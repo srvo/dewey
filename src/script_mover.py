@@ -68,7 +68,8 @@ class ScriptMover:
                         self.process_script(script_path)
                         script_count += 1
                     except Exception as e:
-                        self.logger.error(f"Failed to process {script_path}: {str(e)}")
+                        self.logger.error(f"Fatal error processing {script_path}: {str(e)}")
+                        raise  # Re-raise to halt execution
 
         self.logger.info(f"Processed {script_count} scripts successfully")
 
@@ -155,11 +156,15 @@ class ScriptMover:
         )
         
         try:
-            # Clean response by removing markdown code fences
-            clean_response = re.sub(r'^```yaml?\n', '', response, flags=re.MULTILINE).strip()
-            return yaml.safe_load(clean_response)
-        except yaml.YAMLError as e:
-            raise ValueError(f"Failed to parse LLM response: {str(e)}")
+            # Clean response by removing markdown code fences and invalid characters
+            clean_response = re.sub(r'^```[\w]*\n|```$', '', response, flags=re.MULTILINE).strip()
+            parsed = yaml.safe_load(clean_response)
+            if not isinstance(parsed, dict):
+                raise ValueError("LLM returned invalid YAML structure")
+            return parsed
+        except Exception as e:
+            self.logger.error(f"LLM Response that failed parsing:\n{response}")
+            raise ValueError(f"Failed to parse LLM response: {str(e)}") from e
 
     def determine_target_path(self, analysis: Dict) -> Path:
         """Determine appropriate location in project structure."""
