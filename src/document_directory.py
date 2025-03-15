@@ -114,7 +114,8 @@ class DirectoryAnalyzer:
             logger.info(f"Starting analysis of {self.root_dir}")
             
             # Walk directory with progress bar
-            all_files = [f for f in self.root_dir.rglob('*') if f.is_file()]
+            # Get all files except those in .venv directory
+            all_files = [f for f in self.root_dir.rglob('*') if f.is_file() and '.venv' not in f.parts]
             logger.info(f"Found {len(all_files)} files to analyze")
             
             for file_path in tqdm(all_files, desc="Analyzing files"):
