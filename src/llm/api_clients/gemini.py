@@ -77,7 +77,7 @@ class GeminiClient:
         self.rate_limiter = RateLimiter()
         self.client = genai.GenerativeModel('gemini-pro')
 
-    def generate_content(self, prompt: str, model: str = "gemini-1.5-flash", **kwargs) -> str:
+    def generate_content(self, prompt: str, model: str = "gemini-2.0-flash", **kwargs) -> str:
         """
         Generate content with automatic rate limiting and token tracking.
         
@@ -96,13 +96,23 @@ class GeminiClient:
             # Enforce rate limits before making request
             self.rate_limiter.check_limit(model, prompt)
             
-            response = self.client.generate_content(
-                contents=[prompt],
-                generation_config=genai.types.GenerationConfig(
-                    candidate_count=1,
-                    **kwargs
+            try:
+                response = self.client.generate_content(
+                    contents=[prompt],
+                    generation_config=genai.types.GenerationConfig(
+                        candidate_count=1,
+                        **kwargs
+                    )
                 )
-            )
+            except Exception as e:
+                if "RPM" in str(e) or "rate limit" in str(e).lower():
+                    self.logger.warning(f"Rate limit hit on {model}, falling back to flash-lite")
+                    return self.generate_content(
+                        prompt,
+                        model="gemini-2.0-flash-lite",
+                        **kwargs
+                    )
+                raise
             
             if not response.text:
                 raise LLMError(f"Empty response from Gemini API: {response.prompt_feedback}")

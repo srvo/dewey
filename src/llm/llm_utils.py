@@ -5,7 +5,7 @@ from llm.api_clients.deepinfra import DeepInfraClient, LLMError
 
 def generate_response(
     prompt: str,
-    model: str = "gemini-1.5-flash",
+    model: str = "gemini-2.0-flash", 
     temperature: float = 0.7,
     max_tokens: int = 1000,
     system_message: Optional[str] = None,
