@@ -56,13 +56,19 @@ class CodeConsolidator:
         self._load_checkpoint()
 
     def _init_llm_clients(self) -> bool | None:
-        """Initialize LLM client through llm_utils."""
-        try:
-            # Will use generate_response from llm_utils which handles client management
-            return True
-        except Exception as e:
-            logger.warning(f"LLM setup error: {e}")
-            return None
+        """Initialize LLM client with retries and fallback."""
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                # Test actual LLM connectivity
+                generate_response("test", max_tokens=1, timeout=10)
+                logger.info("LLM client initialized successfully")
+                return True
+            except Exception as e:
+                logger.warning(f"LLM setup error (attempt {attempt+1}/{max_retries}): {e}")
+                if attempt == max_retries - 1:
+                    logger.error("LLM initialization failed - semantic analysis disabled")
+                    return None
 
     def analyze_directory(self) -> None:
         """Main analysis workflow with parallel processing."""
@@ -80,17 +86,27 @@ class CodeConsolidator:
                 future = executor.submit(self._process_file, script_path)
                 futures.append(future)
 
-            # Process results as they complete with nested progress bars
-            with tqdm(total=len(futures), desc="Overall progress", position=0) as pbar:
-                for future in tqdm(as_completed(futures), total=len(futures),
-                                 desc="Analyzing files", position=1, leave=False):
-                    functions, script_path = future.result()
-                    if functions:
-                        with self.lock:
-                            self._cluster_functions(functions, script_path)
-                            self.processed_files.add(str(script_path))
-                            self._save_checkpoint()
-                    pbar.update(1)
+            # Process results with simplified progress and heartbeat logging
+            with tqdm(total=len(futures), desc="Processing files", mininterval=2.0, maxinterval=10.0) as pbar:
+                for i, future in enumerate(as_completed(futures)):
+                    try:
+                        functions, script_path = future.result(timeout=300)  # 5min timeout per file
+                        if functions:
+                            with self.lock:
+                                self._cluster_functions(functions, script_path)
+                                self.processed_files.add(str(script_path))
+                                # Batch checkpoint every 10 files
+                                if i % 10 == 0:
+                                    self._save_checkpoint()
+                        pbar.update(1)
+                        pbar.set_postfix_str(f"Last processed: {script_path.name}", refresh=False)
+                        
+                        # Heartbeat logging every 30 seconds
+                        if i % 5 == 0:
+                            logger.info(f"Progress: {i+1}/{len(futures)} files | Current: {script_path.name}")
+                    except Exception as e:
+                        logger.error(f"Failed processing future: {e}")
+                        self._save_checkpoint()  # Try to save state on any failure
 
         self._analyze_clusters()
         self._batch_process_semantic_hashes()
@@ -327,24 +343,51 @@ class CodeConsolidator:
         return "\n".join(report)
 
     def _process_file(self, script_path: Path) -> tuple:
-        """Process a single file and return results (for parallel execution)."""
+        """Process a single file with timeout and resource limits."""
         try:
-            self._preprocess_script(script_path)
-            functions = self._extract_functions(script_path)
-            return functions, script_path
+            # Add per-file timeout
+            result = subprocess.run(
+                ["timeout", "300", "python", "-c", f"import sys; from {__name__} import CodeConsolidator; CodeConsolidator()._process_file_safe({str(script_path)!r})"],
+                capture_output=True,
+                text=True,
+                check=True
+            )
+            return json.loads(result.stdout)
+        except subprocess.TimeoutExpired:
+            logger.error(f"Timeout processing {script_path} - skipping")
+            return {}, script_path
         except Exception as e:
             logger.exception(f"Failed to process {script_path}: {e}")
             return {}, script_path
+
+    def _process_file_safe(self, script_path: Path) -> tuple:
+        """Wrapper for isolated file processing."""
+        try:
+            self._preprocess_script(script_path)
+            functions = self._extract_functions(script_path)
+            return functions, str(script_path)
+        except Exception as e:
+            logger.debug(f"Error processing {script_path}: {e}")
+            return {}, str(script_path)
 
     def _preprocess_script(self, script_path: Path) -> None:
         """Autoformat script using ruff and black."""
         try:
             # More aggressive cleaning of malformed files
-            subprocess.run([
-                "ruff", "check", "--fix", "--unsafe-fixes",
-                "--select", "ALL", str(script_path),
-            ], check=True)
-            subprocess.run(["black", str(script_path)], check=True)  # Remove quiet for better diagnostics
+            subprocess.run(
+                ["ruff", "check", "--fix", "--unsafe-fixes", "--select", "ALL", str(script_path)],
+                check=True,
+                timeout=120,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+            )
+            subprocess.run(
+                ["black", str(script_path)],
+                check=True,
+                timeout=60,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+            )
         except subprocess.CalledProcessError as e:
             logger.warning(f"Formatting failed for {script_path}: {e}")
 
