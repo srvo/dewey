@@ -36,8 +36,7 @@ def generate_response(
             model=model,
             temperature=temperature,
             max_tokens=max_tokens,
-            system_message=system_message,
-            model=model
+            system_message=system_message
         )
     except Exception as e:
         raise LLMError(f"LLM generation failed: {str(e)}") from e
