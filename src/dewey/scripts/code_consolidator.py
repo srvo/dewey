@@ -522,9 +522,7 @@ def main() -> None:
     parser.add_argument("--report", action="store_true", help="Generate HTML report")
     parser.add_argument("--process-file", help=argparse.SUPPRESS)  # Hidden arg for subprocesses
     
-    args = parser.parse()
-
-()
+    args = parser.parse_args()
 
     if args.process_file:
         # Subprocess mode - just process one file and output JSON
