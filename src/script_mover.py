@@ -110,9 +110,11 @@ class ScriptMover:
         try:
             if self.should_merge(analysis, target_path):
                 self.merge_script(content, analysis, target_path)
+                self.logger.info(f"✅ Merged {script_path} into {target_path} [Category: {analysis.get('category', 'unclassified')}]")
                 audit_entry['status'] = 'merged'
             else:
                 self.write_script(content, target_path)
+                self.logger.info(f"📄 Created {target_path} [Category: {analysis.get('category', 'unclassified')}]")
                 audit_entry['status'] = 'moved'
             
             audit_entry['target_path'] = str(target_path)
@@ -203,7 +205,8 @@ class ScriptMover:
             self.logger.info(f"Created {target_path}")
         except Exception as e:
             # If formatting failed, write original content with warning
-            self.logger.warning(f"Formatting failed, writing original content to {target_path}")
+            self.logger.warning(f"⚠️ Formatting failed, writing original content to {target_path}")
+            self.logger.debug(f"Formatting error: {str(e)}")
             target_path.write_text(f"# Formatting failed: {str(e)}\n\n{content}")
 
     def _format_with_conventions(self, content: str) -> str:

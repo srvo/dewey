@@ -1,7 +1,8 @@
 from typing import Optional, Dict, Any
 import os
 from openai import OpenAI
-from llm.api_clients.deepinfra import DeepInfraClient, LLMError
+from llm.api_clients.deepinfra import DeepInfraClient
+from llm.exceptions import LLMError
 
 def generate_response(
     prompt: str,

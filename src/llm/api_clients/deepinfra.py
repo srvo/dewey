@@ -1,7 +1,7 @@
 from typing import Optional, Dict, Any
 import os
 from openai import OpenAI
-from llm.llm_utils import LLMError
+from llm.exceptions import LLMError
 
 class DeepInfraClient:
     """Client for interacting with DeepInfra's OpenAI-compatible API."""
