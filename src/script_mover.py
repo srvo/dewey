@@ -390,7 +390,15 @@ class ScriptMover:
             self.logger.info(f"Added validated dependencies: {', '.join(valid_deps)}")
 
     def _validate_dependency(self, dep: str) -> bool:
-        """Verify dependency exists on PyPI using PyPI API."""
+        """Verify dependency exists on PyPI or is a standard library module."""
+        import sys
+        
+        # First check if it's a standard library module
+        if dep in sys.stdlib_module_names:
+            self.logger.info(f"Skipping standard library module: {dep}")
+            return True
+            
+        # Then check PyPI
         from dewey.utils.pypi_search import search_pypi
         try:
             return search_pypi(dep) is not None
