@@ -4,6 +4,7 @@
 1. Repository Setup & Core Infrastructure
 2. CRM Module Development
 3. LLM Integration Foundation
+4. [x] Verified ScriptMover hierarchy - removed root `src/script_mover.py`
 
 ## Human Tasks
 
