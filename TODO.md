@@ -9,7 +9,7 @@
 
 x Set up the initial project repository on Git (set up athttps://github.com/srvo/dewey)
 - Set up the `config/` directory with placeholder files
-- Review existing repositories for migration candidates
+x Review existing repositories for migration candidates
 
 ## LLM Tasks
 
