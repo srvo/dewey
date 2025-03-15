@@ -7,18 +7,20 @@
 
 ## Human Tasks
 
-x Set up the initial project repository on Git (set up athttps://github.com/srvo/dewey)
-- Set up the `config/` directory with placeholder files
-x Review existing repositories for migration candidates
+Migrate repositories 
+x Data (in provress
+x lake 
+x crm 
+x books
+- grotius
+- ecic-compliance
+- bin
+- agents
 
 ## LLM Tasks
 
 ### High Priority
-1. Generate complete `pyproject.toml` with dependencies
-2. Create core directory structure
-3. Implement basic CSV reading with Ibis
-4. Scaffold CRM interface
-5. Set up test infrastructure
+ensure various scripts are neatly integrated and well documented
 
 ### Medium Priority
 6. LLM helper functions foundation
