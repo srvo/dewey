@@ -170,3 +170,4 @@ dependencies = [
     "scripts",
     "streamlit",
     "openai",
+    "django_celery_beat",
