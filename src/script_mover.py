@@ -374,17 +374,40 @@ class ScriptMover:
     def _read_current_dependencies(self) -> List[str]:
         """Read current dependencies from pyproject.toml."""
         pyproject_path = Path(__file__).parent.parent / 'pyproject.toml'
-        with open(pyproject_path) as f:
-            content = f.read()
-            
-        matches = re.findall(r'^    "([^"]+)",$', content, flags=re.MULTILINE)
-        return [m.lower() for m in matches]
+        
+        try:
+            import tomli
+            with open(pyproject_path, "rb") as f:
+                data = tomli.load(f)
+            return [dep.lower() for dep in data["project"]["dependencies"]]
+        except ImportError:
+            # Fallback to regex parsing if tomli not available
+            with open(pyproject_path) as f:
+                content = f.read()
+            matches = re.findall(r'^\s*"([^"]+)",\s*$', content, flags=re.MULTILINE)
+            return [m.lower() for m in matches]
 
     def _update_pyproject(self, new_deps: List[str]) -> None:
-        """Update pyproject.toml with new dependencies."""
+        """Update pyproject.toml with new dependencies using proper TOML handling."""
         pyproject_path = Path(__file__).parent.parent / 'pyproject.toml'
-        with open(pyproject_path, 'a') as f:
-            f.write('\n' + '\n'.join(f'    "{dep}",' for dep in new_deps))
+        
+        try:
+            import tomli_w
+            # Read existing content
+            with open(pyproject_path, "rb") as f:
+                data = tomli.load(f)
+            
+            # Get current deps and add new ones
+            current_deps = data["project"]["dependencies"]
+            updated_deps = current_deps + [f'"{dep}"' for dep in new_deps if f'"{dep}"' not in current_deps]
+            
+            # Write back with tomli-w to maintain formatting
+            with open(pyproject_path, "wb") as f:
+                tomli_w.dump(data, f)
+        except ImportError:
+            # Fallback to append mode if tomli-w not available
+            with open(pyproject_path, 'a') as f:
+                f.write('\n' + '\n'.join(f'    "{dep}",' for dep in new_deps))
 
     def _is_valid_target_path(self, path: Path) -> bool:
         """Check if target path is within project structure."""
