@@ -1,6 +1,7 @@
 import os
 import logging
 import hashlib
+import subprocess
 from pathlib import Path
 from typing import Dict, List, Tuple
 from tqdm import tqdm  # For progress bars
@@ -91,8 +92,8 @@ class DirectoryAnalyzer:
 
         return analysis
 
-    def _cluster_similar_files(self) -> None:
-        """Group files by similarity metrics."""
+    def _cluster_similar_files(self, delete_duplicates: bool = False) -> None:
+        """Group files by similarity metrics and optionally delete duplicates."""
         logger.info("Clustering similar files...")
         # First cluster by exact duplicates
         for file_hash, paths in self.file_hashes.items():
@@ -108,18 +109,72 @@ class DirectoryAnalyzer:
                 }
                 logger.warning(f"Found {len(paths)} duplicate files with content hash {file_hash}")
 
+                if delete_duplicates:
+                    # Keep first file, delete others
+                    keeper = Path(paths[0])
+                    for duplicate in paths[1:]:
+                        dup_path = Path(duplicate)
+                        try:
+                            dup_path.unlink()
+                            logger.info(f"Deleted duplicate file: {duplicate}")
+                        except Exception as e:
+                            logger.error(f"Failed to delete {duplicate}: {e}")
+
         #:: Add semantic similarity clustering using embeddings
+
+    def _analyze_code_quality(self, file_path: Path) -> Dict:
+        """Run code quality checks using flake8 and ruff."""
+        results = {'flake8': [], 'ruff': []}
+        
+        try:
+            # Run flake8
+            flake8_result = subprocess.run(
+                ['flake8', str(file_path)],
+                capture_output=True,
+                text=True
+            )
+            results['flake8'] = flake8_result.stdout.splitlines()
+            
+            # Run ruff
+            ruff_result = subprocess.run(
+                ['ruff', 'check', str(file_path)],
+                capture_output=True,
+                text=True
+            )
+            results['ruff'] = ruff_result.stdout.splitlines()
+            
+        except Exception as e:
+            logger.error(f"Code quality analysis failed for {file_path}: {e}")
+            
+        return results
 
     def _generate_report(self) -> str:
         """Generate consolidated analysis report."""
+        code_quality_issues = {
+            path: analysis.get('code_quality', {})
+            for path, analysis in self.file_analysis.items()
+            if analysis.get('code_quality')
+        }
+        
         report = [
             f"# Directory Analysis Report for {self.root_dir}",
             f"## Summary",
             f"- Total files analyzed: {len(self.file_analysis)}",
             f"- Duplicate clusters found: {len([c for c in self.clusters.values() if c['type'] == 'exact_duplicate'])}",
-            f"- Files with issues: {len([a for a in self.file_analysis.values() if a['issues']])}",
-            "\n## Detailed Analysis"
+            f"- Files with code quality issues: {len(code_quality_issues)}",
+            f"- Files with other issues: {len([a for a in self.file_analysis.values() if a['issues']])}",
+            "\n## Code Quality Issues",
+            "### Files with quality issues:"
         ]
+        
+        for path, issues in code_quality_issues.items():
+            report.append(f"\n### {Path(path).name}")
+            report.append("#### Flake8 Issues:")
+            report.extend([f"- {msg}" for msg in issues['flake8']])
+            report.append("#### Ruff Issues:")
+            report.extend([f"- {msg}" for msg in issues['ruff']])
+            
+        report.append("\n## Detailed Analysis")
         
         for cluster_id, cluster in self.clusters.items():
             report.append(f"\n### Cluster {cluster_id}")
@@ -146,6 +201,7 @@ class DirectoryAnalyzer:
                         continue
                         
                     analysis = self._analyze_file(file_path)
+                    analysis['code_quality'] = self._analyze_code_quality(file_path)
                     self.file_analysis[file_path] = analysis
                     
                     # Track hashes for duplicates
@@ -158,7 +214,7 @@ class DirectoryAnalyzer:
                     logger.error(f"Failed to process {file_path}: {str(e)}", exc_info=True)
                     continue
                     
-            self._cluster_similar_files()
+            self._cluster_similar_files(args.delete_duplicates)
             return self._generate_report()
             
         except Exception as e:
@@ -182,6 +238,8 @@ if __name__ == "__main__":
                       nargs="?",
                       default=find_git_root())
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable debug logging")
+    parser.add_argument("--delete-duplicates", action="store_true",
+                      help="Automatically delete exact duplicate files")
     args = parser.parse_args()
     
     if args.verbose:
@@ -191,7 +249,7 @@ if __name__ == "__main__":
     analyzer = DirectoryAnalyzer(args.directory)
     report = analyzer.analyze_directory()
     
-    output_path = Path(args.directory) / "analysis_report.md"
+    output_path = Path(args.directory) / "directory_analysis.md"
     with open(output_path, 'w') as f:
         f.write(report)
     logger.info(f"Analysis report saved to {output_path}")
