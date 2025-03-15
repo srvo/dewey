@@ -17,9 +17,9 @@ CONVENTIONS_PATH = Path("../.aider/CONVENTIONS.md")
 
 # Assuming these are in the same relative location as the script
 try:
-    from src.dewey.llm.api_clients.gemini import GeminiClient
-    from src.dewey.llm.api_clients.deepinfra import DeepInfraClient
-    from src.dewey.llm.exceptions import LLMError
+    from dewey.llm.api_clients.gemini import GeminiClient
+    from dewey.llm.api_clients.deepinfra import DeepInfraClient
+    from dewey.llm.exceptions import LLMError
 except ImportError as e:
     print(f"Error: Could not import necessary modules: {e}. Make sure you are running this script from the project root and dependencies are installed.")
     sys.exit(1)
