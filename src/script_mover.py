@@ -227,35 +227,9 @@ class ScriptMover:
             )
         
         try:
-            # Extract first YAML block between --- markers
-            parts = response.split('---')
-            if len(parts) > 1:
-                yaml_content = parts[1].strip()  # Get content between first --- pair
-            else:
-                yaml_content = response.strip()  # Fallback for responses without ---
+            # Use shared YAML parsing utility
+            parsed = parse_llm_yaml_response(response, self.logger)
             
-            # Clean any remaining markdown syntax
-            clean_response = re.sub(r'^```yaml\s*|```$', '', yaml_content, flags=re.MULTILINE).strip()
-            
-            if not clean_response:
-                raise ValueError("Empty YAML response from LLM")
-                
-            try:
-                parsed = yaml.safe_load(clean_response)
-            except yaml.YAMLError as e:
-                self.logger.error(f"YAML parsing failed. Content:\n{clean_response}")
-                raise
-            
-            # Convert list of entries to dict
-            if isinstance(parsed, list):
-                result = {}
-                for item in parsed:
-                    result.update(item)
-                parsed = result
-                
-            if not isinstance(parsed, dict):
-                raise ValueError("LLM returned invalid YAML structure")
-                
             # Normalize dependencies list
             if 'dependencies' in parsed:
                 if isinstance(parsed['dependencies'], str):

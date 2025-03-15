@@ -1,11 +1,53 @@
 """Core LLM utilities for interacting with AI providers."""
 from typing import Optional, Dict, Any
 import os
+import re
 import logging
+import yaml
 from openai import OpenAI
 from openai.types.chat import ChatCompletion
 
 from src.llm.api_clients.openrouter import OpenRouterClient
+
+
+def parse_llm_yaml_response(response: str, logger: logging.Logger = None) -> Dict:
+    """Parse YAML response from LLM, handling common formatting issues."""
+    try:
+        # Extract first YAML block between --- markers
+        parts = response.split('---')
+        if len(parts) > 1:
+            yaml_content = parts[1].strip()  # Get content between first --- pair
+        else:
+            yaml_content = response.strip()  # Fallback for responses without ---
+        
+        # Clean any remaining markdown syntax
+        clean_response = re.sub(r'^```yaml\s*|```$', '', yaml_content, flags=re.MULTILINE).strip()
+        
+        if not clean_response:
+            raise ValueError("Empty YAML response from LLM")
+            
+        try:
+            parsed = yaml.safe_load(clean_response)
+        except yaml.YAMLError as e:
+            if logger:
+                logger.error(f"YAML parsing failed. Content:\n{clean_response}")
+            raise
+            
+        # Convert list of entries to dict
+        if isinstance(parsed, list):
+            result = {}
+            for item in parsed:
+                result.update(item)
+            parsed = result
+            
+        if not isinstance(parsed, dict):
+            raise ValueError("LLM returned invalid YAML structure")
+            
+        return parsed
+    except Exception as e:
+        if logger:
+            logger.error(f"LLM Response that failed parsing:\n{response}")
+        raise ValueError(f"Failed to parse LLM response: {str(e)}") from e
 
 class LLMError(Exception):
     """Base exception for LLM operations."""
