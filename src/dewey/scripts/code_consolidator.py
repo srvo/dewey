@@ -176,12 +176,12 @@ class CodeConsolidator:
         """Parse AST to extract function definitions with context."""
         functions = {}
         try:
-            with open(file_path, encoding="utf-8") as f:
-                source = f.read()
+            with open(file_path, encoding="utf-8", errors="replace") as f:
+                source = f.read(50_000)  # Limit input size for problematic files
+                
+                # First try full AST parsing
                 try:
                     tree = ast.parse(source, filename=str(file_path))
-
-                    # Process AST nodes if parsing succeeded
                     for node in ast.walk(tree):
                         if isinstance(node, ast.FunctionDef):
                             func_info = {
@@ -195,16 +195,15 @@ class CodeConsolidator:
                             }
                             functions[node.name] = func_info
                     return functions
-
                 except SyntaxError as e:
                     error_msg = f"{file_path}: {e.msg} (line {e.lineno})"
-                    logger.warning(f"Skipped due to syntax error: {error_msg}")
-                    self.syntax_errors.append(error_msg)
-                    # Fall back to line-by-line parsing for basic function detection
-                    return self._parse_functions_manually(source, file_path)
+                    logger.warning(f"Syntax error: {error_msg}")
+                    self.syntax_errors.append(f"{error_msg} - {str(e)}")
                 except Exception as e:
-                    logger.warning(f"Unexpected error parsing {file_path}: {e}")
-                    return {}
+                    logger.warning(f"Unexpected AST error parsing {file_path}: {e}")
+
+                # Fallback parsing with more robust error handling
+                return self._parse_functions_manually(source, file_path)
 
         except Exception as e:
             logger.exception(f"Failed to process {file_path}: {e}")
