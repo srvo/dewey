@@ -1,7 +1,7 @@
 from typing import Optional, Dict, Any
 import os
 from openai import OpenAI
-from llm.api_clients.deepinfra import DeepInfraClient
+from llm.api_clients.gemini import GeminiClient
 from llm.exceptions import LLMError
 
 def generate_response(
@@ -30,13 +30,14 @@ def generate_response(
         LLMError: If there's an error during generation
     """
     try:
-        client = DeepInfraClient(api_key=api_key)
-        return client.chat_completion(
+        client = GeminiClient(api_key=api_key)
+        return client.generate_content(
             prompt=prompt,
             model=model,
             temperature=temperature,
             max_tokens=max_tokens,
-            system_message=system_message
+            system_message=system_message,
+            model=model
         )
     except Exception as e:
         raise LLMError(f"LLM generation failed: {str(e)}") from e
