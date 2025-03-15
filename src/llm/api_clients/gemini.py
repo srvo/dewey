@@ -104,7 +104,7 @@ class RateLimiter:
                 return
                 
             # Put model in cooldown if all retries failed
-            selfoldoldowns[model] = time.time() + (60 * self.cooldown_minutes)
+            self.cooldowns[model] = time.time() + (60 * self.cooldown_minutes)
             raise LLMError(f"Model {model} rate limited. Cooling down for {self.cooldown_minutes} minutes.")
 
 class GeminiClient:
