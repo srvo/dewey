@@ -345,14 +345,28 @@ class CodeConsolidator:
     def _process_file(self, script_path: Path) -> tuple:
         """Process a single file with timeout and resource limits."""
         try:
-            # Add per-file timeout
+            # Run in isolated process with proper Python path
             result = subprocess.run(
-                ["timeout", "300", "python", "-c", f"import sys; from {__name__} import CodeConsolidator; CodeConsolidator()._process_file_safe({str(script_path)!r})"],
+                [
+                    "python", "-m", "src.dewey.scripts.code_consolidator",
+                    "--process-file", str(script_path)
+                ],
                 capture_output=True,
                 text=True,
-                check=True
+                check=False,  # Don't raise on error
+                timeout=300,
+                env={**os.environ, "PYTHONPATH": ":".join(sys.path)}
             )
-            return json.loads(result.stdout)
+            
+            if result.returncode != 0:
+                logger.error(f"Subprocess failed for {script_path.name}: {result.stderr}")
+                return {}, script_path
+                
+            try:
+                return json.loads(result.stdout)
+            except json.JSONDecodeError:
+                logger.error(f"Invalid output from {script_path.name}")
+                return {}, script_path
         except subprocess.TimeoutExpired:
             logger.error(f"Timeout processing {script_path} - skipping")
             return {}, script_path
@@ -506,10 +520,21 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Analyze and consolidate similar code functionality")
     parser.add_argument("--dir", default=".", help="Directory to analyze")
     parser.add_argument("--report", action="store_true", help="Generate HTML report")
-    args = parser.parse_args()
+    parser.add_argument("--process-file", help=argparse.SUPPRESS)  # Hidden arg for subprocesses
+    
+    args = parser.parse()
 
-    consolidator = CodeConsolidator(args.dir)
-    consolidator.analyze_directory()
+()
+
+    if args.process_file:
+        # Subprocess mode - just process one file and output JSON
+        consolidator = CodeConsolidator()
+        result = consolidator._process_file_safe(Path(args.process_file))
+        print(json.dumps(result))
+    else:
+        # Normal mode
+        consolidator = CodeConsolidator(args.dir)
+        consolidator.analyze_directory()
 
     if args.report:
         report_path = Path(args.dir) / "code_consolidation_report.md"
