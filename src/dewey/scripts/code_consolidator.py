@@ -3,6 +3,7 @@ similar functionality across scripts and suggest canonical implementations.
 """
 
 import argparse
+import os
 import ast
 import hashlib
 import json
@@ -73,8 +74,8 @@ class CodeConsolidator:
         new_scripts = [s for s in scripts if str(s) not in self.processed_files]
         logger.info(f"Resuming from checkpoint - {len(new_scripts)}/{len(scripts)} new files to process")
 
-        # Process files in parallel
-        with ThreadPoolExecutor(max_workers=8) as executor:
+        # Process files in parallel with aggressive resource utilization
+        with ThreadPoolExecutor(max_workers=os.cpu_count() * 4) as executor:
             futures = []
             for script_path in new_scripts:
                 future = executor.submit(self._process_file, script_path)
@@ -393,8 +394,8 @@ class CodeConsolidator:
                 if "semantic_hash" not in details:
                     hash_queue.append(details)
 
-        # Process in parallel batches
-        batch_size = 10  # Adjust based on rate limits
+        # Process in large batches for maximum throughput
+        batch_size = 100  # Aggressive batching for bulk processing
         with ThreadPoolExecutor(max_workers=4) as executor:
             for i in range(0, len(hash_queue), batch_size):
                 batch = hash_queue[i:i+batch_size]
