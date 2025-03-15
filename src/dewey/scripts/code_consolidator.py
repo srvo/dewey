@@ -8,8 +8,8 @@ import hashlib
 import json
 import logging
 import os
-import sys
 import subprocess
+import sys
 import threading
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -24,6 +24,7 @@ from dewey.llm.llm_utils import generate_response
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+
 class TqdmHandler(logging.Handler):
     def __init__(self) -> None:
         super().__init__()
@@ -35,6 +36,7 @@ class TqdmHandler(logging.Handler):
         except Exception:
             self.handleError(record)
 
+
 # Compact format without date/time
 formatter = logging.Formatter("%(levelname)s: %(message)s")
 handler = TqdmHandler()
@@ -42,9 +44,10 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 logger.propagate = False  # Prevent duplicate output
 
+
 class CodeConsolidator:
     """Identifies similar functionality across scripts using AST analysis and vector similarity."""
-    
+
     def __init__(self, root_dir: str = ".") -> None:
         self.root_dir = Path(root_dir).expanduser().resolve()
         self.function_clusters = defaultdict(list)
@@ -61,12 +64,13 @@ class CodeConsolidator:
         """Initialize vector database with error handling."""
         try:
             from dewey.utils.vector_db import VectorStore
+
             return VectorStore()
         except ImportError as e:
-            logger.error(f"Vector database disabled: {e}")
+            logger.exception(f"Vector database disabled: {e}")
             return None
         except Exception as e:
-            logger.error(f"Failed to initialize vector database: {e}")
+            logger.exception(f"Failed to initialize vector database: {e}")
             return None
 
     def _init_llm_clients(self) -> bool | None:
@@ -79,10 +83,15 @@ class CodeConsolidator:
                 logger.info("LLM client initialized successfully")
                 return True
             except Exception as e:
-                logger.warning(f"LLM setup error (attempt {attempt+1}/{max_retries}): {e}")
+                logger.warning(
+                    f"LLM setup error (attempt {attempt+1}/{max_retries}): {e}"
+                )
                 if attempt == max_retries - 1:
-                    logger.error("LLM initialization failed - semantic analysis disabled")
+                    logger.exception(
+                        "LLM initialization failed - semantic analysis disabled"
+                    )
                     return None
+        return None
 
     def analyze_directory(self) -> None:
         """Main analysis workflow with parallel processing."""
@@ -92,7 +101,9 @@ class CodeConsolidator:
 
         # Filter out already processed files
         new_scripts = [s for s in scripts if str(s) not in self.processed_files]
-        logger.info(f"Resuming from checkpoint - {len(new_scripts)}/{len(scripts)} new files to process")
+        logger.info(
+            f"Resuming from checkpoint - {len(new_scripts)}/{len(scripts)} new files to process"
+        )
 
         # Process files in parallel with aggressive resource utilization
         with ThreadPoolExecutor(max_workers=os.cpu_count() * 4) as executor:
@@ -102,10 +113,17 @@ class CodeConsolidator:
                 futures.append(future)
 
             # Process results with simplified progress and heartbeat logging
-            with tqdm(total=len(futures), desc="Processing files", mininterval=2.0, maxinterval=10.0) as pbar:
+            with tqdm(
+                total=len(futures),
+                desc="Processing files",
+                mininterval=2.0,
+                maxinterval=10.0,
+            ) as pbar:
                 for i, future in enumerate(as_completed(futures)):
                     try:
-                        functions, script_path = future.result(timeout=300)  # 5min timeout per file
+                        functions, script_path = future.result(
+                            timeout=300
+                        )  # 5min timeout per file
                         if functions:
                             with self.lock:
                                 self._cluster_functions(functions, script_path)
@@ -114,13 +132,17 @@ class CodeConsolidator:
                                 if i % 10 == 0:
                                     self._save_checkpoint()
                         pbar.update(1)
-                        pbar.set_postfix_str(f"Last processed: {script_path.name}", refresh=False)
-                        
+                        pbar.set_postfix_str(
+                            f"Last processed: {script_path.name}", refresh=False
+                        )
+
                         # Heartbeat logging every 30 seconds
                         if i % 5 == 0:
-                            logger.info(f"Progress: {i+1}/{len(futures)} files | Current: {script_path.name}")
+                            logger.info(
+                                f"Progress: {i+1}/{len(futures)} files | Current: {script_path.name}"
+                            )
                     except Exception as e:
-                        logger.error(f"Failed processing future: {e}")
+                        logger.exception(f"Failed processing future: {e}")
                         self._save_checkpoint()  # Try to save state on any failure
 
         self._analyze_clusters()
@@ -128,9 +150,18 @@ class CodeConsolidator:
 
     def _find_script_files(self) -> list[Path]:
         """Find Python files in current directory and subdirectories, excluding venv."""
-        excluded_dirs = {"test", ".venv", "venv", "docs", "deploy", "config", "ingest_data"}
+        excluded_dirs = {
+            "test",
+            ".venv",
+            "venv",
+            "docs",
+            "deploy",
+            "config",
+            "ingest_data",
+        }
         return [
-            f for f in self.root_dir.glob("**/*.py")
+            f
+            for f in self.root_dir.glob("**/*.py")
             if not any(d in f.parts for d in excluded_dirs)
         ]
 
@@ -174,7 +205,9 @@ class CodeConsolidator:
 
         return functions
 
-    def _parse_functions_manually(self, source: str, file_path: Path) -> dict[str, dict]:
+    def _parse_functions_manually(
+        self, source: str, file_path: Path
+    ) -> dict[str, dict]:
         """Fallback function parser that uses simple pattern matching."""
         functions = {}
         current_function = None
@@ -191,7 +224,7 @@ class CodeConsolidator:
                         functions[func_name] = {
                             "name": func_name,
                             "args": [p.strip() for p in params.split(",") if p.strip()],
-                            "lineno": i+1,
+                            "lineno": i + 1,
                             "docstring": None,
                             "complexity": 1,  # Conservative estimate for fallback
                             "file_hash": self._file_hash(file_path),
@@ -209,7 +242,9 @@ class CodeConsolidator:
                     current_indent = len(line) - len(line.lstrip())
 
                     # Check if we've left the function body
-                    if current_indent <= indent_level and not stripped_line.startswith("@"):
+                    if current_indent <= indent_level and not stripped_line.startswith(
+                        "@"
+                    ):
                         in_function = False
                         current_function = None
                         continue
@@ -218,7 +253,11 @@ class CodeConsolidator:
                     if stripped_line.startswith(('"""', "'''")):
                         if not functions[current_function]["docstring"]:
                             # Remove quotes and leading leading/trailing whitespace
-                            doc = stripped_line[3:-3].strip() if len(stripped_line) > 6 else ""
+                            doc = (
+                                stripped_line[3:-3].strip()
+                                if len(stripped_line) > 6
+                                else ""
+                            )
                             functions[current_function]["docstring"] = doc
             except Exception as e:
                 logger.debug(f"Error parsing line {i+1} in {file_path}: {e!s}")
@@ -229,24 +268,30 @@ class CodeConsolidator:
     def _cluster_functions(self, functions: dict[str, dict], script_path: Path) -> None:
         """Group similar functions using vector similarity search."""
         if not self.vector_db:
-            logger.warning("Vector database not available - falling back to structural clustering")
+            logger.warning(
+                "Vector database not available - falling back to structural clustering"
+            )
             self._fallback_cluster(functions, script_path)
             return
 
         for name, details in functions.items():
             context = details.get("context", "")
             func_id = f"{script_path.name}:{name}"
-            
+
             # Store in vector DB
             self.vector_db.upsert_function(
                 func_id,
                 context,
-                {"name": name, "args": details["args"], "complexity": details["complexity"]}
+                {
+                    "name": name,
+                    "args": details["args"],
+                    "complexity": details["complexity"],
+                },
             )
-            
+
             # Find similar existing functions
             similar_ids = self.vector_db.find_similar_functions(context)
-            
+
             if similar_ids:
                 # Use first similar function's cluster
                 cluster_key = self._get_cluster_key_for_id(similar_ids[0])
@@ -311,8 +356,12 @@ class CodeConsolidator:
         for cluster_key, implementations in self.function_clusters.items():
             if len(implementations) > 1:
                 # Find the canonical version (best example)
-                canonical = max(implementations, key=lambda x: self._implementation_quality(x[1]))
-                consolidation_candidates.append((cluster_key, implementations, canonical))
+                canonical = max(
+                    implementations, key=lambda x: self._implementation_quality(x[1])
+                )
+                consolidation_candidates.append(
+                    (cluster_key, implementations, canonical)
+                )
 
         self._present_findings(consolidation_candidates)
         self._report_syntax_errors()
@@ -329,7 +378,11 @@ class CodeConsolidator:
         """Interactive presentation of consolidation opportunities."""
         logger.info(f"\nFound {len(candidates)} consolidation opportunities:")
 
-        for _cluster_key, implementations, (canonical_path, _canonical_details) in candidates:
+        for (
+            _cluster_key,
+            implementations,
+            (canonical_path, _canonical_details),
+        ) in candidates:
             for path, _details in implementations:
                 if path != canonical_path:
                     pass
@@ -337,7 +390,10 @@ class CodeConsolidator:
             if input("\nShow diff? (y/N) ").lower() == "y":
                 self._show_implementation_diff(implementations)
 
-            if self.llm_client and input("Get consolidation suggestion? (y/N) ").lower() == "y":
+            if (
+                self.llm_client
+                and input("Get consolidation suggestion? (y/N) ").lower() == "y"
+            ):
                 self._get_llm_consolidation_advice(implementations)
 
     def _show_implementation_diff(self, implementations: list) -> None:
@@ -388,8 +444,11 @@ class CodeConsolidator:
                 report.append(
                     f"\n### {cluster_key[0]} ({len(implementations)} implementations)\n"
                     f"**Best candidate**: {max(implementations, key=lambda x: self._implementation_quality(x[1]))[0].name}\n"
-                    "**Locations**:\n" +
-                    "\n".join(f"- {p.relative_to(self.root_dir)}: Line {d['lineno']}" for p, d in implementations),
+                    "**Locations**:\n"
+                    + "\n".join(
+                        f"- {p.relative_to(self.root_dir)}: Line {d['lineno']}"
+                        for p, d in implementations
+                    ),
                 )
 
         return "\n".join(report)
@@ -400,27 +459,32 @@ class CodeConsolidator:
             # Run in isolated process with proper Python path
             result = subprocess.run(
                 [
-                    "python", "-m", "src.dewey.scripts.code_consolidator",
-                    "--process-file", str(script_path)
+                    "python",
+                    "-m",
+                    "src.dewey.scripts.code_consolidator",
+                    "--process-file",
+                    str(script_path),
                 ],
                 capture_output=True,
                 text=True,
                 check=False,  # Don't raise on error
                 timeout=300,
-                env={**os.environ, "PYTHONPATH": ":".join(sys.path)}
+                env={**os.environ, "PYTHONPATH": ":".join(sys.path)},
             )
-            
+
             if result.returncode != 0:
-                logger.error(f"Subprocess failed for {script_path.name}: {result.stderr}")
+                logger.error(
+                    f"Subprocess failed for {script_path.name}: {result.stderr}"
+                )
                 return {}, script_path
-                
+
             try:
                 return json.loads(result.stdout)
             except json.JSONDecodeError:
-                logger.error(f"Invalid output from {script_path.name}")
+                logger.exception(f"Invalid output from {script_path.name}")
                 return {}, script_path
         except subprocess.TimeoutExpired:
-            logger.error(f"Timeout processing {script_path} - skipping")
+            logger.exception(f"Timeout processing {script_path} - skipping")
             return {}, script_path
         except Exception as e:
             logger.exception(f"Failed to process {script_path}: {e}")
@@ -444,27 +508,37 @@ class CodeConsolidator:
         try:
             # Run formatting with suppressed output unless there's an error
             ruff_proc = subprocess.run(
-                ["ruff", "check", "--fix", "--unsafe-fixes", "--select", "ALL", str(script_path)],
+                [
+                    "ruff",
+                    "check",
+                    "--fix",
+                    "--unsafe-fixes",
+                    "--select",
+                    "ALL",
+                    str(script_path),
+                ],
                 check=False,  # Don't raise on error
                 timeout=120,
                 capture_output=True,
-                text=True
+                text=True,
             )
-            
+
             black_proc = subprocess.run(
                 ["black", str(script_path)],
                 check=False,  # Don't raise on error
                 timeout=60,
                 capture_output=True,
-                text=True
+                text=True,
             )
-            
+
             # Only show output if there were errors
             if ruff_proc.returncode != 0:
                 logger.debug(f"Ruff output for {script_path.name}:\n{ruff_proc.stderr}")
             if black_proc.returncode != 0:
-                logger.debug(f"Black output for {script_path.name}:\n{black_proc.stderr}")
-                
+                logger.debug(
+                    f"Black output for {script_path.name}:\n{black_proc.stderr}"
+                )
+
         except subprocess.TimeoutExpired:
             logger.warning(f"Formatting timed out for {script_path.name}")
         except Exception as e:
@@ -477,15 +551,17 @@ class CodeConsolidator:
         try:
             # Check if spaCy model is installed
             if not spacy.util.is_package("en_core_web_sm"):
-                logger.warning("spaCy model 'en_core_web_sm' not installed. You can either:\n"
-                               "1. Download just the model: python -m spacy download en_core_web_sm\n"
-                               "2. Install spaCy from source with:\n"
-                               "   uv install install -U pip setuptools wheel && "
-                               "git clone https://github.com/explosion/spaCy && "
-                               "cd spaCy && "
-                               "uv pip install -r requirements.txt && "
-                               "uv pip install --no-build-isolation --editable . && "
-                               "python -m spacy download en_core_web_sm")
+                logger.warning(
+                    "spaCy model 'en_core_web_sm' not installed. You can either:\n"
+                    "1. Download just the model: python -m spacy download en_core_web_sm\n"
+                    "2. Install spaCy from source with:\n"
+                    "   uv install install -U pip setuptools wheel && "
+                    "git clone https://github.com/explosion/spaCy && "
+                    "cd spaCy && "
+                    "uv pip install -r requirements.txt && "
+                    "uv pip install --no-build-isolation --editable . && "
+                    "python -m spacy download en_core_web_sm"
+                )
                 return ""
 
             nlp = spacy.load("en_core_web_sm")
@@ -495,7 +571,11 @@ class CodeConsolidator:
             doc = nlp(func_text)
 
             # Extract key entities and verbs
-            entities = {ent.lemma_.lower() for ent in doc.ents if ent.label_ in {"ORG", "PRODUCT", "NORP"}}
+            entities = {
+                ent.lemma_.lower()
+                for ent in doc.ents
+                if ent.label_ in {"ORG", "PRODUCT", "NORP"}
+            }
             verbs = {token.lemma_ for token in doc if token.pos_ == "VERB"}
             nouns = {chunk.root.lemma_ for chunk in doc.noun_chunks}
 
@@ -521,7 +601,7 @@ class CodeConsolidator:
         batch_size = 100  # Aggressive batching for bulk processing
         with ThreadPoolExecutor(max_workers=4) as executor:
             for i in range(0, len(hash_queue), batch_size):
-                batch = hash_queue[i:i+batch_size]
+                batch = hash_queue[i : i + batch_size]
                 futures = [executor.submit(self._semantic_hash, func) for func in batch]
                 for future in as_completed(futures):
                     func, hash_val = future.result()
@@ -529,7 +609,7 @@ class CodeConsolidator:
 
         # Rebuild clusters with semantic hashes
         new_clusters = defaultdict(list)
-        for (struct_key, details_list) in self.function_clusters.items():
+        for struct_key, details_list in self.function_clusters.items():
             for details in details_list:
                 cluster_key = (*struct_key, details["semantic_hash"])
                 new_clusters[cluster_key].append(details)
@@ -558,29 +638,43 @@ class CodeConsolidator:
                 with open(self.checkpoint_file) as f:
                     data = json.load(f)
                 self.processed_files = set(data["processed_files"])
-                self.function_clusters = defaultdict(list, {
-                    tuple(key): [Path(p) for p in paths]
-                    for key, paths in data["function_clusters"]
-                })
+                self.function_clusters = defaultdict(
+                    list,
+                    {
+                        tuple(key): [Path(p) for p in paths]
+                        for key, paths in data["function_clusters"]
+                    },
+                )
                 self.syntax_errors = data["syntax_errors"]
-                logger.info(f"Loaded checkpoint with {len(self.processed_files)} processed files")
+                logger.info(
+                    f"Loaded checkpoint with {len(self.processed_files)} processed files"
+                )
             except Exception as e:
                 logger.exception(f"Failed to load checkpoint: {e}")
 
+
 def main() -> None:
     """Command line interface."""
-    parser = argparse.ArgumentParser(description="Analyze and consolidate similar code functionality")
-    parser.add_argument("directory", nargs='?', default=".", help="Directory to analyze (default: current directory)")
+    parser = argparse.ArgumentParser(
+        description="Analyze and consolidate similar code functionality"
+    )
+    parser.add_argument(
+        "directory",
+        nargs="?",
+        default=".",
+        help="Directory to analyze (default: current directory)",
+    )
     parser.add_argument("--report", action="store_true", help="Generate HTML report")
-    parser.add_argument("--process-file", help=argparse.SUPPRESS)  # Hidden arg for subprocesses
-    
+    parser.add_argument(
+        "--process-file", help=argparse.SUPPRESS
+    )  # Hidden arg for subprocesses
+
     args = parser.parse_args()
 
     if args.process_file:
         # Subprocess mode - just process one file and output JSON
         consolidator = CodeConsolidator()
-        result = consolidator._process_file_safe(Path(args.process_file))
-        print(json.dumps(result))
+        consolidator._process_file_safe(Path(args.process_file))
     else:
         # Normal mode
         consolidator = CodeConsolidator(args.directory)
@@ -591,6 +685,7 @@ def main() -> None:
         with open(report_path, "w") as f:
             f.write(consolidator.generate_report())
         logger.info(f"Report saved to {report_path}")
+
 
 if __name__ == "__main__":
     main()
