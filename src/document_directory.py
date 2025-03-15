@@ -148,6 +148,39 @@ class DirectoryAnalyzer:
             
         return results
 
+    def _analyze_directory_structure(self) -> Dict:
+        """Analyze directory structure against project conventions."""
+        expected_modules = [
+            "src/dewey/core", "src/dewey/llm", "src/dewey/pipeline", "src/dewey/utils",
+            "ui/screens", "ui/components", "config", "tests", "docs"
+        ]
+        
+        dir_structure = {}
+        deviations = []
+        
+        for root, dirs, files in os.walk(self.root_dir):
+            rel_path = Path(root).relative_to(self_dir_dir)
+            
+            # Skip hidden directories
+            if any(part.startswith('.') for part in rel_path.parts):
+                continue
+                
+            dir_structure[str(rel_path)] = {
+                'files': files,
+                'subdirs': dirs,
+                'expected': any(str(rel_path).startswith(m) for m in expected_modules)
+            }
+            
+            # for for unexpected directories that should follow conventions
+            if not dir_structure[str(rel_path)]['expected'] and rel_path != Path('.'):
+                deviations.append(str(rel_path))
+                
+        return {
+            'structure': dir_structure,
+            'deviations': deviations,
+            'expected_modules': expected_modules
+        }
+
     def _generate_report(self) -> str:
         """Generate consolidated analysis report."""
         code_quality_issues = {
@@ -156,6 +189,8 @@ class DirectoryAnalyzer:
             if analysis.get('code_quality')
         }
         
+        dir_analysis = self._analyze_directory_structure()
+        
         report = [
             f"# Directory Analysis Report for {self.root_dir}",
             f"## Summary",
@@ -163,6 +198,7 @@ class DirectoryAnalyzer:
             f"- Duplicate clusters found: {len([c for c in self.clusters.values() if c['type'] == 'exact_duplicate'])}",
             f"- Files with code quality issues: {len(code_quality_issues)}",
             f"- Files with other issues: {len([a for a in self.file_analysis.values() if a['issues']])}",
+            f"- Directory structure deviations: {len(dir_analysis['deviations'])}",
             "\n## Code Quality Issues",
             "### Files with quality issues:"
         ]
@@ -174,13 +210,28 @@ class DirectoryAnalyzer:
             report.append("#### Ruff Issues:")
             report.extend([f"- {msg}" for msg in issues['ruff']])
             
-        report.append("\n## Detailed Analysis")
-        
-        for cluster_id, cluster in self.clusters.items():
-            report.append(f"\n### Cluster {cluster_id}")
-            report.append(f"Type: {cluster['type']}")
-            report.append("Files:")
-            report.extend([f"- {p}" for p in cluster['files']])
+        report.append("\n## Directory Structure Analysis"),
+        report.append("\n### Expected Module Structure"),
+        report.extend([f"- {m}" for m in dir_analysis['expected_modules']]),
+            
+        report.append("\n### Current Directory Structure"),
+        for path, details in dir_analysis['structure'].items():
+            report.append(f"\n#### {path}/"),
+            report.append(f"Expected: {'Yes' if details['expected'] else 'No'}"),
+            report.append(f"Files ({len(details['files'])}): {', '.join(details['files'][:3])}" + 
+                        ("..." if len(details['files']) > 3 else "")),
+            report.append(f"Subdirectories ({len(details['subdirs'])}): {', '.join(details['subdirs'][:3])}" +
+                        ("..." if len(details['subdirs']) > 3 else "")),
+            
+        if dir_analysis['deviations']:
+            report.append("\n### Structural Deviations"),
+            report.extend([f"- {d}" for d in dir_analysis['deviations']]),
+        else:
+            report.append("\n### Structural Deviations"),
+            report.append("- No structural deviations found"),
+            
+        report.append("\n## Code Analysis"),
+        report.append("### Detailed File Clusters"),
         
         return '\n'.join(report)
 
