@@ -35,3 +35,4 @@ dependencies = [
     "asgiref",
     "asyncpg",
     "tomli-w",  # For proper TOML handling
+]

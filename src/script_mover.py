@@ -392,6 +392,7 @@ class ScriptMover:
         pyproject_path = Path(__file__).parent.parent / 'pyproject.toml'
         
         try:
+            import tomli
             import tomli_w
             # Read existing content
             with open(pyproject_path, "rb") as f:
