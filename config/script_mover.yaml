@@ -1,4 +1,6 @@
 ---
+project_root: "src/dewey"
+
 module_paths:
     core: "core/"
     llm: "llm/"
