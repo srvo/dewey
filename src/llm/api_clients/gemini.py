@@ -16,7 +16,7 @@ class RateLimiter:
     _instance = None
     MODEL_LIMITS = {
         "gemini-2.0-flash": (15, 1_000_000, 1500),  # RPM, TPM, RPD
-        "gemini-2.0-flash-lite": (30, 1_000_000, 1500),
+        "gemini-2.0-flash-lite": (30, 1_000_000, 1500),  # Higher RPM limit
         "gemini-2.0-pro": (2, 1_000_000, 50),
         "gemini-2.0-flash-thinking": (10, 4_000_000, 1500),
         "gemini-1.5-flash": (15, 1_000_000, 1500),
@@ -81,7 +81,7 @@ class RateLimiter:
                 
                 # If over RPM limit, wait with exponential backoff
                 if current_rpm >= rpm:
-                    wait_time = min(remaining + 0.5, (2 ** attempt) + (random.random() * 0.1))
+                    wait_time = min(remaining + 0.5, (2 ** attempt) + (random.random() * 0.1), 60)  # Max 60 seconds
                     self.logger.warning(f"RPM limit reached for {model}. Waiting {wait_time:.2f}s (attempt {attempt+1})")
                     time.sleep(wait_time)
                     continue
@@ -156,10 +156,10 @@ class GeminiClient:
                 )
             except Exception as e:
                 if "RPM" in str(e) or "rate limit" in str(e).lower():
-                    logging.warning(f"Rate limit hit on {model}, falling back to flash-lite")
+                    logging.warning(f"Rate limit hit on {model}, falling back to 2.0-flash-lite")
                     return self.generate_content(
                         prompt,
-                        model="gemini-2.0-flash-lite",
+                        model="gemini-2.0-flash-lite",  # Higher RPM limit model
                         **kwargs
                     )
                 raise
