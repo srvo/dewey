@@ -60,7 +60,7 @@ class CodeConsolidator:
     def _init_vector_db(self):
         """Initialize vector database with error handling."""
         try:
-            from src.dewey.utils.vector_db import VectorStore
+            from dewey.utils.vector_db import VectorStore
             return VectorStore()
         except ImportError as e:
             logger.error(f"Vector database disabled: {e}")
@@ -75,7 +75,7 @@ class CodeConsolidator:
         for attempt in range(max_retries):
             try:
                 # Test actual LLM connectivity
-                generate_response("test", timeout=10)
+                generate_response("test")
                 logger.info("LLM client initialized successfully")
                 return True
             except Exception as e:
@@ -282,7 +282,7 @@ class CodeConsolidator:
         if self.llm_client:
             prompt = f"Normalize this function signature for hashing:\nName: {func_details['name']}\nArgs: {func_details['args']}\nComplexity: {func_details['complexity']}"
             try:
-                normalized = generate_response(prompt)
+                normalized = generate_response(prompt, timeout=10)
                 return hashlib.md5(normalized.encode()).hexdigest()
             except Exception as e:
                 logger.debug(f"LLM normalization failed: {e}")
