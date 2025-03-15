@@ -15,7 +15,6 @@ from spacy.lang.en.stop_words import STOP_WORDS
 from pathlib import Path
 from typing import Dict, List
 from collections import defaultdict
-import subprocess
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
 
