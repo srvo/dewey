@@ -110,8 +110,8 @@ def main():
     )
     parser.add_argument(
         '--dir', 
-        default='~/ingest_data',
-        help="Directory to scan for duplicates"
+        default='/Users/srvo/input_data',
+        help="Directory to scan for duplicates (default: /Users/srvo/input_data)"
     )
     parser.add_argument(
         '--delete', 
