@@ -209,8 +209,6 @@ class GeminiClient:
                             )
                         except Exception as fallback_error:
                             logging.debug(f"Fallback {fallback_model} failed: {fallback_error}")
-                        **kwargs,
-                    )
                 raise
 
             if not response.text:
