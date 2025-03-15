@@ -329,17 +329,37 @@ class ScriptMover:
             target_path.write_text(f"# Formatting failed: {str(e)}\n\n{content}")
 
     def _format_with_conventions(self, content: str) -> str:
-        """Apply project formatting conventions."""
+        """Apply project formatting conventions with validation."""
         prompt = f"""Reformat this Python code to match project conventions:
         - Google-style docstrings
         - Type hints
-        - pep8 spacing
+        - PEP8 spacing
         - Split into logical functions
-        Output ONLY the formatted code:
+        - Keep all original functionality
         
+        Enclose the response in triple backticks.
+        Output ONLY the formatted code, no explanations.
+        
+        Original code:
         {content}"""
         
-        return generate_response(prompt)
+        try:
+            response = generate_response(prompt)
+            # Extract code from between first ```python and last ```
+            code_start = response.find('```python') + len('```python')
+            code_end = response.rfind('```')
+            if code_start == -1 or code_end == -1:
+                raise SyntaxError("Code block markers missing")
+                
+            formatted_code = response[code_start:code_end].strip()
+            
+            # Validate syntax before returning
+            ast.parse(formatted_code)
+            return formatted_code
+        except (SyntaxError, LLMError) as e:
+            self.logger.warning(f"Formatting validation failed: {str(e)}")
+            # Return original content if formatting failed validation
+            return content
 
     def process_dependencies(self, dependencies: List[str]) -> None:
         """Ensure required dependencies are in pyproject.toml."""
