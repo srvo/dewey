@@ -7,7 +7,6 @@ import yaml
 from openai import OpenAI
 from openai.types.chat import ChatCompletion
 
-from dewey.llm.api_clients.openrouter import OpenRouterClient
 from dewey.llm.api_clients.gemini import RateLimiter
 from dewey.llm.api_clients.deepinfra import DeepInfraClient
 
@@ -61,9 +60,6 @@ def get_deepinfra_client() -> OpenAI:
         base_url="https://api.deepinfra.com/v1/openai",
     )
 
-def get_openrouter_client() -> OpenRouterClient:
-    """Initialize OpenRouter client with environment config."""
-    return OpenRouterClient(api_key=os.getenv("OPENROUTER_API_KEY"))
 
 def generate_analysis_response(
     prompt: str,
@@ -148,13 +144,6 @@ def generate_response(
                 max_tokens=max_tokens
             )
             return response.choices[0].message.content
-        elif isinstance(client, OpenRouterClient):
-            return client.generate_content(
-                prompt=prompt,
-                model=model,
-                temperature=temperature,
-                max_tokens=max_tokens,
-            )
         else:
             raise ValueError(f"Unsupported client type: {type(client)}")
     except Exception as e:
