@@ -112,12 +112,18 @@ class DirectoryDocumenter:
 
     def analyze_code(self, code: str) -> str:
         """
-        Analyzes the given code using an LLM and returns a summary.
+        Analyzes the given code using an LLM and returns a summary,
+        including whether the code contains placeholder code or
+        unimplemented methods, and whether it appears to be related to
+        the Dewey project.
         """
         gemini_client, deepinfra_client = self._get_llm_client()
         prompt = f"""
         Analyze the following code and provide a summary of its functionality,
-        its dependencies, and any potential issues or improvements based on the following conventions:
+        its dependencies, any potential issues or improvements based on the following conventions,
+        whether the code contains placeholder code (e.g., "pass", "TODO", "NotImplementedError"),
+        and whether it appears to be related to the Dewey project (e.g., by using project-specific
+        imports or code patterns).
 
         {self.conventions}
 
@@ -218,44 +224,50 @@ class DirectoryDocumenter:
                 try:
                     with open(file_path, "r") as f:
                         code = f.read()
-                        analysis = self.analyze_code(code)
-                        analysis_results[filename] = analysis
 
-                        # Suggest a better filename
-                        suggested_filename = self.suggest_filename(code)
-                        if suggested_filename:
-                            new_file_path = directory_path / (suggested_filename + ".py")
-                            rename_file = input(f"Rename {filename} to {suggested_filename + '.py'}? (y/n): ").lower()
-                            if rename_file == 'y':
-                                try:
-                                    os.rename(file_path, new_file_path)
-                                    logger.info(f"Renamed {filename} to {suggested_filename + '.py'}")
-                                    file_path = new_file_path  # Update file_path to the new name
-                                except Exception as e:
-                                    logger.error(f"Failed to rename {filename} to {suggested_filename + '.py'}: {e}")
-                            else:
-                                logger.info(f"Skipped renaming {filename}.")
+                    # Basic check for project-related code
+                    if "src.dewey" not in code and "from dewey" not in code:
+                        logger.warning(f"Skipping {filename}: Not related to Dewey project.")
+                        continue
 
-                        # Ask for confirmation before correcting code style
-                        correct_style = input(f"Correct code style for {filename}? (y/n): ").lower()
-                        if correct_style == 'y':
-                            corrected_code = self.correct_code_style(code)
-                            if corrected_code:
-                                # Ask for confirmation before writing the corrected code to file
-                                write_corrected = input(f"Write corrected code to {filename}? (y/n): ").lower()
-                                if write_corrected == 'y':
-                                    try:
-                                        with open(file_path, "w") as f:
-                                            f.write(corrected_code)
-                                        logger.info(f"Corrected code style for {filename} and wrote to file.")
-                                    except Exception as e:
-                                        logger.error(f"Failed to write corrected code to {filename}: {e}")
-                                else:
-                                    logger.info(f"Corrected code style for {filename}, but did not write to file.")
-                            else:
-                                logger.warning(f"Failed to correct code style for {filename}.")
+                    analysis = self.analyze_code(code)
+                    analysis_results[filename] = analysis
+
+                    # Suggest a better filename
+                    suggested_filename = self.suggest_filename(code)
+                    if suggested_filename:
+                        new_file_path = directory_path / (suggested_filename + ".py")
+                        rename_file = input(f"Rename {filename} to {suggested_filename + '.py'}? (y/n): ").lower()
+                        if rename_file == 'y':
+                            try:
+                                os.rename(file_path, new_file_path)
+                                logger.info(f"Renamed {filename} to {suggested_filename + '.py'}")
+                                file_path = new_file_path  # Update file_path to the new name
+                            except Exception as e:
+                                logger.error(f"Failed to rename {filename} to {suggested_filename + '.py'}: {e}")
                         else:
-                            logger.info(f"Skipped correcting code style for {filename}.")
+                            logger.info(f"Skipped renaming {filename}.")
+
+                    # Ask for confirmation before correcting code style
+                    correct_style = input(f"Correct code style for {filename}? (y/n): ").lower()
+                    if correct_style == 'y':
+                        corrected_code = self.correct_code_style(code)
+                        if corrected_code:
+                            # Ask for confirmation before writing the corrected code to file
+                            write_corrected = input(f"Write corrected code to {filename}? (y/n): ").lower()
+                            if write_corrected == 'y':
+                                try:
+                                    with open(file_path, "w") as f:
+                                        f.write(corrected_code)
+                                    logger.info(f"Corrected code style for {filename} and wrote to file.")
+                                except Exception as e:
+                                    logger.error(f"Failed to write corrected code to {filename}: {e}")
+                            else:
+                                logger.info(f"Corrected code style for {filename}, but did not write to file.")
+                        else:
+                            logger.warning(f"Failed to correct code style for {filename}.")
+                    else:
+                        logger.info(f"Skipped correcting code style for {filename}.")
 
                     self._checkpoint(file_path)  # Checkpoint after processing
 
