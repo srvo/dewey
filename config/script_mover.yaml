@@ -9,7 +9,8 @@ module_paths:
   utils: "utils/"
   accounting: "core/accounting/"
   research: "core/research/"
-  portfolio: "core/research/investment_performance/"
+  investment_performance: "core/research/investment_performance/"
+  investment_research: "core/research/port
 
 file_patterns:
   - \.py$
