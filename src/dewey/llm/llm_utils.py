@@ -128,7 +128,7 @@ def generate_response(
         LLMError: For API failures or invalid responses
     """
     if not client:
-        client = get_openrouter_client() if "openrouter" in model.lower() else get_deepinfra_client()
+        client = get_deepinfra_client()  # OpenRouter client removed per request
     
     try:
         if isinstance(client, OpenAI):
