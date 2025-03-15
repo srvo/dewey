@@ -224,17 +224,6 @@ class ScriptMover:
                 system_message="You are a Python code analysis assistant. Be concise and precise.",
                 client=DeepInfraClient()
             )
-        else:
-            if self.fallback_to_deepinfra:
-                self.logger.info("All Gemini models failed, falling back to DeepInfra")
-                response = generate_response(
-                    prompt,
-                    model="meta-llama/Meta-Llama-3-8B-Instruct",
-                    system_message="You are a Python code analysis assistant. Be concise and precise.",
-                    client=DeepInfraClient()
-                )
-            else:
-                raise last_error
         
         try:
             # Extract YAML content between --- markers
