@@ -10,7 +10,8 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[logging.FileHandler('doc_analysis.log'), logging.StreamHandler()]
-loggerlogger = logging.getLogger(__name__)
+)
+logger = logging.getLogger(__name__)
 
 class DirectoryAnalyzer:
     """Analyzes directory contents for code consolidation and documentation generation."""
