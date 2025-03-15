@@ -224,13 +224,6 @@ def generate_response(
     except Exception as e:
         logging.error(f"LLM API Error: {str(e)}")
         raise LLMError("Failed to generate LLM response") from e
-````
-
-src/dewey/llm/llm_utils.py
-````python
-<<<<<<< SEARCH
-from openai import OpenAI
-from openai.types.chat import ChatCompletion
 
 class LLMError(Exception):
     """Base exception for LLM operations."""
