@@ -63,6 +63,47 @@ def get_openrouter_client() -> OpenRouterClient:
     """Initialize OpenRouter client with environment config."""
     return OpenRouterClient(api_key=os.getenv("OPENROUTER_API_KEY"))
 
+def generate_analysis_response(
+    prompt: str,
+    config: Dict,
+    logger: logging.Logger,
+    fallback_to_deepinfra: bool = False
+) -> str:
+    """Generate response with model rotation and fallback handling."""
+    # Try all configured models with cooldown awareness
+    models = config['llm_settings']['models']
+    cooldown_minutes = config['llm_settings'].get('cooldownutesutes', 5)
+    RateLimiter.cooldown_minutes = cooldown_minutes
+    
+    # Try primary models first
+    for model in models:
+        if not RateLimiter().is_in_cooldown(model):
+            try:
+                response = generate_response(
+                    prompt,
+                    model=model,
+                    system_message="You are a Python code analysis assistant. Be concise and precise."
+                )
+                # Reset cooldown if successful
+                if model in RateLimiter().cooldowns:
+                    del RateLimiter().cooldowns[model]
+                return response
+            except LLMError as e:
+                logger.warning(f"Model {model} failed: {str(e)}")
+                RateLimiter().track_failure(model)
+    
+    # Fallback logic
+    if fallback_to_deepinfra:
+        logger.warning("All primary models exhausted, falling back to DeepInfra")
+        return generate_response(
+            prompt,
+            model="meta-llama/Meta-Llama-3-8B-Instruct",
+            system_message="You are a Python code analysis assistant. Be concise and precise.",
+            client=DeepInfraClient()
+        )
+    
+    raise LLMError("All configured models exhausted with no successful responses")
+
 def generate_response(
     prompt: str,
     model: str = "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -70,7 +111,7 @@ def generate_response(
     max_tokens: int = 1000,
     system_message: Optional[str] = None,
     api_key: Optional[str] = None,
-    fallback_client: Optional[str] = None
+    client: Optional[Any] = None
 ) -> str:
     """
     Generate text response using DeepInfra's OpenAI-compatible API.

@@ -190,41 +190,12 @@ class ScriptMover:
         Script content:
         {content[:10000]}"""
         
-        # Try all configured Gemini models before falling back
-        models = self.config['llm_settings']['models']
-        cooldown_minutes = self.config['llm_settings'].get('cooldown_minutes', 5)
-        self.llm_client.rate_limiter.cooldown_minutes = cooldown_minutes
-        
-        # Try primary model just once before falling back
-        try:
-            available_models = [m for m in self.config['llm_settings']['models']
-                              if not self.llm_client.rate_limiter.is_in_cooldown(m)]
-            model = available_models[0] if available_models else None
-            
-            if model:
-                response = generate_response(
-                    prompt,
-                    model=model,
-                    system_message="You are a Python code analysis assistant. Be concise and precise.",
-                    fallback_client=DeepInfraClient() if self.fallback_to_deepinfra else None
-                )
-                # Reset cooldown if successful
-                if model in self.llm_client.rate_limiter.cooldowns:
-                    del self.llm_client.rate_limiter.cooldowns[model]
-            else:
-                raise LLMError("All primary models in cooldown")
-                
-        except LLMError as e:
-            if not self.fallback_to_deepinfra:
-                raise
-                
-            self.logger.warning(f"Primary model failed: {str(e)}, switching to DeepInfra fallback")
-            response = generate_response(
-                prompt,
-                model="meta-llama/Meta-Llama-3-8B-Instruct",
-                system_message="You are a Python code analysis assistant. Be concise and precise.",
-                client=DeepInfraClient()
-            )
+        response = generate_analysis_response(
+            prompt,
+            self.config,
+            self.logger,
+            self.fallback_to_deepinfra
+        )
         
         try:
             # Use shared YAML parsing utility
