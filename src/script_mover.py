@@ -227,12 +227,15 @@ class ScriptMover:
             )
         
         try:
-            # Extract YAML content between --- markers
+            # Extract first YAML block between --- markers
             parts = response.split('---')
-            yaml_content = parts[-1].strip() if len(parts) > 1 else response.strip()
+            if len(parts) > 1:
+                yaml_content = parts[1].strip()  # Get content between first --- pair
+            else:
+                yaml_content = response.strip()  # Fallback for responses without ---
             
-            # Clean remaining markdown syntax
-            clean_response = re.sub(r'^```yaml\n|```$', '', yaml_content, flags=re.MULTILINE).strip()
+            # Clean any remaining markdown syntax
+            clean_response = re.sub(r'^```yaml\s*|```$', '', yaml_content, flags=re.MULTILINE).strip()
             
             if not clean_response:
                 raise ValueError("Empty YAML response from LLM")
