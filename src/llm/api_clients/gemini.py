@@ -4,7 +4,7 @@ import time
 import threading
 import google.generativeai as genai
 from dotenv import load_dotenv
-from llm.llm_utils import LLMError
+from llm.exceptions import LLMError
 
 # Load environment variables from .env file
 load_dotenv()
