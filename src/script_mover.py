@@ -151,8 +151,7 @@ class ScriptMover:
         response = generate_response(
             prompt,
             model="gemini-1.5-flash",
-            system_message="You are a Python code analysis assistant. Be concise and precise.",
-            max_tokens=4096  # Using Gemini's higher token limit
+            system_message="You are a Python code analysis assistant. Be concise and precise."
         )
         
         try:
