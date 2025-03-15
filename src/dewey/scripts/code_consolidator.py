@@ -5,6 +5,7 @@ similar functionality across scripts and suggest canonical implementations.
 import argparse
 import ast
 import hashlib
+import re
 import json
 import logging
 import os
