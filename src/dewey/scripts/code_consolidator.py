@@ -9,6 +9,9 @@ import logging
 import hashlib
 import json
 import threading
+import subprocess
+import spacy
+from spacy.lang.en.stop_words import STOP_WORDS
 from pathlib import Path
 from typing import Dict, List
 from collections import defaultdict
@@ -98,7 +101,8 @@ class CodeConsolidator:
                                 'lineno': node.lineno,
                                 'docstring': ast.get_docstring(node),
                                 'complexity': self._calculate_complexity(node),
-                                'file_hash': self._file_hash(file_path)
+                                'file_hash': self._file_hash(file_path),
+                                'context': self._analyze_function_context(node, source)
                             }
                             functions[node.name] = func_info
                     return functions
@@ -174,10 +178,12 @@ class CodeConsolidator:
         """Group similar functions using structural comparison first"""
         for name, details in functions.items():
             # Initial cluster key without semantic hash
+            # Create cluster key with structural and semantic features
             structural_key = (
                 name,
                 len(details['args']),
-                details['complexity'] // 5
+                details['complexity'] // 5,
+                hashlib.md5(details['context'].encode()).hexdigest()[:8]
             )
             details['_structural_key'] = structural_key
             self.function_clusters[structural_key].append((script_path, details))
@@ -306,8 +312,39 @@ class CodeConsolidator:
 
     def _process_file(self, script_path: Path) -> tuple:
         """Process a single file and return results (for parallel execution)"""
-        functions = self._extract_functions(script_path)
-        return functions, script_path
+        try:
+            self._preprocess_script(script_path)
+            functions = self._extract_functions(script_path)
+            return functions, script_path
+        except Exception as e:
+            logger.error(f"Failed to process {script_path}: {e}")
+            return {}, script_path
+
+    def _preprocess_script(self, script_path: Path) -> None:
+        """Autoformat script using ruff and black"""
+        try:
+            subprocess.run(['ruff', 'check', '--fix', str(script_path)], check=True)
+            subprocess.run(['black', '--quiet', str(script_path)], check=True)
+        except subprocess.CalledProcessError as e:
+            logger.warning(f"Formatting failed for {script_path}: {e}")
+
+    def _analyze_function_context(self, node: ast.FunctionDef, source: str) -> str:
+        """Analyze function context using NLP"""
+        nlp = spacy.load('en_core_web_sm')
+        context = []
+        
+        # Get full function text
+        func_text = ast.get_source_segment(source, node) or ''
+        doc = nlp(func_text)
+        
+        # Extract key entities and verbs
+        entities = {ent.lemma_.lower() for ent in doc.ents if ent.label_ in {'ORG', 'PRODUCT', 'NORP'}}
+        verbs = {token.lemma_ for token in doc if token.pos_ == 'VERB'}
+        nouns = {chunk.root.lemma_ for chunk in doc.noun_chunks}
+        
+        # Combine and filter stopwords
+        context_keywords = (entities | verbs | nouns) - STOP_WORDS
+        return ' '.join(sorted(context_keywords))
 
     def _batch_process_semantic_hashes(self):
         """Batch process semantic hashes using LLM in parallel"""
