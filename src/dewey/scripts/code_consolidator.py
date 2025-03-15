@@ -719,15 +719,30 @@ class CodeConsolidator:
             clusters = {}
             for file_id in file_ids:
                 content = self.vector_db.collection.get(ids=[file_id])["documents"][0]
-                similar = self.vector_db.collection.query(
-                    query_texts=[content],
-                    n_results=5,
-                    include=["distances", "metadatas"]
-                )
-                clusters[file_id] = [
-                    id for id, distance in zip(similar["ids"][0], similar["distances"][0])
-                    if distance < 0.2
-                ]
+                try:
+                    similar = self.vector_db.collection.query(
+                        query_texts=[content],
+                        n_results=3,  # Reduced from 5 to avoid sparse results
+                        include=["distances", "metadatas"]
+                    )
+                
+                    # Handle empty results case
+                    if not similar.get("ids") or not similar.get("distances"):
+                        logger.debug(f"No similar files found for {file_id}")
+                        clusters[file_id] = []
+                        continue
+                
+                    # Safely extract results with defaults
+                    cluster_ids = similar.get("ids", [[]])[0] or []
+                    distances = similar.get("distances", [[]])00] or []
+                
+                    clusters[file_id] = [
+                        id for id, distance in zip(cluster_ids, distances)
+                        if distance < self.config["pipeline"]["cluster_threshold"]
+                    ]
+                except Exception as e:
+                    logger.error(f"Error clustering {file_id}: {str(e)}")
+                    clusters[file_id] = []
             return {"clusters": clusters}
         except Exception as e:
             logger.error(f"Clustering failed: {e}")
