@@ -101,7 +101,7 @@ class ScriptMover:
                             
                     self.logger.info(f"Processing {script_path}")
                     try:
-.process.process_script(script_path)
+                        self.process_script(script_path)
                         script_count += 1
                         self._save_checkpoint(script_path, content_hash)
                     except Exception as e:
