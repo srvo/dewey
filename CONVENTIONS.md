@@ -178,9 +178,13 @@ pip install pre-commit
 pre-commit install
 ```
 
-Dependency Management
+Package Management
 
-Use uv to manage project dependencies. Keep your dependencies up-to-date by periodically checking for new versions and updating them in your pyproject.toml file.
+Using uv:
+- Create/update venv: `uv venv`
+- Install deps: `uv pip install -r pyproject.toml` 
+- Update lockfile: `uv pip compile pyproject.toml`
+- Upgrade packages: `uv pip install --upgrade -r pyproject.toml`
 
 Secrets Management
 
