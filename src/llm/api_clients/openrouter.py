@@ -163,10 +163,6 @@ class OpenRouterClient:
                 time.sleep(5)  # Wait before retrying
 
         raise Exception("Failed to generate content after multiple retries.")
-
-src/dewey/llm/llm_utils.py
-````python
-<<<<<<< SEARCH
 from typing import Optional, Dict, Any
 import os
 import logging
