@@ -155,7 +155,9 @@ class ScriptMover:
         )
         
         try:
-            return yaml.safe_load(response)
+            # Clean response by removing markdown code fences
+            clean_response = re.sub(r'^```yaml?\n', '', response, flags=re.MULTILINE).strip()
+            return yaml.safe_load(clean_response)
         except yaml.YAMLError as e:
             raise ValueError(f"Failed to parse LLM response: {str(e)}")
 
