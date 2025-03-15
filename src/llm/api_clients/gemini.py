@@ -155,4 +155,10 @@ class GeminiClient:
             return response.text
             
         except Exception as e:
+            if retries > 0 and "429" in str(e):
+                jitter = random.uniform(0.1, 0.5)
+                backoff = (2 ** (3 - retries)) + jitter
+                self.logger.warning(f"API error: {str(e)}. Retrying in {backoff:.2f}s ({retries} left)")
+                time.sleep(backoff)
+                return self.generate_content(prompt, model=model, retries=retries-1, **kwargs)
             raise LLMError(f"Gemini API error: {str(e)}") from e
