@@ -140,11 +140,11 @@ class ScriptMover:
 
     def analyze_script(self, content: str) -> Dict:
         """Use LLM to analyze script purpose and requirements."""
-        prompt = f"""Analyze this Python script and respond in YAML format:
-        - purpose: <short description>
-        - category: [core/llm/pipeline/ui/utils]
-        - dependencies: [list of external packages]
-        - recommended_path: <project-relative path>
+        prompt = f"""Analyze this Python script and respond in YAML format using key: value pairs:
+        purpose: <short description>
+        category: [core/llm/pipeline/ui/utils]
+        dependencies: [list of external packages]
+        recommended_path: <project-relative path>
         
         Script content:
         {content[:10000]}"""  # Truncate to avoid token limits
@@ -156,11 +156,20 @@ class ScriptMover:
         )
         
         try:
-            # Clean response by removing markdown code fences and invalid characters
+            # Clean response and handle list or dict formats
             clean_response = re.sub(r'^```[\w]*\n|```$', '', response, flags=re.MULTILINE).strip()
             parsed = yaml.safe_load(clean_response)
+            
+            # Convert list of entries to dict
+            if isinstance(parsed, list):
+                result = {}
+                for item in parsed:
+                    result.update(item)
+                return result
+                
             if not isinstance(parsed, dict):
                 raise ValueError("LLM returned invalid YAML structure")
+                
             return parsed
         except Exception as e:
             self.logger.error(f"LLM Response that failed parsing:\n{response}")
