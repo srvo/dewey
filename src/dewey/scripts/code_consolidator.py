@@ -219,28 +219,71 @@ class CodeConsolidator:
         current_function = None
         in_function = False
         indent_level = 0
+        line_buffer = []
 
-        for i, line in enumerate(source.split("\n")):
+        # Handle multi-line function definitions
+        cleaned_source = source.replace("\r\n", "\n").replace("\r", "\n")
+        lines = cleaned_source.split("\n")
+        
+        for i, line in enumerate(lines):
+            line = line.expandtabs(4)  # Normalize tabs to spaces
+            stripped_line = line.strip()
+            
+            try            
             try:
-                # Look for function definitions
-                if line.strip().startswith(("def ", "async def ")):
-                    if "def " in line and "(" in line and "):" in line:
-                        func_name = line.split("def ")[1].split("(")[0].strip()
-                        params = line.split("(", 1)[1].split(")", 1)[0].strip()
-                        functions[func_name] = {
-                            "name": func_name,
-                            "args": [p.strip() for p in params.split(",") if p.strip()],
-                            "lineno": i + 1,
-                            "docstring": None,
-                            "complexity": 1,  # Conservative estimate for fallback
-                            "file_hash": self._file_hash(file_path),
-                            "ast_fallback": True,
-                            "context": "",  # Empty context for manual parsing
-                        }
-                        current_function = func_name
-                        in_function = True
-                        indent_level = len(line) - len(line.lstrip())
+                # Handle multi-line function definitions
+                if line_buffer:
+                    line_buffer.append(line)
+                    joined_line = " ".join([l.strip() for l in line_buffer])
+                    if "):" in joined_line:
+                        full_def = " ".join(line_buffer)
+                        func_match = re.match(r"^(async\s+)?def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(", full_def)
+                        if func_match:
+                            func_name = func_match.group(2)
+                            params = full_def.split("(", 1)[1].split(")", 1)[0].strip()
+                            functions[func_name] = {
+                                "name": func_name,
+                                "args": [p.strip() for p in params.split(",") if p.strip()],
+                                "lineno": i + 1 - len(line_buffer) + 1,
+                                "docstring": None,
+                                "complexity": 2,  # Slightly higher estimate for multi-line
+                                "file_hash": self._file_hash(file_path),
+                                "ast_fallback": True,
+                                "context": "",
+                            }
+                            current_function = func_name
+                            in_function = True
+                            indent_level = len(line_buffer[0]) - len(line_buffer[0].lstrip())
+                        line_buffer = []
                         continue
+                    elif len(line_buffer) > 3:  # Give up after 3 lines
+                        line_buffer = []
+                    continue
+
+                # Look for function definitions with more flexible matching
+                if re.match(r"^\s*(async\s+)?def\s+[a-zA-Z_]", line):
+                    if "):" in line:
+                        #-line-line definition
+                        func_match = re.match(r"^\s*(async\s+)?def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\((.*)\)\s*:", line)
+                        if func_match:
+                            func_name = func_match.group(2)
+                            params = func_match.group(3).strip()
+                            functions[func_name] = {
+                                "name": func_name,
+                                "args": [p.strip() for p in params.split(",") if p.strip()],
+                                "lineno": i + 1,
+                                "docstring": None,
+                                "complexity": 1,
+                                "file_hash": self._file_hash(file_path),
+                                "ast_fallback": True,
+                                "context": "",
+                            }
+                            current_function = func_name
+                            in_function = True
+                            indent_level = len(line) - len(line.lstrip())
+                    else:
+                        # Start of multi-line definition
+                        line_buffer.append(line)
 
                 # Look for docstrings in function body
                 if in_function and current_function:
