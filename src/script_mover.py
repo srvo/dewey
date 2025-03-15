@@ -215,9 +215,21 @@ class ScriptMover:
                 raise last_error
         
         try:
-            # Clean response and handle list or dict formats
-            clean_response = re.sub(r'^```[\w]*\n|```$', '', response, flags=re.MULTILINE).strip()
-            parsed = yaml.safe_load(clean_response)
+            # Extract YAML content between --- markers
+            parts = response.split('---')
+            yaml_content = parts[-1].strip() if len(parts) > 1 else response.strip()
+            
+            # Clean remaining markdown syntax
+            clean_response = re.sub(r'^```yaml\n|```$', '', yaml_content, flags=re.MULTILINE).strip()
+            
+            if not clean_response:
+                raise ValueError("Empty YAML response from LLM")
+                
+            try:
+                parsed = yaml.safe_load(clean_response)
+            except yaml.YAMLError as e:
+                self.logger.error(f"YAML parsing failed. Content:\n{clean_response}")
+                raise
             
             # Convert list of entries to dict
             if isinstance(parsed, list):
