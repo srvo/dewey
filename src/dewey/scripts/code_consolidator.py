@@ -22,7 +22,24 @@ from tqdm import tqdm
 from dewey.llm.llm_utils import generate_response
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger.setLevel(logging.INFO)
+
+class TqdmHandler(logging.Handler):
+    def __init__(self):
+        super().__init__()
+        
+    def emit(self, record):
+        try:
+            msg = self.format(record)
+            tqdm.write(msg, end='')
+        except Exception:
+            self.handleError(record)
+
+# Compact format without date/time
+formatter = logging.Formatter('%(levelname)s: %(message)s')
+handler = TqdmHandler()
+handler.setFormatter(formatter)
+logger.addHandler(handlerloggerlogger.propagate = False  # Prevent duplicate output
 
 class CodeConsolidator:
     """Identifies similar functionality across scripts using AST analysis and LLM-assisted clustering"""
@@ -63,14 +80,17 @@ class CodeConsolidator:
                 future = executor.submit(self._process_file, script_path)
                 futures.append(future)
                 
-            # Process results as they complete
-            for future in tqdm(as_completed(futures), total=len(futures), desc="Analyzing files"):
-                functions, script_path = future.result()
-                if functions:
-                    with self.lock:
-                        self._cluster_functions(functions, script_path)
-                        self.processed_files.add(str(script_path))
-                        self._save_checkpoint()
+            # Process results as they complete with nested progress bars
+            with tqdm(total=len(futures), desc="Overall progress", position=0) as pbar:
+                for future in tqdm(as_completed(futures), total=len(futures), 
+                                 desc="Analyzing files", position=1, leave=False):
+                    functions, script_path = future.result()
+                    if functions:
+                        with self.lock:
+                            self._cluster_functions(functions, script_path)
+                            self.processed_files.add(str(script_path))
+                            self._save_checkpoint()
+                    pbar.update(1)
                 
         self._analyze_clusters()
         self._batch_process_semantic_hashes()
