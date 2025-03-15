@@ -7,8 +7,8 @@ import yaml
 from openai import OpenAI
 from openai.types.chat import ChatCompletion
 
-from dewey.llm.api_clients.gemini import RateLimiter
-from dewey.llm.api_clients.deepinfra import DeepInfraClient
+from .api_clients.gemini import RateLimiter
+from .api_clients.deepinfra import DeepInfraClient
 
 
 def parse_llm_yaml_response(response: str, logger: logging.Logger = None) -> Dict:
