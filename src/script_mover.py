@@ -274,17 +274,29 @@ class ScriptMover:
 
     def determine_target_path(self, analysis: Dict) -> Path:
         """Determine appropriate location in project structure."""
-        # Use LLM recommendation or fallback to category-based path
-        if 'recommended_path' in analysis:
-            target_path = self.root_path / analysis['recommended_path']
-        else:
-            category = analysis.get('category', 'unclassified')
-            base_path = self.module_paths.get(category, self.module_paths['utils'])
-            target_path = base_path / 'migrated_scripts' / analysis.get('purpose', 'general')
-        
-        # Add UUID to prevent collisions
-        unique_id = str(uuid.uuid4())[:8]
-        return target_path.with_name(f"{target_path.stem}_{unique_id}{target_path.suffix}")
+        try:
+            # Use LLM recommendation or fallback to category-based path
+            if 'recommended_path' in analysis:
+                # Validate recommended path is relative and has a filename
+                rec_path = Path(analysis['recommended_path'])
+                if rec_path.is_absolute() or rec_path.suffix == '':
+                    raise ValueError("Invalid recommended path format")
+                target_path = self.root_path / rec_path
+            else:
+                category = analysis.get('category', 'unclassified')
+                base_path = self.module_paths.get(category, self.module_paths['utils'])
+                purpose = analysis.get('purpose', 'migrated_script').replace(' ', '_').lower()
+                target_path = base_path / 'migrated_scripts' / f"{purpose}.py"
+
+            # Ensure path has valid filename components
+            target_path = target_path.with_name(target_path.name.replace(' ', '_'))
+            
+            # Add UUID to prevent collisions
+            unique_id = str(uuid.uuid4())[:8]
+            return target_path.with_stem(f"{target_path.stem}_{unique_id}")
+        except Exception as e:
+            self.logger.warning(f"Path determination failed: {str(e)}, using fallback location")
+            return self.root_path / 'unmapped_scripts' / f"migrated_{uuid.uuid4().hex[:8]}.py")
 
     def should_merge(self, analysis: Dict, target_path: Path) -> bool:
         """Check if similar functionality exists."""
