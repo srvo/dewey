@@ -50,18 +50,73 @@ logger.propagate = False  # Prevent duplicate output
 class CodeConsolidator:
     """Identifies similar functionality across scripts using AST analysis and vector similarity."""
 
-    def __init__(self, root_dir: str = ".", max_files: int | None = None) -> None:
+    def __init__(self, root_dir: str = ".", config_path: str | None = None) -> None:
         self.root_dir = Path(root_dir).expanduser().resolve()
-        self.max_files = max_files
+        self.config = self._load_config(config_path)
         self.function_clusters = defaultdict(list)
         self.script_analysis = {}
         self.syntax_errors = []
         self.processed_files = set()
-        self.checkpoint_file = self.root_dir / ".code_consol_checkpoint.json"
+        self.checkpoint_file = self.root_dir / ".code_consolpointpoint.json"
         self.llm_client = self._init_llm_clients()
         self.lock = threading.Lock()
         self.vector_db = self._init_vector_db()
         self._load_checkpoint()
+
+    def _load_config(self, config_path: str | None = None) -> dict:
+        """Load configuration from YAML file with defaults."""
+        import yaml
+        from pathlib import Path
+
+        default_config = {
+            "pipeline": {
+                "max_files": None,
+                "excluded_dirs": ["test", ".venv", "venv", "docs", "deploy", "config", "ingest_data"],
+                "file_patterns": [r"\.py$"],
+                "cluster_threshold": 0.2,
+                "max_cluster_size": 5,
+                "min_cluster_size": 2
+            },
+            "vector_db": {
+                "persist_dir": ".chroma_cache",
+                "embedding_model": "all-MiniLM-L6-v2",
+                "collection_name": "code_functions",
+                "similarity_threshold": 0.85
+            },
+            "llm": {
+                "default_model": "gemini-2.0-pro",
+                "fallback_models": ["gemini-2.0-flash", "gemini-1.5-flash"],
+                "temperature": 0.2,
+                "max_retries": 3,
+                "batch_size": 100,
+                "max_workers": 4
+            },
+            "formatting": {
+                "lint_timeout": 120,
+                "formatters": [
+                    {"command": ["ruff", "check", "--fix", "--unsafe-fixes", "--select", "ALL"]},
+                    {"command": ["black"]}
+                ]
+            }
+        }
+
+        if config_path:
+            config_file = Path(config_path)
+            if config_file.exists():
+                with open(config_file) as f:
+                    loaded_config = yaml.safe_load(f)
+                    # Deep merge with default config
+                    return self._deep_merge(default_config, loaded_config)
+        return default_config
+
+    def _deep_merge(self, base: dict, update: dict) -> dict:
+        """Recursively merge two dictionaries."""
+        for key, val in update.items():
+            if isinstance(val, dict):
+                base[key] = self._deep_merge(base.get(key, {}), val)
+            else:
+                base[key] = val
+        return base
 
     def _init_vector_db(self):
         """Initialize vector database with error handling."""
