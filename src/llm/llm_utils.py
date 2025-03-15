@@ -30,11 +30,13 @@ def generate_response(
     """
     try:
         client = GeminiClient(api_key=api_key)
+        # Prepend system message to prompt if provided
+        full_prompt = f"{system_message}\n\n{prompt}" if system_message else prompt
+        
         return client.generate_content(
-            prompt=prompt,
+            prompt=full_prompt,
             model=model,
-            temperature=temperature,
-            system_message=system_message
+            temperature=temperature
         )
     except Exception as e:
         raise LLMError(f"LLM generation failed: {str(e)}") from e
