@@ -39,7 +39,8 @@ class TqdmHandler(logging.Handler):
 formatter = logging.Formatter('%(levelname)s: %(message)s')
 handler = TqdmHandler()
 handler.setFormatter(formatter)
-logger.addHandler(handlerloggerlogger.propagate = False  # Prevent duplicate output
+logger.addHandler(handler)
+logger.propagate = False  # Prevent duplicate output
 
 class CodeConsolidator:
     """Identifies similar functionality across scripts using AST analysis and LLM-assisted clustering"""
