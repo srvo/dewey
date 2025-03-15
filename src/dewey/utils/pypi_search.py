@@ -35,14 +35,14 @@ def search_pypi_general(query) -> None:
     try:
         response = requests.get(
             "https://pypi.org/search/",
-            params={'q': query, 'format': 'json'},
+            params={'q': query},
             headers=headers
         )
         response.raise_for_status()
         
-        # Verify we got JSON response
-        if 'application/json' not in response.headers.get('Content-Type', ''):
-            logger.error("Received non-JSON response from PyPI search API")
+        # Verify we got JSON response (PyPI may include charset in content-type)
+        if not response.headers.get('Content-Type', '').startswith('application/json'):
+            logger.error("Received non-JSON response from PyPI API")
             return
             
         data = response.json()
