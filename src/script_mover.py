@@ -189,19 +189,38 @@ class ScriptMover:
         {content[:10000]}"""
         
         # Try all configured Gemini models before falling back
-        last_error = None
-        for model in self.config['llm_settings']['models']:
-            try:
-                response = generate_response(
-                    prompt,
-                    model=model,
-                    system_message="You are a Python code analysis assistant. Be concise and precise.",
-                    fallback_client=DeepInfraClient() if self.fallback_to_deepinfra else None
-                )
-                break
-            except LLMError as e:
-                last_error = e
-                self.logger.warning(f"Model {model} failed: {str(e)} - trying next model")
+        models = self.config['llm_settings']['models']
+        cooldown_minutes = self.config['llm_settings'].get('cooldown_minutes', 5)
+        self.llm_client.rate_limiter.cooldown_minutes = cooldown_minutes
+        
+        while True:
+            available_models = [m for m in models if not self.llm_client.rate_limiter.is_in_cooldown(m)]
+            if not available_models:
+                # All models in cooldown, wait for earliest available
+                next_available = min(self.llm_client.rate_limiter.cooldowns.values())
+                wait_time = max(0, next_available - time.time())
+                self.logger.warning(f"All models cooling down. Waiting {wait_time:.1f}s")
+                time.sleep(wait_time)
+                continue
+                
+            for model in available_models:
+                try:
+                    response = generate_response(
+                        prompt,
+                        model=model,
+                        system_message="You are a Python code analysis assistant. Be concise and precise.",
+                        fallback_client=DeepInfraClient() if self.fallback_to_deepinfra else None
+                    )
+                    # Reset cooldown if successful
+                    if model in self.llm_client.rate_limiter.cooldowns:
+                        del self.llm_client.rate_limiter.cooldowns[model]
+                    break
+                except LLMError as e:
+                    last_error = e
+                    self.logger.warning(f"Model {model} failed: {str(e)}")
+            else:
+                continue
+            break
         else:
             if self.fallback_to_deepinfra:
                 self.logger.info("All Gemini models failed, falling back to DeepInfra")

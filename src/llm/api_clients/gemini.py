@@ -28,7 +28,9 @@ class RateLimiter:
             cls._instance = super().__new__(cls)
             cls._instance.lock = threading.RLock()
             cls._instance.counters = {}
+            cls._instance.cooldowns = {}  # model: resume_time
             cls._instance.logger = logging.getLogger('RateLimiter')
+            cls._instance.cooldown_minutes = 5  # Default, will be overridden by config
         return cls._instance
 
     def _get_limits(self, model: str) -> Tuple[int, int, int]:
@@ -36,8 +38,16 @@ class RateLimiter:
         base_model = model.split("/")[-1].lower()
         return self.MODEL_LIMITS.get(base_model, (15, 100_000, 1500))  # Conservative defaults
 
+    def is_in_cooldown(self, model: str) -> bool:
+        """Check if model is in cooldown period."""
+        return model in self.cooldowns and time.time() < self.cooldowns[model]
+
     def check_limit(self, model: str, prompt: str) -> None:
         """Check and enforce all rate limits with exponential backoff"""
+        # Check cooldown first
+        if self.is_in_cooldown(model):
+            raise LLMError(f"Model {model} in cooldown until {time.ctime(self.cooldowns[model])}")
+            
         rpm, tpm, rpd = self._get_limits(model)
         estimated_tokens = len(prompt.split()) * 1.33  # Token estimation
         
@@ -93,7 +103,9 @@ class RateLimiter:
                 model_counters['daily_requests'] += 1
                 return
                 
-            raise LLMError(f"Could not acquire rate limit slot for {model} after {max_retries} attempts")
+            # Put model in cooldown if all retries failed
+            selfoldoldowns[model] = time.time() + (60 * self.cooldown_minutes)
+            raise LLMError(f"Model {model} rate limited. Cooling down for {self.cooldown_minutes} minutes.")
 
 class GeminiClient:
     """Production-ready Google Gemini client with rate limiting"""
