@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 import yaml
 from llm.llm_utils import generate_response
-from llm.api_clients.deepinfra import DeepInfraClient
+from llm.api_clients.gemini import GeminiClient
 
 class ScriptMover:
     """Refactor scripts into the Dewey project structure with LLM-assisted analysis."""
@@ -71,7 +71,8 @@ class ScriptMover:
     def process_script(self, script_path: Path) -> None:
         """Process an individual script file."""
         # Analyze script content
-        content = script_path.read_text()
+        # Read first 50k characters as Gemini 1.5 Flash supports up to 1M tokens
+        content = script_path.read_text()[:50000]
         analysis = self.analyze_script(content)
         
         # Determine target location
@@ -99,7 +100,9 @@ class ScriptMover:
         
         response = generate_response(
             prompt,
-            system_message="You are a Python code analysis assistant. Be concise and precise."
+            model="gemini-1.5-flash",
+            system_message="You are a Python code analysis assistant. Be concise and precise.",
+            max_tokens=4096  # Using Gemini's higher token limit
         )
         
         try:
