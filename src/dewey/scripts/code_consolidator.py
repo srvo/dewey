@@ -354,7 +354,15 @@ class CodeConsolidator:
         try:
             # Check if spaCy model is installed
             if not spacy.util.is_package("en_core_web_sm"):
-                logger.warning("spaCy model 'en_core_web_sm' not installed. Run: python -m spacy download en_core_web_sm")
+                logger.warning("spaCy model 'en_core_web_sm' not installed. You can either:\n"
+                               "1. Download just the model: python -m spacy download en_core_web_sm\n"
+                               "2. Install spaCy from source with:\n"
+                               "   pip install -U pip setuptools wheel && "
+                               "git clone https://github.com/explosion/spaCy && "
+                               "cd spaCy && "
+                               "pip install -r requirements.txt && "
+                               "pip install --no-build-isolation --editable . && "
+                               "python -m spacy download en_core_web_sm")
                 return ""
             
             nlp = spacy.load('en_core_web_sm')
