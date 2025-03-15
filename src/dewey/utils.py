@@ -1,6 +1,6 @@
 import ibis
 
-def read_csv_to_ibis(file_path: str) -> ibis.expr.types.TableExpr:
+def read_csv_to_ibis(file_path: str) -> ibis.expr.types.Table:
     """Read a CSV file into an Ibis table expression.
     
     Args:
