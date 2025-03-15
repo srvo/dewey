@@ -7,10 +7,14 @@ import argparse
 import ast
 import logging
 import hashlib
+import json
+import threading
 from pathlib import Path
 from typing import Dict, List
 from collections import defaultdict
 import subprocess
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from tqdm import tqdm
 
 from dewey.llm.llm_utils import generate_response
 
@@ -24,8 +28,12 @@ class CodeConsolidator:
         self.root_dir = Path(root_dir).expanduser().resolve()
         self.function_clusters = defaultdict(list)
         self.script_analysis = {}
-        self.syntax_errors = []  # Track files with syntax errors
+        self.syntax_errors = []
+        self.processed_files = set()
+        self.checkpoint_file = self.root_dir / ".code_consol_checkpoint.json"
         self.llm_client = self._init_llm_clients()
+        self.lock = threading.Lock()
+        self._load_checkpoint()
         
     def _init_llm_clients(self):
         """Initialize LLM client through llm_utils"""
@@ -37,16 +45,32 @@ class CodeConsolidator:
             return None
 
     def analyze_directory(self):
-        """Main analysis workflow"""
+        """Main analysis workflow with parallel processing"""
         scripts = self._find_script_files()
         logger.info(f"Found {len(scripts)} Python files to analyze")
         
-        for script_path in scripts:
-            functions = self._extract_functions(script_path)
-            if functions:
-                self._cluster_functions(functions, script_path)
+        # Filter out already processed files
+        new_scripts = [s for s in scripts if str(s) not in self.processed_files]
+        logger.info(f"Resuming from checkpoint - {len(new_scripts)}/{len(scripts)} new files to process")
+        
+        # Process files in parallel
+        with ThreadPoolExecutor(max_workers=8) as executor:
+            futures = []
+            for script_path in new_scripts:
+                future = executor.submit(self._process_file, script_path)
+                futures.append(future)
+                
+            # Process results as they complete
+            for future in tqdm(as_completed(futures), total=len(futures), desc="Analyzing files"):
+                functions, script_path = future.result()
+                if functions:
+                    with self.lock:
+                        self._cluster_functions(functions, script_path)
+                        self.processed_files.add(str(script_path))
+                        self._save_checkpoint()
                 
         self._analyze_clusters()
+        self._batch_process_semantic_hashes()
         
     def _find_script_files(self) -> List[Path]:
         """Find all Python files in the directory, excluding tests, venv, and data directories"""
@@ -91,16 +115,16 @@ class CodeConsolidator:
         return functions
 
     def _cluster_functions(self, functions: Dict[str, dict], script_path: Path):
-        """Group similar functions using multi-factor comparison"""
+        """Group similar functions using structural comparison first"""
         for name, details in functions.items():
-            # Create cluster key using combined metrics
-            cluster_key = (
+            # Initial cluster key without semantic hash
+            structural_key = (
                 name,
                 len(details['args']),
-                details['complexity'] // 5,  # Bucket complexity
-                self._semantic_hash(details)
+                details['complexity'] // 5
             )
-            self.function_clusters[cluster_key].append((script_path, details))
+            details['_structural_key'] = structural_key
+            self.function_clusters[structural_key].append((script_path, details))
 
     def _semantic_hash(self, func_details: dict) -> str:
         """Generate hash based on function structure and LLM analysis"""
@@ -242,3 +266,69 @@ def main():
 
 if __name__ == "__main__":
     main()
+    def _process_file(self, script_path: Path) -> tuple:
+        """Process a single file and return results (for parallel execution)"""
+        functions = self._extract_functions(script_path)
+        return functions, script_path
+
+    def _batch_process_semantic_hashes(self):
+        """Batch process semantic hashes using LLM in parallel"""
+        logger.info("Processing semantic hashes with LLM...")
+        
+        # Collect all unique function signatures needing hashes
+        hash_queue = []
+        for cluster_key, implementations in self.function_clusters.items():
+            for _, details in implementations:
+                if 'semantic_hash' not in details:
+                    hash_queue.append(details)
+        
+        # Process in parallel batches
+        batch_size = 10  # Adjust based on rate limits
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            for i in range(0, len(hash_queue), batch_size):
+                batch = hash_queue[i:i+batch_size]
+                futures = [executor.submit(self._semantic_hash, func) for func in batch]
+                for future in as_completed(futures):
+                    func, hash_val = future.result()
+                    func['semantic_hash'] = hash_val
+        
+        # Rebuild clusters with semantic hashes
+        new_clusters = defaultdict(list)
+        for (struct_key, details_list) in self.function_clusters.items():
+            for details in details_list:
+                cluster_key = (*struct_key, details['semantic_hash'])
+                new_clusters[cluster_key].append(details)
+        self.function_clusters = new_clusters
+
+    def _save_checkpoint(self):
+        """Save current state to checkpoint file"""
+        checkpoint_data = {
+            'processed_files': list(self.processed_files),
+            'function_clusters': [
+                (key, [str(p) for p in paths]) 
+                for key, paths in self.function_clusters.items()
+            ],
+            'syntax_errors': self.syntax_errors
+        }
+        try:
+            with self.lock:
+                with open(self.checkpoint_file, 'w') as f:
+                    json.dump(checkpoint_data, f)
+        except Exception as e:
+            logger.error(f"Failed to save checkpoint: {e}")
+
+    def _load_checkpoint(self):
+        """Load previous state from checkpoint file"""
+        if self.checkpoint_file.exists():
+            try:
+                with open(self.checkpoint_file, 'r') as f:
+                    data = json.load(f)
+                self.processed_files = set(data['processed_files'])
+                self.function_clusters = defaultdict(list, {
+                    tuple(key): [Path(p) for p in paths] 
+                    for key, paths in data['function_clusters']
+                })
+                self.syntax_errors = data['syntax_errors']
+                logger.info(f"Loaded checkpoint with {len(self.processed_files)} processed files")
+            except Exception as e:
+                logger.error(f"Failed to load checkpoint: {e}")
