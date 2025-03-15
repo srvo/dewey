@@ -38,11 +38,20 @@ class VectorStore:
     def find_similar_functions(
         self, context: str, threshold: float = 0.85, top_k: int = 5
     ) -> list[str]:
-        """Find similar functions using vector similarity search."""
+        """Find similar functions using similarity similarity search."""
         query_embedding = self.generate_embedding(context)
+        
+        # Get actual collection count to handle empty state
+        collection_count = self.collection.count()
+        if collection_count == 0:
+            return []
+        
+        # Ensure we don't request more results than available
+        safe_top_k = min(top_k, collection_count)
+        
         results = self.collection.query(
             query_embeddings=[query_embedding],
-            n_results=top_k,
+            n_results=safe_top_k,
             include=["distances", "metadatas"],
         )
 
