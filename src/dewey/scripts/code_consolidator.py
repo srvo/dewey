@@ -734,7 +734,7 @@ class CodeConsolidator:
                 
                     # Safely extract results with defaults
                     cluster_ids = similar.get("ids", [[]])[0] or []
-                    distances = similar.get("distances", [[]])00] or []
+                    distances = similar.get("distances", [[]])[0] or []
                 
                     clusters[file_id] = [
                         id for id, distance in zip(cluster_ids, distances)
