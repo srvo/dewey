@@ -226,10 +226,47 @@ class CodeConsolidator:
         return functions
 
     def _cluster_functions(self, functions: dict[str, dict], script_path: Path) -> None:
-        """Group similar functions using structural comparison first."""
+        """Group similar functions using vector similarity search."""
+        if not self.vector_db:
+            logger.warning("Vector database not available - falling back to structural clustering")
+            self._fallback_cluster(functions, script_path)
+            return
+
         for name, details in functions.items():
-            # Initial cluster key without semantic hash
-            # Create cluster key with structural and semantic features
+            context = details.get("context", "")
+            func_id = f"{script_path.name}:{name}"
+            
+            # Store in vector DB
+            self.vector_db.upsert_function(
+                func_id,
+                context,
+                {"name": name, "args": details["args"], "complexity": details["complexity"]}
+            )
+            
+            # Find similar existing functions
+            similar_ids = self.vector_db.find_similar_functions(context)
+            
+            if similar_ids:
+                # Use first similar function's cluster
+                cluster_key = self._get_cluster_key_for_id(similar_ids[0])
+                self.function_clusters[cluster_key].append((script_path, details))
+            else:
+                # Create new cluster using vector hash
+                vector_hash = hashlib.md5(context.encode()).hexdigest()[:8]
+                cluster_key = (name, vector_hash)
+                self.function_clusters[cluster_key].append((script_path, details))
+
+    def _get_cluster_key_for_id(self, func_id: str) -> tuple:
+        """Find existing cluster key for a function ID."""
+        for key, items in self.function_clusters.items():
+            for path, details in items:
+                if f"{path.name}:{details['name']}" == func_id:
+                    return key
+        return (func_id.split(":")[-1], "new_cluster")
+
+    def _fallback_cluster(self, functions: dict[str, dict], script_path: Path) -> None:
+        """Structural clustering fallback when vector DB is unavailable."""
+        for name, details in functions.items():
             structural_key = (
                 name,
                 len(details.get("args", [])),
