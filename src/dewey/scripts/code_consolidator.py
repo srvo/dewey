@@ -15,6 +15,7 @@ import threading
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+from typing import Dict, Any, List, Tuple
 
 import spacy
 from spacy.lang.en.stop_words import STOP_WORDS
@@ -96,65 +97,10 @@ class CodeConsolidator:
         return None
 
     def analyze_directory(self) -> None:
-        """Main analysis workflow with parallel processing."""
-        logger.info(f"Analyzing directory: {self.root_dir}")
-        scripts = self._find_script_files()
-        logger.info(f"Found {len(scripts)} Python files to analyze")
-
-        # Filter out already processed files
-        new_scripts = [s for s in scripts if str(s) not in self.processed_files]
-        
-        # Apply max files limit if specified
-        if self.max_files:
-            new_scripts = new_scripts[:self.max_files]
-            logger.info(f"Processing first {self.max_files} files due to --max-files flag")
-        else:
-            logger.info(
-                f"Resuming from checkpoint - {len(new_scripts)}/{len(scripts)} new files to process"
-            )
-
-        # Process files in parallel with aggressive resource utilization
-        with ThreadPoolExecutor(max_workers=os.cpu_count() * 4) as executor:
-            futures = []
-            for script_path in new_scripts:
-                future = executor.submit(self._process_file, script_path)
-                futures.append(future)
-
-            # Process results with simplified progress and heartbeat logging
-            with tqdm(
-                total=len(futures),
-                desc="Processing files",
-                mininterval=2.0,
-                maxinterval=10.0,
-            ) as pbar:
-                for i, future in enumerate(as_completed(futures)):
-                    try:
-                        functions, script_path = future.result(
-                            timeout=300
-                        )  # 5min timeout per file
-                        if functions:
-                            with self.lock:
-                                self._cluster_functions(functions, script_path)
-                                self.processed_files.add(str(script_path))
-                                # Batch checkpoint every 10 files
-                                if i % 10 == 0:
-                                    self._save_checkpoint()
-                        pbar.update(1)
-                        pbar.set_postfix_str(
-                            f"Last processed: {script_path.name}", refresh=False
-                        )
-
-                        # Heartbeat logging every 30 seconds
-                        if i % 5 == 0:
-                            logger.info(
-                                f"Progress: {i+1}/{len(futures)} files | Current: {script_path.name}"
-                            )
-                    except Exception as e:
-                        logger.exception(f"Failed processing future: {e}")
-                        self._save_checkpoint()  # Try to save state on any failure
-
-        self._analyze_clusters()
-        self._batch_process_semantic_hashes()
+        """Public interface to run full pipeline."""
+        pipeline_report = self.execute_pipeline()
+        print(self.generate_report(pipeline_report))
+        self._save_checkpoint()
 
     def _find_script_files(self) -> list[Path]:
         """Find Python files in current directory and subdirectories, excluding venv."""
@@ -672,6 +618,159 @@ class CodeConsolidator:
                 json.dump(checkpoint_data, f)
         except Exception as e:
             logger.exception(f"Failed to save checkpoint: {e}")
+
+    def _isolated_step(self, step_func, *args, **kwargs) -> Dict[str, Any]:
+        """Execute a pipeline step with error containment."""
+        result = {"success": False, "error": None, "data": None}
+        try:
+            result["data"] = step_func(*args, **kwargs)
+            result["success"] = True
+        except Exception as e:
+            result["error"] = str(e)
+            logger.error(f"Step {step_func.__name__} failed: {e}", exc_info=True)
+        return result
+
+    def _load_files_step(self) -> Dict[str, Any]:
+        """Step 1: Load files into ChromaDB with error isolation."""
+        results = {"processed": 0, "failed": 0, "errors": []}
+        for script_path in self._find_script_files():
+            try:
+                content = script_path.read_text(encoding="utf-8", errors="replace")[:50000]
+                file_id = str(script_path.relative_to(self.root_dir))
+                
+                self.vector_db.collection.upsert(
+                    ids=[file_id],
+                    embeddings=[self.vector_db.generate_embedding(content)],
+                    documents=[content],
+                    metadatas=[{
+                        "path": str(script_path),
+                        "type": "full_file",
+                        "content_hash": hashlib.md5(content.encode()).hexdigest()
+                    }]
+                )
+                results["processed"] += 1
+            except Exception as e:
+                results["failed"] += 1
+                results["errors"].append(f"{script_path}: {str(e)}")
+        return results
+
+    def _cluster_files_step(self) -> Dict[str, Any]:
+        """Step 2: Cluster similar files."""
+        try:
+            file_ids = [str(f.relative_to(self.root_dir)) for f in self._find_script_files()]
+            clusters = {}
+            for file_id in file_ids:
+                content = self.vector_db.collection.get(ids=[file_id])["documents"][0]
+                similar = self.vector_db.collection.query(
+                    query_texts=[content],
+                    n_results=5,
+                    include=["distances", "metadatas"]
+                )
+                clusters[file_id] = [
+                    id for id, distance in zip(similar["ids"][0], similar["distances"][0])
+                    if distance < 0.2
+                ]
+            return {"clusters": clusters}
+        except Exception as e:
+            logger.error(f"Clustering failed: {e}")
+            return {"clusters": {}}
+
+    def _process_cluster(self, cluster: List[str]) -> Tuple[bool, Dict[str, Any]]:
+        """Process a single file cluster with error handling."""
+        result = {
+            "cluster": cluster,
+            "functions": [],
+            "consolidated": None,
+            "errors": [],
+            "linted": False
+        }
+        
+        try:
+            # Extract functions from all files in cluster
+            for file_id in cluster:
+                file_path = self.root_dir / file_id
+                result["functions"].extend(self._extract_functions(file_path))
+                
+            # Generate consolidated code
+            prompt = f"Consolidate these related functions:\n" + "\n".join(
+                [f["context"] for f in result["functions"]]
+            )
+            consolidated = generate_response(
+                prompt,
+                model="gemini-2.0-pro",
+                temperature=0.2,
+                system_message="Create comprehensive function with type hints and docstrings"
+            )
+            
+            # Lint and format
+            proc = subprocess.run(
+                ["ruff", "format", "-"],
+                input=consolidated.encode(),
+                capture_output=True
+            )
+            result["consolidated"] = proc.stdout.decode() if proc.returncode == 0 else consolidated
+            result["linted"] = proc.returncode == 0
+            
+        except Exception as e:
+            result["errors"].append(str(e))
+            
+        return (len(result["errors"]) == 0, result)
+
+    def execute_pipeline(self) -> Dict[str, Any]:
+        """Execute full consolidation pipeline with isolated steps."""
+        report = {
+            "load_files": self._isolated_step(self._load_files_step),
+            "cluster_files": self._isolated_step(self._cluster_files_step),
+            "processing": {"clusters": [], "success": 0, "failed": 0},
+            "overall_success": False
+        }
+        
+        if report["cluster_files"]["success"]:
+            with ThreadPoolExecutor() as executor:
+                futures = [
+                    executor.submit(self._process_cluster, cluster)
+                    for cluster in report["cluster_files"]["data"]["clusters"].values()
+                ]
+                
+                for future in as_completed(futures):
+                    success, result = future.result()
+                    if success:
+                        report["processing"]["success"] += 1
+                    else:
+                        report["processing"]["failed"] += 1
+                    report["processing"]["clusters"].append(result)
+        
+        report["overall_success"] = (
+            report["load_files"]["success"] and
+            report["cluster_files"]["success"] and
+            report["processing"]["failed"] == 0
+        )
+        
+        return report
+
+    def generate_report(self, pipeline_report: Dict[str, Any]) -> str:
+        """Generate detailed consolidation report."""
+        report = [
+            "# Code Consolidation Pipeline Report",
+            "## Pipeline Execution Summary",
+            f"- Files loaded: {pipeline_report['load_files']['data']['processed']}",
+            f"- File loading errors: {pipeline_report['load_files']['data']['failed']}",
+            f"- Clusters identified: {len(pipeline_report['cluster_files']['data']['clusters'])}",
+            f"- Clusters processed successfully: {pipeline_report['processing']['success']}",
+            f"- Clusters failed: {pipeline_report['processing']['failed']}",
+            "\n## Detailed Cluster Results:"
+        ]
+        
+        for cluster in pipeline_report["processing"]["clusters"]:
+            status = "SUCCESS" if not cluster["errors"] else "FAILED"
+            report.append(
+                f"\n### Cluster: {', '.join(cluster['cluster'])} ({status})"
+                f"\n**Functions:** {len(cluster['functions'])}"
+                f"\n**Errors:** {len(cluster['errors'])}"
+                f"\n**Consolidated Code:**\n```python\n{cluster['consolidated']}\n```"
+            )
+            
+        return "\n".join(report)
 
     def _load_checkpoint(self) -> None:
         """Load previous state from checkpoint file."""
