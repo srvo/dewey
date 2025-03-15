@@ -18,6 +18,12 @@ x books
 - bin
 - agents
 
+### Code Consolidation
+1. [ ] Review code_consolidator.py report
+2. [ ] Prioritize key clusters for consolidation
+3. [ ] Implement canonical versions of clustered functions
+4. [ ] Update dependent code to use canonical implementations
+
 ## Documentation
 
 ### PRD Development (High Priority)
