@@ -1,29 +1,31 @@
 # .aider.conf - Coding Conventions for dewey Project
 
-# Maintenance Principle
-- Keep TODO.md updated as the single source of truth for tasks
-- Update priorities weekly or when major milestones are reached
-- Preserve completed tasks in "Completed/Migrated" section for reference
+# Dewey Project Conventions
 
-# General Guidelines
+## Maintenance Principles
+- Keep TODO.md updated as the single source of truth for tasks
+- Update priorities weekly or when major milestones are reached 
+- Preserve completed tasks in "Completed" section for historical reference
+- Document architectural decisions in docs/decisions.md
+
+## Core Development Guidelines
+
+### Code Quality
 - Use descriptive names for variables, functions, and classes
 - Favor clarity and readability over brevity
-- Keep functions relatively short and focused on a single task
+- Keep functions focused - max 50 lines per function
 - Use type hints consistently
-- Include docstrings for all functions and classes
-# .aider.conf - Coding Conventions for dewey Project
+- Include Google-style docstrings for all public functions/classes
+- Handle errors gracefully using try-except blocks
+- Add comments to explain complex business logic
+- Break complex operations into smaller, well-defined functions
+- Follow PEP 8 style guidelines
 
-# General Guidelines
-
-# Use descriptive names for variables, functions, and classes.
-# Favor clarity and readability over brevity.
-# Keep functions relatively short and focused on a single task.
-# Use type hints consistently.
-# Include docstrings for all functions and classes.
-# Handle errors gracefully using try-except blocks.
-# Add comments to explain complex logic.
-# Break down complex operations into smaller, well-defined functions.
-# Follow PEP 8 (https://peps.python.org/pep-0008/) style guidelines.
+### Project Structure
+- Keep related functionality in module-specific directories
+- Use __init__.py files to define public API for modules
+- Follow the prescribed directory structure from CONVENTIONS.md
+- Keep test files parallel to implementation code
 
 # Project Folder Structure
 
@@ -162,12 +164,19 @@ Use the `main` branch for the stable, production-ready code. For new features or
 
 **Style Guide Enforcement**
 
-Use Ruff to automatically format your code and identify potential style issues. Regularly run the following commands:
+Use Ruff to automatically format your code and identify potential style issues. Regularly run:
 
 ```bash
 uv run ruff check .
 uv run ruff format .
-Consider setting up pre-commit hooks to automate these checks before each commit.
+```
+
+**Pre-commit Automation**  
+Set up pre-commit hooks to enforce quality gates:
+```bash
+pip install pre-commit
+pre-commit install
+```
 
 Dependency Management
 
@@ -175,7 +184,12 @@ Use uv to manage project dependencies. Keep your dependencies up-to-date by peri
 
 Secrets Management
 
-Store sensitive information like API keys in a .env file at the root of the project. Ensure that .env is added to your .gitignore file to prevent accidentally committing it to the repository. Use a library like python-dotenv to load these environment variables into your application.
+- Store credentials in .env file at project root
+- Add .env to .gitignore 
+- Use python-dotenv to load environment variables
+- Never commit secrets to version control
+- Use different secrets for development vs production
+- Rotate API keys quarterly or when compromised
 
 [file:*.py]
 
@@ -284,11 +298,23 @@ pre-commit-recommendations = [
 "no-commit-to-branch"
 ]
 
-Example .pre-commit-config.yaml (PLACEHOLDER - Needs to be filled in later):
+Example .pre-commit-config.yaml:
+```yaml
 repos:
-# Add hook configurations here, based on the recommendations above.
-# See https://pre-commit.com/hooks.html for available hooks.
-pass
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.1.6
+  hooks:
+    - id: ruff
+      args: [--fix, --exit-non-zero-on-fix]
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.5.0
+  hooks:
+    - id: trailing-whitespace
+    - id: end-of-file-fixer
+    - id: check-yaml
+    - id: check-added-large-files
+    - id: detect-private-key
+```
 3-2-1 Backup Strategy
 Maintain at least three (3) copies of your data:
 - 2 local copies on different storage media.
