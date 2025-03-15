@@ -18,7 +18,7 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
 
-from src.dewey.llm.llm_utils import_response_response
+from src.dewey.llm.llm_utils import generate_response
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
