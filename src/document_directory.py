@@ -53,6 +53,17 @@ class DirectoryAnalyzer:
         }
 
         try:
+            # First check if file is text before trying to read it
+            with open(file_path, 'rb') as f:
+                content_bytes = f.read(1024)
+                try:
+                    content_bytes.decode('utf-8')
+                except UnicodeDecodeError:
+                    logger.warning(f"Skipping binary/non-UTF-8 file: {file_path}")
+                    analysis['issues'].append("binary_or_non_utf8_file")
+                    return analysis
+
+            # Now read full content as text
             with open(file_path, 'r', encoding='utf-8') as f:
                 content = f.read()
                 
@@ -71,6 +82,8 @@ class DirectoryAnalyzer:
         except Exception as e:
             logger.error(f"Failed to analyze {file_path}: {str(e)}", exc_info=True)
             analysis['issues'].append(f"analysis_error: {str(e)}")
+            # Skip files we couldn't analyze
+            return analysis
 
         return analysis
 
