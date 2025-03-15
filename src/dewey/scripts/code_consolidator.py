@@ -103,21 +103,20 @@ class CodeConsolidator:
         self._save_checkpoint()
 
     def _find_script_files(self) -> list[Path]:
-        """Find Python files in current directory and subdirectories, excluding venv."""
-        excluded_dirs = {
-            "test",
-            ".venv",
-            "venv",
-            "docs",
-            "deploy",
-            "config",
-            "ingest_data",
-        }
-        return [
-            f
-            for f in self.root_dir.glob("**/*.py")
-            if not any(d in f.parts for d in excluded_dirs)
-        ]
+        """Find Python files using config patterns."""
+        excluded_dirs = set(self.config["pipeline"]["excluded_dirs"])
+        file_patterns = self.config["pipeline"]["file_patterns"]
+        max_files = self.config["pipeline"]["max_files"]
+
+        files = []
+        pattern = "|".join(file_patterns)
+        for f in self.root_dir.glob("**/*"):
+            if any(re.search(pattern, f.name) for pattern in file_patterns):
+                if not any(d in f.parts for d in excluded_dirs):
+                    files.append(f)
+                    if max_files and len(files) >= max_files:
+                        break
+        return files
 
     def _extract_functions(self, file_path: Path) -> dict[str, dict]:
         """Parse AST to extract function definitions with context."""
@@ -285,7 +284,11 @@ class CodeConsolidator:
             )
 
             # Find similar existing functions
-            similar_ids = self.vector_db.find_similar_functions(context)
+            similar_ids = self.vector_db.find_similar_functions(
+                context, 
+                threshold=self.config["vector_db"]["similarity_threshold"],
+                top_k=self.config["pipeline"]["max_cluster_size"]
+            )
 
             if similar_ids:
                 # Use first similar function's cluster
@@ -586,8 +589,8 @@ class CodeConsolidator:
                     hash_queue.append(details)
 
         # Process in large batches for maximum throughput
-        batch_size = 100  # Aggressive batching for bulk processing
-        with ThreadPoolExecutor(max_workers=4) as executor:
+        batch_size = self.config["llm"]["batch_size"]
+        with ThreadPoolExecutor(max_workers=self.config["llm"]["max_workers"]) as executor:
             for i in range(0, len(hash_queue), batch_size):
                 batch = hash_queue[i : i + batch_size]
                 futures = [executor.submit(self._semantic_hash, func) for func in batch]
@@ -692,13 +695,13 @@ class CodeConsolidator:
                 result["functions"].extend(self._extract_functions(file_path))
                 
             # Generate consolidated code
-            prompt = f"Consolidate these related functions:\n" + "\n".join(
+            prompt = f"Consolidate these {len(result['functions'])} related functions:\n" + "\n".join(
                 [f["context"] for f in result["functions"]]
             )
             consolidated = generate_response(
                 prompt,
-                model="gemini-2.0-pro",
-                temperature=0.2,
+                model=self.config["llm"]["default_model"],
+                temperature=self.config["llm"]["temperature"],
                 system_message="Create comprehensive function with type hints and docstrings"
             )
             

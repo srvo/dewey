@@ -1,0 +1,39 @@
+---
+# Consolidation pipeline configuration
+pipeline:
+  max_files: null  # Set to number for testing
+  excluded_dirs:  # Directories to exclude from processing
+    - "test"
+    - ".venv"
+    - "venv"
+    - "docs"
+    - "deploy"
+    - "config"
+    - "ingest_data"
+  file_patterns:
+    - '\.py$'
+  cluster_threshold: 0.2  # Similarity threshold for clustering
+  max_cluster_size: 5  # Maximum files per cluster to process
+  min_cluster_size: 2  # Minimum files to consider for consolidation
+
+vector_db:
+  persist_dir: ".chroma_cache"
+  embedding_model: "all-MiniLM-L6-v2"
+  collection_name: "code_functions"
+  similarity_threshold: 0.85
+
+llm:
+  default_model: "gemini-2.0-pro"
+  fallback_models:
+    - "gemini-2.0-flash"
+    - "gemini-1.5-flash"
+  temperature: 0.2
+  max_retries: 3
+  batch_size: 100  # For parallel processing
+  max_workers: 4
+
+formatting:
+  lint_timeout: 120  # seconds
+  formatters:
+    - command: ["ruff", "check", "--fix", "--unsafe-fixes", "--select", "ALL"]
+    - command: ["black"]

@@ -12,14 +12,13 @@ logger = logging.getLogger(__name__)
 class VectorStore:
     """ChromaDB vector store for code embeddings."""
 
-    def __init__(self, persist_dir: str = ".chroma_cache") -> None:
+    def __init__(self, persist_dir: str = ".chroma_cache", collection_name: str = "code_functions", embedding_model: str = "all-MiniLM-L6-v2") -> None:
         self.persist_dir = Path(persist_dir)
         self.persist_dir.mkdir(exist_ok=True)
 
         self.client = chromadb.PersistentClient(path=str(self.persist_dir))
-
-        self.collection = self.client.get_or_create_collection("code_functions")
-        self.embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+        self.collection = self.client.get_or_create_collection(collection_name)
+        self.embedding_model = SentenceTransformer(embedding_model)
 
     def generate_embedding(self, text: str) -> list[float]:
         """Generate embedding for function context."""
