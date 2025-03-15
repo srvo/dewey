@@ -42,7 +42,7 @@ def generate_response(
     except Exception as e:
         if fallback_client and "exhausted" in str(e).lower():
             try:
-                self.logger.warning("Gemini API exhausted, falling back to DeepInfra")
+                logging.warning("Gemini API exhausted, falling back to DeepInfra")
                 return fallback_client.chat_completion(
                     prompt=prompt,
                     system_message=system_message,
