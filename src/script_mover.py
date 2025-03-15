@@ -296,7 +296,7 @@ class ScriptMover:
             return target_path.with_stem(f"{target_path.stem}_{unique_id}")
         except Exception as e:
             self.logger.warning(f"Path determination failed: {str(e)}, using fallback location")
-            return self.root_path / 'unmapped_scripts' / f"migrated_{uuid.uuid4().hex[:8]}.py")
+            return self.root_path / 'unmapped_scripts' / f"migrated_{uuid.uuid4().hex[:8]}.py"
 
     def should_merge(self, analysis: Dict, target_path: Path) -> bool:
         """Check if similar functionality exists."""
