@@ -14,7 +14,7 @@ from collections import defaultdict
 import subprocess
 import humanize
 
-from dewey.llm.llm_utils import generate_response
+from ..llm.llm_utils import generate_response
 from dewey.utils import read_csv_to_ibis
 
 logger = logging.getLogger(__name__)
