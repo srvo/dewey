@@ -195,34 +195,35 @@ class ScriptMover:
         cooldown_minutes = self.config['llm_settings'].get('cooldown_minutes', 5)
         self.llm_client.rate_limiter.cooldown_minutes = cooldown_minutes
         
-        while True:
-            available_models = [m for m in models if not self.llm_client.rate_limiter.is_in_cooldown(m)]
-            if not available_models:
-                # All models in cooldown, wait for earliest available
-                next_available = min(self.llm_client.rate_limiter.cooldowns.values())
-                wait_time = max(0, next_available - time.time())
-                self.logger.warning(f"All models cooling down. Waiting {wait_time:.1f}s")
-                time.sleep(wait_time)
-                continue
-                
-            for model in available_models:
-                try:
-                    response = generate_response(
-                        prompt,
-                        model=model,
-                        system_message="You are a Python code analysis assistant. Be concise and precise.",
-                        fallback_client=DeepInfraClient() if self.fallback_to_deepinfra else None
-                    )
-                    # Reset cooldown if successful
-                    if model in self.llm_client.rate_limiter.cooldowns:
-                        del self.llm_client.rate_limiter.cooldowns[model]
-                    break
-                except LLMError as e:
-                    last_error = e
-                    self.logger.warning(f"Model {model} failed: {str(e)}")
+        # Try primary model just once before falling back
+        try:
+            model = next((m for m in self.config['llm_settings']['models'] 
+                        if not self.llm_client.rate_limiter.is_in_cooldown(m)), None)
+            
+            if model:
+                response = generate_response(
+                    prompt,
+                    model=model,
+                    system_message="You are a Python code analysis assistant. Be concise and precise.",
+                    fallback_client=DeepInfraClient() if self.fallback_to_deepinfra else None
+                )
+                # Reset cooldown if successful
+                if model in self.llm_client.rate_limiter.cooldowns:
+                    del self.llm_client.rate_limiter.cooldowns[model]
             else:
-                continue
-            break
+                raise LLMError("All primary models in cooldown")
+                
+        except LLMError as e:
+            if not self.fallback_to_deepinfra:
+                raise
+                
+            self.logger.warning(f"Primary model failed: {str(e)}, switching to DeepInfra fallback")
+            response = generate_response(
+                prompt,
+                model="meta-llama/Meta-Llama-3-8B-Instruct",
+                system_message="You are a Python code analysis assistant. Be concise and precise.",
+                client=DeepInfraClient()
+            )
         else:
             if self.fallback_to_deepinfra:
                 self.logger.info("All Gemini models failed, falling back to DeepInfra")
