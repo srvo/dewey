@@ -2,6 +2,8 @@ import os
 import sys
 import logging
 import argparse
+import hashlib
+import json
 from pathlib import Path
 from typing import List, Dict, Optional
 from dotenv import load_dotenv
@@ -27,7 +29,7 @@ class DirectoryDocumenter:
     A tool to document directories by analyzing their contents and generating README files.
     """
 
-    def __init__(self):
+    def __init__(self, root_dir: str = "."):
         gemini_api_key = os.getenv("GEMINI_API_KEY")
         deepinfra_api_key = os.getenv("DEEPINFRA_API_KEY")
 
@@ -39,6 +41,9 @@ class DirectoryDocumenter:
         self.gemini_client = GeminiClient(api_key=gemini_api_key)
         self.deepinfra_client = DeepInfraClient(api_key=deepinfra_api_key)
         self.conventions_path = Path("../.aider/CONVENTIONS.md")  # Relative path to CONVENTIONS.md
+        self.root_dir = Path(root_dir).resolve()
+        self.checkpoint_file = self.root_dir / ".dewey_documenter_checkpoint.json"
+        self.checkpoints = self._load_checkpoints()
 
         if not self.conventions_path.exists():
             logger.error(f"Could not find CONVENTIONS.md at {self.conventions_path}. Please ensure the path is correct.")
@@ -57,6 +62,47 @@ class DirectoryDocumenter:
         except Exception as e:
             logger.error(f"Failed to load conventions: {e}")
             sys.exit(1)
+
+    def _load_checkpoints(self) -> Dict[str, str]:
+        """Load checkpoint data from file."""
+        if self.checkpoint_file.exists():
+            try:
+                with open(self.checkpoint_file, "r") as f:
+                    return json.load(f)
+            except Exception as e:
+                logger.warning(f"Could not load checkpoint file: {e}. Starting from scratch.")
+                return {}
+        return {}
+
+    def _save_checkpoints(self) -> None:
+        """Save checkpoint data to file."""
+        try:
+            with open(self.checkpoint_file, "w") as f:
+                json.dump(self.checkpoints, f, indent=4)
+        except Exception as e:
+            logger.error(f"Could not save checkpoint file: {e}")
+
+    def _is_checkpointed(self, file_path: Path) -> bool:
+        """Check if a file has been checkpointed based on its content hash."""
+        try:
+            with open(file_path, "r") as f:
+                content = f.read()
+            content_hash = hashlib.sha256(content.encode()).hexdigest()
+            return self.checkpoints.get(str(file_path), None) == content_hash
+        except Exception as e:
+            logger.error(f"Could not read file to check checkpoint: {e}")
+            return False
+
+    def _checkpoint(self, file_path: Path) -> None:
+        """Checkpoint a file by saving its content hash."""
+        try:
+            with open(file_path, "r") as f:
+                content = f.read()
+            content_hash = hashlib.sha256(content.encode()).hexdigest()
+            self.checkpoints[str(file_path)] = content_hash
+            self._save_checkpoints()
+        except Exception as e:
+            logger.error(f"Could not checkpoint file: {e}")
 
     def _get_llm_client(self):
         """
@@ -127,6 +173,30 @@ class DirectoryDocumenter:
                 logger.error(f"DeepInfra also failed: {e}")
                 raise
 
+    def suggest_filename(self, code: str) -> str:
+        """
+        Suggests a more human-readable filename for the given code using an LLM.
+        """
+        gemini_client, deepinfra_client = self._get_llm_client()
+        prompt = f"""
+        Suggest a concise, human-readable filename (without the .py extension) for a Python script
+        that contains the following code.  The filename should be lowercase and use underscores
+        instead of spaces.
+
+        ```python
+        {code}
+        ```
+        """
+        try:
+            return gemini_client.generate_content(prompt).strip()
+        except LLMError as e:
+            logger.warning(f"Gemini rate limit exceeded, attempting DeepInfra fallback. GeminiError: {e}")
+            try:
+                return deepinfra_client.chat_completion(prompt=prompt).strip()
+            except Exception as e:
+                logger.error(f"DeepInfra also failed: {e}")
+                return None
+
     def process_directory(self, directory: str) -> None:
         """
         Processes the given directory, analyzes its contents, and generates a README.md file.
@@ -141,11 +211,30 @@ class DirectoryDocumenter:
         for filename in os.listdir(directory_path):
             file_path = directory_path / filename
             if file_path.suffix == ".py":
+                if self._is_checkpointed(file_path):
+                    logger.info(f"Skipping checkpointed file: {filename}")
+                    continue
+
                 try:
                     with open(file_path, "r") as f:
                         code = f.read()
                         analysis = self.analyze_code(code)
                         analysis_results[filename] = analysis
+
+                        # Suggest a better filename
+                        suggested_filename = self.suggest_filename(code)
+                        if suggested_filename:
+                            new_file_path = directory_path / (suggested_filename + ".py")
+                            rename_file = input(f"Rename {filename} to {suggested_filename + '.py'}? (y/n): ").lower()
+                            if rename_file == 'y':
+                                try:
+                                    os.rename(file_path, new_file_path)
+                                    logger.info(f"Renamed {filename} to {suggested_filename + '.py'}")
+                                    file_path = new_file_path  # Update file_path to the new name
+                                except Exception as e:
+                                    logger.error(f"Failed to rename {filename} to {suggested_filename + '.py'}: {e}")
+                            else:
+                                logger.info(f"Skipped renaming {filename}.")
 
                         # Ask for confirmation before correcting code style
                         correct_style = input(f"Correct code style for {filename}? (y/n): ").lower()
@@ -168,6 +257,8 @@ class DirectoryDocumenter:
                         else:
                             logger.info(f"Skipped correcting code style for {filename}.")
 
+                    self._checkpoint(file_path)  # Checkpoint after processing
+
                 except Exception as e:
                     logger.error(f"Failed to process {filename}: {e}")
 
@@ -180,10 +271,15 @@ class DirectoryDocumenter:
         except Exception as e:
             logger.error(f"Failed to write README.md: {e}")
 
+    def process_project(self):
+        """Processes the entire project directory."""
+        for root, _, files in os.walk(self.root_dir):
+            self.process_directory(root)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Document a directory by analyzing its contents and generating a README file.")
-    parser.add_argument("directory", help="The directory to document.")
+    parser.add_argument("--directory", help="The directory to document (defaults to project root).", default=".")
     args = parser.parse_args()
 
-    documenter = DirectoryDocumenter()
-    documenter.process_directory(args.directory)
+    documenter = DirectoryDocumenter(root_dir=args.directory)
+    documenter.process_project()
