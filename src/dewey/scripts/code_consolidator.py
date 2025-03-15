@@ -6,16 +6,13 @@ similar functionality across scripts and suggest canonical implementations.
 import argparse
 import ast
 import logging
-import os
 import hashlib
 from pathlib import Path
-from typing import Dict, List, Tuple, Set, Optional
+from typing import Dict, List
 from collections import defaultdict
 import subprocess
-import humanize
 
 from dewey.llm.llm_utils import generate_response
-from dewey.utils import read_csv_to_ibis
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
