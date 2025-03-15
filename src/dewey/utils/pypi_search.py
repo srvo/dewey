@@ -1,12 +1,13 @@
-import requests
 import json
 import logging
 
+import requests
+
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
-def search_pypi(package_name):
+def search_pypi(package_name) -> None:
     """Searches PyPI for a package and logs the results."""
     url = f"https://pypi.org/pypi/{package_name}/json"
     try:
@@ -24,11 +25,11 @@ def search_pypi(package_name):
         if response and response.status_code == 404:
             logger.warning(f"Package '{package_name}' not found on PyPI.")
         else:
-            logger.error(f"Error: {e}")
+            logger.exception(f"Error: {e}")
     except json.JSONDecodeError:
-        logger.error("Error: Invalid JSON response from PyPI.")
+        logger.exception("Error: Invalid JSON response from PyPI.")
 
-def search_pypi_general(query):
+def search_pypi_general(query) -> None:
     """Searches PyPI for packages based on a general query and logs the results."""
     url = f"https://pypi.org/search/?q={query}&format=json"
     try:
@@ -50,23 +51,21 @@ def search_pypi_general(query):
             logger.info(package_info)
 
     except requests.exceptions.RequestException as e:
-        logger.error(f"Error: {e}")
+        logger.exception(f"Error: {e}")
     except json.JSONDecodeError:
-        logger.error("Error: Invalid JSON response from PyPI.")
+        logger.exception("Error: Invalid JSON response from PyPI.")
 
 # Example usage:
 search_pypi("pandas")
 logger.info("\nGeneral search for 'data analysis':")
 search_pypi_general("data analysis")
-import requests
-import json
 import logging
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
-def search_pypi(package_name):
+def search_pypi(package_name) -> bool | None:
     """Searches PyPI for a package and logs the results."""
     url = f"https://pypi.org/pypi/{package_name}/json"
     try:
@@ -85,8 +84,8 @@ def search_pypi(package_name):
         if response and response.status_code == 404:
             logger.warning(f"Package '{package_name}' not found on PyPI.")
         else:
-            logger.error(f"Error: {e}")
+            logger.exception(f"Error: {e}")
         return False
     except json.JSONDecodeError:
-        logger.error("Error: Invalid JSON response from PyPI.")
+        logger.exception("Error: Invalid JSON response from PyPI.")
         return False
