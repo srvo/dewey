@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import os
+import time
+import uuid
 import re
 import argparse
 import logging
@@ -70,25 +72,57 @@ class ScriptMover:
         ) and not filename.lower().endswith(('.exe', '.dll', '.so', '.dylib'))
 
     def process_script(self, script_path: Path) -> None:
-        """Process an individual script file."""
-        # Analyze script content
-        # Read first 50k characters as Gemini 1.5 Flash supports up to 1M tokens
-        # Skip binary files
+        """Process an individual script file with audit tracking."""
+        audit_entry = {
+            'source_path': str(script_path),
+            'status': 'pending',
+            'timestamp': time.time()
+        }
+        
         try:
             content = script_path.read_text(encoding='utf-8')[:50000]
         except UnicodeDecodeError:
             self.logger.warning(f"Skipping binary file {script_path}")
+            audit_entry['status'] = 'skipped'
+            audit_entry['reason'] = 'binary_file'
+            self._record_migration(audit_entry)
             return
-        analysis = self.analyze_script(content)
+
+        try:
+            analysis = self.analyze_script(content)
+        except yaml.YAMLError as e:
+            self.logger.error(f"Failed to analyze {script_path}: {str(e)}")
+            audit_entry['status'] = 'error'
+            audit_entry['reason'] = 'analysis_failed'
+            self._record_migration(audit_entry)
+            return
         
-        # Determine target location
+        # Determine target location and validate it's within project structure
         target_path = self.determine_target_path(analysis)
         
+        # Ensure target path is within project boundaries
+        if not self._is_valid_target_path(target_path):
+            unmapped_dir = self.root_path / 'unmapped_scripts'
+            target_path = unmapped_dir / script_path.name
+            audit_entry['notes'] = 'Target path outside project scope'
+        
         # Check for existing implementations
-        if self.should_merge(analysis, target_path):
-            self.merge_script(content, analysis, target_path)
-        else:
-            self.write_script(content, target_path)
+        try:
+            if self.should_merge(analysis, target_path):
+                self.merge_script(content, analysis, target_path)
+                audit_entry['status'] = 'merged'
+            else:
+                self.write_script(content, target_path)
+                audit_entry['status'] = 'moved'
+            
+            audit_entry['target_path'] = str(target_path)
+            audit_entry['category'] = analysis.get('category', 'unclassified')
+        except Exception as e:
+            audit_entry['status'] = 'failed'
+            audit_entry['error'] = str(e)
+            self.logger.error(f"Failed to process {script_path}: {str(e)}")
+        
+        self._record_migration(audit_entry)
         
         # Handle dependencies
         self.process_dependencies(analysis.get('dependencies', []))
@@ -120,11 +154,15 @@ class ScriptMover:
         """Determine appropriate location in project structure."""
         # Use LLM recommendation or fallback to category-based path
         if 'recommended_path' in analysis:
-            return self.root_path / analysis['recommended_path']
-            
-        category = analysis.get('category', 'utils')
-        base_path = self.module_paths.get(category, self.module_paths['utils'])
-        return base_path / 'migrated_scripts' / analysis.get('purpose', 'general') 
+            target_path = self.root_path / analysis['recommended_path']
+        else:
+            category = analysis.get('category', 'unclassified')
+            base_path = self.module_paths.get(category, self.module_paths['utils'])
+            target_path = base_path / 'migrated_scripts' / analysis.get('purpose', 'general')
+        
+        # Add UUID to prevent collisions
+        unique_id = str(uuid.uuid4())[:8]
+        return target_path.with_name(f"{target_path.stem}_{unique_id}{target_path.suffix}")
 
     def should_merge(self, analysis: Dict, target_path: Path) -> bool:
         """Check if similar functionality exists."""
@@ -158,10 +196,15 @@ class ScriptMover:
         """Write script to new location with proper formatting."""
         target_path.parent.mkdir(parents=True, exist_ok=True)
         
-        # Format with project conventions
-        formatted = self._format_with_conventions(content)
-        target_path.write_text(formatted)
-        self.logger.info(f"Created {target_path}")
+        try:
+            # Format with project conventions
+            formatted = self._format_with_conventions(content)
+            target_path.write_text(formatted)
+            self.logger.info(f"Created {target_path}")
+        except Exception as e:
+            # If formatting failed, write original content with warning
+            self.logger.warning(f"Formatting failed, writing original content to {target_path}")
+            target_path.write_text(f"# Formatting failed: {str(e)}\n\n{content}")
 
     def _format_with_conventions(self, content: str) -> str:
         """Apply project formatting conventions."""
@@ -199,6 +242,27 @@ class ScriptMover:
         pyproject_path = self.root_path / 'pyproject.toml'
         with open(pyproject_path, 'a') as f:
             f.write('\n' + '\n'.join(f'    "{dep}",' for dep in new_deps))
+
+    def _is_valid_target_path(self, path: Path) -> bool:
+        """Check if target path is within project structure."""
+        try:
+            path.resolve().relative_to(self.root_path.resolve())
+            return True
+        except ValueError:
+            return False
+
+    def _record_migration(self, audit_entry: dict) -> None:
+        """Record migration outcome in audit log."""
+        audit_log = self.root_path / 'config' / 'script_mappings.yaml'
+        
+        existing = []
+        if audit_log.exists():
+            existing = yaml.safe_load(audit_log.read_text()) or []
+        
+        existing.append(audit_entry)
+        
+        with open(audit_log, 'w') as f:
+            yaml.safe_dump(existing, f, sort_keys=False)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Migrate scripts to Dewey project structure")

@@ -8,6 +8,8 @@ module_paths:
   ui: "ui/"
   utils: "utils/"
   accounting: "core/accounting/"
+  research: "core/research/"
+  portfolio: "core/research/investment_performance/"
 
 file_patterns:
   - \.py$
