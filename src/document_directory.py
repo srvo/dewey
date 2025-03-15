@@ -31,10 +31,14 @@ class DirectoryAnalyzer:
             raise PermissionError(f"Access denied to directory: {self.root_dir}")
 
     def _calculate_file_hash(self, file_path: Path) -> str:
-        """Calculate MD5 hash of file contents."""
+        """Calculate SHA256 hash of file contents with size check."""
         try:
+            file_size = file_path.stat().st_size
+            if file_size == 0:
+                return "empty_file"  # Special case for empty files
+            
             with open(file_path, 'rb') as f:
-                return hashlib.md5(f.read()).hexdigest()
+                return f"{file_size}_{hashlib.sha256(f.read()).hexdigest()}"
         except Exception as e:
             logger.error(f"Error calculating hash for {file_path}: {str(e)}")
             raise
@@ -93,11 +97,16 @@ class DirectoryAnalyzer:
         # First cluster by exact duplicates
         for file_hash, paths in self.file_hashes.items():
             if len(paths) > 1:
+                # Skip empty files cluster
+                if file_hash == "empty_file":
+                    logger.debug(f"Skipping {len(paths)} empty files")
+                    continue
+                
                 self.clusters[f"duplicate_group_{file_hash}"] = {
                     'type': 'exact_duplicate',
                     'files': paths
                 }
-                logger.warning(f"Found {len(paths)} duplicate files with hash {file_hash}")
+                logger.warning(f"Found {len(paths)} duplicate files with content hash {file_hash}")
 
         #:: Add semantic similarity clustering using embeddings
 
