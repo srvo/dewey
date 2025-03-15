@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 import re
 import argparse
@@ -66,13 +67,18 @@ class ScriptMover:
         return any(
             re.search(pattern, filename)
             for pattern in self.config['file_patterns']
-        )
+        ) and not filename.lower().endswith(('.exe', '.dll', '.so', '.dylib'))
 
     def process_script(self, script_path: Path) -> None:
         """Process an individual script file."""
         # Analyze script content
         # Read first 50k characters as Gemini 1.5 Flash supports up to 1M tokens
-        content = script_path.read_text()[:50000]
+        # Skip binary files
+        try:
+            content = script_path.read_text(encoding='utf-8')[:50000]
+        except UnicodeDecodeError:
+            self.logger.warning(f"Skipping binary file {script_path}")
+            return
         analysis = self.analyze_script(content)
         
         # Determine target location
