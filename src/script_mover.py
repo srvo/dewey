@@ -10,9 +10,9 @@ from typing import Dict, List, Optional
 import yaml
 import ast
 from dewey.llm.llm_utils import generate_response, generate_analysis_response, parse_llm_yaml_response
-from llm.api_clients.gemini import GeminiClient
-from llm.api_clients.deepinfra import DeepInfraClient
-from llm.exceptions import LLMError
+from dewey.llm.api_clients.gemini import GeminiClient
+from dewey.llm.api_clients.deepinfra import DeepInfraClient
+from dewey.llm.exceptions import LLMError
 import hashlib
 from dewey.utils.pypi_search import search_pypi
 
