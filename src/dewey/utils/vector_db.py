@@ -47,9 +47,9 @@ class VectorStore:
         )
 
         return [
-            result["id"]
-            for result, distance in zip(
-                results["metadatas"][0], results["distances"][0], strict=False
+            result_id
+            for result_id, distance in zip(
+                results["ids"][0], results["distances"][0], strict=False
             )
             if distance < (1 - threshold)
         ]
