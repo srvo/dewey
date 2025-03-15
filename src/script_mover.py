@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 import yaml
 import ast
-from llm.llm_utils import generate_response
+from llm.llm_utils import generate_response, parse_llm_yaml_response
 from llm.api_clients.gemini import GeminiClient
 from llm.api_clients.deepinfra import DeepInfraClient
 from llm.exceptions import LLMError
