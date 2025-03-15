@@ -454,53 +454,24 @@ class CodeConsolidator:
         return "\n".join(report)
 
     def _process_file(self, script_path: Path) -> tuple:
-        """Process a single file with timeout and resource limits."""
+        """Process a single file directly without subprocess."""
         try:
-            # Run in isolated process with proper Python path
-            result = subprocess.run(
-                [
-                    "python",
-                    "-m",
-                    "src.dewey.scripts.code_consolidator",
-                    "--process-file",
-                    str(script_path),
-                ],
-                capture_output=True,
-                text=True,
-                check=False,  # Don't raise on error
-                timeout=300,
-                env={**os.environ, "PYTHONPATH": ":".join(sys.path)},
-            )
-
-            if result.returncode != 0:
-                logger.error(
-                    f"Subprocess failed for {script_path.name}: {result.stderr}"
-                )
-                return {}, script_path
-
-            try:
-                return json.loads(result.stdout)
-            except json.JSONDecodeError:
-                logger.exception(f"Invalid output from {script_path.name}")
-                return {}, script_path
-        except subprocess.TimeoutExpired:
-            logger.exception(f"Timeout processing {script_path} - skipping")
-            return {}, script_path
+            functions = self._extract_functions(script_path)
+            return functions, script_path
         except Exception as e:
-            logger.exception(f"Failed to process {script_path}: {e}")
+            logger.debug(f"Error processing {script_path}: {e}")
             return {}, script_path
 
     def _process_file_safe(self, script_path: Path) -> tuple:
-        """Wrapper for isolated file processing."""
+        """Process file with formatting and analysis."""
         try:
-            # Format first, then analyze - sequential for each file
-            self._preprocess_script(script_path)  # Blocking format
+            self._preprocess_script(script_path)
             logger.debug(f"Analyzing {script_path.name}...")
-            functions = self._extract_functions(script_path)  # Then analysis
-            return functions, str(script_path)
+            functions = self._extract_functions(script_path)
+            return functions, script_path
         except Exception as e:
             logger.debug(f"Error processing {script_path}: {e}")
-            return {}, str(script_path)
+            return {}, script_path
 
     def _preprocess_script(self, script_path: Path) -> None:
         """Autoformat script using ruff and black."""
@@ -672,9 +643,10 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.process_file:
-        # Subprocess mode - just process one file and output JSON
+        # Direct processing mode with JSON output
         consolidator = CodeConsolidator()
-        consolidator._process_file_safe(Path(args.process_file))
+        functions, _ = consolidator._process_file_safe(Path(args.process_file))
+        print(json.dumps((functions, str(args.process_file))))
     else:
         # Normal mode
         consolidator = CodeConsolidator(args.directory)
