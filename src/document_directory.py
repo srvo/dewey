@@ -158,7 +158,7 @@ if __name__ == "__main__":
                       help="Directory to analyze (default: git root)",
                       nargs="?",
                       default=find_git_root())
-    parser.add_argument("-",", "--verbose", action="store_true", help="Enable debug logging")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Enable debug logging")
     args = parser.parse_args()
     
     if args.verbose:
