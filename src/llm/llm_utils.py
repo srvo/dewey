@@ -9,7 +9,8 @@ def generate_response(
     model: str = "gemini-2.0-flash", 
     temperature: float = 0.7,
     system_message: Optional[str] = None,
-    api_key: Optional[str] = None
+    api_key: Optional[str] = None,
+    fallback_client: Optional[Any] = None
 ) -> str:
     """
     Generate a response from the specified LLM model.
@@ -39,6 +40,16 @@ def generate_response(
             temperature=temperature
         )
     except Exception as e:
+        if fallback_client and "exhausted" in str(e).lower():
+            try:
+                self.logger.warning("Gemini API exhausted, falling back to DeepInfra")
+                return fallback_client.chat_completion(
+                    prompt=prompt,
+                    system_message=system_message,
+                    temperature=temperature
+                )
+            except Exception as fallback_error:
+                raise LLMError(f"Both Gemini and fallback failed: {str(fallback_error)}") from e
         raise LLMError(f"LLM generation failed: {str(e)}") from e
 
 def validate_model_params(params: Dict[str, Any]) -> None:

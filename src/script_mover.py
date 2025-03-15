@@ -10,17 +10,22 @@ from typing import Dict, List, Optional
 import yaml
 from llm.llm_utils import generate_response
 from llm.api_clients.gemini import GeminiClient
+from llm.api_clients.deepinfra import DeepInfraClient
+import hashlib
 
 class ScriptMover:
     """Refactor scripts into the Dewey project structure with LLM-assisted analysis."""
     
-    def __init__(self, config_path: Optional[str] = None):
+    def __init__(self, config_path: Optional[str] = None, fallback_to_deepinfra: bool = False):
         # Set default config path relative to project root
         if config_path is None:
             config_path = Path(__file__).parent.parent / "config" / "script_mover.yaml"
         self.config = self._load_config(config_path)
         self.logger = self._setup_logging()
+        self.fallback_to_deepinfra = fallback_to_deepinfra
         self.llm_client = GeminiClient()
+        self.checkpoint_path = Path(__file__).parent.parent / "config" / "script_checkpoints.yaml"
+        self.processed_files = self._load_checkpoints()
         
         # Initialize directory structure from config
         self.root_path = Path(self.config['project_root'])
@@ -51,6 +56,21 @@ class ScriptMover:
         logger.addHandler(handler)
         return logger
 
+    def _load_checkpoints(self) -> Dict:
+        """Load processed files from checkpoint file."""
+        if not self.checkpoint_path.exists():
+            return {}
+            
+        with open(self.checkpoint_path) as f:
+            return yaml.safe_load(f) or {}
+
+    def _save_checkpoint(self, path: Path, content_hash: str) -> None:
+        """Save processed file to checkpoint."""
+        self.processed_files[str(path)] = content_hash
+        self.checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.checkpoint_path, 'w') as f:
+            yaml.safe_dump(self.processed_files, f)
+
     def process_directory(self, target_dir: str) -> None:
         """Process all scripts in a directory and its subdirectories."""
         target_path = Path(target_dir)
@@ -61,12 +81,20 @@ class ScriptMover:
         
         for root, _, files in os.walk(target_dir):
             for file in files:
+                script_path = Path(root) / file
                 if self._is_script_file(file):
-                    script_path = Path(root) / file
+                    # Check if we've already processed this exact file
+                    content_hash = hashlib.md5(script_path.read_bytes()).hexdigest()
+                    if str(script_path) in self.processed_files:
+                        if self.processed_files[str(script_path)] == content_hash:
+                            self.logger.info(f"Skipping already processed file: {script_path}")
+                            continue
+                            
                     self.logger.info(f"Processing {script_path}")
                     try:
                         self.process_script(script_path)
                         script_count += 1
+                        self._save_checkpoint(script_path, content_hash)
                     except Exception as e:
                         self.logger.error(f"Fatal error processing {script_path}: {str(e)}")
                         raise  # Re-raise to halt execution
@@ -152,7 +180,8 @@ class ScriptMover:
         response = generate_response(
             prompt,
             model=self.config['llm_settings']['model'],
-            system_message="You are a Python code analysis assistant. Be concise and precise."
+            system_message="You are a Python code analysis assistant. Be concise and precise.",
+            fallback_client=DeepInfraClient() if self.fallback_to_deepinfra else None
         )
         
         try:
@@ -298,7 +327,9 @@ if __name__ == "__main__":
     parser.add_argument("directory", help="Directory containing scripts to process")
     parser.add_argument("--config", default="config/script_mover.yaml", 
                       help="Configuration file path")
+    parser.add_argument("--fallback-to-deepinfra", action="store_true",
+                      help="Use DeepInfra as fallback when Gemini API is exhausted")
     args = parser.parse_args()
     
-    mover = ScriptMover(args.config)
+    mover = ScriptMover(args.config, args.fallback_to_deepinfra)
     mover.process_directory(args.directory)
