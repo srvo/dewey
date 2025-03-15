@@ -29,51 +29,18 @@ def search_pypi(package_name) -> None:
     except json.JSONDecodeError:
         logger.exception("Error: Invalid JSON response from PyPI.")
 
+# TODO: Reimplement PyPI search with proper API integration
+# Temporarily disabled - see https://github.com/pypi/warehouse/issues/5897
+""" 
 def search_pypi_general(query) -> None:
-    """Searches PyPI for packages based on a general query and logs the results."""
-    headers = {'Accept': 'application/json'}
-    try:
-        response = requests.get(
-            "https://pypi.org/search/",
-            params={'q': query},
-            headers=headers
-        )
-        response.raise_for_status()
-        
-        # Verify we got JSON response (PyPI may include charset in content-type)
-        if not response.headers.get('Content-Type', '').startswith('application/json'):
-            logger.error("Received non-JSON response from PyPI API")
-            return
-            
-        data = response.json()
-        results = data.get("results", [])
-        
-        if not results:
-            logger.info(f"No results found for query: '{query}'")
-            return
-            
-        for result in results:
-            # Handle potential missing fields
-            package_info = (
-                f"Package: {result.get('name', 'N/A')}\n"
-                f"Version: {result.get('version', 'N/A')}\n"
-                f"Summary: {result.get('summary', 'No description')}\n"
-                f"Project URL: {result.get('url', '#')}\n"
-                f"{'-' * 20}"
-            )
-            logger.info(package_info)
-
-    except requests.exceptions.RequestException as e:
-        logger.error(f"API request failed: {str(e)}")
-    except json.JSONDecodeError as e:
-        logger.error(f"Failed to parse response: {str(e)}")
-    except Exception as e:
-        logger.error(f"Unexpected error: {str(e)}")
+    \"\"\"Searches PyPI for packages based on a general query and logs the results.\"\"\"
+    # Implementation removed
 
 # Example usage:
-search_pypi("pandas")
-logger.info("\nGeneral search for 'data analysis':")
-search_pypi_general("data analysis")
+# search_pypi("pandas")
+# logger.info("\nGeneral search for 'data analysis':")
+# search_pypi_general("data analysis")
+"""
 import logging
 
 # Configure logging
