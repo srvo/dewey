@@ -12,5 +12,6 @@ dependencies = [
     "pytest",
     "ibis-duckdb",  # Explicit DuckDB backend
     "requests",      # For API interactions
-    "pyyaml"         # Config file handling
+    "pyyaml",        # Config file handling
+    "openai>=1.0.0"  # Add OpenAI requirement for DeepInfra compatibility
 ]
