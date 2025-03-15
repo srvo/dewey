@@ -76,11 +76,11 @@ class CodeConsolidator:
         self._batch_process_semantic_hashes()
         
     def _find_script_files(self) -> List[Path]:
-        """Find all Python files in the directory, excluding tests, venv, and data directories"""
-        excluded_dirs = {'test', '.venv', 'docs', 'deploy', 'config', 'ingest_data'}
+        """Find Python files in current directory and subdirectories, excluding venv"""
+        excluded_dirs = {'test', '.venv', 'venv', 'docs', 'deploy', 'config', 'ingest_data'}
         return [
-            f for f in self.root_dir.rglob('*.py')
-            if not any(d in excluded_dirs for d in f.parts)
+            f for f in self.root_dir.glob('**/*.py')
+            if not any(d in f.parts for d in excluded_dirs)
         ]
 
     def _extract_functions(self, file_path: Path) -> Dict[str, dict]:
