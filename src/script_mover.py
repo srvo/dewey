@@ -365,11 +365,42 @@ class ScriptMover:
     def process_dependencies(self, dependencies: List[str]) -> None:
         """Ensure required dependencies are in pyproject.toml."""
         existing_deps = self._read_current_dependencies()
-        new_deps = [d for d in dependencies if d not in existing_deps]
         
-        if new_deps:
-            self._update_pyproject(new_deps)
-            self.logger.info(f"Added new dependencies: {', '.join(new_deps)}")
+        # Filter and validate dependencies
+        valid_deps = []
+        for dep in dependencies:
+            # Reject ibis-framework[duckdb] pattern explicitly
+            if re.match(r'ibis-framework\[.*\]', dep):
+                self.logger.warning(f"Skipping invalid dependency format: {dep}")
+                continue
+                
+            # Check if valid PyPI package
+            if not self._validate_dependency(dep):
+                self.logger.warning(f"Skipping unverified dependency: {dep}")
+                continue
+                
+            if dep not in existing_deps:
+                valid_deps.append(dep)
+        
+        if valid_deps:
+            self._update_pyproject(valid_deps)
+            self.logger.info(f"Added validated dependencies: {', '.join(valid_deps)}")
+
+    def _validate_dependency(self, dep: str) -> bool:
+        """Verify dependency exists on PyPI using pip search."""
+        try:
+            import subprocess
+            result = subprocess.run(
+                ['pip', 'search', '--disable-pip-version-check', dep],
+                capture_output=True,
+                text=True,
+                timeout=10
+            )
+            # Check if package exists (successful search result)
+            return result.returncode == 0 and len(result.stdout.strip()) > 0
+        except Exception as e:
+            self.logger.error(f"Dependency validation failed for {dep}: {str(e)}")
+            return False
 
     def _read_current_dependencies(self) -> List[str]:
         """Read current dependencies from pyproject.toml."""
