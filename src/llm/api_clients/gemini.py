@@ -171,7 +171,7 @@ class GeminiClient:
             
         except Exception as e:
             if retries > 0 and "429" in str(e):
-                jitter = random.uniform(0.1, 055)
+                jitter = random.uniform(0.1, 55)
                 backoff = (2 ** (3 - retries)) + jitter
                 self.logger.warning(f"API error: {str(e)}. Retrying in {backoff:.2f}s ({retries} left)")
                 time.sleep(backoff)
