@@ -3,17 +3,16 @@ similar functionality across scripts and suggest canonical implementations.
 """
 
 import argparse
-import os
 import ast
 import hashlib
 import json
 import logging
+import os
 import subprocess
 import threading
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from typing import Dict, List, Optional
 
 import spacy
 from spacy.lang.en.stop_words import STOP_WORDS
@@ -56,7 +55,7 @@ class CodeConsolidator:
         self.lock = threading.Lock()
         self._load_checkpoint()
 
-    def _init_llm_clients(self) -> Optional[bool]:
+    def _init_llm_clients(self) -> bool | None:
         """Initialize LLM client through llm_utils."""
         try:
             # Will use generate_response from llm_utils which handles client management
@@ -96,7 +95,7 @@ class CodeConsolidator:
         self._analyze_clusters()
         self._batch_process_semantic_hashes()
 
-    def _find_script_files(self) -> List[Path]:
+    def _find_script_files(self) -> list[Path]:
         """Find Python files in current directory and subdirectories, excluding venv."""
         excluded_dirs = {"test", ".venv", "venv", "docs", "deploy", "config", "ingest_data"}
         return [
@@ -104,7 +103,7 @@ class CodeConsolidator:
             if not any(d in f.parts for d in excluded_dirs)
         ]
 
-    def _extract_functions(self, file_path: Path) -> Dict[str, dict]:
+    def _extract_functions(self, file_path: Path) -> dict[str, dict]:
         """Parse AST to extract function definitions with context."""
         functions = {}
         try:
@@ -144,7 +143,7 @@ class CodeConsolidator:
 
         return functions
 
-    def _parse_functions_manually(self, source: str, file_path: Path) -> Dict[str, dict]:
+    def _parse_functions_manually(self, source: str, file_path: Path) -> dict[str, dict]:
         """Fallback function parser that uses simple pattern matching."""
         functions = {}
         current_function = None
@@ -196,7 +195,7 @@ class CodeConsolidator:
 
         return functions
 
-    def _cluster_functions(self, functions: Dict[str, dict], script_path: Path) -> None:
+    def _cluster_functions(self, functions: dict[str, dict], script_path: Path) -> None:
         """Group similar functions using structural comparison first."""
         for name, details in functions.items():
             # Initial cluster key without semantic hash
