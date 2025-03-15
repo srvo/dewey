@@ -33,6 +33,6 @@ dependencies = [
     "ulid-py",
     "asgiref",
     "asyncpg",
-    "tomli-w",  # For proper TOML handling
-    "httpx"      # Required for OpenRouter client
+    "tomli-w", # For proper TOML handling # Required for OpenRouter client
+    "httpx",
 ]
