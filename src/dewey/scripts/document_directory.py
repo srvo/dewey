@@ -4,14 +4,18 @@ import logging
 import argparse
 from pathlib import Path
 from typing import List, Dict, Optional
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Assuming these are in the same relative location as the script
 try:
     from src.llm.api_clients.gemini import GeminiClient
     from src.llm.api_clients.deepinfra import DeepInfraClient
     from src.llm.exceptions import LLMError
-except ImportError:
-    print("Error: Could not import necessary modules. Make sure you are running this script from the project root.")
+except ImportError as e:
+    print(f"Error: Could not import necessary modules: {e}. Make sure you are running this script from the project root and dependencies are installed.")
     sys.exit(1)
 
 # Configure logging
@@ -23,7 +27,15 @@ class DirectoryDocumenter:
     A tool to document directories by analyzing their contents and generating README files.
     """
 
-    def __init__(self, gemini_api_key: Optional[str] = None, deepinfra_api_key: Optional[str] = None):
+    def __init__(self):
+        gemini_api_key = os.getenv("GEMINI_API_KEY")
+        deepinfra_api_key = os.getenv("DEEPINFRA_API_KEY")
+
+        if not gemini_api_key:
+            logger.warning("GEMINI_API_KEY not found in .env. Gemini client may not function correctly.")
+        if not deepinfra_api_key:
+            logger.warning("DEEPINFRA_API_KEY not found in .env. DeepInfra client may not function correctly.")
+
         self.gemini_client = GeminiClient(api_key=gemini_api_key)
         self.deepinfra_client = DeepInfraClient(api_key=deepinfra_api_key)
         self.conventions_path = Path("../.aider/CONVENTIONS.md")  # Relative path to CONVENTIONS.md
@@ -39,6 +51,9 @@ class DirectoryDocumenter:
         try:
             with open(self.conventions_path, "r") as f:
                 return f.read()
+        except FileNotFoundError:
+            logger.error(f"Could not find CONVENTIONS.md at {self.conventions_path}. Please ensure the path is correct.")
+            sys.exit(1)
         except Exception as e:
             logger.error(f"Failed to load conventions: {e}")
             sys.exit(1)
@@ -140,9 +155,12 @@ class DirectoryDocumenter:
                                 # Ask for confirmation before writing the corrected code to file
                                 write_corrected = input(f"Write corrected code to {filename}? (y/n): ").lower()
                                 if write_corrected == 'y':
-                                    with open(file_path, "w") as f:
-                                        f.write(corrected_code)
-                                    logger.info(f"Corrected code style for {filename} and wrote to file.")
+                                    try:
+                                        with open(file_path, "w") as f:
+                                            f.write(corrected_code)
+                                        logger.info(f"Corrected code style for {filename} and wrote to file.")
+                                    except Exception as e:
+                                        logger.error(f"Failed to write corrected code to {filename}: {e}")
                                 else:
                                     logger.info(f"Corrected code style for {filename}, but did not write to file.")
                             else:
@@ -165,9 +183,7 @@ class DirectoryDocumenter:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Document a directory by analyzing its contents and generating a README file.")
     parser.add_argument("directory", help="The directory to document.")
-    parser.add_argument("--gemini-api-key", help="The Gemini API key.", required=False)
-    parser.add_argument("--deepinfra-api-key", help="The DeepInfra API key.", required=False)
     args = parser.parse_args()
 
-    documenter = DirectoryDocumenter(gemini_api_key=args.gemini_api_key, deepinfra_api_key=args.deepinfra_api_key)
+    documenter = DirectoryDocumenter()
     documenter.process_directory(args.directory)
