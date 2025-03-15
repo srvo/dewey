@@ -291,7 +291,7 @@ class CodeConsolidator:
                 context,
                 {
                     "name": name,
-                    "args": details["args"],
+                    "args": ",".join(details["args"]) if details["args"] else "",
                     "complexity": details["complexity"],
                 },
             )
