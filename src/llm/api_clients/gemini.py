@@ -106,7 +106,6 @@ class GeminiClient:
                     contents=[prompt],
                     generation_config=genai.types.GenerationConfig(
                         candidate_count=1,
-                        max_output_tokens=max_tokens,
                         **kwargs
                     )
                 )
