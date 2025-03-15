@@ -281,6 +281,9 @@ class ScriptMover:
         """Record migration outcome in audit log."""
         audit_log = self.root_path / 'config' / 'script_mappings.yaml'
         
+        # Ensure directory exists
+        audit_log.parent.mkdir(parents=True, exist_ok=True)
+        
         existing = []
         if audit_log.exists():
             existing = yaml.safe_load(audit_log.read_text()) or []
