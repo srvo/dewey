@@ -14,9 +14,8 @@ from collections import defaultdict
 import subprocess
 import humanize
 
-from dewey.llm.api_clients.deepinfra import DeepInfraClient
-from dewey.llm.api_clients.gemini import GeminiClient
-from dewey.utils import read_csv_to_ibis  # Assuming this exists from previous utils
+from dewey.llm.llm_utils import generate_response
+from dewey.utils import read_csv_to_ibis
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -31,11 +30,12 @@ class CodeConsolidator:
         self.llm_client = self._init_llm_clients()
         
     def _init_llm_clients(self):
-        """Initialize available LLM clients with fallback handling"""
+        """Initialize LLM client through llm_utils"""
         try:
-            return GeminiClient() or DeepInfraClient()
+            # Will use generate_response from llm_utils which handles client management
+            return True
         except Exception as e:
-            logger.warning(f"LLM clients unavailable: {e}")
+            logger.warning(f"LLM setup error: {e}")
             return None
 
     def analyze_directory(self):
@@ -98,7 +98,7 @@ class CodeConsolidator:
         if self.llm_client:
             prompt = f"Normalize this function signature for hashing:\nName: {func_details['name']}\nArgs: {func_details['args']}\nComplexity: {func_details['complexity']}"
             try:
-                normalized = self.llm_client.generate_content(prompt)
+                normalized = generate_response(prompt)
                 return hashlib.md5(normalized.encode()).hexdigest()
             except Exception as e:
                 logger.debug(f"LLM normalization failed: {e}")
