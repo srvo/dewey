@@ -85,7 +85,7 @@ def search_pypi(package_name):
         if response and response.status_code == 404:
             logger.warning(f"Package '{package_name}' not found on PyPI.")
         else:
-            logger.error""Error: {e}")
+            logger.error(f"Error: {e}")
         return False
     except json.JSONDecodeError:
         logger.error("Error: Invalid JSON response from PyPI.")
