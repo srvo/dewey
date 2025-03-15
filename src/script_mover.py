@@ -11,6 +11,7 @@ import yaml
 from llm.llm_utils import generate_response
 from llm.api_clients.gemini import GeminiClient
 from llm.api_clients.deepinfra import DeepInfraClient
+from llm.exceptions import LLMError
 import hashlib
 
 class ScriptMover:
