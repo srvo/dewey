@@ -177,7 +177,9 @@ class ScriptMover:
         prompt = f"""Analyze this Python script and respond in YAML format using key: value pairs:
         purpose: <short description>
         category: [core/llm/pipeline/ui/utils]
-        dependencies: [list of external packages]
+        dependencies: 
+          - "package1"
+          - "package2[extra]"
         recommended_path: <project-relative path>
         
         Script content:
@@ -200,10 +202,16 @@ class ScriptMover:
                 result = {}
                 for item in parsed:
                     result.update(item)
-                return result
+                parsed = result
                 
             if not isinstance(parsed, dict):
                 raise ValueError("LLM returned invalid YAML structure")
+                
+            # Normalize dependencies list
+            if 'dependencies' in parsed:
+                if isinstance(parsed['dependencies'], str):
+                    parsed['dependencies'] = [d.strip() for d in parsed['dependencies'].split(',')]
+                parsed['dependencies'] = [d.strip('"\' ') for d in parsed['dependencies']]
                 
             return parsed
         except Exception as e:
