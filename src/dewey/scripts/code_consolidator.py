@@ -24,6 +24,7 @@ class CodeConsolidator:
         self.root_dir = Path(root_dir).expanduser().resolve()
         self.function_clusters = defaultdict(list)
         self.script_analysis = {}
+        self.syntax_errors = []  # Track files with syntax errors
         self.llm_client = self._init_llm_clients()
         
     def _init_llm_clients(self):
@@ -63,7 +64,9 @@ class CodeConsolidator:
                 try:
                     tree = ast.parse(f.read(), filename=str(file_path))
                 except SyntaxError as e:
-                    logger.warning(f"Skipped {file_path} due to syntax error: {e}")
+                    error_msg = f"{file_path}: {e.msg} (line {e.lineno})"
+                    logger.warning(f"Skipped due to syntax error: {error_msg}")
+                    self.syntax_errors.append(error_msg)
                     return {}
                 except Exception as e:
                     logger.warning(f"Unexpected error parsing {file_path}: {e}")
@@ -137,6 +140,7 @@ class CodeConsolidator:
                 consolidation_candidates.append((cluster_key, implementations, canonical))
                 
         self._present_findings(consolidation_candidates)
+        self._report_syntax_errors()
 
     def _implementation_quality(self, func_details: dict) -> float:
         """Score function quality based on various metrics"""
@@ -188,6 +192,15 @@ class CodeConsolidator:
             print(advice)
         except Exception as e:
             logger.error(f"LLM consultation failed: {e}")
+
+    def _report_syntax_errors(self) -> None:
+        """Report files with syntax errors at end of analysis"""
+        if self.syntax_errors:
+            logger.info(f"\nFound {len(self.syntax_errors)} files with syntax errors:")
+            for error in self.syntax_errors:
+                logger.info(f"  - {error}")
+        else:
+            logger.info("\nNo files with syntax errors found")
 
     def generate_report(self) -> str:
         """Generate consolidation roadmap report"""
