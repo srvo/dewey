@@ -893,7 +893,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
- sys sys
+    import sys
     from pathlib import Path
     
     # Add project root to Python path
