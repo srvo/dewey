@@ -156,7 +156,7 @@ class GeminiClient:
 
         genai.configure(api_key=self.api_key)
         self.rate_limiter = RateLimiter()
-        self.client = genai.GenerativeModel("gemini-2.0-flash")
+        self.client = genai.GenerativeModel("gemini-2.0-flash-lite")
 
     def generate_content(
         self,
@@ -197,11 +197,18 @@ class GeminiClient:
             except Exception as e:
                 if "RPM" in str(e) or "rate limit" in str(e).lower():
                     logging.warning(
-                        f"Rate limit hit on {model}, falling back to 2.0-flash-lite",
+                        f"Rate limit hit on {model}, trying alternative models",
                     )
-                    return self.generate_content(
-                        prompt,
-                        model="gemini-2.0-flash-lite",  # Higher RPM limit model
+                    # Try progressively lighter models
+                    for fallback_model in ["gemini-2.0-pro", "gemini-1.5-flash", "gemini-1.5-flash-8b"]:
+                        try:
+                            return self.generate_content(
+                                prompt,
+                                model=fallback_model,
+                                **kwargs,
+                            )
+                        except Exception as fallback_error:
+                            logging.debug(f"Fallback {fallback_model} failed: {fallback_error}")
                         **kwargs,
                     )
                 raise
