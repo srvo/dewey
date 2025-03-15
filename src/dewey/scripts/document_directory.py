@@ -5,11 +5,13 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
+
+CONVENTIONS_PATH = Path("../.aider/CONVENTIONS.md")
 
 # Assuming these are in the same relative location as the script
 try:
@@ -40,16 +42,15 @@ class DirectoryDocumenter:
 
         self.gemini_client = GeminiClient(api_key=gemini_api_key)
         self.deepinfra_client = DeepInfraClient(api_key=deepinfra_api_key)
-        self.conventions_path = Path("../.aider/CONVENTIONS.md")  # Relative path to CONVENTIONS.md
+        self.conventions_path = CONVENTIONS_PATH  # Relative path to CONVENTIONS.md
         self.root_dir = Path(root_dir).resolve()
         self.checkpoint_file = self.root_dir / ".dewey_documenter_checkpoint.json"
         self.checkpoints = self._load_checkpoints()
+        self.conventions = self._load_conventions()
 
         if not self.conventions_path.exists():
             logger.error(f"Could not find CONVENTIONS.md at {self.conventions_path}. Please ensure the path is correct.")
             sys.exit(1)
-
-        self.conventions = self._load_conventions()
 
     def _load_conventions(self) -> str:
         """Load the project's coding conventions from CONVENTIONS.md."""
@@ -110,20 +111,22 @@ class DirectoryDocumenter:
         """
         return self.gemini_client, self.deepinfra_client
 
-    def analyze_code(self, code: str) -> str:
+    def analyze_code(self, code: str) -> Tuple[str, Optional[str]]:
         """
         Analyzes the given code using an LLM and returns a summary,
         including whether the code contains placeholder code or
         unimplemented methods, and whether it appears to be related to
-        the Dewey project.
+        the Dewey project. Also asks the LLM to suggest a target module.
         """
         gemini_client, deepinfra_client = self._get_llm_client()
         prompt = f"""
-        Analyze the following code and provide a summary of its functionality,
-        its dependencies, any potential issues or improvements based on the following conventions,
-        whether the code contains placeholder code (e.g., "pass", "TODO", "NotImplementedError"),
-        and whether it appears to be related to the Dewey project (e.g., by using project-specific
-        imports or code patterns).
+        Analyze the following code and provide:
+        1.  A summary of its functionality, its dependencies, any potential issues or improvements based on the following conventions.
+        2.  Whether the code contains placeholder code (e.g., "pass", "TODO", "NotImplementedError").
+        3.  Whether it appears to be related to the Dewey project (e.g., by using project-specific imports or code patterns).
+        4.  Suggest a target module within the Dewey project structure (e.g., "core.crm", "llm.api_clients", "utils") for this code.
+            If the code doesn't fit neatly into an existing module, suggest a new module name.
+            Just return the module name, or None if it's unclear.
 
         {self.conventions}
 
@@ -132,14 +135,27 @@ class DirectoryDocumenter:
         ```
         """
         try:
-            return gemini_client.generate_content(prompt)
+            response = gemini_client.generate_content(prompt)
+            # Split the response into analysis and suggested module
+            parts = response.split("4.")
+            analysis = parts[0].strip()
+            suggested_module = parts[1].strip().replace('Suggest a target module within the Dewey project structure', '').replace(':', '').strip() if len(parts) > 1 else None
+            return analysis, suggested_module
         except LLMError as e:
             logger.warning(f"Gemini rate limit exceeded, attempting DeepInfra fallback. GeminiError: {e}")
             try:
-                return deepinfra_client.chat_completion(prompt=prompt)
+                response = deepinfra_client.chat_completion(prompt=prompt)
+                 # Split the response into analysis and suggested module
+                parts = response.split("4.")
+                analysis = parts[0].strip()
+                suggested_module = parts[1].strip().replace('Suggest a target module within the Dewey project structure', '').replace(':', '').strip() if len(parts) > 1 else None
+                return analysis, suggested_module
             except Exception as e:
                 logger.error(f"DeepInfra also failed: {e}")
                 raise
+        except Exception as e:
+            logger.error(f"Unexpected error during code analysis: {e}")
+            raise
 
     def generate_readme(self, directory: Path, analysis_results: Dict[str, str]) -> str:
         """
@@ -230,13 +246,30 @@ class DirectoryDocumenter:
                         logger.warning(f"Skipping {filename}: Not related to Dewey project.")
                         continue
 
-                    analysis = self.analyze_code(code)
+                    analysis, suggested_module = self.analyze_code(code)
                     analysis_results[filename] = analysis
+
+                    # Determine the target path
+                    if suggested_module:
+                        target_dir = self.root_dir / "src" / "dewey" / suggested_module.replace(".", "/")
+                        target_dir.mkdir(parents=True, exist_ok=True)  # Ensure the directory exists
+                        target_path = target_dir / filename
+                        move_file = input(f"Move {filename} to {target_path}? (y/n): ").lower()
+                        if move_file == 'y':
+                            try:
+                                import shutil
+                                shutil.move(file_path, target_path)
+                                logger.info(f"Moved {filename} to {target_path}")
+                                file_path = target_path
+                            except Exception as e:
+                                logger.error(f"Failed to move {filename} to {target_path}: {e}")
+                        else:
+                            logger.info(f"Skipped moving {filename}.")
 
                     # Suggest a better filename
                     suggested_filename = self.suggest_filename(code)
                     if suggested_filename:
-                        new_file_path = directory_path / (suggested_filename + ".py")
+                        new_file_path = file_path.parent / (suggested_filename + ".py")
                         rename_file = input(f"Rename {filename} to {suggested_filename + '.py'}? (y/n): ").lower()
                         if rename_file == 'y':
                             try:
