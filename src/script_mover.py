@@ -175,16 +175,18 @@ class ScriptMover:
 
     def analyze_script(self, content: str) -> Dict:
         """Use LLM to analyze script purpose and requirements."""
-        prompt = f"""Analyze this Python script and respond in YAML format using key: value pairs:
+        prompt = f"""ANALYZE THIS PYTHON SCRIPT AND RESPOND IN YAML FORMAT ONLY:
+        ---
         purpose: <short description>
         category: [core/llm/pipeline/ui/utils]
         dependencies: 
           - "package1"
           - "package2[extra]"
         recommended_path: <project-relative path>
+        ---
         
         Script content:
-        {content[:10000]}"""  # Truncate to avoid token limits
+        {content[:10000]}"""
         
         # Try all configured Gemini models before falling back
         last_error = None
