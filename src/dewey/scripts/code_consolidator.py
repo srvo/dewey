@@ -75,7 +75,7 @@ class CodeConsolidator:
         for attempt in range(max_retries):
             try:
                 # Test actual LLM connectivity
-                generate_response("test", max_tokens=1, timeout=10)
+                generate_response("test", timeout=10)
                 logger.info("LLM client initialized successfully")
                 return True
             except Exception as e:
