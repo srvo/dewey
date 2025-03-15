@@ -163,11 +163,11 @@ class OpenRouterClient:
                 time.sleep(5)  # Wait before retrying
 
         raise Exception("Failed to generate content after multiple retries.")
-from typing import Optional, Dict, Any
-import os
+"""OpenRouter API client with rate limiting."""
+import time
 import logging
-from openai import OpenAI
-from openai.types.chat import ChatCompletion
+from typing import Optional, Tuple
+import httpx
 
 class LLMError(Exception):
     """Base exception for LLM operations."""
