@@ -84,7 +84,7 @@ class CodeConsolidator:
                 "similarity_threshold": 0.85
             },
             "llm": {
-                "default_model": "gemini-2.0-pro",
+                "default_model": "gemini-2.0-flash-lite",
                 "fallback_models": ["gemini-2.0-flash", "gemini-1.5-flash"],
                 "temperature": 0.2,
                 "max_retries": 3,
@@ -468,7 +468,7 @@ class CodeConsolidator:
                 prompt += f"Docs: {details['docstring']}\n"
 
         try:
-            self.llm_client.generate_content(prompt)
+            generate_response(prompt, model=self.config["llm"]["default_model"])
         except Exception as e:
             logger.exception(f"LLM consultation failed: {e}")
 
@@ -869,6 +869,7 @@ class CodeConsolidator:
 
 def main() -> None:
     """Command line interface."""
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
     parser = argparse.ArgumentParser(
         description="Analyze and consolidate similar code functionality"
     )
