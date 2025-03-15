@@ -1,5 +1,6 @@
 from typing import Optional, Dict, Any
 import os
+import logging
 from openai import OpenAI
 from llm.api_clients.gemini import GeminiClient
 from llm.exceptions import LLMError
