@@ -117,7 +117,7 @@ class ScriptMover:
             for pattern in self.config['file_patterns']
         ) and not filename.lower().endswith(('.exe', '.dll', '.so', '.dylib'))
 
-    def process(self(self(self, script_path: Path) -> None:
+    def process_script(self, script_path: Path) -> None:
         """Process an individual script file with audit tracking."""
         audit_entry = {
             'source_path': str(script_path),
@@ -301,7 +301,7 @@ class ScriptMover:
             response = generate_response(prompt)
             # Extract code from between first ```python and last ```
             code_start = response.find('```python') + len('```python')
-            code_end = response.r('('```')
+            code_end = response.rfind('```')
             if code_start == -1 or code_end == -1:
                 raise SyntaxError("Code block markers missing")
                 
