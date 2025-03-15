@@ -86,6 +86,7 @@ class CodeConsolidator:
 
     def analyze_directory(self) -> None:
         """Main analysis workflow with parallel processing."""
+        logger.info(f"Analyzing directory: {self.root_dir}")
         scripts = self._find_script_files()
         logger.info(f"Found {len(scripts)} Python files to analyze")
 
