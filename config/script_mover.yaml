@@ -21,5 +21,8 @@ exclude_patterns:
     - 'site-packages/'
 
 llm_settings:
-    model: "gemini-2.0-flash"
+    models: 
+      - "gemini-2.0-flash"
+      - "gemini-1.5-pro"
     temperature: 0.3
+    max_retries_per_model: 2

@@ -185,12 +185,31 @@ class ScriptMover:
         Script content:
         {content[:10000]}"""  # Truncate to avoid token limits
         
-        response = generate_response(
-            prompt,
-            model=self.config['llm_settings']['model'],
-            system_message="You are a Python code analysis assistant. Be concise and precise.",
-            fallback_client=DeepInfraClient() if self.fallback_to_deepinfra else None
-        )
+        # Try all configured Gemini models before falling back
+        last_error = None
+        for model in self.config['llm_settings']['models']:
+            try:
+                response = generate_response(
+                    prompt,
+                    model=model,
+                    system_message="You are a Python code analysis assistant. Be concise and precise.",
+                    fallback_client=DeepInfraClient() if self.fallback_to_deepinfra else None
+                )
+                break
+            except LLMError as e:
+                last_error = e
+                self.logger.warning(f"Model {model} failed: {str(e)} - trying next model")
+        else:
+            if self.fallback_to_deepinfra:
+                self.logger.info("All Gemini models failed, falling back to DeepInfra")
+                response = generate_response(
+                    prompt,
+                    model="meta-llama/Meta-Llama-3-8B-Instruct",
+                    system_message="You are a Python code analysis assistant. Be concise and precise.",
+                    client=DeepInfraClient()
+                )
+            else:
+                raise last_error
         
         try:
             # Clean response and handle list or dict formats
