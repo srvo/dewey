@@ -1,37 +1,19 @@
- module_paths:
-   core: "core/"
-   llm: "llm/"
-   pipeline: "pipeline/"
-   ui: "ui/"
-   utils: "utils/"
-   accounting: "core/accounting/"
-   research: "core/research/"
-   investment_performance: "core/research/investment_performance/"
+---
+module_paths:
+    core: "core/"
+    llm: "llm/"
+    pipeline: "pipeline/"
+    ui: "ui/"
+    utils: "utils/"
+    accounting: "core/accounting/"
+    research: "core/research/"
+    investment_performance: "core/research/investment_performance/"
 
- file_patterns:
-   - '\.py$'
-   - '\.ipynb$'
+file_patterns:
+    - '\.py$'
+    - '\.ipynb$'
 
- llm_settings:
-   model: "gemini-2.0-flash"
-   temperature: 0.3
-   max_tokens: 4000
- =======
- module_paths:
-   core: "core/"
-   llm: "llm/"
-   pipeline: "pipeline/"
-   ui: "ui/"
-   utils: "utils/"
-   accounting: "core/accounting/"
-   research: "core/research/"
-   investment_performance: "core/research/investment_performance/"
-
- file_patterns:
-   - '\.py$'
-   - '\.ipynb$'
-
- llm_settings:
-   model: "gemini-2.0-flash"
-   temperature: 0.3
-   max_tokens: 4000
+llm_settings:
+    model: "gemini-2.0-flash"
+    temperature: 0.3
+    max_tokens: 4000
