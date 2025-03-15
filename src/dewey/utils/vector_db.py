@@ -16,10 +16,7 @@ class VectorStore:
         self.persist_dir = Path(persist_dir)
         self.persist_dir.mkdir(exist_ok=True)
         
-        self.client = chromadb.Client(Settings(
-            chroma_db_impl="duckdb+parquet",
-            persist_directory=str(self.persist_dir)
-        ))
+        self.client = chromadb.PersistentClient(path=str(self.persist_dir))
         
         self.collection = self.client.get_or_create_collection("code_functions")
         self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
