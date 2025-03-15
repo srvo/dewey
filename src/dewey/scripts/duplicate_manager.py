@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import logging
 import os
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Tuple, Set
 import humanize
@@ -80,12 +81,12 @@ def confirm_delete(files: List[Path], dry_run: bool = True) -> None:
     original = sorted_files[0]
     duplicates = sorted_files[1:]
 
-    print(f"\nOriginal file ({original.stat().st_mtime:%Y-%m-%d}):")
+    print(f"\nOriginal file ({datetime.fromtimestamp(original.stat().st_mtime):%Y-%m-%d}):")
     print(f"  {original}")
 
     print(f"\nPotential duplicates:")
     for dup in duplicates:
-        print(f"  {dup} ({dup.stat().st_mtime:%Y-%m-%d})")
+        print(f"  {dup} ({datetime.fromtimestamp(dup.stat().st_mtime):%Y-%m-%d})")
 
     if dry_run:
         print("\nDry run: Would delete duplicates above")
