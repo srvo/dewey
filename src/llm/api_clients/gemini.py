@@ -10,9 +10,10 @@ from llm.exceptions import LLMError
 load_dotenv()
 
 class RateLimiter:
-    """Enforce Gemini API rate limits dynamically based on model"""
+    """Global rate limiter singleton to track usage across instances"""
+    _instance = None
     MODEL_LIMITS = {
-        "gemini-2.0-flash": (15, 1_000_000, 1500),
+        "gemini-2.0-flash": (15, 1_000_000, 1500),  # RPM, TPM, RPD
         "gemini-2.0-flash-lite": (30, 1_000_000, 1500),
         "gemini-2.0-pro": (2, 1_000_000, 50),
         "gemini-2.0-flash-thinking": (10, 4_000_000, 1500),
@@ -20,9 +21,13 @@ class RateLimiter:
         "gemini-1.5-flash-8b": (15, 1_000_000, 1500)
     }
     
-    def __init__(self):
-        self.lock = threading.Lock()
-        self.counters = {}
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance.lock = threading.RLock()
+            cls._instance.counters = {}
+            cls._instance.logger = logging.getLogger('RateLimiter')
+        return cls._instance
 
     def _get_limits(self, model: str) -> Tuple[int, int, int]:
         """Get RPM, TPM, RPD for given model"""
@@ -30,38 +35,63 @@ class RateLimiter:
         return self.MODEL_LIMITS.get(base_model, (15, 100_000, 1500))  # Conservative defaults
 
     def check_limit(self, model: str, prompt: str) -> None:
-        """Check and enforce rate limits with sleep if needed"""
-        rpm, tpm, _ = self._get_limits(model)
-        estimated_tokens = len(prompt.split()) * 1.33  # Rough token estimation
+        """Check and enforce all rate limits with exponential backoff"""
+        rpm, tpm, rpd = self._get_limits(model)
+        estimated_tokens = len(prompt.split()) * 1.33  # Token estimation
         
         with self.lock:
             now = time.time()
+            model_counters = self.counters.setdefault(model, {
+                'requests': [],
+                'tokens': 0,
+                'daily_requests': 0,
+                'last_reset': now,
+                'daily_reset': now
+            })
             
-            # Initialize model tracking
-            if model not in self.counters:
-                self.counters[model] = {
-                    'requests': [],
-                    'tokens': 0,
-                    'last_reset': now
-                }
+            # Reset minute counters
+            if now - model_counters['last_reset'] > 60:
+                model_counters['requests'] = []
+                model_counters['tokens'] = 0
+                model_counters['last_reset'] = now
+
+            # Reset daily counters
+            if now - model_counters['daily_reset'] > 86400:  # 24 hours
+                model_counters['daily_requests'] = 0
+                model_counters['daily_reset'] = now
                 
-            # Reset counters if over 1 minute
-            if now - self.counters[model]['last_reset'] > 60:
-                self.counters[model]['requests'] = []
-                self.counters[model]['tokens'] = 0
-                self.counters[model]['last_reset'] = now
+            # Check and enforce RPM
+            max_retries = 3
+            for attempt in range(max_retries):
+                current_time = time.time()
+                remaining = 60 - (current_time - model_counters['last_reset'])
+                current_rpm = len(model_counters['requests'])
                 
-            # Check RPM
-            if len(self.counters[model]['requests']) >= rpm:
-                time.sleep(60 - (now - self.counters[model]['last_reset']))
+                # If over RPM limit, wait with exponential backoff
+                if current_rpm >= rpm:
+                    wait_time = min(remaining + 0.5, (2 ** attempt) + (random.random() * 0.1))
+                    self.logger.warning(f"RPM limit reached for {model}. Waiting {wait_time:.2f}s (attempt {attempt+1})")
+                    time.sleep(wait_time)
+                    continue
                 
-            # Check TPM
-            if self.counters[model]['tokens'] + estimated_tokens > tpm:
-                time.sleep(60 - (now - self.counters[model]['last_reset']))
+                # Check TPM limit
+                if (model_counters['tokens'] + estimated_tokens) > tpm:
+                    wait_time = min(remaining + 0.5, (2 ** attempt) + (random.random() * 0.1))
+                    self.logger.warning(f"TPM limit reached for {model}. Waiting {wait_time:.2f}s (attempt {attempt+1})")
+                    time.sleep(wait_time)
+                    continue
+                    
+                # Check RPD limit
+                if model_counters['daily_requests'] >= rpd:
+                    raise LLMError(f"Daily request limit ({rpd}) reached for {model}")
+                    
+                # All checks passed, update counters
+                model_counters['requests'].append(time.time())
+                model_counters['tokens'] += estimated_tokens
+                model_counters['daily_requests'] += 1
+                return
                 
-            # Update counters
-            self.counters[model]['requests'].append(now)
-            self.counters[model]['tokens'] += estimated_tokens
+            raise LLMError(f"Could not acquire rate limit slot for {model} after {max_retries} attempts")
 
 class GeminiClient:
     """Production-ready Google Gemini client with rate limiting"""
@@ -82,7 +112,7 @@ class GeminiClient:
         self.rate_limiter = RateLimiter()
         self.client = genai.GenerativeModel('gemini-2.0-flash')
 
-    def generate_content(self, prompt: str, model: str = "gemini-2.0-flash", **kwargs) -> str:
+    def generate_content(self, prompt: str, model: str = "gemini-2.0-flash", retries: int = 3, **kwargs) -> str:
         """
         Generate content with automatic rate limiting and token tracking.
         
