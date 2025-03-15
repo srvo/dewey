@@ -570,7 +570,7 @@ class CodeConsolidator:
 def main() -> None:
     """Command line interface."""
     parser = argparse.ArgumentParser(description="Analyze and consolidate similar code functionality")
-    parser.add_argument("--dir", default=".", help="Directory to analyze")
+    parser.add_argument("directory", nargs='?', default=".", help="Directory to analyze (default: current directory)")
     parser.add_argument("--report", action="store_true", help="Generate HTML report")
     parser.add_argument("--process-file", help=argparse.SUPPRESS)  # Hidden arg for subprocesses
     
@@ -583,7 +583,7 @@ def main() -> None:
         print(json.dumps(result))
     else:
         # Normal mode
-        consolidator = CodeConsolidator(args.dir)
+        consolidator = CodeConsolidator(args.directory)
         consolidator.analyze_directory()
 
     if args.report:
