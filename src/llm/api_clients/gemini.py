@@ -3,7 +3,11 @@ import os
 import time
 import threading
 import google.generativeai as genai
+from dotenv import load_dotenv
 from llm.llm_utils import LLMError
+
+# Load environment variables from .env file
+load_dotenv()
 
 class RateLimiter:
     """Enforce Gemini API rate limits dynamically based on model"""
@@ -63,6 +67,7 @@ class GeminiClient:
     """Production-ready Google Gemini client with rate limiting"""
     
     def __init__(self, api_key: Optional[str] = None):
+        load_dotenv()  # Ensure .env is loaded
         """
         Initialize Gemini client with proper rate limiting.
         
