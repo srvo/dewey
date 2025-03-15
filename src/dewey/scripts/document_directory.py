@@ -4,8 +4,10 @@ import logging
 import argparse
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 from typing import List, Dict, Optional, Tuple
+from tqdm import tqdm
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -27,21 +29,22 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 class DirectoryDocumenter:
-    """
-    A tool to document directories by analyzing their contents and generating README files.
-    """
-
+    """Document directories with code analysis, quality checks, and structural validation."""
+    
     def __init__(self, root_dir: str = "."):
+        self.root_dir = Path(root_dir).resolve()
+        self._validate_directory()
+        
+        # Setup LLM clients
         gemini_api_key = os.getenv("GEMINI_API_KEY")
         deepinfra_api_key = os.getenv("DEEPINFRA_API_KEY")
-
         if not gemini_api_key:
-            logger.warning("GEMINI_API_KEY not found in .env. Gemini client may not function correctly.")
-        if not deepinfra_api_key:
-            logger.warning("DEEPINFRA_API_KEY not found in .env. DeepInfra client may not function correctly.")
+            logger.warning("GEMINI_API_KEY not found - Gemini client disabled")
+        if not deepinfra_api_key: 
+            logger.warning("DEEPINFRA_API_KEY not found - DeepInfra client disabled")
 
-        self.gemini_client = GeminiClient(api_key=gemini_api_key)
-        self.deepinfra_client = DeepInfraClient(api_key=deepinfra_api_key)
+        self.gemini_client = GeminiClient(api_key=gemini_api_key) if gemini_api_key else None
+        self.deepinfra_client = DeepInfraClient(api_key=deepinfra_api_key) if deepinfra_api_key else None
         self.conventions_path = CONVENTIONS_PATH  # Relative path to CONVENTIONS.md
         self.root_dir = Path(root_dir).resolve()
         self.checkpoint_file = self.root_dir / ".dewey_documenter_checkpoint.json"
@@ -52,8 +55,15 @@ class DirectoryDocumenter:
             logger.error(f"Could not find CONVENTIONS.md at {self.conventions_path}. Please ensure the path is correct.")
             sys.exit(1)
 
+    def _validate_directory(self) -> None:
+        """Ensure directory exists and is accessible."""
+        if not self.root_dir.exists():
+            raise FileNotFoundError(f"Directory not found: {self.root_dir}")
+        if not os.access(self.root_dir, os.R_OK):
+            raise PermissionError(f"Access denied to directory: {self.root_dir}")
+
     def _load_conventions(self) -> str:
-        """Load the project's coding conventions from CONVENTIONS.md."""
+        """Load project coding conventions from CONVENTIONS.md."""
         try:
             with open(self.conventions_path, "r") as f:
                 return f.read()
@@ -83,13 +93,23 @@ class DirectoryDocumenter:
         except Exception as e:
             logger.error(f"Could not save checkpoint file: {e}")
 
-    def _is_checkpointed(self, file_path: Path) -> bool:
-        """Check if a file has been checkpointed based on its content hash."""
+    def _calculate_file_hash(self, file_path: Path) -> str:
+        """Calculate SHA256 hash of file contents with size check."""
         try:
-            with open(file_path, "r") as f:
-                content = f.read()
-            content_hash = hashlib.sha256(content.encode()).hexdigest()
-            return self.checkpoints.get(str(file_path), None) == content_hash
+            file_size = file_path.stat().st_size
+            if file_size == 0:
+                return "empty_file"
+            with open(file_path, 'rb') as f:
+                return f"{file_size}_{hashlib.sha256(f.read()).hexdigest()}"
+        except Exception as e:
+            logger.error(f"Hash calculation failed for {file_path}: {e}")
+            raise
+
+    def _is_checkpointed(self, file_path: Path) -> bool:
+        """Check if a file has been processed based on content hash."""
+        try:
+            current_hash = self._calculate_file_hash(file_path)
+            return self.checkpoints.get(str(file_path)) == current_hash
         except Exception as e:
             logger.error(f"Could not read file to check checkpoint: {e}")
             return False
@@ -157,18 +177,74 @@ class DirectoryDocumenter:
             logger.error(f"Unexpected error during code analysis: {e}")
             raise
 
+    def _analyze_code_quality(self, file_path: Path) -> Dict:
+        """Run code quality checks using flake8 and ruff."""
+        results = {'flake8': [], 'ruff': []}
+        try:
+            # Run flake8
+            flake8_result = subprocess.run(
+                ['flake8', str(file_path)],
+                capture_output=True,
+                text=True
+            )
+            results['flake8'] = flake8_result.stdout.splitlines()
+            
+            # Run ruff
+            ruff_result = subprocess.run(
+                ['ruff', 'check', str(file_path)],
+                capture_output=True,
+                text=True
+            )
+            results['ruff'] = ruff_result.stdout.splitlines()
+        except Exception as e:
+            logger.error(f"Code quality analysis failed: {e}")
+        return results
+
+    def _analyze_directory_structure(self) -> Dict:
+        """Check directory structure against project conventions."""
+        expected_modules = [
+            "src/dewey/core", "src/dewey/llm", "src/dewey/pipeline", "src/dewey/utils",
+            "ui/screens", "ui/components", "config", "tests", "docs"
+        ]
+        
+        dir_structure = {}
+        deviations = []
+        
+        for root, dirs, files in os.walk(self.root_dir):
+            rel_path = Path(root).relative_to(self.root_dir)
+            if any(part.startswith('.') for part in rel_path.parts):
+                continue
+                
+            dir_structure[str(rel_path)] = {
+                'files': files,
+                'subdirs': dirs,
+                'expected': any(str(rel_path).startswith(m) for m in expected_modules)
+            }
+            
+            if not dir_structure[str(rel_path)]['expected'] and rel_path != Path('.'):
+                deviations.append(str(rel_path))
+                
+        return {'structure': dir_structure, 'deviations': deviations}
+
     def generate_readme(self, directory: Path, analysis_results: Dict[str, str]) -> str:
-        """
-        Generates a README.md file for the given directory based on the analysis results.
-        """
-        readme_content = f"# {directory.name}\n\n"
-        readme_content += "## Overview\n\n"
-        for filename, analysis in analysis_results.items():
-            readme_content += f"### {filename}\n{analysis}\n\n"
-
-        readme_content += "## Plans\n\n Future development plans for this directory.\n"  # Add a section for future plans
-
-        return readme_content
+        """Generate comprehensive README with quality and structure analysis."""
+        dir_analysis = self._analyze_directory_structure()
+        
+        readme_content = [
+            f"# {directory.name} Documentation",
+            "\n## Code Analysis",
+            *[f"### {fn}\n{analysis}" for fn, analysis in analysis_results.items()],
+            "\n## Code Quality",
+            *[f"### {fn}\n- Flake8: {len(data['flake8'])} issues\n- Ruff: {len(data['ruff'])} issues" 
+              for fn, data in analysis_results.items() if 'code_quality' in data],
+            "\n## Directory Structure",
+            f"- Expected Modules: {', '.join(dir_analysis['expected_modules'])}",
+            f"- Structural Deviations ({len(dir_analysis['deviations'])}):",
+            *[f"  - {d}" for d in dir_analysis['deviations']],
+            "\n## Future Development Plans\nTBD"
+        ]
+        
+        return '\n'.join(readme_content)
 
     def correct_code_style(self, code: str) -> str:
         """
