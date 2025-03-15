@@ -19,7 +19,7 @@ import spacy
 from spacy.lang.en.stop_words import STOP_WORDS
 from tqdm import tqdm
 
-from src.dewey.llm.llm_utils import generate_response
+from ..llm.llm_utils import generate_response
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
