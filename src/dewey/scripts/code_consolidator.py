@@ -3,6 +3,7 @@ Advanced code consolidation tool using AST analysis and semantic clustering to i
 similar functionality across scripts and suggest canonical implementations.
 """
 
+import argparse
 import ast
 import logging
 import os
