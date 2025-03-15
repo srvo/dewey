@@ -506,10 +506,32 @@ class CodeConsolidator:
         """Process a single file directly without subprocess."""
         try:
             functions = self._extract_functions(script_path)
+            # Store raw file content for full-text analysis
+            if self.vector_db:
+                self._cluster_files(script_path)
             return functions, script_path
         except Exception as e:
             logger.debug(f"Error processing {script_path}: {e}")
             return {}, script_path
+
+    def _cluster_files(self, script_path: Path) -> None:
+        """Store and cluster full file contents."""
+        try:
+            content = script_path.read_text(encoding="utf-8", errors="replace")[:50000]
+            file_id = str(script_path.relative_to(self.root_dir))
+            
+            self.vector_db.collection.upsert(
+                ids=[file_id],
+                embeddings=[self.vector_db.generate_embedding(content)],
+                documents=[content],
+                metadatas=[{
+                    "path": str(script_path),
+                    "type": "full_file",
+                    "content_hash": hashlib.md5(content.encode()).hexdigest()
+                }]
+            )
+        except Exception as e:
+            logger.debug(f"Failed to cluster file {script_path}: {e}")
 
     def _process_file_safe(self, script_path: Path) -> tuple:
         """Process file with formatting and analysis."""
