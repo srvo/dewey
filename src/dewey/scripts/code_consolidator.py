@@ -363,7 +363,9 @@ class CodeConsolidator:
     def _process_file_safe(self, script_path: Path) -> tuple:
         """Wrapper for isolated file processing."""
         try:
+            # Format first, then analyze
             self._preprocess_script(script_path)
+            logger.debug(f"Analyzing {script_path.name}...")
             functions = self._extract_functions(script_path)
             return functions, str(script_path)
         except Exception as e:
@@ -372,24 +374,37 @@ class CodeConsolidator:
 
     def _preprocess_script(self, script_path: Path) -> None:
         """Autoformat script using ruff and black."""
+        logger.info(f"Formatting {script_path.name}...")
         try:
-            # More aggressive cleaning of malformed files
-            subprocess.run(
+            # Run formatting with suppressed output unless there's an error
+            ruff_proc = subprocess.run(
                 ["ruff", "check", "--fix", "--unsafe-fixes", "--select", "ALL", str(script_path)],
-                check=True,
+                check=False,  # Don't raise on error
                 timeout=120,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL
+                capture_output=True,
+                text=True
             )
-            subprocess.run(
+            
+            black_proc = subprocess.run(
                 ["black", str(script_path)],
-                check=True,
+                check=False,  # Don't raise on error
                 timeout=60,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL
+                capture_output=True,
+                text=True
             )
-        except subprocess.CalledProcessError as e:
-            logger.warning(f"Formatting failed for {script_path}: {e}")
+            
+            # Only show output if there were errors
+            if ruff_proc.returncode != 0:
+                logger.debug(f"Ruff output for {script_path.name}:\n{ruff_proc.stderr}")
+            if black_proc.returncode != 0:
+                logger.debug(f"Black output for {script_path.name}:\n{black_proc.stderr}")
+                
+        except subprocess.TimeoutExpired:
+            logger.warning(f"Formatting timed out for {script_path.name}")
+        except Exception as e:
+            logger.warning(f"Formatting error for {script_path.name}: {e}")
+        finally:
+            logger.debug(f"Finished preprocessing {script_path.name}")
 
     def _analyze_function_context(self, node: ast.FunctionDef, source: str) -> str:
         """Analyze function context using NLP."""
