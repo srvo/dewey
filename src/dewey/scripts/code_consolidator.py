@@ -164,7 +164,8 @@ class CodeConsolidator:
                             'docstring': None,
                             'complexity': 1,  # Conservative estimate for fallback
                             'file_hash': self._file_hash(file_path),
-                            'ast_fallback': True
+                            'ast_fallback': True,
+                            'context': ""  # Empty context for manual parsing
                         }
                         current_function = func_name
                         in_function = True
@@ -201,9 +202,9 @@ class CodeConsolidator:
             # Create cluster key with structural and semantic features
             structural_key = (
                 name,
-                len(details['args']),
-                details['complexity'] // 5,
-                hashlib.md5(details['context'].encode()).hexdigest()[:8]
+                len(details.get('args', [])),
+                details.get('complexity', 1) // 5,
+                hashlib.md5(details.get('context', '').encode()).hexdigest()[:8]
             )
             details['_structural_key'] = structural_key
             self.function_clusters[structural_key].append((script_path, details))
@@ -350,21 +351,30 @@ class CodeConsolidator:
 
     def _analyze_function_context(self, node: ast.FunctionDef, source: str) -> str:
         """Analyze function context using NLP"""
-        nlp = spacy.load('en_core_web_sm')
-        context = []
-        
-        # Get full function text
-        func_text = ast.get_source_segment(source, node) or ''
-        doc = nlp(func_text)
-        
-        # Extract key entities and verbs
-        entities = {ent.lemma_.lower() for ent in doc.ents if ent.label_ in {'ORG', 'PRODUCT', 'NORP'}}
-        verbs = {token.lemma_ for token in doc if token.pos_ == 'VERB'}
-        nouns = {chunk.root.lemma_ for chunk in doc.noun_chunks}
-        
-        # Combine and filter stopwords
-        context_keywords = (entities | verbs | nouns) - STOP_WORDS
-        return ' '.join(sorted(context_keywords))
+        try:
+            # Check if spaCy model is installed
+            if not spacy.util.is_package("en_core_web_sm"):
+                logger.warning("spaCy model 'en_core_web_sm' not installed. Run: python -m spacy download en_core_web_sm")
+                return ""
+            
+            nlp = spacy.load('en_core_web_sm')
+            context = []
+            
+            # Get full function text
+            func_text = ast.get_source_segment(source, node) or ''
+            doc = nlp(func_text)
+            
+            # Extract key entities and verbs
+            entities = {ent.lemma_.lower() for ent in doc.ents if ent.label_ in {'ORG', 'PRODUCT', 'NORP'}}
+            verbs = {token.lemma_ for token in doc if token.pos_ == 'VERB'}
+            nouns = {chunk.root.lemma_ for chunk in doc.noun_chunks}
+            
+            # Combine and filter stopwords
+            context_keywords = (entities | verbs | nouns) - STOP_WORDS
+            return ' '.join(sorted(context_keywords))
+        except Exception as e:
+            logger.debug(f"NLP analysis failed: {str(e)}")
+            return ""
 
     def _batch_process_semantic_hashes(self):
         """Batch process semantic hashes using LLM in parallel"""
