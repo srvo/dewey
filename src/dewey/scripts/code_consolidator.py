@@ -84,34 +84,90 @@ class CodeConsolidator:
         """Parse AST to extract function definitions with context"""
         functions = {}
         try:
-            with open(file_path, 'r') as f:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                source = f.read()
                 try:
-                    tree = ast.parse(f.read(), filename=str(file_path))
+                    tree = ast.parse(source, filename=str(file_path))
+                    
+                    # Process AST nodes if parsing succeeded
+                    for node in ast.walk(tree):
+                        if isinstance(node, ast.FunctionDef):
+                            func_info = {
+                                'name': node.name,
+                                'args': [a.arg for a in node.args.args],
+                                'lineno': node.lineno,
+                                'docstring': ast.get_docstring(node),
+                                'complexity': self._calculate_complexity(node),
+                                'file_hash': self._file_hash(file_path)
+                            }
+                            functions[node.name] = func_info
+                    return functions
+                    
                 except SyntaxError as e:
                     error_msg = f"{file_path}: {e.msg} (line {e.lineno})"
                     logger.warning(f"Skipped due to syntax error: {error_msg}")
                     self.syntax_errors.append(error_msg)
-                    return {}
+                    # Fall back to line-by-line parsing for basic function detection
+                    return self._parse_functions_manually(source, file_path)
                 except Exception as e:
                     logger.warning(f"Unexpected error parsing {file_path}: {e}")
                     return {}
-                
-            for node in ast.walk(tree):
-                if isinstance(node, ast.FunctionDef):
-                    func_info = {
-                        'name': node.name,
-                        'args': [a.arg for a in node.args.args],
-                        'lineno': node.lineno,
-                        'docstring': ast.get_docstring(node),
-                        'complexity': self._calculate_complexity(node),
-                        'file_hash': self._file_hash(file_path)
-                    }
-                    functions[node.name] = func_info
-                    
+
         except Exception as e:
             logger.error(f"Failed to process {file_path}: {e}")
             return {}
             
+        return functions
+
+    def _parse_functions_manually(self, source: str, file_path: Path) -> Dict[str, dict]:
+        """Fallback function parser that uses simple pattern matching"""
+        functions = {}
+        current_function = None
+        in_function = False
+        indent_level = 0
+        
+        for i, line in enumerate(source.split('\n')):
+            try:
+                # Look for function definitions
+                if line.strip().startswith(('def ', 'async def ')):
+                    if 'def ' in line and '(' in line and '):' in line:
+                        func_name = line.split('def ')[1].split('(')[0].strip()
+                        params = line.split('(', 1)[1].split(')', 1)[0].strip()
+                        functions[func_name] = {
+                            'name': func_name,
+                            'args': [p.strip() for p in params.split(',') if p.strip()],
+                            'lineno': i+1,
+                            'docstring': None,
+                            'complexity': 1,  # Conservative estimate for fallback
+                            'file_hash': self._file_hash(file_path),
+                            'ast_fallback': True
+                        }
+                        current_function = func_name
+                        in_function = True
+                        indent_level = len(line) - len(line.lstrip())
+                        continue
+                
+                # Look for docstrings in function body
+                if in_function and current_function:
+                    stripped_line = line.strip()
+                    current_indent = len(line) - len(line.lstrip())
+                    
+                    # Check if we've left the function body
+                    if current_indent <= indent_level and not stripped_line.startswith('@'):
+                        in_function = False
+                        current_function = None
+                        continue
+                    
+                    # Capture docstring
+                    if stripped_line.startswith(('"""', "'''")):
+                        if not functions[current_function]['docstring']:
+                            # Remove quotes and leading leading/trailing whitespace
+                            doc = stripped_line[3:-3].strip() if len(stripped_line) > 6 else ''
+                            functions[current_function]['docstring'] = doc
+            except Exception as e:
+                logger.debug(f"Error parsing line {i+1} in {file_path}: {str(e)}")
+                continue
+        
         return functions
 
     def _cluster_functions(self, functions: Dict[str, dict], script_path: Path):
