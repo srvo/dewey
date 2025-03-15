@@ -2,6 +2,8 @@ from typing import Optional, Dict, Any, Tuple
 import os
 import time
 import threading
+import random
+import logging
 import google.generativeai as genai
 from dotenv import load_dotenv
 from llm.exceptions import LLMError
