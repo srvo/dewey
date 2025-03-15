@@ -1,7 +1,16 @@
 [project]
 name = "dewey"
 version = "0.1.0"
-description = "Add your description here"
+description = "Data unification and analysis framework"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "ibis-framework",
+    "duckdb",
+    "python-dotenv",
+    "ruff",
+    "pytest",
+    "ibis-duckdb",  # Explicit DuckDB backend
+    "requests",      # For API interactions
+    "pyyaml"         # Config file handling
+]
