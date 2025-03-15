@@ -344,8 +344,12 @@ class CodeConsolidator:
     def _preprocess_script(self, script_path: Path) -> None:
         """Autoformat script using ruff and black"""
         try:
-            subprocess.run(['ruff', 'check', '--fix', str(script_path)], check=True)
-            subprocess.run(['black', '--quiet', str(script_path)], check=True)
+            # More aggressive cleaning of malformed files
+            subprocess.run([
+                'ruff', 'check', '--fix', '--unsafe-fixes', 
+                '--fixable', 'ALL', '--max-fix-attempts=5', str(script_path)
+            ], check=True)
+            subprocess.run(['black', str(script_path)], check=True)  # Remove quiet for better diagnostics
         except subprocess.CalledProcessError as e:
             logger.warning(f"Formatting failed for {script_path}: {e}")
 
