@@ -229,7 +229,6 @@ class CodeConsolidator:
             line = line.expandtabs(4)  # Normalize tabs to spaces
             stripped_line = line.strip()
             
-            try            
             try:
                 # Handle multi-line function definitions
                 if line_buffer:
