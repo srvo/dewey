@@ -345,7 +345,8 @@ class CodeConsolidator:
         """Autoformat script using ruff and black"""
         try:
             # More aggressive cleaning of malformed files
-            subprocess.run                'ruff', 'check', '--fix', '--unsafe-fixes',
+            subprocess.run([
+                'ruff', 'check', '--fix', '--unsafe-fixes',
                 '--select', 'ALL', str(script_path)
             ], check=True)
             subprocess.run(['black', str(script_path)], check=True)  # Remove quiet for better diagnostics
