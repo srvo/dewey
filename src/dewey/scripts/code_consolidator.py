@@ -8,6 +8,7 @@ import hashlib
 import json
 import logging
 import os
+import sys
 import subprocess
 import threading
 from collections import defaultdict
