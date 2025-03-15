@@ -256,7 +256,7 @@ class ScriptMover:
 
     def _read_current_dependencies(self) -> List[str]:
         """Read current dependencies from pyproject.toml."""
-        pyproject_path = self.root_path / 'pyproject.toml'
+        pyproject_path = Path(__file__).parent.parent / 'pyproject.toml'
         with open(pyproject_path) as f:
             content = f.read()
             
@@ -265,7 +265,7 @@ class ScriptMover:
 
     def _update_pyproject(self, new_deps: List[str]) -> None:
         """Update pyproject.toml with new dependencies."""
-        pyproject_path = self.root_path / 'pyproject.toml'
+        pyproject_path = Path(__file__).parent.parent / 'pyproject.toml'
         with open(pyproject_path, 'a') as f:
             f.write('\n' + '\n'.join(f'    "{dep}",' for dep in new_deps))
 
