@@ -35,5 +35,9 @@ dependencies = [
     "asyncpg",
     "tomli-w", # For proper TOML handling # Required for OpenRouter client
     "httpx",
+    "tqdm",
+    "flake8",
+    "google-generativeai",
+    "openai",
     "humanize",
 ]
