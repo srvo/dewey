@@ -197,8 +197,8 @@ class DirectoryAnalyzer:
             
             for file_path in tqdm(all_files, desc="Analyzing files"):
                 try:
-                    if file_path.suffix not in ['.py', '.md', '.yaml']:
-                        continue
+                    if file_path.suffix != '.py':
+                        continue  # Only analyze Python files
                         
                     analysis = self._analyze_file(file_path)
                     analysis['code_quality'] = self._analyze_code_quality(file_path)
