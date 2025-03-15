@@ -29,3 +29,5 @@ x Set up the initial project repository on Git (set up athttps://github.com/srvo
 x Review generated conventions.md
 x Ensure Python 3.12 + uv setup
 x Decide first core module (Accounting)
+x Generate complete `pyproject.toml` with dependencies
+x Create core directory structure
