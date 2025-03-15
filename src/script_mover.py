@@ -79,7 +79,13 @@ class ScriptMover:
 
         script_count = 0
         
+        exclude_dirs = [re.compile(p) for p in self.config.get('exclude_patterns', [])]
+        
         for root, _, files in os.walk(target_dir):
+            # Skip excluded directories
+            if any(pattern.search(root) for pattern in exclude_dirs):
+                continue
+                
             for file in files:
                 script_path = Path(root) / file
                 if self._is_script_file(file):

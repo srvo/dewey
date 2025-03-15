@@ -15,6 +15,11 @@ file_patterns:
     - '\.py$'
     - '\.ipynb$'
 
+exclude_patterns:
+    - '\.venv/'
+    - '/venv/'
+    - 'site-packages/'
+
 llm_settings:
     model: "gemini-2.0-flash"
     temperature: 0.3

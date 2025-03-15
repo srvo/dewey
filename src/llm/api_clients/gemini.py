@@ -100,6 +100,7 @@ class GeminiClient:
     
     def __init__(self, api_key: Optional[str] = None):
         load_dotenv()  # Ensure .env is loaded
+        self.logger = logging.getLogger('GeminiClient')
         """
         Initialize Gemini client with proper rate limiting.
         
@@ -143,7 +144,7 @@ class GeminiClient:
                 )
             except Exception as e:
                 if "RPM" in str(e) or "rate limit" in str(e).lower():
-                    self.logger.warning(f"Rate limit hit on {model}, falling back to flash-lite")
+                    logging.warning(f"Rate limit hit on {model}, falling back to flash-lite")
                     return self.generate_content(
                         prompt,
                         model="gemini-2.0-flash-lite",
