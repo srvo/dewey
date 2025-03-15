@@ -42,9 +42,16 @@ def find_duplicates(root_dir: str) -> Dict[Tuple[str, int], List[Path]]:
     
     logger.info(f"Starting duplicate scan in {root_path}")
     
-    for dirpath, _, filenames in os.walk(root_path):
+    if not root_path.exists():
+        raise FileNotFoundError(f"Directory {root_path} does not exist")
+    
+    # Convert Path to string for os.walk compatibility
+    for dirpath, _, filenames in os.walk(str(root_path)):
         for filename in filenames:
             file_path = Path(dirpath) / filename
+            if not file_path.is_file():
+                continue  # Skip directories/symlinks etc
+                
             try:
                 file_size = file_path.stat().st_size
                 file_hash = calculate_file_hash(file_path)
