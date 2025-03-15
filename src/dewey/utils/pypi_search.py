@@ -31,29 +31,44 @@ def search_pypi(package_name) -> None:
 
 def search_pypi_general(query) -> None:
     """Searches PyPI for packages based on a general query and logs the results."""
-    url = f"https://pypi.org/search/?q={query}&format=json"
+    headers = {'Accept': 'application/json'}
     try:
-        response = requests.get(url)
+        response = requests.get(
+            "https://pypi.org/search/",
+            params={'q': query, 'format': 'json'},
+            headers=headers
+        )
         response.raise_for_status()
+        
+        # Verify we got JSON response
+        if 'application/json' not in response.headers.get('Content-Type', ''):
+            logger.error("Received non-JSON response from PyPI search API")
+            return
+            
         data = response.json()
         results = data.get("results", [])
+        
         if not results:
             logger.info(f"No results found for query: '{query}'")
             return
+            
         for result in results:
+            # Handle potential missing fields
             package_info = (
-                f"Package: {result['name']}\n"
-                f"Version: {result['version']}\n"
-                f"Summary: {result['summary']}\n"
-                f"Project URL: {result['url']}\n"
+                f"Package: {result.get('name', 'N/A')}\n"
+                f"Version: {result.get('version', 'N/A')}\n"
+                f"Summary: {result.get('summary', 'No description')}\n"
+                f"Project URL: {result.get('url', '#')}\n"
                 f"{'-' * 20}"
             )
             logger.info(package_info)
 
     except requests.exceptions.RequestException as e:
-        logger.exception(f"Error: {e}")
-    except json.JSONDecodeError:
-        logger.exception("Error: Invalid JSON response from PyPI.")
+        logger.error(f"API request failed: {str(e)}")
+    except json.JSONDecodeError as e:
+        logger.error(f"Failed to parse response: {str(e)}")
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
 
 # Example usage:
 search_pypi("pandas")
