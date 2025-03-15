@@ -6,7 +6,7 @@ import random
 import logging
 import google.generativeai as genai
 from dotenv import load_dotenv
-from llm.exceptions import LLMError
+from dewey.llm.exceptions import LLMError
 
 # Load environment variables from .env file
 load_dotenv()
