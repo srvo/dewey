@@ -363,10 +363,10 @@ class CodeConsolidator:
     def _process_file_safe(self, script_path: Path) -> tuple:
         """Wrapper for isolated file processing."""
         try:
-            # Format first, then analyze
-            self._preprocess_script(script_path)
+            # Format first, then analyze - sequential for each file
+            self._preprocess_script(script_path)  # Blocking format
             logger.debug(f"Analyzing {script_path.name}...")
-            functions = self._extract_functions(script_path)
+            functions = self._extract_functions(script_path)  # Then analysis
             return functions, str(script_path)
         except Exception as e:
             logger.debug(f"Error processing {script_path}: {e}")
