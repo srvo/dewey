@@ -197,8 +197,9 @@ class ScriptMover:
         
         # Try primary model just once before falling back
         try:
-            model = next((m for m in self.config['llm_settings']['models'] 
-                        if not self.llm_client.rate_limiter.is_in_cooldown(m)), None)
+            available_models = [m for m in self.config['llm_settings']['models']
+                              if not self.llm_client.rate_limiter.is_in_cooldown(m)]
+            model = available_models[0] if available_models else None
             
             if model:
                 response = generate_response(

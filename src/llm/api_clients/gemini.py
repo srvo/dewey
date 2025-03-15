@@ -171,9 +171,15 @@ class GeminiClient:
             
         except Exception as e:
             if retries > 0 and "429" in str(e):
-                jitter = random.uniform(0.1, 0.5)
+                jitter = random.uniform(0.1, 055)
                 backoff = (2 ** (3 - retries)) + jitter
                 self.logger.warning(f"API error: {str(e)}. Retrying in {backoff:.2f}s ({retries} left)")
                 time.sleep(backoff)
                 return self.generate_content(prompt, model=model, retries=retries-1, **kwargs)
+            
+            # Add model to cooldown if quota exhausted
+            if "quota" in str(e).lower():
+                self.rate_limiter.cooldowns[model] = time.time() + (self.rate_limiter.cooldown_minutes * 60)
+                self.logger.error(f"Quota exhausted for {model}, cooling down for {self.rate_limiter.cooldown_minutes} minutes")
+                
             raise LLMError(f"Gemini API error: {str(e)}") from e
