@@ -51,10 +51,11 @@ class CodeConsolidator:
         self._analyze_clusters()
         
     def _find_script_files(self) -> List[Path]:
-        """Find all Python files in the directory, excluding tests and venv"""
+        """Find all Python files in the directory, excluding tests, venv, and data directories"""
+        excluded_dirs = {'test', '.venv', 'docs', 'deploy', 'config', 'ingest_data'}
         return [
             f for f in self.root_dir.rglob('*.py')
-            if 'test' not in f.parts and '.venv' not in f.parts
+            if not any(d in excluded_dirs for d in f.parts)
         ]
 
     def _extract_functions(self, file_path: Path) -> Dict[str, dict]:
@@ -62,7 +63,14 @@ class CodeConsolidator:
         functions = {}
         try:
             with open(file_path, 'r') as f:
-                tree = ast.parse(f.read(), filename=str(file_path))
+                try:
+                    tree = ast.parse(f.read(), filename=str(file_path))
+                except SyntaxError as e:
+                    logger.warning(f"Skipped {file_path} due to syntax error: {e}")
+                    return {}
+                except Exception as e:
+                    logger.warning(f"Unexpected error parsing {file_path}: {e}")
+                    return {}
                 
             for node in ast.walk(tree):
                 if isinstance(node, ast.FunctionDef):
@@ -77,7 +85,8 @@ class CodeConsolidator:
                     functions[node.name] = func_info
                     
         except Exception as e:
-            logger.error(f"Failed to parse {file_path}: {e}")
+            logger.error(f"Failed to process {file_path}: {e}")
+            return {}
             
         return functions
 
