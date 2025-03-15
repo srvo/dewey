@@ -150,7 +150,7 @@ class ScriptMover:
         
         response = generate_response(
             prompt,
-            model="gemini-1.5-flash",
+            model=self.config['llm_settings']['model'],
             system_message="You are a Python code analysis assistant. Be concise and precise."
         )
         

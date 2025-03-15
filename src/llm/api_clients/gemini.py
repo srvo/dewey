@@ -80,7 +80,7 @@ class GeminiClient:
             
         genai.configure(api_key=self.api_key)
         self.rate_limiter = RateLimiter()
-        self.client = genai.GenerativeModel('gemini-pro')
+        self.client = genai.GenerativeModel('gemini-2.0-flash')
 
     def generate_content(self, prompt: str, model: str = "gemini-2.0-flash", **kwargs) -> str:
         """
