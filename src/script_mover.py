@@ -14,7 +14,10 @@ from llm.api_clients.gemini import GeminiClient
 class ScriptMover:
     """Refactor scripts into the Dewey project structure with LLM-assisted analysis."""
     
-    def __init__(self, config_path: str = "config/script_mover.yaml"):
+    def __init__(self, config_path: Optional[str] = None):
+        # Set default config path relative to project root
+        if config_path is None:
+            config_path = Path(__file__).parent.parent / "config" / "script_mover.yaml"
         self.config = self._load_config(config_path)
         self.logger = self._setup_logging()
         self.llm_client = GeminiClient()
@@ -29,7 +32,12 @@ class ScriptMover:
     def _load_config(self, config_path: str) -> Dict:
         """Load configuration from YAML file."""
         try:
-            with open(config_path) as f:
+            # Try to find config relative to project root if path doesn't exist
+            config_path = Path(config_path)
+            if not config_path.exists():
+                config_path = Path(__file__).parent.parent / config_path
+            
+            with open(config_path, "r") as f:
                 return yaml.safe_load(f)
         except Exception as e:
             raise RuntimeError(f"Failed to load config: {str(e)}") from e

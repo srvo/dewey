@@ -10,11 +10,10 @@ module_paths:
   accounting: "core/accounting/"
   research: "core/research/"
   investment_performance: "core/research/investment_performance/"
-  investment_research: "core/research/port
 
 file_patterns:
-  - \.py$
-  - \.ipynb$
+  - '\.py$'
+  - '\.ipynb$'
 
 llm_settings:
   model: "gemini-2.0-flash"
