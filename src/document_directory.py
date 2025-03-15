@@ -159,7 +159,7 @@ class DirectoryAnalyzer:
         deviations = []
         
         for root, dirs, files in os.walk(self.root_dir):
-            rel_path = Path(root).relative_to(self_dir_dir)
+            rel_path = Path(root).relative_to(self.root_dir)
             
             # Skip hidden directories
             if any(part.startswith('.') for part in rel_path.parts):
