@@ -43,8 +43,8 @@ logger.addHandler(handler)
 logger.propagate = False  # Prevent duplicate output
 
 class CodeConsolidator:
-    """Identifies similar functionality across scripts using AST analysis and LLM-assisted clustering."""
-
+    """Identifies similar functionality across scripts using AST analysis and vector similarity."""
+    
     def __init__(self, root_dir: str = ".") -> None:
         self.root_dir = Path(root_dir).expanduser().resolve()
         self.function_clusters = defaultdict(list)
@@ -54,7 +54,20 @@ class CodeConsolidator:
         self.checkpoint_file = self.root_dir / ".code_consol_checkpoint.json"
         self.llm_client = self._init_llm_clients()
         self.lock = threading.Lock()
+        self.vector_db = self._init_vector_db()
         self._load_checkpoint()
+
+    def _init_vector_db(self):
+        """Initialize vector database with error handling."""
+        try:
+            from src.dewey.utils.vector_db import VectorStore
+            return VectorStore()
+        except ImportError as e:
+            logger.error(f"Vector database disabled: {e}")
+            return None
+        except Exception as e:
+            logger.error(f"Failed to initialize vector database: {e}")
+            return None
 
     def _init_llm_clients(self) -> bool | None:
         """Initialize LLM client with retries and fallback."""
