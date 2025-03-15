@@ -33,7 +33,8 @@ class VectorStore:
         embedding = self.generate_embedding(context)
         self.collection.upsert(
             ids=[function_id],
-            embeddings=[embedding            documents=[context],
+            embeddings=[embedding],
+            documents=[context],
             metadatas=[metadata]
         )
     
