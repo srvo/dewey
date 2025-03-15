@@ -248,24 +248,6 @@ class CodeConsolidator:
                 
         return "\n".join(report)
 
-def main():
-    """Command line interface"""
-    parser = argparse.ArgumentParser(description="Analyze and consolidate similar code functionality")
-    parser.add_argument('--dir', default='.', help="Directory to analyze")
-    parser.add_argument('--report', action='store_true', help="Generate HTML report")
-    args = parser.parse_args()
-    
-    consolidator = CodeConsolidator(args.dir)
-    consolidator.analyze_directory()
-    
-    if args.report:
-        report_path = Path(args.dir) / "code_consolidation_report.md"
-        with open(report_path, 'w') as f:
-            f.write(consolidator.generate_report())
-        logger.info(f"Report saved to {report_path}")
-
-if __name__ == "__main__":
-    main()
     def _process_file(self, script_path: Path) -> tuple:
         """Process a single file and return results (for parallel execution)"""
         functions = self._extract_functions(script_path)
@@ -332,3 +314,22 @@ if __name__ == "__main__":
                 logger.info(f"Loaded checkpoint with {len(self.processed_files)} processed files")
             except Exception as e:
                 logger.error(f"Failed to load checkpoint: {e}")
+
+def main():
+    """Command line interface"""
+    parser = argparse.ArgumentParser(description="Analyze and consolidate similar code functionality")
+    parser.add_argument('--dir', default='.', help="Directory to analyze")
+    parser.add_argument('--report', action='store_true', help="Generate HTML report")
+    args = parser.parse_args()
+    
+    consolidator = CodeConsolidator(args.dir)
+    consolidator.analyze_directory()
+    
+    if args.report:
+        report_path = Path(args.dir) / "code_consolidation_report.md"
+        with open(report_path, 'w') as f:
+            f.write(consolidator.generate_report())
+        logger.info(f"Report saved to {report_path}")
+
+if __name__ == "__main__":
+    main()
