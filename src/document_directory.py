@@ -142,17 +142,29 @@ class DirectoryAnalyzer:
             logger.critical(f"Analysis failed: {str(e)}", exc_info=True)
             raise
 
+def find_git_root(path: Path = Path.cwd()) -> Path:
+    """Find the root directory of the git repository."""
+    while path != path.parent:
+        if (path / ".git").exists():
+            return path
+        path = path.parent
+    return Path.cwd()  # Fallback to current directory if no git repo found
+
 if __name__ == "__main__":
     import argparse
     
     parser = argparse.ArgumentParser(description="Analyze directory for code consolidation opportunities")
-    parser.add_argument("directory", help="Directory to analyze")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Enable debug logging")
+    parser.add_argument("directory", 
+                      help="Directory to analyze (default: git root)",
+                      nargs="?",
+                      default=find_git_root())
+    parser.add_argument("-",", "--verbose", action="store_true", help="Enable debug logging")
     args = parser.parse_args()
     
     if args.verbose:
         logger.setLevel(logging.DEBUG)
     
+    logger.info(f"Analyzing directory: {args.directory}")
     analyzer = DirectoryAnalyzer(args.directory)
     report = analyzer.analyze_directory()
     
