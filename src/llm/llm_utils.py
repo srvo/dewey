@@ -8,7 +8,6 @@ def generate_response(
     prompt: str,
     model: str = "gemini-2.0-flash", 
     temperature: float = 0.7,
-    max_tokens: int = 1000,
     system_message: Optional[str] = None,
     api_key: Optional[str] = None
 ) -> str:
@@ -35,7 +34,6 @@ def generate_response(
             prompt=prompt,
             model=model,
             temperature=temperature,
-            max_tokens=max_tokens,
             system_message=system_message
         )
     except Exception as e:
