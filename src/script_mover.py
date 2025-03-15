@@ -14,7 +14,7 @@ class ScriptMover:
     def __init__(self, config_path: str = "config/script_mover.yaml"):
         self.config = self._load_config(config_path)
         self.logger = self._setup_logging()
-        self.llm_client = DeepInfraClient()
+        self.llm_client = GeminiClient()
         
         # Initialize directory structure from config
         self.root_path = Path(self.config['project_root'])
