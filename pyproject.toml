@@ -35,4 +35,5 @@ dependencies = [
     "asyncpg",
     "tomli-w", # For proper TOML handling # Required for OpenRouter client
     "httpx",
+    "humanize",
 ]
