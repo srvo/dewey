@@ -1,5 +1,3 @@
-# Configuration for script migration
-project_root: "src/dewey"
  module_paths:
    core: "core/"
    llm: "llm/"
@@ -9,11 +7,10 @@ project_root: "src/dewey"
    accounting: "core/accounting/"
    research: "core/research/"
    investment_performance: "core/research/investment_performance/"
-   investment_research: "core/research/port
 
  file_patterns:
-   - \.py$
-   - \.ipynb$
+   - '\.py$'
+   - '\.ipynb$'
 
  llm_settings:
    model: "gemini-2.0-flash"
