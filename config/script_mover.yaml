@@ -1,0 +1,19 @@
+# Configuration for script migration
+project_root: "src/dewey"
+
+module_paths:
+  core: "core/"
+  llm: "llm/"
+  pipeline: "pipeline/"
+  ui: "ui/"
+  utils: "utils/"
+  accounting: "core/accounting/"
+
+file_patterns:
+  - \.py$
+  - \.ipynb$
+
+llm_settings:
+  model: "meta-llama/Meta-Llama-3-8B-Instruct"
+  temperature: 0.3
+  max_tokens: 4000
