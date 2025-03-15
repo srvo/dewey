@@ -7,8 +7,7 @@
 
 ## Human Tasks
 
-- Set up the initial project repository on Git
-- Create the `.gitignore` file based on conventions.md
+x Set up the initial project repository on Git (set up athttps://github.com/srvo/dewey)
 - Set up the `config/` directory with placeholder files
 - Review existing repositories for migration candidates
 
