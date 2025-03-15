@@ -19,6 +19,8 @@ exclude_patterns:
     - '\.venv/'
     - '/venv/'
     - 'site-packages/'
+    - '/django/'  # Skip Django framework scripts
+    - 'manage.py'  # Skip Django management scripts
 
 llm_settings:
     models:
