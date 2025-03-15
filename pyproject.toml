@@ -28,7 +28,6 @@ dependencies = [
     "duckduckgo-search",
     "ratelimit",
     "botocore",
-    "nextcloud_client",
     "psycopg2-binary",
     "coverage",
     "ulid-py",
