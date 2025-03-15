@@ -18,12 +18,21 @@ x books
 - bin
 - agents
 
-## LLM Tasks
+## Documentation
 
-### High Priority
-ensure various scripts are neatly integrated and well documented
+### PRD Development (High Priority)
+1. [ ] Core Module PRD - Data ingestion, processing, analysis
+2. [ ] LLM Integration PRD - API clients, rate limiting, model management  
+3. [ ] Pipeline Architecture PRD - Read/Resolve/Unify stages
+4. [ ] UI Components PRD - Screen hierarchy and data flow
+5. [ ] Deployment Strategy PRD - Cloud integration and scaling
 
-### Medium Priority
+### LLM Tasks
+
+#### High Priority
+- Ensure various scripts are neatly integrated and well documented
+
+#### Medium Priority
 6. LLM helper functions foundation
 7. Google Gemini API scaffolding
 8. Documentation initialization
