@@ -48,8 +48,9 @@ logger.propagate = False  # Prevent duplicate output
 class CodeConsolidator:
     """Identifies similar functionality across scripts using AST analysis and vector similarity."""
 
-    def __init__(self, root_dir: str = ".") -> None:
+    def __init__(self, root_dir: str = ".", max_files: int | None = None) -> None:
         self.root_dir = Path(root_dir).expanduser().resolve()
+        self.max_files = max_files
         self.function_clusters = defaultdict(list)
         self.script_analysis = {}
         self.syntax_errors = []
@@ -101,9 +102,15 @@ class CodeConsolidator:
 
         # Filter out already processed files
         new_scripts = [s for s in scripts if str(s) not in self.processed_files]
-        logger.info(
-            f"Resuming from checkpoint - {len(new_scripts)}/{len(scripts)} new files to process"
-        )
+        
+        # Apply max files limit if specified
+        if self.max_files:
+            new_scripts = new_scripts[:self.max_files]
+            logger.info(f"Processing first {self.max_files} files due to --max-files flag")
+        else:
+            logger.info(
+                f"Resuming from checkpoint - {len(new_scripts)}/{len(scripts)} new files to process"
+            )
 
         # Process files in parallel with aggressive resource utilization
         with ThreadPoolExecutor(max_workers=os.cpu_count() * 4) as executor:
@@ -636,6 +643,11 @@ def main() -> None:
         help="Directory to analyze (default: current directory)",
     )
     parser.add_argument("--report", action="store_true", help="Generate HTML report")
+    parser.add_argument(
+        "--max-files",
+        type=int,
+        help="Maximum number of files to process (for testing)"
+    )
     parser.add_argument(
         "--process-file", help=argparse.SUPPRESS
     )  # Hidden arg for subprocesses
