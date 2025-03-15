@@ -10,6 +10,7 @@ from typing import Dict, List, Optional
 import yaml
 import ast
 from dewey.llm.llm_utils import generate_response, generate_analysis_response, parse_llm_yaml_response
+from dewey.llm.api_clients.gemini import RateLimiter
 from dewey.llm.api_clients.gemini import GeminiClient
 from dewey.llm.api_clients.deepinfra import DeepInfraClient
 from dewey.llm.exceptions import LLMError
