@@ -14,6 +14,7 @@ from llm.api_clients.gemini import GeminiClient
 from llm.api_clients.deepinfra import DeepInfraClient
 from llm.exceptions import LLMError
 import hashlib
+from dewey.utils.pypi_search import search_pypi
 
 class ScriptMover:
     """Refactor scripts into the Dewey project structure with LLM-assisted analysis."""
@@ -399,17 +400,10 @@ class ScriptMover:
             self.logger.info(f"Added validated dependencies: {', '.join(valid_deps)}")
 
     def _validate_dependency(self, dep: str) -> bool:
-        """Verify dependency exists on PyPI using pip search."""
+        """Verify dependency exists on PyPI using PyPI API."""
+        from dewey.utils.pypi_search import search_pypi
         try:
-            import subprocess
-            result = subprocess.run(
-                ['pip', 'search', '--disable-pip-version-check', dep],
-                capture_output=True,
-                text=True,
-                timeout=10
-            )
-            # Check if package exists (successful search result)
-            return result.returncode == 0 and len(result.stdout.strip()) > 0
+            return search_pypi(dep) is not None
         except Exception as e:
             self.logger.error(f"Dependency validation failed for {dep}: {str(e)}")
             return False
