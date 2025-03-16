@@ -29,7 +29,7 @@ class VectorStore:
             timeout: Timeout in seconds for DB operations
 
         """
-        from dewey.config import load_config
+        from src.dewey.config import load_config
 
         config = load_config().get("vector_stores", {}).get(config_name, {})
 

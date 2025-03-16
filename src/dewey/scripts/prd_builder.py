@@ -43,7 +43,7 @@ class PRDManager:
     def _discover_modules(self) -> list[dict]:
         """Discover project modules with LLM-powered classification."""
         modules = []
-        for path in self.root_dir.glob("src/dewey/**/*.py"):
+        for path in self.root_dir.glob("src/dewey/core/**/*.py"):  # Focus on core modules
             if path.name == "__init__.py" or not path.is_file():
                 continue
             
