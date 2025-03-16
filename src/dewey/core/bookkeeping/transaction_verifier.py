@@ -4,6 +4,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from typing import Any
 
 from prompt_toolkit import prompt
 from prompt_toolkit.shortcuts import confirm
@@ -12,7 +13,7 @@ from prompt_toolkit.shortcuts import confirm
 project_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.dewey.core.bookkeeping.classification_engine import ClassificationEngine, ClassificationError
+from src.dewey.core.bookkeeping.classification_engine import ClassificationEngine, ClassificationError # type: ignore
 from src.dewey.llm.api_clients.deepinfra import classify_errors
 
 # Import AFTER path configuration
@@ -20,6 +21,7 @@ from dotenv import find_dotenv, load_dotenv
 from src.dewey.core.bookkeeping.writers.journal_writer_fab1858b import JournalWriter
 
 # Load environment variables from nearest .env file
+# File header: Verifies transaction classifications and allows for correction via user feedback.
 load_dotenv(find_dotenv())
 
 logging.basicConfig(
@@ -29,7 +31,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Configure DeepInfra
+
 deepinfra_api_key = os.getenv("DEEPINFRA_API_KEY")
 model_name = os.getenv("DEEPINFRA_DEFAULT_MODEL")
 
@@ -41,7 +43,7 @@ if not model_name:
     sys.exit(1)
 
 
-class ClassificationVerifier:
+class ClassificationVerifier: # type: ignore
     def __init__(self, rules_path: Path, journal_path: Path) -> None:
         self.engine = ClassificationEngine(rules_path)
         self.writer = JournalWriter(journal_path.parent)
@@ -54,7 +56,7 @@ class ClassificationVerifier:
         return self.engine.categories
 
     def get_ai_suggestion(self, description: str) -> str:
-        """Get AI classification suggestion using DeepInfra."""
+        """Get AI classification suggestion using DeepInfra. """
         try:
             response = classify_errors(
                 [f"Classify transaction: '{description}'"],
@@ -66,7 +68,7 @@ class ClassificationVerifier:
             return ""
 
     def get_transaction_samples(self, limit: int = 50) -> list[dict]:
-        """Get sample transactions using hledger + DuckDB."""
+        """Get sample transactions using hledger + DuckDB. """
         try:
             # Get CSV data directly from hledger
             cmd = [
@@ -123,7 +125,7 @@ class ClassificationVerifier:
             return []
 
     def prompt_for_feedback(self, tx: dict) -> None:
-        """Interactive prompt for transaction verification."""
+        """Interactive prompt for transaction verification. """
         if not isinstance(tx, dict):
             logger.error("Invalid transaction format - expected dict, got %s", type(tx))
             return
@@ -169,7 +171,7 @@ class ClassificationVerifier:
             logger.debug("Problematic transaction data: %s", tx)
 
     def generate_report(self, total: int) -> None:
-        """Generate verification session summary."""
+        """Generate verification session summary. """
         if self.processed_feedback > 0:
             pass
 
@@ -205,4 +207,4 @@ if __name__ == "__main__":
         sys.exit(1)
 
     verifier = ClassificationVerifier(rules_path, journal_path)
-    verifier.main()
+    verifier.main() # type: ignore
