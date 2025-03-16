@@ -33,6 +33,12 @@ class LegacyRefactor:
     def __init__(self, dry_run: bool = False):
         self.dry_run = dry_run
         self.legacy_files = self.find_legacy_files()
+        self.decision_log = []
+        self.log_file = Path("refactor_decisions.log")
+        # Initialize log with header
+        if not self.log_file.exists():
+            with open(self.log_file, "w", encoding="utf-8") as f:
+                f.write("timestamp,source_path,original_target,final_target,conflict_detected,action_taken\n")
         
     def find_legacy_files(self) -> List[Path]:
         """Find all legacy files using hash suffix pattern."""
@@ -70,8 +76,17 @@ class LegacyRefactor:
                 target_dir = Path("src/dewey/legacy_functions")
             
             # Ensure unique filename
-            target = self._get_unique_filename(target_dir, base_name)
+            target, original_target, conflict = self._get_unique_filename(target_dir, base_name)
             self.validate_target(target)
+            
+            # Log decision making
+            self._log_decision(
+                source=source,
+                original_target=original_target,
+                final_target=target,
+                conflict_detected=conflict,
+                action_taken="moved" if not conflict else "renamed"
+            )
             
             if not self.dry_run:
                 shutil.move(str(source), str(target))
@@ -125,13 +140,22 @@ class LegacyRefactor:
         return any((d / f"{filename}.py").exists() for d in search_dirs)
 
     def _get_unique_filename(self, target_dir: Path, base_name: str) -> Path:
-        """Generate unique filename to avoid conflicts."""
-        target = target_dir / f"{base_name}.py"
-        counter = 1
-        while target.exists():
-            target = target_dir / f"{base_name}_{counter}.py"
-            counter += 1
-        return target
+        """Generate unique filename with conflict resolution."""
+        original_target = target_dir / f"{base_name}.py"
+        target = original_target
+        conflict = False
+        
+        if target.exists():
+            base_name += "_tocheck"
+            target = target_dir / f"{base_name}.py"
+            conflict = True
+            # If _tocheck version exists, add counter
+            counter = 1
+            while target.exists():
+                target = target_dir / f"{base_name}_{counter}.py"
+                counter += 1
+                
+        return target, original_target, conflict
 
     def _add_refactoring_metadata(self, target: Path, original_name: str) -> None:
         """Add refactoring metadata as a comment at the top of the file."""
@@ -144,6 +168,23 @@ class LegacyRefactor:
             content = f.read()
             f.seek(0, 0)
             f.write(metadata + content)
+
+    def _log_decision(self, source: Path, original_target: Path, final_target: Path, 
+                    conflict_detected: bool, action_taken: str) -> None:
+        """Log refactoring decisions for future analysis."""
+        log_entry = {
+            "timestamp": datetime.now().isoformat(),
+            "source_path": str(source),
+            "original_target": str(original_target),
+            "final_target": str(final_target),
+            "conflict_detected": str(conflict_detected),
+            "action_taken": action_taken
+        }
+        self.decision_log.append(log_entry)
+        
+        # Append to log file
+        with open(self.log_file, "a", encoding="utf-8") as f:
+            f.write(",".join(log_entry.values()) + "\n")
 
     def update_references(self, old_path: Path, new_path: Path) -> None:
         """Update imports and references using Ruff."""
