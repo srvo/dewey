@@ -17,7 +17,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def _clean_category(category: str) -> str:
+def clean_category(category: str) -> str:
     """Cleans and standardizes the category string.
 
     Args:
