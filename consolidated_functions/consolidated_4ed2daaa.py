@@ -45,14 +45,14 @@ def validate_environment(model: str) -> dict[str, str]:
     return os.environ
 
 
-class EveryLLM:
+class LLMClient:
     """
     A class that encapsulates interaction with various LLM models using LiteLLM and Instructor.
     """
 
     def __init__(self, model: str):
         """
-        Initializes EveryLLM with a specified model.
+        Initializes LLMClient with a specified model.
 
         Args:
             model: The name of the LLM model.
