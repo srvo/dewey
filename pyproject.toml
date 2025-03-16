@@ -47,6 +47,8 @@ dependencies = [
     "sentence-transformers",
     "typer>=0.9.0",
     "rich>=13.0.0",
+    "sqlite3",
+    "pyyaml>=6.0.0",
 ]
 
 [tool.setuptools]
