@@ -30,6 +30,18 @@ LEDGER_FILE = Path.home() / ".hledger.journal"
 BACKUP_EXT = ".bak"
 
 
+def load_classification_rules() -> Dict:
+    """Load classification rules from JSON files."""
+    logger.info("Loading classification rules")
+    return {}  # Placeholder
+
+
+def process_transactions(transactions: List[Dict], rules: Dict) -> List[Dict]:
+    """Process transactions and categorize them based on rules."""
+    logger.info("Processing transactions")
+    return transactions  # Placeholder
+
+
 
 
 
