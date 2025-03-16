@@ -1,4 +1,3 @@
-```python
 """Script to detect business opportunities from email content.
 
 Dependencies:
