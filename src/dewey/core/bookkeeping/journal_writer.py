@@ -5,13 +5,11 @@ from typing import Any
 from datetime import datetime
 from pathlib import Path
 
+from dewey.config import logging  # Centralized logging
+
 logger = logging.getLogger(__name__)
 
 # File header: Handles journal file writing and management.
-
-
-class JournalWriteError(Exception):
-    """Exception for journal writing failures."""
 
 
 class JournalWriteError(Exception):
@@ -30,10 +28,14 @@ def _load_processed_hashes(processed_hashes_file: Path) -> set[str]:
         A set of processed transaction hashes.
 
     """
-    if processed_hashes_file.exists():
-        with open(processed_hashes_file) as f:
-            return set(f.read().splitlines())
-    return set()
+    try:
+        if processed_hashes_file.exists():
+            with open(processed_hashes_file) as f:
+                return set(f.read().splitlines())
+        return set()
+    except Exception as e:
+        logging.exception(f"Failed to load processed hashes: {e!s}")
+        return set()
 
 
 def _save_processed_hashes(processed_hashes_file: Path, seen_hashes: set[str]) -> None:
@@ -45,8 +47,11 @@ def _save_processed_hashes(processed_hashes_file: Path, seen_hashes: set[str]) -
         seen_hashes: Set of processed transaction hashes to save.
 
     """
-    with open(processed_hashes_file, "w") as f:
-        f.write("\n".join(seen_hashes))
+    try:
+        with open(processed_hashes_file, "w") as f:
+            f.write("\n".join(seen_hashes))
+    except Exception as e:
+        logging.exception(f"Failed to save processed hashes: {e!s}")
 
 
 def _write_file_with_backup(filename: Path, entries: list[str]) -> None:
@@ -58,13 +63,16 @@ def _write_file_with_backup(filename: Path, entries: list[str]) -> None:
         entries: List of journal entries to write.
 
     """
-    if filename.exists():
-        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-        backup_name = f"{filename.stem}_{timestamp}{filename.suffix}"
-        shutil.copy(filename, filename.parent / backup_name)
+    try:
+        if filename.exists():
+            timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+            backup_name = f"{filename.stem}_{timestamp}{filename.suffix}"
+            shutil.copy(filename, filename.parent / backup_name)
 
-    with open(filename, "a", encoding="utf-8") as f:
-        f.write("\n".join(entries) + "\n")
+        with open(filename, "a", encoding="utf-8") as f:
+            f.write("\n".join(entries) + "\n")
+    except Exception as e:
+        logging.exception(f"Failed to write file with backup: {e!s}")
 
 
 def _group_entries_by_account_and_year(
@@ -116,7 +124,7 @@ class JournalWriter:
 
         """
         total_entries = sum(len(e) for e in entries.values())
-        logger.info("Writing %d journal entries", total_entries)
+        logging.info(f"Writing {total_entries} journal entries")
 
         for (account_id, year), entries in _group_entries_by_account_and_year(
             entries,
