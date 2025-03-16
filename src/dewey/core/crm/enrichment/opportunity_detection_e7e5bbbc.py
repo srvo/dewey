@@ -128,4 +128,3 @@ if __name__ == "__main__":
     with get_db_connection() as conn:
         detect_opportunities(conn)
     logger.info("Opportunity detection completed successfully.")
-```
