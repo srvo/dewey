@@ -1,5 +1,11 @@
 """PRD management system with architectural awareness and LLM integration."""
 
+# Added early path configuration before any imports
+import sys
+import pathlib
+PROJECT_ROOT = pathlib.Path(__file__).parent.parent.parent.parent
+sys.path.insert(0, str(PROJECT_ROOT / "src"))
+
 import json
 from pathlib import Path
 from typing import Any
@@ -17,8 +23,8 @@ from .code_consolidator import CodeConsolidator, ConsolidationReporter
 class PRDManager:
     """Interactive PRD builder with architectural guardrails."""
 
-    def __init__(self, root_dir: Path = Path()) -> None:
-        self.root_dir = root_dir
+    def __init__(self, root_dir: Path = PROJECT_ROOT) -> None:
+        self.root_dir = root_dir.resolve()
         self.console = Console()
         self.config = self._load_prd_config()
         self.prd_path = self._validate_prd_path()
@@ -31,7 +37,7 @@ class PRDManager:
 
     def _load_prd_config(self) -> dict:
         """Load PRD config from central dewey.yaml."""
-        config_path = self.root_dir / "config" / "dewey.yaml"
+        config_path = self.root_dir / "config/dewey.yaml"
         
         try:
             with open(config_path) as f:
