@@ -539,54 +539,67 @@ class CodeConsolidator:
         return functions
 
     def _cluster_functions(self, functions: dict[str, dict], script_path: Path) -> None:
-        """Group similar functions with error handling and checkpointing."""
+        """Group similar functions with progress tracking and enhanced error handling."""
         if not self.vector_db:
             logger.warning("Vector database disabled - skipping clustering")
             return
 
-        # Skip already clustered files
         if str(script_path) in self.clustered_files:
             return  # Already clustered
 
         try:
-            for name, details in functions.items():
-                context = details.get("context", "")
-                func_id = f"{script_path.name}:{name}"
+            with tqdm(
+                total=len(functions),
+                desc=f"🔗 {script_path.name}",
+                leave=False,
+                bar_format="{desc}: {percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt}",
+            ) as pbar:
+                for name, details in functions.items():
+                    try:
+                        context = details.get("context", "")
+                        func_id = f"{script_path.name}:{name}"
 
-                # Store in vector DB
-                self.vector_db.upsert_function(
-                    func_id,
-                    context,
-                    {
-                        "name": name,
-                        "args": ",".join(details["args"]) if details["args"] else "",
-                        "complexity": details["complexity"],
-                    },
-                )
+                        # Store in vector DB with timeout
+                        self.vector_db.upsert_function(
+                            func_id,
+                            context,
+                            {
+                                "name": name,
+                                "args": ",".join(details["args"]) if details["args"] else "",
+                                "complexity": details["complexity"],
+                            },
+                        )
 
-                # Find similar functions with error handling
-                similar_ids = self.vector_db.find_similar_functions(
-                    context,
-                    threshold=self.config["vector_db"]["similarity_threshold"],
-                    top_k=self.config["pipeline"]["max_cluster_size"],
-                )
+                        # Find similar functions
+                        similar_ids = self.vector_db.find_similar_functions(
+                            context,
+                            threshold=self.config["vector_db"]["similarity_threshold"],
+                            top_k=self.config["pipeline"]["max_cluster_size"],
+                        )
 
-                if similar_ids:
-                    cluster_key = self._get_cluster_key_for_id(similar_ids[0])
-                    self.function_clusters[cluster_key].append((script_path, details))
-                else:
-                    vector_hash = hashlib.md5(context.encode()).hexdigest()[:8]
-                    cluster_key = (name, vector_hash)
-                    self.function_clusters[cluster_key].append((script_path, details))
+                        if similar_ids:
+                            cluster_key = self._get_cluster_key_for_id(similar_ids[0])
+                            self.function_clusters[cluster_key].append((script_path, details))
+                        else:
+                            vector_hash = hashlib.md5(context.encode()).hexdigest()[:8]
+                            cluster_key = (name, vector_hash)
+                            self.function_clusters[cluster_key].append((script_path, details))
 
-            # Mark file as clustered
-            with self.lock:
-                self.clustered_files.add(str(script_path))
-                self._save_checkpoint()
+                        pbar.update(1)
+                        pbar.set_postfix({"last": name[:10]})
+
+                    except Exception as e:
+                        logger.debug(f"Error clustering {name}: {str(e)[:200]}")
+                        pbar.set_postfix_str(f"error: {str(e)[:20]}")
+
+                # Mark file as clustered
+                with self.lock:
+                    self.clustered_files.add(str(script_path))
+                    self._save_checkpoint()
 
         except Exception as e:
-            logger.exception(f"Failed to cluster {script_path}: {e}")
-            self.reporter.error(f"Clustering error: {str(e)[:200]}")
+            logger.error(f"Failed to cluster {script_path.name}: {str(e)[:200]}")
+            self.reporter.error(f"Clustering failed: {script_path.name} - {str(e)[:200]}")
 
     def _get_cluster_key_for_id(self, func_id: str) -> tuple:
         """Find existing cluster key for a function ID."""

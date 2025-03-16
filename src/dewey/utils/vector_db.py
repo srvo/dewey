@@ -87,8 +87,9 @@ class VectorStore:
     def upsert_function(self, function_id: str, context: str, metadata: dict) -> None:
         """Store or update function embedding with timeout and error handling."""
         try:
+            logger.debug(f"Upserting function: {function_id}")
             embedding = self.generate_embedding(context)
-            self.collection.upsert(
+            result = self.collection.upsert(
                 ids=[function_id],
                 embeddings=[embedding],
                 documents=[context],
@@ -97,6 +98,7 @@ class VectorStore:
             )
             self.metrics["upsert_count"] += 1
             self.metrics["last_operation"] = "upsert"
+            logger.debug(f"Upsert successful: {function_id} ({len(embedding)}d vector)")
         except Exception as e:
             self.metrics["errors"].append(
                 {
