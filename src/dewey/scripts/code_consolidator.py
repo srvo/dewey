@@ -897,11 +897,9 @@ class CodeConsolidator:
 
     def _process_cluster(self, cluster: List[str]) -> Tuple[bool, Dict[str, Any]]:  # type: ignore
         """Process a single file cluster with error handling."""
-        try:
-            cluster_name = ", ".join([Path(f).name for f in cluster[:3]]) + ("..." if len(cluster) > 3 else "")
-            self.reporter.update_stage("processing", message=f"Processing cluster: {cluster_name}")
         result = {
             "cluster": cluster,
+            "cluster_name": ", ".join([Path(f).name for f in cluster[:3]]) + ("..." if len(cluster) > 3 else ""),
             "functions": [],
             "consolidated": None,
             "errors": [],
@@ -914,8 +912,12 @@ class CodeConsolidator:
                 f: self._file_hash(self.root_dir / f) for f in cluster
             }
         }
-        result["recommended_action"] = self._get_recommended_action(result)
-        result["next_steps"] = self._get_next_steps(result)
+        try:
+            self.reporter.update_stage("processing", message=f"Processing cluster: {result['cluster_name']}")
+            result["recommended_action"] = self._get_recommended_action(result)
+            result["next_steps"] = self._get_next_steps(result)
+        except Exception as e:
+            result["errors"].append(f"Error processing cluster: {str(e)}")
         
         try:
             # Extract functions from all files in cluster
