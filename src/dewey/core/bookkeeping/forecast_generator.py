@@ -30,15 +30,19 @@ ASSUMPTIONS = [
 
 def validate_assumptions() -> None:
     """Validates key assumptions with user input."""
-    for i, assumption in enumerate(ASSUMPTIONS, 1):
-        while True:
-            response = input(f"{i}. {assumption} (y/n): ").strip().lower()
-            if response == "y":
-                break  # type: ignore
-            if response == "n":
-                sys.exit()
-            else:
-                pass
+    try:
+        for i, assumption in enumerate(ASSUMPTIONS, 1):
+            while True:
+                response = input(f"{i}. {assumption} (y/n): ").strip().lower()
+                if response == "y":
+                    break  # type: ignore
+                if response == "n":
+                    sys.exit()
+                else:
+                    pass
+    except Exception as e:
+        logger.exception(f"Error during assumption validation: {e!s}")
+        sys.exit(1)
 
 
 def create_acquisition_entry(acquisition_date: date) -> str:
