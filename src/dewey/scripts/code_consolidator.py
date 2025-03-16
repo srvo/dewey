@@ -874,7 +874,7 @@ class CodeConsolidator:
                 f"\n### Cluster: {', '.join(c.split('/')[-1] for c in cluster['cluster'])} ({status})"
                 f"\n- Functions: {len(cluster['functions'])}"
                 f"\n- Errors: {len(cluster['errors'])}"
-                + (f"\n```\n" + "\n".join(cluster['errors'][:3]) + "\n```" if cluster['']'] else "")
+                + (f"\n```\n" + "\n".join(cluster['errors'][:3]) + "\n```" if cluster['errors'] else "")
                 + (f"\n```python\n{cluster['consolidated'][:500]}...\n```" 
                    if cluster['consolidated'] and len(cluster['consolidated']) > 50 
                    else "")
