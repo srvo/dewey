@@ -30,7 +30,7 @@ from .code_consolidator import CodeConsolidator, ConsolidationReporter
 class PRDManager:
     """Interactive PRD builder with architectural guardrails."""
 
-    def __init__(self, root_dir: Path = PROJECT_ROOT) -> None:
+    def __init__(self, root_dir: Path = Path(__file__).parent.parent.parent.parent) -> None:
         self.root_dir = root_dir.resolve()
         self.console = Console()
         self.config = self._load_prd_config()
@@ -95,7 +95,7 @@ class PRDManager:
         if not config_path.exists():
             raise FileNotFoundError(
                 f"Config file not found at {config_path}. "
-                f"Project root: {project_root}"
+                f"Project root: {self.root_dir}"
             )
         
         try:
@@ -605,7 +605,7 @@ console = Console()
 
 
 @app.command()
-def init(target_dir: Path = typer.Argument(PROJECT_ROOT, help="Directory to analyze")) -> None:
+def init(target_dir: Path = typer.Argument(Path(__file__).parent.parent.parent.parent, help="Directory to analyze")) -> None:
     """Initialize new PRD with project scan.
     
     Args:
