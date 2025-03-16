@@ -53,21 +53,6 @@ llm:
           tpm: 1000000
 
 pipeline:
-  code_consolidation:
-    max_files: null
-    excluded_dirs:
-      - "test"
-      - ".venv"
-      - "venv"
-      - "docs"
-      - "deploy"
-      - "config" 
-      - "ingest_data"
-    file_patterns:
-      - '\.py$'
-    cluster_threshold: 0.2
-    max_cluster_size: 5
-    min_cluster_size: 2
 
 formatting:
   lint_timeout: 120
