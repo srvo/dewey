@@ -110,7 +110,7 @@ class CodeConsolidator:
                 "similarity_threshold": 0.85
             },
             "llm": {
-                "default_model": "gemini-2.0-flash-lite",
+                "default_model": "gemini-2.0-flash",
                 "model_limits": {
                     "gemini-2.0-flash": {"rpm": 15, "tpm": 1000000, "rpd": 1500},
                     "gemini-2.0-flash-lite": {"rpm": 30, "tpm": 1000000, "rpd": 1500},

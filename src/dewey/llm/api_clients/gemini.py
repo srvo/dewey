@@ -171,7 +171,7 @@ class GeminiClient:
         genai.configure(api_key=self.api_key)
         self.rate_limiter = RateLimiter()
         self.config = config or {}
-        self.client = genai.GenerativeModel(self.config.get("default_model", "gemini-2.0-flash-lite"))
+        self.client = genai.GenerativeModel(self.config.get("default_model", "gemini-2.0-flash"))
 
     def generate_content(
         self,
@@ -215,13 +215,22 @@ class GeminiClient:
                         f"Rate limit hit on {model}, trying alternative models",
                     )
                     # Try progressively lighter models
-                    for fallback_model in ["gemini-2.0-pro", "gemini-1.5-flash", "gemini-1.5-flash-8b"]:
+                    # Try original model once more in case of transient error
+                    try:
+                        return self.generate_content(prompt, model=model, **kwargs)
+                    except Exception as retry_error:
+                        logging.debug(f"Retry failed: {retry_error}")
+                
+                    # Try fallback models
+                    for fallback_model in self.config.get("fallback_models", ["gemini-2.0-pro", "gemini-1.5-flash"]):
                         try:
-                            return self.generate_content(
+                            result = self.generate_content(
                                 prompt,
                                 model=fallback_model,
                                 **kwargs,
                             )
+                            logging.info(f"Successfully used fallback model {fallback_model}")
+                            return result
                         except Exception as fallback_error:
                             logging.debug(f"Fallback {fallback_model} failed: {fallback_error}")
                 raise
