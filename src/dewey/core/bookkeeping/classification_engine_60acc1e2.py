@@ -7,7 +7,7 @@ from re import Pattern
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from journal_writer import JournalWriter
+    from src.dewey.core.bookkeeping.writers.journal_writer_fab1858b import JournalWriter
 
 logger = logging.getLogger(__name__)
 
