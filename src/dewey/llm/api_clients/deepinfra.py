@@ -1,6 +1,6 @@
 import os
 
-from llm.exceptions import LLMError
+from dewey.llm.exceptions import LLMError
 from openai import OpenAI
 
 
