@@ -1,5 +1,7 @@
 """Vector database operations for code consolidation using ChromaDB."""
 
+from __future__ import annotations
+
 import logging
 from pathlib import Path
 
@@ -17,56 +19,65 @@ class VectorStore:
         config_name: str = "code_consolidation",
         batch_size: int = 100,
         timeout: int = 30,
-        **kwargs  # Handle extra config params
+        **kwargs,  # Handle extra config params
     ) -> None:
         """Initialize from centralized config.
-        
+
         Args:
             config_name: Key from vector_stores section in config
             batch_size: Number of items to process in batch operations
             timeout: Timeout in seconds for DB operations
+
         """
         from dewey.config import load_config
-        
+
         config = load_config().get("vector_stores", {}).get(config_name, {})
-        
+
         self.persist_dir = Path(config.get("persist_dir", ".chroma_cache"))
         self.persist_dir.mkdir(exist_ok=True)
         self.collection_name = config.get("collection_name", "default_collection")
-        self.embedding_model_name = config.get("embedding_model", "sentence-transformers/all-MiniLM-L6-v2")
+        self.embedding_model_name = config.get(
+            "embedding_model", "sentence-transformers/all-MiniLM-L6-v2"
+        )
         self.embedding_model = SentenceTransformer(self.embedding_model_name)
         self.batch_size = batch_size
         self.timeout = timeout
 
         # HNSW configuration with defaults
-        self.hnsw_config = config.get("hnsw_config", {
-            "hnsw:construction_ef": 300,
-            "hnsw:search_ef": 200,
-            "hnsw:M": 24,
-            "hnsw:space": "cosine"
-        })
+        self.hnsw_config = config.get(
+            "hnsw_config",
+            {
+                "hnsw:construction_ef": 300,
+                "hnsw:search_ef": 200,
+                "hnsw:M": 24,
+                "hnsw:space": "cosine",
+            },
+        )
 
         # Initialize metrics first
         self.metrics = {
             "upsert_count": 0,
             "query_count": 0,
             "last_operation": None,
-            "errors": []
+            "errors": [],
         }
 
         # Initialize client with HNSW params in metadata
         self.client = chromadb.PersistentClient(path=str(self.persist_dir))
-        
+
         # Check for existing collection
         try:
             self.collection = self.client.get_collection(self.collection_name)
-            if self.collection.metadata.get("hnsw:space") != self.hnsw_config.get("hnsw:space"):
-                raise ValueError("Existing collection has incompatible distance function")
+            if self.collection.metadata.get("hnsw:space") != self.hnsw_config.get(
+                "hnsw:space"
+            ):
+                msg = "Existing collection has incompatible distance function"
+                raise ValueError(msg)
         except Exception:
             # Create new collection with current config
             self.collection = self.client.create_collection(
                 self.collection_name,
-                metadata={**self.hnsw_config}
+                metadata={**self.hnsw_config},
             )
 
     def generate_embedding(self, text: str) -> list[float]:
@@ -82,18 +93,19 @@ class VectorStore:
                 embeddings=[embedding],
                 documents=[context],
                 metadatas=[metadata],
-                timeout=self.timeout
+                timeout=self.timeout,
             )
             self.metrics["upsert_count"] += 1
             self.metrics["last_operation"] = "upsert"
         except Exception as e:
-            self.metrics["errors"].append({
-                "operation": "upsert",
-                "function_id": function_id,
-                "error": str(e)
-            })
-            logger.error(f"Failed to upsert {function_id}: {e}")
-
+            self.metrics["errors"].append(
+                {
+                    "operation": "upsert",
+                    "function_id": function_id,
+                    "error": str(e),
+                }
+            )
+            logger.exception(f"Failed to upsert {function_id}: {e}")
 
     def find_similar_functions(
         self,
@@ -120,14 +132,16 @@ class VectorStore:
                 timeout=self.timeout,
                 query_parameters=query_params,  # Proper parameter passing
             )
-            
+
             self.metrics["query_count"] += 1
             self.metrics["last_operation"] = "query"
 
             return [
                 result_id
                 for result_id, distance in zip(
-                    results["ids"][0], results["distances"][0], strict=False
+                    results["ids"][0],
+                    results["distances"][0],
+                    strict=False,
                 )
                 if distance < (1 - threshold)
             ]
@@ -135,14 +149,15 @@ class VectorStore:
             if "contigious 2D array" in str(e):
                 logger.warning("HNSW dimension error - retrying with higher ef=500")
                 return self.find_similar_functions(context, threshold, top_k, ef=500)
-            self.metrics["errors"].append({
-                "operation": "query",
-                "context": context[:100],
-                "error": str(e)
-            })
-            logger.error(f"Query failed: {e}")
+            self.metrics["errors"].append(
+                {
+                    "operation": "query",
+                    "context": context[:100],
+                    "error": str(e),
+                }
+            )
+            logger.exception(f"Query failed: {e}")
             return []
-
 
     def persist(self) -> None:
         """Persist the database to disk with timeout."""
@@ -150,38 +165,42 @@ class VectorStore:
             self.client.persist(timeout=self.timeout)
             logger.info("Vector DB persisted successfully")
         except Exception as e:
-            self.metrics["errors"].append({
-                "operation": "persist",
-                "error": str(e)
-            })
-            logger.error(f"Failed to persist vector DB: {e}")
+            self.metrics["errors"].append(
+                {
+                    "operation": "persist",
+                    "error": str(e),
+                }
+            )
+            logger.exception(f"Failed to persist vector DB: {e}")
 
     def get_metrics(self) -> dict:
         """Get current performance metrics.
-        
+
         Returns:
             Dictionary containing:
             - upsert_count: Number of upsert operations
             - query_count: Number of queries
             - last_operation: Last operation performed
             - errors: List of recent errors
+
         """
         return self.metrics
 
     def semantic_search(self, query: str, filters: dict | None = None) -> list[str]:
         """Search using both vector similarity and metadata filtering.
-        
+
         Args:
             query: Text query to search for
             filters: Optional metadata filters
-            
+
         Returns:
             List of matching document IDs
+
         """
         results = self.collection.query(
             query_texts=[query],
             where=filters,
             where_document={"$contains": query} if query else None,
-            query_parameters={"ef": self.hnsw_config["hnsw:search_ef"]}
+            query_parameters={"ef": self.hnsw_config["hnsw:search_ef"]},
         )
         return results["ids"][0]

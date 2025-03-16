@@ -2,6 +2,8 @@
 similar functionality across scripts and suggest canonical implementations.
 """
 
+from __future__ import annotations
+
 import argparse
 import ast
 import datetime
@@ -13,10 +15,9 @@ import re
 import subprocess
 import threading
 from collections import defaultdict
-from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 
 class ConsolidationReporter:
@@ -84,6 +85,9 @@ from tqdm import tqdm
 
 from dewey.llm.api_clients.gemini import RateLimiter
 from dewey.llm.llm_utils import LLMHandler
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -256,10 +260,11 @@ class CodeConsolidator:
         """Initialize vector database with error handling."""
         try:
             from dewey.utils.vector_db import VectorStore
+
             try:
                 return VectorStore(config_name="code_consolidation")
             except Exception as e:
-                logger.error(f"Vector store initialization failed: {str(e)}")
+                logger.exception(f"Vector store initialization failed: {e!s}")
                 raise
         except ImportError as e:
             logger.exception(f"Vector database disabled: {e}")
@@ -906,8 +911,7 @@ class CodeConsolidator:
         """Save current state to checkpoint file."""
         checkpoint_data = {
             "processed_files": {
-                str(p): self._file_hash(Path(p))
-                for p in self.processed_files
+                str(p): self._file_hash(Path(p)) for p in self.processed_files
             },
             "clustered_files": list(self.clustered_files),
             "function_clusters": [
@@ -1253,7 +1257,8 @@ class CodeConsolidator:
                     data = json.load(f)
                 # Validate file hashes
                 valid_processed = [
-                    p for p in data["processed_files"]
+                    p
+                    for p in data["processed_files"]
                     if self._file_hash(Path(p)) == data["processed_files"][p]
                 ]
                 self.processed_files = set(valid_processed)
@@ -1399,4 +1404,5 @@ def main() -> None:
 if __name__ == "__main__":
     # Proper package-relative execution
     from dewey.scripts import code_consolidator
+
     code_consolidator.main()
