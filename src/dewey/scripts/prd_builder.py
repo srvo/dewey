@@ -74,7 +74,7 @@ class PRDManager:
 
     def _load_prd_config(self) -> dict:
         """Load PRD config from central dewey.yaml."""
-        config_path = self.root_dir / "config/dewey.yaml"
+        config_path = Path("/Users/srvo/dewey/config/dewey.yaml")
         
         try:
             with open(config_path) as f:
@@ -103,7 +103,7 @@ class PRDManager:
         base_path = self.config.get("base_path", "config/prd")
         active_prd = self.config.get("active_prd", "current_prd.yaml")
         
-        prd_dir = self.root_dir / base_path
+        prd_dir = Path("/Users/srvo/dewey/config/prd")
         prd_dir.mkdir(exist_ok=True, parents=True)
         return prd_dir / active_prd
 
@@ -130,7 +130,7 @@ class PRDManager:
 
     def _load_prd_template(self) -> dict[str, Any]:
         """Load PRD structure with base template and existing content."""
-        config_path = self.root_dir / "config" / "dewey.yaml"
+        config_path = Path("/Users/srvo/dewey/config/dewey.yaml")
         base_template = {}
         
         try:
