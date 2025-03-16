@@ -83,7 +83,7 @@ class CodeConsolidator:
         self.processed_files = set()
         self.checkpoint_file = self.root_dir / ".code_consolpointpoint.json"
         # Pass config to GeminiClient
-        self.llm_client = DeepInfraClient(config=llm_config)
+        self.llm_client = GeminiClient(config=llm_config)
         self.lock = threading.Lock()
         self.vector_db = self._init_vector_db()
         self._load_checkpoint()
