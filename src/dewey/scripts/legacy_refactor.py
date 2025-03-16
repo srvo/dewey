@@ -56,7 +56,7 @@ class LegacyRefactor:
     def relocate_file(self, source: Path) -> Optional[Path]:
         """Move legacy file to appropriate directory with proper naming."""
         try:
-            base_name = HASH_PATTERN.sub("", source.name)
+            base_name = source.stem  # Get filename without .py extension
             
             # Read file content for additional heuristics
             with open(source, 'r', encoding='utf-8') as f:
