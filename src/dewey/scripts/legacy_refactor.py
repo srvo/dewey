@@ -41,7 +41,7 @@ class LegacyRefactor:
         
     def find_legacy_files(self) -> List[Path]:
         """Find all files in consolidated_functions directory."""
-        files = list(CODE_CONSOLIDATION_DIR.glob("*.py"))
+        files = list(CODE_CONSOLIDATION_DIR.glob("*"))
         logger.info(f"Found {len(files)} files in consolidated_functions directory")
         for f in files:
             logger.debug(f"Processing file: {f}")
