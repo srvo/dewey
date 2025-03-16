@@ -256,7 +256,11 @@ class CodeConsolidator:
         """Initialize vector database with error handling."""
         try:
             from dewey.utils.vector_db import VectorStore
-            return VectorStore(config_name="code_consolidation")
+            try:
+                return VectorStore(config_name="code_consolidation")
+            except Exception as e:
+                logger.error(f"Vector store initialization failed: {str(e)}")
+                raise
         except ImportError as e:
             logger.exception(f"Vector database disabled: {e}")
             return None
@@ -1392,15 +1396,7 @@ def main() -> None:
                     pass
 
 
-if __name__ == "__main__" and __package__ is None:
-    # Prevent direct execution when package exists
-    from dewey.scripts import code_consolidator
-
-    code_consolidator.main()
-else:
+if __name__ == "__main__":
     # Proper package-relative execution
-    def __main__() -> None:
-        main()
-
-    if __name__ == "__main__":
-        __main__()
+    from dewey.scripts import code_consolidator
+    code_consolidator.main()
