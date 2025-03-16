@@ -31,12 +31,17 @@ class PRDManager:
 
     def _load_prd_config(self) -> dict:
         """Load PRD config from central dewey.yaml."""
-        from dewey.config import load_config
+        config_path = self.root_dir / "config" / "dewey.yaml"
+        
+        try:
+            with open(config_path) as f:
+                full_config = yaml.safe_load(f) or {}
+        except (FileNotFoundError, yaml.YAMLError) as e:
+            self.console.print(f"[yellow]⚠️ Config loading failed: {e} - Using defaults[/yellow]")
+            full_config = {}
 
-        full_config = load_config() or {}
         prd_config = full_config.get("prd", {})
         
-        # Merge with defaults using the structure from dewey.yaml
         return {
             "base_path": prd_config.get("base_path", "config/prd"),
             "active_prd": prd_config.get("active_prd", "current_prd.yaml"),
@@ -82,16 +87,22 @@ class PRDManager:
 
     def _load_prd_template(self) -> dict[str, Any]:
         """Load PRD structure with base template and existing content."""
-        from dewey.config import load_config
+        config_path = self.root_dir / "config" / "dewey.yaml"
+        base_template = {}
+        
+        try:
+            with open(config_path) as f:
+                base_template = yaml.safe_load(f).get("prd", {}).get("base_template", {})
+        except (FileNotFoundError, yaml.YAMLError) as e:
+            self.console.print(f"[yellow]⚠️ Template loading failed: {e} - Using empty template[/yellow]")
 
-        # Get base template from config
-        base_template = load_config().get("prd", {}).get("base_template", {})
-
-        # Merge with existing PRD content if it exists
         if self.prd_path.exists():
-            with open(self.prd_path) as f:
-                existing_content = yaml.safe_load(f)
-                return self._deep_merge(base_template, existing_content)
+            try:
+                with open(self.prd_path) as f:
+                    existing_content = yaml.safe_load(f)
+                    return self._deep_merge(base_template, existing_content)
+            except yaml.YAMLError as e:
+                self.console.print(f"[red]Error loading existing PRD: {e}[/red]")
 
         return base_template
 
