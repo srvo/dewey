@@ -178,6 +178,8 @@ def add_enrichment_capabilities() -> None:
         if conn:
             conn.close()
 
+    # TODO: Refactor to use centralized database connection and error handling
+
 
 if __name__ == "__main__":
     """Main entry point for the enrichment capabilities migration script.
