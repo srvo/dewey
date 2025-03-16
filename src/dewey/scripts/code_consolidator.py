@@ -11,16 +11,13 @@ import json
 import logging
 import os
 import subprocess
-import sys
 import threading
-from dewey.llm.api_clients.gemini import GeminiClient
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from typing import Dict, Any, List, Tuple
+from typing import Any, Dict, List, Tuple, Optional, Callable
 
-import spacy
-from spacy.lang.en.stop_words import STOP_WORDS
+from dewey.llm.api_clients.gemini import GeminiClient
 from tqdm import tqdm
 
 from dewey.llm.llm_utils import generate_response
@@ -161,7 +158,7 @@ class CodeConsolidator:
                 base[key] = val
         return base
 
-    def _init_vector_db(self):
+    def _init_vector_db(self) -> Optional[Any]:
         """Initialize vector database with error handling."""
         try:
             from dewey.utils.vector_db import VectorStore
@@ -723,7 +720,7 @@ class CodeConsolidator:
         except Exception as e:
             logger.exception(f"Failed to save checkpoint: {e}")
 
-    def _isolated_step(self, step_func, *args, **kwargs) -> Dict[str, Any]:
+    def _isolated_step(self, step_func: Callable, *args, **kwargs) -> Dict[str, Any]:
         """Execute a pipeline step with error containment."""
         result = {"success": False, "error": None, "data": None}
         try:
@@ -795,7 +792,7 @@ class CodeConsolidator:
             logger.error(f"Clustering failed: {e}")
             return {"clusters": {}}
 
-    def _process_cluster(self, cluster: List[str]) -> Tuple[bool, Dict[str, Any]]:
+    def _process_cluster(self, cluster: List[str]) -> Tuple[bool, Dict[str, Any]]:  # type: ignore
         """Process a single file cluster with error handling."""
         result = {
             "cluster": cluster,
@@ -1026,7 +1023,7 @@ def main() -> None:
         default=".",
         help="Directory to analyze (default: current directory)",
     )
-    parser.add_argument("--report", action="store_true", help="Generate HTML report")
+    parser.add_argument("--report", action="store_true", help="Generate markdown report")
     parser.add_argument(
         "--max-files",
         type=int,
