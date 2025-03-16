@@ -6,6 +6,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+# File header: Converts legacy rule formats to the current JSON format.
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -98,7 +100,7 @@ def parse_rules_file(rules_file: Path) -> dict[str, dict[str, Any]]:
                     category = category.replace(">", ":")
 
                     # Clean up the category
-                    category = _clean_category(category)
+                    category = clean_category(category)
 
                     # Store in classifications
                     if pattern not in classifications:
