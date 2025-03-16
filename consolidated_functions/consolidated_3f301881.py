@@ -266,7 +266,7 @@ def main() -> int:
             logger.error(f"Rules file not found: {rules_file}")
             return 1
 
-        rules = load_rules(rules_file)
+        rules = loadRules(rules_file)
 
         # Validate accounts (using the first journal file found)
         first_journal_file = None
@@ -280,11 +280,11 @@ def main() -> int:
                 if first_journal_file:
                     break
 
-        if first_journal_file and not validate_accounts(first_journal_file, rules):
+        if first_journal_file and not validateAccounts(first_journal_file, rules):
             logger.error("Account validation failed. Exiting.")
             return 1
 
-        process_by_year_files(journal_base_dir, rules)
+        processByYearFiles(journal_base_dir, rules)
         logger.info("Categorization process completed.")
         return 0
 
