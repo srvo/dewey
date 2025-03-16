@@ -314,7 +314,7 @@ class CodeConsolidator:
                 futures = [executor.submit(self._process_file_safe, path) for path in unprocessed]
 
                 for future in tqdm(
-                    as_completed(futures), total=len(files), desc="📄 Processing files"
+                    as_completed(futures), total=len(unprocessed), desc="📄 Processing files"
                 ):
                     functions, path = future.result()
                     self.script_analysis[str(path)] = functions
