@@ -16,7 +16,7 @@ from rich.console import Console
 from rich.prompt import Confirm, Prompt
 
 from ..llm.llm_utils import LLMHandler
-from ..utils.vector_db import VectorStore
+from src.dewey.utils.vector_db import VectorStore
 from .code_consolidator import CodeConsolidator, ConsolidationReporter
 
 

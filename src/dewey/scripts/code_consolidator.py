@@ -89,7 +89,7 @@ from dewey.llm.llm_utils import LLMHandler
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-from dewey.config import load_config
+from config import load_config
 
 # Load logging configuration
 config = load_config()
