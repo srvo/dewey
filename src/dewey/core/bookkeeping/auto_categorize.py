@@ -8,6 +8,8 @@ from typing import List, Tuple, Dict, Any
 
 from dewey.config import logging  # Centralized logging
 
+logger = logging.getLogger(__name__)
+
 # File header: Automatically categorizes transactions based on predefined rules.
 
 # Rule sources in priority order (lower numbers = higher priority)
