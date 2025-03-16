@@ -115,4 +115,3 @@ class MercuryDataValidator:
             logger.exception("CSV validation error: %s", str(e))
             msg = f"Invalid transaction data: {e!s}"
             raise DataValidationError(msg)
-+
