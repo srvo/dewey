@@ -96,7 +96,8 @@ class RateLimiter:
             for attempt in range(max_retries):
                 current_time = time.time()
                 remaining = 60 - (current_time - model_counters["last_reset"])
-                current_rpm = len(model_counters["requests"])
+                # Filter requests to only those in last 60 seconds
+                current_rpm = len([ts for ts in model_counters["requests"] if current_time - ts < 60])
 
                 # If over RPM limit, wait with exponential backoff
                 if current_rpm >= rpm:
