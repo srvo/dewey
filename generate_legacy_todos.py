@@ -75,8 +75,4 @@ def generate_search_replace(file_path: str, todo: str) -> str:
     
     new_content = f"{todo.rstrip()}\n\n{original}"
     
-    return f"""
-{file_path}
-```python
-<<<<<<< SEARCH
-{original}
+{new_content}
