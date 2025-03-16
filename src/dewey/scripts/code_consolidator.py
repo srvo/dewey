@@ -89,8 +89,15 @@ from dewey.llm.llm_utils import LLMHandler
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+from dewey.config import load_config
+
+# Load logging configuration
+config = load_config()
+logging_config = config.get("logging", {})
+
+# Configure logging
+logging.configure_logging(logging_config)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 
 class TqdmHandler(logging.Handler):
