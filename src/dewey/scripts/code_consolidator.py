@@ -22,7 +22,7 @@ from tqdm import tqdm
 import spacy
 from spacy.lang.en.stop_words import STOP_WORDS
 
-from dewey.llm.llm_utils import generate_response
+from dewey.llm.llm_utils import generate_response, LLMHandler
 from dewey.llm.api_clients.gemini import RateLimiter
 
 logger = logging.getLogger(__name__)
