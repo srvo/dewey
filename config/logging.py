@@ -1,4 +1,3 @@
-```python
 """Logging configuration module."""
 
 import logging

@@ -1,6 +1,4 @@
-```python
 """Config class to provide access to centralized configuration."""
-```
 
 Key improvements and explanations:
 
