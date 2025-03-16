@@ -53,6 +53,19 @@ class CodeConsolidator:
 
     def __init__(self, root_dir: str = ".", config_path: str | None = None) -> None:
         self.root_dir = Path(root_dir).expanduser().resolve()
+        
+        # Validate project structure
+        if not (self.root_dir / "pyproject.toml").exists():
+            raise FileNotFoundError(
+                f"Invalid project root: {self.root_dir}\n"
+                "Must contain pyproject.toml and follow standard project structure."
+            )
+            
+        if not (self.root_dir / "src" / "dewey").exists():
+            raise FileNotFoundError(
+                f"Missing dewey package in {self.root_dir}/src/dewey"
+            )
+            
         self.config = self._load_config(config_path)
         self.function_clusters = defaultdict(list)
         self.script_analysis = {}
@@ -1079,10 +1092,17 @@ if __name__ == "__main__":
     import sys
     from pathlib import Path
     
-    # Add project root to Python path
-    # Add src directory to Python path
-    src_dir = str(Path(__file__).parent.parent.parent.resolve())
-    if src_dir not in sys.path:
-        sys.path.insert(0, src_dir)
+    # Add src directory to Python path relative to this file's location
+    current_dir = Path(__file__).resolve().parent
+    project_root = current_dir.parent.parent.parent  # Adjust based on actual depth
+    src_dir = project_root / "src"
+    if str(src_dir) not in sys.path:
+        sys.path.insert(0, str(src_dir))
+    
+    try:
+        import dewey  # Verify the path is correct
+    except ImportError:
+        print(f"Error: Could not import dewey module. Check Python path: {sys.path}")
+        sys.exit(1)
     
     main()
