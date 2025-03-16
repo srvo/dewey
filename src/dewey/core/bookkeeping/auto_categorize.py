@@ -30,96 +30,12 @@ LEDGER_FILE = Path.home() / ".hledger.journal"
 BACKUP_EXT = ".bak"
 
 
-def format_category(category_str: str) -> str:
-    """Convert category string to proper Ledger format (PascalCase).
-
-    Args:
-    ----
-        category_str: The category string to format.
-
-    Returns:
-    -------
-        The formatted category string.
-
-    """
-    parts = category_str.split(":")
-    formatted_parts = [part.title().replace(" ", "") for part in parts]
-    return ":".join(formatted_parts)
 
 
-def load_prioritized_rules() -> List[Tuple[Tuple[str, Dict], int]]:
-    """Load rules from multiple sources with priority.
-
-    Returns
-    -------
-        A list of rules with their priority, sorted by priority and pattern specificity.
-
-    """
-    all_rules = []
-    base_dir = Path(__file__).parent.parent / "rules"
-
-    for filename, priority in RULE_SOURCES:
-        file_path = base_dir / filename
-        if file_path.exists():
-            with open(file_path) as f:
-                rules = json.load(f)
-                all_rules.extend((rule, priority) for rule in rules["patterns"].items())
-
-    # Sort by priority then pattern specificity
-    return sorted(
-        all_rules,
-        key=lambda x: (
-            x[1],  # Priority level first
-            -len(x[0][0]),  # Longer patterns get priority
-        ),
-    )
 
 
-def compile_pattern(pattern: str) -> Pattern:
-    """Compile a pattern into a regex object.
-
-    Args:
-    ----
-        pattern: The pattern string to compile.
-
-    Returns:
-    -------
-        A compiled regex pattern.
-
-    """
-    if pattern.startswith("^") or pattern.endswith("$"):
-        logger.debug(f"Compiling regex pattern: {pattern}")
-        compiled = re.compile(pattern)
-    else:
-        translated = fnmatch.translate(f"*{pattern}*")
-        compiled = re.compile(translated, re.IGNORECASE)
-    return compiled
 
 
-def load_classification_rules() -> List[Tuple[Pattern, str, int]]:
-    """Load and compile classification rules with priority.
-
-    Returns
-    -------
-        A list of compiled rules with their associated category and priority.
-
-    """
-    logger.info("Loading classification rules with priority system")
-
-    rules = load_prioritized_rules()
-    compiled_rules = []
-
-    for (pattern, data), priority in rules:
-        category = data["category"]
-        formatted_category = format_category(category)
-
-        # Handle different pattern types
-        compiled = compile_pattern(pattern)
-
-        compiled_rules.append((compiled, formatted_category, priority))
-
-    logger.info(f"Loaded {len(compiled_rules)} classification rules")
-    return compiled_rules
 
 
 def parse_journal_entries(file_path: Path) -> List[Dict]:
@@ -172,41 +88,6 @@ def parse_journal_entries(file_path: Path) -> List[Dict]:
     return transactions
 
 
-def process_transactions(
-    transactions: List[Dict],
-    rules: List[Tuple[Pattern, str, int]],
-) -> List[Dict]:
-    """Apply classification rules to journal entries.
-
-    Args:
-    ----
-        transactions: A list of transactions to process.
-        rules: A list of classification rules.
-
-    Returns:
-    -------
-        A list of updated transactions.
-
-    """
-    updated_count = 0
-
-    for tx in transactions:
-        description = tx["description"]
-        original_account = tx["postings"][0]["account"] if tx["postings"] else ""
-
-        # Find matching rules in priority order
-        for pattern, category, _ in rules:
-            if pattern.search(description):
-                if original_account != category:
-                    tx["postings"][0]["account"] = category
-                    updated_count += 1
-                    logger.debug(
-                        f"Updated transaction '{description[:30]}...' from {original_account} to {category}",
-                    )
-                break  # Use first match
-
-    logger.info(f"Updated {updated_count} transaction classifications")
-    return transactions
 
 
 def serialize_transactions(transactions: List[Dict]) -> str:
