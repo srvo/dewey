@@ -440,7 +440,7 @@ class PRDManager:
         """Find and remove duplicate code implementations."""
         # Simple content-based duplicate detection
         similar = []
-        for path in self.root_dir.glob("src/dewey/**/*.py"):
+        for path in self.project_root.glob("src/dewey/**/*.py"):
             if path.read_text() == analysis["content"] and path != analysis["path"]:
                 similar.append(path)
                 
