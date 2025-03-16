@@ -1,10 +1,17 @@
 import logging
 import shutil
 from collections import defaultdict
+from typing import Any
 from datetime import datetime
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
+
+# File header: Handles journal file writing and management.
+
+
+class JournalWriteError(Exception):
+    """Exception for journal writing failures."""
 
 
 class JournalWriteError(Exception):
