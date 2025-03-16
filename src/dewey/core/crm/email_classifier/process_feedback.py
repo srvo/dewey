@@ -386,10 +386,10 @@ def main():
     
         # One-time migration of existing JSON data
         if not feedback_data and os.path.exists("feedback.json"):
-        print("Migrating existing feedback.json to database...")
-        with open("feedback.json") as f:
-            legacy_feedback = json.load(f)
-            save_feedback(conn, legacy_feedback)
+            print("Migrating existing feedback.json to database...")
+            with open("feedback.json") as f:
+                legacy_feedback = json.load(f)
+                save_feedback(conn, legacy_feedback)
             os.rename("feedback.json", "feedback.json.bak")
         feedback_data = legacy_feedback
     
