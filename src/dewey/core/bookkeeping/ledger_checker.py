@@ -34,6 +34,7 @@ def main() -> None:
     logger = logging.getLogger(__name__)
     import sys
 
+    LEDGER_FILE = "path/to/your/ledger.journal"  # Replace with the actual path
     # ... rest of main logic ...
     checker = LedgerFormatChecker(LEDGER_FILE)
 
