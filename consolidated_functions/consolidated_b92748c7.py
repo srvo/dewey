@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Union, Optional
 
 
-def read_csv_to_ibis(
+def readCsvToIbis(
     csv_path: Union[str, Path],
     table_name: str = "default_table",
     schema: Optional[ibis.Schema] = None,
