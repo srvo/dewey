@@ -4,6 +4,11 @@ core:
   backup_strategy: 3-2-1
   default_timezone: UTC
 
+logging:
+  level: INFO  # Set the default logging level (e.g., DEBUG, INFO, WARNING, ERROR)
+  format: "%(asctime)s - %(levelname)s - %(name)s - %(message)s"  # Define the log message format
+  datefmt: "%Y-%m-%d %H:%M:%S"  # Define the date format
+
 vector_stores:
   code_consolidation:
     persist_dir: ".chroma_cache"
