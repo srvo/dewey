@@ -4,6 +4,7 @@ similar functionality across scripts and suggest canonical implementations.
 
 import argparse
 import ast
+import datetime
 import hashlib
 import re
 import json
@@ -151,11 +152,12 @@ class CodeConsolidator:
                     return None
         return None
 
-    def analyze_directory(self) -> None:
+    def analyze_directory(self) -> dict:
         """Public interface to run full pipeline."""
         pipeline_report = self.execute_pipeline()
         print(self.generate_report(pipeline_report))
         self._save_checkpoint()
+        return pipeline_report
 
     def _find_script_files(self) -> list[Path]:
         """Find Python files using config patterns."""
@@ -906,7 +908,7 @@ def main() -> None:
     else:
         # Normal mode
         consolidator = CodeConsolidator(args.directory)
-        consolidator.analyze_directory()
+        pipeline_report = consolidator.analyze_directory()
 
     if args.report:
         # Create reports directory if needed
