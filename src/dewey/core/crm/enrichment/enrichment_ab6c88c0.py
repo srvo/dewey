@@ -586,29 +586,3 @@ def enrich_contacts(batch_size: int | None = None) -> None:
         raise
 
 
-if __name__ == "__main__":
-    """
-    Main entry point for the contact enrichment script.
-
-    Executes the enrichment process with error handling and logging.
-
-    Workflow:
-        1. Initialize logging
-        2. Run enrichment process
-        3. Handle success/failure
-        4. Clean up resources
-
-    Example usage:
-        python scripts/enrich_contacts.py
-    """
-    logger.info("[MAIN] Starting contact enrichment process")
-    try:
-        # Execute the main enrichment process
-        enrich_contacts()
-        logger.info("[MAIN] Contact enrichment process completed successfully")
-    except Exception as e:
-        # Handle any unexpected errors
-        logger.error(
-            f"[MAIN] Contact enrichment process failed: {e!s}",
-            exc_info=True,
-        )
