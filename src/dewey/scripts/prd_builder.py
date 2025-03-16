@@ -569,9 +569,13 @@ console = Console()
 
 
 @app.command()
-def init() -> None:
-    """Initialize new PRD with project scan."""
-    manager = PRDManager()
+def init(target_dir: Path = typer.Argument(PROJECT_ROOT, help="Directory to analyze")) -> None:
+    """Initialize new PRD with project scan.
+    
+    Args:
+        target_dir: Directory path to analyze (defaults to project root)
+    """
+    manager = PRDManager(root_dir=target_dir)
     manager.interactive_builder()
 
 
