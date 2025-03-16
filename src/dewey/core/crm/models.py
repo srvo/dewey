@@ -1,12 +1,13 @@
-from typing import Optional
 from pydantic import BaseModel
 
+
 class CRMContact(BaseModel):
-    """Represents a CRM contact record"""
-    id: Optional[int] = None
+    """Represents a CRM contact record."""
+
+    id: int | None = None
     name: str
     email: str
-    phone: Optional[str] = None
-    company: Optional[str] = None
-    last_contacted: Optional[str] = None
-    notes: Optional[str] = None
+    phone: str | None = None
+    company: str | None = None
+    last_contacted: str | None = None
+    notes: str | None = None

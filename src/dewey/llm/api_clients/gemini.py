@@ -34,11 +34,11 @@ class RateLimiter:
 
     def configure(self, config: dict) -> None:
         """Update rate limits from configuration"""
-        self.MODEL_LIMITS = config.get('model_limits', {})
-        self.cooldown_minutes = config.get('cooldown_minutes', 5)
+        self.MODEL_LIMITS = config.get("model_limits", {})
+        self.cooldown_minutes = config.get("cooldown_minutes", 5)
         # Add capacity configuration
-        self.max_entries = config.get('max_entries', 100)
-        self.eviction_policy = config.get('eviction_policy', "lru")
+        self.max_entries = config.get("max_entries", 100)
+        self.eviction_policy = config.get("eviction_policy", "lru")
         self.logger.info(f"Updated rate limits from config: {self.MODEL_LIMITS}")
 
     def _get_limits(self, model: str) -> tuple[int, int, int]:
@@ -46,9 +46,9 @@ class RateLimiter:
         base_model = model.split("/")[-1].lower()
         limits = self.MODEL_LIMITS.get(base_model, {})
         return (
-            limits.get('rpm', 15),
-            limits.get('tpm', 1_000_000),
-            limits.get('rpd', 1500)
+            limits.get("rpm", 15),
+            limits.get("tpm", 1_000_000),
+            limits.get("rpd", 1500),
         )  # Conservative fallback defaults
 
     def is_in_cooldown(self, model: str) -> bool:
@@ -136,7 +136,7 @@ class RateLimiter:
                     removed = model_counters["requests"][:remove_count]
                     model_counters["requests"] = model_counters["requests"][remove_count:]
                     model_counters["tokens"] -= sum(self._estimate_tokens_from_time(ts) for ts in removed)
-                
+
                 # All checks passed, update counters
                 model_counters["requests"].append(time.time())
                 model_counters["tokens"] += estimated_tokens
@@ -221,7 +221,7 @@ class GeminiClient:
                         return self.generate_content(prompt, model=model, **kwargs)
                     except Exception as retry_error:
                         logging.debug(f"Retry failed: {retry_error}")
-                
+
                     # Try fallback models
                     for fallback_model in self.config.get("fallback_models", ["gemini-2.0-pro", "gemini-1.5-flash"]):
                         try:

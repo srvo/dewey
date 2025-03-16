@@ -1,3 +1,2 @@
 class LLMError(Exception):
-    """Base exception class for all LLM-related errors"""
-    pass
+    """Base exception class for all LLM-related errors."""
