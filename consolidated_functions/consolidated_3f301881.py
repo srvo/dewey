@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 
-def load_rules(rules_file: str) -> Dict[str, Any]:
+def loadRules(rules_file: str) -> Dict[str, Any]:
     """Load classification rules from a JSON file.
 
     Args:
@@ -40,7 +40,7 @@ def load_rules(rules_file: str) -> Dict[str, Any]:
         sys.exit(1)
 
 
-def validate_accounts(journal_file: str, rules: Dict[str, Any]) -> bool:
+def validateAccounts(journal_file: str, rules: Dict[str, Any]) -> bool:
     """Verify that all accounts in the rules exist in the journal file.
 
     Args:
@@ -81,7 +81,7 @@ def validate_accounts(journal_file: str, rules: Dict[str, Any]) -> bool:
         return False
 
 
-def classify_transaction(content: str, pattern: str, rule: Dict[str, str]) -> Tuple[str, int]:
+def classifyTransaction(content: str, pattern: str, rule: Dict[str, str]) -> Tuple[str, int]:
     """Classify transactions based on a given pattern and rule.
 
     Args:
@@ -109,7 +109,7 @@ def classify_transaction(content: str, pattern: str, rule: Dict[str, str]) -> Tu
         return content, 0
 
 
-def apply_classification_rules(journal_file: str, rules: Dict[str, Any]) -> Dict[str, int]:
+def applyClassificationRules(journal_file: str, rules: Dict[str, Any]) -> Dict[str, int]:
     """Apply classification rules to a journal file.
 
     Args:
@@ -127,7 +127,7 @@ def apply_classification_rules(journal_file: str, rules: Dict[str, Any]) -> Dict
         for rule_name, rule in rules.items():
             if 'patterns' in rule:
                 for pattern in rule['patterns']:
-                    new_content, count = classify_transaction(content, pattern, rule)
+                    new_content, count = classifyTransaction(content, pattern, rule)
                     if count > 0:
                         content = new_content
                         replacements[rule['category']] = replacements.get(rule['category'], 0) + count
@@ -144,7 +144,7 @@ def apply_classification_rules(journal_file: str, rules: Dict[str, Any]) -> Dict
         sys.exit(1)
 
 
-def log_replacement_results(replacements: Dict[str, int]) -> None:
+def logReplacementResults(replacements: Dict[str, int]) -> None:
     """Log the results of the classification process.
 
     Args:
@@ -156,7 +156,7 @@ def log_replacement_results(replacements: Dict[str, int]) -> None:
         logger.info(f"  - {account}: {count} replacements")
 
 
-def create_backup(file_path: str) -> str:
+def createBackup(file_path: str) -> str:
     """Create a backup of the journal file.
 
     Args:
@@ -177,7 +177,7 @@ def create_backup(file_path: str) -> str:
         raise
 
 
-def classify_transaction_v2(transaction: Dict[str, Any], rules: Dict[str, Any]) -> str:
+def classifyTransactionV2(transaction: Dict[str, Any], rules: Dict[str, Any]) -> str:
     """Classify a transaction based on the provided rules.
 
     Args:
@@ -196,7 +196,7 @@ def classify_transaction_v2(transaction: Dict[str, Any], rules: Dict[str, Any]) 
     return rules.get("default_category", "Uncategorized")
 
 
-def process_journal_file(file_path: str, rules: Dict[str, Any]) -> bool:
+def processJournalFile(file_path: str, rules: Dict[str, Any]) -> bool:
     """Process a journal file and categorize its transactions.
 
     Args:
@@ -207,12 +207,12 @@ def process_journal_file(file_path: str, rules: Dict[str, Any]) -> bool:
         True if the processing was successful, False otherwise.
     """
     try:
-        backup_path = create_backup(file_path)
+        backup_path = createBackup(file_path)
         with open(file_path, 'r', encoding='utf-8') as f:
             journal = json.load(f)
 
         for tran in journal.get("transactions", []):
-            new_category = classify_transaction_v2(tran, rules)
+            new_category = classifyTransactionV2(tran, rules)
             if new_category:
                 tran["category"] = new_category
                 logger.debug(f"Classified transaction: {tran['description']} -> {new_category}")
@@ -235,7 +235,7 @@ def process_journal_file(file_path: str, rules: Dict[str, Any]) -> bool:
         return False
 
 
-def process_by_year_files(base_dir: str, rules: Dict[str, Any]) -> None:
+def processByYearFiles(base_dir: str, rules: Dict[str, Any]) -> None:
     """Process all journal files within a base directory, organized by year.
 
     Args:
@@ -253,7 +253,7 @@ def process_by_year_files(base_dir: str, rules: Dict[str, Any]) -> None:
 
 
 def main() -> int:
-    """Main function to execute the hledger classification process.
+    """Main function to execute the hledger categorization process.
 
     Returns:
         0 if the process was successful, 1 otherwise.

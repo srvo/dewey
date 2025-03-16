@@ -102,7 +102,7 @@ def analyze_log_file(log_file: str = DEFAULT_LOG_FILE) -> Tuple[int, datetime.da
     return total_processed, earliest_date, error_count, errored_message_ids
 
 
-def log_processing_summary(
+def logProcessingSummary(
     total_processed: Optional[int] = None,
     message_ids: Optional[Set[str]] = None,
     log_file: str = DEFAULT_LOG_FILE
@@ -188,7 +188,7 @@ def log_processing_summary(
         logging.exception("An unexpected error occurred during summary logging.")
 
 
-def log_recovery_progress(
+def logRecoveryProgress(
     success_count: int,
     failure_count: int,
     total_to_process: int
@@ -250,7 +250,7 @@ def log_recovery_progress(
         logging.exception("An unexpected error occurred during recovery progress logging.")
 
 
-def log_recovery_summary(
+def logRecoverySummary(
     total_to_process: int,
     success_count: int,
     failure_count: int
