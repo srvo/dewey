@@ -143,7 +143,8 @@ class CodeConsolidator:
         self.function_clusters = defaultdict(list)
         self.script_analysis = {}
         self.syntax_errors = []
-        self.processed_files = set()
+        self.processed_files = set()  # Files that have been parsed
+        self.clustered_files = set()  # Files that have been clustered
         self.checkpoint_file = self.root_dir / ".code_consolpointpoint.json"
         # Initialize LLM handler
         self.llm = LLMHandler(llm_config)
@@ -288,15 +289,29 @@ class CodeConsolidator:
         self.reporter.begin_stage("directory_analysis", "📂")
 
         try:
-            files = self._find_script_files()
-            self.reporter.begin_stage("file_processing", "📝", total=len(files))
+            # Get all files
+            all_files = self._find_script_files()
+            
+            # Check if we should resume
+            if self.processed_files:
+                resume = input(
+                    f"Found {len(self.processed_files)} processed files. "
+                    f"{len(self.clustered_files)} clustered. "
+                    "Resume? [Y/n] "
+                ).lower() != "n"
+                if not resume:
+                    self.processed_files = set()
+                    self.clustered_files = set()
+                    self.script_analysis = {}
+            
+            # Filter out already processed
+            unprocessed = [f for f in all_files if str(f) not in self.processed_files]
+            
+            self.reporter.begin_stage("file_processing", "📝", total=len(unprocessed))
 
+            # Process only new files
             with ThreadPoolExecutor(max_workers=os.cpu_count()) as executor:
-                futures = []
-                for script_path in files:
-                    futures.append(
-                        executor.submit(self._process_file_safe, script_path)
-                    )
+                futures = [executor.submit(self._process_file_safe, path) for path in unprocessed]
 
                 for future in tqdm(
                     as_completed(futures), total=len(files), desc="📄 Processing files"
@@ -506,8 +521,8 @@ class CodeConsolidator:
 
         # Skip already clustered files
         if str(script_path) in self.clustered_files:
-            return
-
+            return  # Already clustered
+            
         try:
             for name, details in functions.items():
                 context = details.get("context", "")
@@ -867,6 +882,7 @@ class CodeConsolidator:
         """Save current state to checkpoint file."""
         checkpoint_data = {
             "processed_files": list(self.processed_files),
+            "clustered_files": list(self.clustered_files),
             "function_clusters": [
                 (key, [str(p) for p in paths])
                 for key, paths in self.function_clusters.items()
@@ -1206,6 +1222,7 @@ class CodeConsolidator:
                 with open(self.checkpoint_file) as f:
                     data = json.load(f)
                 self.processed_files = set(data["processed_files"])
+                self.clustered_files = set(data.get("clustered_files", []))
                 self.function_clusters = defaultdict(
                     list,
                     {
