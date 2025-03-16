@@ -45,6 +45,7 @@ Key rules:
    - Enforce timeline realism via historical velocity data
 
 ## Consolidated Function Process
+0. Identify candidate scripts using hash-suffix pattern (_xxxxxxxx.py)
 1. New consolidated functions go in `/consolidated_functions`
 2. Run `prd relocate` to:
    - Classify functionality with LLM
@@ -76,6 +77,12 @@ Key rules:
 - Favor clarity and readability over brevity
 - Keep functions focused - max 50 lines per function
 - Use type hints consistently
+- Scripts with hashed suffixes (ending _xxxxxxxx) must be refactored to:
+  - Follow project naming conventions
+  - Implement proper error handling
+  - Use centralized configuration
+  - Include type hints and docstrings
+  - Meet test coverage requirements
 - Include Google-style docstrings for all public functions/classes
 - Handle errors gracefully using try-except blocks
 - Add comments to explain complex business logic
