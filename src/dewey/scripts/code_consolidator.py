@@ -121,7 +121,9 @@ class CodeConsolidator:
                 "temperature": 0.2,
                 "max_retries": 3,
                 "batch_size": 100,
-                "max_workers": 4
+                "max_workers": 4,
+                "max_entries": 200,  # Increased capacity
+                "eviction_policy": "lru"
             },
             "formatting": {
                 "lint_timeout": 120,

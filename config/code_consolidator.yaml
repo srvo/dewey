@@ -31,6 +31,8 @@ llm:
   max_retries: 3
   batch_size: 100  # For parallel processing
   max_workers: 4
+  max_entries: 200  # Adjust based on your needs
+  eviction_policy: lru
 
 formatting:
   lint_timeout: 120  # seconds

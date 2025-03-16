@@ -27,12 +27,18 @@ class RateLimiter:
             cls._instance.cooldowns = {}
             cls._instance.logger = logging.getLogger("RateLimiter")
             cls._instance.cooldown_minutes = 5  # Default, will be overridden by config
+            # Add capacity configuration
+            cls._instance.max_entries = 100  # Default capacity
+            cls._instance.eviction_policy = "lru"  # Least Recently Used
         return cls._instance
 
     def configure(self, config: dict) -> None:
         """Update rate limits from configuration"""
         self.MODEL_LIMITS = config.get('model_limits', {})
         self.cooldown_minutes = config.get('cooldown_minutes', 5)
+        # Add capacity configuration
+        self.max_entries = config.get('max_entries', 100)
+        self.eviction_policy = config.get('eviction_policy', "lru")
         self.logger.info(f"Updated rate limits from config: {self.MODEL_LIMITS}")
 
     def _get_limits(self, model: str) -> tuple[int, int, int]:
@@ -122,6 +128,12 @@ class RateLimiter:
                     msg = f"Daily request limit ({rpd}) reached for {model}"
                     raise LLMError(msg)
 
+                # Add entry eviction before processing
+                if len(model_counters["requests"]) >= self.max_entries:
+                    # Remove oldest entry
+                    oldest = model_counters["requests"].pop(0)
+                    model_counters["tokens"] -= self._estimate_tokens_from_time(oldest)
+                
                 # All checks passed, update counters
                 model_counters["requests"].append(time.time())
                 model_counters["tokens"] += estimated_tokens
