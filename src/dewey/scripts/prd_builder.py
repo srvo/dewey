@@ -124,15 +124,28 @@ class PRDManager:
         """Convert CONVENTIONS.md to structured data."""
         sections = {}
         current_section = None
+        current_subsect = None
+        
         for line in path.read_text().splitlines():
+            line = line.strip()
+            if not line:
+                continue
+                
             if line.startswith("# "):
                 current_section = line[2:].lower().replace(" ", "_")
-                sections[current_section] = []
+                sections[current_section] = {}
+                current_subsect = None
             elif line.startswith("## "):
-                subsect = line[3:].lower().replace(" ", "_")
-                sections.setdefault(current_section, {})[subsect] = []
-            elif current_section and line.strip():
-                sections[current_section].append(line.strip())
+                current_subsect = line[3:].lower().replace(" ", "_")
+                sections[current_section][current_subsect] = []
+            elif line.startswith("### "):
+                continue  # Skip subsubsections for now
+            else:
+                if current_subsect:
+                    sections[current_section][current_subsect].append(line)
+                elif current_section:
+                    sections[current_section].setdefault("content", []).append(line)
+                    
         return sections
 
 
