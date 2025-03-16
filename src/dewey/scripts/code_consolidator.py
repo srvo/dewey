@@ -23,6 +23,7 @@ from spacy.lang.en.stop_words import STOP_WORDS
 from tqdm import tqdm
 
 from dewey.llm.llm_utils import generate_response
+from dewey.llm.api_clients.gemini import RateLimiter
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -53,6 +54,7 @@ class CodeConsolidator:
 
     def __init__(self, root_dir: str = ".", config_path: str | None = None) -> None:
         self.root_dir = Path(root_dir).expanduser().resolve()
+        self.rate_limiter = RateLimiter()
         
         # Validate project structure
         if not (self.root_dir / "pyproject.toml").exists():
@@ -152,7 +154,7 @@ class CodeConsolidator:
             try:
                 # Test actual LLM connectivity
                 generate_response("test")
-                logger.info("LLM client initialized successfully")
+                logger.info(f"LLM client initialized successfully with rate limiter: {self.rate_limiter}")
                 return True
             except Exception as e:
                 logger.warning(
@@ -816,9 +818,12 @@ class CodeConsolidator:
                 f"- Use modern Python conventions\n\n"
                 f"Function Examples:\n{func_examples}"
             )
+            model = self.config["llm"]["default_model"]
+            self.rate_limiter.check_limit(model, prompt)
+            
             consolidated = generate_response(
                 prompt,
-                model=self.config["llm"]["default_model"],
+                model=model,
                 temperature=self.config["llm"]["temperature"],
                 system_message="Create comprehensive function with type hints and docstrings"
             )
@@ -930,6 +935,13 @@ class CodeConsolidator:
         try:
             prompt = f"Suggest consolidation action for these functions:\n"
             prompt += "\n".join(f["name"] for f in cluster_result["functions"])
+            # Check rate limits before making request
+            model = self.config["llm"]["default_model"]
+            if self.rate_limiter.is_in_cooldown(model):
+                logger.warning(f"Rate limit cooldown active for {model}, using fallback recommendation")
+                return "Consolidate similar implementations into canonical version"
+            
+            self.rate_limiter.check_limit(model, prompt)
             return generate_response(prompt, max_tokens=100)
         except Exception:
             return "Consolidate similar implementations into canonical version"
