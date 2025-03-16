@@ -569,6 +569,8 @@ class CodeConsolidator:
                 timeout=120,
                 capture_output=True,
                 text=True,
+                env={**os.environ, "GRPC_ENABLE_FORK_SUPPORT": "False"},
+                start_new_session=True
             )
 
             black_proc = subprocess.run(
@@ -577,6 +579,8 @@ class CodeConsolidator:
                 timeout=60,
                 capture_output=True,
                 text=True,
+                env={**os.environ, "GRPC_ENABLE_FORK_SUPPORT": "False"},
+                start_new_session=True
             )
 
             # Only show output if there were errors
@@ -842,7 +846,9 @@ class CodeConsolidator:
         }
         
         if report["cluster_files"]["success"]:
-            with ThreadPoolExecutor() as executor:
+            from multiprocessing import get_context
+            mp_context = get_context("spawn")
+            with ThreadPoolExecutor(mp_context=mp_context) as executor:
                 futures = [
                     executor.submit(self._process_cluster, cluster)
                     for cluster in report["cluster_files"]["data"]["clusters"].values()
@@ -958,7 +964,10 @@ def main() -> None:
     - Prints summary to console
     - Full report includes consolidated code implementations and error details
     """
-    os.environ["TOKENIZERS_PARALLELISM"] = "false"
+    # Configure process and threading settings
+    os.environ["GRPC_ENABLE_FORK_SUPPORT"] = "False"  # Disable gRPC fork handlers
+    os.environ["GRPC_POLL_STRATEGY"] = "epoll1"      # Alternative poll strategy
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"   # Disable tokenizer parallelism
     parser = argparse.ArgumentParser(
         description="Analyze and consolidate similar code functionality",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
