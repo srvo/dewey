@@ -23,6 +23,7 @@ vector_db:
   similarity_threshold: 0.85
 
 llm:
+  client: gemini
   default_model: "gemini-2.0-flash"
   fallback_models:
     - "gemini-1.5-flash"

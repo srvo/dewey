@@ -82,8 +82,8 @@ class CodeConsolidator:
         self.syntax_errors = []
         self.processed_files = set()
         self.checkpoint_file = self.root_dir / ".code_consolpointpoint.json"
-        # Pass config to GeminiClient
-        self.llm_client = GeminiClient(config=llm_config)
+        # Initialize LLM handler
+        self.llm = LLMHandler(llm_config)
         self.lock = threading.Lock()
         self.vector_db = self._init_vector_db()
         self._load_checkpoint()
@@ -1018,6 +1018,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Analyze and consolidate similar code functionality",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument(
+        "--llm-client",
+        choices=['gemini', 'deepinfra'],
+        default='gemini',
+        help="Choose which LLM client to use"
     )
     parser.add_argument(
         "directory",

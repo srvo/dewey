@@ -1,65 +1,46 @@
-import logging
-from typing import Any
-
-from dewey.llm.api_clients.deepinfra import DeepInfraClient
+from typing import Any, Optional
 from dewey.llm.exceptions import LLMError
+from dewey.llm.api_clients.gemini import GeminiClient
+from dewey.llm.api_clients.deepinfra import DeepInfraClient
 
+class LLMHandler:
+    """Centralized handler for LLM client configuration and execution."""
+    def __init__(self, config: dict):
+        self.config = config
+        self.client = None
+        self._init_client()
+        
+    def _init_client(self):
+        client_type = self.config.get('client', 'gemini')
+        try:
+            if client_type == 'gemini':
+                self.client = GeminiClient(config=self.config)
+            elif client_type == 'deepinfra':
+                self.client = DeepInfraClient(api_key=self.config.get('api_key'))
+            else:
+                raise LLMError(f"Unsupported LLM client: {client_type}")
+        except Exception as e:
+            raise LLMError(f"Failed to initialize {client_type} client: {str(e)}")
 
-def generate_response(
-    prompt: str,
-    model: str = "gemini-2.0-flash",
-    temperature: float = 0.7,
-    system_message: str | None = None,
-    api_key: str | None = None,
-    fallback_client: Any | None = None,
-) -> str:
-    """Generate a response from the specified LLM model.
-
-    Args:
-    ----
-        prompt: Input text prompt
-        model: Model identifier (default: Meta-Llama-3-8B-Instruct)
-        temperature: Sampling temperature (0-2)
-        max_tokens: Maximum number of tokens to generate
-        system_message: Optional system message for chat models
-        api_key: Optional API key override
-
-    Returns:
-    -------
-        Generated text response
-
-    Raises:
-    ------
-        LLMError: If there's an error during generation
-
-    """
-    try:
-        client = DeepInfraClient(api_key=api_key)
-        # Prepend system message to prompt if provided
-        full_prompt = f"{system_message}\n\n{prompt}" if system_message else prompt
-
-        return client.generate_content(
-            prompt=full_prompt,
-            model=model,
-            temperature=temperature,
-        )
-    except Exception as e:
-        if fallback_client and "exhausted" in str(e).lower():
-            try:
-                logging.warning("Gemini API exhausted, falling back to DeepInfra")
-                return fallback_client.chat_completion(
-                    prompt=prompt,
-                    system_message=system_message,
-                    temperature=temperature,
-                )
-            except Exception as fallback_error:
-                msg = f"Both Gemini and fallback failed: {fallback_error!s}"
-                raise LLMError(
-                    msg,
-                ) from e
-        msg = f"LLM generation failed: {e!s}"
-        raise LLMError(msg) from e
-
+    def generate_response(self, prompt: str, **kwargs) -> str:
+        """Unified interface for generating responses."""
+        if not self.client:
+            raise LLMError("LLM client not initialized")
+            
+        # Merge config defaults with per-call overrides
+        params = {
+            'model': self.config.get('default_model'),
+            'temperature': self.config.get('temperature', 0.7),
+            **kwargs
+        }
+        
+        try:
+            if isinstance(self.client, GeminiClient):
+                return self.client.generate_content(prompt, **params)
+            elif isinstance(self.client, DeepInfraClient):
+                return self.client.chat_completion(prompt, **params)
+        except Exception as e:
+            raise LLMError(f"Generation failed: {str(e)}")
 
 def validate_model_params(params: dict[str, Any]) -> None:
     """Validate parameters for LLM model calls.
