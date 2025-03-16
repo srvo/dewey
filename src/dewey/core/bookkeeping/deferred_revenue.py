@@ -1,12 +1,23 @@
+import logging
 import os
 import re
 import sys
 from datetime import datetime
+# File header: Processes Altruist income for deferred revenue recognition.
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
 
 from dateutil.relativedelta import relativedelta
+from typing import List
+import re
 
-
-def _parse_altruist_transactions(journal_content: str) -> list[re.Match]:
+def _parse_altruist_transactions(journal_content: str) -> List[re.Match]:
     """Parses the journal content to find Altruist income transactions.
 
     Args:
@@ -24,10 +35,10 @@ def _parse_altruist_transactions(journal_content: str) -> list[re.Match]:
         r"\s+Income:[^\s]+\s+([0-9.-]+)",  # Income posting with amount
         re.MULTILINE | re.IGNORECASE,
     )
-    return list(transaction_regex.finditer(journal_content))
+    return list(transaction_regex.finditer(journal_content)) # type: ignore
 
 
-def _generate_deferred_revenue_transactions(match: re.Match) -> list[str]:
+def _generate_deferred_revenue_transactions(match: re.Match) -> List[str]:
     """Generates deferred revenue and fee income transactions for a given Altruist transaction.
 
     Args:
@@ -99,6 +110,7 @@ def process_altruist_income(journal_file: str) -> str:
 
     """
     if not os.path.exists(journal_file):
+        logger.error(f"Could not find journal file at: {journal_file}")
         msg = f"Could not find journal file at: {journal_file}"
         raise FileNotFoundError(msg)
 
@@ -108,6 +120,7 @@ def process_altruist_income(journal_file: str) -> str:
     matches = _parse_altruist_transactions(journal_content)
 
     if not matches:
+        logger.info("No Altruist transactions found in %s", journal_file)
         return journal_content
 
     output_transactions = []
@@ -116,13 +129,22 @@ def process_altruist_income(journal_file: str) -> str:
         try:
             transactions = _generate_deferred_revenue_transactions(match)
             output_transactions.extend(transactions)
-        except Exception:
+        except Exception as e:
+            logger.exception(
+                "Failed to generate transactions for match: %s", match.group(0)
+            )
             continue
 
     if output_transactions:
         output_content = journal_content + "\n" + "\n".join(output_transactions) + "\n"
+        logger.info(
+            "Successfully processed %d Altruist transactions in %s",
+            len(matches),
+            journal_file,
+        )
     else:
         output_content = journal_content
+        logger.info("No new transactions added to %s", journal_file)
 
     return output_content
 
@@ -142,9 +164,11 @@ if __name__ == "__main__":
 
         with open(journal_file, "w") as f:
             f.write(output_content)
+        logger.info("Journal file updated successfully: %s", journal_file)
 
     except FileNotFoundError:
+        logger.error("Journal file not found: %s", journal_file)
         sys.exit(1)
-    except Exception:
-
+    except Exception as e:
+        logger.exception("An unexpected error occurred: %s", str(e))
         sys.exit(1)
