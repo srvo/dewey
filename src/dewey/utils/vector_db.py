@@ -92,12 +92,6 @@ class VectorStore:
             })
             logger.error(f"Failed to upsert {function_id}: {e}")
 
-    def _apply_hnsw_settings(self) -> None:
-        """Update collection with current HNSW config."""
-        try:
-            self.collection.modify(metadata=self.hnsw_config)
-        except Exception as e:
-            logger.warning(f"Couldn't update HNSW settings: {e}")
 
     def find_similar_functions(
         self,
@@ -122,7 +116,7 @@ class VectorStore:
                 n_results=safe_top_k,
                 include=["distances", "metadatas"],
                 timeout=self.timeout,
-                **query_params,
+                query_parameters=query_params,  # Proper parameter passing
             )
             
             self.metrics["query_count"] += 1
@@ -170,3 +164,21 @@ class VectorStore:
             - errors: List of recent errors
         """
         return self.metrics
+
+    def semantic_search(self, query: str, filters: dict | None = None) -> list[str]:
+        """Search using both vector similarity and metadata filtering.
+        
+        Args:
+            query: Text query to search for
+            filters: Optional metadata filters
+            
+        Returns:
+            List of matching document IDs
+        """
+        results = self.collection.query(
+            query_texts=[query],
+            where=filters,
+            where_document={"$contains": query} if query else None,
+            query_parameters={"ef": self.hnsw_config["hnsw:search_ef"]}
+        )
+        return results["ids"][0]
