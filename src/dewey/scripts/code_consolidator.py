@@ -19,6 +19,8 @@ from typing import Any, Dict, List, Tuple, Optional, Callable
 
 from dewey.llm.api_clients.gemini import GeminiClient
 from tqdm import tqdm
+import spacy
+from spacy.lang.en.stop_words import STOP_WORDS
 
 from dewey.llm.llm_utils import generate_response
 from dewey.llm.api_clients.gemini import RateLimiter
