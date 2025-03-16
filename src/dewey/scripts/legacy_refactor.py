@@ -9,10 +9,14 @@ import subprocess
 from pathlib import Path
 from typing import List, Optional
 
-from dewey.utils import get_logger  # Assuming centralized logging utility
+import logging
 import dewey.config as config  # Assuming centralized config loading
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+handler = logging.StreamHandler()
+handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+logger.addHandler(handler)
 
 CODE_CONSOLIDATION_DIR = Path("src/dewey/consolidated_functions")
 HASH_PATTERN = re.compile(r"_([0-9a-fA-F]{8})\.py$")
@@ -23,7 +27,6 @@ class LegacyRefactor:
     
     def __init__(self, dry_run: bool = False):
         self.dry_run = dry_run
-        self.config = config.load()  # Load centralized config
         self.legacy_files = self.find_legacy_files()
         
     def find_legacy_files(self) -> List[Path]:
