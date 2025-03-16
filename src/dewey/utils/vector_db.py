@@ -22,7 +22,7 @@ class VectorStore:
         """Initialize with HNSW configuration."""
         self.persist_dir = Path(persist_dir)
         self.persist_dir.mkdir(exist_ok=True)
-        
+
         # Set default HNSW parameters
         self.hnsw_config = hnsw_config or {
             "hnsw:ef": 200,
@@ -36,7 +36,7 @@ class VectorStore:
             metadata={"hnsw:space": "cosine"},  # Explicitly set similarity metric
         )
         self.embedding_model = SentenceTransformer(embedding_model)
-        
+
         # Apply HNSW configuration
         self._apply_hnsw_settings()
 
@@ -71,7 +71,7 @@ class VectorStore:
         """Find similar functions with adjustable ef parameter."""
         query_embedding = self.generate_embedding(context)
         collection_count = self.collection.count()
-        
+
         if collection_count == 0:
             return []
 
@@ -93,7 +93,9 @@ class VectorStore:
 
         return [
             result_id
-            for result_id, distance in zip(results["ids"][0], results["distances"][0], strict=False)
+            for result_id, distance in zip(
+                results["ids"][0], results["distances"][0], strict=False
+            )
             if distance < (1 - threshold)
         ]
 
