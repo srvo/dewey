@@ -94,6 +94,7 @@ def compile_pattern(pattern: str) -> re.Pattern:
 
 
 def load_classification_rules() -> list[tuple[re.Pattern, str, int]]:
+    # Loads classification rules from prioritized sources
     """Load and compile classification rules with priority.
 
     Returns
