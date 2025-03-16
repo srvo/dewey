@@ -2,7 +2,7 @@
 from typing import List, Union, Tuple, Optional
 
 
-def process_data(data: List[Union[int, float, str]], 
+def processData(data: List[Union[int, float, str]], 
                   *,
                   multiplier: float = 1.0,
                   ignore_errors: bool = False,
