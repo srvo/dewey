@@ -1,4 +1,3 @@
-"""Code documentation analysis and generation agent using smolagents."""
 import ast
 from typing import List, Optional, Dict, Any
 from pathlib import Path

@@ -1,4 +1,3 @@
-"""Transcript analysis agent using smolagents."""
 from typing import List, Dict, Any, Optional
 from smolagents import Tool
 from .base_agent import DeweyBaseAgent
