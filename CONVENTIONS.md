@@ -20,6 +20,28 @@ Key rules:
 5. script_checkpoints.yaml should only contain transient file hashes
 6. Shared config values used by scripts must live in dewey.yaml
 
+**PRD Authoring Standards**
+
+1. Structure:
+   - Use YAML format with Markdown sections
+   - Follow template from config/dewey.yaml
+   - Maintain version history in header
+   
+2. Stakeholder Handling:
+   - Default to Sloane Ortel for non-client modules
+   - Auto-include legal/compliance stakeholders for financial modules
+   - Track stakeholder review dates
+
+3. Requirements:
+   - Categorize as Functional/Technical/Compliance
+   - Link to implementation code
+   - Include complexity metrics
+   
+4. Anti-Pattern Avoidance:
+   - Validate requirements with LLM before inclusion
+   - Auto-generate dependency graphs
+   - Enforce timeline realism via historical velocity data
+
 ## Consolidated Function Process
 1. New consolidated functions go in `/consolidated_functions`
 2. Run `prd relocate` to:
