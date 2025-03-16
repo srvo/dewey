@@ -3,6 +3,7 @@ core:
   project_root: /Users/srvo/dewey
   backup_strategy: 3-2-1
   default_timezone: UTC
+  conventions_document: /Users/srvo/dewey/CONVENTIONS.md
 
 logging:
   level: INFO  # Set the default logging level (e.g., DEBUG, INFO, WARNING, ERROR)
