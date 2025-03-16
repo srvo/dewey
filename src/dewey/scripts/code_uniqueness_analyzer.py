@@ -39,6 +39,7 @@ def generate_report(legacy_files):
     if legacy_files:
         for filename in legacy_files:
             print(f"- {filename}")
+        print(f"\nTotal legacy files remaining: {len(legacy_files)}")
     else:
         print("No legacy files found.")
 
