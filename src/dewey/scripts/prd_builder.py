@@ -98,11 +98,10 @@ class PRDManager:
 
     def _load_prd_config(self) -> dict:
         """Load PRD config from central dewey.yaml."""
-        config_path = self.root_dir / "config" / "dewey.yaml"
+        config_path = Path("/Users/srvo/dewey/config/dewey.yaml")
         if not config_path.exists():
             raise FileNotFoundError(
-                f"Config file not found at {config_path}. "
-                f"Project root: {self.root_dir}"
+                f"Config file not found at {config_path}"
             )
         
         try:
@@ -115,26 +114,23 @@ class PRDManager:
         prd_config = full_config.get("prd", {})
         
         return {
-            "base_path": prd_config.get("base_path", "config/prd"),
-            "active_prd": prd_config.get("active_prd", "current_prd.yaml"),
+            "base_path": "/Users/srvo/dewey/config/prd",
+            "active_prd": "current_prd.yaml",
             "schema": prd_config.get("schema", {
                 "components": [{"name": "", "purpose": "", "dependencies": [], "interfaces": []}],
                 "decisions": [{"timestamp": "datetime", "description": "", "alternatives": [], "rationale": ""}]
             }),
             "references": prd_config.get("references", {
-                "conventions": "../.aider/CONVENTIONS.md",
-                "codebase_analysis": "../docs/codebase_analysis.md"
+                "conventions": "/Users/srvo/dewey/CONVENTIONS.md",
+                "codebase_analysis": "/Users/srvo/dewey/docs/codebase_analysis.md"
             })
         }
 
     def _validate_prd_path(self) -> Path:
-        # Get with safe defaults from direct config keys
-        base_path = self.config.get("base_path", "config/prd")
-        active_prd = self.config.get("active_prd", "current_prd.yaml")
-        
-        prd_dir = self.project_root / "config" / "prd"
+        """Return hardcoded PRD file path."""
+        prd_dir = Path("/Users/srvo/dewey/config/prd")
         prd_dir.mkdir(exist_ok=True, parents=True)
-        return prd_dir / active_prd
+        return prd_dir / "current_prd.yaml"
 
     def _load_conventions(self) -> dict:
         """Parse actual CONVENTIONS.md content."""
