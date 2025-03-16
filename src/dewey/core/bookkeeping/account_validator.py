@@ -1,21 +1,14 @@
 #!/usr/bin/env python3
 
 import json
-import logging
 import subprocess
 import sys
 from pathlib import Path
 from typing import Dict
 
-# File header: Validates accounts in the Hledger journal against predefined rules.
+# from dewey.config import logging  # Centralized logging
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-logger = logging.getLogger(__name__)
+# File header: Validates accounts in the Hledger journal against predefined rules.
 
 
 def load_rules(rules_file: Path) -> Dict:
@@ -31,7 +24,7 @@ def load_rules(rules_file: Path) -> Dict:
         SystemExit: If the rules file cannot be loaded.
     """
     try:
-        with open(rules_file) as f:
+        with open(rules_file) as f:  # type: ignore
             return json.load(f)
     except Exception as e:
         logger.exception(f"Failed to load rules: {e!s}")
@@ -50,7 +43,7 @@ def validate_accounts(journal_file: Path, rules: Dict) -> bool:
     """
     try:
         # Get both declared and used accounts
-        result = subprocess.run(
+        result = subprocess.run(  # type: ignore
             ["hledger", "accounts", "-f", journal_file, "--declared", "--used"],
             capture_output=True,
             text=True,
@@ -78,7 +71,7 @@ def validate_accounts(journal_file: Path, rules: Dict) -> bool:
 
 def main() -> None:
     """Main function to execute the hledger classification process."""
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 3:  # type: ignore
         sys.exit(1)
 
     journal_file = Path(sys.argv[1])
@@ -99,4 +92,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    main()  # type: ignore

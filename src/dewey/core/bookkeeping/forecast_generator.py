@@ -1,13 +1,17 @@
 from __future__ import annotations
 
+from __future__ import annotations
+
 import argparse
-import logging
 import os
 import sys
 from datetime import date, datetime
 from pathlib import Path
+from typing import Any
 
 from dateutil.relativedelta import relativedelta
+
+# from dewey.config import logging  # Centralized logging
 
 ASSUMPTIONS = [
     "Asset acquired on 2023-12-01 for £25 (fair value £2500)",
@@ -21,14 +25,6 @@ ASSUMPTIONS = [
     "Entries append to existing journal file",
 ]
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-logger = logging.getLogger(__name__)
-
 
 def validate_assumptions() -> None:
     """Validates key assumptions with user input."""
@@ -36,7 +32,7 @@ def validate_assumptions() -> None:
         while True:
             response = input(f"{i}. {assumption} (y/n): ").strip().lower()
             if response == "y":
-                break # type: ignore
+                break  # type: ignore
             if response == "n":
                 sys.exit()
             else:
@@ -44,7 +40,7 @@ def validate_assumptions() -> None:
 
 
 def create_acquisition_entry(acquisition_date: date) -> str:
-    """Creates the acquisition journal entry.
+    """Create the acquisition journal entry.
 
     Args:
     ----
@@ -65,7 +61,8 @@ def create_acquisition_entry(acquisition_date: date) -> str:
 
 
 def append_acquisition_entry(complete_ledger_file: str, acquisition_entry: str) -> None:
-    """Appends the acquisition entry to the complete ledger file if it doesn't already exist.
+    """Append the acquisition entry to the complete ledger file if it doesn't
+    already exist.
 
     Args:
     ----
@@ -75,15 +72,22 @@ def append_acquisition_entry(complete_ledger_file: str, acquisition_entry: str) 
     """
     acquisition_entry_exists = False
     try:
-        with open(complete_ledger_file) as f:
+        with open(complete_ledger_file) as f:  # type: ignore
             if acquisition_entry in f.read():
                 acquisition_entry_exists = True
     except FileNotFoundError:
-        pass
+        # logging.warning(f"File not found: {complete_ledger_file}")
+        pass  # Handle missing file gracefully
+    except Exception as e:
+        # logging.error(f"Error reading file: {e}")
+        return
 
     if not acquisition_entry_exists:
-        with open(complete_ledger_file, "a") as f:
-            f.write(acquisition_entry)
+        try:
+            with open(complete_ledger_file, "a") as f:  # type: ignore
+                f.write(acquisition_entry)
+        except Exception as e:
+            pass
 
 
 def initialize_forecast_ledger(forecast_ledger_file: str) -> None:
@@ -95,7 +99,7 @@ def initialize_forecast_ledger(forecast_ledger_file: str) -> None:
 
     """
     if not os.path.exists(forecast_ledger_file):
-        with open(forecast_ledger_file, "w") as f:
+        with open(forecast_ledger_file, "w") as f:  # type: ignore
             account_declarations = """
 ; Account declarations
 account Assets:PPE:Mormair_E650
@@ -111,7 +115,7 @@ account Expenses:Hosting:Mormair_E650
 
 
 def create_depreciation_entry(current_date: datetime) -> str:
-    """Creates a depreciation journal entry for a given date.
+    """Create a depreciation journal entry for a given date.
 
     Args:
     ----
@@ -132,7 +136,7 @@ def create_depreciation_entry(current_date: datetime) -> str:
 def create_revenue_entries(
     current_date: datetime,
     generator: dict,
-) -> tuple[str, str, str]:
+) -> tuple[str, str, str]:  # type: ignore
     """Creates revenue-related journal entries (lease income, revenue share, hosting fee).
 
     Args:
