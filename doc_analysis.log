@@ -1,0 +1,1210 @@
+2025-03-15 02:25:23,977 - __main__ - INFO - Analyzing directory: /Users/srvo/dewey
+2025-03-15 02:25:23,978 - __main__ - INFO - Starting analysis of /Users/srvo/dewey
+2025-03-15 02:25:24,847 - __main__ - INFO - Found 16608 files to analyze
+2025-03-15 02:25:25,924 - __main__ - ERROR - Failed to analyze /Users/srvo/dewey/.venv/lib/python3.12/site-packages/joblib/test/test_func_inspect_special_encoding.py: 'utf-8' codec can't decode byte 0xa4 in position 64: invalid start byte
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/document_directory.py", line 57, in _analyze_file
+    content = f.read()
+              ^^^^^^^^
+  File "<frozen codecs>", line 322, in decode
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xa4 in position 64: invalid start byte
+2025-03-15 02:25:27,056 - __main__ - INFO - Clustering similar files...
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 277 duplicate files with hash d41d8cd98f00b204e9800998ecf8427e
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash 8cfded4d598422b05390d7da1493db31
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash a5fe422e1b15b5b48c2b5a423a3a11e0
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash d0d487bb6b89df7d122f768d8f1f2f2d
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash 5c11c7df0473732aba10567f4c6e2601
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash fa56706c3c4b493a029a0069d9601e0e
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash 32b3d7c2c9c729c18e99c82fffa89764
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash 3fc3c108c9b1b8c25d23a29aa4952f21
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash f6d73a168977560761887d65c7e9ed18
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash 2fc711cf5b4a1a8ac92aab0bd4e13284
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 3 duplicate files with hash de664fedc083927d3d084f416190d876
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash a5626e116f101871cd02d89f983a40d5
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash 8bbc71a89d4fcf1749153876b45e18bf
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash 9177e83d6b0e539c9527b76e7e8d89d3
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash 7a160494be3aab3eb02edb89847f75ff
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash d9f87f194a3876481c50bd45be27da9f
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash 746aff14c3a098a28fe9d01d54f174a9
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash 45219fdbf7d83dd96354f23888300210
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash 313a72cf4425cf31a445d4745d659eb3
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 6 duplicate files with hash 0fc1b4d3e705f5c110975b1b90d43670
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 9 duplicate files with hash 3aadc460d126d5bdc58a04184d7f2d0d
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 6 duplicate files with hash fe4b6a586bd2792f385f3767bd909d5a
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 5 duplicate files with hash 292db541d85c313dcfe3c4cfea1b91de
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 4 duplicate files with hash 43c8dcf09b24dda0d3c95d5ef4d15dc3
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 3 duplicate files with hash 6d9c757cc4891d8ae2a72dbbc41fc71b
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash 65c3af1f6bef4ac22fa7f0cabbec3430
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash 9c985d2f4c311dadf23cb603bcf04402
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 5 duplicate files with hash 2ff211c773691e831c6f3dc6517ef8b0
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 3 duplicate files with hash a9bac715a44a4dc78ff53a8fac03b678
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash 49bdd12837342d71c486ebe0e808943c
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 4 duplicate files with hash 87557c9984133e475bbd65cdcd49bd21
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash d56b9cac5c61d54427fe6669d3b3d617
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 4 duplicate files with hash 7420ce617dcd528434b71902f8111326
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 3 duplicate files with hash 8af4d3fc04fc862290d8376dcefb7eb3
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash 9db9db6f3e5c536c093448614ecf23e6
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash 87aeedf5c0b6fa28749f2b022ed15f42
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 5 duplicate files with hash d076b5cdd7fb19d713e24fa738bc6d42
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 3 duplicate files with hash cc1333da1db081a92f6bbc82e20ce623
+2025-03-15 02:25:27,056 - __main__ - WARNING - Found 2 duplicate files with hash d0f48b737e0026d12b55d6143564d67e
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 4 duplicate files with hash e707b712feab996ac09be844d88735dc
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 835abb38a6fa3fc11ee3c92a1722327d
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 9379cf68c692d9a9f92e5d29f6a54549
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 4118841fdd1bb94795dae88ab1da645d
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 43de8ea616a879b72d6c7f0c749d284b
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 33215d440d5ba5fa95b1ffa035d769e2
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 3 duplicate files with hash ba44201506ac730c75015fcc784c7b92
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 4 duplicate files with hash 185f937b6aaf960bfc1a0c84d1cd5989
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 48d380cc743c30c7c77b8ab583afc400
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 267ae6a4f1856baf15b4f65f4791134f
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 507e339da4b1471b03b84e86a0cfc403
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 042d0ec4d5874fb522b54b4cbdce7a3d
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash aff6a2eae74ed26b7a6b0a025c9e01d6
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 3 duplicate files with hash 1ef0256a86a2420724987b867a8a8996
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 3 duplicate files with hash ad656aaabae09dc285884ad38d889ef9
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash e3dc717de887db03a015667a5fec59d8
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash f467fa232324ad139aaecd0df7698f3f
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 719916ba605b6ce9473c431d22a44c6b
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 2afb5c93cd5f63ab7285427a6b50b0c9
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 3925c0aeb6da9a0900aa604b0ba4a5df
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash dce5326cb1dd4c69b9deb2778575f49c
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 8b0305b8e2d06c3ce088486daa7d230b
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 0cb59b6f8c6aab0ea4f51e40d97afd60
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 22bcf0467251662e95e38dc5c1423004
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 235eadc0033d90c56769f612a0719cef
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 1a2d2947861331a31b9a8455a87aaa2f
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 43fccb4635aeb490517704a0c61f471e
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash aa6721302961a692551ee1492ad85718
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 589c5de06ec02aecb2cff9b9116a60f9
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 59b8b93d92a615e130b137805dfa727b
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 3 duplicate files with hash c9ecca70743fd5971d4e9d3f91e43c78
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash e9f2196775e1d7d5fb7aef08afe9fba4
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 67149f41e2b72f168662f73e06d618de
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 61c4da0491171e52febe9da45ffd4225
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 29b2a8abc18872bd3bd186072c079e64
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 108b869f1174405ed3f96ff9bc23a3bb
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash fe4c0be93e614318190c55ff24bffe6c
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash f89bff8f87192bb6365d79b725a657f6
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 7727598ca8b2f69fa28a02a4e7e99354
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 07defab17ae8c656f0b202fc8d991eb8
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 30928e0a9575c9061c98599ea17d3086
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 03315c4acc5d10fd00086be2368841be
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 2bac2151493c9d0166055ae54363e923
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash 934740613cff2bd3ade43657ab3af4eb
+2025-03-15 02:25:27,057 - __main__ - WARNING - Found 2 duplicate files with hash e1220fd7ec56f79a290515400decafb8
+2025-03-15 02:25:27,059 - __main__ - INFO - Analysis report saved to /Users/srvo/dewey/analysis_report.md
+2025-03-15 02:29:35,666 - __main__ - INFO - Analyzing directory: /Users/srvo/dewey
+2025-03-15 02:29:35,666 - __main__ - INFO - Starting analysis of /Users/srvo/dewey
+2025-03-15 02:29:36,391 - __main__ - INFO - Found 1642 files to analyze
+2025-03-15 02:29:36,531 - __main__ - INFO - Clustering similar files...
+2025-03-15 02:29:36,531 - __main__ - WARNING - Found 41 duplicate files with hash d41d8cd98f00b204e9800998ecf8427e
+2025-03-15 02:29:36,531 - __main__ - WARNING - Found 4 duplicate files with hash 185f937b6aaf960bfc1a0c84d1cd5989
+2025-03-15 02:29:36,531 - __main__ - WARNING - Found 2 duplicate files with hash 48d380cc743c30c7c77b8ab583afc400
+2025-03-15 02:29:36,531 - __main__ - WARNING - Found 2 duplicate files with hash 267ae6a4f1856baf15b4f65f4791134f
+2025-03-15 02:29:36,531 - __main__ - WARNING - Found 2 duplicate files with hash 507e339da4b1471b03b84e86a0cfc403
+2025-03-15 02:29:36,531 - __main__ - WARNING - Found 2 duplicate files with hash 042d0ec4d5874fb522b54b4cbdce7a3d
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash aff6a2eae74ed26b7a6b0a025c9e01d6
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 3 duplicate files with hash 1ef0256a86a2420724987b867a8a8996
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 3 duplicate files with hash ad656aaabae09dc285884ad38d889ef9
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash e3dc717de887db03a015667a5fec59d8
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash f467fa232324ad139aaecd0df7698f3f
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 719916ba605b6ce9473c431d22a44c6b
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 2afb5c93cd5f63ab7285427a6b50b0c9
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 3925c0aeb6da9a0900aa604b0ba4a5df
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash dce5326cb1dd4c69b9deb2778575f49c
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 8b0305b8e2d06c3ce088486daa7d230b
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 0cb59b6f8c6aab0ea4f51e40d97afd60
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 22bcf0467251662e95e38dc5c1423004
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 235eadc0033d90c56769f612a0719cef
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 1a2d2947861331a31b9a8455a87aaa2f
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 43fccb4635aeb490517704a0c61f471e
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash aa6721302961a692551ee1492ad85718
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 589c5de06ec02aecb2cff9b9116a60f9
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 59b8b93d92a615e130b137805dfa727b
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 3 duplicate files with hash c9ecca70743fd5971d4e9d3f91e43c78
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash e9f2196775e1d7d5fb7aef08afe9fba4
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 67149f41e2b72f168662f73e06d618de
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 61c4da0491171e52febe9da45ffd4225
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 29b2a8abc18872bd3bd186072c079e64
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 108b869f1174405ed3f96ff9bc23a3bb
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash fe4c0be93e614318190c55ff24bffe6c
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash f89bff8f87192bb6365d79b725a657f6
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 7727598ca8b2f69fa28a02a4e7e99354
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 07defab17ae8c656f0b202fc8d991eb8
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 30928e0a9575c9061c98599ea17d3086
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 03315c4acc5d10fd00086be2368841be
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 2bac2151493c9d0166055ae54363e923
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash 934740613cff2bd3ade43657ab3af4eb
+2025-03-15 02:29:36,532 - __main__ - WARNING - Found 2 duplicate files with hash e1220fd7ec56f79a290515400decafb8
+2025-03-15 02:29:36,533 - __main__ - INFO - Analysis report saved to /Users/srvo/dewey/analysis_report.md
+2025-03-15 02:31:12,217 - __main__ - INFO - Analyzing directory: /Users/srvo/dewey
+2025-03-15 02:31:12,217 - __main__ - INFO - Starting analysis of /Users/srvo/dewey
+2025-03-15 02:31:12,994 - __main__ - INFO - Found 1646 files to analyze
+2025-03-15 02:31:13,128 - __main__ - INFO - Clustering similar files...
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 4 duplicate files with content hash 140_84ee50d5a0778a0738d9d4f8cdbd0a6bb5f91ba8e509efefb3a6221822ac3d6b
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 1921_ca8100d62533ded8ae5a7f02f78e5e9930bead9d0ec523dbcccce60732b4e288
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 3314_12b68bd55fb1c31247bfcd726c9a9eb1a4eb912ef2a50f837ee9183ac5764c0d
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 1072_1e9e63593a22ef86bb16e4069561b945813a0b9eb1988ff5d01be9905d199ed0
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 723_779944b450a197a2b282ac5f9fae90649a96d21bfc1480af067e3a6494b6b920
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 16175_eacffaff6a5da3e27faa1d21d4054bb5f155bd8c8690e5018a1211d3965ba4e0
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 3 duplicate files with content hash 2132_881dc6ff713d17168045b5f83f65d117f4fd3ae3678b3507124cd328a86d258b
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 3 duplicate files with content hash 26_178d895e09ea16a2b47da8d77aeb72249c703accd1c682cc3642217dce19eca2
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 63_b2e328e31f08dc907100505521d13ee6a9ea67a240655d051120011ce49cfaf8
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 63_c5cd48407aec8a3ee3df74d46e8fbfa1ec32defb34de9c3f7ada4159a318265d
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 7628_4a83fe7d696ba0b4a0b2caacf1848f10f3c4d8f223cfadbb416c4a467e852dfe
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 8288_e3b5ed46f094059f91cd6b787bcc82384f6de9f4848ad5c04040238967b2bd3c
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 2213_64fadee00260581c4eea0b313060833cca53c15446499b42bf662045c194b51a
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 3452_4bf1452b854f9efeb3c70f41f22f99813ad9b35040a531c5f78cf1cee3bd0391
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 2912_d7affe151eaf3e2f12ce0629fd4a72beddf124d1c6250b798309d6e42d6fd345
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 5970_6c69d886e0359ed40ca9431b804aa0bb52a1689772f2c7a7b8df88e3fcb8ecef
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 4960_7c2c6033479eeb01ef61ec0618a52570c930e48c11c67af2b8b068d708ae59e6
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 8066_97bd214d9408b6f0c5ee819d19ceb8ae4fef22e04db27bea0ce3371dc230307a
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 177_583108a0f7e51e32bb38e3cff739b1166992432b252059b1c5aefb4f20227d47
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 1170_4933b3feb0820c428d1952ce9edd1cf300a77fb47ce84977531db48dfd5c279f
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 5292_b36c308d7c09988b814f078a8e657534ea12ef09079fe3f912391ed8ab986ea1
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 3158_ca608ac5f88b6a70616ea7f426ff72d6fd6f4d67d9b13977f7b2844f2276b2a9
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 2731_57bf3e20589f6918436dcef34db58291908bfe83841cff8c6b95adaa594e8a3d
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 3 duplicate files with content hash 189_ffdc8055706a50e18d825c569ebd64201dc998fe8984d398cd74d09af554ddbc
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 2983_e5f836b78bbd97de291e2555578b3d4945f501410d154e2dfe7629cbf18c96a7
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 1415_471e37c2bb5f4c36345923ece8ccb137132d43bdb08a4ab2c584138c5304cb3a
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 26_a960ef03d661542435acf6e4a0589fcbba3f7c38ab5cc51d60cc45d76ab75883
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 864_67163904453ef954b3556798f94556d3c6f2908883df5b88d5287b8f5bc2a47b
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 4029_e7d6d327cea6779a4ef5da3fd43ce1131baf1cb1e8da4be795bfe5674dc9a11a
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 2816_196c861c8f35d628eb9f8e1528329d94d272090fc09d12a190029e51ebe5fc72
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 6389_84d3456cff2256a8ef1eba21874fa25987c0a66abe44dc4ff4649fd842679524
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 12177_b43077b0cff6051b487857d87624abf79cf9203e66a95f0f729ec31714412a6d
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 9362_804a539b09a121e9d373857bec8324d59491cb726dd75367acfc508035451710
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 2377_a3d0949b5990ac287ff53366985b3fa456510bc8dde3cd499b9ddfcdd6bcd23b
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 1651_c9436a819b18d57964d664ab965a9a0871f3f564fbc31eb7881cb740ec98f03d
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 5490_39ae944381fb7227163b15238b05546be462ad800d2baf2fddba73165136da0a
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 2989_823cb73f2df49c29e552c74c6bb00395b2c969ed23ead56c79f14e3d3aa70872
+2025-03-15 02:31:13,129 - __main__ - WARNING - Found 2 duplicate files with content hash 606_caaa8146434da4eb38bafaf9c5592be0239859c21ab216dd54b51f3f86c32dec
+2025-03-15 02:31:13,130 - __main__ - INFO - Analysis report saved to /Users/srvo/dewey/analysis_report.md
+2025-03-15 02:36:19,001 - __main__ - INFO - Analyzing directory: /Users/srvo/dewey
+2025-03-15 02:36:19,001 - __main__ - INFO - Starting analysis of /Users/srvo/dewey
+2025-03-15 02:36:19,740 - __main__ - INFO - Found 1670 files to analyze
+2025-03-15 02:37:54,813 - __main__ - INFO - Clustering similar files...
+2025-03-15 02:37:54,813 - __main__ - WARNING - Found 4 duplicate files with content hash 140_84ee50d5a0778a0738d9d4f8cdbd0a6bb5f91ba8e509efefb3a6221822ac3d6b
+2025-03-15 02:37:54,815 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/dewey/core/hello_world_4b5b2811.py
+2025-03-15 02:37:54,815 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/dewey/core/hello_lake_e2b0b6a9.py
+2025-03-15 02:37:54,816 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/dewey/core/hello_lake_64965e74.py
+2025-03-15 02:37:54,816 - __main__ - WARNING - Found 2 duplicate files with content hash 1921_ca8100d62533ded8ae5a7f02f78e5e9930bead9d0ec523dbcccce60732b4e288
+2025-03-15 02:37:54,817 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/dewey/src/core/models_78d6150f.py
+2025-03-15 02:37:54,817 - __main__ - WARNING - Found 2 duplicate files with content hash 3314_12b68bd55fb1c31247bfcd726c9a9eb1a4eb912ef2a50f837ee9183ac5764c0d
+2025-03-15 02:37:54,817 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/dewey/tests/test_company_tracker_7d8deabc.py
+2025-03-15 02:37:54,817 - __main__ - WARNING - Found 2 duplicate files with content hash 1072_1e9e63593a22ef86bb16e4069561b945813a0b9eb1988ff5d01be9905d199ed0
+2025-03-15 02:37:54,817 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/dewey/backend/validation_a8366535.py
+2025-03-15 02:37:54,817 - __main__ - WARNING - Found 2 duplicate files with content hash 723_779944b450a197a2b282ac5f9fae90649a96d21bfc1480af067e3a6494b6b920
+2025-03-15 02:37:54,817 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/dewey/backend/utils_124aef08.py
+2025-03-15 02:37:54,817 - __main__ - WARNING - Found 2 duplicate files with content hash 16175_eacffaff6a5da3e27faa1d21d4054bb5f155bd8c8690e5018a1211d3965ba4e0
+2025-03-15 02:37:54,818 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/dewey/backend/analysis/entity_analyzer_61ee1940.py
+2025-03-15 02:37:54,818 - __main__ - WARNING - Found 3 duplicate files with content hash 2132_881dc6ff713d17168045b5f83f65d117f4fd3ae3678b3507124cd328a86d258b
+2025-03-15 02:37:54,818 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/utils/llm_setup_63dea8d5.py
+2025-03-15 02:37:54,819 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/ts_project/llm_utils_70227171.py
+2025-03-15 02:37:54,819 - __main__ - WARNING - Found 3 duplicate files with content hash 26_178d895e09ea16a2b47da8d77aeb72249c703accd1c682cc3642217dce19eca2
+2025-03-15 02:37:54,819 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/app/views_4cf9770b.py
+2025-03-15 02:37:54,820 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/<project>/<app>/views_d0f3fa22.py
+2025-03-15 02:37:54,820 - __main__ - WARNING - Found 2 duplicate files with content hash 63_b2e328e31f08dc907100505521d13ee6a9ea67a240655d051120011ce49cfaf8
+2025-03-15 02:37:54,820 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/app_name/admin_76c7738c.py
+2025-03-15 02:37:54,820 - __main__ - WARNING - Found 2 duplicate files with content hash 63_c5cd48407aec8a3ee3df74d46e8fbfa1ec32defb34de9c3f7ada4159a318265d
+2025-03-15 02:37:54,820 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/app_name/views_78ee99d9.py
+2025-03-15 02:37:54,820 - __main__ - WARNING - Found 2 duplicate files with content hash 7628_4a83fe7d696ba0b4a0b2caacf1848f10f3c4d8f223cfadbb416c4a467e852dfe
+2025-03-15 02:37:54,820 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/tools/e2b_code_interpreter_768149a2.py
+2025-03-15 02:37:54,820 - __main__ - WARNING - Found 2 duplicate files with content hash 8288_e3b5ed46f094059f91cd6b787bcc82384f6de9f4848ad5c04040238967b2bd3c
+2025-03-15 02:37:54,821 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/tools/form_filling_205825e3.py
+2025-03-15 02:37:54,821 - __main__ - WARNING - Found 2 duplicate files with content hash 2213_64fadee00260581c4eea0b313060833cca53c15446499b42bf662045c194b51a
+2025-03-15 02:37:54,821 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/tools/duckduckgo_28b8675e.py
+2025-03-15 02:37:54,821 - __main__ - WARNING - Found 2 duplicate files with content hash 3452_4bf1452b854f9efeb3c70f41f22f99813ad9b35040a531c5f78cf1cee3bd0391
+2025-03-15 02:37:54,821 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/tools/image_generation_1151c6f7.py
+2025-03-15 02:37:54,821 - __main__ - WARNING - Found 2 duplicate files with content hash 2912_d7affe151eaf3e2f12ce0629fd4a72beddf124d1c6250b798309d6e42d6fd345
+2025-03-15 02:37:54,821 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/tools/open_meteo_weather_60bbc395.py
+2025-03-15 02:37:54,821 - __main__ - WARNING - Found 2 duplicate files with content hash 5970_6c69d886e0359ed40ca9431b804aa0bb52a1689772f2c7a7b8df88e3fcb8ecef
+2025-03-15 02:37:54,821 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/tools/document_generator_8b2cfe98.py
+2025-03-15 02:37:54,821 - __main__ - WARNING - Found 2 duplicate files with content hash 4960_7c2c6033479eeb01ef61ec0618a52570c930e48c11c67af2b8b068d708ae59e6
+2025-03-15 02:37:54,822 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/llama_index/tools/code_generator_37e13464.py
+2025-03-15 02:37:54,822 - __main__ - WARNING - Found 2 duplicate files with content hash 8066_97bd214d9408b6f0c5ee819d19ceb8ae4fef22e04db27bea0ce3371dc230307a
+2025-03-15 02:37:54,822 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/utils/settings_utils_d52afed0.py
+2025-03-15 02:37:54,822 - __main__ - WARNING - Found 2 duplicate files with content hash 177_583108a0f7e51e32bb38e3cff739b1166992432b252059b1c5aefb4f20227d47
+2025-03-15 02:37:54,822 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/src/utils/observability_4cd64680.py
+2025-03-15 02:37:54,822 - __main__ - WARNING - Found 2 duplicate files with content hash 1170_4933b3feb0820c428d1952ce9edd1cf300a77fb47ce84977531db48dfd5c279f
+2025-03-15 02:37:54,822 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_8087cf98.py
+2025-03-15 02:37:54,822 - __main__ - WARNING - Found 2 duplicate files with content hash 5292_b36c308d7c09988b814f078a8e657534ea12ef09079fe3f912391ed8ab986ea1
+2025-03-15 02:37:54,822 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_84774760.py
+2025-03-15 02:37:54,822 - __main__ - WARNING - Found 2 duplicate files with content hash 3158_ca608ac5f88b6a70616ea7f426ff72d6fd6f4d67d9b13977f7b2844f2276b2a9
+2025-03-15 02:37:54,823 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/llamabot/utils/llama_cloud_5b56ebce.py
+2025-03-15 02:37:54,823 - __main__ - WARNING - Found 2 duplicate files with content hash 2731_57bf3e20589f6918436dcef34db58291908bfe83841cff8c6b95adaa594e8a3d
+2025-03-15 02:37:54,823 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/scripts/index_generation_a47979e2.py
+2025-03-15 02:37:54,823 - __main__ - WARNING - Found 3 duplicate files with content hash 189_ffdc8055706a50e18d825c569ebd64201dc998fe8984d398cd74d09af554ddbc
+2025-03-15 02:37:54,823 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_00865da0.py
+2025-03-15 02:37:54,823 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/config/settings/local_2600814f.py
+2025-03-15 02:37:54,823 - __main__ - WARNING - Found 2 duplicate files with content hash 2983_e5f836b78bbd97de291e2555578b3d4945f501410d154e2dfe7629cbf18c96a7
+2025-03-15 02:37:54,823 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_f488b4da.py
+2025-03-15 02:37:54,823 - __main__ - WARNING - Found 2 duplicate files with content hash 1415_471e37c2bb5f4c36345923ece8ccb137132d43bdb08a4ab2c584138c5304cb3a
+2025-03-15 02:37:54,823 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/app/engine/chat_7a3a147f.py
+2025-03-15 02:37:54,823 - __main__ - WARNING - Found 2 duplicate files with content hash 26_a960ef03d661542435acf6e4a0589fcbba3f7c38ab5cc51d60cc45d76ab75883
+2025-03-15 02:37:54,824 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_7650e945.py
+2025-03-15 02:37:54,824 - __main__ - WARNING - Found 2 duplicate files with content hash 864_67163904453ef954b3556798f94556d3c6f2908883df5b88d5287b8f5bc2a47b
+2025-03-15 02:37:54,824 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/app/api/routers/file_upload_c9260a1e.py
+2025-03-15 02:37:54,824 - __main__ - WARNING - Found 2 duplicate files with content hash 4029_e7d6d327cea6779a4ef5da3fd43ce1131baf1cb1e8da4be795bfe5674dc9a11a
+2025-03-15 02:37:54,824 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/tests/utils/test_5da28c25.py
+2025-03-15 02:37:54,824 - __main__ - WARNING - Found 2 duplicate files with content hash 2816_196c861c8f35d628eb9f8e1528329d94d272090fc09d12a190029e51ebe5fc72
+2025-03-15 02:37:54,824 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/app/utils/next_question_suggestion_5dd93e7d.py
+2025-03-15 02:37:54,825 - __main__ - WARNING - Found 2 duplicate files with content hash 6389_84d3456cff2256a8ef1eba21874fa25987c0a66abe44dc4ff4649fd842679524
+2025-03-15 02:37:54,825 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/app/engine/services/llamacloud_file_service_89f313b6.py
+2025-03-15 02:37:54,825 - __main__ - WARNING - Found 2 duplicate files with content hash 12177_b43077b0cff6051b487857d87624abf79cf9203e66a95f0f729ec31714412a6d
+2025-03-15 02:37:54,825 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/app/models/chat_841e1f8d.py
+2025-03-15 02:37:54,825 - __main__ - WARNING - Found 2 duplicate files with content hash 9362_804a539b09a121e9d373857bec8324d59491cb726dd75367acfc508035451710
+2025-03-15 02:37:54,825 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/app/engine/service_150825fa.py
+2025-03-15 02:37:54,826 - __main__ - WARNING - Found 2 duplicate files with content hash 2377_a3d0949b5990ac287ff53366985b3fa456510bc8dde3cd499b9ddfcdd6bcd23b
+2025-03-15 02:37:54,826 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/app/api/routers/chat_6177a908.py
+2025-03-15 02:37:54,826 - __main__ - WARNING - Found 2 duplicate files with content hash 1651_c9436a819b18d57964d664ab965a9a0871f3f564fbc31eb7881cb740ec98f03d
+2025-03-15 02:37:54,826 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/app/api/routers/config_565b90f9.py
+2025-03-15 02:37:54,826 - __main__ - WARNING - Found 2 duplicate files with content hash 5490_39ae944381fb7227163b15238b05546be462ad800d2baf2fddba73165136da0a
+2025-03-15 02:37:54,826 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/app/api/services/response_b876811a.py
+2025-03-15 02:37:54,826 - __main__ - WARNING - Found 2 duplicate files with content hash 2989_823cb73f2df49c29e552c74c6bb00395b2c969ed23ead56c79f14e3d3aa70872
+2025-03-15 02:37:54,828 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/app/engine/utils/tool_factory_75a6fe18.py
+2025-03-15 02:37:54,828 - __main__ - WARNING - Found 2 duplicate files with content hash 606_caaa8146434da4eb38bafaf9c5592be0239859c21ab216dd54b51f3f86c32dec
+2025-03-15 02:37:54,829 - __main__ - INFO - Deleted duplicate file: /Users/srvo/dewey/src/src/dewey/api/v1/api_e6c17e53.py
+2025-03-15 02:37:54,912 - __main__ - INFO - Analysis report saved to /Users/srvo/dewey/directory_analysis.md
+2025-03-15 02:40:11,062 - __main__ - INFO - Analyzing directory: /Users/srvo/dewey
+2025-03-15 02:40:11,062 - __main__ - INFO - Starting analysis of /Users/srvo/dewey
+2025-03-15 02:40:11,809 - __main__ - INFO - Found 1899 files to analyze
+2025-03-15 02:41:37,828 - __main__ - INFO - Clustering similar files...
+2025-03-15 02:41:37,837 - __main__ - INFO - Analysis report saved to /Users/srvo/dewey/directory_analysis.md
+2025-03-15 02:47:35,276 - __main__ - INFO - Analyzing directory: /Users/srvo/dewey
+2025-03-15 02:47:35,276 - __main__ - DEBUG - Initialized analyzer for directory: /Users/srvo/dewey
+2025-03-15 02:47:35,276 - __main__ - INFO - Starting analysis of /Users/srvo/dewey
+2025-03-15 02:47:36,016 - __main__ - INFO - Found 1914 files to analyze
+2025-03-15 02:47:36,027 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/hello.py: 1 functions found
+2025-03-15 02:47:36,191 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/script_mover.py: 20 functions found
+2025-03-15 02:47:36,307 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/document_directory.py: 10 functions found
+2025-03-15 02:47:36,421 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/ui/screens/crm_screen.py: 2 functions found
+2025-03-15 02:47:36,509 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/tests/core/test_utils.py: 2 functions found
+2025-03-15 02:47:36,597 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/tests/core/__init__.py: 0 functions found
+2025-03-15 02:47:36,681 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/llm/llm_utils.py: 2 functions found
+2025-03-15 02:47:36,770 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/llm/exceptions.py: 0 functions found
+2025-03-15 02:47:36,857 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/setup_21389570.py: 2 functions found
+2025-03-15 02:47:36,941 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/exceptions_4c7b99b1.py: 2 functions found
+2025-03-15 02:47:37,030 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/deepseek_engine_65bc0f66.py: 7 functions found
+2025-03-15 02:47:37,118 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/service_manager_ab66eb9e.py: 0 functions found
+2025-03-15 02:47:37,207 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/setup_0019c0f6.py: 0 functions found
+2025-03-15 02:47:37,293 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/streamlit_app_cbcd9ab5.py: 2 functions found
+2025-03-15 02:47:37,382 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/utils.py: 1 functions found
+2025-03-15 02:47:37,471 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/setup_026dec54.py: 1 functions found
+2025-03-15 02:47:37,558 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/__init___0ef1c1e6.py: 0 functions found
+2025-03-15 02:47:37,643 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/gmail_priority_flow_80cbc058.py: 15 functions found
+2025-03-15 02:47:37,778 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/financial_pipeline_b9aff2fd.py: 10 functions found
+2025-03-15 02:47:37,880 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/llm_utils_1cf5a10f.py: 5 functions found
+2025-03-15 02:47:37,970 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/llm/api_clients/openrouter.py: 6 functions found
+2025-03-15 02:47:38,066 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/llm/api_clients/gemini.py: 6 functions found
+2025-03-15 02:47:38,165 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/llm/api_clients/deepinfra.py: 3 functions found
+2025-03-15 02:47:38,254 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/research/__init___3d4c9550.py: 0 functions found
+2025-03-15 02:47:38,342 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/mdurl/__init___c01e3663.py: 0 functions found
+2025-03-15 02:47:38,427 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/packaging/__init___c704b6e6.py: 0 functions found
+2025-03-15 02:47:38,511 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/packaging/version_ba760aa0.py: 29 functions found
+2025-03-15 02:47:38,598 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/database/tests_3ce35f7d.py: 5 functions found
+2025-03-15 02:47:38,687 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/migrations/env_4762fff2.py: 2 functions found
+2025-03-15 02:47:38,776 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/migrations/env_0801ebe6.py: 2 functions found
+2025-03-15 02:47:38,862 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/migrations/env_b2fffb35.py: 3 functions found
+2025-03-15 02:47:38,948 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tools/database_analyzer_c9b642a9.py: 5 functions found
+2025-03-15 02:47:39,037 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/llm/llm_utils.py: 5 functions found
+2025-03-15 02:47:39,134 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/csv_schema_inference_bb28f4d6.py: 7 functions found
+2025-03-15 02:47:39,224 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/email_enrichment_service_8df80750.py: 3 functions found
+2025-03-15 02:47:39,317 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/fred_engine_2a4cfc5c.py: 2 functions found
+2025-03-15 02:47:39,404 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/email_prioritization_d2b40d47.py: 5 functions found
+2025-03-15 02:47:39,490 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/duckduckgo_engine_4a32892b.py: 4 functions found
+2025-03-15 02:47:39,575 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/hello_lake_9a2a621e.py: 1 functions found
+2025-03-15 02:47:39,662 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/feedback_processor_5e54ba1e.py: 4 functions found
+2025-03-15 02:47:39,753 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/chat_model_500718b8.py: 2 functions found
+2025-03-15 02:47:39,841 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/hello_lake_a0cbb74f.py: 2 functions found
+2025-03-15 02:47:39,925 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/workflow_437751de.py: 10 functions found
+2025-03-15 02:47:40,012 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/github_integration_80c72da0.py: 9 functions found
+2025-03-15 02:47:40,105 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/research_output_handler_cd8c003a.py: 6 functions found
+2025-03-15 02:47:40,189 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/engines_673fdb17.py: 7 functions found
+2025-03-15 02:47:40,274 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/enrichment_engine_49bb84a8.py: 6 functions found
+2025-03-15 02:47:40,361 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/hello_c8bce3f1.py: 2 functions found
+2025-03-15 02:47:40,447 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/action_manager_fff42dfb.py: 1 functions found
+2025-03-15 02:47:40,536 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/polygon_engine_db79ddc2.py: 2 functions found
+2025-03-15 02:47:40,622 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/duckdb_analyzer_82b4c544.py: 6 functions found
+2025-03-15 02:47:40,718 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/email_sync_29541573.py: 4 functions found
+2025-03-15 02:47:40,810 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/tasks_08c5fa60.py: 3 functions found
+2025-03-15 02:47:40,909 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/sec_engine_3385f8f0.py: 1 functions found
+2025-03-15 02:47:40,997 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/fmp_engine_abc64cdd.py: 2 functions found
+2025-03-15 02:47:41,081 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/api_client_08f243da.py: 4 functions found
+2025-03-15 02:47:41,174 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/database_ac882239.py: 6 functions found
+2025-03-15 02:47:41,265 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/data_import_1a125870.py: 1 functions found
+2025-03-15 02:47:41,357 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/markdown_parser_812fac80.py: 8 functions found
+2025-03-15 02:47:41,443 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/code_analyzer_6cb1f7c6.py: 12 functions found
+2025-03-15 02:47:41,533 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/models_7eb065ea.py: 3 functions found
+2025-03-15 02:47:41,623 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/deepinfra_client_3c70464b.py: 4 functions found
+2025-03-15 02:47:41,720 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/exceptions_0b0e30bb.py: 0 functions found
+2025-03-15 02:47:41,807 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/markdown_parser_a174924d.py: 4 functions found
+2025-03-15 02:47:41,892 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/form_detection_11263270.py: 6 functions found
+2025-03-15 02:47:41,987 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/rule_engine_40c99c70.py: 3 functions found
+2025-03-15 02:47:42,074 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/service_deployment_145972f0.py: 15 functions found
+2025-03-15 02:47:42,171 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/log_analyzer_1a7f2e1d.py: 7 functions found
+2025-03-15 02:47:42,266 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/email_processing_d65e8171.py: 9 functions found
+2025-03-15 02:47:42,373 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/enrichment_engine_ff2d5aa6.py: 5 functions found
+2025-03-15 02:47:42,459 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/form_detection_9f92fc84.py: 7 functions found
+2025-03-15 02:47:42,546 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/app/storm_demo_4bbca38e.py: 4 functions found
+2025-03-15 02:47:42,636 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/exceptions_8201d6dc.py: 4 functions found
+2025-03-15 02:47:42,726 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/utils_29150819.py: 7 functions found
+2025-03-15 02:47:42,819 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/__init___89275018.py: 0 functions found
+2025-03-15 02:47:42,905 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/streamlit_apps/storm_demo_31dc18e6.py: 5 functions found
+2025-03-15 02:47:42,990 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/bin/verify_transactions_b4bf0508.py: 7 functions found
+2025-03-15 02:47:43,087 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/emails/models_b6ad9820.py: 2 functions found
+2025-03-15 02:47:43,172 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/test_analysis_tagger_463ec735.py: 1 functions found
+2025-03-15 02:47:43,287 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/test_service_manager_75034ab5.py: 11 functions found
+2025-03-15 02:47:43,380 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/test_controversy_analysis_e6df9659.py: 3 functions found
+2025-03-15 02:47:43,472 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/fixtures_442848ff.py: 0 functions found
+2025-03-15 02:47:43,558 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/test_company_analysis_flow_171ac64e.py: 1 functions found
+2025-03-15 02:47:43,648 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/test_service_manager_22f4c6b5.py: 11 functions found
+2025-03-15 02:47:43,745 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/conftest_5cd4dbba.py: 3 functions found
+2025-03-15 02:47:43,830 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/test_mercury_import_7ca21ab0.py: 12 functions found
+2025-03-15 02:47:43,923 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/test_flow_serving_3045b0e8.py: 2 functions found
+2025-03-15 02:47:44,013 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/config_3d138044.py: 2 functions found
+2025-03-15 02:47:44,106 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/conftest_d5426b6d.py: 7 functions found
+2025-03-15 02:47:44,192 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/test_company_tracker_2d8fdb0d.py: 0 functions found
+2025-03-15 02:47:44,282 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/test_required_attributes_a10f260e.py: 12 functions found
+2025-03-15 02:47:44,377 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/test_service_manager_95bc65e0.py: 11 functions found
+2025-03-15 02:47:44,476 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/test_github_integration_ad62d527.py: 12 functions found
+2025-03-15 02:47:44,572 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/email_analyzer_tests_4692f6ec.py: 1 functions found
+2025-03-15 02:47:44,667 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/conftest_90854fdc.py: 9 functions found
+2025-03-15 02:47:44,757 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/run_tests_986a9337.py: 1 functions found
+2025-03-15 02:47:44,846 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/test_service_manager_dd5cb386.py: 11 functions found
+2025-03-15 02:47:44,942 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/test_deployments_dcaf7136.py: 3 functions found
+2025-03-15 02:47:45,029 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/conftest_25e117d5.py: 5 functions found
+2025-03-15 02:47:45,115 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/test_deployments_71b19a3f.py: 2 functions found
+2025-03-15 02:47:45,205 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/test_ui_3d4c2b54.py: 3 functions found
+2025-03-15 02:47:45,300 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/workflows/analysis_tagging_workflow_f92e90de.py: 4 functions found
+2025-03-15 02:47:45,390 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/workflows/tic_delta_workflow_4753bf87.py: 5 functions found
+2025-03-15 02:47:45,478 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/workflows/ethical_analysis_156d7cb5.py: 2 functions found
+2025-03-15 02:47:45,565 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/workflows/example_workflow_245f875d.py: 7 functions found
+2025-03-15 02:47:45,649 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/workflows/search_workflow_f34b7858.py: 4 functions found
+2025-03-15 02:47:45,733 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/agents/sloan_ghostwriter_db1b484b.py: 1 functions found
+2025-03-15 02:47:45,826 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/agents/docstring_agent_dbc16a9b.py: 3 functions found
+2025-03-15 02:47:45,922 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/agents/data_ingestion_agent_6dccc9f9.py: 1 functions found
+2025-03-15 02:47:46,017 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/agents/optimizer_8a990615.py: 1 functions found
+2025-03-15 02:47:46,111 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/agents/contact_agents_a62b54f1.py: 2 functions found
+2025-03-15 02:47:46,198 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/agents/transcript_analysis_agent_d39dda1f.py: 1 functions found
+2025-03-15 02:47:46,292 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/api_management/api_manager_0bcf0553.py: 6 functions found
+2025-03-15 02:47:46,392 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/utils/email_data_generator_b57a1d6e.py: 2 functions found
+2025-03-15 02:47:46,485 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/utils/encode_b7af9008.py: 2 functions found
+2025-03-15 02:47:46,571 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/utils/six_1a7ee673.py: 38 functions found
+2025-03-15 02:47:46,661 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/utils/__init__.py: 0 functions found
+2025-03-15 02:47:46,746 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/utils/url_parser_bfc24c95.py: 4 functions found
+2025-03-15 02:47:46,837 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/utils/logging_config_957f5830.py: 1 functions found
+2025-03-15 02:47:46,925 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/utils/pypi_search.py: 3 functions found
+2025-03-15 02:47:47,018 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/utils/url_formatter_85acfe08.py: 2 functions found
+2025-03-15 02:47:47,103 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/utils/gmail_auth_621d476b.py: 5 functions found
+2025-03-15 02:47:47,196 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/utils/six_3691f55b.py: 69 functions found
+2025-03-15 02:47:47,332 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/utils/url_decoding_5a27bd5a.py: 3 functions found
+2025-03-15 02:47:47,419 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/utils/log_manager_fc5f5d52.py: 16 functions found
+2025-03-15 02:47:47,517 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/utils/duplicate_checker_da1c17b0.py: 2 functions found
+2025-03-15 02:47:47,609 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/backend/validation_62c18043.py: 1 functions found
+2025-03-15 02:47:47,698 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/backend/main_4ce21a72.py: 6 functions found
+2025-03-15 02:47:47,793 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/backend/utils_a7361930.py: 3 functions found
+2025-03-15 02:47:47,879 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/cli/reset_ecaa3cb6.py: 3 functions found
+2025-03-15 02:47:47,967 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/email_prioritization/__init___28951fa7.py: 0 functions found
+2025-03-15 02:47:48,053 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/service_manager/manager_c71f79af.py: 88 functions found
+2025-03-15 02:47:48,196 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/service_manager/core_604b844e.py: 11 functions found
+2025-03-15 02:47:48,302 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/engines/__init___42fd3645.py: 0 functions found
+2025-03-15 02:47:48,387 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/engines/yahoo_finance_engine_02959ebf.py: 4 functions found
+2025-03-15 02:47:48,473 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/engines/tavily_f1ed97ee.py: 2 functions found
+2025-03-15 02:47:48,560 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/engines/exa_c28dd38b.py: 2 functions found
+2025-03-15 02:47:48,653 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/examples/analysis_tagging_ccf07cc8.py: 1 functions found
+2025-03-15 02:47:48,740 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/examples/interactive_plot_a0a56754.py: 2 functions found
+2025-03-15 02:47:48,831 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/email_daemon_faf81dc6.py: 2 functions found
+2025-03-15 02:47:48,920 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/run_api_1ef78fcd.py: 2 functions found
+2025-03-15 02:47:49,006 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/migration_57af2cae.py: 4 functions found
+2025-03-15 02:47:49,094 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/email_analyzer_370ffb3d.py: 4 functions found
+2025-03-15 02:47:49,182 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/gmail_label_learner_39b36b16.py: 7 functions found
+2025-03-15 02:47:49,280 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/email_processor_b2629bef.py: 8 functions found
+2025-03-15 02:47:49,383 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/motherduck_sync_cd3d1161.py: 4 functions found
+2025-03-15 02:47:49,469 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/email_service_71140add.py: 5 functions found
+2025-03-15 02:47:49,555 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/db_init_63b44386.py: 1 functions found
+2025-03-15 02:47:49,641 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/opportunity_detection_e7e5bbbc.py: 3 functions found
+2025-03-15 02:47:49,723 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/dashboard_generator_42fbf71f.py: 6 functions found
+2025-03-15 02:47:49,804 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/data_migration_3fd6ba41.py: 1 functions found
+2025-03-15 02:47:49,895 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/log_config_8220b62c.py: 10 functions found
+2025-03-15 02:47:49,998 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/env_info_ae0bbc0b.py: 5 functions found
+2025-03-15 02:47:50,082 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/monitor_emails_a33ca107.py: 5 functions found
+2025-03-15 02:47:50,168 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/add_contact_uuids_5ade26a6.py: 1 functions found
+2025-03-15 02:47:50,257 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/email_processor_3fad7b89.py: 16 functions found
+2025-03-15 02:47:50,373 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/attio_integration_2405fa58.py: 2 functions found
+2025-03-15 02:47:50,463 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/format_and_lint_46145e3e.py: 1 functions found
+2025-03-15 02:47:50,552 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/__init___447af098.py: 0 functions found
+2025-03-15 02:47:50,638 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/__init__.py: 0 functions found
+2025-03-15 02:47:50,724 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/add_enrichment_a154a675.py: 1 functions found
+2025-03-15 02:47:50,813 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/contact_creation_bbc4f263.py: 1 functions found
+2025-03-15 02:47:50,903 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/motherduck_sync_43263ed0.py: 4 functions found
+2025-03-15 02:47:50,993 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/db_migration_95be8dc1.py: 1 functions found
+2025-03-15 02:47:51,088 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/attio_api_query_638f7410.py: 2 functions found
+2025-03-15 02:47:51,177 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/journal_fixer_14a84089.py: 5 functions found
+2025-03-15 02:47:51,273 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/email_analyzer_7c6ec35e.py: 5 functions found
+2025-03-15 02:47:51,374 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/email_processor_1ac390c9.py: 9 functions found
+2025-03-15 02:47:51,464 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/db_init_ce32a0f3.py: 1 functions found
+2025-03-15 02:47:51,553 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/extended_sync_d1c5012d.py: 31 functions found
+2025-03-15 02:47:51,689 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/init_db_755450f1.py: 1 functions found
+2025-03-15 02:47:51,777 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/gmail_label_learner_3aa18d52.py: 7 functions found
+2025-03-15 02:47:51,874 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/import_data_9970c919.py: 2 functions found
+2025-03-15 02:47:51,965 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/dokku_healthchecks_aa1a04b4.py: 6 functions found
+2025-03-15 02:47:52,051 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/inspect_db_a4de1349.py: 4 functions found
+2025-03-15 02:47:52,138 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/email_service_5b517c55.py: 5 functions found
+2025-03-15 02:47:52,230 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/run_api_9d29e5f3.py: 2 functions found
+2025-03-15 02:47:52,315 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/issue_resolver_d4515e67.py: 1 functions found
+2025-03-15 02:47:52,405 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/enrichment_ab6c88c0.py: 6 functions found
+2025-03-15 02:47:52,510 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/auto_categorize_7b359726.py: 9 functions found
+2025-03-15 02:47:52,607 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/feedback_processor_40e7ff22.py: 1 functions found
+2025-03-15 02:47:52,696 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/priority_manager_7aeb5f72.py: 8 functions found
+2025-03-15 02:47:52,784 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/priority_manager_26631df9.py: 8 functions found
+2025-03-15 02:47:52,883 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/duckdb_data_checker_415cc3ba.py: 1 functions found
+2025-03-15 02:47:52,973 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/ethical_analysis_eabb4224.py: 3 functions found
+2025-03-15 02:47:53,062 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/hledger_utils_1f418497.py: 3 functions found
+2025-03-15 02:47:53,152 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/test_generation_e950cec7.py: 8 functions found
+2025-03-15 02:47:53,249 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/email_recovery_0a95c07f.py: 2 functions found
+2025-03-15 02:47:53,340 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/migration_18474850.py: 1 functions found
+2025-03-15 02:47:53,427 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/script_mover.py: 20 functions found
+2025-03-15 02:47:53,540 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/email_analyzer_b93600c8.py: 5 functions found
+2025-03-15 02:47:53,627 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/init_db_17904100.py: 0 functions found
+2025-03-15 02:47:53,714 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/email_analyzer_85d90d11.py: 3 functions found
+2025-03-15 02:47:53,801 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/beancount_generator_3823664a.py: 1 functions found
+2025-03-15 02:47:53,889 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/manage_migrations_d7c7dfca.py: 1 functions found
+2025-03-15 02:47:53,976 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/gmail_client_ccd0a54c.py: 5 functions found
+2025-03-15 02:47:54,079 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/document_directory.py: 13 functions found
+2025-03-15 02:47:54,184 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/data_migration_90723451.py: 1 functions found
+2025-03-15 02:47:54,273 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/log_analyzer_92449403.py: 5 functions found
+2025-03-15 02:47:54,369 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/api/__init___695e7620.py: 1 functions found
+2025-03-15 02:47:54,456 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/api/rag_service_39815c96.py: 0 functions found
+2025-03-15 02:47:54,543 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/gmail_integration/sync_a3ee5a57.py: 8 functions found
+2025-03-15 02:47:54,649 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/email_processing/apps_ae8de7bf.py: 1 functions found
+2025-03-15 02:47:54,736 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/email_processing/signals_963d020b.py: 0 functions found
+2025-03-15 02:47:54,823 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/monitoring/service_monitoring_f9c68e38.py: 6 functions found
+2025-03-15 02:47:54,919 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/unmapped_scripts/migrated_ce3578fe.py: 6 functions found
+2025-03-15 02:47:55,011 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/unmapped_scripts/migrated_edeb313f.py: 10 functions found
+2025-03-15 02:47:55,109 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/unmapped_scripts/migrated_52453327.py: 2 functions found
+2025-03-15 02:47:55,201 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/unmapped_scripts/__init__.py: 3 functions found
+2025-03-15 02:47:55,286 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/unmapped_scripts/migrated_b1ffc387.py: 2 functions found
+2025-03-15 02:47:55,370 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/unmapped_scripts/migrated_25e92866.py: 7 functions found
+2025-03-15 02:47:55,463 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/unmapped_scripts/migrated_0de604d6.py: 0 functions found
+2025-03-15 02:47:55,546 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/unmapped_scripts/migrated_3dfe5c4e.py: 17 functions found
+2025-03-15 02:47:55,643 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/unmapped_scripts/migrated_659b25f3.py: 10 functions found
+2025-03-15 02:47:55,737 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/email_triage/workflow_5f71bad3.py: 1 functions found
+2025-03-15 02:47:55,838 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/flows/api_management_7fcdf790.py: 1 functions found
+2025-03-15 02:47:55,931 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/services/contact_enrichment_f0de086f.py: 5 functions found
+2025-03-15 02:47:56,027 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/email_sync/gmail_sync_183dfaf7.py: 4 functions found
+2025-03-15 02:47:56,154 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/package/__init___74222e90.py: 4 functions found
+2025-03-15 02:47:56,243 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/deployments/api_manager_deployment_279a867d.py: 2 functions found
+2025-03-15 02:47:56,330 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/data_models_b6aa1cf8.py: 0 functions found
+2025-03-15 02:47:56,417 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/config_a01ee02e.py: 4 functions found
+2025-03-15 02:47:56,503 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/imap_connector_b6c295f6.py: 0 functions found
+2025-03-15 02:47:56,589 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/company_tagger_d205f2b9.py: 8 functions found
+2025-03-15 02:47:56,674 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/pipeline_a13db674.py: 8 functions found
+2025-03-15 02:47:56,762 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/_musl_17489a29.py: 3 functions found
+2025-03-15 02:47:56,848 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/models_9c4ec9a4.py: 0 functions found
+2025-03-15 02:47:56,948 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/ethical_analyzer_6c094ee6.py: 8 functions found
+2025-03-15 02:47:57,035 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/models_a5074cad.py: 0 functions found
+2025-03-15 02:47:57,123 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/populate_contacts_ffbf9240.py: 9 functions found
+2025-03-15 02:47:57,232 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/email_prioritization_21a13ac6.py: 6 functions found
+2025-03-15 02:47:57,320 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/background_search_a7358eb6.py: 3 functions found
+2025-03-15 02:47:57,409 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/gmail_utils_35eb1519.py: 4 functions found
+2025-03-15 02:47:57,495 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/config_6a4e41c7.py: 5 functions found
+2025-03-15 02:47:57,587 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/gmail_priority_flow_3fdba4c0.py: 13 functions found
+2025-03-15 02:47:57,679 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/database_9a56bb66.py: 7 functions found
+2025-03-15 02:47:57,774 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/rule_engine_e6c69c47.py: 4 functions found
+2025-03-15 02:47:57,859 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/transaction_categorizer_81ed60d5.py: 6 functions found
+2025-03-15 02:47:57,954 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/models_0519cd34.py: 1 functions found
+2025-03-15 02:47:58,083 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/journal_writer_fab1858b.py: 8 functions found
+2025-03-15 02:47:58,177 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/migrations/versions/001_initial_schema_62aeb7eb.py: 2 functions found
+2025-03-15 02:47:58,265 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/llm/clients/simulated_llm_client_ff1a061a.py: 3 functions found
+2025-03-15 02:47:58,354 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/llm/api_clients/gemini.py: 2 functions found
+2025-03-15 02:47:58,440 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/ingestion/csv_ingestor_389f459e.py: 6 functions found
+2025-03-15 02:47:58,528 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/llm/ai_config_483dd2c5.py: 2 functions found
+2025-03-15 02:47:58,621 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/crm/models.py: 0 functions found
+2025-03-15 02:47:58,708 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/utils/database_manager_8ed22423.py: 1 functions found
+2025-03-15 02:47:58,800 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/utils/db_maintenance_4c7f84cf.py: 4 functions found
+2025-03-15 02:47:58,887 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/utils/rule_matcher_e5c89e6f.py: 4 functions found
+2025-03-15 02:47:58,974 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/utils/db_sync_1511845c.py: 1 functions found
+2025-03-15 02:47:59,061 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/utils/csv_schema_inference_c22bbd1d.py: 9 functions found
+2025-03-15 02:47:59,146 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/utils/config_utils_291bc678.py: 8 functions found
+2025-03-15 02:47:59,241 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/search/brave_search_engine_1d052741.py: 2 functions found
+2025-03-15 02:47:59,335 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/db/setup_5a30a089.py: 1 functions found
+2025-03-15 02:47:59,425 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/enrichment/contact_enricher_ccb1f4f7.py: 6 functions found
+2025-03-15 02:47:59,521 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/llm/engine/apitube_d7e92871.py: 2 functions found
+2025-03-15 02:47:59,607 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/management/commands/setup_gmail_8918c39b.py: 1 functions found
+2025-03-15 02:47:59,705 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/management/commands/sync_gmail_ee79d1ee.py: 3 functions found
+2025-03-15 02:47:59,801 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/core/management/commands/sync_gmail_history_2ab63602.py: 2 functions found
+2025-03-15 02:47:59,889 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/research/cli_631780a7.py: 4 functions found
+2025-03-15 02:47:59,974 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/core/research_workflow_e87d9a2b.py: 1 functions found
+2025-03-15 02:48:00,059 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/core/api_client_e0b78def.py: 2 functions found
+2025-03-15 02:48:00,149 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/core/logger_utils_de8f2a1c.py: 3 functions found
+2025-03-15 02:48:00,236 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/tests/test_db_data_processing_2639d0c7.py: 14 functions found
+2025-03-15 02:48:00,323 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/tests/test_tavily_engine_f9a82de8.py: 1 functions found
+2025-03-15 02:48:00,415 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/db/__init___e2fa78b4.py: 0 functions found
+2025-03-15 02:48:00,503 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/db/cli_5138952c.py: 5 functions found
+2025-03-15 02:48:00,589 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/research/analyzers/api_analyzer_813c6be9.py: 1 functions found
+2025-03-15 02:48:00,677 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/research/tests/test_search_workflow_a80fabda.py: 7 functions found
+2025-03-15 02:48:00,764 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/research/tests/test_workflow_4cb6d188.py: 6 functions found
+2025-03-15 02:48:00,852 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/research/workflows/ethical_analysis_5ad99c13.py: 5 functions found
+2025-03-15 02:48:00,936 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/research/workflows/example_usage_8e29fdde.py: 1 functions found
+2025-03-15 02:48:01,022 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/research/engines/test_apitube_837b8e91.py: 1 functions found
+2025-03-15 02:48:01,116 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/research/workflows/ethical/tests/test_ethical_analysis_workflow_74721201.py: 12 functions found
+2025-03-15 02:48:01,215 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/research/engines/tests/test_sec_engine_d4eba80b.py: 0 functions found
+2025-03-15 02:48:01,311 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/research/engines/tests/test_fmp_881b55b2.py: 1 functions found
+2025-03-15 02:48:01,408 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/research/engines/tests/test_deepseek_2c101964.py: 4 functions found
+2025-03-15 02:48:01,505 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/research/engines/tests/test_exa_a9106157.py: 1 functions found
+2025-03-15 02:48:01,601 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/research/engines/tests/test_polygon_02ebdfef.py: 1 functions found
+2025-03-15 02:48:01,702 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/research/engines/tests/test_brave_6e7fd32e.py: 2 functions found
+2025-03-15 02:48:01,796 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/research/engines/tests/test_fred_3cc83477.py: 1 functions found
+2025-03-15 02:48:01,895 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/research/engines/tests/test_openfigi_c4634599.py: 5 functions found
+2025-03-15 02:48:01,986 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/core/tests/test_api_client_15ec830b.py: 6 functions found
+2025-03-15 02:48:02,068 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/core/engine/base_engine_bedb2dd5.py: 8 functions found
+2025-03-15 02:48:02,156 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethifinx/db/tests/test_data_store_0bd7967c.py: 7 functions found
+2025-03-15 02:48:02,248 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/path/to/data_processor_38a1e2ab.py: 7 functions found
+2025-03-15 02:48:02,338 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/path/to/script_4dd80555.py: 0 functions found
+2025-03-15 02:48:02,424 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/mocks/llm_client_5e122dc6.py: 3 functions found
+2025-03-15 02:48:02,510 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/ui/test_tick_manager_ui_56e045a1.py: 2 functions found
+2025-03-15 02:48:02,595 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/core/test_config_689f736f.py: 4 functions found
+2025-03-15 02:48:02,686 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/core/test_yahoo_finance_engine_494690b1.py: 6 functions found
+2025-03-15 02:48:02,778 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/integration/test_searxng_ef119e4e.py: 12 functions found
+2025-03-15 02:48:02,870 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/integration/dokku_tests_d52f1442.py: 14 functions found
+2025-03-15 02:48:02,964 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/integration/test_minio_e9427108.py: 8 functions found
+2025-03-15 02:48:03,056 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/db/test_db_safety_bf5e7727.py: 1 functions found
+2025-03-15 02:48:03,141 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/api/attio_integration_test_81b4380a.py: 5 functions found
+2025-03-15 02:48:03,229 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/api/attio_integration_test_fdeb1b54.py: 1 functions found
+2025-03-15 02:48:03,317 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/email_processing/__init___59166d0d.py: 0 functions found
+2025-03-15 02:48:03,400 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/tests/functional/fixtures_a1512cb5.py: 10 functions found
+2025-03-15 02:48:03,487 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/management/commands/setup_periodic_tasks_73c33c61.py: 1 functions found
+2025-03-15 02:48:03,575 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/management/commands/setup_periodic_tasks_c636d2a8.py: 1 functions found
+2025-03-15 02:48:03,664 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/management/commands/sync_emails_8f1a5383.py: 2 functions found
+2025-03-15 02:48:03,753 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/agents/tests/philosophical_agent_7f1fe39f.py: 2 functions found
+2025-03-15 02:48:03,839 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/backend/analysis/entity_analyzer_ea1b9b5d.py: 9 functions found
+2025-03-15 02:48:03,949 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/syzygy/llm/logical_fallacy_agent_2339b1fa.py: 4 functions found
+2025-03-15 02:48:04,057 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/syzygy/core/contact_merger_9b047df9.py: 1 functions found
+2025-03-15 02:48:04,143 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/syzygy/rag/agent_95bc1bb1.py: 2 functions found
+2025-03-15 02:48:04,240 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/service_manager/tests/test_menu_02e5ea12.py: 16 functions found
+2025-03-15 02:48:04,336 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/data_migration/merge_contacts_4c1655b1.py: 1 functions found
+2025-03-15 02:48:04,425 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/data_management/merge_data_2d412bcf.py: 1 functions found
+2025-03-15 02:48:04,514 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/data_processing/merge_data_b69dcd78.py: 1 functions found
+2025-03-15 02:48:04,603 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/finance/deferred_revenue_e88dafbd.py: 3 functions found
+2025-03-15 02:48:04,697 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/email_processing/template_script_e89ccdd8.py: 3 functions found
+2025-03-15 02:48:04,783 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/email_processing/copy_emails_8010f2ad.py: 2 functions found
+2025-03-15 02:48:04,872 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/migration/migrate_contacts_05fa38d4.py: 1 functions found
+2025-03-15 02:48:04,964 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/scripts/import/mercury/convert_rules_87ddbffe.py: 5 functions found
+2025-03-15 02:48:05,059 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/email_processing/migrations/0002_contact_enrichmentsource_enrichmenttask_6662d9f4.py: 0 functions found
+2025-03-15 02:48:05,152 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/email_processing/migrations/xxxx_auto_alter_593fae5d.py: 0 functions found
+2025-03-15 02:48:05,237 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/email_processing/migrations/0001_initial_3534dec9.py: 0 functions found
+2025-03-15 02:48:05,328 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/email_processing/tests/test_gmail_client_c8185682.py: 21 functions found
+2025-03-15 02:48:05,431 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/import/mercury/mercury_importer_a76b6379.py: 23 functions found
+2025-03-15 02:48:05,546 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/flows/tests/test_agent_analysis_ae0a25a5.py: 3 functions found
+2025-03-15 02:48:05,639 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/ui/textual_ui_62079778.py: 16 functions found
+2025-03-15 02:48:05,736 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/database/connection_manager_a1b0a3e7.py: 1 functions found
+2025-03-15 02:48:05,821 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/analyzers/__init___601e27dd.py: 3 functions found
+2025-03-15 02:48:05,905 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/reporting/tick_report_125d2d3d.py: 5 functions found
+2025-03-15 02:48:05,991 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/reporting/report_generator_d729c19e.py: 1 functions found
+2025-03-15 02:48:06,076 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/core/email_processing_service_93c3a3e2.py: 9 functions found
+2025-03-15 02:48:06,172 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/core/workflow_8a68593a.py: 3 functions found
+2025-03-15 02:48:06,262 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/core/db_inspector_cc0339a5.py: 4 functions found
+2025-03-15 02:48:06,350 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/core/api_client_6816dc95.py: 1 functions found
+2025-03-15 02:48:06,445 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/core/classification_engine_60acc1e2.py: 12 functions found
+2025-03-15 02:48:06,549 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/app/tick_manager_69c5ee15.py: 1 functions found
+2025-03-15 02:48:06,636 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/app/db_converters_19ee0c2b.py: 6 functions found
+2025-03-15 02:48:06,730 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/beancount_importer/altruist_processor_2bf10734.py: 1 functions found
+2025-03-15 02:48:06,821 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/my_module/__init___50e93f54.py: 0 functions found
+2025-03-15 02:48:06,907 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/my_module/research_utils_69011e27.py: 22 functions found
+2025-03-15 02:48:06,996 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/data_processing/data_processor_e580d8de.py: 2 functions found
+2025-03-15 02:48:07,080 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/agents/base_14916eb4.py: 5 functions found
+2025-03-15 02:48:07,178 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/utils/logging_config_c1741f8b.py: 4 functions found
+2025-03-15 02:48:07,263 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/utils/precommit_analyzer_62e78dbc.py: 32 functions found
+2025-03-15 02:48:07,390 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/utils/mercury_data_validator_8783fd79.py: 4 functions found
+2025-03-15 02:48:07,478 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/utils/imap_connect_03757f4b.py: 0 functions found
+2025-03-15 02:48:07,564 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/utils/csv_ingestor_270cf535.py: 6 functions found
+2025-03-15 02:48:07,650 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/utils/rule_matcher_344ce959.py: 3 functions found
+2025-03-15 02:48:07,740 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/utils/rule_matcher_a1f3a8ae.py: 4 functions found
+2025-03-15 02:48:07,826 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/models/company_fbffde06.py: 0 functions found
+2025-03-15 02:48:07,913 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/models/company_0c2c0735.py: 1 functions found
+2025-03-15 02:48:07,998 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/service_manager/main_4c0302a6.py: 1 functions found
+2025-03-15 02:48:08,084 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/cleanup/database_cleaner_ff526836.py: 5 functions found
+2025-03-15 02:48:08,177 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/db/setup_3099494c.py: 1 functions found
+2025-03-15 02:48:08,268 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/db/setup_091f43e7.py: 1 functions found
+2025-03-15 02:48:08,354 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/db/schema_checker_fe997166.py: 8 functions found
+2025-03-15 02:48:08,440 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/db/duckdb_store_4318af64.py: 9 functions found
+2025-03-15 02:48:08,542 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/api/presidio_service_0e8884ff.py: 0 functions found
+2025-03-15 02:48:08,633 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/api/app_3d8aca34.py: 0 functions found
+2025-03-15 02:48:08,720 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/email_processing/gmail_client_a647858c.py: 10 functions found
+2025-03-15 02:48:08,821 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/engine/openfigi_b1f0797f.py: 3 functions found
+2025-03-15 02:48:08,909 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/loaders/duckdb_loader_a4a0a340.py: 11 functions found
+2025-03-15 02:48:08,995 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/contact_management/contact_manager_9d30788b.py: 7 functions found
+2025-03-15 02:48:09,095 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/migration/email_rules_migration_7b6ff76c.py: 3 functions found
+2025-03-15 02:48:09,184 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/reports/tick_report_0a32d29d.py: 4 functions found
+2025-03-15 02:48:09,268 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/core/utils/ledger_checker_b9c283ef.py: 5 functions found
+2025-03-15 02:48:09,355 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/ethifinx/db/data_store_afc1c297.py: 8 functions found
+2025-03-15 02:48:09,448 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/syzygy/agents/client_advocate_45e36203.py: 1 functions found
+2025-03-15 02:48:09,544 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/syzygy/agents/self_care_agent_2e4994a6.py: 1 functions found
+2025-03-15 02:48:09,637 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/syzygy/agents/agent_creator_2383cbb4.py: 5 functions found
+2025-03-15 02:48:09,734 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/syzygy/agents/adversarial_f704e402.py: 1 functions found
+2025-03-15 02:48:09,827 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/syzygy/triage/triage_agent_c98168a5.py: 2 functions found
+2025-03-15 02:48:09,920 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/pip/_internal/utils/tags_1d83ab57.py: 30 functions found
+2025-03-15 02:48:10,007 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/virtualenv/patches/distutils_30ceddd6.py: 6 functions found
+2025-03-15 02:48:10,094 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/virtualenv/patches/distutils_13ad5934.py: 5 functions found
+2025-03-15 02:48:10,182 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/pdm/backend/hooks/metadata_4b742992.py: 24 functions found
+2025-03-15 02:48:10,272 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/src/pdm/backend/hooks/vendorize/_parser_fb07fd5c.py: 24 functions found
+2025-03-15 02:48:10,361 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethi_finx/core/__init___ed1c2c6e.py: 0 functions found
+2025-03-15 02:48:10,444 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/dewey/ethi_finx/api/routers/companies_e6203760.py: 1 functions found
+2025-03-15 02:48:10,545 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/mypy_extensions_fdab7ba2.py: 20 functions found
+2025-03-15 02:48:10,641 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/admin_08da5df4.py: 0 functions found
+2025-03-15 02:48:10,728 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/settings_local_4b4efcf9.py: 0 functions found
+2025-03-15 02:48:10,815 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tasks_39fabc0d.py: 1 functions found
+2025-03-15 02:48:10,900 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/mccabe_6616c929.py: 33 functions found
+2025-03-15 02:48:11,007 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/admin_ab63423d.py: 6 functions found
+2025-03-15 02:48:11,108 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/models_c7bcc2b2.py: 0 functions found
+2025-03-15 02:48:11,197 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tasks_55cba788.py: 3 functions found
+2025-03-15 02:48:11,296 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/llm_interface_df8ad375.py: 7 functions found
+2025-03-15 02:48:11,388 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/soundfile_243ad43b.py: 45 functions found
+2025-03-15 02:48:11,484 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/manage_0ba7c003.py: 0 functions found
+2025-03-15 02:48:11,570 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/setup_661df8a6.py: 0 functions found
+2025-03-15 02:48:11,656 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/podcast_analyzer_306a42e7.py: 5 functions found
+2025-03-15 02:48:11,752 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/configargparse_cecefce9.py: 40 functions found
+2025-03-15 02:48:11,850 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tasks_ee89fff5.py: 1 functions found
+2025-03-15 02:48:12,027 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/typing_inspect_bca83e27.py: 37 functions found
+2025-03-15 02:48:12,227 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/company_analysis_app_ce49ba2d.py: 9 functions found
+2025-03-15 02:48:12,322 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/manage_ff8d9184.py: 1 functions found
+2025-03-15 02:48:12,410 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/rxconfig_3f8b122b.py: 0 functions found
+2025-03-15 02:48:12,505 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/config_3d5dae93.py: 4 functions found
+2025-03-15 02:48:12,602 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/typing_extensions_a06ad8e6.py: 75 functions found
+2025-03-15 02:48:12,701 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/utils_23d957a4.py: 9 functions found
+2025-03-15 02:48:12,805 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/llm_utils_fca2b7a4.py: 5 functions found
+2025-03-15 02:48:12,893 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/setup_d27f939b.py: 0 functions found
+2025-03-15 02:48:12,978 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/main_2604e28f.py: 1 functions found
+2025-03-15 02:48:13,064 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/admin_871aa263.py: 0 functions found
+2025-03-15 02:48:13,154 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/podcast_utils_b681fe22.py: 3 functions found
+2025-03-15 02:48:13,247 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/config_823a4ddb.py: 0 functions found
+2025-03-15 02:48:13,331 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/manage_46616d2b.py: 1 functions found
+2025-03-15 02:48:13,417 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/llm_utils_5f1800e6.py: 4 functions found
+2025-03-15 02:48:13,511 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/models_7cb4a65a.py: 1 functions found
+2025-03-15 02:48:13,602 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/models_8584f8a4.py: 8 functions found
+2025-03-15 02:48:13,704 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/conftest_084f0698.py: 1 functions found
+2025-03-15 02:48:13,790 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/views_16be6d35.py: 0 functions found
+2025-03-15 02:48:13,875 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/models_fc8e543f.py: 0 functions found
+2025-03-15 02:48:13,961 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/sounddevice_88be781f.py: 49 functions found
+2025-03-15 02:48:14,051 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/conftest_dfa77e61.py: 5 functions found
+2025-03-15 02:48:14,145 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/main_d28f1089.py: 4 functions found
+2025-03-15 02:48:14,235 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/research/models_1959d353.py: 4 functions found
+2025-03-15 02:48:14,326 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app_name/views_c53edf32.py: 0 functions found
+2025-03-15 02:48:14,411 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app_name/admin_a59e0ae8.py: 0 functions found
+2025-03-15 02:48:14,499 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app_name/views_412a7547.py: 0 functions found
+2025-03-15 02:48:14,584 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/database/apps_a5bab668.py: 0 functions found
+2025-03-15 02:48:14,672 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/database/db_connector_30defc02.py: 6 functions found
+2025-03-15 02:48:14,763 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/database/initialize_db_1b7da45f.py: 1 functions found
+2025-03-15 02:48:14,850 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/database/__init___e2aa53df.py: 1 functions found
+2025-03-15 02:48:14,936 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/migrations/env_d1d779f3.py: 2 functions found
+2025-03-15 02:48:15,026 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tools/e2b_code_interpreter_973c76c3.py: 7 functions found
+2025-03-15 02:48:15,122 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tools/__init___f293c7cb.py: 2 functions found
+2025-03-15 02:48:15,214 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tools/form_filling_ea81ac7d.py: 5 functions found
+2025-03-15 02:48:15,311 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tools/podcast_downloader_0acaca3d.py: 7 functions found
+2025-03-15 02:48:15,405 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tools/duckduckgo_312bbd16.py: 3 functions found
+2025-03-15 02:48:15,496 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tools/image_generation_50a9d57d.py: 6 functions found
+2025-03-15 02:48:15,586 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tools/open_meteo_weather_9ff25335.py: 3 functions found
+2025-03-15 02:48:15,675 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tools/document_generator_552915df.py: 7 functions found
+2025-03-15 02:48:15,770 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tools/code_generator_6791ce97.py: 3 functions found
+2025-03-15 02:48:15,859 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/config_ede66a49.py: 0 functions found
+2025-03-15 02:48:15,951 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/rule_engine_f81424e3.py: 5 functions found
+2025-03-15 02:48:16,041 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/models_b015c34e.py: 2 functions found
+2025-03-15 02:48:16,132 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/views_059854fd.py: 3 functions found
+2025-03-15 02:48:16,219 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/models_94af2f3d.py: 6 functions found
+2025-03-15 02:48:16,318 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/utils_53d5c06c.py: 11 functions found
+2025-03-15 02:48:16,415 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/observability_a4d9afdc.py: 1 functions found
+2025-03-15 02:48:16,502 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/exceptions_dccf6027.py: 0 functions found
+2025-03-15 02:48:16,590 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/gmail_client_9fe5c89b.py: 10 functions found
+2025-03-15 02:48:16,693 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/logging_utils_39dcf841.py: 3 functions found
+2025-03-15 02:48:16,784 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/models_d70e45f0.py: 3 functions found
+2025-03-15 02:48:16,878 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/search_client_c15ba567.py: 1 functions found
+2025-03-15 02:48:16,970 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/tick_processor_62b7e6ac.py: 3 functions found
+2025-03-15 02:48:17,060 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/models_b2061370.py: 1 functions found
+2025-03-15 02:48:17,152 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/models_4cbef4c7.py: 0 functions found
+2025-03-15 02:48:17,242 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/logging_utils_d1e30f26.py: 3 functions found
+2025-03-15 02:48:17,332 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/email_sync_350480d0.py: 4 functions found
+2025-03-15 02:48:17,425 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/cli_tick_manager_182a41c4.py: 12 functions found
+2025-03-15 02:48:17,530 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/sec_filings_manager_c2b7e528.py: 3 functions found
+2025-03-15 02:48:17,618 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/email_processing_service_d151ef9a.py: 9 functions found
+2025-03-15 02:48:17,714 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/setup_208c977c.py: 1 functions found
+2025-03-15 02:48:17,806 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/email_enrichment_service_d371c523.py: 3 functions found
+2025-03-15 02:48:17,903 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/client_grants_credential_provider_14e7ab27.py: 5 functions found
+2025-03-15 02:48:17,993 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/__init___fa12bc4e.py: 0 functions found
+2025-03-15 02:48:18,087 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/models_4f771b90.py: 35 functions found
+2025-03-15 02:48:18,226 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/settings_545abd8f.py: 1 functions found
+2025-03-15 02:48:18,332 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/config_6da0aab6.py: 3 functions found
+2025-03-15 02:48:18,422 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/wsgi_999c7083.py: 0 functions found
+2025-03-15 02:48:18,509 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/tests_6371ee8f.py: 10 functions found
+2025-03-15 02:48:18,602 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/bigtable_backup_manager_cfa34087.py: 16 functions found
+2025-03-15 02:48:18,704 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/document_processing_c42335cc.py: 4 functions found
+2025-03-15 02:48:18,791 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/contact_management_aaf4c489.py: 7 functions found
+2025-03-15 02:48:18,889 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/rss_feed_manager_7bbad7e3.py: 5 functions found
+2025-03-15 02:48:18,981 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/urls_80bc980f.py: 1 functions found
+2025-03-15 02:48:19,069 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/sts_xml_parser_b55fa4bd.py: 6 functions found
+2025-03-15 02:48:19,160 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/form_detection_3e8b587d.py: 10 functions found
+2025-03-15 02:48:19,258 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/asgi_ec752069.py: 0 functions found
+2025-03-15 02:48:19,342 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/api_client_4ea3f6d8.py: 6 functions found
+2025-03-15 02:48:19,434 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/podcast_analyzer_4d0a10a1.py: 2 functions found
+2025-03-15 02:48:19,527 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/schemas_30063d18.py: 0 functions found
+2025-03-15 02:48:19,614 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/utils_c1c5a6cd.py: 1 functions found
+2025-03-15 02:48:19,699 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/models_24f5da06.py: 1 functions found
+2025-03-15 02:48:19,788 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/ssh_service_ff6d125d.py: 4 functions found
+2025-03-15 02:48:19,883 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/email_prioritization_b034be3c.py: 9 functions found
+2025-03-15 02:48:19,977 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/analysis/template_0861cead.py: 0 functions found
+2025-03-15 02:48:20,062 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app/main_7499dd81.py: 0 functions found
+2025-03-15 02:48:20,147 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app/utils_20374d94.py: 3 functions found
+2025-03-15 02:48:20,239 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/config/celery_153b5bfb.py: 0 functions found
+2025-03-15 02:48:20,325 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/config/settings_8ce21c5e.py: 0 functions found
+2025-03-15 02:48:20,408 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/config/constants_dbfff33a.py: 0 functions found
+2025-03-15 02:48:20,494 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/config/wsgi_bcea670d.py: 0 functions found
+2025-03-15 02:48:20,581 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/config/celery_ec9f87ab.py: 1 functions found
+2025-03-15 02:48:20,667 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/config/urls_2c286e04.py: 0 functions found
+2025-03-15 02:48:20,755 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/config/jupyterhub_config_de68e2cf.py: 0 functions found
+2025-03-15 02:48:20,845 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/config/paths_391216db.py: 2 functions found
+2025-03-15 02:48:20,931 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/config/settings_b58639ff.py: 0 functions found
+2025-03-15 02:48:21,016 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/context_processors/allauth_settings_d9280a53.py: 1 functions found
+2025-03-15 02:48:21,102 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ecic/version_0cc81eb3.py: 0 functions found
+2025-03-15 02:48:21,187 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ecic/cli_e6aa7bf7.py: 2 functions found
+2025-03-15 02:48:21,274 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/contacts/signals_30e98ab3.py: 1 functions found
+2025-03-15 02:48:21,361 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/emails/models_fa58efac.py: 2 functions found
+2025-03-15 02:48:21,452 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_investment_models_9f77dc1a.py: 4 functions found
+2025-03-15 02:48:21,543 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/ai_interaction_d6643019.py: 0 functions found
+2025-03-15 02:48:21,631 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/fixtures_02ee4853.py: 1 functions found
+2025-03-15 02:48:21,717 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_tick_manager_03c991c0.py: 1 functions found
+2025-03-15 02:48:21,808 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_tick_manager_d3f2e95b.py: 12 functions found
+2025-03-15 02:48:21,899 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_app_e912ee69.py: 5 functions found
+2025-03-15 02:48:21,987 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_config_f350a370.py: 5 functions found
+2025-03-15 02:48:22,074 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_tick_manager_7953fddb.py: 0 functions found
+2025-03-15 02:48:22,163 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_models_f1c70d3c.py: 0 functions found
+2025-03-15 02:48:22,247 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_ai_client_48d3e500.py: 2 functions found
+2025-03-15 02:48:22,335 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_ai_helper_2b1e52d8.py: 9 functions found
+2025-03-15 02:48:22,426 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_price_service_c2008247.py: 1 functions found
+2025-03-15 02:48:22,514 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/fixtures_574021c2.py: 2 functions found
+2025-03-15 02:48:22,598 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/conftest_c96cac5d.py: 2 functions found
+2025-03-15 02:48:22,686 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_triage_agent_b8230360.py: 1 functions found
+2025-03-15 02:48:22,773 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/conftest_74046831.py: 4 functions found
+2025-03-15 02:48:22,860 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_package_58223fd9.py: 0 functions found
+2025-03-15 02:48:22,946 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/conftest_a5554c0f.py: 17 functions found
+2025-03-15 02:48:23,041 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_schema_b515bace.py: 4 functions found
+2025-03-15 02:48:23,128 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/user_tests_a190fa39.py: 3 functions found
+2025-03-15 02:48:23,217 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_database_612071ae.py: 2 functions found
+2025-03-15 02:48:23,305 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_controversy_analysis_2faf8e72.py: 3 functions found
+2025-03-15 02:48:23,399 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_api_client_c51a32cf.py: 5 functions found
+2025-03-15 02:48:23,489 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_main_6a246fb7.py: 9 functions found
+2025-03-15 02:48:23,584 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_environment_3798e373.py: 1 functions found
+2025-03-15 02:48:23,669 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/fixtures_6dd4492b.py: 1 functions found
+2025-03-15 02:48:23,752 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_merge_production_dotenvs_in_dotenv_17a86ca3.py: 1 functions found
+2025-03-15 02:48:23,838 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_init_a2675981.py: 0 functions found
+2025-03-15 02:48:23,922 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/test_package_a7588abd.py: 0 functions found
+2025-03-15 02:48:24,006 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/podcast_analysis/data_processing_8112e285.py: 0 functions found
+2025-03-15 02:48:24,102 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/agents/logical_fallacy_agent_7c91080e.py: 4 functions found
+2025-03-15 02:48:24,245 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/agents/philosophical_agent_8977c13a.py: 2 functions found
+2025-03-15 02:48:24,332 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/agents/contact_agents_f6322bec.py: 2 functions found
+2025-03-15 02:48:24,419 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/agents/sloan_optimizer_18d3ed45.py: 1 functions found
+2025-03-15 02:48:24,510 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/agents/data_ingestion_agent_a5e0a77c.py: 1 functions found
+2025-03-15 02:48:24,606 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/agents/creator_f50f0404.py: 5 functions found
+2025-03-15 02:48:24,707 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/pipelines/controversy_analyzer_83cb47c6.py: 1 functions found
+2025-03-15 02:48:24,799 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/utils/tool_launcher_9fcdbef5.py: 3 functions found
+2025-03-15 02:48:24,892 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/utils/pdf_to_image_converter_4ec37224.py: 1 functions found
+2025-03-15 02:48:24,978 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/utils/filter_generator_1b8c6a3d.py: 1 functions found
+2025-03-15 02:48:25,065 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/utils/django_schema_1e8d86d6.py: 3 functions found
+2025-03-15 02:48:25,157 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/utils/event_callback_e7ac8299.py: 10 functions found
+2025-03-15 02:48:25,253 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/utils/llamacloud_34d5fa99.py: 6 functions found
+2025-03-15 02:48:25,345 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/utils/asyncio_patch_b1c8818a.py: 14 functions found
+2025-03-15 02:48:25,443 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/utils/compat_f8807c26.py: 69 functions found
+2025-03-15 02:48:25,580 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/utils/media_scanner_2329085c.py: 1 functions found
+2025-03-15 02:48:25,675 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/backend/models_380338ba.py: 0 functions found
+2025-03-15 02:48:25,764 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/backend/main_ddce10fa.py: 6 functions found
+2025-03-15 02:48:25,856 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/backend/validation_51db5a82.py: 4 functions found
+2025-03-15 02:48:25,944 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/backend/models_d9aa2aa1.py: 1 functions found
+2025-03-15 02:48:26,037 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/backend/utils_ae9098f0.py: 2 functions found
+2025-03-15 02:48:26,121 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/models/schema_comparison_43767124.py: 4 functions found
+2025-03-15 02:48:26,213 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/models/tick_history_model_ddf05dcb.py: 1 functions found
+2025-03-15 02:48:26,301 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/models/event_log_9703bcf1.py: 1 functions found
+2025-03-15 02:48:26,387 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/docs/conf_1f429c1a.py: 0 functions found
+2025-03-15 02:48:26,472 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/docs/conf_35a9d834.py: 0 functions found
+2025-03-15 02:48:26,559 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/my_app/urls_4ef706eb.py: 0 functions found
+2025-03-15 02:48:26,644 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/schemas/__init___17cf160d.py: 0 functions found
+2025-03-15 02:48:26,730 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/blog/urls_b47b2c08.py: 1 functions found
+2025-03-15 02:48:26,814 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/blog/views_1eac50cb.py: 9 functions found
+2025-03-15 02:48:26,904 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/blog/apps_d14d424b.py: 0 functions found
+2025-03-15 02:48:26,989 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/blog/models_d4e4911c.py: 6 functions found
+2025-03-15 02:48:27,080 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/syzygy/api_6d5f797c.py: 0 functions found
+2025-03-15 02:48:27,169 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/syzygy/apps_8a77bfcc.py: 1 functions found
+2025-03-15 02:48:27,256 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/syzygy/admin_fb44d673.py: 5 functions found
+2025-03-15 02:48:27,359 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/integrations/apps_8b3e7125.py: 1 functions found
+2025-03-15 02:48:27,445 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/integrations/models_b8f8e457.py: 0 functions found
+2025-03-15 02:48:27,535 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/integrations/apps_f43be7c3.py: 0 functions found
+2025-03-15 02:48:27,619 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/styles/styles_7a13d737.py: 0 functions found
+2025-03-15 02:48:27,707 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/components/monaco_d7a9e053.py: 0 functions found
+2025-03-15 02:48:27,794 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/logs/apps_1d1cc450.py: 0 functions found
+2025-03-15 02:48:27,879 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/data_pipelines/sec_etl_7d4a1807.py: 12 functions found
+2025-03-15 02:48:27,989 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/accounts/forms_a9052b3a.py: 0 functions found
+2025-03-15 02:48:28,075 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/accounts/models_91dadf0c.py: 4 functions found
+2025-03-15 02:48:28,165 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/accounts/managers_bf589a52.py: 3 functions found
+2025-03-15 02:48:28,252 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/accounts/apps_46215864.py: 0 functions found
+2025-03-15 02:48:28,338 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/examples/interactive_plot_a842da9f.py: 4 functions found
+2025-03-15 02:48:28,426 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/examples/oauth_sts_s3_222493d9.py: 3 functions found
+2025-03-15 02:48:28,515 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/examples/search_example_43d551ef.py: 0 functions found
+2025-03-15 02:48:28,600 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/examples/ingest_to_postgres_78fda80e.py: 4 functions found
+2025-03-15 02:48:28,692 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/examples/s3_upload_download_cdf6a8d9.py: 0 functions found
+2025-03-15 02:48:28,782 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/examples/search_example_a2d98781.py: 0 functions found
+2025-03-15 02:48:28,868 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/examples/search_api_usage_65e64094.py: 0 functions found
+2025-03-15 02:48:28,954 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/users/admin_a635cfcf.py: 0 functions found
+2025-03-15 02:48:29,041 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/users/forms_6d0a0815.py: 0 functions found
+2025-03-15 02:48:29,129 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/users/urls_e835a6cb.py: 0 functions found
+2025-03-15 02:48:29,215 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/users/models_ed2c2cbe.py: 1 functions found
+2025-03-15 02:48:29,305 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/email_analyzer_1734a0ce.py: 4 functions found
+2025-03-15 02:48:29,397 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/google_docs_automation_084d2ae7.py: 2 functions found
+2025-03-15 02:48:29,485 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/update_readme_2010fb16.py: 0 functions found
+2025-03-15 02:48:29,572 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/dashboard_generator_183e6e8f.py: 4 functions found
+2025-03-15 02:48:29,663 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/minio_zip_extraction_55305100.py: 5 functions found
+2025-03-15 02:48:29,752 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/email_service_275aa152.py: 6 functions found
+2025-03-15 02:48:29,843 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/opportunity_detection_64812914.py: 4 functions found
+2025-03-15 02:48:29,934 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/gmail_label_learner_0b2dfb22.py: 16 functions found
+2025-03-15 02:48:30,032 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/s3_query_90e30347.py: 4 functions found
+2025-03-15 02:48:30,120 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/data_ingestion_cbf2075b.py: 2 functions found
+2025-03-15 02:48:30,205 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/data_processing_d1941a9c.py: 0 functions found
+2025-03-15 02:48:30,292 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/company_analysis_b33eeb3c.py: 2 functions found
+2025-03-15 02:48:30,387 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/github_analyzer_25f42e35.py: 3 functions found
+2025-03-15 02:48:30,493 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/setup_17be35d8.py: 1 functions found
+2025-03-15 02:48:30,579 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/email_processor_be50b184.py: 12 functions found
+2025-03-15 02:48:30,683 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/email_analysis_23095820.py: 1 functions found
+2025-03-15 02:48:30,773 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/email_analyzer_c95bf18b.py: 9 functions found
+2025-03-15 02:48:30,873 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/daily_note_generator_dfa022df.py: 10 functions found
+2025-03-15 02:48:30,973 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/merge_dotenvs_5078e0d9.py: 1 functions found
+2025-03-15 02:48:31,058 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/data_import_fc4337f1.py: 6 functions found
+2025-03-15 02:48:31,157 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/priority_manager_d15845cf.py: 8 functions found
+2025-03-15 02:48:31,256 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/generate_index_409c42fc.py: 1 functions found
+2025-03-15 02:48:31,340 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/sync_script_85f9c220.py: 1 functions found
+2025-03-15 02:48:31,426 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/email_app/models_aa0aa1f4.py: 3 functions found
+2025-03-15 02:48:31,519 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/srvo_utils/urls_c4751366.py: 0 functions found
+2025-03-15 02:48:31,606 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/lib/templates_b21d59c1.py: 4 functions found
+2025-03-15 02:48:31,696 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/api/companies_1493ebdd.py: 0 functions found
+2025-03-15 02:48:31,784 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/templates/analysis_template_56cb23e6.py: 0 functions found
+2025-03-15 02:48:31,870 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/templates/analysis_template_d8bd3935.py: 0 functions found
+2025-03-15 02:48:31,955 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/email_processing/gmail_sync_5bac9c7c.py: 4 functions found
+2025-03-15 02:48:32,080 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/email_processing/email_triage_workflow_3f89fffa.py: 1 functions found
+2025-03-15 02:48:32,182 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/email_processing/schemas_660a5a4c.py: 0 functions found
+2025-03-15 02:48:32,270 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/email_processing/apps_407bde80.py: 1 functions found
+2025-03-15 02:48:32,357 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/views/company_views_4677aeed.py: 5 functions found
+2025-03-15 02:48:32,448 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/timeline/models_f05db340.py: 6 functions found
+2025-03-15 02:48:32,544 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/pages/urls_1d0dae0d.py: 0 functions found
+2025-03-15 02:48:32,628 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/pages/models_4a49e5a8.py: 2 functions found
+2025-03-15 02:48:32,715 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/pages/apps_2bfd01ac.py: 0 functions found
+2025-03-15 02:48:32,801 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/apps/company_analysis_manager_14f63b69.py: 8 functions found
+2025-03-15 02:48:32,892 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_86297da3.py: 2 functions found
+2025-03-15 02:48:32,980 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_ed430643.py: 2 functions found
+2025-03-15 02:48:33,068 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_3ad8f6ef.py: 1 functions found
+2025-03-15 02:48:33,154 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_76156029.py: 0 functions found
+2025-03-15 02:48:33,234 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_d1f1a881.py: 0 functions found
+2025-03-15 02:48:33,314 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_2e4e1059.py: 2 functions found
+2025-03-15 02:48:33,399 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_80fb34fa.py: 0 functions found
+2025-03-15 02:48:33,486 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_dcc37bae.py: 0 functions found
+2025-03-15 02:48:33,576 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_cdb18f3e.py: 11 functions found
+2025-03-15 02:48:33,674 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_0b0ae890.py: 1 functions found
+2025-03-15 02:48:33,771 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_495b5efc.py: 0 functions found
+2025-03-15 02:48:33,861 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_b6c0697c.py: 4 functions found
+2025-03-15 02:48:33,964 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_2ffda9e2.py: 0 functions found
+2025-03-15 02:48:34,049 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_e4307b78.py: 3 functions found
+2025-03-15 02:48:34,137 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_4c9f0a08.py: 0 functions found
+2025-03-15 02:48:34,224 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_4fa4c311.py: 0 functions found
+2025-03-15 02:48:34,309 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_bd88d724.py: 0 functions found
+2025-03-15 02:48:34,393 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_56d24df2.py: 0 functions found
+2025-03-15 02:48:34,482 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_c947879b.py: 0 functions found
+2025-03-15 02:48:34,569 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_e472d2ba.py: 0 functions found
+2025-03-15 02:48:34,650 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_8bb9dd71.py: 0 functions found
+2025-03-15 02:48:34,732 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_fabc6d2d.py: 0 functions found
+2025-03-15 02:48:34,826 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_ce98cda9.py: 0 functions found
+2025-03-15 02:48:34,914 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_6f69f878.py: 17 functions found
+2025-03-15 02:48:35,008 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_1c4fdb2e.py: 1 functions found
+2025-03-15 02:48:35,096 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_0ac43133.py: 5 functions found
+2025-03-15 02:48:35,186 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_0f48cc7b.py: 0 functions found
+2025-03-15 02:48:35,275 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_6836f660.py: 0 functions found
+2025-03-15 02:48:35,360 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_e66f5197.py: 2 functions found
+2025-03-15 02:48:35,463 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_6e191e75.py: 0 functions found
+2025-03-15 02:48:35,551 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_a28646ea.py: 0 functions found
+2025-03-15 02:48:35,635 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_eb2bb46e.py: 0 functions found
+2025-03-15 02:48:35,722 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_63c038cb.py: 0 functions found
+2025-03-15 02:48:35,809 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_fbb7fd02.py: 2 functions found
+2025-03-15 02:48:35,895 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_049b40e3.py: 6 functions found
+2025-03-15 02:48:35,985 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_7d51b924.py: 0 functions found
+2025-03-15 02:48:36,072 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_085c8ee6.py: 8 functions found
+2025-03-15 02:48:36,160 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_97742070.py: 0 functions found
+2025-03-15 02:48:36,245 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_403da552.py: 3 functions found
+2025-03-15 02:48:36,333 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_fdab47fc.py: 2 functions found
+2025-03-15 02:48:36,423 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_947b036f.py: 1 functions found
+2025-03-15 02:48:36,510 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_967a3f59.py: 8 functions found
+2025-03-15 02:48:36,604 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_80e626e0.py: 3 functions found
+2025-03-15 02:48:36,702 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_251daf7a.py: 0 functions found
+2025-03-15 02:48:36,793 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_a41901ac.py: 0 functions found
+2025-03-15 02:48:36,880 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_13d4a55b.py: 0 functions found
+2025-03-15 02:48:36,965 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_f1e726ac.py: 3 functions found
+2025-03-15 02:48:37,054 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_b63e8d1b.py: 2 functions found
+2025-03-15 02:48:37,144 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_ec7013bd.py: 7 functions found
+2025-03-15 02:48:37,249 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_e9bee6a1.py: 0 functions found
+2025-03-15 02:48:37,336 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_a19b767b.py: 0 functions found
+2025-03-15 02:48:37,423 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_b3884dad.py: 2 functions found
+2025-03-15 02:48:37,512 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_195a2af6.py: 0 functions found
+2025-03-15 02:48:37,599 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_ddf4dc6b.py: 0 functions found
+2025-03-15 02:48:37,686 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_416671ef.py: 1 functions found
+2025-03-15 02:48:37,776 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_1f7b0a1c.py: 7 functions found
+2025-03-15 02:48:37,870 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_1c592f6c.py: 0 functions found
+2025-03-15 02:48:37,956 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_2e945726.py: 5 functions found
+2025-03-15 02:48:38,050 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_506261a8.py: 9 functions found
+2025-03-15 02:48:38,135 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_90f39365.py: 0 functions found
+2025-03-15 02:48:38,219 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_1e1a9785.py: 3 functions found
+2025-03-15 02:48:38,320 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_1b5234e7.py: 0 functions found
+2025-03-15 02:48:38,406 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_e5ab08f4.py: 1 functions found
+2025-03-15 02:48:38,498 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_bcabfdd5.py: 0 functions found
+2025-03-15 02:48:38,583 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_b5eb3476.py: 0 functions found
+2025-03-15 02:48:38,678 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_eb1cac77.py: 5 functions found
+2025-03-15 02:48:38,777 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_801d525e.py: 0 functions found
+2025-03-15 02:48:38,886 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_990ff050.py: 0 functions found
+2025-03-15 02:48:38,972 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_9e6039cc.py: 0 functions found
+2025-03-15 02:48:39,064 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_8ee53d08.py: 0 functions found
+2025-03-15 02:48:39,151 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_683649fa.py: 2 functions found
+2025-03-15 02:48:39,237 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_4765a129.py: 0 functions found
+2025-03-15 02:48:39,321 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_ec7f2fba.py: 1 functions found
+2025-03-15 02:48:39,406 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_916a2a24.py: 0 functions found
+2025-03-15 02:48:39,491 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_a6cf517e.py: 0 functions found
+2025-03-15 02:48:39,578 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_f2699304.py: 29 functions found
+2025-03-15 02:48:39,671 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_ca5675da.py: 0 functions found
+2025-03-15 02:48:39,757 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_0a4709d8.py: 0 functions found
+2025-03-15 02:48:39,838 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_35b88de6.py: 2 functions found
+2025-03-15 02:48:39,932 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_1544ce2d.py: 0 functions found
+2025-03-15 02:48:40,018 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_cbe44986.py: 0 functions found
+2025-03-15 02:48:40,102 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_82503e39.py: 0 functions found
+2025-03-15 02:48:40,191 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_29edb84c.py: 0 functions found
+2025-03-15 02:48:40,276 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_8d1632a9.py: 4 functions found
+2025-03-15 02:48:40,364 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_2edf8664.py: 0 functions found
+2025-03-15 02:48:40,449 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_112cd41b.py: 2 functions found
+2025-03-15 02:48:40,541 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_7f87d5c9.py: 0 functions found
+2025-03-15 02:48:40,627 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_9fd1b68d.py: 0 functions found
+2025-03-15 02:48:40,712 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_93e1f86e.py: 0 functions found
+2025-03-15 02:48:40,799 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_c4f6dc2b.py: 5 functions found
+2025-03-15 02:48:40,885 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_b6418617.py: 0 functions found
+2025-03-15 02:48:40,969 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_fb83cf32.py: 0 functions found
+2025-03-15 02:48:41,057 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_be8228d6.py: 0 functions found
+2025-03-15 02:48:41,140 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_e2943a23.py: 2 functions found
+2025-03-15 02:48:41,227 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_98055cd9.py: 1 functions found
+2025-03-15 02:48:41,323 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_dbd29b13.py: 0 functions found
+2025-03-15 02:48:41,405 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_f51891ca.py: 6 functions found
+2025-03-15 02:48:41,493 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_9c0568d1.py: 10 functions found
+2025-03-15 02:48:41,587 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_e65f58fc.py: 3 functions found
+2025-03-15 02:48:41,678 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_3bed6c92.py: 0 functions found
+2025-03-15 02:48:41,760 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_7f3eac08.py: 0 functions found
+2025-03-15 02:48:41,846 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_e9a5a008.py: 0 functions found
+2025-03-15 02:48:41,936 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/unmapped_scripts/migrated_c0a5d54d.py: 1 functions found
+2025-03-15 02:48:42,023 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/flows/hello_flow_0c32cde9.py: 1 functions found
+2025-03-15 02:48:42,108 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/flows/deploy_controversy_monitoring_8f5969e8.py: 1 functions found
+2025-03-15 02:48:42,197 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/flows/controversy_detection_f0ccc937.py: 0 functions found
+2025-03-15 02:48:42,290 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/flows/entity_analysis_a902aa8d.py: 0 functions found
+2025-03-15 02:48:42,379 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/flows/deploy_controversy_analysis_d6cb7b4a.py: 1 functions found
+2025-03-15 02:48:42,468 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ethical_capital/celery_238dbdbf.py: 0 functions found
+2025-03-15 02:48:42,554 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ethical_capital/settings_1f03d0f2.py: 0 functions found
+2025-03-15 02:48:42,646 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ethical_capital/asgi_e1012ad1.py: 0 functions found
+2025-03-15 02:48:42,733 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ethical_capital/wsgi_07be8b4f.py: 0 functions found
+2025-03-15 02:48:42,818 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ethical_capital/urls_d8306c0a.py: 0 functions found
+2025-03-15 02:48:42,903 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/threadpoolctl/__init___d52f942e.py: 77 functions found
+2025-03-15 02:48:42,995 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/deployments/company_analysis_deployment_ed3c1d9c.py: 0 functions found
+2025-03-15 02:48:43,083 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/media_scanner_944ad53a.py: 1 functions found
+2025-03-15 02:48:43,170 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/converter_28f257d6.py: 2 functions found
+2025-03-15 02:48:43,255 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/financial_analysis_0d6c19e2.py: 6 functions found
+2025-03-15 02:48:43,351 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/data_loader_1b825488.py: 0 functions found
+2025-03-15 02:48:43,440 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/email_checker_df5cf9d9.py: 4 functions found
+2025-03-15 02:48:43,534 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/email_analyzer_5294de70.py: 4 functions found
+2025-03-15 02:48:43,626 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/calendar_integration_4ece5e1f.py: 5 functions found
+2025-03-15 02:48:43,732 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/gmail_checker_5d039aa6.py: 4 functions found
+2025-03-15 02:48:43,824 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/version_92643719.py: 0 functions found
+2025-03-15 02:48:43,909 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/tick_manager_2eb3b13e.py: 19 functions found
+2025-03-15 02:48:44,035 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/metadata_generator_1a849aa8.py: 4 functions found
+2025-03-15 02:48:44,124 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/schema_discovery_722e97c5.py: 20 functions found
+2025-03-15 02:48:44,252 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/main_3dd6af1e.py: 11 functions found
+2025-03-15 02:48:44,350 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/db_query_5b49a7fd.py: 0 functions found
+2025-03-15 02:48:44,438 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/prompts_4b33c255.py: 0 functions found
+2025-03-15 02:48:44,525 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/port_cli_3b1a7a6c.py: 2 functions found
+2025-03-15 02:48:44,619 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/web_loader_f8d9a7b3.py: 1 functions found
+2025-03-15 02:48:44,709 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/gmail_priority_flow_81bc021b.py: 0 functions found
+2025-03-15 02:48:44,794 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/llm_analysis_37326a1e.py: 0 functions found
+2025-03-15 02:48:44,886 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/schemas_3861e3ca.py: 0 functions found
+2025-03-15 02:48:44,975 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/data_pipeline_01fced39.py: 1 functions found
+2025-03-15 02:48:45,065 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/content_processor_31501000.py: 2 functions found
+2025-03-15 02:48:45,155 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/db_setup_7119da48.py: 2 functions found
+2025-03-15 02:48:45,255 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/gmail_sync_ecb5b631.py: 10 functions found
+2025-03-15 02:48:45,363 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/index_utils_988d2ad0.py: 2 functions found
+2025-03-15 02:48:45,452 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/email_prioritization_c7f0346b.py: 6 functions found
+2025-03-15 02:48:45,552 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/tagging_engine_a7498ac6.py: 13 functions found
+2025-03-15 02:48:45,648 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/app_78e685e8.py: 24 functions found
+2025-03-15 02:48:45,738 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app_name/migrations/0001_initial_988160b5.py: 0 functions found
+2025-03-15 02:48:45,829 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/database/migrations/xxxx_create_timelineevent_4dee8386.py: 0 functions found
+2025-03-15 02:48:45,920 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/database/migrations/0001_initial_defecc72.py: 0 functions found
+2025-03-15 02:48:46,015 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/database/migrations/0002_config_f4f1edca.py: 0 functions found
+2025-03-15 02:48:46,107 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/database/tests/integration/test_email_processing_adfe82f1.py: 5 functions found
+2025-03-15 02:48:46,197 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/migrations/versions/20231123_03_df89deec.py: 2 functions found
+2025-03-15 02:48:46,283 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/llm/rag_agent_83b4f375.py: 2 functions found
+2025-03-15 02:48:46,378 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/llm/config_4f0ee8c8.py: 2 functions found
+2025-03-15 02:48:46,471 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/tests/test_ai_endpoints_507e64e0.py: 4 functions found
+2025-03-15 02:48:46,572 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/tests/fixtures_c523090a.py: 6 functions found
+2025-03-15 02:48:46,661 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/tests/base_4729556f.py: 3 functions found
+2025-03-15 02:48:46,750 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/agents/transcript_analysis_agent_7cb33e80.py: 1 functions found
+2025-03-15 02:48:46,842 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/utils/test_16b10cf2.py: 9 functions found
+2025-03-15 02:48:46,928 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/utils/gmail_auth_8b2cdfb8.py: 5 functions found
+2025-03-15 02:48:47,018 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/utils/markdown_updater_0ef51ea6.py: 3 functions found
+2025-03-15 02:48:47,107 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/models/mixins_f35c7036.py: 2 functions found
+2025-03-15 02:48:47,198 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/api/endpoints_dfc91535.py: 4 functions found
+2025-03-15 02:48:47,285 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/views/health_41bc2c3f.py: 1 functions found
+2025-03-15 02:48:47,372 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/pages/apps_2c08f6e6.py: 0 functions found
+2025-03-15 02:48:47,457 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/llm/pipeline/contact_enricher_91cfb3c0.py: 7 functions found
+2025-03-15 02:48:47,554 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/management/commands/setup_gmail_540c208a.py: 1 functions found
+2025-03-15 02:48:47,653 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/core/management/commands/sync_gmail_128b7b2c.py: 8 functions found
+2025-03-15 02:48:47,754 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app/ui/schema_editor_a8c50be3.py: 1 functions found
+2025-03-15 02:48:47,842 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app/utils/next_question_suggestion_536f7875.py: 2 functions found
+2025-03-15 02:48:47,931 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app/utils/file_loader_25577f9f.py: 3 functions found
+2025-03-15 02:48:48,020 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app/utils/llamacloud_3937e7f5.py: 10 functions found
+2025-03-15 02:48:48,113 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app/utils/settings_dc2cf988.py: 13 functions found
+2025-03-15 02:48:48,216 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app/models/chat_32a0ed45.py: 15 functions found
+2025-03-15 02:48:48,320 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app/components/upload_43e91257.py: 4 functions found
+2025-03-15 02:48:48,409 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app/components/structured_query_b4f149ea.py: 1 functions found
+2025-03-15 02:48:48,499 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app/api/api_fcd55afb.py: 0 functions found
+2025-03-15 02:48:48,586 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app/engine/service_2b3c2016.py: 9 functions found
+2025-03-15 02:48:48,686 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app/engine/service_0e05974a.py: 9 functions found
+2025-03-15 02:48:48,786 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app/services/extractor_2fc1312e.py: 1 functions found
+2025-03-15 02:48:48,876 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app/api/routers/chat_6a90df51.py: 0 functions found
+2025-03-15 02:48:48,965 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app/api/routers/config_c8485897.py: 1 functions found
+2025-03-15 02:48:49,053 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app/api/endpoints/extractor_d802251e.py: 0 functions found
+2025-03-15 02:48:49,141 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app/api/utils/vercel_stream_40c2d2e3.py: 4 functions found
+2025-03-15 02:48:49,235 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app/engine/utils/tool_factory_d640dc0e.py: 2 functions found
+2025-03-15 02:48:49,325 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/app/engine/loaders/document_loader_65f949cd.py: 2 functions found
+2025-03-15 02:48:49,412 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/config/settings/production_cc3c827d.py: 0 functions found
+2025-03-15 02:48:49,498 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/config/settings/base_bad4738b.py: 0 functions found
+2025-03-15 02:48:49,597 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/config/settings/production_856bc638.py: 0 functions found
+2025-03-15 02:48:49,693 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/config/settings/dev_60f94875.py: 0 functions found
+2025-03-15 02:48:49,781 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/config/settings/test_821878a2.py: 0 functions found
+2025-03-15 02:48:49,869 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/config/settings/test_43cdb96f.py: 2 functions found
+2025-03-15 02:48:49,952 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/config/settings/dev_f05ec244.py: 0 functions found
+2025-03-15 02:48:50,039 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/plugins/django_plugin_blog/plugin_db4f2f85.py: 4 functions found
+2025-03-15 02:48:50,131 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ecic/tests/test_portfolio_widget_4eb02907.py: 3 functions found
+2025-03-15 02:48:50,222 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/path/to/script_ee18e87e.py: 0 functions found
+2025-03-15 02:48:50,311 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/path/to/script_7dd0c97c.py: 1 functions found
+2025-03-15 02:48:50,398 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/path/to/script_d9497ee5.py: 0 functions found
+2025-03-15 02:48:50,481 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/path/to/script_b5756864.py: 0 functions found
+2025-03-15 02:48:50,564 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/ui/widget_test_base_3a46db35.py: 1 functions found
+2025-03-15 02:48:50,652 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/core/test_ssh_service_a36eec3e.py: 0 functions found
+2025-03-15 02:48:50,743 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/integration/test_ai_client_9c8fc5e7.py: 1 functions found
+2025-03-15 02:48:50,834 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/integration/docker_setup_53d65d59.py: 8 functions found
+2025-03-15 02:48:50,927 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/models/test_user_model_43b47582.py: 2 functions found
+2025-03-15 02:48:51,014 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/accounts/test_accounts_9a05626a.py: 2 functions found
+2025-03-15 02:48:51,102 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/email_processing/__init___6b6f8547.py: 4 functions found
+2025-03-15 02:48:51,192 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/core/llm/test_ai_helper_2029dc7e.py: 12 functions found
+2025-03-15 02:48:51,285 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/ecic/services/test_tick_processor_34ed4bb9.py: 0 functions found
+2025-03-15 02:48:51,374 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/tests/ec1c/users/test_models_f664d7e9.py: 2 functions found
+2025-03-15 02:48:51,460 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/management/commands/setup_periodic_tasks_cb786613.py: 3 functions found
+2025-03-15 02:48:51,549 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/management/commands/sync_gmail_f17d23a6.py: 6 functions found
+2025-03-15 02:48:51,638 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/management/commands/sync_emails_f9711982.py: 2 functions found
+2025-03-15 02:48:51,727 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/management/commands/hello_10deaedf.py: 1 functions found
+2025-03-15 02:48:51,813 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/management/commands/setup_celery_beat_a36ad9ce.py: 3 functions found
+2025-03-15 02:48:51,901 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/agents/ghostwriter/sloan_ghostwriter_116ea036.py: 1 functions found
+2025-03-15 02:48:51,995 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/port5/core/github_analysis_e4b9f707.py: 2 functions found
+2025-03-15 02:48:52,123 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/backend/chat/pro_chat_1f271237.py: 3 functions found
+2025-03-15 02:48:52,222 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/backend/db/utils_adf1ce03.py: 8 functions found
+2025-03-15 02:48:52,319 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/backend/api/api_a96d21e1.py: 0 functions found
+2025-03-15 02:48:52,406 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/backend/flows/company_analysis_868b2a5d.py: 5 functions found
+2025-03-15 02:48:52,504 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/backend/search/providers/tavily_bfe85965.py: 1 functions found
+2025-03-15 02:48:52,591 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/backend/search/providers/bing_2e20277d.py: 1 functions found
+2025-03-15 02:48:52,679 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/backend/search/providers/searxng_1749685c.py: 1 functions found
+2025-03-15 02:48:52,767 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/backend/search/providers/serper_3a12f603.py: 1 functions found
+2025-03-15 02:48:52,857 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/backend/db/migrations/env_18a7f85d.py: 2 functions found
+2025-03-15 02:48:52,942 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/models/stocks/stock_models_9ea59b27.py: 1 functions found
+2025-03-15 02:48:53,030 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ec1c/users/serializers_bc590aa3.py: 0 functions found
+2025-03-15 02:48:53,117 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ec1c/users/factories_a6d780a4.py: 2 functions found
+2025-03-15 02:48:53,207 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ec1c/users/views_5de4ec44.py: 3 functions found
+2025-03-15 02:48:53,295 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ec1c/users/adapters_3244e8ee.py: 3 functions found
+2025-03-15 02:48:53,381 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ec1c/users/admin_70ad07ce.py: 0 functions found
+2025-03-15 02:48:53,467 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ec1c/users/apps_d83ea451.py: 1 functions found
+2025-03-15 02:48:53,555 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ec1c/users/migrations/0001_initial_db090e80.py: 0 functions found
+2025-03-15 02:48:53,644 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ec1c/users/tests/test_user_viewset_0d47d3ed.py: 3 functions found
+2025-03-15 02:48:53,732 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ec1c/users/tests/test_urls_e5e8fcf4.py: 5 functions found
+2025-03-15 02:48:53,820 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ec1c/users/tests/test_tasks_8c4af7cf.py: 1 functions found
+2025-03-15 02:48:53,907 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ec1c/users/tests/conftest_2c7bf68a.py: 2 functions found
+2025-03-15 02:48:53,991 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ec1c/users/tests/test_models_6d67c967.py: 5 functions found
+2025-03-15 02:48:54,081 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ec1c/users/tests/test_views_7e5d6698.py: 7 functions found
+2025-03-15 02:48:54,175 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ec1c/users/tests/test_admin_3653b846.py: 6 functions found
+2025-03-15 02:48:54,264 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ec1c/users/tests/test_forms_f118bf6e.py: 1 functions found
+2025-03-15 02:48:54,348 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ec1c/users/tests/test_urls_f721a407.py: 7 functions found
+2025-03-15 02:48:54,439 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/ec1c/users/api/views_8722b273.py: 4 functions found
+2025-03-15 02:48:54,527 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/myapp/migrations/0001_initial_9fa0bc60.py: 0 functions found
+2025-03-15 02:48:54,614 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/relative/path/to/script_912dfb4b.py: 0 functions found
+2025-03-15 02:48:54,701 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/blog/migrations/0001_initial_357fe064.py: 0 functions found
+2025-03-15 02:48:54,790 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/syzygy/migrations/models_65a2d5a1.py: 0 functions found
+2025-03-15 02:48:54,912 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/syzygy/migrations/xxxx_llm_tool_tracking_d6d7c24a.py: 0 functions found
+2025-03-15 02:48:55,002 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/syzygy/core/contact_merger_1d469828.py: 1 functions found
+2025-03-15 02:48:55,097 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/syzygy/agents/triage_7cb9d554.py: 2 functions found
+2025-03-15 02:48:55,196 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/syzygy/models/__init___7cc2556b.py: 0 functions found
+2025-03-15 02:48:55,283 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/syzygy/views/base_99185bca.py: 1 functions found
+2025-03-15 02:48:55,371 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/syzygy/views/priority_actions_f6bb7f79.py: 7 functions found
+2025-03-15 02:48:55,466 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/syzygy/ai/agents/tests/test_logical_fallacy_8fdc77c1.py: 2 functions found
+2025-03-15 02:48:55,563 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/project/app/management/commands/setup_periodic_tasks_e22cddda.py: 1 functions found
+2025-03-15 02:48:55,650 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/integrations/management/commands/sync_google_99a7ec1a.py: 6 functions found
+2025-03-15 02:48:55,743 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/my_project/settings/test_1156ccac.py: 0 functions found
+2025-03-15 02:48:55,832 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/database/upload_to_motherduck_042102bd.py: 1 functions found
+2025-03-15 02:48:55,921 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/data_analysis/universe_breakdown_118840c6.py: 1 functions found
+2025-03-15 02:48:56,008 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/scripts/data_import/populate_stocks_6420f1e6.py: 3 functions found
+2025-03-15 02:48:56,098 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/db/migrations/xxxx_create_site_model_eaba89b0.py: 0 functions found
+2025-03-15 02:48:56,188 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/db/migrations/0004_alter_site_options_7ee55bdd.py: 0 functions found
+2025-03-15 02:48:56,275 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/email_processing/migrations/0001_initial_6221cfe8.py: 2 functions found
+2025-03-15 02:48:56,368 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/email_processing/prioritization/views_96d78e2b.py: 5 functions found
+2025-03-15 02:48:56,461 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/email_processing/tests/test_imap_sync_517b7855.py: 9 functions found
+2025-03-15 02:48:56,555 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/email_processing/tests/test_gmail_client_e858efcf.py: 21 functions found
+2025-03-15 02:48:56,660 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/email_processing/tests/test_gmail_history_sync_fe37e167.py: 11 functions found
+2025-03-15 02:48:56,755 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/email_processing/tests/management/commands/test_sync_emails_eb42877e.py: 4 functions found
+2025-03-15 02:48:56,845 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/prefect/deployments/deploy_controversy_monitor_60601eb4.py: 1 functions found
+2025-03-15 02:48:56,933 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/graphite/events/views_8c899151.py: 8 functions found
+2025-03-15 02:48:57,028 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/apps/contacts/apps_9259e784.py: 2 functions found
+2025-03-15 02:48:57,115 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/flows/tests/test_agent_analysis_9c139b01.py: 3 functions found
+2025-03-15 02:48:57,210 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/services/text_extraction/app_632a8734.py: 0 functions found
+2025-03-15 02:48:57,299 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/ui/tools_menu_84307150.py: 6 functions found
+2025-03-15 02:48:57,392 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/database/verification_74daf678.py: 1 functions found
+2025-03-15 02:48:57,479 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/database/port_database_0ef98aae.py: 1 functions found
+2025-03-15 02:48:57,569 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/core/scanner_563b4d24.py: 2 functions found
+2025-03-15 02:48:57,658 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/analysis/deep_analysis_engine_42f3d236.py: 9 functions found
+2025-03-15 02:48:57,769 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/config/celery_config_f2fdd943.py: 0 functions found
+2025-03-15 02:48:57,853 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/data_processing/email_analysis_2ec98e57.py: 2 functions found
+2025-03-15 02:48:57,944 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/agents/base_3c6e1562.py: 5 functions found
+2025-03-15 02:48:58,041 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/agents/docstring_agent_e10fb6d8.py: 3 functions found
+2025-03-15 02:48:58,137 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/agents/chat_history_2b875762.py: 1 functions found
+2025-03-15 02:48:58,232 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/utils/model_config_08876e6d.py: 3 functions found
+2025-03-15 02:48:58,320 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/utils/pdf_to_image_converter_960bb6a3.py: 1 functions found
+2025-03-15 02:48:58,408 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/utils/entity_resolver_761b5e24.py: 1 functions found
+2025-03-15 02:48:58,495 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/utils/image_processing_73a2dbe4.py: 3 functions found
+2025-03-15 02:48:58,585 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/utils/monotonic_7e303481.py: 4 functions found
+2025-03-15 02:48:58,680 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/utils/pii_handler_7a9c9a18.py: 2 functions found
+2025-03-15 02:48:58,767 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/models/request_3990700d.py: 0 functions found
+2025-03-15 02:48:58,853 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/models/validation_060fd67e.py: 0 functions found
+2025-03-15 02:48:58,942 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/models/investments_95767032.py: 2 functions found
+2025-03-15 02:48:59,032 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/email_prioritization/__init___039a1606.py: 0 functions found
+2025-03-15 02:48:59,118 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/db/database_6f1bac60.py: 3 functions found
+2025-03-15 02:48:59,210 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/db/database_manager_523fd301.py: 1 functions found
+2025-03-15 02:48:59,302 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/db/connection_ea993d9f.py: 2 functions found
+2025-03-15 02:48:59,391 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/api/processing_config_590e5717.py: 0 functions found
+2025-03-15 02:48:59,479 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/email_processing/signals_b7d174af.py: 0 functions found
+2025-03-15 02:48:59,565 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/email_processing/init_6e0026e2.py: 0 functions found
+2025-03-15 02:48:59,650 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/ecic_terminal/app_eb4ad536.py: 11 functions found
+2025-03-15 02:48:59,748 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/pages/index_5e425007.py: 1 functions found
+2025-03-15 02:48:59,837 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/data_loaders/db_loader_cd6084bb.py: 1 functions found
+2025-03-15 02:48:59,927 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/widgets/portfolio_widget_cb0a30d4.py: 2 functions found
+2025-03-15 02:49:00,019 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/widgets/server_menu_10938691.py: 3 functions found
+2025-03-15 02:49:00,112 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/widgets/base_widget_c2c4f780.py: 4 functions found
+2025-03-15 02:49:00,199 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/widgets/terminal_e93f4c51.py: 8 functions found
+2025-03-15 02:49:00,289 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/widgets/status_widget_d121f13f.py: 7 functions found
+2025-03-15 02:49:00,379 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/widgets/lunar_widget_90480725.py: 5 functions found
+2025-03-15 02:49:00,469 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/core/services/contact_enrichment_3606926d.py: 5 functions found
+2025-03-15 02:49:00,563 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/syzygy/agents/adversarial_59d755b9.py: 1 functions found
+2025-03-15 02:49:00,655 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/syzygy/agents/developer_agent_9e0f7414.py: 1 functions found
+2025-03-15 02:49:00,747 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/syzygy/agents/client_advocate_fa974b31.py: 1 functions found
+2025-03-15 02:49:00,844 - __main__ - DEBUG - Analyzed /Users/srvo/dewey/src/src/dewey/src/syzygy/ai/wellness_agent_bea788e9.py: 1 functions found
+2025-03-15 02:49:00,939 - __main__ - INFO - Clustering similar files...
+2025-03-15 02:49:00,939 - __main__ - DEBUG - Skipping 32 empty files
+2025-03-15 02:49:01,302 - __main__ - INFO - Analysis report saved to /Users/srvo/dewey/directory_analysis.md

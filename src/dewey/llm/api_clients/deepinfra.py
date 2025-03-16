@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 import os
 
-from dewey.llm.exceptions import LLMError
 from openai import OpenAI
+
+from dewey.llm.exceptions import LLMError
 
 
 class DeepInfraClient:

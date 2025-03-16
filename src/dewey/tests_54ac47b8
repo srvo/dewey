@@ -1,0 +1,8 @@
+# Formatting failed: LLM generation failed: Gemini API error: Model gemini-2.0-flash rate limited. Cooling down for 5 minutes.
+
+"""
+Test Suite for EthiFinX
+======================
+
+Contains all tests for the EthiFinX package, organized by module.
+"""

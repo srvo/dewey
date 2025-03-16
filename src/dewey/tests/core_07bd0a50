@@ -1,0 +1,125 @@
+#!/usr/bin/env python3
+
+import pytest
+import requests
+import json
+from typing import Dict
+import os
+
+class TestFarfalle:
+    """Test suite for Farfalle service."""
+
+    @pytest.fixture(autouse=True)
+    def setup(self, service_urls: Dict[str, str], auth_headers: Dict[str, str]):
+        """Set up test fixtures."""
+        self.base_url = service_urls["farfalle"]
+        self.auth_headers = auth_headers
+        self.api_url = f"{self.base_url}/api"
+
+    def test_api_health(self):
+        """Test API health endpoint."""
+        response = requests.get(f"{self.api_url}/health")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "ok"
+
+    def test_frontend_static(self):
+        """Test frontend static file serving."""
+        response = requests.get(f"{self.base_url}/_next/static/", headers=self.auth_headers)
+        assert response.status_code == 200
+
+    def test_search_functionality(self):
+        """Test search endpoint."""
+        payload = {"query": "test query", "provider": "searxng"}
+        response = requests.post(
+            f"{self.api_url}/search",
+            headers=self.auth_headers,
+            json=payload
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert "results" in data
+
+    def test_ollama_connection(self):
+        """Test Ollama LLM connection."""
+        response = requests.get(
+            "http://localhost:11434/api/health",
+            timeout=5
+        )
+        assert response.status_code == 200
+
+    def test_redis_connection(self):
+        """Test Redis connection through API."""
+        response = requests.get(
+            f"{self.api_url}/system/redis-health",
+            headers=self.auth_headers
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "connected"
+
+    def test_authentication(self):
+        """Test authentication requirements."""
+        # Test without auth
+        response = requests.get(f"{self.base_url}/api/protected")
+        assert response.status_code == 401
+
+        # Test with auth
+        response = requests.get(
+            f"{self.base_url}/api/protected",
+            headers=self.auth_headers
+        )
+        assert response.status_code == 200
+
+    def test_environment_config(self):
+        """Test environment configuration."""
+        required_vars = [
+            "NEXT_PUBLIC_API_URL",
+            "SEARX_INSTANCE",
+            "OLLAMA_BASE_URL"
+        ]
+        response = requests.get(
+            f"{self.api_url}/system/config",
+            headers=self.auth_headers
+        )
+        assert response.status_code == 200
+        config = response.json()
+        for var in required_vars:
+            assert var in config, f"Missing environment variable: {var}"
+
+    def test_error_handling(self):
+        """Test API error handling."""
+        # Test invalid search provider
+        payload = {"query": "test", "provider": "invalid"}
+        response = requests.post(
+            f"{self.api_url}/search",
+            headers=self.auth_headers,
+            json=payload
+        )
+        assert response.status_code == 400
+        data = response.json()
+        assert "error" in data
+
+    def test_rate_limiting(self):
+        """Test rate limiting functionality."""
+        # Make multiple rapid requests
+        responses = []
+        for _ in range(10):
+            response = requests.get(
+                f"{self.api_url}/health",
+                headers=self.auth_headers
+            )
+            responses.append(response)
+
+        # Check if rate limiting kicks in
+        assert any(r.status_code == 429 for r in responses), "Rate limiting not working"
+
+    @pytest.mark.integration
+    def test_searxng_integration(self):
+        """Test SearXNG integration."""
+        searx_url = os.getenv("SEARX_INSTANCE", "http://100.110.141.34:8080")
+        response = requests.get(f"{searx_url}/healthz")
+        assert response.status_code == 200
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"]) 

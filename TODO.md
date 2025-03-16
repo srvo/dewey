@@ -4,19 +4,12 @@
 1. Repository Setup & Core Infrastructure
 2. CRM Module Development
 3. LLM Integration Foundation
-4. [x] Verified ScriptMover hierarchy - removed root `src/script_mover.py`
 
 ## Human Tasks
 
-Migrate repositories 
-x Data (in provress
-x lake 
-x crm 
-x books
-- grotius
-- ecic-compliance
-- bin
-- agents
+- clarify prd builder invocation -- is there a proper alias in zshrc?
+- begin integrating consolidated scripts
+- take a break from coding and go skiing
 
 ### Code Consolidation
 1. [ ] Review code_consolidator.py report

@@ -1,0 +1,49 @@
+```python
+import math
+
+
+def calculate_hypotenuse(side_a: float, side_b: float) -> float:
+    """Calculates the length of the hypotenuse of a right triangle.
+
+    Args:
+        side_a: The length of the first side.
+        side_b: The length of the second side.
+
+    Returns:
+        The length of the hypotenuse.
+    """
+    return math.sqrt(side_a**2 + side_b**2)
+
+
+def calculate_area(side_a: float, side_b: float) -> float:
+    """Calculates the area of a right triangle.
+
+    Args:
+        side_a: The length of the first side.
+        side_b: The length of the second side.
+
+    Returns:
+        The area of the right triangle.
+    """
+    return 0.5 * side_a * side_b
+
+
+def main() -> None:
+    """Prompts the user for side lengths and calculates hypotenuse and area."""
+    try:
+        side_a = float(input("Enter the length of side a: "))
+        side_b = float(input("Enter the length of side b: "))
+
+        hypotenuse = calculate_hypotenuse(side_a, side_b)
+        area = calculate_area(side_a, side_b)
+
+        print(f"Hypotenuse: {hypotenuse}")
+        print(f"Area: {area}")
+
+    except ValueError:
+        print("Invalid input. Please enter numeric values.")
+
+
+if __name__ == "__main__":
+    main()
+```

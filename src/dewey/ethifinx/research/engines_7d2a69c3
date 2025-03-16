@@ -1,0 +1,79 @@
+```python
+import asyncio
+from typing import Any, Dict, Optional
+
+from ethifinx.research.engines.base import AnalysisEngine
+
+
+class APIDocEngine(AnalysisEngine):
+    """Engine for analyzing API documentation and data types."""
+
+    def __init__(self) -> None:
+        """Initializes the APIDocEngine."""
+        super().__init__()
+        self.api_configs: Dict[str, Dict[str, Any]] = {
+            "API1": {
+                "data_types": {
+                    "categories": ["financial", "market"],
+                    "fields": ["price", "volume", "indicators"],
+                    "formats": ["json", "csv"],
+                    "special_features": ["real-time", "historical"],
+                },
+                "commercial_usage": "allowed",
+                "tier": "enterprise",
+            },
+            "API2": {
+                "data_types": {
+                    "categories": ["company", "regulatory"],
+                    "fields": ["filings", "reports", "metrics"],
+                    "formats": ["json", "xml"],
+                    "special_features": ["full-text search", "alerts"],
+                },
+                "commercial_usage": "restricted",
+                "tier": "professional",
+            },
+        }
+
+    async def fetch_all_documentation(self) -> Dict[str, Dict[str, Any]]:
+        """Fetches documentation for all configured APIs.
+
+        Returns:
+            A dictionary containing API configurations.
+
+        Raises:
+            Exception: If fetching API documentation fails.
+        """
+        try:
+            # Simulated API documentation fetch
+            await asyncio.sleep(1)  # Simulate network delay
+            return self.api_configs
+        except Exception as e:
+            self.logger.error(f"Failed to fetch API documentation: {str(e)}")
+            raise
+
+    async def get_commercial_usage_status(self, api_name: str) -> Dict[str, Optional[str]]:
+        """Gets commercial usage status and data types for an API.
+
+        Args:
+            api_name: The name of the API.
+
+        Returns:
+            A dictionary containing data types, commercial usage, and tier information.
+            Returns default values if the API is not found or an error occurs.
+        """
+        try:
+            if api_name not in self.api_configs:
+                return {
+                    "data_types": None,
+                    "commercial_usage": "unknown",
+                    "tier": "unknown",
+                }
+            return self.api_configs[api_name]
+        except Exception as e:
+            self.logger.error(f"Error getting usage status for {api_name}: {str(e)}")
+            return {
+                "data_types": None,
+                "commercial_usage": "error",
+                "tier": "unknown",
+            }
+```

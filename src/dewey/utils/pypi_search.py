@@ -47,7 +47,7 @@ def search_pypi_general(query: str) -> list[dict]:
                 1
             ].split("<")[0]
             results.append(
-                {"name": name, "version": version, "description": description}
+                {"name": name, "version": version, "description": description},
             )
 
         return results

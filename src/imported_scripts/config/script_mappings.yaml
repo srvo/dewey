@@ -1,0 +1,3966 @@
+- source_path: /Users/srvo/Data/rawl/farfalle/docs/farfalle/src/backend/main.py
+  status: moved
+  timestamp: 1742022529.929914
+  target_path: src/dewey/unmapped_scripts/migrated_2e945726.py
+  category:
+  - core
+  - llm
+  - ui
+- source_path: /Users/srvo/Data/rawl/farfalle/docs/farfalle/src/backend/base.py
+  status: moved
+  timestamp: 1742022555.130649
+  target_path: src/dewey/llm_interface_df8ad375.py
+  category:
+  - core
+  - llm
+- source_path: /Users/srvo/Data/rawl/farfalle/docs/farfalle/src/backend/api/db_manager.py
+  status: moved
+  timestamp: 1742022566.6587992
+  target_path: src/dewey/src/db/database_manager_523fd301.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/rawl/farfalle/docs/farfalle/src/backend/api/openrouter_manager.py
+  status: moved
+  timestamp: 1742022575.591902
+  target_path: src/dewey/unmapped_scripts/migrated_0b0ae890.py
+  category:
+  - llm
+- source_path: /Users/srvo/Data/rawl/farfalle/src/__init__.py
+  status: moved
+  timestamp: 1742022593.6405702
+  target_path: src/dewey/unmapped_scripts/migrated_c4f6dc2b.py
+  category: []
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/related_queries.py
+  status: moved
+  timestamp: 1742022596.338016
+  target_path: src/dewey/unmapped_scripts/migrated_ed430643.py
+  category:
+  - llm
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/validators.py
+  status: moved
+  timestamp: 1742022600.032035
+  target_path: src/dewey/backend/validation_51db5a82.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/constants.py
+  status: moved
+  timestamp: 1742022604.879949
+  target_path: src/dewey/src/utils/model_config_08876e6d.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/__init__.py
+  status: moved
+  timestamp: 1742022610.0286589
+  target_path: src/dewey/path/to/script_7dd0c97c.py
+  category:
+  - template
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/prompts.py
+  status: moved
+  timestamp: 1742022611.838181
+  target_path: src/dewey/src/prompts_4b33c255.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/chat.py
+  status: moved
+  timestamp: 1742022617.6791198
+  target_path: src/dewey/unmapped_scripts/migrated_112cd41b.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/schemas.py
+  status: moved
+  timestamp: 1742022627.5539358
+  target_path: src/dewey/backend/models_d9aa2aa1.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/utils.py
+  status: moved
+  timestamp: 1742022642.6657438
+  target_path: src/dewey/backend/utils_ae9098f0.py
+  category:
+  - utils
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/exceptions.py
+  status: moved
+  timestamp: 1742022643.5637498
+  target_path: src/dewey/core/exceptions_dccf6027.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/main.py
+  status: moved
+  timestamp: 1742022644.279474
+  target_path: src/dewey/backend/main_ddce10fa.py
+  category:
+  - core
+  - llm
+  - backend
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/agent_search.py
+  status: moved
+  timestamp: 1742022655.443149
+  target_path: src/dewey/backend/chat/pro_chat_1f271237.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/llm/base.py
+  status: moved
+  timestamp: 1742022659.866431
+  target_path: src/dewey/llm_utils_fca2b7a4.py
+  category:
+  - llm
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/search/__init__.py
+  status: moved
+  timestamp: 1742022663.388979
+  target_path: src/dewey/unmapped_scripts/migrated_a41901ac.py
+  category: []
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/search/search_service.py
+  status: moved
+  timestamp: 1742022664.0468612
+  target_path: src/dewey/unmapped_scripts/migrated_0ac43133.py
+  category:
+  - core
+  - llm
+  - search
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/search/providers/tavily.py
+  status: moved
+  timestamp: 1742022672.582518
+  target_path: src/dewey/backend/search/providers/tavily_bfe85965.py
+  category:
+  - core
+  - llm
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/search/providers/serper.py
+  status: moved
+  timestamp: 1742022674.623232
+  target_path: src/dewey/backend/search/providers/serper_3a12f603.py
+  category:
+  - core
+  - llm
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/search/providers/searxng.py
+  status: moved
+  timestamp: 1742022678.033752
+  target_path: src/dewey/backend/search/providers/searxng_1749685c.py
+  category:
+  - core
+  - llm
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/search/providers/bing.py
+  status: moved
+  timestamp: 1742022681.579336
+  target_path: src/dewey/backend/search/providers/bing_2e20277d.py
+  category:
+  - core
+  - llm
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/search/providers/__init__.py
+  status: moved
+  timestamp: 1742022685.395479
+  target_path: src/dewey/unmapped_scripts/migrated_8bb9dd71.py
+  category:
+  - unknown
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/search/providers/base.py
+  status: moved
+  timestamp: 1742022686.209899
+  target_path: src/dewey/unmapped_scripts/migrated_1544ce2d.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/db/models.py
+  status: moved
+  timestamp: 1742022688.297759
+  target_path: src/dewey/backend/models_380338ba.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/db/engine.py
+  status: moved
+  timestamp: 1742022691.9319308
+  target_path: src/dewey/src/db/connection_ea993d9f.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/db/chat.py
+  status: moved
+  timestamp: 1742022694.965052
+  target_path: src/dewey/backend/db/utils_adf1ce03.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/alembic/env.py
+  status: moved
+  timestamp: 1742022700.601381
+  target_path: src/dewey/backend/db/migrations/env_18a7f85d.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/alembic/versions/17892ab566d1_initial_models.py
+  status: moved
+  timestamp: 1742022703.394088
+  target_path: src/dewey/unmapped_scripts/migrated_35b88de6.py
+  category:
+  - core
+  - database
+  - migration
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/alembic/versions/91d5d7402c69_agent_response.py
+  status: moved
+  timestamp: 1742022705.522381
+  target_path: src/dewey/unmapped_scripts/migrated_e2943a23.py
+  category:
+  - core
+  - database
+  - migration
+- source_path: /Users/srvo/Data/rawl/farfalle/src/backend/alembic/versions/64dfe5ff288e_jsonb.py
+  status: moved
+  timestamp: 1742022707.8429818
+  target_path: src/dewey/unmapped_scripts/migrated_b3884dad.py
+  category:
+  - core
+  - database
+  - migration
+- source_path: /Users/srvo/Data/rawl/marimo/notebooks/company_input.py
+  status: moved
+  timestamp: 1742022710.137409
+  target_path: src/dewey/apps/company_analysis_manager_14f63b69.py
+  category:
+  - llm
+  - pipeline
+  - ui
+- source_path: /Users/srvo/Data/rawl/marimo/notebooks/company_data.py
+  status: moved
+  timestamp: 1742022712.6556711
+  target_path: src/dewey/company_analysis_app_ce49ba2d.py
+  category:
+  - llm
+  - ui
+- source_path: /Users/srvo/Data/rawl/marimo/notebooks/analyze_entities.py
+  status: moved
+  timestamp: 1742022714.764139
+  target_path: src/dewey/unmapped_scripts/migrated_ec7013bd.py
+  category:
+  - llm
+  - ui
+- source_path: /Users/srvo/Data/rawl/marimo/notebooks/welcome.py
+  status: moved
+  timestamp: 1742022717.906504
+  target_path: src/dewey/examples/interactive_plot_a842da9f.py
+  category:
+  - llm
+  - ui
+- source_path: /Users/srvo/Data/rawl/unstructured/app/__init__.py
+  status: moved
+  timestamp: 1742022721.491551
+  target_path: src/dewey/unmapped_scripts/migrated_be8228d6.py
+  category: []
+- source_path: /Users/srvo/Data/rawl/unstructured/app/main.py
+  status: moved
+  timestamp: 1742022722.2113972
+  target_path: src/dewey/services/text_extraction/app_632a8734.py
+  category:
+  - llm
+- source_path: /Users/srvo/Data/rawl/unstructured/tests/__init__.py
+  status: moved
+  timestamp: 1742022725.0055182
+  target_path: src/dewey/unmapped_scripts/migrated_e9bee6a1.py
+  category: []
+- source_path: /Users/srvo/Data/rawl/unstructured/tests/test_app.py
+  status: moved
+  timestamp: 1742022725.708523
+  target_path: src/dewey/tests/test_app_e912ee69.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/rawl/prefect/tests/conftest.py
+  status: moved
+  timestamp: 1742022728.52493
+  target_path: src/dewey/tests/conftest_a5554c0f.py
+  category:
+  - core
+  - utils
+  - testing
+- source_path: /Users/srvo/Data/rawl/prefect/tests/test_flow_serve.py
+  status: moved
+  timestamp: 1742022736.877974
+  target_path: src/dewey/unmapped_scripts/migrated_97742070.py
+  category:
+  - unknown
+- source_path: /Users/srvo/Data/rawl/prefect/tests/test_company_analysis_flow.py
+  status: moved
+  timestamp: 1742022737.573929
+  target_path: src/dewey/unmapped_scripts/migrated_b63e8d1b.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/rawl/prefect/tests/test_flow_patterns.py
+  status: moved
+  timestamp: 1742022743.0620632
+  target_path: src/dewey/unmapped_scripts/migrated_6f69f878.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/rawl/prefect/tests/test_api_integration.py
+  status: moved
+  timestamp: 1742022746.015241
+  target_path: src/dewey/unmapped_scripts/migrated_e66f5197.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/rawl/prefect/tests/__init__.py
+  status: moved
+  timestamp: 1742022762.844415
+  target_path: src/dewey/unmapped_scripts/migrated_ca5675da.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/rawl/prefect/tests/test_controversy_analysis.py
+  status: moved
+  timestamp: 1742022763.5248451
+  target_path: src/dewey/tests/test_controversy_analysis_2faf8e72.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/rawl/prefect/tests/test_agent_analysis.py
+  status: moved
+  timestamp: 1742022766.4906309
+  target_path: src/dewey/flows/tests/test_agent_analysis_9c139b01.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/rawl/prefect/flows/hello.py
+  status: moved
+  timestamp: 1742022769.4993432
+  target_path: src/dewey/flows/hello_flow_0c32cde9.py
+  category:
+  - core
+  - pipeline
+- source_path: /Users/srvo/Data/rawl/prefect/flows/deploy.py
+  status: moved
+  timestamp: 1742022770.930092
+  target_path: src/dewey/prefect/deployments/deploy_controversy_monitor_60601eb4.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/rawl/prefect/flows/deployment.py
+  status: moved
+  timestamp: 1742022772.973669
+  target_path: src/dewey/deployments/company_analysis_deployment_ed3c1d9c.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/rawl/prefect/flows/controversy_analysis.py
+  status: moved
+  timestamp: 1742022774.73008
+  target_path: src/dewey/pipelines/controversy_analyzer_83cb47c6.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/rawl/prefect/flows/deploy_agent.py
+  status: moved
+  timestamp: 1742022780.233152
+  target_path: src/dewey/unmapped_scripts/migrated_416671ef.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/rawl/prefect/flows/agent_analysis.py
+  status: moved
+  timestamp: 1742022781.688871
+  target_path: src/dewey/flows/entity_analysis_a902aa8d.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/rawl/prefect/flows/company_analysis.py
+  status: moved
+  timestamp: 1742022786.4363751
+  target_path: src/dewey/backend/flows/company_analysis_868b2a5d.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/rawl/prefect/flows/deploy_controversy.py
+  status: moved
+  timestamp: 1742022789.5093691
+  target_path: src/dewey/flows/deploy_controversy_analysis_d6cb7b4a.py
+  category:
+  - llm
+  - pipeline
+  - deployment
+- source_path: /Users/srvo/Data/rawl/prefect/flows/company_analysis_flow.py
+  status: moved
+  timestamp: 1742022792.602967
+  target_path: src/dewey/scripts/company_analysis_b33eeb3c.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/rawl/prefect/flows/controversy_detection.py
+  status: moved
+  timestamp: 1742022796.7159529
+  target_path: src/dewey/flows/controversy_detection_f0ccc937.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/rawl/flows/deploy.py
+  status: moved
+  timestamp: 1742022823.973887
+  target_path: src/dewey/flows/deploy_controversy_monitoring_8f5969e8.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/Development/survey.py
+  status: moved
+  timestamp: 1742022826.165796
+  target_path: src/dewey/src/media_scanner_944ad53a.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/email_analyzer.py
+  status: moved
+  timestamp: 1742022832.611614
+  target_path: src/dewey/scripts/email_analysis_23095820.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/calendar_scraper.py
+  status: moved
+  timestamp: 1742022834.7949178
+  target_path: src/dewey/src/calendar_integration_4ece5e1f.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/match_transcripts.py
+  status: moved
+  timestamp: 1742022841.583935
+  target_path: src/dewey/podcast_utils_b681fe22.py
+  category:
+  - core
+  - llm
+  - utils
+- source_path: /Users/srvo/Data/Development/DeepSeek .ipynb
+  status: moved
+  timestamp: 1742022843.7357178
+  target_path: src/dewey/notebooks/deepseek_integration_8a446bdc.ipynb
+  category:
+  - llm
+  - ui
+- source_path: /Users/srvo/Data/Development/check_email_uniqueness.py
+  status: moved
+  timestamp: 1742022846.079794
+  target_path: src/dewey/src/data_processing/email_analysis_2ec98e57.py
+  category:
+  - core
+  - database
+  - analysis
+- source_path: /Users/srvo/Data/Development/email_contacts.py
+  status: moved
+  timestamp: 1742022848.2066581
+  target_path: src/dewey/scripts/data_processing_d1941a9c.py
+  category:
+  - core
+  - data analysis
+  - database
+- source_path: /Users/srvo/Data/Development/upload_to_motherduck.py
+  status: moved
+  timestamp: 1742022850.4242828
+  target_path: src/dewey/scripts/database/upload_to_motherduck_042102bd.py
+  category:
+  - core
+  - database
+- source_path: /Users/srvo/Data/Development/import_csv_contacts.py
+  status: moved
+  timestamp: 1742022852.691849
+  target_path: src/dewey/unmapped_scripts/migrated_e65f58fc.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/Development/scan_meetings.py
+  status: moved
+  timestamp: 1742022854.769539
+  target_path: src/dewey/utils/media_scanner_2329085c.py
+  category:
+  - utils
+- source_path: /Users/srvo/Data/Development/setup.py
+  status: moved
+  timestamp: 1742022860.343735
+  target_path: src/dewey/scripts/setup_17be35d8.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/podcast_analyzer.py
+  status: moved
+  timestamp: 1742022861.164176
+  target_path: src/dewey/core/podcast_analyzer_4d0a10a1.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/aider/models.py
+  status: moved
+  timestamp: 1742022865.427077
+  target_path: src/dewey/core/models_94af2f3d.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/rss_reader.py
+  status: moved
+  timestamp: 1742022866.739527
+  target_path: src/dewey/core/rss_feed_manager_7bbad7e3.py
+  category:
+  - core
+  - llm
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/aider/company_view.py
+  status: moved
+  timestamp: 1742022869.787487
+  target_path: src/dewey/views/company_views_4677aeed.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/Development/archive/aider/database.py
+  status: moved
+  timestamp: 1742022881.8166778
+  target_path: src/dewey/src/db/database_6f1bac60.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/navigation.py
+  status: moved
+  timestamp: 1742022884.103123
+  target_path: src/dewey/unmapped_scripts/migrated_506261a8.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/Development/archive/aider/ethical_portfolio.py
+  status: moved
+  timestamp: 1742022886.21933
+  target_path: src/dewey/src/app_78e685e8.py
+  category:
+  - ui
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/Development/archive/aider/sec_filings.py
+  status: moved
+  timestamp: 1742022890.366297
+  target_path: src/dewey/core/sec_filings_manager_c2b7e528.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/aider/init_db.py
+  status: moved
+  timestamp: 1742022892.5759108
+  target_path: src/dewey/src/data_loader_1b825488.py
+  category:
+  - core
+  - database
+  - data loading
+- source_path: /Users/srvo/Data/Development/archive/aider/migrations/env.py
+  status: moved
+  timestamp: 1742022896.125605
+  target_path: src/dewey/migrations/env_d1d779f3.py
+  category:
+  - core
+  - database
+- source_path: /Users/srvo/Data/Development/archive/aider/migrations/versions/20231123_01_relationship_schema.py
+  status: moved
+  timestamp: 1742022898.135249
+  target_path: src/dewey/unmapped_scripts/migrated_fbb7fd02.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/aider/migrations/versions/20231123_03_cleanup.py
+  status: moved
+  timestamp: 1742022901.104077
+  target_path: src/dewey/migrations/versions/20231123_03_df89deec.py
+  category:
+  - core
+  - utils
+  - database
+- source_path: /Users/srvo/Data/Development/archive/aider/migrations/versions/20231123_02_migrate_events.py
+  status: moved
+  timestamp: 1742022903.991201
+  target_path: src/dewey/unmapped_scripts/migrated_86297da3.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/__init__.py
+  status: moved
+  timestamp: 1742022906.89765
+  target_path: src/dewey/ecic/version_0cc81eb3.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/setup.py
+  status: moved
+  timestamp: 1742022907.787255
+  target_path: src/dewey/unmapped_scripts/migrated_c947879b.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/ecic/config.py
+  status: moved
+  timestamp: 1742022909.343956
+  target_path: src/dewey/core/config_6da0aab6.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/ecic/__init__.py
+  status: moved
+  timestamp: 1742022911.450357
+  target_path: src/dewey/unmapped_scripts/migrated_13d4a55b.py
+  category: []
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/ecic/cli.py
+  status: moved
+  timestamp: 1742022912.192179
+  target_path: src/dewey/ecic/cli_e6aa7bf7.py
+  category:
+  - cli
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/ecic/app.py
+  status: moved
+  timestamp: 1742022917.041014
+  target_path: src/dewey/src/ecic_terminal/app_eb4ad536.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/ecic/tools/__init__.py
+  status: moved
+  timestamp: 1742022919.261125
+  target_path: src/dewey/tools/__init___f293c7cb.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/ecic/tools/launcher.py
+  status: moved
+  timestamp: 1742022939.121061
+  target_path: src/dewey/utils/tool_launcher_9fcdbef5.py
+  category:
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/ecic/models/investment.py
+  status: moved
+  timestamp: 1742022949.27407
+  target_path: src/dewey/src/models/investments_95767032.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/ecic/services/tick_processor.py
+  status: moved
+  timestamp: 1742022954.2193122
+  target_path: src/dewey/core/tick_processor_62b7e6ac.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/ecic/services/ssh.py
+  status: moved
+  timestamp: 1742022957.96811
+  target_path: src/dewey/core/ssh_service_ff6d125d.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/ecic/widgets/server_menu.py
+  status: moved
+  timestamp: 1742022967.539988
+  target_path: src/dewey/src/widgets/server_menu_10938691.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/ecic/widgets/terminal.py
+  status: moved
+  timestamp: 1742022973.225852
+  target_path: src/dewey/src/widgets/terminal_e93f4c51.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/ecic/widgets/tools_menu.py
+  status: moved
+  timestamp: 1742022978.106328
+  target_path: src/dewey/src/ui/tools_menu_84307150.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/ecic/widgets/portfolio.py
+  status: moved
+  timestamp: 1742022986.035192
+  target_path: src/dewey/src/widgets/portfolio_widget_cb0a30d4.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/ecic/widgets/base.py
+  status: moved
+  timestamp: 1742022998.423456
+  target_path: src/dewey/src/widgets/base_widget_c2c4f780.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/ecic/widgets/status.py
+  status: moved
+  timestamp: 1742022999.945312
+  target_path: src/dewey/src/widgets/status_widget_d121f13f.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/ecic/widgets/lunar.py
+  status: moved
+  timestamp: 1742023001.267253
+  target_path: src/dewey/src/widgets/lunar_widget_90480725.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/tests/test_portfolio.py
+  status: moved
+  timestamp: 1742023003.6579998
+  target_path: src/dewey/ecic/tests/test_portfolio_widget_4eb02907.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/tests/__init__.py
+  status: moved
+  timestamp: 1742023006.780601
+  target_path: src/dewey/tests/test_package_58223fd9.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/tests/test_price_service.py
+  status: moved
+  timestamp: 1742023007.426835
+  target_path: src/dewey/tests/test_price_service_c2008247.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/tests/test_ssh.py
+  status: moved
+  timestamp: 1742023010.314487
+  target_path: src/dewey/tests/core/test_ssh_service_a36eec3e.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/tests/widget_test_base.py
+  status: moved
+  timestamp: 1742023012.5743191
+  target_path: src/dewey/tests/ui/widget_test_base_3a46db35.py
+  category:
+  - ui
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/tests/test_config.py
+  status: moved
+  timestamp: 1742023014.821121
+  target_path: src/dewey/tests/test_config_f350a370.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/tests/test_tick_processor.py
+  status: moved
+  timestamp: 1742023019.665369
+  target_path: src/dewey/tests/ecic/services/test_tick_processor_34ed4bb9.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/ecic/tests/test_investment.py
+  status: moved
+  timestamp: 1742023022.0401669
+  target_path: src/dewey/tests/test_investment_models_9f77dc1a.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/lib/python3.11/site-packages/monotonic.py
+  status: moved
+  timestamp: 1742023024.6764889
+  target_path: src/dewey/src/utils/monotonic_7e303481.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/aider/lib/python3.11/site-packages/threadpoolctl.py
+  status: moved
+  timestamp: 1742023029.6248698
+  target_path: src/dewey/threadpoolctl/__init___d52f942e.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/lib/python3.11/site-packages/sounddevice.py
+  status: moved
+  timestamp: 1742023038.5027368
+  target_path: src/dewey/sounddevice_88be781f.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/lib/python3.11/site-packages/_sounddevice.py
+  status: moved
+  timestamp: 1742023059.189374
+  target_path: src/dewey/unmapped_scripts/migrated_b5eb3476.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/lib/python3.11/site-packages/mccabe.py
+  status: moved
+  timestamp: 1742023060.766216
+  target_path: src/dewey/mccabe_6616c929.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/lib/python3.11/site-packages/configargparse.py
+  status: moved
+  timestamp: 1742023065.427875
+  target_path: src/dewey/configargparse_cecefce9.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/aider/lib/python3.11/site-packages/pycodestyle.py
+  status: moved
+  timestamp: 1742023067.099835
+  target_path: src/dewey/unmapped_scripts/migrated_f2699304.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/lib/python3.11/site-packages/mypy_extensions.py
+  status: moved
+  timestamp: 1742023077.3815439
+  target_path: src/dewey/mypy_extensions_fdab7ba2.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/lib/python3.11/site-packages/soundfile.py
+  status: moved
+  timestamp: 1742023078.977993
+  target_path: src/dewey/soundfile_243ad43b.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/lib/python3.11/site-packages/isympy.py
+  status: moved
+  timestamp: 1742023081.193482
+  target_path: src/dewey/unmapped_scripts/migrated_98055cd9.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/lib/python3.11/site-packages/six.py
+  status: moved
+  timestamp: 1742023084.897103
+  target_path: src/dewey/utils/compat_f8807c26.py
+  category:
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/aider/lib/python3.11/site-packages/typing_inspect.py
+  status: moved
+  timestamp: 1742023085.727641
+  target_path: src/dewey/typing_inspect_bca83e27.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/aider/lib/python3.11/site-packages/_soundfile.py
+  status: moved
+  timestamp: 1742023088.593229
+  target_path: src/dewey/unmapped_scripts/migrated_80fb34fa.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/lib/python3.11/site-packages/nest_asyncio.py
+  status: moved
+  timestamp: 1742023090.263446
+  target_path: src/dewey/utils/asyncio_patch_b1c8818a.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/aider/lib/python3.11/site-packages/typing_extensions.py
+  status: moved
+  timestamp: 1742023092.6103292
+  target_path: src/dewey/typing_extensions_a06ad8e6.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/convert_pdf.py
+  status: moved
+  timestamp: 1742023094.068726
+  target_path: src/dewey/utils/pdf_to_image_converter_4ec37224.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/setup.py
+  status: moved
+  timestamp: 1742023096.219429
+  target_path: src/dewey/setup_d27f939b.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/main.py
+  status: moved
+  timestamp: 1742023101.1020648
+  target_path: src/dewey/main_2604e28f.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/config.py
+  status: moved
+  timestamp: 1742023106.854492
+  target_path: src/dewey/config/constants_dbfff33a.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/llmhub.py
+  status: moved
+  timestamp: 1742023119.468787
+  target_path: src/dewey/llm_utils_5f1800e6.py
+  category:
+  - llm
+  - core
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/__init__.py
+  status: moved
+  timestamp: 1742023121.69705
+  target_path: src/dewey/unmapped_scripts/migrated_916a2a24.py
+  category: []
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/observability.py
+  status: moved
+  timestamp: 1742023122.441885
+  target_path: src/dewey/src/utils/observability_4cd64680.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/settings.py
+  status: moved
+  timestamp: 1742023123.192329
+  target_path: src/dewey/core/utils_53d5c06c.py
+  category:
+  - core
+  - llm
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/api/__init__.py
+  status: moved
+  timestamp: 1742023135.169781
+  target_path: src/dewey/templates/analysis_template_56cb23e6.py
+  category:
+  - template
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/api/routers/chat_config.py
+  status: moved
+  timestamp: 1742023136.057823
+  target_path: src/dewey/app/api/routers/config_565b90f9.py
+  category:
+  - llm
+  - api
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/api/routers/models.py
+  status: moved
+  timestamp: 1742023139.463539
+  target_path: src/dewey/app/models/chat_32a0ed45.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/api/routers/upload.py
+  status: moved
+  timestamp: 1742023143.000802
+  target_path: src/dewey/app/api/routers/file_upload_c9260a1e.py
+  category:
+  - api
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/api/routers/events.py
+  status: moved
+  timestamp: 1742023144.978705
+  target_path: src/dewey/unmapped_scripts/migrated_84774760.py
+  category:
+  - core
+  - llm
+  - ui
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/api/routers/vercel_response.py
+  status: moved
+  timestamp: 1742023149.798096
+  target_path: src/dewey/app/api/utils/vercel_stream_40c2d2e3.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/api/routers/__init__.py
+  status: moved
+  timestamp: 1742023157.32635
+  target_path: src/dewey/api/v1/api_e6c17e53.py
+  category:
+  - core
+  - api
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/api/routers/chat.py
+  status: moved
+  timestamp: 1742023158.836565
+  target_path: src/dewey/app/api/routers/chat_6177a908.py
+  category:
+  - llm
+  - api
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/api/services/suggestion.py
+  status: moved
+  timestamp: 1742023161.668512
+  target_path: src/dewey/app/utils/next_question_suggestion_536f7875.py
+  category:
+  - llm
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/engine/service.py
+  status: moved
+  timestamp: 1742023163.898886
+  target_path: src/dewey/app/utils/llamacloud_3937e7f5.py
+  category:
+  - llm
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/engine/index.py
+  status: moved
+  timestamp: 1742023173.076106
+  target_path: src/dewey/llamabot/utils/llama_cloud_5b56ebce.py
+  category:
+  - llm
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/engine/generate.py
+  status: moved
+  timestamp: 1742023175.4375758
+  target_path: src/dewey/scripts/data_ingestion_cbf2075b.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/engine/query_filter.py
+  status: moved
+  timestamp: 1742023182.7467608
+  target_path: src/dewey/utils/filter_generator_1b8c6a3d.py
+  category:
+  - core
+  - llm
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/engine/__init__.py
+  status: moved
+  timestamp: 1742023184.304201
+  target_path: src/dewey/templates/python_analysis_template_9cd2c3ea.yaml
+  category:
+  - template
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/engine/engine.py
+  status: moved
+  timestamp: 1742023185.029564
+  target_path: src/dewey/app/engine/chat_7a3a147f.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/engine/tools/artifact.py
+  status: moved
+  timestamp: 1742023187.2651362
+  target_path: src/dewey/llama_index/tools/code_generator_37e13464.py
+  category:
+  - llm
+  - tools
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/engine/tools/img_gen.py
+  status: moved
+  timestamp: 1742023189.550608
+  target_path: src/dewey/tools/image_generation_50a9d57d.py
+  category:
+  - llm
+  - tools
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/engine/tools/form_filling.py
+  status: moved
+  timestamp: 1742023192.8945
+  target_path: src/dewey/tools/form_filling_205825e3.py
+  category:
+  - llm
+  - tools
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/engine/tools/weather.py
+  status: moved
+  timestamp: 1742023199.752985
+  target_path: src/dewey/tools/open_meteo_weather_60bbc395.py
+  category:
+  - llm
+  - tools
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/engine/tools/__init__.py
+  status: moved
+  timestamp: 1742023201.920863
+  target_path: src/dewey/app/engine/utils/tool_factory_d640dc0e.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/engine/tools/openapi_action.py
+  status: moved
+  timestamp: 1742023204.394092
+  target_path: src/dewey/unmapped_scripts/migrated_fdab47fc.py
+  category:
+  - llm
+  - tools
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/engine/tools/interpreter.py
+  status: moved
+  timestamp: 1742023207.1495628
+  target_path: src/dewey/tools/e2b_code_interpreter_768149a2.py
+  category:
+  - llm
+  - tools
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/engine/tools/document_generator.py
+  status: moved
+  timestamp: 1742023214.272251
+  target_path: src/dewey/tools/document_generator_552915df.py
+  category:
+  - llm
+  - tools
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/engine/tools/duckduckgo.py
+  status: moved
+  timestamp: 1742023217.0937228
+  target_path: src/dewey/tools/duckduckgo_312bbd16.py
+  category:
+  - core
+  - tools
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/app/services/file.py
+  status: moved
+  timestamp: 1742023219.15551
+  target_path: src/dewey/app/engine/service_150825fa.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/backend/tests/__init__.py
+  status: moved
+  timestamp: 1742023226.250449
+  target_path: src/dewey/unmapped_scripts/migrated_bcabfdd5.py
+  category: []
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/dev/blog2md/config.py
+  status: moved
+  timestamp: 1742023226.99337
+  target_path: src/dewey/config_823a4ddb.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/dev/blog2md/convert.py
+  status: moved
+  timestamp: 1742023227.9148648
+  target_path: src/dewey/src/converter_28f257d6.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/dev/blog2md/tests/test_processor.py
+  status: moved
+  timestamp: 1742023239.298162
+  target_path: src/dewey/config/settings_8ce21c5e.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/dev/blog2md/src/__init__.py
+  status: moved
+  timestamp: 1742023240.139801
+  target_path: src/dewey/path/to/script_ee18e87e.py
+  category:
+  - template
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/dev/blog2md/src/processor.py
+  status: moved
+  timestamp: 1742023240.845536
+  target_path: src/dewey/src/content_processor_31501000.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/dev/blog2md/src/markdown_handler.py
+  status: moved
+  timestamp: 1742023244.904473
+  target_path: src/dewey/core/utils/markdown_updater_0ef51ea6.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/dev/blog2md/src/image_handler.py
+  status: moved
+  timestamp: 1742023247.695393
+  target_path: src/dewey/src/utils/image_processing_73a2dbe4.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/dev/blog2md/src/metadata_handler.py
+  status: moved
+  timestamp: 1742023251.477282
+  target_path: src/dewey/src/metadata_generator_1a849aa8.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/z-ecic/data/decks/pdf_to_images.py
+  status: moved
+  timestamp: 1742023255.092028
+  target_path: src/dewey/src/utils/pdf_to_image_converter_960bb6a3.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/docker/markdown_to_gdocs.py
+  status: moved
+  timestamp: 1742023257.360272
+  target_path: src/dewey/scripts/google_docs_automation_084d2ae7.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/podcast_analysis/podcast_analyzer_2.py
+  status: moved
+  timestamp: 1742023260.976892
+  target_path: src/dewey/podcast_analyzer_306a42e7.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/podcast_analysis/podcast.ipynb
+  status: moved
+  timestamp: 1742023263.029681
+  target_path: src/dewey/podcast_analysis/data_processing_8112e285.py
+  category:
+  - core
+  - llm
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/daily_notes_generator/generate_notes.py
+  status: moved
+  timestamp: 1742023266.244534
+  target_path: src/dewey/scripts/daily_note_generator_dfa022df.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/data-processor/data-transfer.py
+  status: moved
+  timestamp: 1742023271.568073
+  target_path: src/dewey/scripts/sync_script_85f9c220.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/data-processor/src/tasks.py
+  status: moved
+  timestamp: 1742023273.197432
+  target_path: src/dewey/tasks_39fabc0d.py
+  category:
+  - core
+  - pipeline
+- source_path: /Users/srvo/Data/Development/archive/data-processor/src/file_analyzer.py
+  status: moved
+  timestamp: 1742023276.8738508
+  target_path: src/dewey/src/core/scanner_563b4d24.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/pathway-processor/processor.py
+  status: moved
+  timestamp: 1742023300.431981
+  target_path: src/dewey/examples/ingest_to_postgres_78fda80e.py
+  category:
+  - core
+  - pipeline
+- source_path: /Users/srvo/Data/Development/archive/configs/scripts/download_podcast.py
+  status: moved
+  timestamp: 1742023306.8141172
+  target_path: src/dewey/tools/podcast_downloader_0acaca3d.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/track_correspondence
+    copy 2.py
+  status: moved
+  timestamp: 1742023314.977886
+  target_path: src/dewey/src/email_analyzer_5294de70.py
+  category:
+  - core
+  - llm
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/track_correspondence.py
+  status: moved
+  timestamp: 1742023324.0155451
+  target_path: src/dewey/src/gmail_checker_5d039aa6.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/track_correspondence
+    copy.py
+  status: moved
+  timestamp: 1742023333.2693372
+  target_path: src/dewey/src/email_checker_df5cf9d9.py
+  category:
+  - core
+  - llm
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/main.py
+  status: moved
+  timestamp: 1742023343.045272
+  target_path: src/dewey/main_d28f1089.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/config.py
+  status: moved
+  timestamp: 1742023350.495842
+  target_path: src/dewey/config/paths_391216db.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/llmhub.py
+  status: moved
+  timestamp: 1742023352.663834
+  target_path: src/dewey/utils/llm_setup_63dea8d5.py
+  category:
+  - core
+  - llm
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/__init__.py
+  status: moved
+  timestamp: 1742023361.59297
+  target_path: src/dewey/analysis/template_854cbf24.yaml
+  category:
+  - template
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/observability.py
+  status: moved
+  timestamp: 1742023362.459313
+  target_path: src/dewey/core/observability_a4d9afdc.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/settings.py
+  status: moved
+  timestamp: 1742023363.199136
+  target_path: src/dewey/utils/settings_utils_d52afed0.py
+  category:
+  - core
+  - llm
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/api/__init__.py
+  status: moved
+  timestamp: 1742023375.2571049
+  target_path: src/dewey/unmapped_scripts/migrated_7f87d5c9.py
+  category: []
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/api/routers/chat_config.py
+  status: moved
+  timestamp: 1742023375.999734
+  target_path: src/dewey/app/api/routers/config_c8485897.py
+  category:
+  - api
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/api/routers/models.py
+  status: moved
+  timestamp: 1742023379.097322
+  target_path: src/dewey/app/models/chat_841e1f8d.py
+  category:
+  - core
+  - llm
+  - pipeline
+  - ui
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/api/routers/upload.py
+  status: moved
+  timestamp: 1742023382.8084219
+  target_path: src/dewey/unmapped_scripts/migrated_c0a5d54d.py
+  category:
+  - api
+  - file_handling
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/api/routers/events.py
+  status: moved
+  timestamp: 1742023384.970758
+  target_path: src/dewey/utils/event_callback_e7ac8299.py
+  category:
+  - llm
+  - ui
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/api/routers/vercel_response.py
+  status: moved
+  timestamp: 1742023389.9643688
+  target_path: src/dewey/app/api/services/response_b876811a.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/api/routers/__init__.py
+  status: moved
+  timestamp: 1742023396.6405818
+  target_path: src/dewey/backend/api/api_a96d21e1.py
+  category:
+  - core
+  - ui
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/api/routers/chat.py
+  status: moved
+  timestamp: 1742023398.1882932
+  target_path: src/dewey/app/api/routers/chat_6a90df51.py
+  category:
+  - llm
+  - api
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/api/services/suggestion.py
+  status: moved
+  timestamp: 1742023400.3891551
+  target_path: src/dewey/app/utils/next_question_suggestion_5dd93e7d.py
+  category:
+  - llm
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/engine/service.py
+  status: moved
+  timestamp: 1742023402.749185
+  target_path: src/dewey/app/engine/services/llamacloud_file_service_89f313b6.py
+  category:
+  - llm
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/engine/index.py
+  status: moved
+  timestamp: 1742023411.664478
+  target_path: src/dewey/utils/llamacloud_34d5fa99.py
+  category:
+  - llm
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/engine/generate.py
+  status: moved
+  timestamp: 1742023413.900853
+  target_path: src/dewey/scripts/index_generation_a47979e2.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/engine/query_filter.py
+  status: moved
+  timestamp: 1742023417.564996
+  target_path: src/dewey/unmapped_scripts/migrated_8087cf98.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/engine/__init__.py
+  status: moved
+  timestamp: 1742023419.042081
+  target_path: src/dewey/templates/python_analysis_77e869af.yaml
+  category:
+  - template
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/engine/engine.py
+  status: moved
+  timestamp: 1742023419.9501069
+  target_path: src/dewey/unmapped_scripts/migrated_947b036f.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/engine/tools/artifact.py
+  status: moved
+  timestamp: 1742023422.206916
+  target_path: src/dewey/tools/code_generator_6791ce97.py
+  category:
+  - llm
+  - tools
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/engine/tools/img_gen.py
+  status: moved
+  timestamp: 1742023424.464857
+  target_path: src/dewey/tools/image_generation_1151c6f7.py
+  category:
+  - llm
+  - tools
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/engine/tools/form_filling.py
+  status: moved
+  timestamp: 1742023427.550027
+  target_path: src/dewey/tools/form_filling_ea81ac7d.py
+  category:
+  - llm
+  - tools
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/engine/tools/weather.py
+  status: moved
+  timestamp: 1742023431.124834
+  target_path: src/dewey/tools/open_meteo_weather_9ff25335.py
+  category:
+  - llm
+  - tools
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/engine/tools/__init__.py
+  status: moved
+  timestamp: 1742023433.251523
+  target_path: src/dewey/app/engine/utils/tool_factory_75a6fe18.py
+  category:
+  - core
+  - llm
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/engine/tools/openapi_action.py
+  status: moved
+  timestamp: 1742023437.582121
+  target_path: src/dewey/unmapped_scripts/migrated_f488b4da.py
+  category:
+  - llm
+  - tools
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/engine/tools/interpreter.py
+  status: moved
+  timestamp: 1742023440.433689
+  target_path: src/dewey/tools/e2b_code_interpreter_973c76c3.py
+  category:
+  - llm
+  - tools
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/engine/tools/document_generator.py
+  status: moved
+  timestamp: 1742023447.265596
+  target_path: src/dewey/tools/document_generator_8b2cfe98.py
+  category:
+  - core
+  - tools
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/engine/tools/duckduckgo.py
+  status: moved
+  timestamp: 1742023450.231889
+  target_path: src/dewey/tools/duckduckgo_28b8675e.py
+  category:
+  - llm
+  - tools
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/app/services/file.py
+  status: moved
+  timestamp: 1742023452.564024
+  target_path: src/dewey/app/engine/service_2b3c2016.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/archive/configs/unstrucutred files/backend/tests/__init__.py
+  status: moved
+  timestamp: 1742023462.6578739
+  target_path: src/dewey/unmapped_scripts/migrated_2ffda9e2.py
+  category: []
+- source_path: /Users/srvo/Data/Development/archive/port/import_data.py
+  status: moved
+  timestamp: 1742023463.49682
+  target_path: src/dewey/scripts/data_import_fc4337f1.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/Development/archive/port/test_queries.py
+  status: moved
+  timestamp: 1742023466.294963
+  target_path: src/dewey/src/database/verification_74daf678.py
+  category:
+  - core
+  - database
+- source_path: /Users/srvo/Data/Development/archive/port/portdatabase.py
+  status: moved
+  timestamp: 1742023468.548186
+  target_path: src/dewey/src/database/port_database_0ef98aae.py
+  category:
+  - core
+  - database
+- source_path: /Users/srvo/Data/Development/archive/port/cliui.py
+  status: moved
+  timestamp: 1742023480.459189
+  target_path: src/dewey/src/port_cli_3b1a7a6c.py
+  category:
+  - core
+  - cli
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/merge_production_dotenvs_in_dotenv.py
+  status: moved
+  timestamp: 1742023483.32726
+  target_path: src/dewey/scripts/merge_dotenvs_5078e0d9.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/manage.py
+  status: moved
+  timestamp: 1742023484.247396
+  target_path: src/dewey/manage_0ba7c003.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/config/celery_app.py
+  status: moved
+  timestamp: 1742023485.774683
+  target_path: src/dewey/config/celery_153b5bfb.py
+  category:
+  - core
+  - backend
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/config/api_router.py
+  status: moved
+  timestamp: 1742023488.2226582
+  target_path: src/dewey/unmapped_scripts/migrated_82503e39.py
+  category:
+  - api
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/config/__init__.py
+  status: moved
+  timestamp: 1742023490.357783
+  target_path: src/dewey/unmapped_scripts/migrated_eb2bb46e.py
+  category:
+  - background_tasks
+  - celery
+  - django
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/config/urls.py
+  status: moved
+  timestamp: 1742023492.575867
+  target_path: src/dewey/config/urls_2c286e04.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/config/wsgi.py
+  status: moved
+  timestamp: 1742023496.8151412
+  target_path: src/dewey/config/wsgi_bcea670d.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/config/settings/local.py
+  status: moved
+  timestamp: 1742023498.314293
+  target_path: src/dewey/config/settings/dev_f05ec244.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/config/settings/__init__.py
+  status: moved
+  timestamp: 1742023501.93071
+  target_path: src/dewey/unmapped_scripts/migrated_990ff050.py
+  category: []
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/config/settings/test.py
+  status: moved
+  timestamp: 1742023502.6686652
+  target_path: src/dewey/config/settings/test_821878a2.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/config/settings/base.py
+  status: moved
+  timestamp: 1742023505.778014
+  target_path: src/dewey/config/settings/base_bad4738b.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/config/settings/production.py
+  status: moved
+  timestamp: 1742023514.591004
+  target_path: src/dewey/config/settings/production_856bc638.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/tests/__init__.py
+  status: moved
+  timestamp: 1742023518.3484008
+  target_path: src/dewey/unmapped_scripts/migrated_2edf8664.py
+  category:
+  - unknown
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/tests/test_merge_production_dotenvs_in_dotenv.py
+  status: moved
+  timestamp: 1742023519.783796
+  target_path: src/dewey/tests/test_merge_production_dotenvs_in_dotenv_17a86ca3.py
+  category:
+  - core
+  - utils
+  - testing
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/docs/conf.py
+  status: moved
+  timestamp: 1742023539.344913
+  target_path: src/dewey/docs/conf_35a9d834.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/docs/__init__.py
+  status: moved
+  timestamp: 1742023541.4501052
+  target_path: src/dewey/docs/placeholder_68ea0d76.txt
+  category:
+  - documentation
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/conftest.py
+  status: moved
+  timestamp: 1742023542.2150998
+  target_path: src/dewey/ec1c/users/tests/conftest_2c7bf68a.py
+  category:
+  - testing
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/__init__.py
+  status: moved
+  timestamp: 1742023544.5671968
+  target_path: src/dewey/src/version_92643719.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/contrib/__init__.py
+  status: moved
+  timestamp: 1742023545.348935
+  target_path: src/dewey/unmapped_scripts/migrated_6836f660.py
+  category:
+  - django
+  - configuration
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/contrib/sites/__init__.py
+  status: moved
+  timestamp: 1742023546.308362
+  target_path: src/dewey/config/settings/local_2600814f.py
+  category:
+  - documentation
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/contrib/sites/migrations/0003_set_site_domain_and_name.py
+  status: moved
+  timestamp: 1742023547.183866
+  target_path: src/dewey/unmapped_scripts/migrated_e4307b78.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/contrib/sites/migrations/__init__.py
+  status: moved
+  timestamp: 1742023548.8410208
+  target_path: src/dewey/unmapped_scripts/migrated_00865da0.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/contrib/sites/migrations/0004_alter_options_ordering_domain.py
+  status: moved
+  timestamp: 1742023549.65402
+  target_path: src/dewey/db/migrations/0004_alter_site_options_7ee55bdd.py
+  category:
+  - core
+  - database
+  - migrations
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/contrib/sites/migrations/0002_alter_domain_unique.py
+  status: moved
+  timestamp: 1742023551.144994
+  target_path: src/dewey/unmapped_scripts/migrated_7d51b924.py
+  category:
+  - core
+  - migrations
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/contrib/sites/migrations/0001_initial.py
+  status: moved
+  timestamp: 1742023552.683339
+  target_path: src/dewey/db/migrations/xxxx_create_site_model_eaba89b0.py
+  category:
+  - core
+  - django
+  - database
+  - migrations
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/tasks.py
+  status: moved
+  timestamp: 1742023554.2791638
+  target_path: src/dewey/tasks_ee89fff5.py
+  category:
+  - celery
+  - database
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/models.py
+  status: moved
+  timestamp: 1742023555.755635
+  target_path: src/dewey/users/models_ed2c2cbe.py
+  category:
+  - core
+  - database
+  - authentication
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/__init__.py
+  status: moved
+  timestamp: 1742023557.3734488
+  target_path: src/dewey/unmapped_scripts/migrated_3bed6c92.py
+  category:
+  - unknown
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/apps.py
+  status: moved
+  timestamp: 1742023558.203294
+  target_path: src/dewey/ec1c/users/apps_d83ea451.py
+  category:
+  - core
+  - django
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/forms.py
+  status: moved
+  timestamp: 1742023559.819113
+  target_path: src/dewey/users/forms_6d0a0815.py
+  category:
+  - core
+  - ui
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/context_processors.py
+  status: moved
+  timestamp: 1742023603.355683
+  target_path: src/dewey/context_processors/allauth_settings_d9280a53.py
+  category:
+  - web
+  - django
+  - settings
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/admin.py
+  status: moved
+  timestamp: 1742023604.894381
+  target_path: src/dewey/ec1c/users/admin_70ad07ce.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/urls.py
+  status: moved
+  timestamp: 1742023606.394243
+  target_path: src/dewey/users/urls_e835a6cb.py
+  category:
+  - core
+  - ui
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/views.py
+  status: moved
+  timestamp: 1742023607.955151
+  target_path: src/dewey/ec1c/users/views_5de4ec44.py
+  category:
+  - core
+  - ui
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/managers.py
+  status: moved
+  timestamp: 1742023609.425996
+  target_path: src/dewey/accounts/managers_bf589a52.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/adapters.py
+  status: moved
+  timestamp: 1742023611.561035
+  target_path: src/dewey/ec1c/users/adapters_3244e8ee.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/migrations/__init__.py
+  status: moved
+  timestamp: 1742023613.832682
+  target_path: src/dewey/analysis/template_0861cead.py
+  category:
+  - analysis
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/migrations/0001_initial.py
+  status: moved
+  timestamp: 1742023614.658828
+  target_path: src/dewey/ec1c/users/migrations/0001_initial_db090e80.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/tests/test_forms.py
+  status: moved
+  timestamp: 1742023616.378332
+  target_path: src/dewey/ec1c/users/tests/test_forms_f118bf6e.py
+  category:
+  - core
+  - tests
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/tests/test_admin.py
+  status: moved
+  timestamp: 1742023618.66493
+  target_path: src/dewey/ec1c/users/tests/test_admin_3653b846.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/tests/test_swagger.py
+  status: moved
+  timestamp: 1742023622.52468
+  target_path: src/dewey/unmapped_scripts/migrated_403da552.py
+  category:
+  - core
+  - ui
+  - tests
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/tests/test_drf_views.py
+  status: moved
+  timestamp: 1742023624.592395
+  target_path: src/dewey/ec1c/users/tests/test_user_viewset_0d47d3ed.py
+  category:
+  - core
+  - api
+  - tests
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/tests/__init__.py
+  status: moved
+  timestamp: 1742023627.041734
+  target_path: src/dewey/unmapped_scripts/migrated_93e1f86e.py
+  category:
+  - uncategorized
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/tests/factories.py
+  status: moved
+  timestamp: 1742023627.803114
+  target_path: src/dewey/ec1c/users/factories_a6d780a4.py
+  category:
+  - core
+  - testing
+  - factory_boy
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/tests/test_views.py
+  status: moved
+  timestamp: 1742023630.1495318
+  target_path: src/dewey/ec1c/users/tests/test_views_7e5d6698.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/tests/test_tasks.py
+  status: moved
+  timestamp: 1742023632.7022452
+  target_path: src/dewey/ec1c/users/tests/test_tasks_8c4af7cf.py
+  category:
+  - tests
+  - celery
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/tests/test_managers.py
+  status: moved
+  timestamp: 1742023660.265677
+  target_path: src/dewey/ec1c/users/tests/test_models_6d67c967.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/tests/test_models.py
+  status: moved
+  timestamp: 1742023666.8707998
+  target_path: src/dewey/tests/ec1c/users/test_models_f664d7e9.py
+  category:
+  - core
+  - tests
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/tests/test_drf_urls.py
+  status: moved
+  timestamp: 1742023669.3236039
+  target_path: src/dewey/ec1c/users/tests/test_urls_f721a407.py
+  category:
+  - core
+  - tests
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/tests/test_urls.py
+  status: moved
+  timestamp: 1742023674.201401
+  target_path: src/dewey/ec1c/users/tests/test_urls_e5e8fcf4.py
+  category:
+  - core
+  - testing
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/api/serializers.py
+  status: moved
+  timestamp: 1742023679.080118
+  target_path: src/dewey/ec1c/users/serializers_bc590aa3.py
+  category:
+  - core
+  - api
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/api/__init__.py
+  status: moved
+  timestamp: 1742023682.3442318
+  target_path: src/dewey/unmapped_scripts/migrated_1c4fdb2e.py
+  category:
+  - unknown
+- source_path: /Users/srvo/Data/Development/ec1c/ec1c/ec1c/users/api/views.py
+  status: moved
+  timestamp: 1742023683.946528
+  target_path: src/dewey/ec1c/users/api/views_8722b273.py
+  category:
+  - core
+  - api
+- source_path: /Users/srvo/Data/Development/jupyterhub/jupyterhub_config.py
+  status: moved
+  timestamp: 1742023690.473147
+  target_path: src/dewey/config/jupyterhub_config_de68e2cf.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/jupyterhub/notebooks/f1rst.ipynb
+  status: moved
+  timestamp: 1742023699.276327
+  target_path: src/dewey/unmapped_scripts/migrated_7f3eac08.py
+  category:
+  - llm
+- source_path: /Users/srvo/Data/Development/ethical-capital/manage.py
+  status: moved
+  timestamp: 1742023720.2521422
+  target_path: src/dewey/manage_ff8d9184.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/asgi.py
+  status: moved
+  timestamp: 1742023721.956149
+  target_path: src/dewey/ethical_capital/asgi_e1012ad1.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/__init__.py
+  status: moved
+  timestamp: 1742023723.600971
+  target_path: src/dewey/src/config/celery_config_f2fdd943.py
+  category:
+  - core
+  - task_queue
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/celery.py
+  status: moved
+  timestamp: 1742023725.277678
+  target_path: src/dewey/ethical_capital/celery_238dbdbf.py
+  category:
+  - core
+  - backend
+  - task_queue
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/urls.py
+  status: moved
+  timestamp: 1742023727.422258
+  target_path: src/dewey/ethical_capital/urls_d8306c0a.py
+  category:
+  - core
+  - ui
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/views.py
+  status: moved
+  timestamp: 1742023729.561269
+  target_path: src/dewey/views_16be6d35.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/wsgi.py
+  status: moved
+  timestamp: 1742023730.997602
+  target_path: src/dewey/ethical_capital/wsgi_07be8b4f.py
+  category:
+  - core
+  - web
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/settings/local.py
+  status: moved
+  timestamp: 1742023732.2775621
+  target_path: src/dewey/config/settings/dev_60f94875.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/settings/__init__.py
+  status: moved
+  timestamp: 1742023733.096525
+  target_path: src/dewey/relative/path/to/script_912dfb4b.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/settings/base.py
+  status: moved
+  timestamp: 1742023733.921383
+  target_path: src/dewey/ethical_capital/settings_1f03d0f2.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/settings/production.py
+  status: moved
+  timestamp: 1742023740.3131342
+  target_path: src/dewey/config/settings/production_cc3c827d.py
+  category:
+  - core
+  - security
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/contacts/models.py
+  status: moved
+  timestamp: 1742023741.6924741
+  target_path: src/dewey/core/models_24f5da06.py
+  category:
+  - core
+  - models
+  - database
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/contacts/__init__.py
+  status: moved
+  timestamp: 1742023743.183512
+  target_path: src/dewey/docs/templates/analysis_template_fde49725.yaml
+  category:
+  - documentation
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/contacts/apps.py
+  status: moved
+  timestamp: 1742023743.9329312
+  target_path: src/dewey/apps/contacts/apps_9259e784.py
+  category:
+  - core
+  - django
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/contacts/admin.py
+  status: moved
+  timestamp: 1742023745.4737659
+  target_path: src/dewey/app_name/admin_a59e0ae8.py
+  category:
+  - web
+  - django
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/contacts/tests.py
+  status: moved
+  timestamp: 1742023746.9351249
+  target_path: src/dewey/tests/test_models_f1c70d3c.py
+  category:
+  - core
+  - ui
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/contacts/views.py
+  status: moved
+  timestamp: 1742023782.0464342
+  target_path: src/dewey/app_name/views_412a7547.py
+  category:
+  - web
+  - backend
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/contacts/migrations/__init__.py
+  status: moved
+  timestamp: 1742023783.648535
+  target_path: src/dewey/templates/analysis_template_d8bd3935.py
+  category:
+  - template
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/integrations/signals.py
+  status: moved
+  timestamp: 1742023784.4901829
+  target_path: src/dewey/contacts/signals_30e98ab3.py
+  category:
+  - django
+  - signals
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/integrations/tasks.py
+  status: moved
+  timestamp: 1742023785.955183
+  target_path: src/dewey/unmapped_scripts/migrated_1f7b0a1c.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/integrations/models.py
+  status: moved
+  timestamp: 1742023789.4491122
+  target_path: src/dewey/integrations/models_b8f8e457.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/integrations/__init__.py
+  status: moved
+  timestamp: 1742023790.926325
+  target_path: src/dewey/integrations/apps_f43be7c3.py
+  category:
+  - django
+  - configuration
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/integrations/apps.py
+  status: moved
+  timestamp: 1742023791.864793
+  target_path: src/dewey/integrations/apps_8b3e7125.py
+  category:
+  - core
+  - web
+  - django
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/integrations/admin.py
+  status: moved
+  timestamp: 1742023793.349304
+  target_path: src/dewey/app_name/admin_76c7738c.py
+  category:
+  - web
+  - django
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/integrations/tests.py
+  status: moved
+  timestamp: 1742023794.6703942
+  target_path: src/dewey/unmapped_scripts/migrated_085c8ee6.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/integrations/views.py
+  status: moved
+  timestamp: 1742023796.062979
+  target_path: src/dewey/app_name/views_78ee99d9.py
+  category:
+  - core
+  - web
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/integrations/management/__init__.py
+  status: moved
+  timestamp: 1742023797.702199
+  target_path: src/dewey/analysis/template_1ee16f94.yaml
+  category:
+  - template
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/integrations/management/commands/hello.py
+  status: moved
+  timestamp: 1742023798.48562
+  target_path: src/dewey/management/commands/hello_10deaedf.py
+  category:
+  - core
+  - django
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/integrations/management/commands/sync_google_services.py
+  status: moved
+  timestamp: 1742023800.651028
+  target_path: src/dewey/integrations/management/commands/sync_google_99a7ec1a.py
+  category:
+  - core
+  - integrations
+- source_path: /Users/srvo/Data/Development/ethical-capital/ethical_capital_old/integrations/management/commands/__init__.py
+  status: moved
+  timestamp: 1742023804.003223
+  target_path: src/dewey/unmapped_scripts/migrated_a6cf517e.py
+  category:
+  - unknown
+- source_path: /Users/srvo/Data/Development/.ipynb_checkpoints/DeepSeek -checkpoint.ipynb
+  status: moved
+  timestamp: 1742023804.8513012
+  target_path: src/dewey/notebooks/deepseek_magic_cb58480d.ipynb
+  category:
+  - llm
+  - ui
+- source_path: /Users/srvo/Data/Development/.ipynb_checkpoints/Untitled-checkpoint.ipynb
+  status: moved
+  timestamp: 1742023807.107502
+  target_path: src/dewey/notebooks/gmail_contact_extraction_dd928b3a.ipynb
+  category:
+  - core
+  - llm
+- source_path: /Users/srvo/Data/Development/.ipynb_checkpoints/emails to contacts.ipynb
+  status: moved
+  timestamp: 1742023844.5973902
+  target_path: src/dewey/unmapped_scripts/migrated_a19b767b.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/Development/.ipynb_checkpoints/calendar/calendar.ipynb
+  status: moved
+  timestamp: 1742023850.2830138
+  target_path: src/dewey/unmapped_scripts/migrated_fabc6d2d.py
+  category:
+  - core
+  - llm
+  - utils
+- source_path: /Users/srvo/Data/models/tick_history.py
+  status: moved
+  timestamp: 1742023855.162551
+  target_path: src/dewey/models/tick_history_model_ddf05dcb.py
+  category:
+  - dbt
+  - database
+- source_path: /Users/srvo/Data/models/stock.py
+  status: moved
+  timestamp: 1742023857.897283
+  target_path: src/dewey/models/stocks/stock_models_9ea59b27.py
+  category:
+  - core
+  - data modeling
+- source_path: /Users/srvo/Data/models/schema_verify.py
+  status: moved
+  timestamp: 1742023860.1643379
+  target_path: src/dewey/models/schema_comparison_43767124.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/local/cli_tick_manager.py
+  status: moved
+  timestamp: 1742023863.17904
+  target_path: src/dewey/core/cli_tick_manager_182a41c4.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/local/tests/test_providers.py
+  status: moved
+  timestamp: 1742023868.906686
+  target_path: src/dewey/unmapped_scripts/migrated_2e4e1059.py
+  category:
+  - llm
+- source_path: /Users/srvo/Data/local/tests/test_schema.py
+  status: moved
+  timestamp: 1742023871.896047
+  target_path: src/dewey/tests/test_schema_b515bace.py
+  category:
+  - core
+  - testing
+- source_path: /Users/srvo/Data/local/tests/test_ai_helper.py
+  status: moved
+  timestamp: 1742023876.620903
+  target_path: src/dewey/tests/test_ai_helper_2b1e52d8.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/local/tests/test_tick_manager_2.py
+  status: moved
+  timestamp: 1742023879.348767
+  target_path: src/dewey/tests/test_tick_manager_03c991c0.py
+  category:
+  - ui
+  - testing
+- source_path: /Users/srvo/Data/local/tests/test_models.py
+  status: moved
+  timestamp: 1742023882.287966
+  target_path: src/dewey/tests/core/llm/test_ai_helper_2029dc7e.py
+  category:
+  - core
+  - llm
+- source_path: /Users/srvo/Data/local/tests/test_tick_manager.py
+  status: moved
+  timestamp: 1742023884.685097
+  target_path: src/dewey/tests/test_tick_manager_7953fddb.py
+  category:
+  - llm
+  - ui
+- source_path: /Users/srvo/Data/local/tests/test_advanced_features.py
+  status: moved
+  timestamp: 1742023888.327086
+  target_path: src/dewey/tests/integration/test_ai_client_9c8fc5e7.py
+  category:
+  - llm
+  - testing
+- source_path: /Users/srvo/Data/local/tests/test_integration.py
+  status: moved
+  timestamp: 1742023892.1193368
+  target_path: src/dewey/unmapped_scripts/migrated_e5ab08f4.py
+  category:
+  - llm
+- source_path: /Users/srvo/Data/local/tests/test_client.py
+  status: moved
+  timestamp: 1742023895.175146
+  target_path: src/dewey/tests/test_ai_client_48d3e500.py
+  category:
+  - core
+  - llm
+- source_path: /Users/srvo/Data/local/port5/tick_manager.py
+  status: moved
+  timestamp: 1742023897.986986
+  target_path: src/dewey/src/tick_manager_2eb3b13e.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/local/port5/test_tick_manager.py
+  status: moved
+  timestamp: 1742023900.290821
+  target_path: src/dewey/tests/test_tick_manager_d3f2e95b.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/local/port5/core/schema_discovery.py
+  status: moved
+  timestamp: 1742023903.848834
+  target_path: src/dewey/src/schema_discovery_722e97c5.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/local/port5/core/entity_resolver.py
+  status: moved
+  timestamp: 1742023913.496076
+  target_path: src/dewey/src/utils/entity_resolver_761b5e24.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/local/port5/core/pipeline.py
+  status: moved
+  timestamp: 1742023915.578071
+  target_path: src/dewey/src/data_pipeline_01fced39.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/local/port5/core/pii_handler.py
+  status: moved
+  timestamp: 1742023918.543373
+  target_path: src/dewey/src/utils/pii_handler_7a9c9a18.py
+  category:
+  - security
+  - text processing
+- source_path: /Users/srvo/Data/local/port5/core/validation.py
+  status: moved
+  timestamp: 1742023919.563621
+  target_path: src/dewey/src/models/validation_060fd67e.py
+  category:
+  - core
+  - data validation
+- source_path: /Users/srvo/Data/local/port5/scripts/analyze_libraries.py
+  status: moved
+  timestamp: 1742023921.8470762
+  target_path: src/dewey/port5/core/github_analysis_e4b9f707.py
+  category:
+  - core
+  - llm
+  - utils
+- source_path: /Users/srvo/Data/local/scripts/analyze_sec_events.py
+  status: moved
+  timestamp: 1742023930.189097
+  target_path: src/dewey/src/financial_analysis_0d6c19e2.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/local/scripts/enhanced_client.py
+  status: moved
+  timestamp: 1742023932.608771
+  target_path: src/dewey/core/search_client_c15ba567.py
+  category:
+  - core
+  - llm
+- source_path: /Users/srvo/Data/local/scripts/example_enhanced.py
+  status: moved
+  timestamp: 1742023936.307472
+  target_path: src/dewey/examples/search_api_usage_65e64094.py
+  category:
+  - llm
+  - api
+- source_path: /Users/srvo/Data/local/scripts/analyze_universe_filters.py
+  status: moved
+  timestamp: 1742023938.5093892
+  target_path: src/dewey/scripts/data_analysis/universe_breakdown_118840c6.py
+  category:
+  - core
+  - data analysis
+- source_path: /Users/srvo/Data/local/scripts/example_usage.py
+  status: moved
+  timestamp: 1742023940.281805
+  target_path: src/dewey/examples/search_example_a2d98781.py
+  category:
+  - llm
+- source_path: /Users/srvo/Data/local/scripts/integrate_sec_facts.py
+  status: moved
+  timestamp: 1742023942.3575108
+  target_path: src/dewey/data_pipelines/sec_etl_7d4a1807.py
+  category:
+  - core
+  - data_pipeline
+- source_path: /Users/srvo/Data/local/scripts/example.py
+  status: moved
+  timestamp: 1742023949.5868611
+  target_path: src/dewey/examples/search_example_43d551ef.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/local/scripts/fetch_yahoo_prices.py
+  status: moved
+  timestamp: 1742023951.6964
+  target_path: src/dewey/unmapped_scripts/migrated_b6c0697c.py
+  category:
+  - core
+  - data-pipeline
+- source_path: /Users/srvo/Data/local/scripts/analyze_libraries.py
+  status: moved
+  timestamp: 1742023955.4984572
+  target_path: src/dewey/scripts/github_analyzer_25f42e35.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/local/scripts/add_port45_stocks.py
+  status: moved
+  timestamp: 1742023967.7917619
+  target_path: src/dewey/scripts/data_import/populate_stocks_6420f1e6.py
+  category:
+  - core
+  - data ingestion
+- source_path: /Users/srvo/Data/local/scripts/analyze_stocks.py
+  status: moved
+  timestamp: 1742023973.644202
+  target_path: src/dewey/src/llm_analysis_37326a1e.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/local/scripts/add_tracked_stocks.py
+  status: moved
+  timestamp: 1742023980.907813
+  target_path: src/dewey/src/db_setup_7119da48.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/local/scripts/check_analysis.py
+  status: moved
+  timestamp: 1742023983.2671309
+  target_path: src/dewey/src/db_query_5b49a7fd.py
+  category:
+  - core
+  - database
+- source_path: /Users/srvo/Data/local/scripts/deep_analysis.py
+  status: moved
+  timestamp: 1742023984.9408069
+  target_path: src/dewey/src/analysis/deep_analysis_engine_42f3d236.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/local/scripts/data_infrastructure.py
+  status: moved
+  timestamp: 1742023994.65626
+  target_path: src/dewey/unmapped_scripts/migrated_cdb18f3e.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/local/api/endpoints/company.py
+  status: moved
+  timestamp: 1742024000.247089
+  target_path: src/dewey/api/companies_1493ebdd.py
+  category:
+  - api
+- source_path: /Users/srvo/Data/local/api/endpoints/integration.py
+  status: moved
+  timestamp: 1742024006.598177
+  target_path: src/dewey/unmapped_scripts/migrated_251daf7a.py
+  category:
+  - api
+- source_path: /Users/srvo/Data/local/api/endpoints/processing.py
+  status: moved
+  timestamp: 1742024018.37888
+  target_path: src/dewey/src/api/processing_config_590e5717.py
+  category:
+  - api
+- source_path: /Users/srvo/Data/local/api/endpoints/validation.py
+  status: moved
+  timestamp: 1742024022.537642
+  target_path: src/dewey/unmapped_scripts/migrated_0f48cc7b.py
+  category:
+  - api
+  - validation
+- source_path: /Users/srvo/Data/cloud/storage/minio/docs/extensions/s3zip/examples/boto3/main.py
+  status: moved
+  timestamp: 1742024026.985069
+  target_path: src/dewey/scripts/minio_zip_extraction_55305100.py
+  category:
+  - core
+  - aws
+  - s3
+- source_path: /Users/srvo/Data/cloud/storage/minio/docs/select/select.py
+  status: moved
+  timestamp: 1742024034.0543208
+  target_path: src/dewey/scripts/s3_query_90e30347.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/cloud/storage/minio/docs/sts/web-identity.py
+  status: moved
+  timestamp: 1742024039.321664
+  target_path: src/dewey/examples/oauth_sts_s3_222493d9.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/cloud/storage/minio/docs/sts/client-grants.py
+  status: moved
+  timestamp: 1742024049.7741828
+  target_path: src/dewey/examples/s3_upload_download_cdf6a8d9.py
+  category:
+  - core
+  - aws
+  - s3
+- source_path: /Users/srvo/Data/cloud/storage/minio/docs/sts/client_grants/sts_element.py
+  status: moved
+  timestamp: 1742024052.7888699
+  target_path: src/dewey/core/sts_xml_parser_b55fa4bd.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/cloud/storage/minio/docs/sts/client_grants/__init__.py
+  status: moved
+  timestamp: 1742024054.462701
+  target_path: src/dewey/core/client_grants_credential_provider_14e7ab27.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/cloud/monitoring/loki/tools/bigtable-backup/bigtable-backup.py
+  status: moved
+  timestamp: 1742024058.337714
+  target_path: src/dewey/core/bigtable_backup_manager_cfa34087.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/cloud/monitoring/loki/vendor/github.com/hashicorp/go-msgpack/codec/test.py
+  status: moved
+  timestamp: 1742024064.4865642
+  target_path: src/dewey/tests/utils/test_5da28c25.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/cloud/monitoring/loki/vendor/github.com/dgryski/go-metro/metro.py
+  status: moved
+  timestamp: 1742024067.69084
+  target_path: src/dewey/unmapped_scripts/migrated_eb1cac77.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/cloud/monitoring/loki/vendor/github.com/alecthomas/chroma/v2/table.py
+  status: moved
+  timestamp: 1742024069.3025641
+  target_path: src/dewey/scripts/update_readme_2010fb16.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/cloud/monitoring/loki/vendor/github.com/ugorji/go/codec/test.py
+  status: moved
+  timestamp: 1742024072.4094179
+  target_path: src/dewey/core/utils/test_16b10cf2.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/cloud/monitoring/grafana/devenv/docker/blocks/graphite09/files/events_views.py
+  status: moved
+  timestamp: 1742024083.546866
+  target_path: src/dewey/graphite/events/views_8c899151.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/cloud/monitoring/grafana/devenv/docker/blocks/graphite09/files/local_settings.py
+  status: moved
+  timestamp: 1742024091.248249
+  target_path: src/dewey/settings_local_4b4efcf9.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/cloud/monitoring/grafana/scripts/build/ci-msi-build/msigenerator/generator/build.py
+  status: moved
+  timestamp: 1742024092.382241
+  target_path: src/dewey/unmapped_scripts/migrated_1e1a9785.py
+  category:
+  - core
+  - pipeline
+- source_path: /Users/srvo/Data/cloud/monitoring/grafana/scripts/build/ci-msi-build/msigenerator/generator/utils.py
+  status: moved
+  timestamp: 1742024094.721631
+  target_path: src/dewey/utils_23d957a4.py
+  category:
+  - utils
+- source_path: /Users/srvo/Data/srvo_utils/conftest.py
+  status: moved
+  timestamp: 1742024099.880888
+  target_path: src/dewey/conftest_084f0698.py
+  category:
+  - testing
+  - django
+- source_path: /Users/srvo/Data/srvo_utils/__init__.py
+  status: moved
+  timestamp: 1742024102.0026848
+  target_path: src/dewey/unmapped_scripts/migrated_dbd29b13.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/setup.py
+  status: moved
+  timestamp: 1742024102.8723142
+  target_path: src/dewey/setup_661df8a6.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/srvo_utils/manage.py
+  status: moved
+  timestamp: 1742024104.284251
+  target_path: src/dewey/manage_46616d2b.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/initialize_db.py
+  status: moved
+  timestamp: 1742024105.921077
+  target_path: src/dewey/database/initialize_db_1b7da45f.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/main.py
+  status: moved
+  timestamp: 1742024107.422134
+  target_path: src/dewey/src/main_3dd6af1e.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/database/mixins.py
+  status: moved
+  timestamp: 1742024115.2883992
+  target_path: src/dewey/core/models/mixins_f35c7036.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/database/models.py
+  status: moved
+  timestamp: 1742024116.820999
+  target_path: src/dewey/core/models_4f771b90.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/database/db_connector.py
+  status: moved
+  timestamp: 1742024120.4246762
+  target_path: src/dewey/database/db_connector_30defc02.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/database/__init__.py
+  status: moved
+  timestamp: 1742024122.054358
+  target_path: src/dewey/database/__init___e2aa53df.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/database/apps.py
+  status: moved
+  timestamp: 1742024122.838794
+  target_path: src/dewey/database/apps_a5bab668.py
+  category:
+  - core
+  - database
+- source_path: /Users/srvo/Data/srvo_utils/database/admin.py
+  status: moved
+  timestamp: 1742024124.746848
+  target_path: src/dewey/admin_ab63423d.py
+  category:
+  - core
+  - ui
+- source_path: /Users/srvo/Data/srvo_utils/database/migrations/0008_email_is_deleted.py
+  status: moved
+  timestamp: 1742024142.316458
+  target_path: src/dewey/unmapped_scripts/migrated_1b5234e7.py
+  category:
+  - core
+  - database
+  - migrations
+- source_path: /Users/srvo/Data/srvo_utils/database/migrations/0009_update_jsonfields.py
+  status: moved
+  timestamp: 1742024143.751843
+  target_path: src/dewey/unmapped_scripts/migrated_9e6039cc.py
+  category:
+  - core
+  - database
+  - migrations
+- source_path: /Users/srvo/Data/srvo_utils/database/migrations/__init__.py
+  status: moved
+  timestamp: 1742024145.400172
+  target_path: src/dewey/unmapped_scripts/migrated_a28646ea.py
+  category:
+  - core
+  - database
+- source_path: /Users/srvo/Data/srvo_utils/database/migrations/0002_config.py
+  status: moved
+  timestamp: 1742024146.2886531
+  target_path: src/dewey/database/migrations/0002_config_f4f1edca.py
+  category:
+  - core
+  - database
+- source_path: /Users/srvo/Data/srvo_utils/database/migrations/0003_message_thread_emaillabelhistory.py
+  status: moved
+  timestamp: 1742024147.823489
+  target_path: src/dewey/unmapped_scripts/migrated_495b5efc.py
+  category:
+  - core
+  - database
+- source_path: /Users/srvo/Data/srvo_utils/database/migrations/0007_alter_rawemail_checksum.py
+  status: moved
+  timestamp: 1742024150.030273
+  target_path: src/dewey/unmapped_scripts/migrated_195a2af6.py
+  category:
+  - core
+  - database
+- source_path: /Users/srvo/Data/srvo_utils/database/migrations/0004_messagethreadassociation.py
+  status: moved
+  timestamp: 1742024151.661004
+  target_path: src/dewey/unmapped_scripts/migrated_e9a5a008.py
+  category:
+  - core
+  - database
+- source_path: /Users/srvo/Data/srvo_utils/database/migrations/0006_contacthistory_contacttag_enrichmenttask_tag_and_more.py
+  status: moved
+  timestamp: 1742024153.8451982
+  target_path: src/dewey/unmapped_scripts/migrated_801d525e.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/database/migrations/0001_initial.py
+  status: moved
+  timestamp: 1742024155.317717
+  target_path: src/dewey/database/migrations/0001_initial_defecc72.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/database/migrations/0005_alter_contact_options_remove_contact_first_name_and_more.py
+  status: moved
+  timestamp: 1742024157.6615949
+  target_path: src/dewey/unmapped_scripts/migrated_56d24df2.py
+  category:
+  - core
+  - database
+  - migration
+- source_path: /Users/srvo/Data/srvo_utils/core/settings_test.py
+  status: moved
+  timestamp: 1742024159.323385
+  target_path: src/dewey/my_project/settings/test_1156ccac.py
+  category:
+  - core
+  - utils
+  - testing
+- source_path: /Users/srvo/Data/srvo_utils/core/asgi.py
+  status: moved
+  timestamp: 1742024161.792098
+  target_path: src/dewey/core/asgi_ec752069.py
+  category:
+  - core
+  - web
+- source_path: /Users/srvo/Data/srvo_utils/core/__init__.py
+  status: moved
+  timestamp: 1742024164.114563
+  target_path: src/dewey/core/__init___fa12bc4e.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/core/api.py
+  status: moved
+  timestamp: 1742024164.926244
+  target_path: src/dewey/core/api/endpoints_dfc91535.py
+  category:
+  - core
+  - api
+- source_path: /Users/srvo/Data/srvo_utils/core/utils.py
+  status: moved
+  timestamp: 1742024167.2255108
+  target_path: src/dewey/core/utils_c1c5a6cd.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/srvo_utils/core/celery.py
+  status: moved
+  timestamp: 1742024168.0050402
+  target_path: src/dewey/config/celery_ec9f87ab.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/srvo_utils/core/settings.py
+  status: moved
+  timestamp: 1742024203.6354449
+  target_path: src/dewey/core/settings_545abd8f.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/core/urls.py
+  status: moved
+  timestamp: 1742024217.688715
+  target_path: src/dewey/core/urls_80bc980f.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/core/views.py
+  status: moved
+  timestamp: 1742024221.4008331
+  target_path: src/dewey/core/views/health_41bc2c3f.py
+  category:
+  - core
+  - monitoring
+- source_path: /Users/srvo/Data/srvo_utils/core/wsgi.py
+  status: moved
+  timestamp: 1742024224.0731
+  target_path: src/dewey/core/wsgi_999c7083.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/core/pages/models.py
+  status: moved
+  timestamp: 1742024226.274914
+  target_path: src/dewey/pages/models_4a49e5a8.py
+  category:
+  - core
+  - database
+  - models
+- source_path: /Users/srvo/Data/srvo_utils/core/pages/__init__.py
+  status: moved
+  timestamp: 1742024227.821858
+  target_path: src/dewey/unmapped_scripts/migrated_ddf4dc6b.py
+  category:
+  - unknown
+- source_path: /Users/srvo/Data/srvo_utils/core/pages/apps.py
+  status: moved
+  timestamp: 1742024228.546205
+  target_path: src/dewey/core/pages/apps_2c08f6e6.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/core/pages/admin.py
+  status: moved
+  timestamp: 1742024230.05113
+  target_path: src/dewey/admin_08da5df4.py
+  category:
+  - core
+  - django
+  - admin
+- source_path: /Users/srvo/Data/srvo_utils/core/pages/tests.py
+  status: moved
+  timestamp: 1742024231.6485639
+  target_path: src/dewey/unmapped_scripts/migrated_f51891ca.py
+  category:
+  - core
+  - testing
+- source_path: /Users/srvo/Data/srvo_utils/core/pages/urls.py
+  status: moved
+  timestamp: 1742024233.066217
+  target_path: src/dewey/pages/urls_1d0dae0d.py
+  category:
+  - web
+  - django
+  - routing
+- source_path: /Users/srvo/Data/srvo_utils/core/pages/views.py
+  status: moved
+  timestamp: 1742024234.639906
+  target_path: src/dewey/core/views_059854fd.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/core/pages/migrations/__init__.py
+  status: moved
+  timestamp: 1742024236.46448
+  target_path: src/dewey/unmapped_scripts/migrated_4c9f0a08.py
+  category:
+  - unknown
+- source_path: /Users/srvo/Data/srvo_utils/core/pages/migrations/0001_initial.py
+  status: moved
+  timestamp: 1742024237.3962529
+  target_path: src/dewey/myapp/migrations/0001_initial_9fa0bc60.py
+  category:
+  - core
+  - database
+  - django
+- source_path: /Users/srvo/Data/srvo_utils/config/__init__.py
+  status: moved
+  timestamp: 1742024238.9529421
+  target_path: src/dewey/unmapped_scripts/migrated_d1f1a881.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/config/settings.py
+  status: moved
+  timestamp: 1742024239.7901921
+  target_path: src/dewey/core/config_ede66a49.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/tests/conftest.py
+  status: moved
+  timestamp: 1742024258.794802
+  target_path: src/dewey/conftest_dfa77e61.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/srvo_utils/tests/test_logical_fallacy_agent.py
+  status: moved
+  timestamp: 1742024263.293877
+  target_path: src/dewey/syzygy/ai/agents/tests/test_logical_fallacy_8fdc77c1.py
+  category:
+  - llm
+- source_path: /Users/srvo/Data/srvo_utils/tests/__init__.py
+  status: moved
+  timestamp: 1742024265.669943
+  target_path: src/dewey/tests/test_init_a2675981.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/tests/unit/test_api_client.py
+  status: moved
+  timestamp: 1742024266.457407
+  target_path: src/dewey/tests/test_api_client_c51a32cf.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/tests/unit/test_imap_sync.py
+  status: moved
+  timestamp: 1742024269.364148
+  target_path: src/dewey/email_processing/tests/test_imap_sync_517b7855.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/tests/unit/conftest.py
+  status: moved
+  timestamp: 1742024272.474375
+  target_path: src/dewey/core/tests/fixtures_c523090a.py
+  category:
+  - core
+  - testing
+- source_path: /Users/srvo/Data/srvo_utils/tests/unit/test_service.py
+  status: moved
+  timestamp: 1742024274.672014
+  target_path: src/dewey/unmapped_scripts/migrated_967a3f59.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/tests/unit/test_accounts_pages.py
+  status: moved
+  timestamp: 1742024276.8070889
+  target_path: src/dewey/unmapped_scripts/migrated_049b40e3.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/tests/unit/__init__.py
+  status: moved
+  timestamp: 1742024278.96952
+  target_path: src/dewey/unmapped_scripts/migrated_dcc37bae.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/tests/unit/test_accounts.py
+  status: moved
+  timestamp: 1742024279.936589
+  target_path: src/dewey/tests/accounts/test_accounts_9a05626a.py
+  category:
+  - core
+  - testing
+- source_path: /Users/srvo/Data/srvo_utils/tests/unit/test_gmail_history_sync.py
+  status: moved
+  timestamp: 1742024281.374045
+  target_path: src/dewey/email_processing/tests/test_gmail_history_sync_fe37e167.py
+  category:
+  - core
+  - email
+- source_path: /Users/srvo/Data/srvo_utils/tests/unit/test_db_connector.py
+  status: moved
+  timestamp: 1742024285.043801
+  target_path: src/dewey/tests/test_database_612071ae.py
+  category:
+  - core
+  - testing
+- source_path: /Users/srvo/Data/srvo_utils/tests/unit/test_gmail_client.py
+  status: moved
+  timestamp: 1742024286.486728
+  target_path: src/dewey/unmapped_scripts/migrated_9c0568d1.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/tests/unit/test_minimal.py
+  status: moved
+  timestamp: 1742024291.369848
+  target_path: src/dewey/tests/test_environment_3798e373.py
+  category:
+  - test
+- source_path: /Users/srvo/Data/srvo_utils/tests/unit/test_sync_emails_command.py
+  status: moved
+  timestamp: 1742024293.7305741
+  target_path: src/dewey/email_processing/tests/management/commands/test_sync_emails_eb42877e.py
+  category:
+  - core
+  - testing
+- source_path: /Users/srvo/Data/srvo_utils/tests/unit/test_models.py
+  status: moved
+  timestamp: 1742024296.591394
+  target_path: src/dewey/core/tests_6371ee8f.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/tests/unit/test_main.py
+  status: moved
+  timestamp: 1742024323.851388
+  target_path: src/dewey/tests/test_main_6a246fb7.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/tests/unit/base.py
+  status: moved
+  timestamp: 1742024325.957489
+  target_path: src/dewey/core/tests/base_4729556f.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/srvo_utils/tests/unit/fixtures/auth.py
+  status: moved
+  timestamp: 1742024328.167422
+  target_path: src/dewey/tests/conftest_c96cac5d.py
+  category:
+  - core
+  - testing
+- source_path: /Users/srvo/Data/srvo_utils/tests/unit/fixtures/db.py
+  status: moved
+  timestamp: 1742024330.2519622
+  target_path: src/dewey/tests/fixtures_02ee4853.py
+  category:
+  - testing
+  - database
+- source_path: /Users/srvo/Data/srvo_utils/tests/unit/fixtures/__init__.py
+  status: moved
+  timestamp: 1742024332.455859
+  target_path: src/dewey/unmapped_scripts/migrated_29edb84c.py
+  category:
+  - unknown
+- source_path: /Users/srvo/Data/srvo_utils/tests/unit/fixtures/base.py
+  status: moved
+  timestamp: 1742024333.311718
+  target_path: src/dewey/tests/fixtures_6dd4492b.py
+  category:
+  - testing
+  - django
+- source_path: /Users/srvo/Data/srvo_utils/tests/integration/test_docker_setup.py
+  status: moved
+  timestamp: 1742024335.490775
+  target_path: src/dewey/tests/integration/docker_setup_53d65d59.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/srvo_utils/tests/fixtures/db.py
+  status: moved
+  timestamp: 1742024341.726505
+  target_path: src/dewey/tests/fixtures_574021c2.py
+  category:
+  - testing
+  - django
+- source_path: /Users/srvo/Data/srvo_utils/docs/conf.py
+  status: moved
+  timestamp: 1742024343.907495
+  target_path: src/dewey/docs/conf_1f429c1a.py
+  category:
+  - documentation
+- source_path: /Users/srvo/Data/srvo_utils/blog/models.py
+  status: moved
+  timestamp: 1742024344.778612
+  target_path: src/dewey/blog/models_d4e4911c.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/blog/__init__.py
+  status: moved
+  timestamp: 1742024347.110921
+  target_path: src/dewey/plugins/django_plugin_blog/plugin_db4f2f85.py
+  category:
+  - core
+  - plugin
+- source_path: /Users/srvo/Data/srvo_utils/blog/apps.py
+  status: moved
+  timestamp: 1742024352.578729
+  target_path: src/dewey/blog/apps_d14d424b.py
+  category:
+  - core
+  - web
+  - django
+- source_path: /Users/srvo/Data/srvo_utils/blog/admin.py
+  status: moved
+  timestamp: 1742024354.686223
+  target_path: src/dewey/admin_871aa263.py
+  category:
+  - core
+  - django
+- source_path: /Users/srvo/Data/srvo_utils/blog/urls.py
+  status: moved
+  timestamp: 1742024365.0299351
+  target_path: src/dewey/blog/urls_b47b2c08.py
+  category:
+  - web
+  - django
+- source_path: /Users/srvo/Data/srvo_utils/blog/views.py
+  status: moved
+  timestamp: 1742024384.605642
+  target_path: src/dewey/blog/views_1eac50cb.py
+  category:
+  - core
+  - ui
+- source_path: /Users/srvo/Data/srvo_utils/blog/migrations/__init__.py
+  status: moved
+  timestamp: 1742024393.372021
+  target_path: src/dewey/unmapped_scripts/migrated_cbe44986.py
+  category: []
+- source_path: /Users/srvo/Data/srvo_utils/blog/migrations/0001_initial.py
+  status: moved
+  timestamp: 1742024394.284304
+  target_path: src/dewey/blog/migrations/0001_initial_357fe064.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/models.py
+  status: moved
+  timestamp: 1742024395.719661
+  target_path: src/dewey/core/models_b2061370.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/__init__.py
+  status: moved
+  timestamp: 1742024397.2552361
+  target_path: src/dewey/path/to/script_b5756864.py
+  category:
+  - template
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/apps.py
+  status: moved
+  timestamp: 1742024398.216353
+  target_path: src/dewey/syzygy/apps_8a77bfcc.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/api.py
+  status: moved
+  timestamp: 1742024399.7439492
+  target_path: src/dewey/syzygy/api_6d5f797c.py
+  category:
+  - llm
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/admin.py
+  status: moved
+  timestamp: 1742024402.058018
+  target_path: src/dewey/syzygy/admin_fb44d673.py
+  category:
+  - core
+  - ui
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/tests.py
+  status: moved
+  timestamp: 1742024404.474684
+  target_path: src/dewey/unmapped_scripts/migrated_b6418617.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/urls.py
+  status: moved
+  timestamp: 1742024405.286145
+  target_path: src/dewey/my_app/urls_4ef706eb.py
+  category:
+  - web
+  - api
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/views.py
+  status: moved
+  timestamp: 1742024407.584098
+  target_path: src/dewey/app/views_4cf9770b.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/migrations/0002_cleanup_schema.py
+  status: moved
+  timestamp: 1742024408.5651488
+  target_path: src/dewey/unmapped_scripts/migrated_1c592f6c.py
+  category:
+  - core
+  - db
+  - migrations
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/migrations/0002_timeline_view.py
+  status: moved
+  timestamp: 1742024410.3841841
+  target_path: src/dewey/syzygy/migrations/xxxx_llm_tool_tracking_d6d7c24a.py
+  category:
+  - core
+  - llm
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/migrations/0003_timelineevent.py
+  status: moved
+  timestamp: 1742024412.008908
+  target_path: src/dewey/database/migrations/xxxx_create_timelineevent_4dee8386.py
+  category:
+  - core
+  - database
+  - migrations
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/migrations/__init__.py
+  status: moved
+  timestamp: 1742024413.4935958
+  target_path: src/dewey/unmapped_scripts/migrated_e472d2ba.py
+  category: []
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/migrations/0002_alter_responsedraft_context_notes_and_more.py
+  status: moved
+  timestamp: 1742024439.494881
+  target_path: src/dewey/unmapped_scripts/migrated_fb83cf32.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/migrations/0001_initial.py
+  status: moved
+  timestamp: 1742024441.95011
+  target_path: src/dewey/syzygy/migrations/models_65a2d5a1.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/tests/__init__.py
+  status: moved
+  timestamp: 1742024444.238358
+  target_path: src/dewey/tests/test_package_a7588abd.py
+  category:
+  - test
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/tests/test_ai_endpoints.py
+  status: moved
+  timestamp: 1742024445.12022
+  target_path: src/dewey/core/tests/test_ai_endpoints_507e64e0.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/tests/settings.py
+  status: moved
+  timestamp: 1742024450.053806
+  target_path: src/dewey/config/settings/test_43cdb96f.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/models/metrics.py
+  status: moved
+  timestamp: 1742024450.986418
+  target_path: src/dewey/models_7cb4a65a.py
+  category:
+  - core
+  - llm
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/models/timeline.py
+  status: moved
+  timestamp: 1742024452.554477
+  target_path: src/dewey/timeline/models_f05db340.py
+  category:
+  - core
+  - ui
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/models/research.py
+  status: moved
+  timestamp: 1742024456.855764
+  target_path: src/dewey/models_8584f8a4.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/models/__init__.py
+  status: moved
+  timestamp: 1742024458.303093
+  target_path: src/dewey/syzygy/models/__init___7cc2556b.py
+  category:
+  - core
+  - llm
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/models/triage.py
+  status: moved
+  timestamp: 1742024459.254456
+  target_path: src/dewey/email_app/models_aa0aa1f4.py
+  category:
+  - core
+  - ui
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/models/tracking.py
+  status: moved
+  timestamp: 1742024461.621311
+  target_path: src/dewey/core/models_b015c34e.py
+  category:
+  - core
+  - llm
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/models/research_views.py
+  status: moved
+  timestamp: 1742024463.990987
+  target_path: src/dewey/research/models_1959d353.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/models/base.py
+  status: moved
+  timestamp: 1742024466.2489128
+  target_path: src/dewey/core/models_4cbef4c7.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/schemas/models.py
+  status: moved
+  timestamp: 1742024467.69326
+  target_path: src/dewey/email_processing/schemas_660a5a4c.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/schemas/ai.py
+  status: moved
+  timestamp: 1742024471.4778109
+  target_path: src/dewey/core/schemas_30063d18.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/schemas/__init__.py
+  status: moved
+  timestamp: 1742024473.265933
+  target_path: src/dewey/schemas/__init___17cf160d.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/schemas/base.py
+  status: moved
+  timestamp: 1742024499.49538
+  target_path: src/dewey/utils/django_schema_1e8d86d6.py
+  category:
+  - utils
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/ai/test_agent.py
+  status: moved
+  timestamp: 1742024503.587532
+  target_path: src/dewey/agents/philosophical_agent_8977c13a.py
+  category:
+  - llm
+  - agent
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/ai/config.py
+  status: moved
+  timestamp: 1742024505.8599749
+  target_path: src/dewey/core/llm/config_4f0ee8c8.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/ai/base.py
+  status: moved
+  timestamp: 1742024509.391207
+  target_path: src/dewey/src/agents/base_3c6e1562.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/ai/contact_agents.py
+  status: moved
+  timestamp: 1742024517.878227
+  target_path: src/dewey/agents/contact_agents_f6322bec.py
+  category:
+  - llm
+  - agent
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/ai/workflows/email_triage.py
+  status: moved
+  timestamp: 1742024519.438207
+  target_path: src/dewey/email_processing/email_triage_workflow_3f89fffa.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/ai/agents/sloane_optimizer.py
+  status: moved
+  timestamp: 1742024526.669877
+  target_path: src/dewey/agents/sloan_optimizer_18d3ed45.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/ai/agents/adversarial.py
+  status: moved
+  timestamp: 1742024529.641762
+  target_path: src/dewey/src/syzygy/agents/adversarial_59d755b9.py
+  category:
+  - llm
+  - agent
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/ai/agents/transcript_analysis.py
+  status: moved
+  timestamp: 1742024534.0941892
+  target_path: src/dewey/core/agents/transcript_analysis_agent_7cb33e80.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/ai/agents/data_ingestion.py
+  status: moved
+  timestamp: 1742024537.8166
+  target_path: src/dewey/agents/data_ingestion_agent_a5e0a77c.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/ai/agents/self_care.py
+  status: moved
+  timestamp: 1742024543.4880052
+  target_path: src/dewey/src/syzygy/ai/wellness_agent_bea788e9.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/ai/agents/agent_creator.py
+  status: moved
+  timestamp: 1742024547.203284
+  target_path: src/dewey/agents/creator_f50f0404.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/ai/agents/docstring.py
+  status: moved
+  timestamp: 1742024550.239103
+  target_path: src/dewey/src/agents/docstring_agent_e10fb6d8.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/ai/agents/triage.py
+  status: moved
+  timestamp: 1742024554.535611
+  target_path: src/dewey/syzygy/agents/triage_7cb9d554.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/ai/agents/ghostwriter.py
+  status: moved
+  timestamp: 1742024559.60253
+  target_path: src/dewey/agents/ghostwriter/sloan_ghostwriter_116ea036.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/ai/agents/rag.py
+  status: moved
+  timestamp: 1742024562.79634
+  target_path: src/dewey/core/llm/rag_agent_83b4f375.py
+  category:
+  - core
+  - llm
+  - agent
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/ai/agents/logical_fallacy.py
+  status: moved
+  timestamp: 1742024569.092136
+  target_path: src/dewey/agents/logical_fallacy_agent_7c91080e.py
+  category:
+  - llm
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/ai/agents/client_advocate.py
+  status: moved
+  timestamp: 1742024573.67796
+  target_path: src/dewey/src/syzygy/agents/client_advocate_fa974b31.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/ai/agents/developer.py
+  status: moved
+  timestamp: 1742024577.40209
+  target_path: src/dewey/src/syzygy/agents/developer_agent_9e0f7414.py
+  category:
+  - llm
+  - agent
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/ai/agents/chat_history.py
+  status: moved
+  timestamp: 1742024581.79005
+  target_path: src/dewey/src/agents/chat_history_2b875762.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/views/priority_actions.py
+  status: moved
+  timestamp: 1742024587.306425
+  target_path: src/dewey/syzygy/views/priority_actions_f6bb7f79.py
+  category:
+  - ui
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/views/base.py
+  status: moved
+  timestamp: 1742024591.8460522
+  target_path: src/dewey/syzygy/views/base_99185bca.py
+  category:
+  - ui
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/syzygy/views/contact_review.py
+  status: moved
+  timestamp: 1742024593.510679
+  target_path: src/dewey/email_processing/prioritization/views_96d78e2b.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/srvo_utils/logs/models.py
+  status: moved
+  timestamp: 1742024597.2045739
+  target_path: src/dewey/models/event_log_9703bcf1.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/logs/apps.py
+  status: moved
+  timestamp: 1742024598.6270359
+  target_path: src/dewey/logs/apps_1d1cc450.py
+  category:
+  - core
+  - django
+- source_path: /Users/srvo/Data/srvo_utils/accounts/models.py
+  status: moved
+  timestamp: 1742024599.5151622
+  target_path: src/dewey/accounts/models_91dadf0c.py
+  category:
+  - core
+  - django
+  - authentication
+- source_path: /Users/srvo/Data/srvo_utils/accounts/__init__.py
+  status: moved
+  timestamp: 1742024601.171315
+  target_path: src/dewey/unmapped_scripts/migrated_4765a129.py
+  category:
+  - unknown
+- source_path: /Users/srvo/Data/srvo_utils/accounts/apps.py
+  status: moved
+  timestamp: 1742024602.0085812
+  target_path: src/dewey/accounts/apps_46215864.py
+  category:
+  - core
+  - django
+- source_path: /Users/srvo/Data/srvo_utils/accounts/forms.py
+  status: moved
+  timestamp: 1742024603.631527
+  target_path: src/dewey/accounts/forms_a9052b3a.py
+  category:
+  - core
+  - ui
+- source_path: /Users/srvo/Data/srvo_utils/accounts/admin.py
+  status: moved
+  timestamp: 1742024605.0801868
+  target_path: src/dewey/users/admin_a635cfcf.py
+  category:
+  - core
+  - ui
+- source_path: /Users/srvo/Data/srvo_utils/accounts/tests.py
+  status: moved
+  timestamp: 1742024606.720652
+  target_path: src/dewey/tests/user_tests_a190fa39.py
+  category:
+  - core
+  - testing
+- source_path: /Users/srvo/Data/srvo_utils/accounts/views.py
+  status: moved
+  timestamp: 1742024620.001447
+  target_path: src/dewey/app_name/views_c53edf32.py
+  category:
+  - web
+  - django
+  - views
+- source_path: /Users/srvo/Data/srvo_utils/accounts/migrations/__init__.py
+  status: moved
+  timestamp: 1742024621.057097
+  target_path: src/dewey/unmapped_scripts/migrated_76156029.py
+  category:
+  - unknown
+- source_path: /Users/srvo/Data/srvo_utils/accounts/migrations/0001_initial.py
+  status: moved
+  timestamp: 1742024621.866467
+  target_path: src/dewey/app_name/migrations/0001_initial_988160b5.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/scripts/test_triage.py
+  status: moved
+  timestamp: 1742024623.757589
+  target_path: src/dewey/tests/test_triage_agent_b8230360.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/scripts/test_ai.py
+  status: moved
+  timestamp: 1742024628.664449
+  target_path: src/dewey/tests/ai_interaction_d6643019.py
+  category:
+  - llm
+  - test
+- source_path: /Users/srvo/Data/srvo_utils/scripts/management/commands/setup_periodic_tasks.py
+  status: moved
+  timestamp: 1742024633.147893
+  target_path: src/dewey/project/app/management/commands/setup_periodic_tasks_e22cddda.py
+  category:
+  - core
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/srvo_utils/settings.py
+  status: moved
+  timestamp: 1742024636.813177
+  target_path: src/dewey/config/settings_b58639ff.py
+  category:
+  - core
+  - backend
+- source_path: /Users/srvo/Data/srvo_utils/srvo_utils/urls.py
+  status: moved
+  timestamp: 1742024639.692599
+  target_path: src/dewey/srvo_utils/urls_c4751366.py
+  category:
+  - core
+  - web
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/signals.py
+  status: moved
+  timestamp: 1742024641.353898
+  target_path: src/dewey/src/email_processing/signals_b7d174af.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/service.py
+  status: moved
+  timestamp: 1742024642.914282
+  target_path: src/dewey/core/email_processing_service_d151ef9a.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/tasks.py
+  status: moved
+  timestamp: 1742024646.444745
+  target_path: src/dewey/tasks_55cba788.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/models.py
+  status: moved
+  timestamp: 1742024650.9772
+  target_path: src/dewey/emails/models_fa58efac.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/contact_enrichment.py
+  status: moved
+  timestamp: 1742024652.685955
+  target_path: src/dewey/src/core/services/contact_enrichment_3606926d.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/gmail_client.py
+  status: moved
+  timestamp: 1742024654.961083
+  target_path: src/dewey/core/gmail_client_9fe5c89b.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/__init__.py
+  status: moved
+  timestamp: 1742024658.021179
+  target_path: src/dewey/src/email_processing/init_6e0026e2.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/apps.py
+  status: moved
+  timestamp: 1742024658.9333508
+  target_path: src/dewey/email_processing/apps_407bde80.py
+  category:
+  - core
+  - web
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/email_enrichment.py
+  status: moved
+  timestamp: 1742024678.5146399
+  target_path: src/dewey/core/email_enrichment_service_d371c523.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/imap_sync.py
+  status: moved
+  timestamp: 1742024683.28293
+  target_path: src/dewey/core/email_sync_350480d0.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/gmail_history_sync.py
+  status: moved
+  timestamp: 1742024685.711194
+  target_path: src/dewey/email_processing/gmail_sync_5bac9c7c.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/gmail_auth.py
+  status: moved
+  timestamp: 1742024691.414965
+  target_path: src/dewey/core/utils/gmail_auth_8b2cdfb8.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/api_client.py
+  status: moved
+  timestamp: 1742024695.1903949
+  target_path: src/dewey/core/api_client_4ea3f6d8.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/gmail_sync.py
+  status: moved
+  timestamp: 1742024702.767788
+  target_path: src/dewey/src/gmail_sync_ecb5b631.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/migrations/__init__.py
+  status: moved
+  timestamp: 1742024723.983532
+  target_path: src/dewey/unmapped_scripts/migrated_ec7f2fba.py
+  category: []
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/migrations/0003_auto_20250117_1505.py
+  status: moved
+  timestamp: 1742024728.1748312
+  target_path: src/dewey/unmapped_scripts/migrated_683649fa.py
+  category:
+  - core
+  - database
+  - migrations
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/migrations/0002_contact_enrichmentsource_enrichmenttask_and_more.py
+  status: moved
+  timestamp: 1742024740.6784241
+  target_path: src/dewey/unmapped_scripts/migrated_80e626e0.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/migrations/0001_initial.py
+  status: moved
+  timestamp: 1742024756.130781
+  target_path: src/dewey/email_processing/migrations/0001_initial_6221cfe8.py
+  category:
+  - core
+  - data
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/prioritization/models.py
+  status: moved
+  timestamp: 1742024761.4043741
+  target_path: src/dewey/core/models_d70e45f0.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/prioritization/contact_enrichment.py
+  status: moved
+  timestamp: 1742024767.727586
+  target_path: src/dewey/core/llm/pipeline/contact_enricher_91cfb3c0.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/prioritization/__init__.py
+  status: moved
+  timestamp: 1742024779.324925
+  target_path: src/dewey/src/email_prioritization/__init___039a1606.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/prioritization/contact_manager.py
+  status: moved
+  timestamp: 1742024780.9261382
+  target_path: src/dewey/core/contact_management_aaf4c489.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/prioritization/contact_merger.py
+  status: moved
+  timestamp: 1742024797.822798
+  target_path: src/dewey/syzygy/core/contact_merger_1d469828.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/prioritization/email_prioritizer.py
+  status: moved
+  timestamp: 1742024810.414242
+  target_path: src/dewey/src/email_prioritization_c7f0346b.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/prioritization/priority_rules.py
+  status: moved
+  timestamp: 1742024828.3051
+  target_path: src/dewey/core/email_prioritization_b034be3c.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/prioritization/for integration/email_analyzer.py
+  status: moved
+  timestamp: 1742024842.0317
+  target_path: src/dewey/scripts/email_analyzer_c95bf18b.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/prioritization/for integration/email_operations.py
+  status: moved
+  timestamp: 1742024860.466377
+  target_path: src/dewey/scripts/email_processor_be50b184.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/prioritization/for integration/gmail_priority_flow.py
+  status: moved
+  timestamp: 1742024877.7353349
+  target_path: src/dewey/src/gmail_priority_flow_81bc021b.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/prioritization/for integration/generate_dashboard.py
+  status: moved
+  timestamp: 1742024925.045459
+  target_path: src/dewey/scripts/dashboard_generator_183e6e8f.py
+  category:
+  - llm
+  - ui
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/prioritization/for integration/detect_forms.py
+  status: moved
+  timestamp: 1742024933.418956
+  target_path: src/dewey/core/form_detection_3e8b587d.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/prioritization/for integration/rule_engine.py
+  status: moved
+  timestamp: 1742024953.476753
+  target_path: src/dewey/core/rule_engine_f81424e3.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/prioritization/for integration/detect_opportunities.py
+  status: moved
+  timestamp: 1742024961.0417228
+  target_path: src/dewey/scripts/opportunity_detection_64812914.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/prioritization/for integration/email_service.py
+  status: moved
+  timestamp: 1742024970.542548
+  target_path: src/dewey/scripts/email_service_275aa152.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/prioritization/for integration/email_analyzer_orm.py
+  status: moved
+  timestamp: 1742024988.3879948
+  target_path: src/dewey/scripts/email_analyzer_1734a0ce.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/prioritization/for integration/gmail_label_learner.py
+  status: moved
+  timestamp: 1742024994.661367
+  target_path: src/dewey/scripts/gmail_label_learner_0b2dfb22.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/prioritization/for integration/priority_manager.py
+  status: moved
+  timestamp: 1742025010.340076
+  target_path: src/dewey/scripts/priority_manager_d15845cf.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/tests/__init__.py
+  status: moved
+  timestamp: 1742025026.678257
+  target_path: src/dewey/tests/email_processing/__init___6b6f8547.py
+  category:
+  - testing
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/tests/test_gmail_client.py
+  status: moved
+  timestamp: 1742025030.7708778
+  target_path: src/dewey/email_processing/tests/test_gmail_client_e858efcf.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/tests/test_integration.py
+  status: moved
+  timestamp: 1742025051.86544
+  target_path: src/dewey/database/tests/integration/test_email_processing_adfe82f1.py
+  category:
+  - core
+  - database
+  - testing
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/management/__init__.py
+  status: moved
+  timestamp: 1742025057.386691
+  target_path: src/dewey/unmapped_scripts/migrated_8d1632a9.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/management/commands/initial_gmail_sync.py
+  status: moved
+  timestamp: 1742025061.1593359
+  target_path: src/dewey/core/management/commands/sync_gmail_128b7b2c.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/management/commands/setup_periodic_tasks.py
+  status: moved
+  timestamp: 1742025081.379246
+  target_path: src/dewey/management/commands/setup_periodic_tasks_cb786613.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/management/commands/__init__.py
+  status: moved
+  timestamp: 1742025087.6512399
+  target_path: src/dewey/unmapped_scripts/migrated_f1e726ac.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/management/commands/setup_celery_beat.py
+  status: moved
+  timestamp: 1742025090.932032
+  target_path: src/dewey/management/commands/setup_celery_beat_a36ad9ce.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/management/commands/sync_gmail_history.py
+  status: moved
+  timestamp: 1742025097.7280152
+  target_path: src/dewey/management/commands/sync_gmail_f17d23a6.py
+  category:
+  - core
+  - ui
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/management/commands/setup_gmail.py
+  status: moved
+  timestamp: 1742025106.5902631
+  target_path: src/dewey/core/management/commands/setup_gmail_540c208a.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/email_processing/management/commands/sync_emails.py
+  status: moved
+  timestamp: 1742025114.6620271
+  target_path: src/dewey/management/commands/sync_emails_f9711982.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/srvo_utils/pages/models.py
+  status: moved
+  timestamp: 1742025117.044422
+  target_path: src/dewey/models_fc8e543f.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/pages/__init__.py
+  status: moved
+  timestamp: 1742025118.172488
+  target_path: src/dewey/unmapped_scripts/migrated_90f39365.py
+  category:
+  - unknown
+- source_path: /Users/srvo/Data/srvo_utils/pages/apps.py
+  status: moved
+  timestamp: 1742025118.9945338
+  target_path: src/dewey/pages/apps_2bfd01ac.py
+  category:
+  - core
+  - web
+  - django
+- source_path: /Users/srvo/Data/srvo_utils/pages/admin.py
+  status: moved
+  timestamp: 1742025120.5440278
+  target_path: src/dewey/models_c7bcc2b2.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/pages/tests.py
+  status: moved
+  timestamp: 1742025121.412936
+  target_path: src/dewey/unmapped_scripts/migrated_7650e945.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/pages/views.py
+  status: moved
+  timestamp: 1742025122.232361
+  target_path: src/dewey/<project>/<app>/views_d0f3fa22.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/srvo_utils/pages/migrations/__init__.py
+  status: moved
+  timestamp: 1742025123.210824
+  target_path: src/dewey/unmapped_scripts/migrated_4fa4c311.py
+  category: []
+- source_path: /Users/srvo/Data/api-collections/scripts/gpt_researcher.py
+  status: moved
+  timestamp: 1742025124.0523741
+  target_path: src/dewey/core/logging_utils_d1e30f26.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/api-collections/scripts/setup.py
+  status: moved
+  timestamp: 1742025129.146843
+  target_path: src/dewey/core/setup_208c977c.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/api-collections/scripts/api_logger.py
+  status: moved
+  timestamp: 1742025131.035576
+  target_path: src/dewey/core/logging_utils_39dcf841.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/szyvore/rxconfig.py
+  status: moved
+  timestamp: 1742025136.290258
+  target_path: src/dewey/rxconfig_3f8b122b.py
+  category:
+  - core
+  - ui
+- source_path: /Users/srvo/Data/szyvore/app/config.py
+  status: moved
+  timestamp: 1742025137.820502
+  target_path: src/dewey/config_3d5dae93.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/szyvore/app/llmhub.py
+  status: moved
+  timestamp: 1742025138.810891
+  target_path: src/dewey/ts_project/llm_utils_70227171.py
+  category:
+  - llm
+  - core
+- source_path: /Users/srvo/Data/szyvore/app/__init__.py
+  status: moved
+  timestamp: 1742025161.184622
+  target_path: src/dewey/templates/analysis_template_2ef936cb.yaml
+  category:
+  - template
+- source_path: /Users/srvo/Data/szyvore/app/settings.py
+  status: moved
+  timestamp: 1742025162.0580091
+  target_path: src/dewey/app/utils/settings_dc2cf988.py
+  category:
+  - core
+  - llm
+  - utils
+- source_path: /Users/srvo/Data/szyvore/app/app.py
+  status: moved
+  timestamp: 1742025174.401404
+  target_path: src/dewey/app/main_7499dd81.py
+  category:
+  - core
+  - ui
+- source_path: /Users/srvo/Data/szyvore/app/ui/components/upload.py
+  status: moved
+  timestamp: 1742025176.758851
+  target_path: src/dewey/app/components/upload_43e91257.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/szyvore/app/ui/components/__init__.py
+  status: moved
+  timestamp: 1742025178.381925
+  target_path: src/dewey/unmapped_scripts/migrated_6e191e75.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/szyvore/app/ui/components/extractor.py
+  status: moved
+  timestamp: 1742025179.2812731
+  target_path: src/dewey/app/components/structured_query_b4f149ea.py
+  category:
+  - ui
+  - llm
+- source_path: /Users/srvo/Data/szyvore/app/ui/components/monaco.py
+  status: moved
+  timestamp: 1742025182.4062479
+  target_path: src/dewey/components/monaco_d7a9e053.py
+  category:
+  - core
+  - ui
+- source_path: /Users/srvo/Data/szyvore/app/ui/components/schema_editor.py
+  status: moved
+  timestamp: 1742025185.03683
+  target_path: src/dewey/app/ui/schema_editor_a8c50be3.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/szyvore/app/ui/templates/__init__.py
+  status: moved
+  timestamp: 1742025186.848261
+  target_path: src/dewey/unmapped_scripts/migrated_bd88d724.py
+  category:
+  - core
+  - ui
+- source_path: /Users/srvo/Data/szyvore/app/ui/templates/styles.py
+  status: moved
+  timestamp: 1742025187.750644
+  target_path: src/dewey/styles/styles_7a13d737.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/szyvore/app/ui/templates/template.py
+  status: moved
+  timestamp: 1742025189.314682
+  target_path: src/dewey/lib/templates_b21d59c1.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/szyvore/app/ui/pages/index.py
+  status: moved
+  timestamp: 1742025190.988312
+  target_path: src/dewey/src/pages/index_5e425007.py
+  category:
+  - ui
+- source_path: /Users/srvo/Data/szyvore/app/ui/pages/__init__.py
+  status: moved
+  timestamp: 1742025193.388364
+  target_path: src/dewey/unmapped_scripts/migrated_9fd1b68d.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/szyvore/app/models/output.py
+  status: moved
+  timestamp: 1742025194.186862
+  target_path: src/dewey/unmapped_scripts/migrated_ce98cda9.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/szyvore/app/api/models.py
+  status: moved
+  timestamp: 1742025197.320436
+  target_path: src/dewey/src/models/request_3990700d.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/szyvore/app/api/__init__.py
+  status: moved
+  timestamp: 1742025218.740591
+  target_path: src/dewey/path/to/script_d9497ee5.py
+  category:
+  - template
+- source_path: /Users/srvo/Data/szyvore/app/api/routers/models.py
+  status: moved
+  timestamp: 1742025219.564945
+  target_path: src/dewey/app/utils_20374d94.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/szyvore/app/api/routers/__init__.py
+  status: moved
+  timestamp: 1742025221.830959
+  target_path: src/dewey/unmapped_scripts/migrated_0a4709d8.py
+  category: []
+- source_path: /Users/srvo/Data/szyvore/app/api/routers/extractor.py
+  status: moved
+  timestamp: 1742025222.6757
+  target_path: src/dewey/app/api/endpoints/extractor_d802251e.py
+  category:
+  - llm
+  - api
+- source_path: /Users/srvo/Data/szyvore/app/api/routers/main.py
+  status: moved
+  timestamp: 1742025225.456733
+  target_path: src/dewey/app/api/api_fcd55afb.py
+  category:
+  - api
+- source_path: /Users/srvo/Data/szyvore/app/engine/index.py
+  status: moved
+  timestamp: 1742025227.69506
+  target_path: src/dewey/src/index_utils_988d2ad0.py
+  category:
+  - llm
+- source_path: /Users/srvo/Data/szyvore/app/engine/generate.py
+  status: moved
+  timestamp: 1742025231.042992
+  target_path: src/dewey/scripts/generate_index_409c42fc.py
+  category:
+  - core
+  - llm
+- source_path: /Users/srvo/Data/szyvore/app/engine/__init__.py
+  status: moved
+  timestamp: 1742025233.516722
+  target_path: src/dewey/unmapped_scripts/migrated_63c038cb.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/szyvore/app/engine/engine.py
+  status: moved
+  timestamp: 1742025234.4194
+  target_path: src/dewey/unmapped_scripts/migrated_3ad8f6ef.py
+  category:
+  - llm
+- source_path: /Users/srvo/Data/szyvore/app/engine/loaders/db.py
+  status: moved
+  timestamp: 1742025236.532973
+  target_path: src/dewey/src/data_loaders/db_loader_cd6084bb.py
+  category:
+  - llm
+  - data loading
+- source_path: /Users/srvo/Data/szyvore/app/engine/loaders/web.py
+  status: moved
+  timestamp: 1742025238.90699
+  target_path: src/dewey/src/web_loader_f8d9a7b3.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/szyvore/app/engine/loaders/__init__.py
+  status: moved
+  timestamp: 1742025242.466242
+  target_path: src/dewey/app/engine/loaders/document_loader_65f949cd.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/szyvore/app/engine/loaders/file.py
+  status: moved
+  timestamp: 1742025245.01759
+  target_path: src/dewey/app/utils/file_loader_25577f9f.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/szyvore/app/services/extractor.py
+  status: moved
+  timestamp: 1742025251.550505
+  target_path: src/dewey/app/services/extractor_2fc1312e.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/szyvore/app/services/model.py
+  status: moved
+  timestamp: 1742025255.864264
+  target_path: src/dewey/src/schemas_3861e3ca.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/szyvore/app/services/file.py
+  status: moved
+  timestamp: 1742025258.857023
+  target_path: src/dewey/app/engine/service_0e05974a.py
+  category:
+  - core
+- source_path: /Users/srvo/Data/szyvore/app/services/document.py
+  status: moved
+  timestamp: 1742025286.182376
+  target_path: src/dewey/core/document_processing_c42335cc.py
+  category:
+  - core
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/szyvore/app/services/tagging.py
+  status: moved
+  timestamp: 1742025288.524221
+  target_path: src/dewey/src/tagging_engine_a7498ac6.py
+  category:
+  - llm
+  - pipeline
+- source_path: /Users/srvo/Data/szyvore/tests/conftest.py
+  status: moved
+  timestamp: 1742025292.9797592
+  target_path: src/dewey/tests/conftest_74046831.py
+  category:
+  - core
+  - utils
+- source_path: /Users/srvo/Data/szyvore/tests/unit/test_models.py
+  status: moved
+  timestamp: 1742025298.046773
+  target_path: src/dewey/tests/models/test_user_model_43b47582.py
+  category:
+  - core
+  - testing
+- source_path: /Users/srvo/Data/szyvore/tests/unit/loaders/test_db.py
+  status: moved
+  timestamp: 1742025300.336352
+  target_path: src/dewey/unmapped_scripts/migrated_8ee53d08.py
+  category:
+  - core
+  - testing

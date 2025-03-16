@@ -1,0 +1,42 @@
+```python
+def calculate_sum(a: int, b: int) -> int:
+    """Calculates the sum of two integers.
+
+    Args:
+        a: The first integer.
+        b: The second integer.
+
+    Returns:
+        The sum of a and b.
+    """
+    return a + b
+
+
+def process_data(data: list[int]) -> list[int]:
+    """Processes a list of integers by doubling each element.
+
+    Args:
+        data: A list of integers.
+
+    Returns:
+        A new list with each element doubled.
+    """
+    processed_data: list[int] = [x * 2 for x in data]
+    return processed_data
+
+
+def main() -> None:
+    """Main function to demonstrate the usage of the above functions."""
+    num1: int = 5
+    num2: int = 10
+    sum_result: int = calculate_sum(num1, num2)
+    print(f"The sum of {num1} and {num2} is: {sum_result}")
+
+    data: list[int] = [1, 2, 3, 4, 5]
+    processed_data: list[int] = process_data(data)
+    print(f"The processed data is: {processed_data}")
+
+
+if __name__ == "__main__":
+    main()
+```

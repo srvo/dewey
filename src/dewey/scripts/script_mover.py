@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+from __future__ import annotations
+
 import argparse
 import ast
 import hashlib
@@ -25,7 +27,9 @@ class ScriptMover:
     """Refactor scripts into the Dewey project structure with LLM-assisted analysis."""
 
     def __init__(
-        self, config_path: str | None = None, fallback_to_deepinfra: bool = False
+        self,
+        config_path: str | None = None,
+        fallback_to_deepinfra: bool = False,
     ) -> None:
         # Set default config path relative to project root
         if config_path is None:
@@ -68,7 +72,7 @@ class ScriptMover:
         logger.setLevel(logging.INFO)
         handler = logging.StreamHandler()
         handler.setFormatter(
-            logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+            logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"),
         )
         logger.addHandler(handler)
         return logger
@@ -112,7 +116,7 @@ class ScriptMover:
                     if str(script_path) in self.processed_files:
                         if self.processed_files[str(script_path)] == content_hash:
                             self.logger.info(
-                                f"Skipping already processed file: {script_path}"
+                                f"Skipping already processed file: {script_path}",
                             )
                             continue
 
@@ -123,7 +127,7 @@ class ScriptMover:
                         self._save_checkpoint(script_path, content_hash)
                     except Exception as e:
                         self.logger.exception(
-                            f"Fatal error processing {script_path}: {e!s}"
+                            f"Fatal error processing {script_path}: {e!s}",
                         )
                         raise  # Re-raise to halt execution
 
@@ -175,13 +179,13 @@ class ScriptMover:
             if self.should_merge(analysis, target_path):
                 self.merge_script(content, analysis, target_path)
                 self.logger.info(
-                    f"✅ Merged {script_path} into {target_path} [Category: {analysis.get('category', 'unclassified')}]"
+                    f"✅ Merged {script_path} into {target_path} [Category: {analysis.get('category', 'unclassified')}]",
                 )
                 audit_entry["status"] = "merged"
             else:
                 self.write_script(content, target_path)
                 self.logger.info(
-                    f"📄 Created {target_path} [Category: {analysis.get('category', 'unclassified')}]"
+                    f"📄 Created {target_path} [Category: {analysis.get('category', 'unclassified')}]",
                 )
                 audit_entry["status"] = "moved"
 
@@ -267,7 +271,7 @@ class ScriptMover:
             return target_path.with_stem(f"{target_path.stem}_{unique_id}")
         except Exception as e:
             self.logger.warning(
-                f"Path determination failed: {e!s}, using fallback location"
+                f"Path determination failed: {e!s}, using fallback location",
             )
             return (
                 self.root_path
@@ -315,7 +319,7 @@ class ScriptMover:
         except Exception as e:
             # If formatting failed, write original content with warning
             self.logger.warning(
-                f"⚠️ Formatting failed, writing original content to {target_path}"
+                f"⚠️ Formatting failed, writing original content to {target_path}",
             )
             self.logger.debug(f"Formatting error: {e!s}")
             target_path.write_text(f"# Formatting failed: {e!s}\n\n{content}")
@@ -464,11 +468,13 @@ class ScriptMover:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Migrate scripts to Dewey project structure"
+        description="Migrate scripts to Dewey project structure",
     )
     parser.add_argument("directory", help="Directory containing scripts to process")
     parser.add_argument(
-        "--config", default="config/script_mover.yaml", help="Configuration file path"
+        "--config",
+        default="config/script_mover.yaml",
+        help="Configuration file path",
     )
     parser.add_argument(
         "--fallback-to-deepinfra",

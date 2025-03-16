@@ -1,0 +1,30 @@
+```python
+from __future__ import annotations
+
+from typing import NamedTuple
+
+
+class URL(NamedTuple):
+    """
+    Represents a parsed URL.
+
+    Attributes:
+        protocol: The protocol of the URL (e.g., "http", "https").
+        slashes: Whether the URL contains "//" after the protocol.
+        auth: The authentication part of the URL (e.g., "user:password").
+        port: The port number of the URL.
+        hostname: The hostname of the URL.
+        hash: The fragment identifier of the URL (e.g., "#section").
+        search: The query string of the URL (e.g., "?param1=value1&param2=value2").
+        pathname: The path component of the URL.
+    """
+
+    protocol: str | None
+    slashes: bool
+    auth: str | None
+    port: str | None
+    hostname: str | None
+    hash: str | None  # noqa: A003
+    search: str | None
+    pathname: str | None
+```
