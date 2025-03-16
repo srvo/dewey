@@ -45,8 +45,12 @@ def analyze_code_uniqueness(root_dir="src"):
     results = {}
 
     for legacy_file in legacy_files:
-        with open(legacy_file, 'r', encoding='utf-8') as f:
-            legacy_lines = f.readlines()
+        try:
+            with open(legacy_file, 'r', encoding='utf-8') as f:
+                legacy_lines = f.readlines()
+        except UnicodeDecodeError as e:
+            print(f"Error reading file {legacy_file}: {e}")
+            continue
 
         total_lines = len(legacy_lines)
         unique_lines = 0
@@ -54,11 +58,15 @@ def analyze_code_uniqueness(root_dir="src"):
         for i, legacy_line in enumerate(legacy_lines):
             found = False
             for current_file in current_files:
-                with open(current_file, 'r', encoding='utf-8') as cf:
-                    current_lines = cf.readlines()
-                    if legacy_line in current_lines:
-                        found = True
-                        break
+                try:
+                    with open(current_file, 'r', encoding='utf-8') as cf:
+                        current_lines = cf.readlines()
+                except UnicodeDecodeError as e:
+                    print(f"Error reading file {current_file}: {e}")
+                    continue
+                if legacy_line in current_lines:
+                    found = True
+                    break
             if not found:
                 unique_lines += 1
 
