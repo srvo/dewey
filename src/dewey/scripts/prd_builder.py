@@ -531,7 +531,11 @@ class PRDManager:
             
             Keep it under 3 paragraphs. Focus on technical architecture and business impact.
             """
-            self.prd_data["executive_summary"] = self.llm.generate_response(prompt)
+            self.prd_data["executive_summary"] = self.llm.generate_response(
+                prompt,
+                model="gemini-2.0-flash",
+                fallback_model="google/gemini-2.0-flash-001"
+            )
             
         if Confirm.ask("Validate PRD against coding conventions?"):
             issues = self._validate_conformance()
