@@ -116,7 +116,8 @@ class PRDManager:
 
     def _load_conventions(self) -> dict:
         """Parse actual CONVENTIONS.md content."""
-        conv_path = self.root_dir / self.config["references"]["conventions"]
+        # Use absolute path from project root per conventions
+        conv_path = Path.home() / "dewey" / "CONVENTIONS.md"
         return self._parse_markdown_conventions(conv_path)
 
     def _parse_markdown_conventions(self, path: Path) -> dict:
