@@ -868,10 +868,17 @@ class CodeConsolidator:
 
 
 def main() -> None:
-    """Command line interface."""
+    """Command line interface.
+    
+    Outputs:
+    - Creates consolidation_reports/ directory with timestamped markdown reports
+    - Prints summary to console
+    - Full report includes consolidated code implementations and error details
+    """
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
     parser = argparse.ArgumentParser(
-        description="Analyze and consolidate similar code functionality"
+        description="Analyze and consolidate similar code functionality",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     parser.add_argument(
         "directory",
@@ -902,10 +909,23 @@ def main() -> None:
         consolidator.analyze_directory()
 
     if args.report:
-        report_path = Path(args.dir) / "code_consolidation_report.md"
+        # Create reports directory if needed
+        report_dir = Path(args.directory) / "consolidation_reports"
+        report_dir.mkdir(exist_ok=True)
+        
+        # Create timestamped report filename
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        report_path = report_dir / f"consolidation_report_{timestamp}.md"
+        
+        # Write both full and simplified reports
         with open(report_path, "w") as f:
-            f.write(consolidator.generate_report())
-        logger.info(f"Report saved to {report_path}")
+            f.write(consolidator.generate_report(pipeline_report))
+            
+        # Print key findings to console
+        logger.info(f"\n📊 Consolidation Report Summary:")
+        logger.info(f"✅ Successful clusters: {pipeline_report['processing']['success']}")
+        logger.info(f"❌ Failed clusters: {pipeline_report['processing']['failed']}")
+        logger.info(f"📄 Full report saved to: {report_path.resolve()}")
 
 
 if __name__ == "__main__":
