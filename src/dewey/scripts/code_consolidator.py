@@ -1089,20 +1089,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    import sys
-    from pathlib import Path
-    
-    # Add src directory to Python path relative to this file's location
-    current_dir = Path(__file__).resolve().parent
-    project_root = current_dir.parent.parent.parent  # Adjust based on actual depth
-    src_dir = project_root / "src"
-    if str(src_dir) not in sys.path:
-        sys.path.insert(0, str(src_dir))
-    
-    try:
-        import dewey  # Verify the path is correct
-    except ImportError:
-        print(f"Error: Could not import dewey module. Check Python path: {sys.path}")
-        sys.exit(1)
-    
     main()
