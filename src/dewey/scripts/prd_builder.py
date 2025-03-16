@@ -72,11 +72,13 @@ class PRDManager:
 
     def _load_prd_config(self) -> dict:
         """Load PRD config from central dewey.yaml."""
-        config_path = self.root_dir / "config" / "dewey.yaml"
+        # Get project root by going up 3 levels from llm directory
+        project_root = self.root_dir.parent.parent.parent
+        config_path = project_root / "config" / "dewey.yaml"
         if not config_path.exists():
             raise FileNotFoundError(
                 f"Config file not found at {config_path}. "
-                f"Project root: {self.root_dir}"
+                f"Project root: {project_root}"
             )
         
         try:
@@ -106,7 +108,9 @@ class PRDManager:
         base_path = self.config.get("base_path", "config/prd")
         active_prd = self.config.get("active_prd", "current_prd.yaml")
         
-        prd_dir = Path("/Users/srvo/dewey/config/prd")
+        # Use project root from config loading
+        project_root = self.root_dir.parent.parent.parent
+        prd_dir = project_root / "config" / "prd"
         prd_dir.mkdir(exist_ok=True, parents=True)
         return prd_dir / active_prd
 
