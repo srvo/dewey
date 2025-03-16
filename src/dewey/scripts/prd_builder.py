@@ -38,7 +38,7 @@ class PRDManager:
     """Interactive PRD builder with architectural guardrails."""
 
     def __init__(self, root_dir: Path = Path(__file__).parent.parent.parent.parent) -> None:
-        self.root_dir = root_dir.resolve()
+        self.project_root = root_dir.resolve()  # Changed from root_dir to project_root
         self.console = Console()
         self.config = self._load_prd_config()
         self.prd_path = self._validate_prd_path()
