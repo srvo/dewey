@@ -80,6 +80,9 @@ class LegacyRefactor:
                 # Add refactoring metadata
                 self._add_refactoring_metadata(target, source.name)
             return target
+        except Exception as e:
+            logger.error(f"Failed to relocate {source}: {str(e)}")
+            return None
 
     def _is_test_file(self, filename: str, content: str) -> bool:
         """Check if file is test-related using name and content."""
