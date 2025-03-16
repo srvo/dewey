@@ -181,11 +181,10 @@ class CodeConsolidator:
                 "similarity_threshold": 0.85
             },
             "llm": {
-                "default_model": "gemini-2.0-flash",
+                "client": "deepinfra",
+                "default_model": "meta-llama/Meta-Llama-3-8B-Instruct",
                 "model_limits": {
-                    "gemini-2.0-flash": {"rpm": 15, "tpm": 1000000, "rpd": 1500},
-                    "gemini-2.0-flash-lite": {"rpm": 30, "tpm": 1000000, "rpd": 1500},
-                    "gemini-1.5-flash": {"rpm": 15, "tpm": 1000000, "rpd": 1500}
+                    "meta-llama/Meta-Llama-3-8B-Instruct": {"rpm": 15, "tpm": 1000000, "rpd": 1500}
                 },
                 "cooldown_minutes": 5,
                 "fallback_models": ["gemini-2.0-flash", "gemini-1.5-flash"],

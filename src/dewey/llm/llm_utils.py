@@ -28,12 +28,21 @@ class LLMHandler:
         if not self.client:
             raise LLMError("LLM client not initialized")
             
-        # Merge config defaults with per-call overrides
-        params = {
-            'model': self.config.get('default_model'),
-            'temperature': self.config.get('temperature', 0.7),
-            **kwargs
-        }
+        # Client-specific parameter handling
+        params = {"temperature": self.config.get('temperature', 0.7)}
+        
+        if isinstance(self.client, GeminiClient):
+            params.update({
+                'model': self.config.get('default_model', 'gemini-2.0-flash'),
+                'max_output_tokens': kwargs.get('max_tokens', 1000)
+            })
+        elif isinstance(self.client, DeepInfraClient):
+            params.update({
+                'model': self.config.get('default_model', 'meta-llama/Meta-Llama-3-8B-Instruct'),
+                'max_tokens': kwargs.get('max_tokens', 1000)
+            })
+            
+        params.update(kwargs)
         
         try:
             self.usage_stats["requests"] += 1
