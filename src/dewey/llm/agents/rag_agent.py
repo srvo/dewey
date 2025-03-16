@@ -1,17 +1,22 @@
 """RAG agent for semantic search using pgvector (DEPRECATED)."""
 from typing import List, Dict, Any, Optional
+import structlog
 from smolagents import Tool
 from .base_agent import DeweyBaseAgent
 
+logger = structlog.get_logger(__name__)
+
 class RAGAgent(DeweyBaseAgent):
-    """
-    DEPRECATED: RAG agent for semantic search. Use external workflow integration instead.
+    """DEPRECATED: RAG agent for semantic search. Use external workflow integration instead.
+    
+    Attributes:
+        task_type: The type of task the agent performs (rag_search)
     """
 
-    def __init__(self):
-        """Initializes the RAGAgent."""
+    def __init__(self) -> None:
+        """Initializes the RAGAgent and logs deprecation warning."""
         super().__init__(task_type="rag_search")
-        print("WARNING: RAGAgent is deprecated - use external workflow integration instead")
+        logger.warning("RAGAgent is deprecated - use external workflow integration instead")
         self.add_tools([
             Tool.from_function(self.search, description="Searches the knowledge base using semantic similarity.")
         ])
