@@ -185,7 +185,7 @@ dewey/
 
 **Environment Setup**
 
-1.  **Python Version:** Ensure you are using a compatible Python version (e.g., Python 3.11 or later).
+1.  **Python Version:** Ensure you are using Python 3.12 or later.
 2.  **Install uv:** If you haven't already, install `uv`:
     ```bash
     pip install uv

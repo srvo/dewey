@@ -40,6 +40,41 @@
 ### CRM Module
 - Refactor database connection and error handling in `add_enrichment_a154a675.py` to use centralized utilities
 
+## Pre-commit hook installation
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+## Ruff commands
+```bash
+uv run ruff check .
+uv run ruff format .
+```
+
+## Backup procedure
+```bash
+After each successful data processing run:
+a. Copy the joined master DuckDB file (merged.duckdb) to a separate location (e.g., a backup drive, network share). Timestamp the backup file.
+b. Use the MotherDuck CLI or Python API to upload the joined master DuckDB file to your MotherDuck account.
+```
+
+## Data locations
+```bash
+Input Data: /Users/srvo/ingest_data/
+Intermediate Data: /Users/srvo/ingest_data/process_1/intermediate.duckdb
+Output Data: ~/dewey/merged.duckdb
+```
+
+## Pipeline stages
+```bash
+Read: Read data from source files using Ibis.
+Resolve: Merge schemas using DeepInfra API.
+Unify: Create target table and insert data.
+Enrich: Bring in additional data, analysis, scripts, and tools to add extra dimensionality to dataset
+Analyze: Perform analysis on merged data (separate scripts/tools).
+```
+
 ## Completed Tasks
 x Review generated conventions.md
 x Ensure Python 3.12 + uv setup

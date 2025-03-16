@@ -49,6 +49,9 @@ dependencies = [
     "rich>=13.0.0",
     "sqlite3",
     "pyyaml>=6.0.0",
+    "python-dotenv",
+    "pre-commit",
+    "ruff",
 ]
 
 [tool.setuptools]
