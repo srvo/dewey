@@ -130,9 +130,11 @@ class RateLimiter:
 
                 # Add entry eviction before processing
                 if len(model_counters["requests"]) >= self.max_entries:
-                    # Remove oldest entry
-                    oldest = model_counters["requests"].pop(0)
-                    model_counters["tokens"] -= self._estimate_tokens_from_time(oldest)
+                    # Remove oldest 10% of entries when hitting capacity
+                    remove_count = int(self.max_entries * 0.1)
+                    removed = model_counters["requests"][:remove_count]
+                    model_counters["requests"] = model_counters["requests"][remove_count:]
+                    model_counters["tokens"] -= sum(self._estimate_tokens_from_time(ts) for ts in removed)
                 
                 # All checks passed, update counters
                 model_counters["requests"].append(time.time())

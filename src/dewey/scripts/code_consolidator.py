@@ -140,7 +140,16 @@ class CodeConsolidator:
                 with open(config_file) as f:
                     loaded_config = yaml.safe_load(f)
                     # Deep merge with default config
-                    return self._deep_merge(default_config, loaded_config)
+                    config = self._deep_merge(default_config, loaded_config)
+                    
+                    # Add validation for large-scale operations
+                    if config.get('pipeline', {}).get('max_files') is None:
+                        config.setdefault('llm', {}).setdefault('max_entries', 1500)
+                        config.setdefault('llm', {}).setdefault('batch_size', 250)
+                        config.setdefault('llm', {}).setdefault('max_workers', 8)
+                        logger.info("Auto-configured for large-scale operation (900+ files)")
+                    
+                    return config
         return default_config
 
     def _deep_merge(self, base: dict, update: dict) -> dict:
