@@ -48,6 +48,10 @@ class PRDManager:
         self.reporter = ConsolidationReporter()
         self.code_insights = self._analyze_codebase()
         self.modules = self._discover_modules()
+        self.console.print(f"Initialized PRDManager with:\n"
+                         f"  Target Dir: {self.target_dir}\n"
+                         f"  Project Root: {self.project_root}\n"
+                         f"  PRD Path: {self.prd_path}")
 
     def _analyze_codebase(self) -> dict:
         """Analyze only the target directory structure and content."""
@@ -127,8 +131,8 @@ class PRDManager:
         }
 
     def _validate_prd_path(self) -> Path:
-        """Return hardcoded PRD file path."""
-        prd_dir = Path("/Users/srvo/dewey/config/prd")
+        """Return PRD file path relative to project root."""
+        prd_dir = self.project_root / "config" / "prd"
         prd_dir.mkdir(exist_ok=True, parents=True)
         return prd_dir / "current_prd.yaml"
 
