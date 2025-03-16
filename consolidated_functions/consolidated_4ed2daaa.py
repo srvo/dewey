@@ -1,4 +1,3 @@
-```python
 import os
 from typing import Any, Type, TypeVar, Union
 
