@@ -51,13 +51,17 @@ class PRDManager:
         }
 
     def _validate_prd_path(self) -> Path:
-        prd_dir = self.root_dir / self.config["prd"]["base_path"]
+        # Get with safe defaults from direct config keys
+        base_path = self.config.get("base_path", "config/prd")
+        active_prd = self.config.get("active_prd", "current_prd.yaml")
+        
+        prd_dir = self.root_dir / base_path
         prd_dir.mkdir(exist_ok=True, parents=True)
-        return prd_dir / self.config["prd"]["active_prd"]
+        return prd_dir / active_prd
 
     def _load_conventions(self) -> dict:
         """Parse actual CONVENTIONS.md content."""
-        conv_path = self.root_dir / self.config["prd"]["conventions_ref"]
+        conv_path = self.root_dir / self.config["references"]["conventions"]
         return self._parse_markdown_conventions(conv_path)
 
     def _parse_markdown_conventions(self, path: Path) -> dict:
@@ -75,16 +79,6 @@ class PRDManager:
                 sections[current_section].append(line.strip())
         return sections
 
-    def _load_conventions(self) -> dict[str, Any]:
-        """Parse CONVENTIONS.md into structured data."""
-        # Implementation stub - would use regex to extract:
-        return {
-            "folder_structure": {
-                "core": ["crm", "research", "accounting"],
-                "llm": ["api_clients", "prompts"],
-            },
-            "arch_rules": ["No raw SQL", "Central LLM handler"],
-        }
 
     def _load_prd_template(self) -> dict[str, Any]:
         """Load PRD structure with base template and existing content."""
