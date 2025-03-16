@@ -50,10 +50,10 @@ class VectorStore:
         # Initialize client
         self.client = chromadb.PersistentClient(path=str(self.persist_dir))
         self.collection = self.client.get_or_create_collection(
-            collection_name,
+            self.collection_name,
             metadata={**self.hnsw_config}  # Include all HNSW params from start
         )
-        self.embedding_model = SentenceTransformer(embedding_model)
+        self.embedding_model = SentenceTransformer(self.embedding_model)
 
         # Apply HNSW configuration
         self._apply_hnsw_settings()
