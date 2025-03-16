@@ -1,7 +1,7 @@
 import logging
 from typing import Any
 
-from dewey.llm.api_clients.gemini import GeminiClient
+from dewey.llm.api_clients.deepinfra import DeepInfraClient
 from dewey.llm.exceptions import LLMError
 
 
@@ -34,7 +34,7 @@ def generate_response(
 
     """
     try:
-        client = GeminiClient(api_key=api_key)
+        client = DeepInfraClient(api_key=api_key)
         # Prepend system message to prompt if provided
         full_prompt = f"{system_message}\n\n{prompt}" if system_message else prompt
 
