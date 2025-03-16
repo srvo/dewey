@@ -42,10 +42,14 @@ class LegacyRefactor:
         
     def find_legacy_files(self) -> List[Path]:
         """Find all legacy files using hash suffix pattern."""
-        return [
-            p for p in Path("src").rglob("*.py")
+        files = [
+            p for p in Path("src").rglob("*.py") 
             if HASH_PATTERN.search(p.name)
         ]
+        logger.info(f"Found {len(files)} legacy files matching hash pattern")
+        for f in files:
+            logger.debug(f"Legacy file: {f}")
+        return files
 
     def validate_target(self, target: Path) -> None:
         """Ensure target path follows project conventions."""
@@ -90,7 +94,7 @@ class LegacyRefactor:
             
             if not self.dry_run:
                 shutil.move(str(source), str(target))
-                logger.info(f"Moved {source} -> {target}")
+                logger.info(f"Successfully moved {source} -> {target}")
                 
                 # Add refactoring metadata
                 self._add_refactoring_metadata(target, source.name)
@@ -200,9 +204,16 @@ class LegacyRefactor:
 
     def process_files(self) -> None:
         """Main processing pipeline."""
+        logger.info(f"Starting processing of {len(self.legacy_files)} legacy files")
+        if not self.legacy_files:
+            logger.warning("No legacy files found to process")
+            return
+            
         for legacy_file in self.legacy_files:
+            logger.info(f"Processing {legacy_file}")
             if target := self.relocate_file(legacy_file):
                 self.update_references(legacy_file, target)
+        logger.info(f"Completed processing {len(self.legacy_files)} files")
 
 def main():
     """CLI entry point with dry-run support."""
