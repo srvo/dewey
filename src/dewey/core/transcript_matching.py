@@ -1,4 +1,3 @@
-```python
 \"\"\"
 Functions for matching transcript files to episode entries in a database.
 \"\"\"
@@ -11,43 +10,6 @@ from pathlib import Path
 
 # Define a type alias for database connection
 DBConnection = sqlite3.Connection
-
-
-def clean_title(title: str) -> str:
-    """Cleans a title string for matching purposes.
-
-    This function removes all non-alphanumeric characters from the input title,
-    converting it to lowercase.  This helps to standardize titles for comparison.
-
-    Args:
-        title: The input title string.
-
-    Returns:
-        The cleaned title string.
-    """
-    if not isinstance(title, str):
-        return ""  # Handle non-string input gracefully
-    return re.sub(r"[^a-z0-9\s]", "", title.lower())
-
-
-def similarity_score(a: str, b: str) -> float:
-    """Calculates the similarity score between two strings.
-
-    This function uses the SequenceMatcher from the difflib module to calculate
-    a similarity ratio between two strings.  The ratio represents the degree
-    of similarity, ranging from 0.0 (no similarity) to 1.0 (identical).
-
-    Args:
-        a: The first string.
-        b: The second string.
-
-    Returns:
-        The similarity score (float) between the two strings.
-    """
-    if not isinstance(a, str) or not isinstance(b, str):
-        return 0.0  # Handle non-string input gracefully
-    return SequenceMatcher(None, a, b).ratio()
-
 
 def match_transcript_files(
     database_path: str,
@@ -64,11 +26,7 @@ def match_transcript_files(
     unmatched_limit: int = 5,
     update_db: bool = True,
 ) -> Tuple[List[Dict[str, Union[str, float]]], List[str]]:
-    """Matches transcript files to episode entries in a database.
-
-    This function iterates through transcript files in a specified directory,
-    attempts to match them to episodes in a SQLite database based on title
-    similarity, and optionally updates the database with the matched file paths.
+    \"\""Matches transcript files to episode entries in a database.
 
     Args:
         database_path: The path to the SQLite database file.
@@ -90,7 +48,7 @@ def match_transcript_files(
             - matches: A list of dictionaries, where each dictionary represents a matched transcript
               and contains keys like "title", "file", "score", and potentially other episode data.
             - unmatched_files: A list of file paths for transcripts that could not be matched.
-    """
+    \"""
     matches: List[Dict[str, Union[str, float]]] = []
     unmatched_files: List[str] = []
 
@@ -181,34 +139,3 @@ def match_transcript_files(
         return [], []
 
     return matches[:max_matches], unmatched_files[:unmatched_limit]
-```
-Key improvements and explanations:
-
-*   **Comprehensive Docstrings:**  Each function has a detailed Google-style docstring explaining its purpose, arguments, return values, and any important considerations.
-*   **Type Hints:**  All function arguments and return values are type-hinted for clarity and to help with static analysis.  A `DBConnection` type alias is used for database connections.
-*   **Error Handling:**  Robust error handling is implemented:
-    *   **File I/O Errors:**  Handles `IOError` and `UnicodeDecodeError` when reading transcript files.
-    *   **Database Errors:**  Catches `sqlite3.Error` during database operations.  Returns empty lists in case of database errors to prevent the program from crashing.
-    *   **File Not Found:** Handles `FileNotFoundError` for the database file.
-    *   **Non-String Input:** Handles cases where `clean_title` and `similarity_score` receive non-string inputs gracefully, returning appropriate default values.
-    *   **Unexpected Errors:** Includes a general `except Exception` block to catch any other unexpected errors and prevent the program from crashing.
-*   **Edge Case Handling:**
-    *   Handles empty titles in the database to avoid errors.
-    *   Skips files that are not common transcript formats.
-*   **Modern Python Conventions:**
-    *   Uses `with` statements for file and database connections to ensure proper resource management (closing files and connections automatically).
-    *   Uses f-strings for string formatting, making the code more readable.
-    *   Uses type hints for improved readability and maintainability.
-    *   Uses a `Tuple` return type for the `match_transcripts` function, clearly indicating the two lists that are returned.
-*   **Clearer Variable Names:** Uses more descriptive variable names (e.g., `episode_table_name` instead of just `table_name`).
-*   **Flexibility:**  The `match_transcripts` function is highly configurable with parameters for table and column names, encoding, similarity threshold, and the option to update the database.
-*   **Efficiency:** The code now fetches all episodes from the database *once* at the beginning, improving efficiency by avoiding repeated database queries within the loop.
-*   **Conciseness:** The code is written in a concise and readable manner.
-*   **Correctness:** The logic for matching transcripts and updating the database is accurate.
-*   **Return Values on Error:**  The function now returns empty lists (`[], []`) on any error, making it easier for calling code to handle failures.
-*   **File Path Storage:** The `best_match` dictionary now stores the full file path, which is essential for updating the database and providing useful information to the user.
-*   **Transcript Extension Handling:** The code now checks for common transcript file extensions (.txt, .srt, .vtt) to avoid processing irrelevant files.
-*   **Database Update Handling:** The code now correctly updates the database with the matched file path, and includes error handling for database update operations.
-*   **Limits:** The `max_matches` and `unmatched_limit` parameters are correctly applied to the returned lists.
-
-This revised version addresses all the requirements, handles edge cases, and provides a robust and well-documented solution. It's ready for production use.
