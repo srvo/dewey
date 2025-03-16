@@ -141,9 +141,7 @@ class RateLimiter:
                     model_counters["requests"] = model_counters["requests"][
                         remove_count:
                     ]
-                    model_counters["tokens"] -= sum(
-                        self._estimate_tokens_from_time(ts) for ts in removed
-                    )
+                    model_counters["tokens"] -= 100 * len(removed)  # Simple token estimate
 
                 # All checks passed, update counters
                 model_counters["requests"].append(time.time())
