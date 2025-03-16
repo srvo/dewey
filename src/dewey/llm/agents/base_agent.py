@@ -1,10 +1,8 @@
-# Formatting failed: LLM generation failed: Gemini API error: Model gemini-2.0-flash in cooldown until Sat Mar 15 00:53:33 2025
-
-"""Base configuration for PydanticAI agents with DeepInfra integration."""
+"""Base configuration for agents with DeepInfra integration."""
 from __future__ import annotations
 
 import time
-from typing import Any
+from typing import Any, List, Dict, Optional
 
 import httpx
 import sentry_sdk
@@ -13,6 +11,7 @@ from asgiref.sync import sync_to_async
 from django.db import transaction
 from pydantic import BaseModel, Field
 from ulid import ULID
+from smolagents import Agent, Tool
 
 from ..models.metrics import AgentInteraction
 from .config import AIConfig
@@ -29,16 +28,16 @@ class FunctionDefinition(BaseModel):
     required: list[str] = Field(default_factory=list)
 
 
-class SyzygyAgent:
-    """Base class for Syzygy's AI agents using DeepInfra.
+class DeweyBaseAgent(Agent):
+    """Base class for AI agents using DeepInfra.
 
     Features include:
-    - Automatic model selection based on task complexity
-    - Function calling support
-    - Comprehensive metrics tracking
-    - Cost estimation and monitoring
-    - Sentry error reporting
-    - Configurable retries and timeouts
+        - Automatic model selection based on task complexity
+        - Function calling support
+        - Comprehensive metrics tracking
+        - Cost estimation and monitoring
+        - Sentry error reporting
+        - Configurable retries and timeouts
     """
 
     def __init__(
@@ -46,21 +45,20 @@ class SyzygyAgent:
         task_type: str | None = None,
         model: str | None = None,
         complexity: int = 0,
-        functions: list[FunctionDefinition] | None = None,
+        tools: List[Tool] | None = None,
     ) -> None:
         """Initialize the agent with configuration.
 
         Args:
-        ----
-            task_type: Type of task for automatic model selection
-            model: Override model selection (optional)
-            complexity: Task complexity level (0-2)
-            functions: List of available functions (optional)
-
+            task_type (str, optional): Type of task for automatic model selection. Defaults to None.
+            model (str, optional): Override model selection (optional). Defaults to None.
+            complexity (int, optional): Task complexity level (0-2). Defaults to 0.
+            tools (List[Tool], optional): List of available tools (optional). Defaults to None.
         """
+        super().__init__(tools=tools)
         self.logger = logger.bind(component=self.__class__.__name__)
         self.task_type = task_type or self.__class__.__name__.lower()
-        self.functions = functions or []
+        self.functions = []  # Keeping this for compatibility, but it's not used by smolagents
 
         # Get model configuration
         if model:
@@ -104,19 +102,34 @@ class SyzygyAgent:
         """Get the system prompt for this agent.
 
         Override this in subclasses to provide specific prompts.
+
+        Returns:
+            str: The system prompt.
         """
         return "You are a helpful AI assistant in the Syzygy system."
 
     @sync_to_async
     def _create_interaction(self, **kwargs) -> AgentInteraction:
-        """Create an interaction record in the database."""
+        """Create an interaction record in the database.
+
+        Args:
+            **kwargs: Keyword arguments to create the AgentInteraction object.
+
+        Returns:
+            AgentInteraction: The created AgentInteraction object.
+        """
         with transaction.atomic():
             kwargs["id"] = str(ULID())
             return AgentInteraction.objects.create(**kwargs)
 
     @sync_to_async
     def _update_interaction(self, interaction: AgentInteraction, **kwargs) -> None:
-        """Update an interaction record in the database."""
+        """Update an interaction record in the database.
+
+        Args:
+            interaction (AgentInteraction): The AgentInteraction object to update.
+            **kwargs: Keyword arguments to update the AgentInteraction object.
+        """
         with transaction.atomic():
             for key, value in kwargs.items():
                 setattr(interaction, key, value)
@@ -134,18 +147,18 @@ class SyzygyAgent:
         """Run the agent with comprehensive monitoring.
 
         Args:
-        ----
-            prompt: The prompt to send to the model
-            result_type: Expected result type (optional)
-            entity_type: Type of entity being processed (optional)
-            entity_id: ID of entity being processed (optional)
-            metadata: Additional context and metadata (optional)
-            **kwargs: Additional arguments for the agent
+            prompt (str): The prompt to send to the model.
+            result_type (Any, optional): Expected result type (optional). Defaults to None.
+            entity_type (str, optional): Type of entity being processed (optional). Defaults to None.
+            entity_id (str, optional): ID of entity being processed (optional). Defaults to None.
+            metadata (dict, optional): Additional context and metadata (optional). Defaults to None.
+            **kwargs: Additional arguments for the agent.
 
         Returns:
-        -------
-            Agent response
+            Any: Agent response.
 
+        Raises:
+            Exception: If the agent run fails.
         """
         start_time = time.time()
         interaction = None
@@ -178,19 +191,20 @@ class SyzygyAgent:
             }
 
             # Add function calling if available
-            if self.functions:
-                payload["functions"] = [
-                    {
-                        "name": f.name,
-                        "description": f.description,
-                        "parameters": {
-                            "type": "object",
-                            "properties": f.parameters,
-                            "required": f.required,
-                        },
-                    }
-                    for f in self.functions
-                ]
+            # Smolagents handles tools differently, so this is not needed
+            # if self.functions:
+            #     payload["functions"] = [
+            #         {
+            #             "name": f.name,
+            #             "description": f.description,
+            #             "parameters": {
+            #                 "type": "object",
+            #                 "properties": f.parameters,
+            #                 "required": f.required,
+            #             },
+            #         }
+            #         for f in self.functions
+            #     ]
 
             # Make API call
             response = await self.client.post(
@@ -271,7 +285,14 @@ class SyzygyAgent:
             raise
 
     def _get_api_key(self) -> str:
-        """Get the DeepInfra API key from environment variables."""
+        """Get the DeepInfra API key from environment variables.
+
+        Returns:
+            str: The DeepInfra API key.
+
+        Raises:
+            ValueError: If the DEEPINFRA_API_KEY environment variable is not set.
+        """
         import os
 
         api_key = os.getenv("DEEPINFRA_API_KEY")
