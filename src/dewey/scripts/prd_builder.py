@@ -72,7 +72,12 @@ class PRDManager:
 
     def _load_prd_config(self) -> dict:
         """Load PRD config from central dewey.yaml."""
-        config_path = Path("/Users/srvo/dewey/config/dewey.yaml")
+        config_path = self.root_dir / "config" / "dewey.yaml"
+        if not config_path.exists():
+            raise FileNotFoundError(
+                f"Config file not found at {config_path}. "
+                f"Project root: {self.root_dir}"
+            )
         
         try:
             with open(config_path) as f:
