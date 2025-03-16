@@ -757,8 +757,17 @@ class CodeConsolidator:
             "functions": [],
             "consolidated": None,
             "errors": [],
-            "linted": False
+            "linted": False,
+            "cluster_id": f"CLUSTER-{hashlib.md5(str(cluster).encode()).hexdigest()[:6]}",
+            "file_names": [Path(f).name for f in cluster],
+            "priority": min(5, len(cluster) // 2),  # Scale priority with cluster size
+            "timestamp": datetime.datetime.now().isoformat(),
+            "file_versions": {
+                f: self._file_hash(self.root_dir / f) for f in cluster
+            }
         }
+        result["recommended_action"] = self._get_recommended_action(result)
+        result["next_steps"] = self._get_next_steps(result)
         
         try:
             # Extract functions from all files in cluster
@@ -859,7 +868,12 @@ class CodeConsolidator:
         """Generate detailed consolidation report."""
         report = [
             "# Code Consolidation Pipeline Report",
-            "## Pipeline Execution Summary",
+            f"## Metadata\n"
+            f"- Generated: {datetime.datetime.now().isoformat()}\n"
+            f"- Project Root: {self.root_dir.resolve()}\n"
+            f"- Config Version: {hashlib.md5(json.dumps(self.config).encode()).hexdigest()[:8]}\n"
+            f"- File Hashes Version: {self._get_file_hashes_version()}",
+            "\n## Pipeline Execution Summary",
             f"- Files loaded: {pipeline_report['load_files']['data']['processed']}",
             f"- File loading errors: {pipeline_report['load_files']['data']['failed']}",
             f"- Clusters identified: {len(pipeline_report['cluster_files']['data']['clusters'])}",
@@ -882,6 +896,37 @@ class CodeConsolidator:
             )
             
         return "\n".join(report)
+
+    def _get_file_hashes_version(self) -> str:
+        """Create version string based on file hashes"""
+        hashes = sorted(f["file_hash"] for f in self.script_analysis.values())
+        return hashlib.md5("".join(hashes).encode()).hexdigest()[:8]
+
+    def _get_recommended_action(self, cluster_result: dict) -> str:
+        """Generate actionable recommendation using rules + LLM"""
+        # Rule-based recommendations
+        if len(cluster_result["errors"]) > 0:
+            return "Investigate errors before consolidation"
+        if len(cluster_result["functions"]) < 2:
+            return "Monitor for additional implementations"
+        
+        # LLM-enhanced recommendation
+        try:
+            prompt = f"Suggest consolidation action for these functions:\n"
+            prompt += "\n".join(f["name"] for f in cluster_result["functions"])
+            return generate_response(prompt, max_tokens=100)
+        except Exception:
+            return "Consolidate similar implementations into canonical version"
+
+    def _get_next_steps(self, cluster_result: dict) -> str:
+        """Generate next steps for the cluster"""
+        steps = []
+        if cluster_result.get("output_path"):
+            steps.append(f"Review generated code: {cluster_result['output_path']}")
+        if len(cluster_result["functions"]) > 3:
+            steps.append("Consider creating utility module")
+        steps.append("Verify backward compatibility")
+        return " • ".join(steps)
 
     def _load_checkpoint(self) -> None:
         """Load previous state from checkpoint file."""
@@ -954,10 +999,54 @@ def main() -> None:
         # Create timestamped report filename
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         report_path = report_dir / f"consolidation_report_{timestamp}.md"
+        json_path = report_dir / f"consolidation_report_{timestamp}.json"
         
-        # Write both full and simplified reports
+        # Generate and save reports
+        report_content = consolidator.generate_report(pipeline_report)
         with open(report_path, "w") as f:
-            f.write(consolidator.generate_report(pipeline_report))
+            f.write(report_content)
+            
+        # Save machine-readable JSON report
+        json_report = {
+            "metadata": {
+                "generated": datetime.datetime.now().isoformat(),
+                "project_root": str(Path(args.directory).resolve()),
+                "config_version": hashlib.md5(json.dumps(consolidator.config).encode()).hexdigest()[:8],
+                "file_hashes_version": consolidator._get_file_hashes_version()
+            },
+            "clusters": [
+                {
+                    k: v for k, v in cluster.items()
+                    if k not in ["consolidated", "errors"]
+                } 
+                for cluster in pipeline_report["processing"]["clusters"]
+            ]
+        }
+        
+        with open(json_path, "w") as f:
+            json.dump(json_report, f, indent=2)
+            
+        # Compare with previous run if available
+        previous_reports = list(report_dir.glob("*.json"))
+        if len(previous_reports) > 1:  # Current report + at least one previous
+            latest_report = max(
+                [p for p in previous_reports if p != json_path], 
+                key=lambda p: p.stat().st_mtime
+            )
+            with open(latest_report) as f:
+                previous = json.load(f)
+            
+            comparison = {
+                "resolved_clusters": len(previous["clusters"]) - len(json_report["clusters"]),
+                "carryover_clusters": len([
+                    c for c in json_report["clusters"]
+                    if c["cluster_id"] in [pc["cluster_id"] for pc in previous["clusters"]]
+                ])
+            }
+            
+            print(f"\n\033[1mProgress since last run:\033[0m")
+            print(f"  Resolved clusters: {comparison['resolved_clusters']}")
+            print(f"  Carryover clusters: {comparison['carryover_clusters']}")
             
         # Print key findings to console
         # Print condensed summary with colors
