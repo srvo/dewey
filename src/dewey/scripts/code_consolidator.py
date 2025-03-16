@@ -251,7 +251,7 @@ class CodeConsolidator:
         for attempt in range(max_retries):
             try:
                 # Test actual LLM connectivity
-                generate_response("test")
+                self.llm.generate_response("test")
                 logger.info(f"LLM client initialized successfully with rate limiter: {self.rate_limiter}")
                 return True
             except Exception as e:
@@ -524,7 +524,7 @@ class CodeConsolidator:
         if self.llm_client:
             prompt = f"Normalize this function signature for hashing:\nName: {func_details['name']}\nArgs: {func_details['args']}\nComplexity: {func_details['complexity']}"
             try:
-                normalized = generate_response(prompt, timeout=10)
+                normalized = self.llm.generate_response(prompt, timeout=10)
                 return hashlib.md5(normalized.encode()).hexdigest()
             except Exception as e:
                 logger.debug(f"LLM normalization failed: {e}")
@@ -953,7 +953,7 @@ class CodeConsolidator:
             model = self.config["llm"]["default_model"]
             self.rate_limiter.check_limit(model, prompt)
             
-            consolidated = generate_response(
+            consolidated = self.llm.generate_response(
                 prompt,
                 model=model,
                 temperature=self.config["llm"]["temperature"],
@@ -1074,7 +1074,7 @@ class CodeConsolidator:
                 return "Consolidate similar implementations into canonical version"
             
             self.rate_limiter.check_limit(model, prompt)
-            return generate_response(prompt, max_tokens=100)
+            return self.llm.generate_response(prompt, max_tokens=100)
         except Exception:
             return "Consolidate similar implementations into canonical version"
 
