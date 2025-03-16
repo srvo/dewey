@@ -46,23 +46,28 @@ class VectorStore:
             "hnsw:space": "cosine"
         })
 
-        # Initialize client
-        self.client = chromadb.PersistentClient(path=str(self.persist_dir))
-        self.collection = self.client.get_or_create_collection(
-            self.collection_name,
-            metadata={**self.hnsw_config}  # Include all HNSW params from start
-        )
-
-        # Apply HNSW configuration
-        self._apply_hnsw_settings()
-        
-        # Initialize metrics
+        # Initialize metrics first
         self.metrics = {
             "upsert_count": 0,
             "query_count": 0,
             "last_operation": None,
             "errors": []
         }
+
+        # Initialize client with HNSW params in metadata
+        self.client = chromadb.PersistentClient(path=str(self.persist_dir))
+        
+        # Check for existing collection
+        try:
+            self.collection = self.client.get_collection(self.collection_name)
+            if self.collection.metadata.get("hnsw:space") != self.hnsw_config.get("hnsw:space"):
+                raise ValueError("Existing collection has incompatible distance function")
+        except Exception:
+            # Create new collection with current config
+            self.collection = self.client.create_collection(
+                self.collection_name,
+                metadata={**self.hnsw_config}
+            )
 
     def generate_embedding(self, text: str) -> list[float]:
         """Generate embedding for function context."""
@@ -138,25 +143,6 @@ class VectorStore:
             logger.error(f"Query failed: {e}")
             return []
 
-    def _apply_hnsw_settings(self) -> None:
-        """Apply HNSW configuration to collection.
-        
-        Updates the collection metadata with HNSW parameters for optimized
-        approximate nearest neighbor search.
-        """
-        try:
-            # ChromaDB requires updating collection metadata
-            self.collection.modify(
-                metadata={**self.hnsw_config}
-            )
-            logger.debug("Applied HNSW configuration")
-        except Exception as e:
-            logger.error(f"Failed to apply HNSW settings: {e}")
-            self.metrics["errors"].append({
-                "operation": "hnsw_config",
-                "error": str(e)
-            })
-            raise
 
     def persist(self) -> None:
         """Persist the database to disk with timeout."""
