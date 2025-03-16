@@ -1,7 +1,7 @@
 ```python
 from typing import Optional, Union, List, Dict, Any
 
-class DataProcessor:
+class DataHandler:
     """
     A comprehensive data processing class that combines initialization and representation functionalities.
 
@@ -11,7 +11,7 @@ class DataProcessor:
 
     def __init__(self, name: str) -> None:
         """
-        Initializes a DataProcessor object.
+        Initializes a DataHandler object.
 
         Args:
             name: The name of the data processor.  Must be a string.
@@ -20,7 +20,7 @@ class DataProcessor:
             TypeError: If the provided name is not a string.
 
         Examples:
-            >>> processor = DataProcessor("MyProcessor")
+            >>> processor = DataHandler("MyProcessor")
             >>> processor.name
             "MyProcessor"
         """
@@ -31,36 +31,36 @@ class DataProcessor:
 
     def __repr__(self) -> str:
         """
-        Returns a string representation of the DataProcessor object.
+        Returns a string representation of the DataHandler object.
 
         This representation is suitable for debugging and logging purposes.
 
         Returns:
-            A string representing the DataProcessor object in the format "DataProcessor(name='<name>')".
+            A string representing the DataHandler object in the format "DataHandler(name='<name>')".
 
         Examples:
-            >>> processor = DataProcessor("MyProcessor")
+            >>> processor = DataHandler("MyProcessor")
             >>> repr(processor)
-            "DataProcessor(name='MyProcessor')"
+            "DataHandler(name='MyProcessor')"
         """
-        return f"DataProcessor(name='{self.name}')"
+        return f"DataHandler(name='{self.name}')"
 
 
 # Example Usage (demonstrates the functionality and edge case handling)
 if __name__ == '__main__':
     # Valid initialization
-    processor1 = DataProcessor("MyDataProcessor")
-    print(f"Processor 1: {processor1}")  # Output: Processor 1: DataProcessor(name='MyDataProcessor')
+    processor1 = DataHandler("MyDataProcessor")
+    print(f"Processor 1: {processor1}")  # Output: Processor 1: DataHandler(name='MyDataProcessor')
 
     # Invalid initialization (TypeError)
     try:
-        processor2 = DataProcessor(123)
+        processor2 = DataHandler(123)
     except TypeError as e:
         print(f"Error initializing processor 2: {e}") # Output: Error initializing processor 2: Name must be a string.
 
     # Representation check
-    processor3 = DataProcessor("AnotherProcessor")
-    print(f"Representation of processor 3: {repr(processor3)}") # Output: Representation of processor 3: DataProcessor(name='AnotherProcessor')
+    processor3 = DataHandler("AnotherProcessor")
+    print(f"Representation of processor 3: {repr(processor3)}") # Output: Representation of processor 3: DataHandler(name='AnotherProcessor')
 ```
 
 Key improvements and explanations:
