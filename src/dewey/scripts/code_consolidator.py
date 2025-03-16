@@ -38,7 +38,10 @@ class ConsolidationReporter:
         }
 
     def update_stage(
-        self, name: str, increment: int = 1, message: str | None = None
+        self,
+        name: str,
+        increment: int = 1,
+        message: str | None = None,
     ) -> None:
         if name in self.stages:
             self.stages[name]["completed"] += increment
@@ -120,7 +123,7 @@ class CodeConsolidator:
             {
                 "model_limits": llm_config.get("model_limits", {}),
                 "cooldown_minutes": llm_config.get("cooldown_minutes", 5),
-            }
+            },
         )
 
         # Validate project structure
@@ -213,7 +216,7 @@ class CodeConsolidator:
                             "--unsafe-fixes",
                             "--select",
                             "ALL",
-                        ]
+                        ],
                     },
                     {"command": ["black"]},
                 ],
@@ -234,7 +237,7 @@ class CodeConsolidator:
                         config.setdefault("llm", {}).setdefault("batch_size", 250)
                         config.setdefault("llm", {}).setdefault("max_workers", 8)
                         logger.info(
-                            "Auto-configured for large-scale operation (900+ files)"
+                            "Auto-configured for large-scale operation (900+ files)",
                         )
 
                     return config
@@ -270,7 +273,7 @@ class CodeConsolidator:
                 # Test actual LLM connectivity
                 self.llm.generate_response("test")
                 logger.info(
-                    f"LLM client initialized successfully with rate limiter: {self.rate_limiter}"
+                    f"LLM client initialized successfully with rate limiter: {self.rate_limiter}",
                 )
                 return True
             except Exception as e:
@@ -291,44 +294,57 @@ class CodeConsolidator:
         try:
             # Get all files
             all_files = self._find_script_files()
-            
+
             # Check if we should resume
             if self.processed_files:
-                resume = input(
-                    f"Found {len(self.processed_files)} processed files. "
-                    f"{len(self.clustered_files)} clustered. "
-                    "Resume? [Y/n] "
-                ).lower() != "n"
+                resume = (
+                    input(
+                        f"Found {len(self.processed_files)} processed files. "
+                        f"{len(self.clustered_files)} clustered. "
+                        "Resume? [Y/n] ",
+                    ).lower()
+                    != "n"
+                )
                 if not resume:
                     self.processed_files = set()
                     self.clustered_files = set()
                     self.script_analysis = {}
-            
+
             # Filter out already processed
             unprocessed = [f for f in all_files if str(f) not in self.processed_files]
-            
+
             self.reporter.begin_stage("file_processing", "📝", total=len(unprocessed))
 
             # Process only new files
             with ThreadPoolExecutor(max_workers=os.cpu_count()) as executor:
-                futures = [executor.submit(self._process_file_safe, path) for path in unprocessed]
+                futures = [
+                    executor.submit(self._process_file_safe, path)
+                    for path in unprocessed
+                ]
 
                 for future in tqdm(
-                    as_completed(futures), total=len(unprocessed), desc="📄 Processing files"
+                    as_completed(futures),
+                    total=len(unprocessed),
+                    desc="📄 Processing files",
                 ):
                     functions, path = future.result()
                     self.script_analysis[str(path)] = functions
                     self.reporter.update_stage(
-                        "file_processing", increment=1, message=f"Processed {path.name}"
+                        "file_processing",
+                        increment=1,
+                        message=f"Processed {path.name}",
                     )
 
             self.reporter.end_stage("file_processing")
 
             self.reporter.begin_stage(
-                "clustering", "🧩", total=len(self.script_analysis)
+                "clustering",
+                "🧩",
+                total=len(self.script_analysis),
             )
             for path, functions in tqdm(
-                self.script_analysis.items(), desc="🔗 Clustering functions"
+                self.script_analysis.items(),
+                desc="🔗 Clustering functions",
             ):
                 self._cluster_functions(functions, Path(path))
                 self.reporter.update_stage("clustering", increment=1)
@@ -426,7 +442,8 @@ class CodeConsolidator:
                     if "):" in joined_line:
                         full_def = " ".join(line_buffer)
                         func_match = re.match(
-                            r"^(async\s+)?def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(", full_def
+                            r"^(async\s+)?def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(",
+                            full_def,
                         )
                         if func_match:
                             func_name = func_match.group(2)
@@ -446,7 +463,7 @@ class CodeConsolidator:
                             current_function = func_name
                             in_function = True
                             indent_level = len(line_buffer[0]) - len(
-                                line_buffer[0].lstrip()
+                                line_buffer[0].lstrip(),
                             )
                         line_buffer = []
                         continue
@@ -522,7 +539,7 @@ class CodeConsolidator:
         # Skip already clustered files
         if str(script_path) in self.clustered_files:
             return  # Already clustered
-            
+
         try:
             for name, details in functions.items():
                 context = details.get("context", "")
@@ -560,7 +577,7 @@ class CodeConsolidator:
                 self._save_checkpoint()
 
         except Exception as e:
-            logger.error(f"Failed to cluster {script_path}: {e}")
+            logger.exception(f"Failed to cluster {script_path}: {e}")
             self.reporter.error(f"Clustering error: {str(e)[:200]}")
 
     def _get_cluster_key_for_id(self, func_id: str) -> tuple:
@@ -678,7 +695,8 @@ class CodeConsolidator:
 
         try:
             self.llm.generate_response(
-                prompt, model=self.config["llm"]["default_model"]
+                prompt,
+                model=self.config["llm"]["default_model"],
             )
         except Exception as e:
             logger.exception(f"LLM consultation failed: {e}")
@@ -744,7 +762,7 @@ class CodeConsolidator:
                         "path": str(script_path),
                         "type": "full_file",
                         "content_hash": hashlib.md5(content.encode()).hexdigest(),
-                    }
+                    },
                 ],
             )
         except Exception as e:
@@ -861,7 +879,7 @@ class CodeConsolidator:
         # Process in large batches for maximum throughput
         batch_size = self.config["llm"]["batch_size"]
         with ThreadPoolExecutor(
-            max_workers=self.config["llm"]["max_workers"]
+            max_workers=self.config["llm"]["max_workers"],
         ) as executor:
             for i in range(0, len(hash_queue), batch_size):
                 batch = hash_queue[i : i + batch_size]
@@ -925,7 +943,7 @@ class CodeConsolidator:
                             "path": str(script_path),
                             "type": "full_file",
                             "content_hash": hashlib.md5(content.encode()).hexdigest(),
-                        }
+                        },
                     ],
                 )
                 results["processed"] += 1
@@ -992,7 +1010,8 @@ class CodeConsolidator:
         }
         try:
             self.reporter.update_stage(
-                "processing", message=f"Processing cluster: {result['cluster_name']}"
+                "processing",
+                message=f"Processing cluster: {result['cluster_name']}",
             )
             result["recommended_action"] = self._get_recommended_action(result)
             result["next_steps"] = self._get_next_steps(result)
@@ -1005,7 +1024,7 @@ class CodeConsolidator:
                 file_path = self.root_dir / file_id
                 functions = self._extract_functions(file_path)
                 result["functions"].extend(
-                    functions.values()
+                    functions.values(),
                 )  # Get dict values instead of keys
 
             # Generate consolidated code with enhanced prompt
@@ -1166,7 +1185,7 @@ class CodeConsolidator:
             model = self.config["llm"]["default_model"]
             if self.rate_limiter.is_in_cooldown(model):
                 logger.warning(
-                    f"Rate limit cooldown active for {model}, using fallback recommendation"
+                    f"Rate limit cooldown active for {model}, using fallback recommendation",
                 )
                 return "Consolidate similar implementations into canonical version"
 
@@ -1202,7 +1221,8 @@ class CodeConsolidator:
         # Check vector DB status
         if self.vector_db:
             self.reporter.update_stage(
-                "initial_checks", message="Vector database connected"
+                "initial_checks",
+                message="Vector database connected",
             )
         else:
             self.reporter.warning("Vector database disabled")
@@ -1210,7 +1230,8 @@ class CodeConsolidator:
         # File count estimate
         files = self._find_script_files()
         self.reporter.update_stage(
-            "initial_checks", message=f"Found {len(files)} script files"
+            "initial_checks",
+            message=f"Found {len(files)} script files",
         )
 
         self.reporter.end_stage("initial_checks")
@@ -1266,7 +1287,9 @@ def main() -> None:
         help="Directory to analyze (default: current directory)",
     )
     parser.add_argument(
-        "--report", action="store_true", help="Generate markdown report"
+        "--report",
+        action="store_true",
+        help="Generate markdown report",
     )
     parser.add_argument(
         "--max-files",
@@ -1310,7 +1333,7 @@ def main() -> None:
                 "generated": datetime.datetime.now().isoformat(),
                 "project_root": str(Path(args.directory).resolve()),
                 "config_version": hashlib.md5(
-                    json.dumps(consolidator.config).encode()
+                    json.dumps(consolidator.config).encode(),
                 ).hexdigest()[:8],
                 "file_hashes_version": consolidator._get_file_hashes_version(),
             },
@@ -1346,7 +1369,7 @@ def main() -> None:
                         for c in json_report["clusters"]
                         if c["cluster_id"]
                         in [pc["cluster_id"] for pc in previous["clusters"]]
-                    ]
+                    ],
                 ),
             }
 
@@ -1362,10 +1385,11 @@ def main() -> None:
 if __name__ == "__main__" and __package__ is None:
     # Prevent direct execution when package exists
     from dewey.scripts import code_consolidator
+
     code_consolidator.main()
 else:
     # Proper package-relative execution
-    def __main__():
+    def __main__() -> None:
         main()
 
     if __name__ == "__main__":
