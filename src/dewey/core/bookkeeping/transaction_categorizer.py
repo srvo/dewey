@@ -46,7 +46,7 @@ def load_classification_rules(rules_file: str) -> dict[str, Any]:
         raise
 
 
-def create_backup(file_path: str) -> str:
+def create_backup(file_path: Path) -> str:
     """Create a backup of the journal file.
 
     Args:
@@ -92,7 +92,7 @@ def classify_transaction(transaction: dict[str, Any], rules: dict[str, Any]) -> 
     return rules["default_category"]
 
 
-def process_journal_file(file_path: str, rules: dict[str, Any]) -> bool:
+def process_journal_file(file_path: Path, rules: dict[str, Any]) -> bool:
     """Process a journal file and categorize its transactions.
 
     Args:
@@ -154,7 +154,7 @@ def process_journal_file(file_path: str, rules: dict[str, Any]) -> bool:
     return True
 
 
-def process_by_year_files(base_dir: str, rules: dict[str, Any]) -> None:
+def process_by_year_files(base_dir: Path, rules: dict[str, Any]) -> None:
     """Process all journal files within a base directory, organized by year.
 
     Args:
