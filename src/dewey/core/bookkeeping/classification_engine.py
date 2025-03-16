@@ -4,7 +4,8 @@ import re
 from datetime import datetime
 from pathlib import Path
 from re import Pattern
-from typing import TYPE_CHECKING
+import fnmatch
+from typing import TYPE_CHECKING, List, Tuple, Dict
 
 if TYPE_CHECKING:
     from src.dewey.core.bookkeeping.writers.journal_writer_fab1858b import JournalWriter
@@ -19,7 +20,7 @@ class ClassificationError(Exception):
 class ClassificationEngine:
     """Handles transaction categorization logic."""
 
-    def __init__(self, rules_path: Path) -> None:
+    def __init__(self, rules_path: Path, ledger_file: Path) -> None:
         """Initializes the ClassificationEngine.
 
         Args:
@@ -27,9 +28,14 @@ class ClassificationEngine:
             rules_path: Path to the JSON file containing classification rules.
 
         """
+        self.ledger_file = ledger_file
         self.rules: dict = self._load_rules(rules_path)
         self.compiled_patterns: dict[str, Pattern] = self._compile_patterns()
         self._valid_categories: list[str] = self.rules["categories"]
+        self.RULE_SOURCES = [
+            ("overrides.json", 0),  # Highest priority
+            ("manual_rules.json", 1),
+            ("base_rules.json", 2)]  # Lowest priority
 
     @property
     def categories(self) -> list[str]:
@@ -110,8 +116,31 @@ class ClassificationEngine:
                 ) from None
         return compiled
 
-    def export_hledger_rules(self, output_path: Path) -> None:
-        """Export rules in hledger's CSV format.
+   def load_classification_rules(self) -> List[Tuple[Pattern, str, int]]:
+       """Load and compile classification rules with priority.
+
+       Returns
+       -------
+           A list of compiled rules with their associated category and priority.
+
+       """
+       logger.info("Loading classification rules with priority system")
+
+       rules = self.load_prioritized_rules()
+       compiled_rules = []
+
+       for (pattern, data), priority in rules:
+           category = data["category"]
+           formatted_category = self.format_category(category)
+
+           # Handle different pattern types
+           compiled = self.compile_pattern(pattern)
+
+           compiled_rules.append((compiled, formatted_category, priority))
+
+       logger.info(f"Loaded {len(compiled_rules)} classification rules")
+   def export_hledger_rules(self, output_path: Path) -> None:
+       """Export rules in hledger's CSV format.
 
         Args:
         ----

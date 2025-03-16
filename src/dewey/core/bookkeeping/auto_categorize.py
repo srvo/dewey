@@ -5,7 +5,7 @@ import logging
 import re
 import shutil
 from pathlib import Path
-from typing import List, Tuple, Dict, Pattern
+from typing import List, Tuple, Dict
 
 # File header: Automatically categorizes transactions based on predefined rules.
 
