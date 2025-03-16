@@ -17,7 +17,7 @@ from .code_consolidator import CodeConsolidator, ConsolidationReporter
 class PRDManager:
     """Interactive PRD builder with architectural guardrails."""
 
-    def __init__(self, root_dir: Path = Path(".")) -> None:
+    def __init__(self, root_dir: Path = Path()) -> None:
         self.root_dir = root_dir
         self.console = Console()
         self.config = self._load_prd_config()
@@ -32,16 +32,17 @@ class PRDManager:
     def _load_prd_config(self) -> dict:
         """Load PRD config from central dewey.yaml."""
         from dewey.config import load_config
+
         full_config = load_config()
         prd_config = full_config.get("prd", {})
-        
+
         # Set defaults if section missing
         defaults = {
             "base_path": "config/prd",
             "active_prd": "current_prd.yaml",
             "schema": {
                 "components": [
-                    {"name": "", "purpose": "", "dependencies": [], "interfaces": []}
+                    {"name": "", "purpose": "", "dependencies": [], "interfaces": []},
                 ],
                 "decisions": [
                     {
@@ -49,29 +50,29 @@ class PRDManager:
                         "description": "",
                         "alternatives": [],
                         "rationale": "",
-                    }
-                ]
+                    },
+                ],
             },
             "references": {
                 "conventions": "../.aider/CONVENTIONS.md",
-                "codebase_analysis": "../docs/codebase_analysis.md"
-            }
+                "codebase_analysis": "../docs/codebase_analysis.md",
+            },
         }
-        
+
         return {**defaults, **prd_config}  # Merge with defaults
-    
+
     def _validate_prd_path(self) -> Path:
-        prd_dir = self.root_dir / self.config['prd']['base_path']
+        prd_dir = self.root_dir / self.config["prd"]["base_path"]
         prd_dir.mkdir(exist_ok=True, parents=True)
-        return prd_dir / self.config['prd']['active_prd']
-    
+        return prd_dir / self.config["prd"]["active_prd"]
+
     def _load_conventions(self) -> dict:
-        """Parse actual CONVENTIONS.md content"""
-        conv_path = self.root_dir / self.config['prd']['conventions_ref']
+        """Parse actual CONVENTIONS.md content."""
+        conv_path = self.root_dir / self.config["prd"]["conventions_ref"]
         return self._parse_markdown_conventions(conv_path)
 
     def _parse_markdown_conventions(self, path: Path) -> dict:
-        """Convert CONVENTIONS.md to structured data"""
+        """Convert CONVENTIONS.md to structured data."""
         sections = {}
         current_section = None
         for line in path.read_text().splitlines():
@@ -118,74 +119,74 @@ class PRDManager:
         return True
 
     def _architectural_review(self, func_desc: str) -> dict:
-        """Enhanced LLM analysis with codebase context"""
+        """Enhanced LLM analysis with codebase context."""
         prompt = f"""
         Project Conventions:
         {json.dumps(self.conventions, indent=2)}
-        
+
         Existing Components:
         {json.dumps(self._get_similar_components(func_desc), indent=2)}
-        
+
         New Function Description: {func_desc}
-        
+
         Output JSON with:
         - recommended_module: string (match project structure)
         - required_dependencies: list of existing components
         - architecture_rules: list of applicable conventions
         - potential_conflicts: list of strings
         """
-        
+
         response = self.llm.generate_response(
             prompt,
             response_format={"type": "json_object"},
-            temperature=0.1
+            temperature=0.1,
         )
         return json.loads(response)
-    
+
     def _get_similar_components(self, query: str) -> list:
-        """Find related components using vector DB"""
+        """Find related components using vector DB."""
         if not self.vector_db:
             return []
-            
+
         return self.vector_db.collection.query(
             query_texts=[query],
             n_results=5,
-            include=["metadatas"]
-        )['metadatas'][0]
+            include=["metadatas"],
+        )["metadatas"][0]
 
     def interactive_builder(self) -> None:
-        """Guided PRD creation with validation"""
+        """Guided PRD creation with validation."""
         self.console.print("[bold]PRD Builder[/]")
-        
+
         while True:
             try:
                 func_name = Prompt.ask("Function name (or 'exit')").strip()
-                if func_name.lower() == 'exit':
+                if func_name.lower() == "exit":
                     break
-                    
-                if any(c in func_name for c in ' _'):
+
+                if any(c in func_name for c in " _"):
                     self.console.print("[red]Use camelCase naming[/]", style="red")
                     continue
-                    
+
                 func_desc = Prompt.ask("Description (include input/output types)")
                 analysis = self._architectural_review(func_desc)
-                
+
                 self._display_analysis(analysis)
-                
-                if analysis.get('potential_conflicts'):
+
+                if analysis.get("potential_conflicts"):
                     self.console.print("\n[bold]Conflicts Detected:[/]")
-                    for conflict in analysis['potential_conflicts']:
+                    for conflict in analysis["potential_conflicts"]:
                         self.console.print(f"  ⚠️  {conflict}")
-                        
+
                 if not Confirm.ask("Continue with this design?"):
                     continue
-                    
+
                 self._record_component(func_name, func_desc, analysis)
-                
+
             except KeyboardInterrupt:
                 self.console.print("\n[yellow]Partial PRD saved[/]")
                 break
-                
+
         self._save_prd()
         self._generate_docs()
 
@@ -195,21 +196,21 @@ class PRDManager:
             yaml.dump(self.prd_data, f, sort_keys=False)
 
     def _generate_docs(self) -> None:
-        """Create Markdown version of PRD"""
-        md_path = self.prd_path.with_suffix('.md')
+        """Create Markdown version of PRD."""
+        md_path = self.prd_path.with_suffix(".md")
         template = f"""
         # Project Requirements Document
-        
+
         ## Components
         {self._format_components()}
-        
+
         ## Architectural Decisions
         {self._format_decisions()}
-        
+
         ## Convention Adherence
         {self._format_conventions()}
         """
-        
+
         md_path.write_text(template)
         self.console.print(f"[green]Markdown PRD generated: {md_path}[/]")
 
@@ -219,21 +220,23 @@ console = Console()
 
 
 @app.command()
-def init():
-    """Initialize new PRD with project scan"""
+def init() -> None:
+    """Initialize new PRD with project scan."""
     manager = PRDManager()
     manager.interactive_builder()
-    
+
+
 @app.command()
-def validate():
-    """Check PRD against current codebase"""
+def validate() -> None:
+    """Check PRD against current codebase."""
     manager = PRDManager()
     report = manager.validate_prd()
     console.print(report)
 
+
 @app.command()
-def export():
-    """Generate Markdown version"""
+def export() -> None:
+    """Generate Markdown version."""
     manager = PRDManager()
     manager._generate_docs()
 
