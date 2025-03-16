@@ -49,7 +49,6 @@ class PRDManager:
         self.code_insights = self._analyze_codebase()
         self.modules = self._discover_modules()
         self.console.print(f"Initialized PRDManager with:\n"
-                         f"  Target Dir: {self.target_dir}\n"
                          f"  Project Root: {self.project_root}\n"
                          f"  PRD Path: {self.prd_path}")
 
