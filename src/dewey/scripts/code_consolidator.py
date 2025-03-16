@@ -871,11 +871,14 @@ class CodeConsolidator:
         for cluster in pipeline_report["processing"]["clusters"]:
             status = "SUCCESS" if not cluster["errors"] else "FAILED"
             report.append(
-                f"\n### Cluster: {', '.join(cluster['cluster'])} ({status})"
-                f"\n**Functions:** {len(cluster['functions'])}"
-                f"\n**Errors:** {len(cluster['errors'])}"
-                f"\n**Consolidated Code:**\n```python\n{cluster['consolidated']}\n```"
-                f"\n**Saved to:** {cluster.get('output_path', 'Not saved')}"
+                f"\n### Cluster: {', '.join(c.split('/')[-1] for c in cluster['cluster'])} ({status})"
+                f"\n- Functions: {len(cluster['functions'])}"
+                f"\n- Errors: {len(cluster['errors'])}"
+                + (f"\n```\n" + "\n".join(cluster['errors'][:3]) + "\n```" if cluster['']'] else "")
+                + (f"\n```python\n{cluster['consolidated'][:500]}...\n```" 
+                   if cluster['consolidated'] and len(cluster['consolidated']) > 50 
+                   else "")
+                + (f"\nSaved to: {cluster.get('output_path', '')}" if cluster.get('output_path') else "")
             )
             
         return "\n".join(report)
@@ -957,10 +960,21 @@ def main() -> None:
             f.write(consolidator.generate_report(pipeline_report))
             
         # Print key findings to console
-        logger.info(f"\n📊 Consolidation Report Summary:")
-        logger.info(f"✅ Successful clusters: {pipeline_report['processing']['success']}")
-        logger.info(f"❌ Failed clusters: {pipeline_report['processing']['failed']}")
-        logger.info(f"📄 Full report saved to: {report_path.resolve()}")
+        # Print condensed summary with colors
+        print(f"\n\033[1mConsolidation Report Summary:\033[0m")
+        print(f"\033[32m✅ Successful clusters: {pipeline_report['processing']['success']}\033[0m")
+        print(f"\033[31m❌ Failed clusters: {pipeline_report['processing']['failed']}\033[0m")
+        
+        if pipeline_report['processing']['failed'] > 0:
+            print(f"\n\033[1mTop Errors:\033[0m")
+            for cluster in pipeline_report['processing']['clusters']:
+                if cluster['errors']:
+                    print(f"\n\033[33m{cluster['cluster'][0].split('/')[-1]}\033[0m")
+                    print(f"  - {cluster['errors'][0]}")
+                    if len(cluster['errors']) > 1:
+                        print(f"  + {len(cluster['errors'])-1} more errors")
+        
+        print(f"\n\033[1mFull report:\033[0m {report_path.resolve()}")
 
 
 if __name__ == "__main__":
