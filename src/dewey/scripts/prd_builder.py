@@ -220,18 +220,53 @@ class PRDManager:
         self._update_module_prd(target_dir, analysis, func_info)
         self._remove_duplicate_code(analysis)
 
+    def _reformat_code(self, content: str, target_module: str) -> str:
+        """Reformat code using LLM with Gemini first, DeepInfra fallback."""
+        prompt = f"""Reformat this Python code to match our project conventions:
+        - Add type hints
+        - Include Google-style docstrings
+        - Apply PEP 8 formatting
+        - Add proper error handling
+        - Remove unused imports
+        - Make it match {target_module} module conventions
+        
+        Return only the reformed code with no commentary.
+        
+        Code to reformat:
+        {content}
+        """
+        
+        try:
+            return self.llm.generate_response(
+                prompt,
+                model="gemini-2.0-flash",
+                temperature=0.1,
+                fallback_model="google/gemini-2.0-flash-001",
+                max_tokens=4000
+            )
+        except Exception as e:
+            self.console.print(f"[yellow]⚠️ Reformating failed: {e}[/yellow]")
+            return content  # Return original if reformat fails
+
     def _move_function_file(self, src: Path, target_module: str, func_info: dict) -> None:
-        """Move file to appropriate directory with conflict resolution."""
+        """Move and reformat file with LLM-powered cleanup."""
         target_dir = self.root_dir / "src" / "dewey" / target_module
         target_dir.mkdir(exist_ok=True)
         
-        # Find existing files with similar functionality
+        # Generate unique filename
         existing_files = [f.name for f in target_dir.glob("*.py")]
         new_name = self._get_unique_filename(func_info["name"], existing_files)
         
+        # Read, reformat, and write
+        original_content = src.read_text()
+        reformed_content = self._reformat_code(original_content, target_module)
+        
         dest_path = target_dir / new_name
-        src.rename(dest_path)
-        self.console.print(f"✅ Moved to: {dest_path.relative_to(self.root_dir)}")
+        dest_path.write_text(reformed_content)
+        src.unlink()  # Remove original consolidated file
+        
+        self.console.print(f"✅ Moved to: [bold green]{dest_path.relative_to(self.root_dir)}[/]")
+        self.console.print(f"📏 Size change: {len(original_content)} → {len(reformed_content)} chars")
 
     def _update_module_prd(self, module: str, analysis: dict, func_info: dict) -> None:
         """Create/update the module's PRD file."""

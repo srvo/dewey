@@ -180,9 +180,9 @@ class GeminiClient:
         genai.configure(api_key=self.api_key)
         self.rate_limiter = RateLimiter()
         self.config = config or {}
-        self.client = genai.GenerativeModel(
-            self.config.get("default_model", "gemini-2.0-flash"),
-        )
+        self.default_model = self.config.get("default_model", "gemini-2.0-flash")
+        self.fallback_model = self.config.get("fallback_model", "google/gemini-2.0-flash-001")
+        self.client = genai.GenerativeModel(self.default_model)
 
     def generate_content(
         self,
