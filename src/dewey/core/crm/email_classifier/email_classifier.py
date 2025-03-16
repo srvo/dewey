@@ -664,6 +664,7 @@ def main():
         # Calculate priority even if missing from analysis result
         if "priority" not in analysis_result:
             print(f"Calculating priority locally for {msg_id} (missing in analysis)")
+            #TODO move output directory to ~/input_data
             analysis_result['priority'] = calculate_priority(analysis_result, preferences)
 
         priority = analysis_result['priority']
@@ -677,6 +678,10 @@ def main():
     # Save feedback file
     if feedback_entries:
         save_feedback(feedback_entries)
+
+    # Generate draft responses if requested
+    if args.generate_drafts:
+        print("\nGenerating draft responses for critical emails...")
 
     # Generate draft responses if requested
     if args.generate_drafts:
