@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 import fnmatch
 import json
-import logging
 import re
 import shutil
 from pathlib import Path
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Any
+
+from dewey.config import logging  # Centralized logging
 
 # File header: Automatically categorizes transactions based on predefined rules.
 
