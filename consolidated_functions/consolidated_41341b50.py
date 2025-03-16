@@ -1,4 +1,3 @@
-```python
 from typing import List, Union, Tuple, Optional, Dict, Any
 import math
 import logging
