@@ -38,9 +38,10 @@ class VectorStore:
 
         # Set default HNSW parameters
         self.hnsw_config = hnsw_config or {
-            "hnsw:ef": 200,
-            "hnsw:ef_construction": 300,
+            "hnsw:construction_ef": 300,  # Correct parameter name
+            "hnsw:search_ef": 200,        # Changed from "hnsw:ef"
             "hnsw:M": 24,
+            "hnsw:space": "cosine"        # Include space in config
         }
 
         # Initialize with timeout settings
@@ -52,7 +53,7 @@ class VectorStore:
         )
         self.collection = self.client.get_or_create_collection(
             collection_name,
-            metadata={"hnsw:space": "cosine"},  # Explicitly set similarity metric
+            metadata={**self.hnsw_config}  # Include all HNSW params from start
         )
         self.embedding_model = SentenceTransformer(embedding_model)
 
