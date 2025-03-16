@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import argparse
+import logging
 import os
 import sys
 from datetime import date, datetime
++from pathlib import Path
 
 from dateutil.relativedelta import relativedelta
 
@@ -19,6 +21,14 @@ ASSUMPTIONS = [
     "Entries append to existing journal file",
 ]
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
+
 
 def validate_assumptions() -> None:
     """Validates key assumptions with user input."""
@@ -26,7 +36,7 @@ def validate_assumptions() -> None:
         while True:
             response = input(f"{i}. {assumption} (y/n): ").strip().lower()
             if response == "y":
-                break
+                break # type: ignore
             if response == "n":
                 sys.exit()
             else:
