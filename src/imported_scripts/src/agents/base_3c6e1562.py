@@ -14,8 +14,15 @@ from pydantic import BaseModel, Field
 from ulid import ULID
 
 from ..models.metrics import AgentInteraction
+from dewey.config import load_config, logging
 from .config import AIConfig
 
+# Load logging configuration
+config = load_config()
+logging_config = config.get("logging", {})
+
+# Configure logging
+logging.configure_logging(logging_config)
 logger = structlog.get_logger(__name__)
 
 

@@ -6,8 +6,14 @@ import shutil
 from pathlib import Path
 from typing import List, Tuple, Dict, Any
 
-from dewey.config import logging  # Centralized logging
+from dewey.config import load_config, logging  # Centralized logging
 
+# Load logging configuration
+config = load_config()
+logging_config = config.get("logging", {})
+
+# Configure logging
+logging.configure_logging(logging_config)
 logger = logging.getLogger(__name__)
 
 # File header: Automatically categorizes transactions based on predefined rules.
@@ -21,14 +27,6 @@ RULE_SOURCES = [
 
 # TODO: Fix search/replace block
 ]
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-logger = logging.getLogger(__name__)
 
 # Use absolute path for classification rules file
 CLASSIFICATION_FILE = Path.home() / "books/import/mercury/classification_rules.json"

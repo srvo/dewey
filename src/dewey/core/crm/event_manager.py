@@ -44,16 +44,20 @@ class EventManager:
             request_id: A unique identifier for the request.
             max_retries: The maximum number of retries for operations. Defaults to 3.
         """
+        from dewey.config import load_config
+
+        # Load logging configuration
+        config = load_config()
+        logging_config = config.get("logging", {})
+
+        # Configure logging
+        logging.configure_logging(logging_config)
+        self._logger = logging.getLogger(__name__)
+
         self.request_id = request_id
         self.max_retries = max_retries
         self._events: List[Dict[str, Any]] = []  # Internal storage for events
         self._context: Dict[str, Any] = {}  # Contextual data
-        self._logger = logging.getLogger(__name__)  # Use a logger for info, error, exception
-        self._logger.setLevel(logging.INFO)  # Set default log level
-        self._handler = logging.StreamHandler()  # Add a stream handler
-        self._formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        self._handler.setFormatter(self._formatter)
-        self._logger.addHandler(self._handler)
 
 
     def objects(self) -> List[Dict[str, Any]]:
