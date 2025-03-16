@@ -92,7 +92,7 @@ from tqdm import tqdm
 import spacy
 from spacy.lang.en.stop_words import STOP_WORDS
 
-from dewey.llm.llm_utils import generate_response, LLMHandler
+from dewey.llm.llm_utils import LLMHandler
 from dewey.llm.api_clients.gemini import RateLimiter
 
 logger = logging.getLogger(__name__)
@@ -612,7 +612,7 @@ class CodeConsolidator:
                 prompt += f"Docs: {details['docstring']}\n"
 
         try:
-            generate_response(prompt, model=self.config["llm"]["default_model"])
+            self.llm.generate_response(prompt, model=self.config["llm"]["default_model"])
         except Exception as e:
             logger.exception(f"LLM consultation failed: {e}")
 
