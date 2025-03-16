@@ -11,7 +11,7 @@ from typing import Any
 
 from dateutil.relativedelta import relativedelta
 
-# from dewey.config import logging  # Centralized logging
+from dewey.config import logging  # Centralized logging
 
 ASSUMPTIONS = [
     "Asset acquired on 2023-12-01 for £25 (fair value £2500)",
