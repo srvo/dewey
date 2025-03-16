@@ -46,7 +46,7 @@ def similarity_score(a: str, b: str) -> float:
     return SequenceMatcher(None, a, b).ratio()
 
 
-def match_transcript_files(
+def matchTranscripts(
     database_path: str,
     transcript_directory: str,
     episode_table_name: str = "episodes",
