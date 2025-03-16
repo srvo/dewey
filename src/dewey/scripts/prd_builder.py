@@ -16,7 +16,6 @@ from rich.console import Console
 from rich.prompt import Confirm, Prompt
 
 from ..llm.llm_utils import LLMHandler
-from src.dewey.utils.vector_db import VectorStore
 from .code_consolidator import CodeConsolidator, ConsolidationReporter
 
 
@@ -29,7 +28,6 @@ class PRDManager:
         self.config = self._load_prd_config()
         self.prd_path = self._validate_prd_path()
         self.llm = LLMHandler(config={})  
-        self.vector_db = VectorStore(collection_name="prd_components")
         self.conventions = self._load_conventions()
         self.prd_data = self._load_prd_template()
         self.reporter = ConsolidationReporter()
@@ -234,15 +232,8 @@ class PRDManager:
         return json.loads(response)
 
     def _get_similar_components(self, query: str) -> list:
-        """Find related components using vector DB."""
-        if not self.vector_db:
-            return []
-
-        return self.vector_db.collection.query(
-            query_texts=[query],
-            n_results=5,
-            include=["metadatas"],
-        )["metadatas"][0]
+        """Find related components by module name."""
+        return [m for m in self.modules if query.lower() in m.get("purpose", "").lower()]
 
     def process_consolidated_functions(self) -> None:
         """Process all consolidated functions interactively."""
@@ -402,17 +393,20 @@ class PRDManager:
 
     def _remove_duplicate_code(self, analysis: dict) -> None:
         """Find and remove duplicate code implementations."""
-        similar = self.vector_db.find_similar_functions(
-            analysis["content"], threshold=0.95
-        )
+        # Simple content-based duplicate detection
+        similar = []
+        for path in self.root_dir.glob("src/dewey/**/*.py"):
+            if path.read_text() == analysis["content"] and path != analysis["path"]:
+                similar.append(path)
+                
         if similar:
-            self.console.print(f"Found {len(similar)} potential duplicates:")
+            self.console.print(f"Found {len(similar)} exact duplicates:")
             for path in similar:
-                self.console.print(f" - {Path(path).relative_to(self.root_dir)}")
+                self.console.print(f" - {path.relative_to(self.root_dir)}")
 
             if Confirm.ask("Delete duplicates?"):
                 for path in similar:
-                    Path(path).unlink()
+                    path.unlink()
                     self.console.print(f"🗑️ Deleted: {path}")
 
     def interactive_builder(self) -> None:
