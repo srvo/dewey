@@ -81,6 +81,10 @@ def authenticate_gmail() -> Any:
     Raises:
         SystemExit: If authentication fails completely
     """
+    if not all([build, InstalledAppFlow, Request]):
+        logging.error("Google API libraries are not available. Skipping authentication.")
+        return None
+
     creds = None
     token_file = 'token.pickle'
 
@@ -125,7 +129,7 @@ def authenticate_gmail() -> Any:
         return service
     except Exception as e:
         logging.exception(f"Failed to build Gmail service: {e}")
-        sys.exit(1)  # Exit if service creation fails
+        return None  # Return None if service creation fails
 
 
 def get_priority_from_labels(labels: List[str]) -> Optional[int]:

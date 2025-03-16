@@ -4,6 +4,9 @@ import ibis
 from ibis.expr.schema import Schema
 from pathlib import Path
 from typing import Optional, Union, List, Dict, Any, Tuple
+import logging
+
+logger = logging.getLogger(__name__)
 
 def read_csv_to_ibis(
     file_path: Union[str, Path],
@@ -89,22 +92,27 @@ def read_csv_to_ibis(
             if empty_file_behavior == 'error':
                 raise ValueError("File is empty.")
             elif empty_file_behavior == 'skip':
+                logger.info(f"Skipping empty file: {file_path}")
                 return None
             else:  # empty_file_behavior == 'empty'
                 # Create an empty DataFrame to infer schema if needed
                 df = pd.DataFrame()
         else:
-            # Read the CSV into a pandas DataFrame
-            df = pd.read_csv(
-                file_path,
-                delimiter=delimiter,
-                header=header,
-                skiprows=skiprows,
-                usecols=usecols,
-                index_col=index_col,
-                dtype=dtype,
-                encoding=encoding,
-            )
+            try:
+                # Read the CSV into a pandas DataFrame
+                df = pd.read_csv(
+                    file_path,
+                    delimiter=delimiter,
+                    header=header,
+                    skiprows=skiprows,
+                    usecols=usecols,
+                    index_col=index_col,
+                    dtype=dtype,
+                    encoding=encoding,
+                )
+            except Exception as e:
+                logger.error(f"Error reading CSV file {file_path}: {e}")
+                raise
 
         # Handle schema
         if schema:
@@ -135,8 +143,10 @@ def read_csv_to_ibis(
         return table
 
     except (ValueError, TypeError) as e:
+        logger.error(f"ValueError or TypeError: {e}")
         raise e  # Re-raise specific exceptions for clarity
     except Exception as e:
+        logger.error(f"Error reading CSV: {e}")
         raise ValueError(f"Error reading CSV: {e}") from e
 ```
 Key improvements and explanations:

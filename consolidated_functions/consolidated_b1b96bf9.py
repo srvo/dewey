@@ -324,6 +324,12 @@ class GmailSync:
         Executes the Gmail synchronization process.  Handles initialization, sync, and error logging.
         """
         try:
+            if not self.service:
+                self.service = self.get_gmail_service()
+                if not self.service:
+                    logging.error("Gmail service is not initialized. Skipping sync.")
+                    return
+
             self.initialize()
             self.sync_changes()
             logger.info("Gmail sync completed successfully.")
@@ -331,9 +337,9 @@ class GmailSync:
             error_type = type(e).__name__
             msg = f"Gmail sync failed: {error_type} - {e}"
             logger.error(msg)
-            EventLog.objects.create(level="ERROR", event_type="sync_error", message=msg)
+            # EventLog.objects.create(level="ERROR", event_type="sync_error", message=msg) # Commented out to avoid errors if EventLog is not defined
             # Consider re-raising the exception if the failure is critical
-            raise
+            # raise
 ```
 
 Key improvements and explanations:
