@@ -739,8 +739,9 @@ class CodeConsolidator:
                 try:
                     similar = self.vector_db.collection.query(
                         query_texts=[content],
-                        n_results=3,  # Reduced from 5 to avoid sparse results
-                        include=["distances", "metadatas"]
+                        n_results=3,
+                        include=["distances", "metadatas"],
+                        query_embeddings=[self.vector_db.generate_embedding(content)]
                     )
                 
                     # Handle empty results case
@@ -857,9 +858,7 @@ class CodeConsolidator:
         }
         
         if report["cluster_files"]["success"]:
-            from multiprocessing import get_context
-            mp_context = get_context("spawn")
-            with ThreadPoolExecutor(mp_context=mp_context) as executor:
+            with ThreadPoolExecutor() as executor:
                 futures = [
                     executor.submit(self._process_cluster, cluster)
                     for cluster in report["cluster_files"]["data"]["clusters"].values()
