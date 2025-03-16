@@ -25,7 +25,7 @@ def analyze_code_uniqueness(root_dir="src"):
     # Discover all Python files in the source directory
     for filename in glob.iglob(root_dir + '**/*.py', recursive=True):
         if filename.endswith(".py"):
-            if re.search(r"_[0-9a-f]{8}\.py$", os.path.basename(filename)):
+            if re.search(r"_[0-9a-f]{8}\.py$", filename):
                 legacy_files.append(filename)
             else:
                 current_files.append(filename)
