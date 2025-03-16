@@ -89,14 +89,12 @@ from dewey.llm.llm_utils import LLMHandler
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-from config import load_config
-
-# Load logging configuration
-config = load_config()
-logging_config = config.get("logging", {})
-
-# Configure logging
-logging.configure_logging(logging_config)
+# Basic logging configuration for standalone script
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(name)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 logger = logging.getLogger(__name__)
 
 
