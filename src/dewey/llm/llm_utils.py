@@ -1,151 +1,81 @@
-"""Core LLM utilities for interacting with AI providers."""
-from typing import Optional, Dict, Any
-import os
-import re
 import logging
-import yaml
-from openai import OpenAI
-from openai.types.chat import ChatCompletion
+from typing import Any
 
-from .api_clients.gemini import RateLimiter
-from .api_clients.deepinfra import DeepInfraClient
+from dewey.llm.api_clients.gemini import GeminiClient
+from dewey.llm.exceptions import LLMError
 
-
-def parse_llm_yaml_response(response: str, logger: logging.Logger = None) -> Dict:
-    """Parse YAML response from LLM, handling common formatting issues."""
-    try:
-        # Extract first YAML block between --- markers
-        parts = response.split('---')
-        if len(parts) > 1:
-            yaml_content = parts[1].strip()  # Get content between first --- pair
-        else:
-            yaml_content = response.strip()  # Fallback for responses without ---
-        
-        # Clean any remaining markdown syntax
-        clean_response = re.sub(r'^```yaml\s*|```$', '', yaml_content, flags=re.MULTILINE).strip()
-        
-        if not clean_response:
-            raise ValueError("Empty YAML response from LLM")
-            
-        try:
-            parsed = yaml.safe_load(clean_response)
-        except yaml.YAMLError as e:
-            if logger:
-                logger.error(f"YAML parsing failed. Content:\n{clean_response}")
-            raise
-            
-        # Convert list of entries to dict
-        if isinstance(parsed, list):
-            result = {}
-            for item in parsed:
-                result.update(item)
-            parsed = result
-            
-        if not isinstance(parsed, dict):
-            raise ValueError("LLM returned invalid YAML structure")
-            
-        return parsed
-    except Exception as e:
-        if logger:
-            logger.error(f"LLM Response that failed parsing:\n{response}")
-        raise ValueError(f"Failed to parse LLM response: {str(e)}") from e
-
-class LLMError(Exception):
-    """Base exception for LLM operations."""
-
-def get_deepinfra_client() -> OpenAI:
-    """Initialize DeepInfra client with environment config."""
-    return OpenAI(
-        api_key=os.getenv("DEEPINFRA_API_KEY"),
-        base_url="https://api.deepinfra.com/v1/openai",
-    )
-
-
-def generate_analysis_response(
-    prompt: str,
-    config: Dict,
-    logger: logging.Logger,
-    fallback_to_deepinfra: bool = False
-) -> str:
-    """Generate response with model rotation and fallback handling."""
-    # Try all configured models with cooldown awareness
-    models = config['llm_settings']['models']
-    cooldown_minutes = config['llm_settings'].get('cooldownutesutes', 5)
-    RateLimiter.cooldown_minutes = cooldown_minutes
-    
-    # Try primary models first
-    for model in models:
-        if not RateLimiter().is_in_cooldown(model):
-            try:
-                response = generate_response(
-                    prompt,
-                    model=model,
-                    system_message="You are a Python code analysis assistant. Be concise and precise."
-                )
-                # Reset cooldown if successful
-                if model in RateLimiter().cooldowns:
-                    del RateLimiter().cooldowns[model]
-                return response
-            except LLMError as e:
-                logger.warning(f"Model {model} failed: {str(e)}")
-                RateLimiter().track_failure(model)
-    
-    # Fallback logic
-    if fallback_to_deepinfra:
-        logger.warning("All primary models exhausted, falling back to DeepInfra")
-        return generate_response(
-            prompt,
-            model="meta-llama/Meta-Llama-3-8B-Instruct",
-            system_message="You are a Python code analysis assistant. Be concise and precise.",
-            client=DeepInfraClient()
-        )
-    
-    raise LLMError("All configured models exhausted with no successful responses")
 
 def generate_response(
     prompt: str,
-    model: str = "meta-llama/Meta-Llama-3-8B-Instruct",
+    model: str = "gemini-2.0-flash",
     temperature: float = 0.7,
-    max_tokens: int = 1000,
-    system_message: Optional[str] = None,
-    api_key: Optional[str] = None,
-    client: Optional[Any] = None
+    system_message: str | None = None,
+    api_key: str | None = None,
+    fallback_client: Any | None = None,
 ) -> str:
-    """
-    Generate text response using DeepInfra's OpenAI-compatible API.
-    
-    Args:
-        prompt: User input prompt
-        model: DeepInfra model name
-        temperature: Creativity parameter (0-2)
-        max_tokens: Maximum response length
-        system_message: Optional system role message
-    
-    Returns:
-        Generated text response
-        
-    Raises:
-        LLMError: For API failures or invalid responses
-    """
-    if not client:
-        client = get_deepinfra_client()  # OpenRouter client removed per request
-    
-    try:
-        if isinstance(client, OpenAI):
-            messages = []
-            if system_message:
-                messages.append({"role": "system", "content": system_message})
-            messages.append({"role": "user", "content": prompt})
+    """Generate a response from the specified LLM model.
 
-            response: ChatCompletion = client.chat.completions.create(
-                model=model,
-                messages=messages,
-                temperature=temperature,
-                max_tokens=max_tokens
-            )
-            return response.choices[0].message.content
-        else:
-            raise ValueError(f"Unsupported client type: {type(client)}")
+    Args:
+    ----
+        prompt: Input text prompt
+        model: Model identifier (default: Meta-Llama-3-8B-Instruct)
+        temperature: Sampling temperature (0-2)
+        max_tokens: Maximum number of tokens to generate
+        system_message: Optional system message for chat models
+        api_key: Optional API key override
+
+    Returns:
+    -------
+        Generated text response
+
+    Raises:
+    ------
+        LLMError: If there's an error during generation
+
+    """
+    try:
+        client = GeminiClient(api_key=api_key)
+        # Prepend system message to prompt if provided
+        full_prompt = f"{system_message}\n\n{prompt}" if system_message else prompt
+
+        return client.generate_content(
+            prompt=full_prompt,
+            model=model,
+            temperature=temperature,
+        )
     except Exception as e:
-        logging.error(f"LLM API Error: {str(e)}")
-        raise LLMError("Failed to generate LLM response") from e
+        if fallback_client and "exhausted" in str(e).lower():
+            try:
+                logging.warning("Gemini API exhausted, falling back to DeepInfra")
+                return fallback_client.chat_completion(
+                    prompt=prompt,
+                    system_message=system_message,
+                    temperature=temperature,
+                )
+            except Exception as fallback_error:
+                msg = f"Both Gemini and fallback failed: {fallback_error!s}"
+                raise LLMError(
+                    msg,
+                ) from e
+        msg = f"LLM generation failed: {e!s}"
+        raise LLMError(msg) from e
+
+
+def validate_model_params(params: dict[str, Any]) -> None:
+    """Validate parameters for LLM model calls.
+
+    Args:
+    ----
+        params: Dictionary of parameters to validate
+
+    Raises:
+    ------
+        ValueError: If any parameters are invalid
+
+    """
+    if "temperature" in params and not 0 <= params["temperature"] <= 2:
+        msg = "Temperature must be between 0 and 2"
+        raise ValueError(msg)
+    if "max_tokens" in params and params["max_tokens"] <= 0:
+        msg = "max_tokens must be positive integer"
+        raise ValueError(msg)
