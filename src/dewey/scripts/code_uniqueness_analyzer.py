@@ -29,6 +29,18 @@ def analyze_code_uniqueness(root_dir="src"):
             else:
                 current_files.append(filename)
 
+    print("Legacy files found:")
+    for file in legacy_files:
+        print(f"- {file}")
+
+    print("\nCurrent files found:")
+    for file in current_files:
+        print(f"- {file}")
+
+    if not legacy_files:
+        print("\nNo legacy files found matching the _xxxxxxxx pattern.")
+        return {}
+
     results = {}
 
     for legacy_file in legacy_files:
