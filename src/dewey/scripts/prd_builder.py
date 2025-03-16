@@ -14,6 +14,13 @@ logging.basicConfig(
 )
 logger = logging.getLogger("PRD Builder")
 
+# Configure basic logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+)
+logger = logging.getLogger("PRD Builder")
+
 import json
 from pathlib import Path
 from typing import Any
