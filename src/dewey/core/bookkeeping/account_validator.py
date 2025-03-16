@@ -2,12 +2,10 @@
 
 import json
 import logging
-import re
 import subprocess
 import sys
-from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict
 
 # File header: Validates accounts in the Hledger journal against predefined rules.
 
@@ -78,73 +76,6 @@ def validate_accounts(journal_file: Path, rules: Dict) -> bool:
         return False
 
 
-def classify_transaction(content: str, pattern: str, rule: Dict) -> Tuple[str, int]:
-    """Classify transactions based on a given pattern and rule.
-
-    Args:
-        content (str): The content of the journal file.
-        pattern (str): The regex pattern to match transaction descriptions.
-        rule (Dict): The classification rule to apply.
-
-    Returns:
-        Tuple[str, int]: A tuple containing the updated content and the number of replacements made.
-    """
-    pattern_re = re.compile(
-        rf"^(?P<date>\d{{4}}-\d{{2}}-\d{{2}})\s+(?P<desc>.*{pattern}.*)\n"
-        rf"(\s{{4}}.*\n)*\s{{4}}Expenses:Unknown\b",
-        re.IGNORECASE | re.MULTILINE,
-    )
-
-    new_content, count = pattern_re.subn(
-        lambda m: f"{m.group('date')} {m.group('desc')}\n    {rule['category']}",
-        content,
-    )
-    return new_content, count
-
-
-def apply_classification_rules(journal_file: Path, rules: Dict) -> Dict[str, int]:
-    """Apply classification rules to a journal file.
-
-    Args:
-        journal_file (Path): The path to the hledger journal file.
-        rules (Dict): A dictionary containing the classification rules.
-
-    Returns:
-        Dict[str, int]: A dictionary containing the number of replacements made for each account.
-    """
-    try:
-        with open(journal_file, encoding="utf-8") as f:
-            content = f.read()
-
-        replacements: Dict[str, int] = defaultdict(int)
-        new_content = content
-
-        for pattern, rule in rules["patterns"].items():
-            new_content, count = classify_transaction(new_content, pattern, rule)
-            if count > 0:
-                replacements[rule["category"]] += count
-
-        with open(journal_file, "w", encoding="utf-8") as f:
-            f.write(new_content)
-
-        return replacements
-
-    except Exception as e:
-        logger.exception(f"Classification failed: {e!s}")
-        sys.exit(1)
-
-
-def log_replacement_results(replacements: Dict[str, int]) -> None:
-    """Log the results of the classification process.
-
-    Args:
-        replacements (Dict[str, int]): A dictionary containing the number of replacements made for each account.
-    """
-    logger.info(f"Made {sum(replacements.values())} replacements:")
-    for account, count in replacements.items():
-        logger.info(f" - {count} => {account}")
-
-
 def main() -> None:
     """Main function to execute the hledger classification process."""
     if len(sys.argv) != 3:
@@ -165,10 +96,6 @@ def main() -> None:
 
     if not validate_accounts(journal_file, rules):
         sys.exit(1)
-
-    replacements = apply_classification_rules(journal_file, rules)
-    log_replacement_results(replacements)
-    logger.info("Classification completed successfully")
 
 
 if __name__ == "__main__":
