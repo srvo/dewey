@@ -16,6 +16,7 @@
 4. [ ] Update dependent code to use canonical implementations
 5. [ ] Analyze code_consolidator.py report and identify top consolidation opportunities
 6. [ ] Reimplement PyPI search with proper API integration
+- [ ] Fix search/replace block in auto_categorize.py (low priority)
 
 ## Documentation
 
