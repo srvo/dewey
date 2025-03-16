@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 import os
 import random
@@ -33,7 +35,7 @@ class RateLimiter:
         return cls._instance
 
     def configure(self, config: dict) -> None:
-        """Update rate limits from configuration"""
+        """Update rate limits from configuration."""
         self.MODEL_LIMITS = config.get("model_limits", {})
         self.cooldown_minutes = config.get("cooldown_minutes", 5)
         # Add capacity configuration
@@ -42,7 +44,7 @@ class RateLimiter:
         self.logger.info(f"Updated rate limits from config: {self.MODEL_LIMITS}")
 
     def _get_limits(self, model: str) -> tuple[int, int, int]:
-        """Get RPM, TPM, RPD for given model from config with fallbacks"""
+        """Get RPM, TPM, RPD for given model from config with fallbacks."""
         base_model = model.split("/")[-1].lower()
         limits = self.MODEL_LIMITS.get(base_model, {})
         return (
@@ -97,7 +99,9 @@ class RateLimiter:
                 current_time = time.time()
                 remaining = 60 - (current_time - model_counters["last_reset"])
                 # Filter requests to only those in last 60 seconds
-                current_rpm = len([ts for ts in model_counters["requests"] if current_time - ts < 60])
+                current_rpm = len(
+                    [ts for ts in model_counters["requests"] if current_time - ts < 60],
+                )
 
                 # If over RPM limit, wait with exponential backoff
                 if current_rpm >= rpm:
@@ -134,8 +138,12 @@ class RateLimiter:
                     # Remove oldest 10% of entries when hitting capacity
                     remove_count = int(self.max_entries * 0.1)
                     removed = model_counters["requests"][:remove_count]
-                    model_counters["requests"] = model_counters["requests"][remove_count:]
-                    model_counters["tokens"] -= sum(self._estimate_tokens_from_time(ts) for ts in removed)
+                    model_counters["requests"] = model_counters["requests"][
+                        remove_count:
+                    ]
+                    model_counters["tokens"] -= sum(
+                        self._estimate_tokens_from_time(ts) for ts in removed
+                    )
 
                 # All checks passed, update counters
                 model_counters["requests"].append(time.time())
@@ -172,7 +180,9 @@ class GeminiClient:
         genai.configure(api_key=self.api_key)
         self.rate_limiter = RateLimiter()
         self.config = config or {}
-        self.client = genai.GenerativeModel(self.config.get("default_model", "gemini-2.0-flash"))
+        self.client = genai.GenerativeModel(
+            self.config.get("default_model", "gemini-2.0-flash"),
+        )
 
     def generate_content(
         self,
@@ -223,17 +233,24 @@ class GeminiClient:
                         logging.debug(f"Retry failed: {retry_error}")
 
                     # Try fallback models
-                    for fallback_model in self.config.get("fallback_models", ["gemini-2.0-pro", "gemini-1.5-flash"]):
+                    for fallback_model in self.config.get(
+                        "fallback_models",
+                        ["gemini-2.0-pro", "gemini-1.5-flash"],
+                    ):
                         try:
                             result = self.generate_content(
                                 prompt,
                                 model=fallback_model,
                                 **kwargs,
                             )
-                            logging.info(f"Successfully used fallback model {fallback_model}")
+                            logging.info(
+                                f"Successfully used fallback model {fallback_model}",
+                            )
                             return result
                         except Exception as fallback_error:
-                            logging.debug(f"Fallback {fallback_model} failed: {fallback_error}")
+                            logging.debug(
+                                f"Fallback {fallback_model} failed: {fallback_error}",
+                            )
                 raise
 
             if not response.text:
