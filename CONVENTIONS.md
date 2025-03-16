@@ -13,16 +13,28 @@ All system configuration MUST be defined in `config/dewey.yaml` using this struc
 - Formatting rules under `formatting`
 
 Key rules:
-1. No module-specific YAML files allowed
+1. No module-specific YAML files allowed (except script_checkpoints.yaml)
 2. Cross-module dependencies must reference the central config
 3. Environment variables should be used via ${VAR_NAME} syntax
 4. Config sections should validate themselves on load
+5. script_checkpoints.yaml should only contain transient file hashes
+6. Shared config values used by scripts must live in dewey.yaml
 
 ## Maintenance Principles
-- Keep TODO.md updated as the single source of truth for tasks
-- Update priorities weekly or when major milestones are reached 
-- Preserve completed tasks in "Completed" section for historical reference
+- Keep TODO.md updated as the single source of truth for tasks with:
+  - Clear current priorities ranked by importance
+  - Detailed human and automated tasks
+  - Completed tasks preserved for historical reference
+  - Regular updates (weekly or per milestone)
+- Maintain shell aliases in ~/.zshrc for core functions:
+  - Version-controlled aliases matching current script locations
+  - Simple verbs mapping to complex commands (e.g. `consolidate`, `prd`)
+  - Automatic updates when script paths/configs change
 - Document architectural decisions in docs/decisions.md
+- Synchronize config relationships:
+  - script_checkpoints.yaml should reference configs from dewey.yaml
+  - Maintain separation due to size differences
+  - Shared values extracted to dewey.yaml where possible
 
 ## Core Development Guidelines
 
