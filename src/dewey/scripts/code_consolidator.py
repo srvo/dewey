@@ -55,6 +55,14 @@ class CodeConsolidator:
     def __init__(self, root_dir: str = ".", config_path: str | None = None) -> None:
         self.root_dir = Path(root_dir).expanduser().resolve()
         self.rate_limiter = RateLimiter()
+        self.config = self._load_config(config_path)
+        
+        # Configure rate limiter with loaded config
+        llm_config = self.config.get('llm', {})
+        self.rate_limiter.configure({
+            "model_limits": llm_config.get('model_limits', {}),
+            "cooldown_minutes": llm_config.get('cooldown_minutes', 5)
+        })
         
         # Validate project structure
         if not (self.root_dir / "pyproject.toml").exists():
@@ -101,6 +109,12 @@ class CodeConsolidator:
             },
             "llm": {
                 "default_model": "gemini-2.0-flash-lite",
+                "model_limits": {
+                    "gemini-2.0-flash": {"rpm": 15, "tpm": 1000000, "rpd": 1500},
+                    "gemini-2.0-flash-lite": {"rpm": 30, "tpm": 1000000, "rpd": 1500},
+                    "gemini-1.5-flash": {"rpm": 15, "tpm": 1000000, "rpd": 1500}
+                },
+                "cooldown_minutes": 5,
                 "fallback_models": ["gemini-2.0-flash", "gemini-1.5-flash"],
                 "temperature": 0.2,
                 "max_retries": 3,

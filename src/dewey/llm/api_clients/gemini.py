@@ -17,32 +17,33 @@ class RateLimiter:
     """Global rate limiter singleton to track usage across instances."""
 
     _instance = None
-    MODEL_LIMITS = {
-        "gemini-2.0-flash": (15, 1_000_000, 1500),  # RPM, TPM, RPD
-        "gemini-2.0-flash-lite": (30, 1_000_000, 1500),  # Higher RPM limit
-        "gemini-2.0-pro": (2, 1_000_000, 50),
-        "gemini-2.0-flash-thinking": (10, 4_000_000, 1500),
-        "gemini-1.5-flash": (15, 1_000_000, 1500),
-        "gemini-1.5-flash-8b": (15, 1_000_000, 1500),
-    }
+    MODEL_LIMITS = {}  # Will be populated from config
 
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance.lock = threading.RLock()
             cls._instance.counters = {}
-            cls._instance.cooldowns = {}  # model: resume_time
+            cls._instance.cooldowns = {}
             cls._instance.logger = logging.getLogger("RateLimiter")
             cls._instance.cooldown_minutes = 5  # Default, will be overridden by config
         return cls._instance
 
+    def configure(self, config: dict) -> None:
+        """Update rate limits from configuration"""
+        self.MODEL_LIMITS = config.get('model_limits', {})
+        self.cooldown_minutes = config.get('cooldown_minutes', 5)
+        self.logger.info(f"Updated rate limits from config: {self.MODEL_LIMITS}")
+
     def _get_limits(self, model: str) -> tuple[int, int, int]:
-        """Get RPM, TPM, RPD for given model."""
+        """Get RPM, TPM, RPD for given model from config with fallbacks"""
         base_model = model.split("/")[-1].lower()
-        return self.MODEL_LIMITS.get(
-            base_model,
-            (15, 100_000, 1500),
-        )  # Conservative defaults
+        limits = self.MODEL_LIMITS.get(base_model, {})
+        return (
+            limits.get('rpm', 15),
+            limits.get('tpm', 1_000_000),
+            limits.get('rpd', 1500)
+        )  # Conservative fallback defaults
 
     def is_in_cooldown(self, model: str) -> bool:
         """Check if model is in cooldown period."""
