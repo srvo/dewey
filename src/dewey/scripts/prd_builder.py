@@ -28,12 +28,49 @@ class PRDManager:
         self.console = Console()
         self.config = self._load_prd_config()
         self.prd_path = self._validate_prd_path()
-        self.llm = LLMHandler(config={})  # Load from config in real implementation
+        self.llm = LLMHandler(config={})  
         self.vector_db = VectorStore(collection_name="prd_components")
         self.conventions = self._load_conventions()
         self.prd_data = self._load_prd_template()
         self.reporter = ConsolidationReporter()
-        self.code_insights = CodeConsolidator().analyze_directory()
+        self.code_insights = self._analyze_codebase()
+        self.modules = self._discover_modules()
+
+    def _analyze_codebase(self) -> dict:
+        """Recursively analyze codebase structure and content."""
+        analyzer = CodeConsolidator()
+        analyzer.root_path = self.root_dir
+        return analyzer.analyze_directory()
+
+    def _discover_modules(self) -> list[dict]:
+        """Discover project modules with LLM-powered classification."""
+        modules = []
+        for path in self.root_dir.glob("src/dewey/**/*.py"):
+            if path.name == "__init__.py" or not path.is_file():
+                continue
+            
+            prompt = f"""Classify this Python module based on its path and content:
+            Path: {path.relative_to(self.root_dir)}
+            Content:
+            {path.read_text()[:2000]}
+
+            Output JSON with:
+            - module_type: "core", "llm", "ui", "utils", "pipeline" 
+            - purpose: 1-sentence description
+            - key_functions: list of main functions/classes
+            - dependencies: list of other modules it imports
+            """
+            
+            try:
+                analysis = json.loads(self.llm.generate_response(prompt, response_format={"type": "json_object"}))
+                modules.append({
+                    "path": str(path.relative_to(self.root_dir)),
+                    **analysis
+                })
+            except Exception as e:
+                self.console.print(f"[yellow]⚠️ Error analyzing {path}: {e}[/yellow]")
+        
+        return modules
 
     def _load_prd_config(self) -> dict:
         """Load PRD config from central dewey.yaml."""
@@ -380,39 +417,127 @@ class PRDManager:
 
     def interactive_builder(self) -> None:
         """Guided PRD creation with validation."""
-        self.console.print("[bold]PRD Builder[/]")
-
-        while True:
-            try:
-                func_name = Prompt.ask("Function name (or 'exit')").strip()
-                if func_name.lower() == "exit":
-                    break
-
-                if any(c in func_name for c in " _"):
-                    self.console.print("[red]Use camelCase naming[/]", style="red")
-                    continue
-
-                func_desc = Prompt.ask("Description (include input/output types)")
-                analysis = self._architectural_review(func_desc)
-
-                self._display_analysis(analysis)
-
-                if analysis.get("potential_conflicts"):
-                    self.console.print("\n[bold]Conflicts Detected:[/]")
-                    for conflict in analysis["potential_conflicts"]:
-                        self.console.print(f"  ⚠️  {conflict}")
-
-                if not Confirm.ask("Continue with this design?"):
-                    continue
-
-                self._record_component(func_name, func_desc, analysis)
-
-            except KeyboardInterrupt:
-                self.console.print("\n[yellow]Partial PRD saved[/]")
-                break
-
+        self.console.print("[bold cyan]PRD Builder[/bold cyan]\n")
+        
+        # Initialize with high-level requirements
+        self._gather_overview()
+        self._gather_components()
+        self._gather_decisions()
+        self._finalize_prd()
+        
         self._save_prd()
         self._generate_docs()
+        self.console.print("\n[bold green]✅ PRD generation complete![/bold green]")
+
+    def _gather_overview(self) -> None:
+        """Collect high-level PRD information."""
+        self.console.print("[bold]Step 1/4: Project Overview[/bold]")
+        
+        # Use existing config or prompt for new values
+        self.prd_data["title"] = Prompt.ask(
+            "Project title", 
+            default=self.prd_data.get("title", "Untitled Project")
+        )
+        
+        self.prd_data["description"] = self.llm.generate_response(
+            f"Generate a 1-paragraph project description based on these modules:\n"
+            f"{json.dumps(self.modules, indent=2)}\n\n"
+            "Keep it technical and concise."
+        )
+        
+        self.console.print("\n[bold]Key Modules Found:[/bold]")
+        for module in self.modules[:5]:  # Show top 5 most important
+            self.console.print(f"  • {module['module_type']}: {module['purpose']}")
+
+    def _gather_components(self) -> None:
+        """Identify and document key components."""
+        self.console.print("\n[bold]Step 2/4: Core Components[/bold]")
+        
+        for module in self.modules:
+            if not Confirm.ask(f"\nDocument {module['module_type']} module '{Path(module['path']).name}'?"):
+                continue
+                
+            # Generate component description using LLM
+            prompt = f"""Describe this module for a technical PRD:
+            Path: {module['path']}
+            Key Functions: {', '.join(module['key_functions'])}
+            Purpose: {module['purpose']}
+            
+            Output a 3-5 bullet point description focusing on architecture and business value.
+            """
+            description = self.llm.generate_response(prompt)
+            
+            self.prd_data.setdefault("components", []).append({
+                "name": Path(module['path']).stem,
+                "type": module['module_type'],
+                "description": description,
+                "dependencies": module['dependencies']
+            })
+
+    def _gather_decisions(self) -> None:
+        """Document architectural decisions."""
+        self.console.print("\n[bold]Step 3/4: Architectural Decisions[/bold]")
+        
+        while True:
+            decision = {}
+            decision["description"] = Prompt.ask(
+                "\nDecision summary (or 'done' to finish)", 
+                default="done"
+            )
+            
+            if decision["description"].lower() == "done":
+                break
+                
+            # Use LLM to flesh out decision details
+            prompt = f"""Expand this architectural decision into structured PRD format:
+            {decision['description']}
+            
+            Include:
+            - Alternatives considered
+            - Rationale
+            - Impacted components
+            - Tradeoffs
+            """
+            structured = self.llm.generate_response(prompt)
+            decision.update(json.loads(structured))
+            
+            self.prd_data.setdefault("decisions", []).append(decision)
+            self.console.print(f"\n[green]Added decision:[/green] {decision['description']}")
+
+    def _finalize_prd(self) -> None:
+        """LLM-assisted PRD polishing."""
+        self.console.print("\n[bold]Step 4/4: Final Polish[/bold]")
+        
+        if Confirm.ask("Generate executive summary using LLM?"):
+            prompt = f"""Write an executive summary for this PRD:
+            {json.dumps(self.prd_data, indent=2)}
+            
+            Keep it under 3 paragraphs. Focus on technical architecture and business impact.
+            """
+            self.prd_data["executive_summary"] = self.llm.generate_response(prompt)
+            
+        if Confirm.ask("Validate PRD against coding conventions?"):
+            issues = self._validate_conformance()
+            if issues:
+                self.console.print("\n[bold yellow]Convention Issues Found:[/bold yellow]")
+                for issue in issues[:3]:  # Show top 3 issues
+                    self.console.print(f"  • {issue}")
+                    
+            if Confirm.ask("Attempt automatic fixes with LLM?"):
+                self._apply_convention_fixes()
+
+    def _validate_conformance(self) -> list[str]:
+        """Check PRD against project conventions."""
+        prompt = f"""Review this PRD for convention compliance:
+        PRD:
+        {json.dumps(self.prd_data, indent=2)}
+        
+        Conventions:
+        {json.dumps(self.conventions, indent=2)}
+        
+        List up to 5 non-compliance issues in bullet points.
+        """
+        return self.llm.generate_response(prompt).split("\n")
 
     def _save_prd(self) -> None:
         """Persist PRD data to YAML."""
