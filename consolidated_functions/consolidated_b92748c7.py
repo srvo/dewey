@@ -80,7 +80,7 @@ def readCsvToIbis(
         >>> with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.csv') as f:
         ...     f.write("col1|col2\\n1|abc\\n2|def")
         ...     csv_path = f.name
-        >>> table = read_csv_to_ibis(csv_path, table_name="my_table", delimiter="|", header=False)
+        >>> table = readCsvToIbis(csv_path, table_name="my_table", delimiter="|", header=False)
         >>> print(table.count().execute())
         2
     """
