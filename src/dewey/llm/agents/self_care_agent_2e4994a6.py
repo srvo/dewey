@@ -254,3 +254,10 @@ Include:
             model="mixtral-8x7b",
             metadata={"metrics": metrics.dict()},
         )
+"""Wellness monitoring and self-care intervention agent."""
+from .self_care_agent import SelfCareAgent  # Import the new agent
+
+async def monitor_and_intervene() -> str | None:
+    """Monitors work patterns and intervenes if needed using the new SelfCareAgent."""
+    agent = SelfCareAgent()
+    return await agent.monitor_and_intervene()
