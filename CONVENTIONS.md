@@ -6,6 +6,12 @@ All documentation, docstrings, and so forth must be written in english.
 
 ## Centralized Configuration Architecture
 
+### Config File Locations
+- **Primary config path:** `/Users/srvo/dewey/config/dewey.yaml`
+- Environment-specific overrides: `config/${ENVIRONMENT}_overrides.yaml` 
+- All paths in config files are relative to project root (`/Users/srvo/dewey`)
+- Secrets must be stored in `.env` at project root
+
 All system configuration MUST be defined in `config/dewey.yaml` using this structure:
 - Core system settings under `core`
 - Vector store configurations under `vector_stores`
@@ -14,7 +20,7 @@ All system configuration MUST be defined in `config/dewey.yaml` using this struc
 - PRD-specific settings under `prd`
 - Formatting rules under `formatting`
 
-Key rules:
+### Key Rules:
 1. No module-specific YAML files allowed (except script_checkpoints.yaml)
 2. Cross-module dependencies must reference the central config
 3. Environment variables should be used via ${VAR_NAME} syntax
