@@ -37,6 +37,9 @@
 7. Google Gemini API scaffolding
 8. Documentation initialization
 
+### CRM Module
+- Refactor database connection and error handling in `add_enrichment_a154a675.py` to use centralized utilities
+
 ## Completed Tasks
 x Review generated conventions.md
 x Ensure Python 3.12 + uv setup
