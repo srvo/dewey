@@ -6,14 +6,10 @@ import re
 import shutil
 from typing import List, Dict, Optional
 
+from dewey.config import logging  # Centralized logging
+
 # File header: Corrects formatting issues in Hledger journal files.
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
 logger = logging.getLogger(__name__)
 
 
@@ -78,14 +74,14 @@ def parse_transaction(lines: List[str]) -> Optional[Dict]:
         Optional[Dict]: A dictionary representing the transaction, or None if parsing fails.
     """
     if not lines or not lines[0].strip():
-        logger.debug("Empty transaction lines encountered")
+        logging.debug("Empty transaction lines encountered")
         return None
 
     # Parse transaction date and description
     first_line = lines[0].strip()
     date_match = re.match(r"(\d{4}-\d{2}-\d{2})", first_line)
     if not date_match:
-        logger.debug("Invalid transaction date format: %s", first_line)
+        logging.debug("Invalid transaction date format: %s", first_line)
         return None
 
     transaction = {
@@ -121,10 +117,10 @@ def process_journal_file(file_path: str) -> None:
         Exception: If the file processing fails, the original exception is re-raised after attempting to restore from backup.
     """
     if not os.path.exists(file_path):
-        logger.error("File not found: %s", file_path)
+        logging.error(f"File not found: {file_path}")
         return
 
-    logger.info("Processing file: %s", file_path)
+    logging.info(f"Processing file: {file_path}")
 
     # Create backup first
     backup_path = file_path + ".bak"
@@ -136,7 +132,7 @@ def process_journal_file(file_path: str) -> None:
             content = f.read()
 
         transactions = parse_transactions(content)
-        logger.debug("Processing %d transactions", len(transactions))
+        logging.debug(f"Processing {len(transactions)} transactions")
 
         # Rest of processing logic
         fixed_content = process_transactions(transactions)
@@ -146,23 +142,23 @@ def process_journal_file(file_path: str) -> None:
             f.write(fixed_content)
 
     except Exception as e:
-        logger.exception("Failed to process %s", file_path)
+        logging.exception(f"Failed to process {file_path}")
         if os.path.exists(backup_path):
-            logger.info("Restoring from backup: %s", backup_path)
+            logging.info(f"Restoring from backup: {backup_path}")
             shutil.move(backup_path, file_path)
         raise
 
 
 def main() -> None:
     """Main function to process all journal files."""
-    logger.info("Starting journal entries correction")
+    logging.info("Starting journal entries correction")
 
     # Process all journal files in the current directory
     for filename in os.listdir("."):
         if filename.endswith(".journal"):
             process_journal_file(filename)
 
-    logger.info("Completed journal entries correction")
+    logging.info("Completed journal entries correction")
 
 
 if __name__ == "__main__":
