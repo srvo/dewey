@@ -7,6 +7,9 @@ import subprocess
 import sys
 from collections import defaultdict
 from pathlib import Path
+from typing import Dict, List, Tuple
+
+# File header: Validates accounts in the Hledger journal against predefined rules.
 
 # Configure logging
 logging.basicConfig(
@@ -17,21 +20,17 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def load_rules(rules_file: Path) -> dict:
+def load_rules(rules_file: Path) -> Dict:
     """Load classification rules from a JSON file.
 
     Args:
-    ----
-        rules_file: The path to the JSON rules file.
+        rules_file (Path): The path to the JSON rules file.
 
     Returns:
-    -------
-        A dictionary containing the classification rules.
+        Dict: A dictionary containing the classification rules.
 
     Raises:
-    ------
         SystemExit: If the rules file cannot be loaded.
-
     """
     try:
         with open(rules_file) as f:
@@ -41,18 +40,15 @@ def load_rules(rules_file: Path) -> dict:
         sys.exit(1)
 
 
-def validate_accounts(journal_file: Path, rules: dict) -> bool:
+def validate_accounts(journal_file: Path, rules: Dict) -> bool:
     """Verify that all accounts in the rules exist in the journal file.
 
     Args:
-    ----
-        journal_file: The path to the hledger journal file.
-        rules: A dictionary containing the classification rules.
+        journal_file (Path): The path to the hledger journal file.
+        rules (Dict): A dictionary containing the classification rules.
 
     Returns:
-    -------
-        True if all accounts are valid, False otherwise.
-
+        bool: True if all accounts are valid, False otherwise.
     """
     try:
         # Get both declared and used accounts
@@ -82,19 +78,16 @@ def validate_accounts(journal_file: Path, rules: dict) -> bool:
         return False
 
 
-def classify_transaction(content: str, pattern: str, rule: dict) -> tuple[str, int]:
+def classify_transaction(content: str, pattern: str, rule: Dict) -> Tuple[str, int]:
     """Classify transactions based on a given pattern and rule.
 
     Args:
-    ----
-        content: The content of the journal file.
-        pattern: The regex pattern to match transaction descriptions.
-        rule: The classification rule to apply.
+        content (str): The content of the journal file.
+        pattern (str): The regex pattern to match transaction descriptions.
+        rule (Dict): The classification rule to apply.
 
     Returns:
-    -------
-        A tuple containing the updated content and the number of replacements made.
-
+        Tuple[str, int]: A tuple containing the updated content and the number of replacements made.
     """
     pattern_re = re.compile(
         rf"^(?P<date>\d{{4}}-\d{{2}}-\d{{2}})\s+(?P<desc>.*{pattern}.*)\n"
@@ -109,24 +102,21 @@ def classify_transaction(content: str, pattern: str, rule: dict) -> tuple[str, i
     return new_content, count
 
 
-def apply_classification_rules(journal_file: Path, rules: dict) -> dict[str, int]:
+def apply_classification_rules(journal_file: Path, rules: Dict) -> Dict[str, int]:
     """Apply classification rules to a journal file.
 
     Args:
-    ----
-        journal_file: The path to the hledger journal file.
-        rules: A dictionary containing the classification rules.
+        journal_file (Path): The path to the hledger journal file.
+        rules (Dict): A dictionary containing the classification rules.
 
     Returns:
-    -------
-        A dictionary containing the number of replacements made for each account.
-
+        Dict[str, int]: A dictionary containing the number of replacements made for each account.
     """
     try:
         with open(journal_file, encoding="utf-8") as f:
             content = f.read()
 
-        replacements: dict[str, int] = defaultdict(int)
+        replacements: Dict[str, int] = defaultdict(int)
         new_content = content
 
         for pattern, rule in rules["patterns"].items():
@@ -144,13 +134,11 @@ def apply_classification_rules(journal_file: Path, rules: dict) -> dict[str, int
         sys.exit(1)
 
 
-def log_replacement_results(replacements: dict[str, int]) -> None:
+def log_replacement_results(replacements: Dict[str, int]) -> None:
     """Log the results of the classification process.
 
     Args:
-    ----
-        replacements: A dictionary containing the number of replacements made for each account.
-
+        replacements (Dict[str, int]): A dictionary containing the number of replacements made for each account.
     """
     logger.info(f"Made {sum(replacements.values())} replacements:")
     for account, count in replacements.items():
