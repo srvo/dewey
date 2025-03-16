@@ -3,8 +3,16 @@
 # Added early path configuration before any imports
 import sys
 import pathlib
-PROJECT_ROOT = pathlib.Path(__file__).parent.parent.parent.parent
-sys.path.insert(0, str(PROJECT_ROOT / "src"))
+from typing import Iterator
+from pathlib import Path
+import logging
+
+# Configure basic logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+)
+logger = logging.getLogger("PRD Builder")
 
 import json
 from pathlib import Path
@@ -35,15 +43,26 @@ class PRDManager:
         self.modules = self._discover_modules()
 
     def _analyze_codebase(self) -> dict:
-        """Recursively analyze codebase structure and content."""
+        """Analyze only the target directory structure and content."""
         analyzer = CodeConsolidator()
         analyzer.root_path = self.root_dir
-        return analyzer.analyze_directory()
+        return {
+            "target_directory": str(self.root_dir),
+            "files": list(self._find_python_files(self.root_dir)),
+            "module_count": sum(1 for _ in self._find_python_files(self.root_dir))
+        }
+
+    def _find_python_files(self, directory: Path) -> Iterator[Path]:
+        """Yield Python files in directory, ignoring hidden/log files."""
+        for path in directory.rglob("*"):
+            if path.suffix == ".py" and not path.name.startswith("__"):
+                if "/logs/" not in str(path) and not path.name.endswith("_test.py"):
+                    yield path
 
     def _discover_modules(self) -> list[dict]:
-        """Discover project modules with LLM-powered classification."""
+        """Discover modules in target directory with LLM classification."""
         modules = []
-        for path in self.root_dir.glob("src/dewey/core/**/*.py"):  # Focus on core modules
+        for path in self._find_python_files(self.root_dir):
             if path.name == "__init__.py" or not path.is_file():
                 continue
             
@@ -72,9 +91,7 @@ class PRDManager:
 
     def _load_prd_config(self) -> dict:
         """Load PRD config from central dewey.yaml."""
-        # Get project root by going up 3 levels from llm directory
-        project_root = self.root_dir.parent.parent.parent
-        config_path = project_root / "config" / "dewey.yaml"
+        config_path = self.root_dir / "config" / "dewey.yaml"
         if not config_path.exists():
             raise FileNotFoundError(
                 f"Config file not found at {config_path}. "
@@ -108,9 +125,7 @@ class PRDManager:
         base_path = self.config.get("base_path", "config/prd")
         active_prd = self.config.get("active_prd", "current_prd.yaml")
         
-        # Use project root from config loading
-        project_root = self.root_dir.parent.parent.parent
-        prd_dir = project_root / "config" / "prd"
+        prd_dir = self.root_dir / "config" / "prd"
         prd_dir.mkdir(exist_ok=True, parents=True)
         return prd_dir / active_prd
 
