@@ -3,6 +3,8 @@ import re
 from datetime import datetime
 from typing import Any
 
+# File header: Validates raw transaction data from Mercury CSV files.
+
 logger = logging.getLogger(__name__)
 
 
@@ -10,7 +12,7 @@ class DataValidationError(Exception):
     """Exception for invalid transaction data."""
 
 
-def _normalize_description(description: str) -> str:
+def normalize_description(description: str) -> str:
     """Normalize transaction description.
 
     Args:
@@ -93,14 +95,14 @@ class MercuryDataValidator:
             account_id = row["account_id"].strip()
 
             # Parse date with validation
-            date_obj = _parse_and_validate_date(date_str)
+            date_obj = parse_and_validate_date(date_str)
 
             # Normalize amount with type detection
-            amount = _normalize_amount(amount_str)
+            amount = normalize_amount(amount_str)
             is_income = amount > 0
             abs_amount = abs(amount)
 
-            return {
+            return  {
                 "date": date_obj.isoformat(),
                 "description": description,
                 "amount": abs_amount,
@@ -113,3 +115,4 @@ class MercuryDataValidator:
             logger.exception("CSV validation error: %s", str(e))
             msg = f"Invalid transaction data: {e!s}"
             raise DataValidationError(msg)
++
