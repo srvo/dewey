@@ -583,7 +583,6 @@ class CodeConsolidator:
                 capture_output=True,
                 text=True,
                 env={**os.environ, "GRPC_ENABLE_FORK_SUPPORT": "False"},
-                start_new_session=True
             )
 
             black_proc = subprocess.run(
@@ -593,7 +592,6 @@ class CodeConsolidator:
                 capture_output=True,
                 text=True,
                 env={**os.environ, "GRPC_ENABLE_FORK_SUPPORT": "False"},
-                start_new_session=True
             )
 
             # Only show output if there were errors
@@ -979,7 +977,6 @@ def main() -> None:
     """
     # Configure process and threading settings
     os.environ["GRPC_ENABLE_FORK_SUPPORT"] = "False"  # Disable gRPC fork handlers
-    os.environ["GRPC_POLL_STRATEGY"] = "epoll1"      # Alternative poll strategy
     os.environ["TOKENIZERS_PARALLELISM"] = "false"   # Disable tokenizer parallelism
     parser = argparse.ArgumentParser(
         description="Analyze and consolidate similar code functionality",
