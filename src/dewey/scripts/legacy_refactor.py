@@ -10,7 +10,11 @@ from pathlib import Path
 from typing import List, Optional
 
 import logging
-import dewey.config as config  # Assuming centralized config loading
+import sys
+from pathlib import Path
+
+# Add project root to Python path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
