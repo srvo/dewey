@@ -8,6 +8,7 @@ class LLMHandler:
     def __init__(self, config: dict):
         self.config = config
         self.client = None
+        self.usage_stats = {"requests": 0, "tokens": 0}
         self._init_client()
         
     def _init_client(self):
@@ -35,10 +36,16 @@ class LLMHandler:
         }
         
         try:
+            self.usage_stats["requests"] += 1
             if isinstance(self.client, GeminiClient):
-                return self.client.generate_content(prompt, **params)
+                response = self.client.generate_content(prompt, **params)
             elif isinstance(self.client, DeepInfraClient):
-                return self.client.chat_completion(prompt, **params)
+                response = self.client.chat_completion(prompt, **params)
+            
+            # Track token usage if available
+            if hasattr(response, 'usage'):
+                self.usage_stats["tokens"] += response.usage.total_tokens
+            return response
         except Exception as e:
             raise LLMError(f"Generation failed: {str(e)}")
 

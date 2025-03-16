@@ -17,6 +17,76 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any, Dict, List, Tuple, Optional, Callable
 
+class ConsolidationReporter:
+    """Real-time progress reporting with emojis and color."""
+    
+    def __init__(self):
+        self.stages = {}
+        self.error_log = []
+        self.warning_log = []
+        self.progress_bars = {}
+        self.start_time = datetime.datetime.now()
+        
+    def begin_stage(self, name: str, emoji: str, total: int = None) -> None:
+        self.stages[name] = {
+            "emoji": emoji,
+            "start": datetime.datetime.now(),
+            "total": total,
+            "completed": 0
+        }
+        print(f"\n{emoji} \033[1m{name.title()}\033[0m")
+        
+    def update_stage(self, name: str, increment: int = 1, message: str = None) -> None:
+        if name in self.stages:
+            self.stages[name]["completed"] += increment
+            if message:
+                total = self.stages[name]["total"]
+                if total:
+                    pct = (self.stages[name]["completed"] / total) * 100
+                    status = f"{self.stages[name]['completed']}/{total} ({pct:.1f}%)"
+                else:
+                    status = f"{self.stages[name]['completed']}"
+                
+                print(f"  {self.stages[name]['emoji']} {status} - {message}")
+
+    def end_stage(self, name: str) -> None:
+        if name in self.stages:
+            duration = datetime.datetime.now() - self.stages[name]["start"]
+            print(f"  ✅ Completed in {duration.total_seconds():.1f}s\n")
+            
+    def error(self, message: str) -> None:
+        self.error_log.append(message)
+        print(f"  \033[31m❌ {message}\033[0m")
+        
+    def warning(self, message: str) -> None:
+        self.warning_log.append(message)
+        print(f"  \033[33m⚠️ {message}\033[0m")
+        
+    def final_report(self) -> None:
+        duration = datetime.datetime.now() - self.start_time
+        print(f"\n\033[1m🏁 Consolidation Complete\033[0m")
+        print(f"⏱  Total Duration: {duration.total_seconds():.1f}s")
+        
+        # Summary table
+        print("\n\033[1m📊 Summary:\033[0m")
+        print(f"  📂 Files Processed: {sum(stage['completed'] for stage in self.stages.values() if stage['total'])}")
+        print(f"  🧩 Function Clusters: {len(self.stages.get('clustering', {}).get('completed', 0))}")
+        print(f"  ✅ Successful Clusters: {len([e for e in self.stages.get('processing', {}).get('completed', []) if e])}")
+        print(f"  ❌ Failed Clusters: {len(self.error_log)}")
+        print(f"  ⚠️  Warnings: {len(self.warning_log)}")
+        
+        # Show top 5 errors if any
+        if self.error_log:
+            print("\n\033[1m🔴 Top Errors:\033[0m")
+            for error in self.error_log[:5]:
+                print(f"  - {error}")
+                
+        # Show LLM usage stats
+        if 'llm_requests' in self.stages:
+            print(f"\n🤖 LLM Usage:")
+            print(f"  📝 Requests: {self.stages['llm_requests']['completed']}")
+            print(f"  ⚡ Tokens Used: {self.stages.get('llm_tokens', {}).get('completed', 'N/A')}")
+
 from dewey.llm.api_clients.gemini import GeminiClient
 from tqdm import tqdm
 import spacy
@@ -87,6 +157,8 @@ class CodeConsolidator:
         self.lock = threading.Lock()
         self.vector_db = self._init_vector_db()
         self._load_checkpoint()
+        self.reporter = ConsolidationReporter()
+        self._print_welcome_banner()
 
     def _load_config(self, config_path: str | None = None) -> dict:
         """Load configuration from YAML file with defaults."""
@@ -195,10 +267,39 @@ class CodeConsolidator:
 
     def analyze_directory(self) -> dict:
         """Public interface to run full pipeline."""
-        pipeline_report = self.execute_pipeline()
-        print(self.generate_report(pipeline_report))
-        self._save_checkpoint()
-        return pipeline_report
+        self.reporter.begin_stage("directory_analysis", "📂")
+        
+        try:
+            files = self._find_script_files()
+            self.reporter.begin_stage("file_processing", "📝", total=len(files))
+            
+            with ThreadPoolExecutor(max_workers=os.cpu_count()) as executor:
+                futures = []
+                for script_path in files:
+                    futures.append(executor.submit(self._process_file_safe, script_path))
+                    
+                for future in tqdm(as_completed(futures), total=len(files), desc="📄 Processing files"):
+                    functions, path = future.result()
+                    self.script_analysis[str(path)] = functions
+                    self.reporter.update_stage("file_processing", increment=1, 
+                                             message=f"Processed {path.name}")
+                    
+            self.reporter.end_stage("file_processing")
+            
+            self.reporter.begin_stage("clustering", "🧩", total=len(self.script_analysis))
+            for path, functions in tqdm(self.script_analysis.items(), desc="🔗 Clustering functions"):
+                self._cluster_functions(functions, Path(path))
+                self.reporter.update_stage("clustering", increment=1)
+            self.reporter.end_stage("clustering")
+            
+            pipeline_report = self.execute_pipeline()
+            self.reporter.final_report()
+            self._save_checkpoint()
+            return pipeline_report
+            
+        except Exception as e:
+            self.reporter.error(f"Fatal error: {str(e)}")
+            raise
 
     def _find_script_files(self) -> list[Path]:
         """Find Python files using config patterns."""
@@ -796,6 +897,9 @@ class CodeConsolidator:
 
     def _process_cluster(self, cluster: List[str]) -> Tuple[bool, Dict[str, Any]]:  # type: ignore
         """Process a single file cluster with error handling."""
+        try:
+            cluster_name = ", ".join([Path(f).name for f in cluster[:3]]) + ("..." if len(cluster) > 3 else "")
+            self.reporter.update_stage("processing", message=f"Processing cluster: {cluster_name}")
         result = {
             "cluster": cluster,
             "functions": [],
@@ -981,6 +1085,29 @@ class CodeConsolidator:
             steps.append("Consider creating utility module")
         steps.append("Verify backward compatibility")
         return " • ".join(steps)
+
+    def _print_welcome_banner(self) -> None:
+        """Display initial status checks and configuration."""
+        self.reporter.begin_stage("initial_checks", "🔍")
+        
+        # Check LLM connectivity
+        try:
+            self.llm.generate_response("test", max_tokens=1)
+            self.reporter.update_stage("initial_checks", message=f"LLM {self.config['llm']['client']} connection OK")
+        except Exception as e:
+            self.reporter.error(f"LLM connection failed: {str(e)}")
+            
+        # Check vector DB status
+        if self.vector_db:
+            self.reporter.update_stage("initial_checks", message="Vector database connected")
+        else:
+            self.reporter.warning("Vector database disabled")
+            
+        # File count estimate
+        files = self._find_script_files()
+        self.reporter.update_stage("initial_checks", message=f"Found {len(files)} script files")
+        
+        self.reporter.end_stage("initial_checks")
 
     def _load_checkpoint(self) -> None:
         """Load previous state from checkpoint file."""
