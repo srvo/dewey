@@ -69,3 +69,33 @@ formatting:
   formatters:
     - command: ["ruff", "check", "--fix", "--unsafe-fixes", "--select", "ALL"]
     - command: ["black"]
+
+prd:
+  base_template:
+    metadata:
+      author: "Sloane Ortel"
+      revision_policy: "Bi-weekly review"
+    stakeholders:
+      default: 
+        - name: "Sloane Ortel"
+          role: "Primary Stakeholder"
+          contact: "srvo@domain.com"
+      client_modules:
+        - name: "Client Services Team"
+          role: "Client Interface"
+    market_assessment: 
+      default: "Internal knowledge management and client-facing financial analysis systems"
+      client_facing: "High-net-worth individuals and institutional investors"
+    assumptions:
+      - "All non-client modules assume single-stakeholder (Sloane Ortel) usage"
+      - "Data security requirements follow FINRA/SEC regulations"
+      - "Python 3.11+ runtime environment"
+    evaluation_metrics:
+      - "Code maintainability (cyclomatic complexity < 15)"
+      - "LLM response latency < 2.5s"
+      - "Data processing throughput > 100MB/s"
+    timelines:
+      discovery: 2
+      development: 3
+      testing: 1
+      deployment: 0.5

@@ -98,15 +98,29 @@ class PRDManager:
         }
 
     def _load_prd_template(self) -> dict[str, Any]:
-        """Load or initialize PRD structure."""
+        """Load PRD structure with base template and existing content."""
+        from dewey.config import load_config
+        
+        # Get base template from config
+        base_template = load_config().get("prd", {}).get("base_template", {})
+        
+        # Merge with existing PRD content if it exists
         if self.prd_path.exists():
             with open(self.prd_path) as f:
-                return yaml.safe_load(f)
-        return {
-            "functions": [],
-            "decisions": [],
-            "components": [],
-        }
+                existing_content = yaml.safe_load(f)
+                return self._deep_merge(base_template, existing_content)
+                
+        return base_template
+
+    def _deep_merge(self, base: dict, update: dict) -> dict:
+        """Recursively merge two dictionaries."""
+        for key, val in update.items():
+            if isinstance(val, dict):
+                base[key] = self._deep_merge(base.get(key, {}), val)
+            else:
+                if key not in base:  # Only add new keys, don't overwrite
+                    base[key] = val
+        return base
 
     def _find_consolidated_functions(self) -> list[Path]:
         """Discover consolidated function files."""
@@ -148,10 +162,16 @@ class PRDManager:
         return True
 
     def _architectural_review(self, func_desc: str) -> dict:
-        """Enhanced LLM analysis with codebase context."""
+        """Enhanced LLM analysis with stakeholder context."""
+        from dewey.config import load_config
+        prd_config = load_config().get("prd", {})
+        
         prompt = f"""
         Project Conventions:
         {json.dumps(self.conventions, indent=2)}
+
+        Stakeholder Context:
+        {json.dumps(prd_config.get('base_template', {}).get('stakeholders'), indent=2)}
 
         Existing Components:
         {json.dumps(self._get_similar_components(func_desc), indent=2)}
@@ -161,8 +181,10 @@ class PRDManager:
         Output JSON with:
         - recommended_module: string (match project structure)
         - required_dependencies: list of existing components
-        - architecture_rules: list of applicable conventions
-        - potential_conflicts: list of strings
+        - architecture_rules: list of applicable conventions 
+        - stakeholder_impact: list of affected stakeholders
+        - security_considerations: list of strings
+        - data_sources: list of required data inputs
         """
 
         response = self.llm.generate_response(
@@ -269,17 +291,60 @@ class PRDManager:
         self.console.print(f"📏 Size change: {len(original_content)} → {len(reformed_content)} chars")
 
     def _update_module_prd(self, module: str, analysis: dict, func_info: dict) -> None:
-        """Create/update the module's PRD file."""
+        """Update PRD with structured function documentation."""
         prd_path = self.root_dir / "docs" / "prds" / f"{module}_prd.md"
         prd_path.parent.mkdir(exist_ok=True)
+
+        # Load existing or initialize with base structure
+        prd_content = self._load_prd_template()
         
-        content = f"\n## {func_info['name']}\n{func_info['functionality_summary']}\n"
-        content += f"```python\n{analysis['content'][:500]}...\n```\n"
+        # Add function-specific content to appropriate sections
+        func_entry = {
+            "name": func_info["name"],
+            "summary": func_info["functionality_summary"],
+            "category": func_info["primary_category"],
+            "dependencies": analysis["dependencies"],
+            "complexity": len(analysis["content"]) // 100  # Simple complexity heuristic
+        }
         
-        if prd_path.exists():
-            content = prd_path.read_text() + content
-        prd_path.write_text(content)
-        self.console.print(f"📄 Updated PRD: {prd_path.name}")
+        # Add to requirements section
+        prd_content.setdefault("requirements", {}).setdefault("functional", []).append(func_entry)
+        
+        # Add technical spec
+        tech_spec = {
+            "function": func_info["name"],
+            "input_types": self._detect_input_types(analysis["content"]),
+            "output_type": self._detect_output_type(analysis["content"]),
+            "error_handling": "Present" if "try" in analysis["content"] else "Basic"
+        }
+        prd_content.setdefault("technical_specs", []).append(tech_spec)
+        
+        # Save updated PRD
+        with open(prd_path, "w") as f:
+            yaml.dump(prd_content, f, sort_keys=False)
+            
+        self.console.print(f"📄 Updated structured PRD: {prd_path.name}")
+
+    def _detect_input_types(self, code: str) -> list:
+        """Simple type detection from function code."""
+        types = []
+        if "DataFrame" in code:
+            types.append("pandas.DataFrame")
+        if "ibis" in code:
+            types.append("ibis.Table")
+        if "def __init__" in code:
+            types.append("ConfigDict")
+        return types or ["Any"]
+
+    def _detect_output_type(self, code: str) -> str:
+        """Detect output type from code patterns."""
+        if "return pd." in code:
+            return "pandas.DataFrame"
+        if "return ibis." in code:
+            return "ibis.Table"
+        if "return {" in code:
+            return "dict"
+        return "None"
 
     def _remove_duplicate_code(self, analysis: dict) -> None:
         """Find and remove duplicate code implementations."""
