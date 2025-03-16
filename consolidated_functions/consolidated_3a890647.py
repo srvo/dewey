@@ -480,7 +480,7 @@ def main(argv: Optional[List[str]] = None) -> None:
                 print(output)
         else:
             if dot_output:
-                output = analyze_code_complexity(
+                output = analyzeCodeComplexity(
                     _read(filename),
                     threshold,
                     filename,
@@ -488,7 +488,7 @@ def main(argv: Optional[List[str]] = None) -> None:
                     output_file=output_file,
                 )
             else:
-                output = analyze_code_complexity(
+                output = analyzeCodeComplexity(
                     _read(filename),
                     threshold,
                     filename,
@@ -505,8 +505,9 @@ def main(argv: Optional[List[str]] = None) -> None:
 
 
 # --- Example Usage (simulated) ---
+
 if __name__ == "__main__":
-    # Simulate command-line arguments
+    # Simulate commandline arguments
     import sys
     # Example 1: Analyze a file
     # sys.argv = ["script_name.py", "my_module.py", "-t", "5"]
