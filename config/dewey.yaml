@@ -8,7 +8,7 @@ vector_stores:
   code_consolidation:
     persist_dir: ".chroma_cache"
     collection_name: "code_functions"
-    embedding_model: "all-MiniLM-L6-v2"
+    embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
     hnsw_config:
       construction_ef: 300
       search_ef: 200
