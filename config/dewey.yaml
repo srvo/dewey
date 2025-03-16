@@ -1,0 +1,71 @@
+# Global Dewey configuration
+core:
+  project_root: /Users/srvo/dewey
+  backup_strategy: 3-2-1
+  default_timezone: UTC
+
+vector_stores:
+  code_consolidation:
+    persist_dir: ".chroma_cache"
+    collection_name: "code_functions"
+    embedding_model: "all-MiniLM-L6-v2"
+    hnsw_config:
+      construction_ef: 300
+      search_ef: 200
+      M: 24
+      space: "cosine"
+    similarity_threshold: 0.85
+
+  document_store:
+    persist_dir: ".chroma_docs"
+    collection_name: "document_chunks" 
+    embedding_model: "all-mpnet-base-v2"
+    hnsw_config:
+      construction_ef: 500
+      search_ef: 300
+      M: 32
+      space: "cosine"
+
+llm:
+  default_provider: "deepinfra"
+  providers:
+    deepinfra:
+      api_key: ${DEEPINFRA_API_KEY}
+      default_model: "meta-llama/Meta-Llama-3-8B-Instruct"
+      model_limits:
+        "meta-llama/Meta-Llama-3-8B-Instruct":
+          rpm: 15
+          tpm: 1000000
+          rpd: 1500
+      fallback_models: []
+    
+    gemini:
+      api_key: ${GEMINI_API_KEY}
+      default_model: "gemini-2.0-flash"
+      model_limits:
+        "gemini-2.0-flash":
+          rpm: 60
+          tpm: 1000000
+
+pipeline:
+  code_consolidation:
+    max_files: null
+    excluded_dirs:
+      - "test"
+      - ".venv"
+      - "venv"
+      - "docs"
+      - "deploy"
+      - "config" 
+      - "ingest_data"
+    file_patterns:
+      - '\.py$'
+    cluster_threshold: 0.2
+    max_cluster_size: 5
+    min_cluster_size: 2
+
+formatting:
+  lint_timeout: 120
+  formatters:
+    - command: ["ruff", "check", "--fix", "--unsafe-fixes", "--select", "ALL"]
+    - command: ["black"]

@@ -14,36 +14,38 @@ class VectorStore:
 
     def __init__(
         self,
-        persist_dir: str = ".chroma_cache",
-        collection_name: str = "code_functions",
-        embedding_model: str = "all-MiniLM-L6-v2",
-        hnsw_config: dict | None = None,
+        config_name: str = "code_consolidation",
         batch_size: int = 100,
         timeout: int = 30,
         **kwargs  # Handle extra config params
     ) -> None:
-        """Initialize with HNSW configuration.
+        """Initialize from centralized config.
         
         Args:
-            persist_dir: Directory to store vector DB
-            collection_name: Name of collection to use
-            embedding_model: Sentence transformer model name
-            hnsw_config: HNSW configuration parameters
+            config_name: Key from vector_stores section in config
             batch_size: Number of items to process in batch operations
             timeout: Timeout in seconds for DB operations
         """
-        self.persist_dir = Path(persist_dir)
+        from dewey.config import load_config
+        
+        config = load_config().get("vector_stores", {}).get(config_name, {})
+        
+        self.persist_dir = Path(config.get("persist_dir", ".chroma_cache"))
         self.persist_dir.mkdir(exist_ok=True)
+        self.collection_name = config.get("collection_name", "default_collection")
+        self.embedding_model = SentenceTransformer(
+            config.get("embedding_model", "all-MiniLM-L6-v2")
+        )
         self.batch_size = batch_size
         self.timeout = timeout
 
-        # Set default HNSW parameters
-        self.hnsw_config = hnsw_config or {
-            "hnsw:construction_ef": 300,  # Correct parameter name
-            "hnsw:search_ef": 200,        # Changed from "hnsw:ef"
+        # HNSW configuration with defaults
+        self.hnsw_config = config.get("hnsw_config", {
+            "hnsw:construction_ef": 300,
+            "hnsw:search_ef": 200,
             "hnsw:M": 24,
-            "hnsw:space": "cosine"        # Include space in config
-        }
+            "hnsw:space": "cosine"
+        })
 
         # Initialize client
         self.client = chromadb.PersistentClient(path=str(self.persist_dir))

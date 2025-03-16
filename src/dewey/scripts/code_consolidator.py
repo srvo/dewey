@@ -256,8 +256,7 @@ class CodeConsolidator:
         """Initialize vector database with error handling."""
         try:
             from dewey.utils.vector_db import VectorStore
-            # Pass the vector_db config from the main config
-            return VectorStore(**self.config["vector_db"])
+            return VectorStore(config_name="code_consolidation")
         except ImportError as e:
             logger.exception(f"Vector database disabled: {e}")
             return None
