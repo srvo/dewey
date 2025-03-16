@@ -764,11 +764,32 @@ class CodeConsolidator:
             # Extract functions from all files in cluster
             for file_id in cluster:
                 file_path = self.root_dir / file_id
-                result["functions"].extend(self._extract_functions(file_path))
+                functions = self._extract_functions(file_path)
+                result["functions"].extend(functions.values())  # Get dict values instead of keys
                 
-            # Generate consolidated code
-            prompt = f"Consolidate these {len(result['functions'])} related functions:\n" + "\n".join(
-                [f["context"] for f in result["functions"]]
+            # Generate consolidated code with enhanced prompt
+            if not result["functions"]:
+                result["errors"].append("No functions found in cluster")
+                return (False, result)
+                
+            func_examples = "\n\n".join(
+                f"Function: {f['name']}\n"
+                f"Args: {f['args']}\n"
+                f"Docstring: {f.get('docstring', '')}\n"
+                f"Complexity: {f['complexity']}\n"
+                f"Context: {f.get('context', '')}"
+                for f in result["functions"]
+            )
+            
+            prompt = (
+                f"Create a comprehensive consolidated Python function that combines the functionality "
+                f"of these {len(result['functions'])} related implementations.\n\n"
+                f"Requirements:\n"
+                f"- Preserve all functionality with type hints\n"
+                f"- Add detailed Google-style docstring\n"
+                f"- Handle edge cases from all implementations\n"
+                f"- Use modern Python conventions\n\n"
+                f"Function Examples:\n{func_examples}"
             )
             consolidated = generate_response(
                 prompt,
@@ -785,6 +806,17 @@ class CodeConsolidator:
             )
             result["consolidated"] = proc.stdout.decode() if proc.returncode == 0 else consolidated
             result["linted"] = proc.returncode == 0
+            
+            # Write consolidated code to file
+            if result["consolidated"]:
+                output_dir = self.root_dir / "consolidated_functions"
+                output_dir.mkdir(exist_ok=True)
+                cluster_id = hashlib.md5(str(cluster).encode()).hexdigest()[:8]
+                output_path = output_dir / f"consolidated_{cluster_id}.py"
+                
+                with open(output_path, "w") as f:
+                    f.write(result["consolidated"])
+                result["output_path"] = str(output_path.relative_to(self.root_dir))
             
         except Exception as e:
             result["errors"].append(str(e))
@@ -843,6 +875,7 @@ class CodeConsolidator:
                 f"\n**Functions:** {len(cluster['functions'])}"
                 f"\n**Errors:** {len(cluster['errors'])}"
                 f"\n**Consolidated Code:**\n```python\n{cluster['consolidated']}\n```"
+                f"\n**Saved to:** {cluster.get('output_path', 'Not saved')}"
             )
             
         return "\n".join(report)
