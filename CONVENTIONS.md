@@ -20,6 +20,15 @@ Key rules:
 5. script_checkpoints.yaml should only contain transient file hashes
 6. Shared config values used by scripts must live in dewey.yaml
 
+## Consolidated Function Process
+1. New consolidated functions go in `/consolidated_functions`
+2. Run `prd relocate` to:
+   - Classify functionality with LLM
+   - Move to appropriate module directory
+   - Update module PRD documentation
+   - Remove duplicates
+3. PRD files are maintained in `/docs/prds/[module]_prd.md`
+
 ## Maintenance Principles
 - Keep TODO.md updated as the single source of truth for tasks with:
   - Clear current priorities ranked by importance
