@@ -1359,5 +1359,14 @@ def main() -> None:
                     pass
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == "__main__" and __package__ is None:
+    # Prevent direct execution when package exists
+    from dewey.scripts import code_consolidator
+    code_consolidator.main()
+else:
+    # Proper package-relative execution
+    def __main__():
+        main()
+
+    if __name__ == "__main__":
+        __main__()
