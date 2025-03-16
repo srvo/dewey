@@ -61,57 +61,61 @@ def process_data(
 
     processed_data: List[Union[int, float, str]] = []
 
-    if clip is not None:
-        if not isinstance(clip, tuple) or len(clip) != 2:
-            raise TypeError("clip must be a tuple of length 2 (min, max)")
-        if not all(isinstance(x, (int, float)) for x in clip):
-            raise ValueError("clip values must be numerical")
-        min_val, max_val = clip
+    try:
+        if clip is not None:
+            if not isinstance(clip, tuple) or len(clip) != 2:
+                raise TypeError("clip must be a tuple of length 2 (min, max)")
+            if not all(isinstance(x, (int, float)) for x in clip):
+                raise ValueError("clip values must be numerical")
+            min_val, max_val = clip
 
-    numerical_data: List[Union[int, float]] = []
-    for item in data:
-        if isinstance(item, (int, float)):
-            numerical_data.append(item)
+        numerical_data: List[Union[int, float]] = []
+        for item in data:
+            if isinstance(item, (int, float)):
+                numerical_data.append(item)
 
-    if normalize:
-        if not numerical_data:
-            min_val = 0
-            max_val = 1
-        else:
-            min_val = min(numerical_data)
-            max_val = max(numerical_data)
-
-        if min_val == max_val:
-            normalized_data = [0.0 for _ in numerical_data]  # Avoid division by zero
-        else:
-            normalized_data = [(float(x) - min_val) / (max_val - min_val) for x in numerical_data]
-    else:
-        normalized_data = numerical_data
-
-    numerical_index = 0
-    for item in data:
-        if isinstance(item, (int, float)):
-            processed_value: Union[int, float] = normalized_data[numerical_index]
-
-            if clip is not None:
-                processed_value = max(min_val, min(processed_value, max_val))
-
-            if convert_to_int:
-                try:
-                    processed_value = int(processed_value)
-                except (ValueError, TypeError):
-                    processed_value = default_value
-            numerical_index += 1
-
-        elif isinstance(item, str):
-            if string_replacement_map and item in string_replacement_map:
-                processed_value = string_replacement_map[item]
+        if normalize:
+            if not numerical_data:
+                min_val = 0
+                max_val = 1
             else:
-                processed_value = item
+                min_val = min(numerical_data)
+                max_val = max(numerical_data)
+
+            if min_val == max_val:
+                normalized_data = [0.0 for _ in numerical_data]  # Avoid division by zero
+            else:
+                normalized_data = [(float(x) - min_val) / (max_val - min_val) for x in numerical_data]
         else:
-            processed_value = default_value
+            normalized_data = numerical_data
 
-        processed_data.append(processed_value)
+        numerical_index = 0
+        for item in data:
+            if isinstance(item, (int, float)):
+                processed_value: Union[int, float] = normalized_data[numerical_index]
 
-    return processed_data
+                if clip is not None:
+                    processed_value = max(min_val, min(processed_value, max_val))
+
+                if convert_to_int:
+                    try:
+                        processed_value = int(processed_value)
+                    except (ValueError, TypeError):
+                        processed_value = default_value
+                numerical_index += 1
+
+            elif isinstance(item, str):
+                if string_replacement_map and item in string_replacement_map:
+                    processed_value = string_replacement_map[item]
+                else:
+                    processed_value = item
+            else:
+                processed_value = default_value
+
+            processed_data.append(processed_value)
+
+        return processed_data
+    except Exception as e:
+        logger.error(f"An error occurred during data processing: {e}")
+        return data
 ```
