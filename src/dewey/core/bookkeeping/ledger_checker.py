@@ -37,14 +37,15 @@ def main() -> None:
     # ... rest of main logic ...
     checker = LedgerFormatChecker(LEDGER_FILE)
 
-    if checker.warnings:
-        logger.warning("Validation warnings occurred")
+    if checker.run_all_checks():
+        logger.info("All ledger checks passed successfully")
+    else:
+        if checker.warnings:
+            logger.warning("Validation warnings occurred")
 
-    if checker.errors:
-        logger.error("Validation errors detected")
-        sys.exit(1)
-
-    logger.info("All ledger checks passed successfully")
+        if checker.errors:
+            logger.error("Validation errors detected")
+            sys.exit(1)
 
 
 # ... rest of original code ...
