@@ -23,7 +23,6 @@ handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)
 logger.addHandler(handler)
 
 CODE_CONSOLIDATION_DIR = Path("src/dewey/consolidated_functions")
-HASH_PATTERN = re.compile(r"_([0-9a-fA-F]{8})$")  # Match hash without .py extension
 REFACTOR_PREFIX = "RF_"
 
 
@@ -41,14 +40,11 @@ class LegacyRefactor:
                 f.write("timestamp,source_path,original_target,final_target,conflict_detected,action_taken\n")
         
     def find_legacy_files(self) -> List[Path]:
-        """Find all legacy files using hash suffix pattern."""
-        files = [
-            p for p in Path("src").rglob("*.py") 
-            if HASH_PATTERN.search(p.name)
-        ]
-        logger.info(f"Found {len(files)} legacy files matching hash pattern")
+        """Find all files in consolidated_functions directory."""
+        files = list(CODE_CONSOLIDATION_DIR.glob("*.py"))
+        logger.info(f"Found {len(files)} files in consolidated_functions directory")
         for f in files:
-            logger.debug(f"Legacy file: {f}")
+            logger.debug(f"Processing file: {f}")
         return files
 
     def validate_target(self, target: Path) -> None:
