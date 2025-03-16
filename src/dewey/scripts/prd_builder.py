@@ -1,5 +1,6 @@
 """PRD management system with architectural awareness and LLM integration."""
 
+import json
 from pathlib import Path
 from typing import Any
 
@@ -10,7 +11,7 @@ from rich.prompt import Confirm, Prompt
 
 from ..llm.llm_utils import LLMHandler
 from ..utils.vector_db import VectorStore
-from .code_consolidator import ConsolidationReporter
+from .code_consolidator import CodeConsolidator, ConsolidationReporter
 
 
 class PRDManager:
