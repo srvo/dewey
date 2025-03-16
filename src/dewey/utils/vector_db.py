@@ -33,7 +33,7 @@ class VectorStore:
         self.persist_dir = Path(config.get("persist_dir", ".chroma_cache"))
         self.persist_dir.mkdir(exist_ok=True)
         self.collection_name = config.get("collection_name", "default_collection")
-        self.embedding_model_name = config.get("embedding_model", "all-MiniLM-L6-v2")
+        self.embedding_model_name = config.get("embedding_model", "sentence-transformers/all-MiniLM-L6-v2")
         self.embedding_model = SentenceTransformer(self.embedding_model_name)
         self.batch_size = batch_size
         self.timeout = timeout
