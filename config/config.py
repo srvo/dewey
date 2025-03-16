@@ -14,7 +14,7 @@ class Config:
     """
 
     required_env_vars: List[str] = []  # Define required environment variables at the class level
-
+    
     @classmethod
     def verify_config(cls) -> None:
         """
