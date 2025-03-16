@@ -37,7 +37,8 @@ class VectorStore:
         self.persist_dir.mkdir(exist_ok=True)
         self.collection_name = config.get("collection_name", "default_collection")
         self.embedding_model_name = config.get(
-            "embedding_model", "sentence-transformers/all-MiniLM-L6-v2"
+            "embedding_model",
+            "sentence-transformers/all-MiniLM-L6-v2",
         )
         self.embedding_model = SentenceTransformer(self.embedding_model_name)
         self.batch_size = batch_size
@@ -69,7 +70,7 @@ class VectorStore:
         try:
             self.collection = self.client.get_collection(self.collection_name)
             if self.collection.metadata.get("hnsw:space") != self.hnsw_config.get(
-                "hnsw:space"
+                "hnsw:space",
             ):
                 msg = "Existing collection has incompatible distance function"
                 raise ValueError(msg)
@@ -89,7 +90,7 @@ class VectorStore:
         try:
             logger.debug(f"Upserting function: {function_id}")
             embedding = self.generate_embedding(context)
-            result = self.collection.upsert(
+            self.collection.upsert(
                 ids=[function_id],
                 embeddings=[embedding],
                 documents=[context],
@@ -105,7 +106,7 @@ class VectorStore:
                     "operation": "upsert",
                     "function_id": function_id,
                     "error": str(e),
-                }
+                },
             )
             logger.exception(f"Failed to upsert {function_id}: {e}")
 
@@ -156,7 +157,7 @@ class VectorStore:
                     "operation": "query",
                     "context": context[:100],
                     "error": str(e),
-                }
+                },
             )
             logger.exception(f"Query failed: {e}")
             return []
@@ -171,7 +172,7 @@ class VectorStore:
                 {
                     "operation": "persist",
                     "error": str(e),
-                }
+                },
             )
             logger.exception(f"Failed to persist vector DB: {e}")
 

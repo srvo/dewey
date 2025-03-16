@@ -2,14 +2,12 @@
 
 ## Current Priorities
 1. Repository Setup & Core Infrastructure
-2. CRM Module Development
+2. CRM Module Integration & Execution
 3. LLM Integration Foundation
 
 ## Human Tasks
 
 - clarify prd builder invocation -- is there a proper alias in zshrc?
-- begin integrating consolidated scripts
-- take a break from coding and go skiing
 
 ### Code Consolidation
 1. [ ] Review code_consolidator.py report
