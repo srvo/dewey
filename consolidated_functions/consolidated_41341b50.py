@@ -1,7 +1,9 @@
 ```python
-from typing import List, Union, Tuple, Optional, Dict
+from typing import List, Union, Tuple, Optional, Dict, Any
 import math
+import logging
 
+logger = logging.getLogger(__name__)
 
 def process_data(
     data: List[Union[int, float, str]],
