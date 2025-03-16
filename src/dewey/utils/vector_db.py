@@ -138,6 +138,26 @@ class VectorStore:
             logger.error(f"Query failed: {e}")
             return []
 
+    def _apply_hnsw_settings(self) -> None:
+        """Apply HNSW configuration to collection.
+        
+        Updates the collection metadata with HNSW parameters for optimized
+        approximate nearest neighbor search.
+        """
+        try:
+            # ChromaDB requires updating collection metadata
+            self.collection.modify(
+                metadata={**self.hnsw_config}
+            )
+            logger.debug("Applied HNSW configuration")
+        except Exception as e:
+            logger.error(f"Failed to apply HNSW settings: {e}")
+            self.metrics["errors"].append({
+                "operation": "hnsw_config",
+                "error": str(e)
+            })
+            raise
+
     def persist(self) -> None:
         """Persist the database to disk with timeout."""
         try:
