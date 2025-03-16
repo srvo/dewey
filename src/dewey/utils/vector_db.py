@@ -20,6 +20,7 @@ class VectorStore:
         hnsw_config: dict | None = None,
         batch_size: int = 100,
         timeout: int = 30,
+        **kwargs  # Handle extra config params
     ) -> None:
         """Initialize with HNSW configuration.
         
@@ -44,13 +45,8 @@ class VectorStore:
             "hnsw:space": "cosine"        # Include space in config
         }
 
-        # Initialize with timeout settings
-        self.client = chromadb.PersistentClient(
-            path=str(self.persist_dir),
-            settings=chromadb.Settings(
-                chroma_server_request_timeout_secs=self.timeout
-            )
-        )
+        # Initialize client
+        self.client = chromadb.PersistentClient(path=str(self.persist_dir))
         self.collection = self.client.get_or_create_collection(
             collection_name,
             metadata={**self.hnsw_config}  # Include all HNSW params from start

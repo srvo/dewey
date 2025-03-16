@@ -256,8 +256,8 @@ class CodeConsolidator:
         """Initialize vector database with error handling."""
         try:
             from dewey.utils.vector_db import VectorStore
-
-            return VectorStore()
+            # Pass the vector_db config from the main config
+            return VectorStore(**self.config["vector_db"])
         except ImportError as e:
             logger.exception(f"Vector database disabled: {e}")
             return None
@@ -774,6 +774,9 @@ class CodeConsolidator:
             self._preprocess_script(script_path)
             logger.debug(f"Analyzing {script_path.name}...")
             functions = self._extract_functions(script_path)
+            # Add to processed files
+            with self.lock:
+                self.processed_files.add(str(script_path))
             return functions, script_path
         except Exception as e:
             logger.debug(f"Error processing {script_path}: {e}")
@@ -899,7 +902,10 @@ class CodeConsolidator:
     def _save_checkpoint(self) -> None:
         """Save current state to checkpoint file."""
         checkpoint_data = {
-            "processed_files": list(self.processed_files),
+            "processed_files": {
+                str(p): self._file_hash(Path(p))
+                for p in self.processed_files
+            },
             "clustered_files": list(self.clustered_files),
             "function_clusters": [
                 (key, [str(p) for p in paths])
@@ -1242,7 +1248,12 @@ class CodeConsolidator:
             try:
                 with open(self.checkpoint_file) as f:
                     data = json.load(f)
-                self.processed_files = set(data["processed_files"])
+                # Validate file hashes
+                valid_processed = [
+                    p for p in data["processed_files"]
+                    if self._file_hash(Path(p)) == data["processed_files"][p]
+                ]
+                self.processed_files = set(valid_processed)
                 self.clustered_files = set(data.get("clustered_files", []))
                 self.function_clusters = defaultdict(
                     list,
