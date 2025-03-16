@@ -1,8 +1,11 @@
+import logging
 from typing import Any
 
 from dewey.llm.api_clients.deepinfra import DeepInfraClient
 from dewey.llm.api_clients.gemini import GeminiClient
 from dewey.llm.exceptions import LLMError
+
+logger = logging.getLogger(__name__)
 
 
 class LLMHandler:
