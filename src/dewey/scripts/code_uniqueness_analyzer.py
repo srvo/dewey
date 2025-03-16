@@ -15,13 +15,17 @@ def analyze_code_uniqueness(root_dir="src"):
         list: A list of legacy file paths.
     """
 
+    all_files = []
     legacy_files = []
 
     # Discover all Python files in the source directory
     for filename in glob.iglob(root_dir + '**/*.py', recursive=True):
         if filename.endswith(".py"):
-            if re.search(r"_[0-9a-zA-Z]{8}", os.path.basename(filename)):
-                legacy_files.append(filename)
+            all_files.append(filename)
+
+    for filename in all_files:
+        if re.search(r"_[0-9a-zA-Z]{8}", os.path.basename(filename)):
+            legacy_files.append(filename)
 
     return legacy_files
 
