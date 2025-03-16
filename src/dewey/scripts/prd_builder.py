@@ -201,7 +201,7 @@ class PRDManager:
 
     def _architectural_review(self, func_desc: str) -> dict:
         """Enhanced LLM analysis with stakeholder context."""
-        from dewey.config import load_config
+        from src.dewey.config import load_config
 
         prd_config = load_config().get("prd", {})
 
