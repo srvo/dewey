@@ -108,6 +108,35 @@ class PRDManager:
             "components": [],
         }
 
+    def _find_consolidated_functions(self) -> list[Path]:
+        """Discover consolidated function files."""
+        consolidated_dir = self.root_dir / "consolidated_functions"
+        return list(consolidated_dir.glob("consolidated_*.py"))
+
+    def _analyze_consolidated_function(self, path: Path) -> dict:
+        """Extract key details from a consolidated function file."""
+        content = path.read_text()
+        return {
+            "path": path,
+            "name": path.stem.replace("consolidated_", ""),
+            "content": content,
+            "dependencies": self._find_dependencies(content),
+            "function_type": self._classify_function(content),
+        }
+
+    def _classify_function(self, code: str) -> str:
+        """Use LLM to classify function purpose."""
+        prompt = f"""Classify this Python function's purpose:
+        {code}
+        
+        Output JSON with:
+        - primary_category: "crm", "research", "accounting", "llm", "utils", "pipeline"
+        - secondary_category: specific module if applicable
+        - functionality_summary: 1-2 sentence description
+        """
+        response = self.llm.generate_response(prompt, response_format={"type": "json_object"})
+        return json.loads(response)
+
     def _validate_location(self, proposed_path: Path) -> bool:
         """Ensure path matches project conventions."""
         parts = proposed_path.parts
@@ -153,6 +182,82 @@ class PRDManager:
             n_results=5,
             include=["metadatas"],
         )["metadatas"][0]
+
+    def process_consolidated_functions(self) -> None:
+        """Process all consolidated functions interactively."""
+        self.console.print("[bold]Consolidated Function Relocation[/]")
+        consolidated_files = self._find_consolidated_functions()
+        
+        for func_file in consolidated_files:
+            analysis = self._analyze_consolidated_function(func_file)
+            self._handle_single_function(analysis)
+
+    def _handle_single_function(self, analysis: dict) -> None:
+        """Handle relocation and documentation for a single function."""
+        func_info = self._classify_function(analysis["content"])
+        target_dir = self._determine_target_directory(func_info)
+        
+        self.console.print(f"\n[bold]Processing {analysis['name']}[/]")
+        self.console.print(f"LLM Suggestion: {func_info['primary_category']} > {func_info['secondary_category']}")
+        
+        # Let user confirm or override
+        choice = self.console.input(
+            "Accept suggestion? (Y/n) \n"
+            "Or choose module: [1]core [2]llm [3]utils [4]pipeline [5]skip "
+        ).strip().lower()
+        
+        if choice in ["1", "2", "3", "4"]:
+            target_dir = {
+                "1": "core",
+                "2": "llm",
+                "3": "utils",
+                "4": "pipeline"
+            }[choice]
+        elif choice == "5":
+            return
+
+        self._move_function_file(analysis["path"], target_dir, func_info)
+        self._update_module_prd(target_dir, analysis, func_info)
+        self._remove_duplicate_code(analysis)
+
+    def _move_function_file(self, src: Path, target_module: str, func_info: dict) -> None:
+        """Move file to appropriate directory with conflict resolution."""
+        target_dir = self.root_dir / "src" / "dewey" / target_module
+        target_dir.mkdir(exist_ok=True)
+        
+        # Find existing files with similar functionality
+        existing_files = [f.name for f in target_dir.glob("*.py")]
+        new_name = self._get_unique_filename(func_info["name"], existing_files)
+        
+        dest_path = target_dir / new_name
+        src.rename(dest_path)
+        self.console.print(f"✅ Moved to: {dest_path.relative_to(self.root_dir)}")
+
+    def _update_module_prd(self, module: str, analysis: dict, func_info: dict) -> None:
+        """Create/update the module's PRD file."""
+        prd_path = self.root_dir / "docs" / "prds" / f"{module}_prd.md"
+        prd_path.parent.mkdir(exist_ok=True)
+        
+        content = f"\n## {func_info['name']}\n{func_info['functionality_summary']}\n"
+        content += f"```python\n{analysis['content'][:500]}...\n```\n"
+        
+        if prd_path.exists():
+            content = prd_path.read_text() + content
+        prd_path.write_text(content)
+        self.console.print(f"📄 Updated PRD: {prd_path.name}")
+
+    def _remove_duplicate_code(self, analysis: dict) -> None:
+        """Find and remove duplicate code implementations."""
+        similar = self.vector_db.find_similar_functions(analysis["content"], threshold=0.95)
+        if similar:
+            self.console.print(f"Found {len(similar)} potential duplicates:")
+            for path in similar:
+                self.console.print(f" - {Path(path).relative_to(self.root_dir)}")
+            
+            if Confirm.ask("Delete duplicates?"):
+                for path in similar:
+                    Path(path).unlink()
+                    self.console.print(f"🗑️ Deleted: {path}")
 
     def interactive_builder(self) -> None:
         """Guided PRD creation with validation."""
@@ -233,6 +338,12 @@ def validate() -> None:
     report = manager.validate_prd()
     console.print(report)
 
+
+@app.command()
+def relocate() -> None:
+    """Process consolidated functions and relocate them."""
+    manager = PRDManager()
+    manager.process_consolidated_functions()
 
 @app.command()
 def export() -> None:
