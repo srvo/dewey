@@ -6,6 +6,17 @@ Dependencies:
 - pandas for data manipulation
 """
 
+import sqlite3
+import logging
+import re
+from typing import Dict
+
+Dependencies:
+- SQLite database with processed contacts
+- Regex for opportunity detection
+- pandas for data manipulation
+"""
+
 import logging
 import re
 from typing import Dict
