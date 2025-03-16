@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 
 import json
+import logging
 import subprocess
 import sys
 from pathlib import Path
 from typing import Dict
 
-# from dewey.config import logging  # Centralized logging
+from dewey.config import logging  # Centralized logging
 
 # File header: Validates accounts in the Hledger journal against predefined rules.
 
+logger = logging.getLogger(__name__)
 
 def load_rules(rules_file: Path) -> Dict:
     """Load classification rules from a JSON file.
@@ -27,7 +29,7 @@ def load_rules(rules_file: Path) -> Dict:
         with open(rules_file) as f:  # type: ignore
             return json.load(f)
     except Exception as e:
-        logger.exception(f"Failed to load rules: {e!s}")
+        logging.exception(f"Failed to load rules: {e!s}")
         sys.exit(1)
 
 
@@ -55,17 +57,17 @@ def validate_accounts(journal_file: Path, rules: Dict) -> bool:
         missing = [acc for acc in rules["categories"] if acc not in existing_accounts]
 
         if missing:
-            logger.error("Missing accounts required for classification:")
+            logging.error("Missing accounts required for classification:")
             for acc in missing:
-                logger.error(f"  {acc}")
-            logger.error("\nAdd these account declarations to your journal file:")
+                logging.error(f"  {acc}")
+            logging.error("\nAdd these account declarations to your journal file:")
             for acc in missing:
-                logger.error(f"account {acc}")
+                logging.error(f"account {acc}")
             return False
 
         return True
     except Exception as e:
-        logger.exception(f"Account validation failed: {e!s}")
+        logging.exception(f"Account validation failed: {e!s}")
         return False
 
 
@@ -78,11 +80,11 @@ def main() -> None:
     rules_file = Path(sys.argv[2])
 
     if not journal_file.exists():
-        logger.error(f"Journal file not found: {journal_file}")
+        logging.error(f"Journal file not found: {journal_file}")
         sys.exit(1)
 
     if not rules_file.exists():
-        logger.error(f"Rules file not found: {rules_file}")
+        logging.error(f"Rules file not found: {rules_file}")
         sys.exit(1)
 
     rules = load_rules(rules_file)
