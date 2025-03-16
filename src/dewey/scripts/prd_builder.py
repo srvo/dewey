@@ -52,11 +52,11 @@ class PRDManager:
     def _analyze_codebase(self) -> dict:
         """Analyze only the target directory structure and content."""
         analyzer = CodeConsolidator()
-        analyzer.root_path = self.root_dir
+        analyzer.root_path = self.target_dir
         return {
-            "target_directory": str(self.root_dir),
-            "files": list(self._find_python_files(self.root_dir)),
-            "module_count": sum(1 for _ in self._find_python_files(self.root_dir))
+            "target_directory": str(self.target_dir),
+            "files": list(self._find_python_files(self.target_dir)),
+            "module_count": sum(1 for _ in self._find_python_files(self.target_dir))
         }
 
     def _find_python_files(self, directory: Path) -> Iterator[Path]:
@@ -74,7 +74,7 @@ class PRDManager:
                 continue
             
             prompt = f"""Classify this Python module based on its path and content:
-            Path: {path.relative_to(self.root_dir)}
+            Path: {path.relative_to(self.target_dir)}
             Content:
             {path.read_text()[:2000]}
 
@@ -88,7 +88,7 @@ class PRDManager:
             try:
                 analysis = json.loads(self.llm.generate_response(prompt, response_format={"type": "json_object"}))
                 modules.append({
-                    "path": str(path.relative_to(self.root_dir)),
+                    "path": str(path.relative_to(self.target_dir)),
                     **analysis
                 })
             except Exception as e:
@@ -132,7 +132,7 @@ class PRDManager:
         base_path = self.config.get("base_path", "config/prd")
         active_prd = self.config.get("active_prd", "current_prd.yaml")
         
-        prd_dir = self.root_dir / "config" / "prd"
+        prd_dir = self.project_root / "config" / "prd"
         prd_dir.mkdir(exist_ok=True, parents=True)
         return prd_dir / active_prd
 
@@ -355,7 +355,7 @@ class PRDManager:
         self, src: Path, target_module: str, func_info: dict
     ) -> None:
         """Move and reformat file with LLM-powered cleanup."""
-        target_dir = self.root_dir / "src" / "dewey" / target_module
+        target_dir = self.project_root / "src" / "dewey" / target_module
         target_dir.mkdir(exist_ok=True)
 
         # Generate unique filename
@@ -371,7 +371,7 @@ class PRDManager:
         src.unlink()  # Remove original consolidated file
 
         self.console.print(
-            f"✅ Moved to: [bold green]{dest_path.relative_to(self.root_dir)}[/]"
+            f"✅ Moved to: [bold green]{dest_path.relative_to(self.project_root)}[/]"
         )
         self.console.print(
             f"📏 Size change: {len(original_content)} → {len(reformed_content)} chars"
@@ -447,7 +447,7 @@ class PRDManager:
         if similar:
             self.console.print(f"Found {len(similar)} exact duplicates:")
             for path in similar:
-                self.console.print(f" - {path.relative_to(self.root_dir)}")
+                self.console.print(f" - {path.relative_to(self.project_root)}")
 
             if Confirm.ask("Delete duplicates?"):
                 for path in similar:
