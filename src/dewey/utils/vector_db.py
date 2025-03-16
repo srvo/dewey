@@ -12,7 +12,12 @@ logger = logging.getLogger(__name__)
 class VectorStore:
     """ChromaDB vector store for code embeddings."""
 
-    def __init__(self, persist_dir: str = ".chroma_cache", collection_name: str = "code_functions", embedding_model: str = "all-MiniLM-L6-v2") -> None:
+    def __init__(
+        self,
+        persist_dir: str = ".chroma_cache",
+        collection_name: str = "code_functions",
+        embedding_model: str = "all-MiniLM-L6-v2",
+    ) -> None:
         self.persist_dir = Path(persist_dir)
         self.persist_dir.mkdir(exist_ok=True)
 
@@ -35,19 +40,22 @@ class VectorStore:
         )
 
     def find_similar_functions(
-        self, context: str, threshold: float = 0.85, top_k: int = 5
+        self,
+        context: str,
+        threshold: float = 0.85,
+        top_k: int = 5,
     ) -> list[str]:
         """Find similar functions using similarity similarity search."""
         query_embedding = self.generate_embedding(context)
-        
+
         # Get actual collection count to handle empty state
         collection_count = self.collection.count()
         if collection_count == 0:
             return []
-        
+
         # Ensure we don't request more results than available
         safe_top_k = min(top_k, collection_count)
-        
+
         results = self.collection.query(
             query_embeddings=[query_embedding],
             n_results=safe_top_k,
@@ -57,7 +65,9 @@ class VectorStore:
         return [
             result_id
             for result_id, distance in zip(
-                results["ids"][0], results["distances"][0], strict=False
+                results["ids"][0],
+                results["distances"][0],
+                strict=False,
             )
             if distance < (1 - threshold)
         ]

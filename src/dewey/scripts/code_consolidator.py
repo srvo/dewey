@@ -6,94 +6,81 @@ import argparse
 import ast
 import datetime
 import hashlib
-import re
 import json
 import logging
 import os
+import re
 import subprocess
 import threading
 from collections import defaultdict
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from typing import Any, Dict, List, Tuple, Optional, Callable
+from typing import Any
+
 
 class ConsolidationReporter:
     """Real-time progress reporting with emojis and color."""
-    
-    def __init__(self):
+
+    def __init__(self) -> None:
         self.stages = {}
         self.error_log = []
         self.warning_log = []
         self.progress_bars = {}
         self.start_time = datetime.datetime.now()
-        
-    def begin_stage(self, name: str, emoji: str, total: int = None) -> None:
+
+    def begin_stage(self, name: str, emoji: str, total: int | None = None) -> None:
         self.stages[name] = {
             "emoji": emoji,
             "start": datetime.datetime.now(),
             "total": total,
-            "completed": 0
+            "completed": 0,
         }
-        print(f"\n{emoji} \033[1m{name.title()}\033[0m")
-        
-    def update_stage(self, name: str, increment: int = 1, message: str = None) -> None:
+
+    def update_stage(
+        self, name: str, increment: int = 1, message: str | None = None
+    ) -> None:
         if name in self.stages:
             self.stages[name]["completed"] += increment
             if message:
                 total = self.stages[name]["total"]
                 if total:
                     pct = (self.stages[name]["completed"] / total) * 100
-                    status = f"{self.stages[name]['completed']}/{total} ({pct:.1f}%)"
+                    f"{self.stages[name]['completed']}/{total} ({pct:.1f}%)"
                 else:
-                    status = f"{self.stages[name]['completed']}"
-                
-                print(f"  {self.stages[name]['emoji']} {status} - {message}")
+                    f"{self.stages[name]['completed']}"
 
     def end_stage(self, name: str) -> None:
         if name in self.stages:
-            duration = datetime.datetime.now() - self.stages[name]["start"]
-            print(f"  ✅ Completed in {duration.total_seconds():.1f}s\n")
-            
+            datetime.datetime.now() - self.stages[name]["start"]
+
     def error(self, message: str) -> None:
         self.error_log.append(message)
-        print(f"  \033[31m❌ {message}\033[0m")
-        
+
     def warning(self, message: str) -> None:
         self.warning_log.append(message)
-        print(f"  \033[33m⚠️ {message}\033[0m")
-        
+
     def final_report(self) -> None:
-        duration = datetime.datetime.now() - self.start_time
-        print(f"\n\033[1m🏁 Consolidation Complete\033[0m")
-        print(f"⏱  Total Duration: {duration.total_seconds():.1f}s")
-        
+        datetime.datetime.now() - self.start_time
+
         # Summary table
-        print("\n\033[1m📊 Summary:\033[0m")
-        print(f"  📂 Files Processed: {sum(stage['completed'] for stage in self.stages.values() if stage['total'])}")
-        print(f"  🧩 Function Clusters: {len(self.stages.get('clustering', {}).get('completed', 0))}")
-        print(f"  ✅ Successful Clusters: {len([e for e in self.stages.get('processing', {}).get('completed', []) if e])}")
-        print(f"  ❌ Failed Clusters: {len(self.error_log)}")
-        print(f"  ⚠️  Warnings: {len(self.warning_log)}")
-        
+
         # Show top 5 errors if any
         if self.error_log:
-            print("\n\033[1m🔴 Top Errors:\033[0m")
-            for error in self.error_log[:5]:
-                print(f"  - {error}")
-                
-        # Show LLM usage stats
-        if 'llm_requests' in self.stages:
-            print(f"\n🤖 LLM Usage:")
-            print(f"  📝 Requests: {self.stages['llm_requests']['completed']}")
-            print(f"  ⚡ Tokens Used: {self.stages.get('llm_tokens', {}).get('completed', 'N/A')}")
+            for _error in self.error_log[:5]:
+                pass
 
-from dewey.llm.api_clients.gemini import GeminiClient
-from tqdm import tqdm
+        # Show LLM usage stats
+        if "llm_requests" in self.stages:
+            pass
+
+
 import spacy
 from spacy.lang.en.stop_words import STOP_WORDS
+from tqdm import tqdm
 
-from dewey.llm.llm_utils import LLMHandler
 from dewey.llm.api_clients.gemini import RateLimiter
+from dewey.llm.llm_utils import LLMHandler
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -126,26 +113,32 @@ class CodeConsolidator:
         self.root_dir = Path(root_dir).expanduser().resolve()
         self.rate_limiter = RateLimiter()
         self.config = self._load_config(config_path)
-        
+
         # Configure rate limiter with loaded config
-        llm_config = self.config.get('llm', {})
-        self.rate_limiter.configure({
-            "model_limits": llm_config.get('model_limits', {}),
-            "cooldown_minutes": llm_config.get('cooldown_minutes', 5)
-        })
-        
+        llm_config = self.config.get("llm", {})
+        self.rate_limiter.configure(
+            {
+                "model_limits": llm_config.get("model_limits", {}),
+                "cooldown_minutes": llm_config.get("cooldown_minutes", 5),
+            }
+        )
+
         # Validate project structure
         if not (self.root_dir / "pyproject.toml").exists():
-            raise FileNotFoundError(
+            msg = (
                 f"Invalid project root: {self.root_dir}\n"
                 "Must contain pyproject.toml and follow standard project structure."
             )
-            
-        if not (self.root_dir / "src" / "dewey").exists():
             raise FileNotFoundError(
-                f"Missing dewey package in {self.root_dir}/src/dewey"
+                msg,
             )
-            
+
+        if not (self.root_dir / "src" / "dewey").exists():
+            msg = f"Missing dewey package in {self.root_dir}/src/dewey"
+            raise FileNotFoundError(
+                msg,
+            )
+
         self.config = self._load_config(config_path)
         self.function_clusters = defaultdict(list)
         self.script_analysis = {}
@@ -162,29 +155,42 @@ class CodeConsolidator:
 
     def _load_config(self, config_path: str | None = None) -> dict:
         """Load configuration from YAML file with defaults."""
-        import yaml
         from pathlib import Path
+
+        import yaml
 
         default_config = {
             "pipeline": {
                 "max_files": None,
-                "excluded_dirs": ["test", ".venv", "venv", "docs", "deploy", "config", "ingest_data"],
+                "excluded_dirs": [
+                    "test",
+                    ".venv",
+                    "venv",
+                    "docs",
+                    "deploy",
+                    "config",
+                    "ingest_data",
+                ],
                 "file_patterns": [r"\.py$"],
                 "cluster_threshold": 0.2,
                 "max_cluster_size": 5,
-                "min_cluster_size": 2
+                "min_cluster_size": 2,
             },
             "vector_db": {
                 "persist_dir": ".chroma_cache",
                 "embedding_model": "all-MiniLM-L6-v2",
                 "collection_name": "code_functions",
-                "similarity_threshold": 0.85
+                "similarity_threshold": 0.85,
             },
             "llm": {
                 "client": "deepinfra",
                 "default_model": "meta-llama/Meta-Llama-3-8B-Instruct",
                 "model_limits": {
-                    "meta-llama/Meta-Llama-3-8B-Instruct": {"rpm": 15, "tpm": 1000000, "rpd": 1500}
+                    "meta-llama/Meta-Llama-3-8B-Instruct": {
+                        "rpm": 15,
+                        "tpm": 1000000,
+                        "rpd": 1500,
+                    },
                 },
                 "cooldown_minutes": 5,
                 "fallback_models": ["gemini-2.0-flash", "gemini-1.5-flash"],
@@ -193,15 +199,24 @@ class CodeConsolidator:
                 "batch_size": 100,
                 "max_workers": 4,
                 "max_entries": 200,  # Increased capacity
-                "eviction_policy": "lru"
+                "eviction_policy": "lru",
             },
             "formatting": {
                 "lint_timeout": 120,
                 "formatters": [
-                    {"command": ["ruff", "check", "--fix", "--unsafe-fixes", "--select", "ALL"]},
-                    {"command": ["black"]}
-                ]
-            }
+                    {
+                        "command": [
+                            "ruff",
+                            "check",
+                            "--fix",
+                            "--unsafe-fixes",
+                            "--select",
+                            "ALL",
+                        ]
+                    },
+                    {"command": ["black"]},
+                ],
+            },
         }
 
         if config_path:
@@ -211,14 +226,16 @@ class CodeConsolidator:
                     loaded_config = yaml.safe_load(f)
                     # Deep merge with default config
                     config = self._deep_merge(default_config, loaded_config)
-                    
+
                     # Add validation for large-scale operations
-                    if config.get('pipeline', {}).get('max_files') is None:
-                        config.setdefault('llm', {}).setdefault('max_entries', 1500)
-                        config.setdefault('llm', {}).setdefault('batch_size', 250)
-                        config.setdefault('llm', {}).setdefault('max_workers', 8)
-                        logger.info("Auto-configured for large-scale operation (900+ files)")
-                    
+                    if config.get("pipeline", {}).get("max_files") is None:
+                        config.setdefault("llm", {}).setdefault("max_entries", 1500)
+                        config.setdefault("llm", {}).setdefault("batch_size", 250)
+                        config.setdefault("llm", {}).setdefault("max_workers", 8)
+                        logger.info(
+                            "Auto-configured for large-scale operation (900+ files)"
+                        )
+
                     return config
         return default_config
 
@@ -231,7 +248,7 @@ class CodeConsolidator:
                 base[key] = val
         return base
 
-    def _init_vector_db(self) -> Optional[Any]:
+    def _init_vector_db(self) -> Any | None:
         """Initialize vector database with error handling."""
         try:
             from dewey.utils.vector_db import VectorStore
@@ -251,15 +268,17 @@ class CodeConsolidator:
             try:
                 # Test actual LLM connectivity
                 self.llm.generate_response("test")
-                logger.info(f"LLM client initialized successfully with rate limiter: {self.rate_limiter}")
+                logger.info(
+                    f"LLM client initialized successfully with rate limiter: {self.rate_limiter}"
+                )
                 return True
             except Exception as e:
                 logger.warning(
-                    f"LLM setup error (attempt {attempt+1}/{max_retries}): {e}"
+                    f"LLM setup error (attempt {attempt+1}/{max_retries}): {e}",
                 )
                 if attempt == max_retries - 1:
                     logger.exception(
-                        "LLM initialization failed - semantic analysis disabled"
+                        "LLM initialization failed - semantic analysis disabled",
                     )
                     return None
         return None
@@ -267,37 +286,46 @@ class CodeConsolidator:
     def analyze_directory(self) -> dict:
         """Public interface to run full pipeline."""
         self.reporter.begin_stage("directory_analysis", "📂")
-        
+
         try:
             files = self._find_script_files()
             self.reporter.begin_stage("file_processing", "📝", total=len(files))
-            
+
             with ThreadPoolExecutor(max_workers=os.cpu_count()) as executor:
                 futures = []
                 for script_path in files:
-                    futures.append(executor.submit(self._process_file_safe, script_path))
-                    
-                for future in tqdm(as_completed(futures), total=len(files), desc="📄 Processing files"):
+                    futures.append(
+                        executor.submit(self._process_file_safe, script_path)
+                    )
+
+                for future in tqdm(
+                    as_completed(futures), total=len(files), desc="📄 Processing files"
+                ):
                     functions, path = future.result()
                     self.script_analysis[str(path)] = functions
-                    self.reporter.update_stage("file_processing", increment=1, 
-                                             message=f"Processed {path.name}")
-                    
+                    self.reporter.update_stage(
+                        "file_processing", increment=1, message=f"Processed {path.name}"
+                    )
+
             self.reporter.end_stage("file_processing")
-            
-            self.reporter.begin_stage("clustering", "🧩", total=len(self.script_analysis))
-            for path, functions in tqdm(self.script_analysis.items(), desc="🔗 Clustering functions"):
+
+            self.reporter.begin_stage(
+                "clustering", "🧩", total=len(self.script_analysis)
+            )
+            for path, functions in tqdm(
+                self.script_analysis.items(), desc="🔗 Clustering functions"
+            ):
                 self._cluster_functions(functions, Path(path))
                 self.reporter.update_stage("clustering", increment=1)
             self.reporter.end_stage("clustering")
-            
+
             pipeline_report = self.execute_pipeline()
             self.reporter.final_report()
             self._save_checkpoint()
             return pipeline_report
-            
+
         except Exception as e:
-            self.reporter.error(f"Fatal error: {str(e)}")
+            self.reporter.error(f"Fatal error: {e!s}")
             raise
 
     def _find_script_files(self) -> list[Path]:
@@ -307,7 +335,7 @@ class CodeConsolidator:
         max_files = self.config["pipeline"]["max_files"]
 
         files = []
-        pattern = "|".join(file_patterns)
+        "|".join(file_patterns)
         for f in self.root_dir.glob("**/*"):
             if any(re.search(pattern, f.name) for pattern in file_patterns):
                 if not any(d in f.parts for d in excluded_dirs):
@@ -322,7 +350,7 @@ class CodeConsolidator:
         try:
             with open(file_path, encoding="utf-8", errors="replace") as f:
                 source = f.read(50_000)  # Limit input size for problematic files
-                
+
                 # First try full AST parsing
                 try:
                     tree = ast.parse(source, filename=str(file_path))
@@ -342,7 +370,7 @@ class CodeConsolidator:
                 except SyntaxError as e:
                     error_msg = f"{file_path}: {e.msg} (line {e.lineno})"
                     logger.warning(f"Syntax error: {error_msg}")
-                    self.syntax_errors.append(f"{error_msg} - {str(e)}")
+                    self.syntax_errors.append(f"{error_msg} - {e!s}")
                 except Exception as e:
                     logger.warning(f"Unexpected AST error parsing {file_path}: {e}")
 
@@ -356,7 +384,9 @@ class CodeConsolidator:
         return functions
 
     def _parse_functions_manually(
-        self, source: str, file_path: Path
+        self,
+        source: str,
+        file_path: Path,
     ) -> dict[str, dict]:
         """Fallback function parser that uses simple pattern matching."""
         functions = {}
@@ -368,11 +398,11 @@ class CodeConsolidator:
         # Handle multi-line function definitions
         cleaned_source = source.replace("\r\n", "\n").replace("\r", "\n")
         lines = cleaned_source.split("\n")
-        
+
         for i, line in enumerate(lines):
             line = line.expandtabs(4)  # Normalize tabs to spaces
             stripped_line = line.strip()
-            
+
             try:
                 # Handle multi-line function definitions
                 if line_buffer:
@@ -380,13 +410,17 @@ class CodeConsolidator:
                     joined_line = " ".join([l.strip() for l in line_buffer])
                     if "):" in joined_line:
                         full_def = " ".join(line_buffer)
-                        func_match = re.match(r"^(async\s+)?def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(", full_def)
+                        func_match = re.match(
+                            r"^(async\s+)?def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(", full_def
+                        )
                         if func_match:
                             func_name = func_match.group(2)
                             params = full_def.split("(", 1)[1].split(")", 1)[0].strip()
                             functions[func_name] = {
                                 "name": func_name,
-                                "args": [p.strip() for p in params.split(",") if p.strip()],
+                                "args": [
+                                    p.strip() for p in params.split(",") if p.strip()
+                                ],
                                 "lineno": i + 1 - len(line_buffer) + 1,
                                 "docstring": None,
                                 "complexity": 2,  # Slightly higher estimate for multi-line
@@ -396,24 +430,31 @@ class CodeConsolidator:
                             }
                             current_function = func_name
                             in_function = True
-                            indent_level = len(line_buffer[0]) - len(line_buffer[0].lstrip())
+                            indent_level = len(line_buffer[0]) - len(
+                                line_buffer[0].lstrip()
+                            )
                         line_buffer = []
                         continue
-                    elif len(line_buffer) > 3:  # Give up after 3 lines
+                    if len(line_buffer) > 3:  # Give up after 3 lines
                         line_buffer = []
                     continue
 
                 # Look for function definitions with more flexible matching
                 if re.match(r"^\s*(async\s+)?def\s+[a-zA-Z_]", line):
                     if "):" in line:
-                        #-line-line definition
-                        func_match = re.match(r"^\s*(async\s+)?def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\((.*)\)\s*:", line)
+                        # -line-line definition
+                        func_match = re.match(
+                            r"^\s*(async\s+)?def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\((.*)\)\s*:",
+                            line,
+                        )
                         if func_match:
                             func_name = func_match.group(2)
                             params = func_match.group(3).strip()
                             functions[func_name] = {
                                 "name": func_name,
-                                "args": [p.strip() for p in params.split(",") if p.strip()],
+                                "args": [
+                                    p.strip() for p in params.split(",") if p.strip()
+                                ],
                                 "lineno": i + 1,
                                 "docstring": None,
                                 "complexity": 1,
@@ -435,7 +476,7 @@ class CodeConsolidator:
 
                     # Check if we've left the function body
                     if current_indent <= indent_level and not stripped_line.startswith(
-                        "@"
+                        "@",
                     ):
                         in_function = False
                         current_function = None
@@ -461,7 +502,7 @@ class CodeConsolidator:
         """Group similar functions using vector similarity search."""
         if not self.vector_db:
             logger.warning(
-                "Vector database not available - falling back to structural clustering"
+                "Vector database not available - falling back to structural clustering",
             )
             self._fallback_cluster(functions, script_path)
             return
@@ -483,9 +524,9 @@ class CodeConsolidator:
 
             # Find similar existing functions
             similar_ids = self.vector_db.find_similar_functions(
-                context, 
+                context,
                 threshold=self.config["vector_db"]["similarity_threshold"],
-                top_k=self.config["pipeline"]["max_cluster_size"]
+                top_k=self.config["pipeline"]["max_cluster_size"],
             )
 
             if similar_ids:
@@ -553,10 +594,11 @@ class CodeConsolidator:
             if len(implementations) > 1:
                 # Find the canonical version (best example)
                 canonical = max(
-                    implementations, key=lambda x: self._implementation_quality(x[1])
+                    implementations,
+                    key=lambda x: self._implementation_quality(x[1]),
                 )
                 consolidation_candidates.append(
-                    (cluster_key, implementations, canonical)
+                    (cluster_key, implementations, canonical),
                 )
 
         self._present_findings(consolidation_candidates)
@@ -611,7 +653,9 @@ class CodeConsolidator:
                 prompt += f"Docs: {details['docstring']}\n"
 
         try:
-            self.llm.generate_response(prompt, model=self.config["llm"]["default_model"])
+            self.llm.generate_response(
+                prompt, model=self.config["llm"]["default_model"]
+            )
         except Exception as e:
             logger.exception(f"LLM consultation failed: {e}")
 
@@ -666,16 +710,18 @@ class CodeConsolidator:
         try:
             content = script_path.read_text(encoding="utf-8", errors="replace")[:50000]
             file_id = str(script_path.relative_to(self.root_dir))
-            
+
             self.vector_db.collection.upsert(
                 ids=[file_id],
                 embeddings=[self.vector_db.generate_embedding(content)],
                 documents=[content],
-                metadatas=[{
-                    "path": str(script_path),
-                    "type": "full_file",
-                    "content_hash": hashlib.md5(content.encode()).hexdigest()
-                }]
+                metadatas=[
+                    {
+                        "path": str(script_path),
+                        "type": "full_file",
+                        "content_hash": hashlib.md5(content.encode()).hexdigest(),
+                    }
+                ],
             )
         except Exception as e:
             logger.debug(f"Failed to cluster file {script_path}: {e}")
@@ -727,7 +773,7 @@ class CodeConsolidator:
                 logger.debug(f"Ruff output for {script_path.name}:\n{ruff_proc.stderr}")
             if black_proc.returncode != 0:
                 logger.debug(
-                    f"Black output for {script_path.name}:\n{black_proc.stderr}"
+                    f"Black output for {script_path.name}:\n{black_proc.stderr}",
                 )
 
         except subprocess.TimeoutExpired:
@@ -751,7 +797,7 @@ class CodeConsolidator:
                     "cd spaCy && "
                     "uv pip install -r requirements.txt && "
                     "uv pip install --no-build-isolation --editable . && "
-                    "python -m spacy download en_core_web_sm"
+                    "python -m spacy download en_core_web_sm",
                 )
                 return ""
 
@@ -790,7 +836,9 @@ class CodeConsolidator:
 
         # Process in large batches for maximum throughput
         batch_size = self.config["llm"]["batch_size"]
-        with ThreadPoolExecutor(max_workers=self.config["llm"]["max_workers"]) as executor:
+        with ThreadPoolExecutor(
+            max_workers=self.config["llm"]["max_workers"]
+        ) as executor:
             for i in range(0, len(hash_queue), batch_size):
                 batch = hash_queue[i : i + batch_size]
                 futures = [executor.submit(self._semantic_hash, func) for func in batch]
@@ -822,7 +870,7 @@ class CodeConsolidator:
         except Exception as e:
             logger.exception(f"Failed to save checkpoint: {e}")
 
-    def _isolated_step(self, step_func: Callable, *args, **kwargs) -> Dict[str, Any]:
+    def _isolated_step(self, step_func: Callable, *args, **kwargs) -> dict[str, Any]:
         """Execute a pipeline step with error containment."""
         result = {"success": False, "error": None, "data": None}
         try:
@@ -833,34 +881,40 @@ class CodeConsolidator:
             logger.error(f"Step {step_func.__name__} failed: {e}", exc_info=True)
         return result
 
-    def _load_files_step(self) -> Dict[str, Any]:
+    def _load_files_step(self) -> dict[str, Any]:
         """Step 1: Load files into ChromaDB with error isolation."""
         results = {"processed": 0, "failed": 0, "errors": []}
         for script_path in self._find_script_files():
             try:
-                content = script_path.read_text(encoding="utf-8", errors="replace")[:50000]
+                content = script_path.read_text(encoding="utf-8", errors="replace")[
+                    :50000
+                ]
                 file_id = str(script_path.relative_to(self.root_dir))
-                
+
                 self.vector_db.collection.upsert(
                     ids=[file_id],
                     embeddings=[self.vector_db.generate_embedding(content)],
                     documents=[content],
-                    metadatas=[{
-                        "path": str(script_path),
-                        "type": "full_file",
-                        "content_hash": hashlib.md5(content.encode()).hexdigest()
-                    }]
+                    metadatas=[
+                        {
+                            "path": str(script_path),
+                            "type": "full_file",
+                            "content_hash": hashlib.md5(content.encode()).hexdigest(),
+                        }
+                    ],
                 )
                 results["processed"] += 1
             except Exception as e:
                 results["failed"] += 1
-                results["errors"].append(f"{script_path}: {str(e)}")
+                results["errors"].append(f"{script_path}: {e!s}")
         return results
 
-    def _cluster_files_step(self) -> Dict[str, Any]:
+    def _cluster_files_step(self) -> dict[str, Any]:
         """Step 2: Cluster similar files."""
         try:
-            file_ids = [str(f.relative_to(self.root_dir)) for f in self._find_script_files()]
+            file_ids = [
+                str(f.relative_to(self.root_dir)) for f in self._find_script_files()
+            ]
             clusters = {}
             for file_id in file_ids:
                 content = self.vector_db.collection.get(ids=[file_id])["documents"][0]
@@ -869,36 +923,38 @@ class CodeConsolidator:
                         query_texts=[content],
                         n_results=3,
                         include=["distances", "metadatas"],
-                        query_embeddings=[self.vector_db.generate_embedding(content)]
+                        query_embeddings=[self.vector_db.generate_embedding(content)],
                     )
-                
+
                     # Handle empty results case
                     if not similar.get("ids") or not similar.get("distances"):
                         logger.debug(f"No similar files found for {file_id}")
                         clusters[file_id] = []
                         continue
-                
+
                     # Safely extract results with defaults
                     cluster_ids = similar.get("ids", [[]])[0] or []
                     distances = similar.get("distances", [[]])[0] or []
-                
+
                     clusters[file_id] = [
-                        id for id, distance in zip(cluster_ids, distances)
+                        id
+                        for id, distance in zip(cluster_ids, distances, strict=False)
                         if distance < self.config["pipeline"]["cluster_threshold"]
                     ]
                 except Exception as e:
-                    logger.error(f"Error clustering {file_id}: {str(e)}")
+                    logger.exception(f"Error clustering {file_id}: {e!s}")
                     clusters[file_id] = []
             return {"clusters": clusters}
         except Exception as e:
-            logger.error(f"Clustering failed: {e}")
+            logger.exception(f"Clustering failed: {e}")
             return {"clusters": {}}
 
-    def _process_cluster(self, cluster: List[str]) -> Tuple[bool, Dict[str, Any]]:  # type: ignore
+    def _process_cluster(self, cluster: list[str]) -> tuple[bool, dict[str, Any]]:  # type: ignore
         """Process a single file cluster with error handling."""
         result = {
             "cluster": cluster,
-            "cluster_name": ", ".join([Path(f).name for f in cluster[:3]]) + ("..." if len(cluster) > 3 else ""),
+            "cluster_name": ", ".join([Path(f).name for f in cluster[:3]])
+            + ("..." if len(cluster) > 3 else ""),
             "functions": [],
             "consolidated": None,
             "errors": [],
@@ -907,29 +963,31 @@ class CodeConsolidator:
             "file_names": [Path(f).name for f in cluster],
             "priority": min(5, len(cluster) // 2),  # Scale priority with cluster size
             "timestamp": datetime.datetime.now().isoformat(),
-            "file_versions": {
-                f: self._file_hash(self.root_dir / f) for f in cluster
-            }
+            "file_versions": {f: self._file_hash(self.root_dir / f) for f in cluster},
         }
         try:
-            self.reporter.update_stage("processing", message=f"Processing cluster: {result['cluster_name']}")
+            self.reporter.update_stage(
+                "processing", message=f"Processing cluster: {result['cluster_name']}"
+            )
             result["recommended_action"] = self._get_recommended_action(result)
             result["next_steps"] = self._get_next_steps(result)
         except Exception as e:
-            result["errors"].append(f"Error processing cluster: {str(e)}")
-        
+            result["errors"].append(f"Error processing cluster: {e!s}")
+
         try:
             # Extract functions from all files in cluster
             for file_id in cluster:
                 file_path = self.root_dir / file_id
                 functions = self._extract_functions(file_path)
-                result["functions"].extend(functions.values())  # Get dict values instead of keys
-                
+                result["functions"].extend(
+                    functions.values()
+                )  # Get dict values instead of keys
+
             # Generate consolidated code with enhanced prompt
             if not result["functions"]:
                 result["errors"].append("No functions found in cluster")
                 return (False, result)
-                
+
             func_examples = "\n\n".join(
                 f"Function: {f['name']}\n"
                 f"Args: {f['args']}\n"
@@ -938,7 +996,7 @@ class CodeConsolidator:
                 f"Context: {f.get('context', '')}"
                 for f in result["functions"]
             )
-            
+
             prompt = (
                 f"Create a comprehensive consolidated Python function that combines the functionality "
                 f"of these {len(result['functions'])} related implementations.\n\n"
@@ -951,55 +1009,58 @@ class CodeConsolidator:
             )
             model = self.config["llm"]["default_model"]
             self.rate_limiter.check_limit(model, prompt)
-            
+
             consolidated = self.llm.generate_response(
                 prompt,
                 model=model,
                 temperature=self.config["llm"]["temperature"],
-                system_message="Create comprehensive function with type hints and docstrings"
+                system_message="Create comprehensive function with type hints and docstrings",
             )
-            
+
             # Lint and format
             proc = subprocess.run(
                 ["ruff", "format", "-"],
                 input=consolidated.encode(),
-                capture_output=True
+                capture_output=True,
+                check=False,
             )
-            result["consolidated"] = proc.stdout.decode() if proc.returncode == 0 else consolidated
+            result["consolidated"] = (
+                proc.stdout.decode() if proc.returncode == 0 else consolidated
+            )
             result["linted"] = proc.returncode == 0
-            
+
             # Write consolidated code to file
             if result["consolidated"]:
                 output_dir = self.root_dir / "consolidated_functions"
                 output_dir.mkdir(exist_ok=True)
                 cluster_id = hashlib.md5(str(cluster).encode()).hexdigest()[:8]
                 output_path = output_dir / f"consolidated_{cluster_id}.py"
-                
+
                 with open(output_path, "w") as f:
                     f.write(result["consolidated"])
                 result["output_path"] = str(output_path.relative_to(self.root_dir))
-            
+
         except Exception as e:
             result["errors"].append(str(e))
-            
+
         return (len(result["errors"]) == 0, result)
 
-    def execute_pipeline(self) -> Dict[str, Any]:
+    def execute_pipeline(self) -> dict[str, Any]:
         """Execute full consolidation pipeline with isolated steps."""
         report = {
             "load_files": self._isolated_step(self._load_files_step),
             "cluster_files": self._isolated_step(self._cluster_files_step),
             "processing": {"clusters": [], "success": 0, "failed": 0},
-            "overall_success": False
+            "overall_success": False,
         }
-        
+
         if report["cluster_files"]["success"]:
             with ThreadPoolExecutor() as executor:
                 futures = [
                     executor.submit(self._process_cluster, cluster)
                     for cluster in report["cluster_files"]["data"]["clusters"].values()
                 ]
-                
+
                 for future in as_completed(futures):
                     success, result = future.result()
                     if success:
@@ -1007,16 +1068,16 @@ class CodeConsolidator:
                     else:
                         report["processing"]["failed"] += 1
                     report["processing"]["clusters"].append(result)
-        
+
         report["overall_success"] = (
-            report["load_files"]["success"] and
-            report["cluster_files"]["success"] and
-            report["processing"]["failed"] == 0
+            report["load_files"]["success"]
+            and report["cluster_files"]["success"]
+            and report["processing"]["failed"] == 0
         )
-        
+
         return report
 
-    def generate_report(self, pipeline_report: Dict[str, Any]) -> str:
+    def generate_report(self, pipeline_report: dict[str, Any]) -> str:
         """Generate detailed consolidation report."""
         report = [
             "# Code Consolidation Pipeline Report",
@@ -1031,54 +1092,66 @@ class CodeConsolidator:
             f"- Clusters identified: {len(pipeline_report['cluster_files']['data']['clusters'])}",
             f"- Clusters processed successfully: {pipeline_report['processing']['success']}",
             f"- Clusters failed: {pipeline_report['processing']['failed']}",
-            "\n## Detailed Cluster Results:"
+            "\n## Detailed Cluster Results:",
         ]
-        
+
         for cluster in pipeline_report["processing"]["clusters"]:
             status = "SUCCESS" if not cluster["errors"] else "FAILED"
             report.append(
                 f"\n### Cluster: {', '.join(c.split('/')[-1] for c in cluster['cluster'])} ({status})"
                 f"\n- Functions: {len(cluster['functions'])}"
                 f"\n- Errors: {len(cluster['errors'])}"
-                + (f"\n```\n" + "\n".join(cluster['errors'][:3]) + "\n```" if cluster['errors'] else "")
-                + (f"\n```python\n{cluster['consolidated'][:500]}...\n```" 
-                   if cluster['consolidated'] and len(cluster['consolidated']) > 50 
-                   else "")
-                + (f"\nSaved to: {cluster.get('output_path', '')}" if cluster.get('output_path') else "")
+                + (
+                    "\n```\n" + "\n".join(cluster["errors"][:3]) + "\n```"
+                    if cluster["errors"]
+                    else ""
+                )
+                + (
+                    f"\n```python\n{cluster['consolidated'][:500]}...\n```"
+                    if cluster["consolidated"] and len(cluster["consolidated"]) > 50
+                    else ""
+                )
+                + (
+                    f"\nSaved to: {cluster.get('output_path', '')}"
+                    if cluster.get("output_path")
+                    else ""
+                ),
             )
-            
+
         return "\n".join(report)
 
     def _get_file_hashes_version(self) -> str:
-        """Create version string based on file hashes"""
+        """Create version string based on file hashes."""
         hashes = sorted(f["file_hash"] for f in self.script_analysis.values())
         return hashlib.md5("".join(hashes).encode()).hexdigest()[:8]
 
     def _get_recommended_action(self, cluster_result: dict) -> str:
-        """Generate actionable recommendation using rules + LLM"""
+        """Generate actionable recommendation using rules + LLM."""
         # Rule-based recommendations
         if len(cluster_result["errors"]) > 0:
             return "Investigate errors before consolidation"
         if len(cluster_result["functions"]) < 2:
             return "Monitor for additional implementations"
-        
+
         # LLM-enhanced recommendation
         try:
-            prompt = f"Suggest consolidation action for these functions:\n"
+            prompt = "Suggest consolidation action for these functions:\n"
             prompt += "\n".join(f["name"] for f in cluster_result["functions"])
             # Check rate limits before making request
             model = self.config["llm"]["default_model"]
             if self.rate_limiter.is_in_cooldown(model):
-                logger.warning(f"Rate limit cooldown active for {model}, using fallback recommendation")
+                logger.warning(
+                    f"Rate limit cooldown active for {model}, using fallback recommendation"
+                )
                 return "Consolidate similar implementations into canonical version"
-            
+
             self.rate_limiter.check_limit(model, prompt)
             return self.llm.generate_response(prompt, max_tokens=100)
         except Exception:
             return "Consolidate similar implementations into canonical version"
 
     def _get_next_steps(self, cluster_result: dict) -> str:
-        """Generate next steps for the cluster"""
+        """Generate next steps for the cluster."""
         steps = []
         if cluster_result.get("output_path"):
             steps.append(f"Review generated code: {cluster_result['output_path']}")
@@ -1090,24 +1163,31 @@ class CodeConsolidator:
     def _print_welcome_banner(self) -> None:
         """Display initial status checks and configuration."""
         self.reporter.begin_stage("initial_checks", "🔍")
-        
+
         # Check LLM connectivity
         try:
             self.llm.generate_response("test", max_tokens=1)
-            self.reporter.update_stage("initial_checks", message=f"LLM {self.config['llm']['client']} connection OK")
+            self.reporter.update_stage(
+                "initial_checks",
+                message=f"LLM {self.config['llm']['client']} connection OK",
+            )
         except Exception as e:
-            self.reporter.error(f"LLM connection failed: {str(e)}")
-            
+            self.reporter.error(f"LLM connection failed: {e!s}")
+
         # Check vector DB status
         if self.vector_db:
-            self.reporter.update_stage("initial_checks", message="Vector database connected")
+            self.reporter.update_stage(
+                "initial_checks", message="Vector database connected"
+            )
         else:
             self.reporter.warning("Vector database disabled")
-            
+
         # File count estimate
         files = self._find_script_files()
-        self.reporter.update_stage("initial_checks", message=f"Found {len(files)} script files")
-        
+        self.reporter.update_stage(
+            "initial_checks", message=f"Found {len(files)} script files"
+        )
+
         self.reporter.end_stage("initial_checks")
 
     def _load_checkpoint(self) -> None:
@@ -1126,7 +1206,7 @@ class CodeConsolidator:
                 )
                 self.syntax_errors = data["syntax_errors"]
                 logger.info(
-                    f"Loaded checkpoint with {len(self.processed_files)} processed files"
+                    f"Loaded checkpoint with {len(self.processed_files)} processed files",
                 )
             except Exception as e:
                 logger.exception(f"Failed to load checkpoint: {e}")
@@ -1134,7 +1214,7 @@ class CodeConsolidator:
 
 def main() -> None:
     """Command line interface.
-    
+
     Outputs:
     - Creates consolidation_reports/ directory with timestamped markdown reports
     - Prints summary to console
@@ -1142,16 +1222,16 @@ def main() -> None:
     """
     # Configure process and threading settings
     os.environ["GRPC_ENABLE_FORK_SUPPORT"] = "False"  # Disable gRPC fork handlers
-    os.environ["TOKENIZERS_PARALLELISM"] = "false"   # Disable tokenizer parallelism
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"  # Disable tokenizer parallelism
     parser = argparse.ArgumentParser(
         description="Analyze and consolidate similar code functionality",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
         "--llm-client",
-        choices=['gemini', 'deepinfra'],
-        default='gemini',
-        help="Choose which LLM client to use"
+        choices=["gemini", "deepinfra"],
+        default="gemini",
+        help="Choose which LLM client to use",
     )
     parser.add_argument(
         "directory",
@@ -1159,14 +1239,17 @@ def main() -> None:
         default=".",
         help="Directory to analyze (default: current directory)",
     )
-    parser.add_argument("--report", action="store_true", help="Generate markdown report")
+    parser.add_argument(
+        "--report", action="store_true", help="Generate markdown report"
+    )
     parser.add_argument(
         "--max-files",
         type=int,
-        help="Maximum number of files to process (for testing)"
+        help="Maximum number of files to process (for testing)",
     )
     parser.add_argument(
-        "--process-file", help=argparse.SUPPRESS
+        "--process-file",
+        help=argparse.SUPPRESS,
     )  # Hidden arg for subprocesses
 
     args = parser.parse_args()
@@ -1175,7 +1258,6 @@ def main() -> None:
         # Direct processing mode with JSON output
         consolidator = CodeConsolidator()
         functions, _ = consolidator._process_file_safe(Path(args.process_file))
-        print(json.dumps((functions, str(args.process_file))))
     else:
         # Normal mode
         consolidator = CodeConsolidator(args.directory)
@@ -1185,75 +1267,70 @@ def main() -> None:
         # Create reports directory if needed
         report_dir = Path(args.directory) / "consolidation_reports"
         report_dir.mkdir(exist_ok=True)
-        
+
         # Create timestamped report filename
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         report_path = report_dir / f"consolidation_report_{timestamp}.md"
         json_path = report_dir / f"consolidation_report_{timestamp}.json"
-        
+
         # Generate and save reports
         report_content = consolidator.generate_report(pipeline_report)
         with open(report_path, "w") as f:
             f.write(report_content)
-            
+
         # Save machine-readable JSON report
         json_report = {
             "metadata": {
                 "generated": datetime.datetime.now().isoformat(),
                 "project_root": str(Path(args.directory).resolve()),
-                "config_version": hashlib.md5(json.dumps(consolidator.config).encode()).hexdigest()[:8],
-                "file_hashes_version": consolidator._get_file_hashes_version()
+                "config_version": hashlib.md5(
+                    json.dumps(consolidator.config).encode()
+                ).hexdigest()[:8],
+                "file_hashes_version": consolidator._get_file_hashes_version(),
             },
             "clusters": [
                 {
-                    k: v for k, v in cluster.items()
+                    k: v
+                    for k, v in cluster.items()
                     if k not in ["consolidated", "errors"]
-                } 
+                }
                 for cluster in pipeline_report["processing"]["clusters"]
-            ]
+            ],
         }
-        
+
         with open(json_path, "w") as f:
             json.dump(json_report, f, indent=2)
-            
+
         # Compare with previous run if available
         previous_reports = list(report_dir.glob("*.json"))
         if len(previous_reports) > 1:  # Current report + at least one previous
             latest_report = max(
-                [p for p in previous_reports if p != json_path], 
-                key=lambda p: p.stat().st_mtime
+                [p for p in previous_reports if p != json_path],
+                key=lambda p: p.stat().st_mtime,
             )
             with open(latest_report) as f:
                 previous = json.load(f)
-            
-            comparison = {
-                "resolved_clusters": len(previous["clusters"]) - len(json_report["clusters"]),
-                "carryover_clusters": len([
-                    c for c in json_report["clusters"]
-                    if c["cluster_id"] in [pc["cluster_id"] for pc in previous["clusters"]]
-                ])
+
+            {
+                "resolved_clusters": len(previous["clusters"])
+                - len(json_report["clusters"]),
+                "carryover_clusters": len(
+                    [
+                        c
+                        for c in json_report["clusters"]
+                        if c["cluster_id"]
+                        in [pc["cluster_id"] for pc in previous["clusters"]]
+                    ]
+                ),
             }
-            
-            print(f"\n\033[1mProgress since last run:\033[0m")
-            print(f"  Resolved clusters: {comparison['resolved_clusters']}")
-            print(f"  Carryover clusters: {comparison['carryover_clusters']}")
-            
+
         # Print key findings to console
         # Print condensed summary with colors
-        print(f"\n\033[1mConsolidation Report Summary:\033[0m")
-        print(f"\033[32m✅ Successful clusters: {pipeline_report['processing']['success']}\033[0m")
-        print(f"\033[31m❌ Failed clusters: {pipeline_report['processing']['failed']}\033[0m")
-        
-        if pipeline_report['processing']['failed'] > 0:
-            print(f"\n\033[1mTop Errors:\033[0m")
-            for cluster in pipeline_report['processing']['clusters']:
-                if cluster['errors']:
-                    print(f"\n\033[33m{cluster['cluster'][0].split('/')[-1]}\033[0m")
-                    print(f"  - {cluster['errors'][0]}")
-                    if len(cluster['errors']) > 1:
-                        print(f"  + {len(cluster['errors'])-1} more errors")
-        
-        print(f"\n\033[1mFull report:\033[0m {report_path.resolve()}")
+
+        if pipeline_report["processing"]["failed"] > 0:
+            for cluster in pipeline_report["processing"]["clusters"]:
+                if cluster["errors"] and len(cluster["errors"]) > 1:
+                    pass
 
 
 if __name__ == "__main__":
