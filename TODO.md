@@ -14,7 +14,8 @@
 2. [ ] Prioritize key clusters for consolidation
 3. [ ] Implement canonical versions of clustered functions
 4. [ ] Update dependent code to use canonical implementations
-5. [ ] Reimplement PyPI search with proper API integration
+5. [ ] Analyze code_consolidator.py report and identify top consolidation opportunities
+6. [ ] Reimplement PyPI search with proper API integration
 
 ## Documentation
 
