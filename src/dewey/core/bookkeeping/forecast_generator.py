@@ -13,6 +13,8 @@ from dateutil.relativedelta import relativedelta
 
 from dewey.config import logging  # Centralized logging
 
+logger = logging.getLogger(__name__)
+
 ASSUMPTIONS = [
     "Asset acquired on 2023-12-01 for £25 (fair value £2500)",
     "Depreciation starts 2026-12-31 (operational date)",
