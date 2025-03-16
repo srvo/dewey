@@ -12,12 +12,12 @@ from prompt_toolkit.shortcuts import confirm
 project_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(project_root))
 
-from classification_engine import ClassificationEngine, ClassificationError
-from deepinfra_client import classify_errors
+from src.dewey.core.bookkeeping.engines.classification_engine_60acc1e2 import ClassificationEngine, ClassificationError
+from src.dewey.llm.api_clients.deepinfra import classify_errors
 
 # Import AFTER path configuration
 from dotenv import find_dotenv, load_dotenv
-from journal_writer import JournalWriter
+from src.dewey.core.bookkeeping.writers.journal_writer_fab1858b import JournalWriter
 
 # Load environment variables from nearest .env file
 load_dotenv(find_dotenv())
