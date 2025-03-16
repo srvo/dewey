@@ -2,6 +2,8 @@
 
 # Dewey Project Conventions
 
+All documentation, docstrings, and so forth must be written in english. 
+
 ## Centralized Configuration Architecture
 
 All system configuration MUST be defined in `config/dewey.yaml` using this structure:
