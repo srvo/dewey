@@ -1,11 +1,11 @@
 ---
 prd:
   base_path: "config/prd"
-  active_prd: "current_prd.yaml"
+  active_prd: "active_prd.yaml"
   schema:
     components:
       - name: str
-        purpose: str
+        purpose: str 
         dependencies: list[str]
         interfaces: list[str]
     decisions:
@@ -13,5 +13,6 @@ prd:
         description: str
         alternatives: list[str]
         rationale: str
-    conventions_ref: "../.aider/CONVENTIONS.md"
-    codebase_insights_ref: "../docs/codebase_analysis.md"
+  references:
+    conventions: "../.aider/CONVENTIONS.md"
+    codebase_analysis: "../docs/codebase_analysis.md"

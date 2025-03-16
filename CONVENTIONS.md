@@ -2,6 +2,22 @@
 
 # Dewey Project Conventions
 
+## Centralized Configuration Architecture
+
+All system configuration MUST be defined in `config/dewey.yaml` using this structure:
+- Core system settings under `core`
+- Vector store configurations under `vector_stores`
+- LLM provider settings under `llm` 
+- Pipeline configurations under `pipeline`
+- PRD-specific settings under `prd`
+- Formatting rules under `formatting`
+
+Key rules:
+1. No module-specific YAML files allowed
+2. Cross-module dependencies must reference the central config
+3. Environment variables should be used via ${VAR_NAME} syntax
+4. Config sections should validate themselves on load
+
 ## Maintenance Principles
 - Keep TODO.md updated as the single source of truth for tasks
 - Update priorities weekly or when major milestones are reached 

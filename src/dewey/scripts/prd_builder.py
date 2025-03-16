@@ -30,10 +30,35 @@ class PRDManager:
         self.code_insights = CodeConsolidator().analyze_directory()
 
     def _load_prd_config(self) -> dict:
-        config_path = self.root_dir / "config/prd_config.yaml"
-        if not config_path.exists():
-            raise FileNotFoundError(f"PRD config missing: {config_path}")
-        return yaml.safe_load(config_path.read_text())
+        """Load PRD config from central dewey.yaml."""
+        from dewey.config import load_config
+        full_config = load_config()
+        prd_config = full_config.get("prd", {})
+        
+        # Set defaults if section missing
+        defaults = {
+            "base_path": "config/prd",
+            "active_prd": "current_prd.yaml",
+            "schema": {
+                "components": [
+                    {"name": "", "purpose": "", "dependencies": [], "interfaces": []}
+                ],
+                "decisions": [
+                    {
+                        "timestamp": "datetime",
+                        "description": "",
+                        "alternatives": [],
+                        "rationale": "",
+                    }
+                ]
+            },
+            "references": {
+                "conventions": "../.aider/CONVENTIONS.md",
+                "codebase_analysis": "../docs/codebase_analysis.md"
+            }
+        }
+        
+        return {**defaults, **prd_config}  # Merge with defaults
     
     def _validate_prd_path(self) -> Path:
         prd_dir = self.root_dir / self.config['prd']['base_path']
