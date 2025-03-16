@@ -1,7 +1,4 @@
 ```python
-\"\"\"
-Functions for matching transcript files to episode entries in a database.
-\"\"\"
 import re
 import os
 import sqlite3
