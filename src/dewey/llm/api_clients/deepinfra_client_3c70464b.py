@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""DeepInfra API Client.
+"""DeepInfra API Client (Legacy).
 
 Handles error classification requests through the DeepInfra API with
 improved error handling, retries, and chunking for large files.
