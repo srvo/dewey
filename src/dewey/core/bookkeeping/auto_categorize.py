@@ -5,6 +5,9 @@ import logging
 import re
 import shutil
 from pathlib import Path
+from typing import List, Tuple, Dict, Pattern
+
+# File header: Automatically categorizes transactions based on predefined rules.
 
 # Rule sources in priority order (lower numbers = higher priority)
 RULE_SOURCES = [
@@ -44,7 +47,7 @@ def format_category(category_str: str) -> str:
     return ":".join(formatted_parts)
 
 
-def load_prioritized_rules() -> list[tuple[tuple[str, dict], int]]:
+def load_prioritized_rules() -> List[Tuple[Tuple[str, Dict], int]]:
     """Load rules from multiple sources with priority.
 
     Returns
@@ -72,7 +75,7 @@ def load_prioritized_rules() -> list[tuple[tuple[str, dict], int]]:
     )
 
 
-def compile_pattern(pattern: str) -> re.Pattern:
+def compile_pattern(pattern: str) -> Pattern:
     """Compile a pattern into a regex object.
 
     Args:
@@ -93,8 +96,7 @@ def compile_pattern(pattern: str) -> re.Pattern:
     return compiled
 
 
-def load_classification_rules() -> list[tuple[re.Pattern, str, int]]:
-    # Loads classification rules from prioritized sources
+def load_classification_rules() -> List[Tuple[Pattern, str, int]]:
     """Load and compile classification rules with priority.
 
     Returns
@@ -120,7 +122,7 @@ def load_classification_rules() -> list[tuple[re.Pattern, str, int]]:
     return compiled_rules
 
 
-def parse_journal_entries(file_path: Path) -> list[dict]:
+def parse_journal_entries(file_path: Path) -> List[Dict]:
     """Parse hledger journal file into structured transactions.
 
     Args:
@@ -171,9 +173,9 @@ def parse_journal_entries(file_path: Path) -> list[dict]:
 
 
 def process_transactions(
-    transactions: list[dict],
-    rules: list[tuple[re.Pattern, str, int]],
-) -> list[dict]:
+    transactions: List[Dict],
+    rules: List[Tuple[Pattern, str, int]],
+) -> List[Dict]:
     """Apply classification rules to journal entries.
 
     Args:
@@ -207,7 +209,7 @@ def process_transactions(
     return transactions
 
 
-def serialize_transactions(transactions: list[dict]) -> str:
+def serialize_transactions(transactions: List[Dict]) -> str:
     """Convert structured transactions back to journal format.
 
     Args:
