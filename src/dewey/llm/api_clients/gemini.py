@@ -139,7 +139,7 @@ class RateLimiter:
 class GeminiClient:
     """Production-ready Google Gemini client with rate limiting."""
 
-    def __init__(self, api_key: str | None = None) -> None:
+    def __init__(self, api_key: str | None = None, config: dict | None = None) -> None:
         load_dotenv()  # Ensure .env is loaded
         self.logger = logging.getLogger("GeminiClient")
         """
@@ -147,17 +147,17 @@ class GeminiClient:
 
         Args:
             api_key: Optional Gemini API key. Uses GEMINI_API_KEY env var if not provided.
+            config: Configuration dictionary for model and rate limiting
         """
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
         if not self.api_key:
             msg = "Gemini API key not found. Set GEMINI_API_KEY environment variable."
-            raise LLMError(
-                msg,
-            )
+            raise LLMError(msg)
 
         genai.configure(api_key=self.api_key)
         self.rate_limiter = RateLimiter()
-        self.client = genai.GenerativeModel("gemini-2.0-flash-lite")
+        self.config = config or {}
+        self.client = genai.GenerativeModel(self.config.get("default_model", "gemini-2.0-flash-lite"))
 
     def generate_content(
         self,

@@ -82,7 +82,8 @@ class CodeConsolidator:
         self.syntax_errors = []
         self.processed_files = set()
         self.checkpoint_file = self.root_dir / ".code_consolpointpoint.json"
-        self.llm_client = self._init_llm_clients()
+        # Pass config to GeminiClient
+        self.llm_client = GeminiClient(config=llm_config)
         self.lock = threading.Lock()
         self.vector_db = self._init_vector_db()
         self._load_checkpoint()
