@@ -19,6 +19,9 @@ RULE_SOURCES = [
     ("base_rules.json", 2),  # Lowest priority
 ]
 
+# TODO: Fix search/replace block
+]
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
