@@ -32,8 +32,10 @@ def main() -> None:
         datefmt="%Y-%m-%d %H:%M:%S",
     )
     logger = logging.getLogger(__name__)
+    import sys
 
     # ... rest of main logic ...
+    checker = LedgerFormatChecker(LEDGER_FILE)
 
     if checker.warnings:
         logger.warning("Validation warnings occurred")
