@@ -499,45 +499,54 @@ class CodeConsolidator:
         return functions
 
     def _cluster_functions(self, functions: dict[str, dict], script_path: Path) -> None:
-        """Group similar functions using vector similarity search."""
+        """Group similar functions with error handling and checkpointing."""
         if not self.vector_db:
-            logger.warning(
-                "Vector database not available - falling back to structural clustering",
-            )
-            self._fallback_cluster(functions, script_path)
+            logger.warning("Vector database disabled - skipping clustering")
             return
 
-        for name, details in functions.items():
-            context = details.get("context", "")
-            func_id = f"{script_path.name}:{name}"
+        # Skip already clustered files
+        if str(script_path) in self.clustered_files:
+            return
 
-            # Store in vector DB
-            self.vector_db.upsert_function(
-                func_id,
-                context,
-                {
-                    "name": name,
-                    "args": ",".join(details["args"]) if details["args"] else "",
-                    "complexity": details["complexity"],
-                },
-            )
+        try:
+            for name, details in functions.items():
+                context = details.get("context", "")
+                func_id = f"{script_path.name}:{name}"
 
-            # Find similar existing functions
-            similar_ids = self.vector_db.find_similar_functions(
-                context,
-                threshold=self.config["vector_db"]["similarity_threshold"],
-                top_k=self.config["pipeline"]["max_cluster_size"],
-            )
+                # Store in vector DB
+                self.vector_db.upsert_function(
+                    func_id,
+                    context,
+                    {
+                        "name": name,
+                        "args": ",".join(details["args"]) if details["args"] else "",
+                        "complexity": details["complexity"],
+                    },
+                )
 
-            if similar_ids:
-                # Use first similar function's cluster
-                cluster_key = self._get_cluster_key_for_id(similar_ids[0])
-                self.function_clusters[cluster_key].append((script_path, details))
-            else:
-                # Create new cluster using vector hash
-                vector_hash = hashlib.md5(context.encode()).hexdigest()[:8]
-                cluster_key = (name, vector_hash)
-                self.function_clusters[cluster_key].append((script_path, details))
+                # Find similar functions with error handling
+                similar_ids = self.vector_db.find_similar_functions(
+                    context,
+                    threshold=self.config["vector_db"]["similarity_threshold"],
+                    top_k=self.config["pipeline"]["max_cluster_size"],
+                )
+
+                if similar_ids:
+                    cluster_key = self._get_cluster_key_for_id(similar_ids[0])
+                    self.function_clusters[cluster_key].append((script_path, details))
+                else:
+                    vector_hash = hashlib.md5(context.encode()).hexdigest()[:8]
+                    cluster_key = (name, vector_hash)
+                    self.function_clusters[cluster_key].append((script_path, details))
+
+            # Mark file as clustered
+            with self.lock:
+                self.clustered_files.add(str(script_path))
+                self._save_checkpoint()
+
+        except Exception as e:
+            logger.error(f"Failed to cluster {script_path}: {e}")
+            self.reporter.error(f"Clustering error: {str(e)[:200]}")
 
     def _get_cluster_key_for_id(self, func_id: str) -> tuple:
         """Find existing cluster key for a function ID."""

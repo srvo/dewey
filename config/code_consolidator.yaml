@@ -21,6 +21,10 @@ vector_db:
   embedding_model: "all-MiniLM-L6-v2"
   collection_name: "code_functions"
   similarity_threshold: 0.85
+  hnsw_config:
+    hnsw:ef: 200
+    hnsw:ef_construction: 300 
+    hnsw:M: 24
 
 llm:
   client: deepinfra
