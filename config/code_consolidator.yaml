@@ -25,8 +25,8 @@ vector_db:
 llm:
   default_model: "gemini-2.0-flash"
   fallback_models:
-    - "gemini-2.0-flash"
     - "gemini-1.5-flash"
+    - "gemini-2.0-flash-lite" 
   temperature: 0.2
   max_retries: 3
   batch_size: 100  # For parallel processing
