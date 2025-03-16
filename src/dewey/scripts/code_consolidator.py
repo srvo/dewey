@@ -547,12 +547,18 @@ class CodeConsolidator:
         if str(script_path) in self.clustered_files:
             return  # Already clustered
 
+        if not functions:
+            logger.debug(f"No functions found in {script_path.name} - skipping clustering")
+            return
+
         try:
             with tqdm(
-                total=len(functions),
+                total=len(functions) or 1,  # Prevent 0/0 case
                 desc=f"🔗 {script_path.name}",
                 leave=False,
                 bar_format="{desc}: {percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt}",
+                mininterval=0.5,  # Update more frequently
+                maxinterval=1.0,
             ) as pbar:
                 for name, details in functions.items():
                     try:
