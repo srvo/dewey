@@ -4,6 +4,9 @@ import logging
 import os
 import re
 import shutil
+from typing import List, Dict, Optional
+
+# File header: Corrects formatting issues in Hledger journal files.
 
 # Configure logging
 logging.basicConfig(
@@ -13,19 +16,16 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-import logging
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-logger = logging.getLogger(__name__)
+def parse_transactions(content: str) -> List[Dict]:
+    """Parse all transactions from journal content.
 
+    Args:
+        content (str): The content of the journal file.
 
-def parse_transactions(content: str) -> list[dict]:
-    """Parse all transactions from journal content."""
+    Returns:
+        List[Dict]: A list of dictionaries, where each dictionary represents a transaction.
+    """
     transactions = []
     current_transaction = []
 
@@ -47,8 +47,15 @@ def parse_transactions(content: str) -> list[dict]:
     return transactions
 
 
-def process_transactions(transactions: list[dict]) -> str:
-    """Process transactions and return fixed journal content."""
+def process_transactions(transactions: List[Dict]) -> str:
+    """Process transactions and return fixed journal content.
+
+    Args:
+        transactions (List[Dict]): A list of transaction dictionaries.
+
+    Returns:
+        str: The fixed journal content as a string.
+    """
     fixed_entries = []
 
     for transaction in transactions:
@@ -61,8 +68,15 @@ def process_transactions(transactions: list[dict]) -> str:
     return "\n".join(fixed_entries)
 
 
-def parse_transaction(lines: list[str]) -> dict:
-    """Parse a transaction from a list of lines."""
+def parse_transaction(lines: List[str]) -> Optional[Dict]:
+    """Parse a transaction from a list of lines.
+
+    Args:
+        lines (List[str]): A list of strings representing the lines of a transaction.
+
+    Returns:
+        Optional[Dict]: A dictionary representing the transaction, or None if parsing fails.
+    """
     if not lines or not lines[0].strip():
         logger.debug("Empty transaction lines encountered")
         return None
@@ -97,8 +111,15 @@ def parse_transaction(lines: list[str]) -> dict:
     return transaction
 
 
-def process_journal_file(file_path) -> None:
-    """Process a journal file and fix all transactions."""
+def process_journal_file(file_path: str) -> None:
+    """Process a journal file and fix all transactions.
+
+    Args:
+        file_path (str): The path to the journal file.
+
+    Raises:
+        Exception: If the file processing fails, the original exception is re-raised after attempting to restore from backup.
+    """
     if not os.path.exists(file_path):
         logger.error("File not found: %s", file_path)
         return
@@ -124,7 +145,7 @@ def process_journal_file(file_path) -> None:
         with open(file_path, "w") as f:
             f.write(fixed_content)
 
-    except Exception:
+    except Exception as e:
         logger.exception("Failed to process %s", file_path)
         if os.path.exists(backup_path):
             logger.info("Restoring from backup: %s", backup_path)
