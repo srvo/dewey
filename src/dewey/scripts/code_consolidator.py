@@ -565,7 +565,9 @@ class CodeConsolidator:
                             context,
                             {
                                 "name": name,
-                                "args": ",".join(details["args"]) if details["args"] else "",
+                                "args": (
+                                    ",".join(details["args"]) if details["args"] else ""
+                                ),
                                 "complexity": details["complexity"],
                             },
                         )
@@ -579,11 +581,15 @@ class CodeConsolidator:
 
                         if similar_ids:
                             cluster_key = self._get_cluster_key_for_id(similar_ids[0])
-                            self.function_clusters[cluster_key].append((script_path, details))
+                            self.function_clusters[cluster_key].append(
+                                (script_path, details)
+                            )
                         else:
                             vector_hash = hashlib.md5(context.encode()).hexdigest()[:8]
                             cluster_key = (name, vector_hash)
-                            self.function_clusters[cluster_key].append((script_path, details))
+                            self.function_clusters[cluster_key].append(
+                                (script_path, details)
+                            )
 
                         pbar.update(1)
                         pbar.set_postfix({"last": name[:10]})
@@ -598,8 +604,10 @@ class CodeConsolidator:
                     self._save_checkpoint()
 
         except Exception as e:
-            logger.error(f"Failed to cluster {script_path.name}: {str(e)[:200]}")
-            self.reporter.error(f"Clustering failed: {script_path.name} - {str(e)[:200]}")
+            logger.exception(f"Failed to cluster {script_path.name}: {str(e)[:200]}")
+            self.reporter.error(
+                f"Clustering failed: {script_path.name} - {str(e)[:200]}"
+            )
 
     def _get_cluster_key_for_id(self, func_id: str) -> tuple:
         """Find existing cluster key for a function ID."""
