@@ -12,26 +12,23 @@ import re
 from typing import Dict
 
 import pandas as pd
+import yaml
 
-from scripts.db_connector import get_db
+from src.dewey.utils.database import get_db_connection
+from config.logging import configure_logging
 
-# Initialize logging to capture INFO and ERROR level logs
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    filename="project.log",
-    filemode="a",
-)
+# Load the configuration file
+with open("config/dewey.yaml", "r") as f:
+    config = yaml.safe_load(f)
+
+# Configure logging
+configure_logging(config["logging"])
+
+# Get logger
 logger = logging.getLogger(__name__)
 
-# Define regex patterns to identify various business opportunities within email content
-OPPORTUNITY_PATTERNS: Dict[str, re.Pattern] = {
-    "demo": re.compile(r"\bdemo\b|\bschedule a demo\b", re.IGNORECASE),
-    "cancellation": re.compile(r"\bcancel\b|\bneed to cancel\b", re.IGNORECASE),
-    "speaking": re.compile(r"\bspeaking opportunity\b|\bpresentation\b", re.IGNORECASE),
-    "publicity": re.compile(r"\bpublicity opportunity\b|\bmedia\b", re.IGNORECASE),
-    "submission": re.compile(r"\bpaper submission\b|\bsubmit a paper\b", re.IGNORECASE),
-}
+# Load regex patterns from config
+OPPORTUNITY_PATTERNS: Dict[str, str] = config["regex_patterns"]["opportunity"]
 
 
 def extract_opportunities(email_text: str) -> Dict[str, bool]:
@@ -44,69 +41,66 @@ def extract_opportunities(email_text: str) -> Dict[str, bool]:
         A dictionary indicating the presence of each opportunity type.
     """
     opportunities = {}
-    for key, pattern in OPPORTUNITY_PATTERNS.items():
+    for key, pattern_str in OPPORTUNITY_PATTERNS.items():
+        pattern = re.compile(pattern_str, re.IGNORECASE)
         opportunities[key] = bool(pattern.search(email_text))
     return opportunities
 
 
-def update_contacts_db(opportunities_df: pd.DataFrame) -> None:
+def update_contacts_db(opportunities_df: pd.DataFrame, conn: sqlite3.Connection) -> None:
     """Updates the contacts table in the database with detected opportunities.
 
     Args:
         opportunities_df: DataFrame containing email and opportunity flags.
     """
-    db = get_db()
-    with db.get_connection() as conn:
-        for _, row in opportunities_df.iterrows():
-            try:
-                conn.execute(
-                    """
-                UPDATE contacts
-                SET
-                    demo_opportunity = ?,
-                    cancellation_request = ?,
-                    speaking_opportunity = ?,
-                    publicity_opportunity = ?,
-                    paper_submission_opportunity = ?
-                WHERE email = ?
-                """,
-                    (
-                        row["demo"],
-                        row["cancellation"],
-                        row["speaking"],
-                        row["publicity"],
-                        row["submission"],
-                        row["from_email"],
-                    ),
-                )
-            except Exception as e:
-                logger.error(
-                    f"Error updating opportunities for {row['from_email']}: {str(e)}"
-                )
+    for _, row in opportunities_df.iterrows():
+        try:
+            conn.execute(
+                """
+            UPDATE contacts
+            SET
+                demo_opportunity = ?,
+                cancellation_request = ?,
+                speaking_opportunity = ?,
+                publicity_opportunity = ?,
+                paper_submission_opportunity = ?
+            WHERE email = ?
+            """,
+                (
+                    row["demo"],
+                    row["cancellation"],
+                    row["speaking"],
+                    row["publicity"],
+                    row["submission"],
+                    row["from_email"],
+                ),
+            )
+        except Exception as e:
+            logger.error(
+                f"Error updating opportunities for {row['from_email']}: {str(e)}"
+            )
 
 
-def detect_opportunities() -> None:
+def detect_opportunities(conn: sqlite3.Connection) -> None:
     """Detects and flags business opportunities within emails.
 
     Fetches emails, identifies opportunities based on regex patterns, and updates the contacts database.
     """
-    db = get_db()
-    with db.get_connection() as conn:
-        query = """
-        SELECT
-            e.message_id,
-            e.from_email,
-            e.subject,
-            e.full_message
-        FROM raw_emails e
-        JOIN processed_contacts pc ON e.message_id = pc.message_id
-        """
-        df = pd.read_sql_query(query, conn)
+    query = """
+    SELECT
+        e.message_id,
+        e.from_email,
+        e.subject,
+        e.full_message
+    FROM raw_emails e
+    JOIN processed_contacts pc ON e.message_id = pc.message_id
+    """
+    df = pd.read_sql_query(query, conn)
 
     # Initialize new columns for each opportunity type, defaulting to False
     for key in OPPORTUNITY_PATTERNS.keys():
         df[key] = df["full_message"].apply(
-            lambda text: bool(OPPORTUNITY_PATTERNS[key].search(text))
+            lambda text: bool(extract_opportunities(text).get(key, False))
         )
 
     # Aggregate opportunities per contact
@@ -125,13 +119,14 @@ def detect_opportunities() -> None:
     )
 
     # Update the contacts table with detected opportunities
-    update_contacts_db(opportunities)
+    update_contacts_db(opportunities, conn)
 
     logger.info("Completed opportunity detection.")
 
 
 if __name__ == "__main__":
     logger.info("Starting opportunity detection.")
-    detect_opportunities()
+    with get_db_connection() as conn:
+        detect_opportunities(conn)
     logger.info("Opportunity detection completed successfully.")
 ```

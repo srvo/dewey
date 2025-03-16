@@ -54,6 +54,56 @@ llm:
 
 pipeline:
 
+regex_patterns:
+  contact_info:
+    name_email: "([^<\\n]*?)\\s*<([^>]+)>"
+    job_title: "(?i)(CEO|CTO|CFO|Director|Manager|Analyst|Associate|Partner|VP|President|Founder|Co-founder|Principal|Advisor|Consultant)"
+    company: "(?i)(?:at|@)\\s*([A-Za-z0-9][A-Za-z0-9\\s&-]+(?:\\s+(?:LLC|Inc|Ltd|Limited|Corp|Corporation|Capital|Partners|Group|Advisory|Consulting))?)"
+    phone: "Phone:\\s*(\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4})"
+    linkedin: "LinkedIn:\\s*(linkedin\\.com/in/[a-zA-Z0-9_-]+)"
+  opportunity:
+    demo: "\\bdemo\\b|\\bschedule a demo\\b"
+    cancellation: "\\bcancel\\b|\\bneed to cancel\\b"
+    speaking: "\\bspeaking opportunity\\b|\\bpresentation\\b"
+    publicity: "\\bpublicity opportunity\\b|\\bmedia\\b"
+    submission: "\\bpaper submission\\b|\\bsubmit a paper\\b"
+
+formatting:
+  lint_timeout: 120
+  formatters:
+    - command: ["ruff", "check", "--fix", "--unsafe-fixes", "--select", "ALL"]
+    - command: ["black"]
+
+prd:
+  base_template:
+    metadata:
+      author: "Sloane Ortel"
+      revision_policy: "Bi-weekly review"
+    stakeholders:
+      default: 
+        - name: "Sloane Ortel"
+          role: "Primary Stakeholder"
+          contact: "srvo@domain.com"
+      client_modules:
+        - name: "Client Services Team"
+          role: "Client Interface"
+    market_assessment: 
+      default: "Internal knowledge management and client-facing financial analysis systems"
+      client_facing: "High-net-worth individuals and institutional investors"
+    assumptions:
+      - "All non-client modules assume single-stakeholder (Sloane Ortel) usage"
+      - "Data security requirements follow FINRA/SEC regulations"
+      - "Python 3.11+ runtime environment"
+    evaluation_metrics:
+      - "Code maintainability (cyclomatic complexity < 15)"
+      - "LLM response latency < 2.5s"
+      - "Data processing throughput > 100MB/s"
+    timelines:
+      discovery: 2
+      development: 3
+      testing: 1
+      deployment: 0.5
+
 formatting:
   lint_timeout: 120
   formatters:

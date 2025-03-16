@@ -30,25 +30,24 @@ import uuid
 
 from scripts.config import config
 from scripts.db_connector import get_db_connection
-from scripts.log_config import setup_logger
+from src.dewey.utils.database import get_db_connection
+from config.logging import configure_logging
+import logging
+import yaml
+import re
 
-# Set up detailed logging with script-specific context
-logger = setup_logger("enrichment")
+# Load the configuration file
+with open("config/dewey.yaml", "r") as f:
+    config = yaml.safe_load(f)
 
-# Regex patterns for extracting contact information from email content
-# Patterns are designed to be flexible and handle various formats
-PATTERNS = {
-    # Matches name and email in format: "John Doe <john@example.com>"
-    "name_email": r"([^<\n]*?)\s*<([^>]+)>",
-    # Matches common job titles (case-insensitive)
-    "job_title": r"(?i)(CEO|CTO|CFO|Director|Manager|Analyst|Associate|Partner|VP|President|Founder|Co-founder|Principal|Advisor|Consultant)",
-    # Matches company names with optional legal suffixes
-    "company": r"(?i)(?:at|@)\s*([A-Za-z0-9][A-Za-z0-9\s&-]+(?:\s+(?:LLC|Inc|Ltd|Limited|Corp|Corporation|Capital|Partners|Group|Advisory|Consulting))?)",
-    # Matches phone numbers in various formats
-    "phone": r"Phone:\s*(\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})",
-    # Matches LinkedIn profile URLs
-    "linkedin": r"LinkedIn:\s*(linkedin\.com/in/[a-zA-Z0-9_-]+)",
-}
+# Configure logging
+configure_logging(config["logging"])
+
+# Get logger
+logger = logging.getLogger(__name__)
+
+# Load regex patterns from config
+PATTERNS = config["regex_patterns"]["contact_info"]
 
 
 def create_enrichment_task(
@@ -331,11 +330,13 @@ def extract_contact_info(message_text: str) -> dict | None:
 
     try:
         # Apply each regex pattern to extract information
-        for field, pattern in PATTERNS.items():
+        for field, pattern_str in PATTERNS.items():
+            pattern = re.compile(pattern_str)
             match = re.search(pattern, message_text)
             if match:
+                # Extract value from the first matching group
                 value = match.group(1).strip()
-                info[field.split("_")[0]] = value
+                info[field] = value
                 logger.debug(f"[EXTRACT] Found {field}: {value}")
             else:
                 logger.debug(f"[EXTRACT] No match for {field}")
