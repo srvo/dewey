@@ -51,12 +51,14 @@ class TestWriter:
         self._validate_config()
 
     def _init_model(self):
-        """Initialize LLM model with project-specific configuration."""
+        """Initialize LLM model using configured client."""
+        # Get model name from config
         model_name = self.config["llm"]["providers"]["deepinfra"]["default_model"]
+        
+        # Create Model instance using pre-configured client from llm_utils
         self.model = Model(
-            model_name,
-            api_base="https://api.deepinfra.com/v1/openai",
-            api_key=self.llm_client.client.api_key
+            self.llm_client.client.client,  # Pre-configured OpenAI client
+            model_name
         )
 
     def _validate_config(self):
