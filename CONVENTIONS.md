@@ -98,10 +98,15 @@ All system configuration MUST be defined in `config/dewey.yaml` using this struc
      search_engine:
        class: dewey.core.engines.base.SearchEngine
        enabled: true
-       methods: ["search"]
+   ```yaml
+   engines:
+     brave_search:
+       class: dewey.core.engines.brave.BraveSearchEngine
+       enabled: true
+       methods: ["search", "news_search"]
        params:
-         max_results: 10
-         timeout: 30
+         api_key: ${BRAVE_API_KEY}
+         max_results: 15
    ```
    - Engine classes must be fully qualified Python paths
    - Disabled engines remain in config but aren't initialized
