@@ -25,6 +25,44 @@ llm:
       fallback_models:
       - google/gemini-2.0-pro
       - google/gemini-2.0-pro-vision
+
+agents:
+  # Common agent configuration
+  defaults:
+    enabled: true
+    version: 1.0
+    logging:
+      level: INFO
+      format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  
+  # Agent-specific configurations
+  client_advocacy:
+    enabled: true
+    version: 1.0
+    client_rules:
+      priority_levels: [1-5]
+      response_time:
+        critical: 1h
+        high: 4h
+        normal: 24h
+  
+  data_analysis:
+    enabled: true
+    version: 1.0
+    schema_rules:
+      default_types:
+        string: VARCHAR(255)
+        number: DECIMAL(18,4)
+      naming_conventions:
+        table: snake_case
+        column: camelCase
+  
+  agent_creation:
+    enabled: true
+    version: 1.0
+    templates:
+      base_agent: "src/dewey/llm/templates/base_agent.j2"
+      function_template: "src/dewey/llm/templates/function.j2"
     gemini:
       api_key: ${GEMINI_API_KEY}
       default_model: gemini-2.0-flash
