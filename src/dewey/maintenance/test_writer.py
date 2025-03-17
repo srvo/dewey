@@ -54,9 +54,8 @@ class TestWriter:
         """Initialize LLM model with project-specific configuration."""
         model_name = self.config["llm"]["providers"]["deepinfra"]["default_model"]
         self.model = Model(
+            self.llm_client.client,
             model_name,
-            api_key=self.config["llm"]["providers"]["deepinfra"]["api_key"],
-            base_url="https://api.deepinfra.com/v1/openai",
             params={"temperature": 0.2}
         )
 
