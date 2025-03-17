@@ -3,6 +3,7 @@ core:
   conventions_document: /Users/srvo/dewey/CONVENTIONS.md
   default_timezone: UTC
   project_root: /Users/srvo/dewey
+  base_script: /Users/srvo/dewey/src/dewey/core/base_script.py
 formatting:
   formatters:
   - command:

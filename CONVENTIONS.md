@@ -86,6 +86,38 @@ All system configuration MUST be defined in `config/dewey.yaml` using this struc
 
 ## Core Development Guidelines
 
+### Script Implementation Standards
+1. **Base Script Requirement:**
+   - ALL non-test scripts MUST inherit from `/Users/srvo/dewey/src/dewey/core/base_script.py`
+   - Absolute requirement with no exceptions except for experimental code in `/sandbox`
+   - Violations will break CI/CD pipelines and trigger code reviews
+
+2. **Implementation Rules:**
+   ```python
+   from dewey.core import base_script
+
+   class CustomScript(base_script.BaseScript):
+       def __init__(self):
+           super().__init__(
+               config_section='custom',
+               requires_db=True,
+               enable_llm=True
+           )
+
+       def run(self):
+           # Implementation using self.logger, self.config, etc
+   ```
+   - Must implement run() method
+   - Must use built-in logging (self.logger)
+   - Must load configuration through base class
+   - Must handle errors through base class mechanisms
+
+3. **Prohibited Patterns:**
+   - Standalone scripts without base inheritance
+   - Direct config/logging initialization
+   - Custom exception handling outside base framework
+   - Database connections not using base class pool
+
 ### Agent & Tool Configuration
 1. **Engine Integration:**
    - All engines must inherit from `BaseEngine`/`SearchEngine`
