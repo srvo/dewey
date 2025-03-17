@@ -56,7 +56,7 @@ class TestWriter:
         self.model = Model(
             self.llm_client.client,
             model_name,
-            params={"temperature": 0.2}
+            temperature=0.2
         )
 
     def _validate_config(self):
