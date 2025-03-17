@@ -2,6 +2,42 @@
 from typing import Dict, Any, List, Optional
 import os
 from smolagents import CodeAgent, Tool, LiteLLMModel
+from typing import Callable, Type
+from inspect import signature, Parameter
+from dewey.core.engines.base import BaseEngine, SearchEngine
+
+class EngineTool(Tool):
+    """Dynamic tool wrapper for Dewey engines"""
+    
+    def __init__(self, engine: BaseEngine, method_name: str):
+        self.engine = engine
+        self.method = getattr(engine, method_name)
+        self._populate_metadata()
+        
+    def _populate_metadata(self):
+        """Generate tool metadata from method signature"""
+        self.name = f"{self.engine.get_name()}_{self.method.__name__}"
+        self.description = (self.method.__doc__ or "").strip()
+        self.inputs = {}
+        self.output_type = "dict"
+        
+        sig = signature(self.method)
+        for name, param in sig.parameters.items():
+            if name == "self": continue
+            self.inputs[name] = {
+                "type": "string" if param.annotation == Parameter.empty else param.annotation.__name__,
+                "description": f"Parameter {name} for {self.method.__name__}"
+            }
+
+    def forward(self, **kwargs):
+        return self.method(**kwargs)
+
+def engine_tool(engine_class: Type[BaseEngine], method_name: str) -> Callable[[Dict], Tool]:
+    """Decorator to create engine tools from config"""
+    def decorator(config: Dict) -> Tool:
+        engine = engine_class(**config)
+        return EngineTool(engine, method_name)
+    return decorator
 from smolagents.tools import PythonREPLTool
 from dewey.llm.llm_utils import LLMHandler
 
@@ -53,7 +89,27 @@ class DeweyBaseAgent(CodeAgent):
         Returns:
             List of Tool instances
         """
-        return [PythonREPLTool()]
+        tools = [PythonREPLTool()]
+        
+        # Load engine-based tools from config
+        engine_configs = self.get_config_value("engines", {})
+        for engine_name, config in engine_configs.items():
+            if config.get("enabled", True):
+                engine_class = self._get_engine_class(config["class"])
+                for method in config.get("methods", ["search"]):
+                    try:
+                        tool_creator = engine_tool(engine_class, method)
+                        tools.append(tool_creator(config.get("params", {})))
+                    except Exception as e:
+                        self.logger.error(f"Failed to create tool {engine_name}.{method}: {str(e)}")
+        
+        return tools
+
+    def _get_engine_class(self, class_path: str) -> Type[BaseEngine]:
+        """Dynamically import engine class from string path"""
+        module_path, class_name = class_path.rsplit(".", 1)
+        module = __import__(module_path, fromlist=[class_name])
+        return getattr(module, class_name)
 
     def _get_system_prompt(self, task_type: str) -> str:
         """
