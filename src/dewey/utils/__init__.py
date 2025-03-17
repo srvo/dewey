@@ -1,3 +1,5 @@
+"""Utility functions package for Dewey project."""
+
 from .logging import get_logger, setup_logging
 
-__all__ = ['get_logger', 'setup_logging'] """Utility functions package for Dewey project."""
+__all__ = ['get_logger', 'setup_logging']
