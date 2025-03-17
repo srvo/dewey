@@ -24,8 +24,8 @@ try:
     from aider.io import InputOutput
 except ImportError as e:
     raise RuntimeError(
-        "Missing required 'aider' dependency. Install with:\n"
-        "uv pip install 'aider @ git+https://github.com/paul-gauthier/aider.git'\n"
+        "Missing required 'aider-chat' dependency. Install with:\n"
+        "uv pip install 'aider-chat @ git+https://github.com/paul-gauthier/aider.git'\n"
         f"Original error: {str(e)}"
     )
 

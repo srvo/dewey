@@ -60,7 +60,7 @@ dependencies = [
     "pre-commit",
     "ruff", 
     "textual>=2.1.2",
-    "aider @ git+https://github.com/paul-gauthier/aider.git",  # Latest version from GitHub
+    "aider-chat @ git+https://github.com/paul-gauthier/aider.git",  # Correct package name
 ]
 
 [tool.setuptools]
