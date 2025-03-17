@@ -136,7 +136,7 @@ class TestWriter:
                 dirty_commits=False
             )
             
-            response = coder.run(prompt, temperature=0.2)
+            response = coder.run(prompt)
             if not response:
                 return None
                 
