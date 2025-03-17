@@ -34,7 +34,6 @@ dependencies = [
     "pytest-cov",
     "boto3",
     "duckduckgo-search",
-    "ratelimit",
     "botocore",
     "psycopg2-binary",
     "coverage",

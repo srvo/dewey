@@ -30,7 +30,6 @@ except ImportError as e:
     )
 
 from dewey.utils import load_config, get_llm_client, validate_test_output
-from dewey.core.automation import rate_limiter
 
 
 class TestWriter:
@@ -163,10 +162,7 @@ class TestWriter:
                 for file in files:
                     if file.endswith(".py"):
                         full_path = Path(root) / file
-                        future = executor.submit(
-                            rate_limiter(self.generate_tests_for_file), 
-                            full_path
-                        )
+                        future = executor.submit(self.generate_tests_for_file, full_path)
                         futures.append(future)
                         results[full_path] = False
             
