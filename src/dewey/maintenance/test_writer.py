@@ -54,9 +54,9 @@ class TestWriter:
         """Initialize LLM model with project-specific configuration."""
         model_name = self.config["llm"]["providers"]["deepinfra"]["default_model"]
         self.model = Model(
-            self.llm_client.client,
             model_name,
-            temperature=0.2
+            api_base="https://api.deepinfra.com/v1/openai",
+            api_key=self.llm_client.client.api_key
         )
 
     def _validate_config(self):
@@ -132,7 +132,7 @@ class TestWriter:
                 dirty_commits=False
             )
             
-            response = coder.run(prompt)
+            response = coder.run(prompt, temperature=0.2)
             if not response:
                 return None
                 
