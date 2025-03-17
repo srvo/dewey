@@ -19,7 +19,14 @@ class EngineTool(Tool):
         self.name = f"{self.engine.get_name()}_{self.method.__name__}"
         self.description = (self.method.__doc__ or "").strip()
         self.inputs = {}
-        self.output_type = "dict"
+        # Generate more precise output type from method return annotation
+        return_type = sig.return_annotation
+        if hasattr(return_type, "__name__"):
+            self.output_type = return_type.__name__.lower()
+        elif hasattr(return_type, "_name"):
+            self.output_type = return_type._name.lower()  # Handle typing.* types
+        else:
+            self.output_type = "dict"
         
         sig = signature(self.method)
         for name, param in sig.parameters.items():
@@ -30,7 +37,30 @@ class EngineTool(Tool):
             }
 
     def forward(self, **kwargs):
-        return self.method(**kwargs)
+        """Execute the engine method with proper parameter validation and error handling"""
+        try:
+            # Get method signature to validate parameters
+            sig = signature(self.method)
+            valid_params = sig.parameters
+            
+            # Filter and type check arguments
+            filtered_kwargs = {}
+            for name, param in valid_params.items():
+                if name == "self":
+                    continue
+                if name in kwargs:
+                    # Simple type coercion
+                    if param.annotation != Parameter.empty:
+                        filtered_kwargs[name] = param.annotation(kwargs[name])
+                    else:
+                        filtered_kwargs[name] = kwargs[name]
+                elif param.default == Parameter.empty:
+                    raise ValueError(f"Missing required parameter: {name}")
+            
+            return self.method(**filtered_kwargs)
+        except Exception as e:
+            self.logger.error(f"Tool {self.name} failed: {str(e)}")
+            raise
 
 def engine_tool(engine_class: Type[BaseEngine], method_name: str) -> Callable[[Dict], Tool]:
     """Decorator to create engine tools from config"""
@@ -101,7 +131,15 @@ class DeweyBaseAgent(CodeAgent):
                         tool_creator = engine_tool(engine_class, method)
                         tools.append(tool_creator(config.get("params", {})))
                     except Exception as e:
-                        self.logger.error(f"Failed to create tool {engine_name}.{method}: {str(e)}")
+                        self.logger.error(
+                            f"Failed to register tool {engine_name}.{method}",
+                            exc_info=True,
+                            extra={
+                                "engine_class": config["class"],
+                                "method": method,
+                                "params": config.get("params", {})
+                            }
+                        )
         
         return tools
 

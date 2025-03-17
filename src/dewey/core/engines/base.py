@@ -45,8 +45,13 @@ class SearchEngine(BaseEngine):
     Provides common functionality for search operations.
     """
     
+    def __init__(self, max_results: int = 10, timeout: int = 30):
+        super().__init__()
+        self.default_max_results = max_results
+        self.timeout = timeout
+
     @abstractmethod
-    def search(self, query: str, max_results: int = 10, **kwargs: Any) -> List[Dict[str, Any]]:
+    def search(self, query: str, max_results: int = None, **kwargs: Any) -> List[Dict[str, Any]]:
         """Search for information using the engine.
         
         Args:
