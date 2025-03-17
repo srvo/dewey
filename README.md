@@ -39,7 +39,7 @@ The `src/dewey/scripts` directory contains a collection of sophisticated managem
 
 ### Documentation and Deployment
 - **Document Directory** (`document_directory.py`): Generates comprehensive directory documentation
-- **Service Deployment** (`src/dewey/core/automation/service_deployment.py`): Manages service deployment and configuration
+- **Service Deployment** (`service_deployment.py`): Manages service deployment and configuration
 
 ### Key Features Across Scripts
 1. **LLM Integration**
@@ -102,12 +102,4 @@ For more details, see [Data Upload README](src/dewey/core/data_upload/README.md)
 
 ```bash
 python src/dewey/core/data_upload/upload.py --input_dir /path/to/data --target_db your_database
-```
-
-## Development
-
-### Running Tests
-
-```bash
-pytest
 ```
