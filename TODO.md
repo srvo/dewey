@@ -2,12 +2,49 @@
 
 ## Current Priorities
 1. Repository Setup & Core Infrastructure
-2. CRM Module Integration & Execution
-3. LLM Integration Foundation
+2. Database Integration & Synchronization
+3. CRM Module Integration & Execution
+4. LLM Integration Foundation
 
 ## Human Tasks
 
 - clarify prd builder invocation -- is there a proper alias in zshrc?
+
+### Database Integration (High Priority)
+1. [ ] Set up MotherDuck cloud instance
+   - [ ] Create account and configure access
+   - [ ] Set up API keys and environment variables
+   - [ ] Test basic connectivity
+2. [ ] Design and implement core database schema
+   - [ ] Create schema migration system
+   - [ ] Define table structures and relationships
+   - [ ] Set up indexes and partitioning
+3. [ ] Develop synchronization system
+   - [ ] Create sync status tracking
+   - [ ] Implement conflict resolution
+   - [ ] Set up cron jobs for regular sync
+4. [ ] Implement connection management
+   - [ ] Create connection pool
+   - [ ] Add fallback mechanisms
+   - [ ] Set up health monitoring
+5. [ ] Configure backup system
+   - [ ] Set up local backup scripts
+   - [ ] Configure MotherDuck snapshots
+   - [ ] Test restore procedures
+
+### Automated Tasks
+1. [ ] Regular database maintenance
+   - [ ] Vacuum and optimize local database
+   - [ ] Update statistics
+   - [ ] Monitor disk space
+2. [ ] Synchronization monitoring
+   - [ ] Track sync status
+   - [ ] Alert on failures
+   - [ ] Log performance metrics
+3. [ ] Backup verification
+   - [ ] Verify backup integrity
+   - [ ] Test restore procedures
+   - [ ] Clean up old backups
 
 ### Code Consolidation
 1. [ ] Review code_consolidator.py report
@@ -70,17 +107,17 @@ uv run ruff format .
 ```
 
 ## Backup procedure
-```bash
 After each successful data processing run:
-a. Copy the joined master DuckDB file (merged.duckdb) to a separate location (e.g., a backup drive, network share). Timestamp the backup file.
-b. Use the MotherDuck CLI or Python API to upload the joined master DuckDB file to your MotherDuck account.
-```
+a. Sync changes to MotherDuck cloud instance
+b. Copy the local DuckDB file (dewey.duckdb) to backup location
+c. Verify backup integrity
+d. Clean up old backups according to retention policy
 
 ## Data locations
 ```bash
-Input Data: /Users/srvo/ingest_data/
-Intermediate Data: /Users/srvo/ingest_data/process_1/intermediate.duckdb
-Output Data: ~/dewey/merged.duckdb
+Primary Database: md:dewey@motherduck/dewey.duckdb
+Local Database: /Users/srvo/dewey/dewey.duckdb
+Backup Location: /Users/srvo/dewey/backups/
 ```
 
 ## Pipeline stages
