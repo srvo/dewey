@@ -15,7 +15,6 @@ Attributes:
 import os
 import logging
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Optional, Dict, Any, List
 
 try:
@@ -150,7 +149,7 @@ class TestWriter:
             return None
 
     def generate_tests_for_directory(self, source_dir: Path) -> Dict[Path, bool]:
-        """Process all Python files in directory with parallel execution.
+        """Process all Python files in directory with individual commands.
 
         Args:
             source_dir (Path): Directory containing source files to process
@@ -159,25 +158,44 @@ class TestWriter:
             Dict[Path, bool]: Mapping of file paths to success status
         """
         results = {}
-        futures = []
+        files = []
         
-        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-            for root, _, files in os.walk(source_dir):
-                for file in files:
-                    if file.endswith(".py"):
-                        full_path = Path(root) / file
-                        future = executor.submit(self.generate_tests_for_file, full_path)
-                        futures.append(future)
-                        results[full_path] = False
-            
-            for future in as_completed(futures):
-                try:
-                    result = future.result()
-                    if result:
-                        results[future._args[0]] = True
-                except Exception as e:
-                    logging.error(f"Error processing {future._args[0]}: {str(e)}")
-        
+        # First collect all files to process
+        for root, _, filenames in os.walk(source_dir):
+            for file in filenames:
+                if file.endswith(".py"):
+                    full_path = Path(root) / file
+                    files.append(full_path)
+                    results[full_path] = False
+
+        # Process each file with its own command
+        for file_path in files:
+            try:
+                # Create new Coder instance per file
+                with open(file_path, "r") as f:
+                    code = f.read()
+                
+                prompt = self._construct_test_prompt(code)
+                coder = Coder.create(
+                    main_model=self.model,
+                    fnames=[str(file_path)],
+                    io=self.io,
+                    auto_commits=False,
+                    dirty_commits=False
+                )
+                
+                response = coder.run(prompt)
+                if not response:
+                    continue
+                    
+                test_path = self._get_test_path(file_path)
+                self._write_test_file(test_path, response)
+                results[file_path] = True
+                
+            except Exception as e:
+                logging.error(f"Error processing {file_path}: {str(e)}")
+                results[file_path] = False
+
         return results
 
 if __name__ == "__main__":
