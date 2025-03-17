@@ -33,6 +33,8 @@ llm:
       fallback_models:
       - google/gemini-2.0-pro
       - google/gemini-2.0-pro-vision
+      api_base: https://api.deepinfra.com/v1/openai
+      timeout: 30.0
 
 agents:
   # Common agent configuration

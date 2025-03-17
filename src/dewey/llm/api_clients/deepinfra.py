@@ -21,25 +21,34 @@ class DeepInfraClient:
                 to read from DEEPINFRA_API_KEY environment variable.
 
         """
-        # Load environment variables from project root .env
+        from dewey.config import load_config
+        
+        # Load config and environment variables
+        self.config = load_config()["llm"]["providers"]["deepinfra"]
         env_path = os.path.join(os.getenv("DEWEY_PROJECT_ROOT", "/Users/srvo/dewey"), ".env")
         load_dotenv(env_path)
         
-        # Try to get API key from parameter first, then environment
-        self.api_key = api_key or os.getenv("DEEPINFRA_API_KEY")
-        logging.info(f"Using API key: {self.api_key}")
+        # Get API key from parameter, config, or environment
+        self.api_key = (
+            api_key 
+            or self.config.get("api_key")
+            or os.getenv("DEEPINFRA_API_KEY")
+        )
         
         if not self.api_key:
-            msg = f"DeepInfra API key not found in environment file at {env_path}. Set DEEPINFRA_API_KEY in .env file."
+            msg = f"DeepInfra API key not found in config or environment file at {env_path}"
             raise LLMError(msg)
         
-        # Initialize OpenAI client with proper configuration
+        # Initialize OpenAI client with configured settings
         self.client = OpenAI(
-            base_url="https://api.deepinfra.com/v1/openai",
+            base_url=self.config.get("api_base", "https://api.deepinfra.com/v1/openai"),
             api_key=self.api_key,
-            default_headers={"Content-Type": "application/json"}
+            default_headers={"Content-Type": "application/json"},
+            timeout=self.config.get("timeout", 30.0)
         )
-        logging.info("OpenAI client initialized with DeepInfra configuration")
+        self.default_model = self.config["default_model"]
+        self.fallback_models = self.config.get("fallback_models", [])
+        logging.info(f"Initialized DeepInfra client with model: {self.default_model}")
 
     def _save_llm_output(self, prompt: str, response: str, model: str, metadata: dict | None = None) -> None:
         """Save LLM interaction to a log file for later reference.
@@ -141,9 +150,9 @@ Format: {kwargs['response_format']}
         messages.append({"role": "user", "content": prompt})
 
         try:
-            # Ensure model name is correct for Gemini
-            if "gemini" in model.lower() and not model.startswith("google/"):
-                model = f"google/{model}"
+            # Apply model naming conventions from config
+            if not model.startswith("google/") and any(m in model.lower() for m in ("gemini", "qwen")):
+                model = f"google/{model}" if "gemini" in model.lower() else f"deepinfra/{model}"
 
             # Log request details
             logger = logging.getLogger("DeepInfraClient")
@@ -254,11 +263,12 @@ Format: {kwargs['response_format']}
     def generate_content(
         self,
         prompt: str,
-        model: str = "google/gemini-2.0-flash-001",
+        model: str = None,
         temperature: float = 0.7,
         max_tokens: int = 1000,
         **kwargs,
     ) -> str:
+        model = model or self.default_model
         """Generate content using DeepInfra's API. This is an alias for chat_completion
         to maintain compatibility with the Gemini client interface.
 
