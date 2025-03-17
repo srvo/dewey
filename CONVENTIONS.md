@@ -84,6 +84,40 @@ All system configuration MUST be defined in `config/dewey.yaml` using this struc
 
 ## Core Development Guidelines
 
+### Agent & Tool Configuration
+1. **Engine Integration:**
+   - All engines must inherit from `BaseEngine`/`SearchEngine`
+   - Tool metadata is automatically generated from method signatures
+   - Use `@engine_tool` decorator for config-based tool creation
+   - Tools follow naming convention: `{EngineName}_{MethodName}`
+
+2. **Configuration Rules:**
+   ```yaml
+   engines:
+     search_engine:
+       class: dewey.core.engines.base.SearchEngine
+       enabled: true
+       methods: ["search"]
+       params:
+         max_results: 10
+         timeout: 30
+   ```
+   - Engine classes must be fully qualified Python paths
+   - Disabled engines remain in config but aren't initialized
+   - Methods list specifies which engine methods become tools
+
+3. **Tool Requirements:**
+   - Methods must have type annotations for parameters/returns
+   - Docstrings become tool descriptions
+   - Parameter descriptions default to "Parameter {name} for {method}"
+   - Complex types must be JSON-serializable
+
+4. **Error Handling:**
+   - Tools automatically validate parameters
+   - Type coercion attempts for annotated parameters
+   - Missing required parameters raise ValueErrors
+   - All tool errors are logged with full context
+
 ### Code Quality
 - Use descriptive names for variables, functions, and classes
 - Favor clarity and readability over brevity
