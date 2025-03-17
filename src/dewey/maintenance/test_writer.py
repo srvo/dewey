@@ -55,9 +55,9 @@ class TestWriter:
         model_name = self.config["llm"]["providers"]["deepinfra"]["default_model"]
         self.model = Model(
             model_name,
-            temperature=0.2,
             api_key=self.config["llm"]["providers"]["deepinfra"]["api_key"],
-            base_url="https://api.deepinfra.com/v1/openai"
+            base_url="https://api.deepinfra.com/v1/openai",
+            params={"temperature": 0.2}
         )
 
     def _validate_config(self):
