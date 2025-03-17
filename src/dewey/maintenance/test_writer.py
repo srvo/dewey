@@ -44,7 +44,7 @@ class TestWriter:
         self.config = load_config()
         self.io = InputOutput(yes=True)
         self.max_workers = max_workers
-        self.test_root = Path(self.config["project_root"]) / "tests"
+        self.test_root = Path(self.config["core"]["project_root"]) / "tests"
         self.llm_client = get_llm_client()
         
         self._init_model()
