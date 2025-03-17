@@ -18,9 +18,16 @@ from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Optional, Dict, Any, List
 
-from aider.coders import Coder
-from aider.models import Model
-from aider.io import InputOutput
+try:
+    from aider.coders import Coder
+    from aider.models import Model
+    from aider.io import InputOutput
+except ImportError as e:
+    raise RuntimeError(
+        "Missing required 'aider' dependency. Install with:\n"
+        "uv pip install aider>=0.9.0\n"
+        f"Original error: {str(e)}"
+    )
 
 from dewey.utils import load_config, get_deepinfra_client, validate_test_output
 from dewey.llm.api_clients.deepinfra import DeepInfraClient
