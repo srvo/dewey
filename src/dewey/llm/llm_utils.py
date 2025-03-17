@@ -12,6 +12,34 @@ from dewey.llm.exceptions import LLMError
 logger = logging.getLogger(__name__)
 
 
+def get_llm_client() -> LLMHandler:
+    """Get configured LLM client handler.
+    
+    Returns:
+        LLMHandler: Initialized LLM client handler instance
+    """
+    from dewey.config import load_config
+    config = load_config()["llm"]
+    return LLMHandler(config)
+
+def validate_test_output(output: str) -> bool:
+    """Validate generated test code meets project standards.
+    
+    Args:
+        output: Generated test code to validate
+        
+    Returns:
+        bool: True if output meets all validation criteria
+    """
+    required_patterns = [
+        "import pytest",
+        "def test_",
+        "Arrange",
+        "Act", 
+        "Assert"
+    ]
+    return all(pattern in output for pattern in required_patterns)
+
 class LLMHandler:
     """Centralized handler for LLM client configuration and execution."""
 
