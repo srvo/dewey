@@ -25,7 +25,7 @@ try:
 except ImportError as e:
     raise RuntimeError(
         "Missing required 'aider' dependency. Install with:\n"
-        "uv pip install aider\n"
+        "uv pip install 'aider @ git+https://github.com/paul-gauthier/aider.git'\n"
         f"Original error: {str(e)}"
     )
 

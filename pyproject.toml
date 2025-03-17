@@ -60,7 +60,7 @@ dependencies = [
     "pre-commit",
     "ruff", 
     "textual>=2.1.2",
-    "aider",  # AI-powered test generation
+    "aider @ git+https://github.com/paul-gauthier/aider.git",  # Latest version from GitHub
 ]
 
 [tool.setuptools]
