@@ -552,4 +552,78 @@ pipeline-stages =
 },
 ]
 
+## Database Integration Strategy
+
+### Database Architecture
+- **Primary Database:** MotherDuck cloud instance (default for all operations)
+- **Local Fallback:** `/Users/srvo/dewey/dewey.duckdb`
+- **Sync Schedule:** Every 6 hours via cron job
+
+### Database Organization
+1. Core Tables:
+   - `emails` - Email data from Gmail integration
+   - `email_analyses` - Analysis results and metadata
+   - `import_checkpoints` - Import progress tracking
+   - `company_context` - Company research and context data
+   - `documents` - Document storage and metadata
+   - `tasks` - Task tracking and automation
+
+2. Integration Tables:
+   - `sync_status` - Track synchronization state between local and cloud
+   - `sync_conflicts` - Record and resolve sync conflicts
+   - `schema_versions` - Track schema versions and migrations
+
+### Synchronization Rules
+1. **Default Operations:**
+   - Read operations default to MotherDuck
+   - Write operations replicate to both MotherDuck and local
+   - Fallback to local DB if MotherDuck is unavailable
+
+2. **Conflict Resolution:**
+   - Use timestamp-based resolution (latest wins)
+   - Log conflicts in `sync_conflicts` table
+   - Manual review required for schema conflicts
+
+3. **Schema Management:**
+   - Schema changes must be versioned
+   - Migrations must be backward compatible
+   - Both databases must maintain identical schemas
+
+### Connection Management
+1. **MotherDuck:**
+   - Use connection pooling
+   - Implement exponential backoff for retries
+   - Monitor connection health
+
+2. **Local Database:**
+   - Single connection for writes
+   - Connection pool for reads
+   - Regular vacuum and optimization
+
+### Backup Strategy
+1. **MotherDuck:**
+   - Relies on MotherDuck's built-in replication
+   - Daily snapshots retained for 30 days
+
+2. **Local Database:**
+   - Daily incremental backups
+   - Weekly full backups
+   - 30-day retention policy
+
+### Performance Optimization
+1. **Indexes:**
+   - Create consistent indexes across both databases
+   - Monitor and maintain index health
+   - Regular index usage analysis
+
+2. **Partitioning:**
+   - Partition large tables by date
+   - Implement consistent partitioning strategy
+   - Regular partition maintenance
+
+3. **Query Optimization:**
+   - Use prepared statements
+   - Implement query caching where appropriate
+   - Regular query performance monitoring
+
 
