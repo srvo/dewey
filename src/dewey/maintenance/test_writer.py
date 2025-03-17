@@ -57,10 +57,18 @@ class TestWriter:
 
     def _validate_config(self):
         """Validate required configuration values."""
-        required_keys = ["project_root", "llm"]
-        for key in required_keys:
-            if key not in self.config:
-                raise ValueError(f"Missing required config key: {key}")
+        # Check for required top-level sections
+        if "core" not in self.config:
+            raise ValueError("Missing required 'core' section in config")
+            
+        # Check for required keys within sections
+        required_core_keys = ["project_root"]
+        for key in required_core_keys:
+            if key not in self.config["core"]:
+                raise ValueError(f"Missing required core config key: {key}")
+                
+        if "llm" not in self.config:
+            raise ValueError("Missing required 'llm' section in config")
 
     def _construct_test_prompt(self, code: str) -> str:
         """Build structured prompt following Assembled's testing methodology.
