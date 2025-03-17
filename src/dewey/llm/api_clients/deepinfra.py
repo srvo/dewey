@@ -96,11 +96,13 @@ class DeepInfraClient:
     def chat_completion(
         self,
         prompt: str,
+        model: str = None,
         temperature: float = 0.7,
         max_tokens: int = 1000,
         system_message: str | None = None,
         **kwargs,
     ) -> str:
+        model = model or self.default_model
         """Generate a chat completion response from DeepInfra.
 
         Args:
