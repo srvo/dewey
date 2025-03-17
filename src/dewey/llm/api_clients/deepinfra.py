@@ -87,7 +87,6 @@ class DeepInfraClient:
     def chat_completion(
         self,
         prompt: str,
-        model: str = "google/gemini-2.0-flash-001",
         temperature: float = 0.7,
         max_tokens: int = 1000,
         system_message: str | None = None,
