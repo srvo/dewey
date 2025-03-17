@@ -25,7 +25,7 @@ try:
 except ImportError as e:
     raise RuntimeError(
         "Missing required 'aider' dependency. Install with:\n"
-        "uv pip install aider>=0.7.7\n"
+        "uv pip install aider\n"
         f"Original error: {str(e)}"
     )
 

@@ -60,7 +60,7 @@ dependencies = [
     "pre-commit",
     "ruff", 
     "textual>=2.1.2",
-    "aider>=0.7.7",  # Current latest version on PyPI
+    "aider",  # AI-powered test generation
 ]
 
 [tool.setuptools]
