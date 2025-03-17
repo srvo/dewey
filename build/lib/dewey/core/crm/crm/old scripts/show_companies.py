@@ -1,0 +1,1 @@
+import sys; sys.path.append("jupyter"); from search_flow import get_top_companies; companies = get_top_companies(150); print("\nTop Operating Companies by Tick Score:\n" + "="*80); print(f"{"Company Name":<50} {"Ticker":<8} {"Tick":<5}\n" + "-"*80); [print(f"{c["name"]:<50} {c["ticker"]:<8} {c["tick"]:<5}") for c in companies]

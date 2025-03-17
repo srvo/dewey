@@ -6,11 +6,11 @@ Requires-Python: >=3.12
 Description-Content-Type: text/markdown
 Requires-Dist: ibis-framework[duckdb]
 Requires-Dist: duckdb-engine
-Requires-Dist: python-dotenv
+Requires-Dist: python-dotenv>=1.0.0
 Requires-Dist: ruff
 Requires-Dist: pytest
 Requires-Dist: requests
-Requires-Dist: pyyaml
+Requires-Dist: pyyaml>=6.0.0
 Requires-Dist: openai>=1.0.0
 Requires-Dist: google-generativeai
 Requires-Dist: pydantic
@@ -44,3 +44,9 @@ Requires-Dist: black>=25.1.0
 Requires-Dist: numpy==1.26.0
 Requires-Dist: chromadb
 Requires-Dist: sentence-transformers
+Requires-Dist: typer>=0.9.0
+Requires-Dist: rich>=13.0.0
+Requires-Dist: pyyaml>=6.0.0
+Requires-Dist: python-dotenv
+Requires-Dist: pre-commit
+Requires-Dist: ruff

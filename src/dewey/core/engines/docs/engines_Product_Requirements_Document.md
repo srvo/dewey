@@ -1,0 +1,614 @@
+# External Data/API Engines
+
+
+
+## Executive Summary
+
+This project aims to create a suite of Python engines designed to access and process data from various external APIs, including financial data providers (FRED, Tavily, SEC EDGAR, FMP, Polygon, Yahoo Finance, OpenFIGI), search engines (DuckDuckGo, SearxNG, Bing, Serper), and other data sources (GitHub, Gmail, PyPI, RSS feeds, MotherDuck). The scope encompasses the development of individual engine modules, each responsible for interacting with a specific API, handling authentication, managing rate limits, processing data, and providing a consistent interface for data retrieval.
+
+Key components include engines for FRED, Tavily, SEC EDGAR, GitHub, Serper, FMP, SearxNG, Bing, consolidated Gmail, MotherDuck, Polygon, PyPI, RSS feeds, Yahoo Finance, OpenFIGI, DuckDuckGo, and associated utilities. Each engine leverages libraries like `aiohttp`, `asyncio`, `httpx`, and others specific to the API being accessed. Responsibilities include API interaction, data transformation, error handling, and potentially caching. The `sec_etl.py` component focuses on extracting and storing SEC data, while `motherduck_sync.py` handles data synchronization.
+
+The architecture extends a `BaseEngine` class to promote code reuse and a consistent interface across different data sources. Major architectural decisions include the use of asynchronous operations for efficient API calls, rate limit management to avoid service disruptions, and data processing pipelines to transform raw API responses into usable formats. No major architectural changes are explicitly mentioned in the provided PRD, but the implementation of caching mechanisms and the handling of API key security would be important considerations.
+
+## Components
+
+### fred_engine.py
+
+FRED API Engine
+==========
+
+Provides functionality to access Federal Reserve Economic Data (FRED) using the FRED API.
+
+#### Responsibilities
+
+- Handles data retrieval from FRED API endpoints, including error handling and retry logic.
+- Initializes the FREDEngine object with necessary configurations (e.g., API key, logger).
+- Manages API key authentication and authorization for accessing FRED data.
+- Sets up the aiohttp ClientSession for making asynchronous HTTP requests.
+- May implement logic to securely store and manage the API key.
+- Handles cases where the API key is missing or invalid, raising appropriate exceptions or logging warnings.
+- Processes and transforms FRED data into usable formats (e.g., dictionaries, lists).
+- Implements caching mechanisms to reduce API calls and improve performance (if applicable).
+- Extends BaseEngine, inheriting its core functionalities and conforming to its interface.
+- Configures logging for debugging and monitoring API interactions.
+- Retrieves the FRED API key from environment variables or a configuration file.
+- Manages interactions with the FRED API using aiohttp for asynchronous requests.
+- Potentially initializes caching mechanisms (if implemented).
+
+#### Dependencies
+
+- aiohttp library
+- asyncio library
+-  library
+
+### tavily.py
+
+Tavily Research Engine.
+
+Provides functionality to perform advanced search queries using the Tavily API.
+
+#### Responsibilities
+
+- Configures the aiohttp session for making API requests.
+- May perform validation on the API key to ensure it is in the correct format.
+- Manages the Tavily search functionality, including constructing and executing search queries.
+- Retrieves and stores the Tavily API key.
+- Initializes any necessary internal data structures.
+- Handles API interactions with the Tavily Search API, including authentication and rate limiting.
+- Sets up logging for debugging and monitoring.
+- Handles cases where the API key is missing or invalid, potentially raising an exception or logging an error.
+- Potentially caches search results to improve performance and reduce API usage.
+- Initializes a TavilyEngine object.
+- Orchestrates search queries and processes results, potentially including result parsing and filtering.
+- Provides a centralized location for accessing the API key, ensuring consistency throughout the class.
+- Extends BaseEngine, inheriting its core functionalities and adapting them for Tavily.
+- Handles potential errors and exceptions during API calls and search processing.
+- Manages asynchronous operations using asyncio and aiohttp for efficient API calls.
+- Retrieves the Tavily API key from environment variables or a configuration file.
+
+#### Dependencies
+
+- aiohttp library
+- asyncio library
+-  library
+
+### sec_engine.py
+
+SEC EDGAR API Engine.
+
+Provides functionality to access SEC EDGAR data using the SEC API.
+
+#### Responsibilities
+
+- Potentially manages asynchronous operations (due to asyncio import)
+- Inherits from BaseEngine (implied by import)
+- May initialize aiohttp client session
+- May initialize logging configurations
+- Likely sets up internal state of SECEngine
+- Likely handles HTTP requests (due to aiohttp import)
+- May use logging for debugging or monitoring (due to logging import)
+- Initializes an object
+
+#### Dependencies
+
+- aiohttp library
+- asyncio library
+-  library
+
+### github_analyzer.py
+
+No description available.
+
+#### Responsibilities
+
+- Handle API authentication
+- May require methods to record and aggregate metrics
+- Update rate limit information based on API response headers or other data
+- Update rate limit information based on API responses
+- Track metrics related to library usage and performance
+- Potentially track data volume processed
+- Parse API responses
+- May be a method within RateLimitMonitor or a standalone utility function
+- Implement retry logic
+- Make API requests
+- Log alerts when rate limit thresholds are crossed
+- Potentially trigger actions based on threshold breaches (e.g., pausing requests)
+- Log threshold breaches with appropriate severity levels
+- Potentially implement strategies for handling rate limits (e.g., pausing requests)
+- Potentially track API call success/failure rates
+- Potentially cache API responses
+- Monitor API rate limits
+- Provide current rate limit status to APIClient
+- Utilize RateLimitMonitor to avoid exceeding rate limits
+
+#### Dependencies
+
+- asyncio library
+- dlt library
+- dotenv library
+- aiohttp library
+- pathlib library
+- datetime library
+- pydantic library
+- pandas library
+- __future__ library
+
+### serper.py
+
+No description available.
+
+#### Responsibilities
+
+- Initialize the search provider with API key and other configurations
+- Convert raw search results into a list of SearchResult objects
+- Implement the SearchProvider interface for consistent integration with other search providers
+- Parse and transform the raw Serper.dev API response into a standardized SearchResponse schema
+- Provide search results from Serper.dev API
+- Handle API requests to Serper.dev, including error handling and rate limiting
+
+#### Dependencies
+
+- backend library
+- asyncio library
+- __future__ library
+- httpx library
+
+### fmp_engine.py
+
+Financial Modeling Prep Engine
+==========================
+
+Provides functionality to access financial data, statements, and market
+information using the FMP API.
+
+#### Responsibilities
+
+- Processes and transforms financial data retrieved from FMP.
+- Extends BaseEngine functionality (inheritance relationship).
+- Implements error handling and retry mechanisms for API requests.
+- Initializes the FMPEngine object.
+- Handles cases where the API key is missing or invalid.
+- Manages the FMP engine lifecycle.
+- Configures logging for the engine.
+- Potentially caches API responses to improve performance.
+- Sets up API connection parameters (e.g., API key).
+- Initializes any necessary data structures or caches.
+- Retrieves the FMP API key from environment variables or a configuration file.
+- May implement API key validation.
+- Handles API interactions with Financial Modeling Prep (FMP).
+
+#### Dependencies
+
+- aiohttp library
+- asyncio library
+-  library
+
+### searxng.py
+
+No description available.
+
+#### Responsibilities
+
+- Implement error handling and retry mechanisms for failed search requests.
+- Asynchronously execute search requests using asyncio and httpx.
+- Handle search requests, including query construction and execution.
+- Provide search results from SearxNG.
+- Adhere to the SearchProvider interface for consistent integration with the search backend.
+- Initialize the search provider with configuration parameters (e.g., SearxNG instance URL).
+- Parse and transform raw search results from SearxNG into a standardized format (SearchResponse and SearchResult schemas).
+
+#### Dependencies
+
+- backend library
+- asyncio library
+- __future__ library
+- httpx library
+
+### bing.py
+
+No description available.
+
+#### Responsibilities
+
+- Implement asynchronous search requests using `asyncio` and `httpx`
+- Construct and send HTTP requests to the Bing Search API endpoint
+- Manage Bing search API interactions, including authentication and rate limiting
+- Handle potential API errors and exceptions gracefully
+- Inherit and implement the abstract methods defined in the `SearchProvider` base class
+- Transform raw Bing API responses into a standardized SearchResponse schema
+- Provide search results from Bing
+
+#### Dependencies
+
+- backend library
+- asyncio library
+- __future__ library
+- httpx library
+
+### consolidated_gmail_api.py
+
+Custom exception for Gmail API rate limits.
+
+#### Responsibilities
+
+- Handles user consent flow if necessary.
+- Retrieves the body of an email message from the Gmail API response.
+- Manages authentication token refresh.
+- Ensures continuous access to the Gmail API.
+- Handles rate limiting errors and implements retry mechanisms.
+- Authenticates with Gmail using OAuth 2.0 or service account credentials.
+- Handles different email formats and structures.
+- Retrieves label names for an email from the Gmail API response.
+- Persists the state of the application for later use.
+- Implements error handling and retry mechanisms for API requests.
+- Handles different character encodings.
+- Sets up authentication credentials and API client.
+- Loads a checkpoint from a file.
+- Parses an email message to extract relevant information (e.g., sender, recipient, subject, date).
+- Obtains and stores authentication tokens.
+- Handles pagination to retrieve large numbers of emails.
+- Refreshes the authentication token when it expires.
+- Fetches emails from Gmail based on specified criteria (e.g., labels, date range).
+- Represents a rate limit error encountered when interacting with the Gmail API.
+- Processes fetched emails, including decoding the body, parsing content, and extracting relevant information.
+- Handles different MIME types and encodings.
+- Provides a custom exception type for handling rate limiting scenarios.
+- Initializes a GmailClient object.
+- Manages interactions with the Gmail API, including authentication, email fetching, and processing.
+- Restores the state of the application from the checkpoint.
+- Configures logging.
+- Saves a checkpoint to a file.
+- Decodes the email body from base64 encoding.
+
+#### Dependencies
+
+- pickle library
+- re library
+- pathlib library
+- google library
+- googleapiclient library
+- base64 library
+- time library
+- datetime library
+- google_auth_oauthlib library
+
+### motherduck_sync.py
+
+Sync local DuckDB data to MotherDuck cloud service with detailed logging.
+
+#### Responsibilities
+
+- Call `sync_database` or `sync_table_to_motherduck` based on the specified configuration.
+- Synchronize a specific table from a source database (e.g., DuckDB) to MotherDuck.
+- Implement error handling for data transfer failures.
+- Log the progress and status of the table synchronization.
+- Orchestrate the overall synchronization process to MotherDuck.
+- Handle database-level errors and logging.
+- Parse command-line arguments or configuration files to determine the source database, target MotherDuck instance, and tables to synchronize.
+- Potentially support incremental synchronization based on timestamps or other criteria.
+- Iterate through all tables in the source database.
+- Handle data type conversions between the source database and MotherDuck.
+- Manage dependencies between tables if necessary (e.g., ensuring parent tables are synced before child tables).
+- Manage the overall workflow and error handling for the entire synchronization process.
+- Call `sync_table_to_motherduck` for each table.
+- Synchronize an entire database from a source (e.g., DuckDB) to MotherDuck.
+- Provide a user-friendly interface for initiating and monitoring the synchronization.
+- Handle potential connection errors and provide informative logging.
+- Establish a connection to MotherDuck using credentials (likely from environment variables or .env file).
+- Return an ibis connection object for interacting with MotherDuck.
+
+#### Dependencies
+
+- ibis library
+- dotenv library
+- pathlib library
+- argparse library
+
+### polygon_engine.py
+
+Polygon API Engine.
+
+Provides functionality to access market data, financial information, and news
+using the Polygon API.
+
+#### Responsibilities
+
+- Handles data processing related to polygons, including parsing API responses and transforming data into a usable format.
+- Potentially implements caching mechanisms to improve performance and reduce API usage.
+- Manages API key retrieval and authentication for accessing the polygon data API.
+- Configures logging for the PolygonEngine.
+- Sets up the aiohttp client session for making API requests.
+- May implement logic to securely store and retrieve the API key.
+- Handles error handling and logging related to API requests and data processing.
+- Retrieves the API key from environment variables or a configuration file.
+- Interacts with an external API (likely a polygon data provider) using aiohttp for asynchronous requests.
+- Extends BaseEngine, inheriting its core functionalities and potentially overriding or extending its methods.
+- Handles cases where the API key is missing or invalid, potentially raising an exception or logging an error.
+- May validate the API key format.
+- Initializes the PolygonEngine object.
+- Retrieves and stores the API key using _get_api_key.
+- Initializes any internal data structures or caches.
+- Manages polygon-related operations, including fetching, processing, and potentially storing polygon data.
+
+#### Dependencies
+
+- aiohttp library
+- asyncio library
+-  library
+
+### pypi_search.py
+
+No description available.
+
+#### Responsibilities
+
+- Parses the search results to extract relevant package information.
+- Searches PyPI for packages matching a general query.
+- Searches PyPI for a specific package.
+- Uses the 'requests' library to make HTTP requests to the PyPI API.
+- Handles potential errors during the PyPI search (e.g., network errors, API errors).
+- May rank or filter results based on relevance or other criteria.
+- Logs the search results, including package name, version, and description.
+- May implement pagination to handle large result sets.
+
+#### Dependencies
+
+- requests library
+
+### rss_feed_manager.py
+
+No description available.
+
+#### Responsibilities
+
+- Retrieves the latest news entries specifically related to a given company.
+- Provides filtering and sorting of news entries (e.g., by date, keyword).
+- Handles asynchronous fetching of feed data using aiohttp and asyncio.
+- Parses RSS feed content using feedparser.
+- Creates RSSFeed instances for each feed defined in the data source.
+- Handles potential errors during feed parsing (e.g., invalid XML).
+- Initializes RSSFeed instances from a configuration source (e.g., a list of URLs).
+- Manages multiple RSSFeed instances.
+- Caches feed data to reduce network requests.
+- May filter entries based on keywords or other criteria.
+- May involve validating the feed URL before creating an RSSFeed instance.
+- Allows specifying the number of entries to retrieve.
+- Registers the initialized feeds with the RSSManager.
+- Prioritizes news entries from feeds that are known to be relevant to the company.
+- Returns a list of news entries, potentially formatted as dictionaries or custom objects.
+- Returns a list of news entries related to the company, potentially ranked by relevance.
+- May include methods for refreshing the feed content.
+- Handles cases where a feed is unavailable or returns an error.
+- Sorts entries by date (or other relevant criteria).
+- Stores and manages feed metadata (title, link, description).
+- Provides access to individual feed entries.
+- May use natural language processing (NLP) techniques to improve the accuracy of company news identification.
+- Retrieves and aggregates news entries from multiple feeds.
+- Represents a single RSS feed.
+- Handles potential errors during feed initialization (e.g., invalid URL).
+- Retrieves the latest news entries from a specified feed or all feeds managed by the RSSManager.
+- Provides methods for accessing feeds by name or URL.
+- Filters news entries based on the company name or other relevant keywords.
+- Initializes RSS feeds from a data source (e.g., a configuration file, database).
+
+#### Dependencies
+
+- asyncio library
+- aiohttp library
+- datetime library
+- feedparser library
+- pandas library
+- __future__ library
+
+### yahoo_finance_engine.py
+
+Yahoo Finance Research Engine
+==========================
+
+Provides functionality to fetch market data from Yahoo Finance.
+
+#### Responsibilities
+
+- Potentially initialize a session or connection to the Yahoo Finance API (if needed).
+- Initialize the YahooFinanceEngine object, setting up logging and any necessary configurations.
+- Log any errors or warnings encountered during data retrieval.
+- Fetch financial data for multiple symbols in a batch to improve efficiency.
+- Implement batching logic to group symbols for data retrieval.
+- Handle date range specifications for historical data retrieval.
+- Configure retry parameters (e.g., number of retries, delay between retries).
+- Rename columns to a standardized format.
+- Manage concurrency or parallelism to speed up batch processing (if applicable).
+- Apply rate limiting to prevent overloading the Yahoo Finance API.
+- Manage data retrieval and processing, including error handling and rate limiting.
+- Adhere to rate limits imposed by Yahoo Finance to avoid being blocked.
+- Fetch historical financial data for a given symbol (e.g., stock ticker).
+- Handle errors and exceptions that may occur during batch processing.
+- Implement retry logic for failed data fetches.
+- Convert data types to appropriate formats (e.g., datetime, float).
+- Return a Pandas DataFrame containing the historical data, or None if an error occurs.
+- Aggregate the results from individual symbol fetches into a single data structure.
+- Handle missing values (e.g., filling with NaN or interpolation).
+- Process and standardize data formats received from Yahoo Finance.
+- Apply rate limiting to the entire batch to avoid exceeding API limits.
+- Handle potential API errors and exceptions from Yahoo Finance.
+- Implement error handling for invalid symbols or data retrieval failures.
+- Ensure the DataFrame conforms to a specific schema or data model.
+- Fetch financial data from Yahoo Finance using the yfinance library.
+- Provide a consistent interface for accessing financial data, abstracting away the specifics of the yfinance library.
+- Process and clean a Pandas DataFrame containing financial data.
+- Perform any necessary data transformations or calculations.
+
+#### Dependencies
+
+-  library
+- yfinance library
+- time library
+- datetime library
+- pandas library
+
+### openfigi.py
+
+OpenFIGI Engine Module
+
+Provides integration with OpenFIGI API for looking up financial instrument identifiers.
+Follows the engine pattern used in other research modules.
+
+#### Responsibilities
+
+- Tracks API request counts and timestamps.
+- Processes API responses, including error handling and data parsing.
+- Filters API response data to identify and return the primary listing for a given security.
+- May involve comparing different fields within the API response to determine the best match.
+- Potentially initializes session objects for API communication (using `requests`).
+- Extends BaseEngine, inheriting its core functionalities (details depend on BaseEngine's implementation).
+- Initializes an OpenFIGIEngine object.
+- Handles data retrieval from the OpenFIGI API.
+- Implements retry logic for failed API requests.
+- Sets up API credentials (API key, etc.).
+- Manages interactions with the OpenFIGI API, including request construction and submission.
+- Enforces API rate limits to prevent exceeding allowed request quotas.
+- Handles cases where no primary listing is found.
+- Provides a configurable interface for specifying API keys and other parameters.
+- Applies specific criteria to determine the primary listing (e.g., based on exchange, market sector, or other attributes).
+- Potentially uses a token bucket or similar algorithm for rate limiting.
+- Initializes rate limiting mechanisms.
+- Pauses execution (using `time.sleep`) if the rate limit is reached.
+- Configures logging.
+
+#### Dependencies
+
+- time library
+- datetime library
+- requests library
+-  library
+
+### sec_etl.py
+
+No description available.
+
+#### Responsibilities
+
+- Process a batch of company data files
+- Query the database for filing dates
+- Define views based on common queries or aggregations
+- Load CIK (Central Index Key) lookup data into the database
+- Manage file processing order and dependencies
+- Create financial views
+- Handle data type conversions and validation
+- Determine the most recent filing date for a company
+- Extract financial metrics from company filings (e.g., 10-K, 10-Q)
+- Create database tables if they don't exist
+- Handle connection errors and logging
+- Potentially parallelize file processing
+- Orchestrate the entire data processing pipeline
+- Ensure data integrity through constraints (if any)
+- Calculate derived metrics (e.g., ratios)
+- Establish and return database connections (DuckDB)
+- Process company files
+- Error handling for invalid or missing data
+- Orchestrate the extraction and storage of data for each company
+- Store company-specific data (e.g., CIK, name, industry) in the database
+- Handle schema updates or migrations
+- Potentially create materialized views for pre-computed results
+- Handle different filing formats and versions
+- Optimize views for performance
+- Optimize storage for efficient querying
+- Return the metrics in a structured format
+- Handle data updates and synchronization
+- Store extracted financial metrics in the database
+- Delegate to other functions for extraction and storage
+- Load CIK lookup data
+- Iterate through company filing files
+- Ensure data integrity and accuracy
+- Parse and process CIK data
+- Handle file errors and logging
+- Create database views for simplified data access
+- Manage batch-level errors and logging
+- Define schema for company data and financial metrics
+- Handle cases where no metrics exist
+- Fetch CIK data from a source (e.g., file, API)
+- Handle potential conflicts or duplicates
+- Potentially schedule or monitor the pipeline execution
+- Extract the latest financial metrics for a company
+- Parse and process financial statements
+- Initialize database connections
+- Return the filing date in a consistent format
+- Handle cases where no filings exist
+- Query the database for the most recent metrics
+- Handle overall program errors and logging
+- Manage database transactions for atomicity
+- Potentially manage multiple connections
+- Potentially handle transaction management for the batch
+- Optimize batch size for performance
+
+#### Dependencies
+
+- tqdm library
+- pathlib library
+- datetime library
+- pandas library
+- duckdb library
+
+### duckduckgo_engine.py
+
+DuckDuckGo Search Engine
+======================
+
+Provides search functionality using the DuckDuckGo API with rate limiting.
+
+#### Responsibilities
+
+- Orchestrates search operations using the DuckDuckGo search engine.
+- May configure rate limiting based on environment variables or default settings.
+- Initializes the DuckDuckGoEngine object with necessary configurations.
+- Sets up logging for debugging and monitoring search operations.
+- Retrieves raw search results from the DuckDuckGo API.
+- Manages the processing of raw search results into a structured format.
+- Potentially initializes a DDGS (DuckDuckGo Search) object for interacting with the DuckDuckGo API.
+- May retry the search query if it fails due to temporary errors (e.g., network issues).
+- Implements rate limiting to avoid exceeding DuckDuckGo's API limits.
+- May perform additional filtering or ranking of the search results based on specific criteria.
+- Handles potential exceptions during the search process (e.g., network errors, rate limiting errors).
+- Inherits from a base SearchEngine class (likely providing common search engine functionality).
+- Processes the raw search results received from the DuckDuckGo API.
+- Provides a high-level interface for initiating and managing search queries.
+- Cleans and sanitizes the extracted information to remove potentially harmful content.
+- Validates input parameters to ensure they are valid and safe.
+- Executes the search query against the DuckDuckGo search engine using the DDGS library.
+- Handles communication with the DuckDuckGo API.
+- Extracts relevant information from the raw results (e.g., title, URL, description).
+- Initiates a search query based on the provided search term and optional parameters.
+- Returns the processed search results in a structured format.
+- Applies rate limiting to prevent exceeding the allowed number of requests.
+- Transforms the raw results into a structured format (e.g., a list of dictionaries).
+- Calls the _execute_search method to perform the actual search.
+
+#### Dependencies
+
+- duckduckgo_search library
+- ratelimit library
+-  library
+
+### duckduckgo.py
+
+No description available.
+
+#### Responsibilities
+
+- Search for a query in DuckDuckGo using the DDGS library.
+- May involve creating FunctionTool objects from other functions.
+- Retrieve a list of available tools.
+- Search for images in DuckDuckGo using the DDGS library.
+- Handle potential errors during the search process.
+- Return image-based search results (e.g., URLs).
+- Return text-based search results.
+- Format tools into a usable structure (likely for a language model or agent).
+- Potentially dynamically load tools based on configuration or user input.
+
+#### Dependencies
+
+- llama_index library
+- duckduckgo_search library
+
+## Architectural Decisions
+

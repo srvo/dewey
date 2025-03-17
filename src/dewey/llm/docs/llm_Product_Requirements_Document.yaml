@@ -1,0 +1,369 @@
+metadata:
+  author: Sloane Ortel
+  revision_policy: Bi-weekly review
+  version_history:
+  - version: '1.0'
+    date: '2024-11-06'
+    author: Sloane Ortel
+    changes: Initial draft
+  - version: '1.1'
+    date: '2024-11-07'
+    author: Sloane Ortel
+    changes: Fixed PRD to comply with project conventions
+title: LLM Functions
+description: This PRD details the development of an LLM-based framework designed to
+  enhance internal knowledge management and client-facing financial analysis systems.
+  The framework leverages AI agents and external APIs for tasks like data analysis,
+  email processing, and content generation. It utilizes key components such as dynamic
+  tool integration, LLM interaction management, and specialized AI agents built on
+  the smolagents framework. The goal is to improve the efficiency and reliability
+  of these systems, directly impacting client service and internal operations.
+stakeholders:
+  default:
+  - name: Sloane Ortel
+    role: Primary Stakeholder
+    contact: srvo@domain.com
+    review_date: null
+  client_modules:
+  - name: Client Services Team
+    role: Client Interface
+    review_date: null
+  legal_compliance:
+  - name: Legal & Compliance
+    role: Regulatory Oversight
+    review_date: null
+market_assessment:
+  default: Internal knowledge management and client-facing financial analysis systems
+  client_facing: High-net-worth individuals and institutional investors
+assumptions:
+- All non-client modules assume single-stakeholder (Sloane Ortel) usage
+- Data security requirements follow FINRA/SEC regulations
+- Python 3.11+ runtime environment
+evaluation_metrics:
+- Code maintainability (cyclomatic complexity < 15)
+- LLM response latency < 2.5s
+- Data processing throughput > 100MB/s
+timelines:
+  discovery: 2
+  development: 3
+  testing: 1
+  deployment: 0.5
+components:
+  tool_factory.py:
+    description: Dynamically loads and instantiates tools based on configuration files,
+      enabling flexible tool integration.
+    responsibilities:
+    - Loading tool configurations
+    - Instantiating tool objects
+    - Managing tool lifecycle
+    dependencies:
+    - importlib
+    - os
+    - yaml
+  llm_utils.py:
+    description: Handles interactions with Large Language Models (LLMs), including
+      validation of model parameters and generating responses using DeepInfraClient.
+    responsibilities:
+    - Validating LLM parameters
+    - Generating LLM responses
+    - Managing LLM client connections
+    dependencies:
+    - logging
+    - json
+    - dewey.llm.api_clients.deepinfra.DeepInfraClient
+  tool_launcher.py:
+    description: Manages the execution and monitoring of external CLI tools, providing
+      a mechanism for integrating them into the agent workflow.
+    responsibilities:
+    - Launching external CLI tools
+    - Monitoring tool execution
+    - Managing tool lifecycle
+    dependencies:
+    - asyncio
+    - logging
+    - shutil
+  agents/:
+    description: Contains various AI agents built using the smolagents framework,
+      each designed for specific tasks such as docstring generation, self-care, triage,
+      optimization, content creation, and logical fallacy detection.
+    responsibilities:
+    - Performing specific tasks using AI
+    - Interacting with other agents
+    - Adapting to changing environments
+    dependencies:
+    - smolagents
+    - structlog
+    - pydantic
+    - base.SyzygyAgent
+    - database.models.Contact
+  api_clients/:
+    description: Provides clients for interacting with external APIs, including OpenRouter,
+      Gemini, and DeepInfra, with rate limiting and error handling.
+    responsibilities:
+    - Interacting with external APIs
+    - Handling API requests
+    - Managing rate limits
+    - Handling API errors
+    dependencies:
+    - httpx
+    - openai
+    - logging
+    - os
+  legacy/:
+    description: Contains older code related to various functionalities such as log
+      analysis, image generation, database synchronization, email prioritization,
+      data ingestion, company analysis, and more. This section seems to be in the
+      process of being refactored or replaced.
+    responsibilities:
+    - Performing various legacy functionalities
+    - Maintaining compatibility with older systems
+    dependencies:
+    - json
+    - logging
+    - subprocess
+    - sys
+    - time
+    - requests
+    - sqlalchemy
+    - django
+    - pathlib
+    - duckdb
+    - llama_index
+    - marimo
+    - prefect
+    - aiosqlite
+    - asyncpg
+decisions:
+  patterns:
+  - Factory Pattern
+  - Agent-Based Architecture
+  - API Client Pattern
+  - Modular Design
+  - Microservices Architecture
+  - Legacy Code Integration
+  - Data Ingestion Pipeline
+  issues:
+  - title: Monolithic 'legacy/' Directory
+    impact: High coupling, increased complexity, difficult to test and maintain, potential
+      dependency conflicts, hinders future development and refactoring.
+    required_change: Decompose the 'legacy/' directory into smaller, well-defined
+      modules or services with clear responsibilities and minimal dependencies.
+    priority: high
+  - title: Lack of clear separation of concerns and potential for tight coupling between
+      agents and the underlying framework.
+    impact: Reduced reusability of agents, increased complexity in modifying the framework,
+      potential for unintended side effects when changing agent behavior, limits scalability
+      and maintainability.
+    required_change: Define a clear and well-defined interface between agents and
+      the framework, promoting loose coupling and allowing for independent development
+      and deployment.
+    priority: medium
+  - title: Inconsistent error handling and logging across different components.
+    impact: Difficult to diagnose and debug issues, reduced system reliability, potential
+      for data loss or corruption, hinders monitoring and alerting.
+    required_change: Implement a consistent and centralized error handling and logging
+      strategy across the entire codebase.
+    priority: medium
+  - title: Lack of explicit dependency management and versioning.
+    impact: Dependency conflicts, difficulty in reproducing environments, potential
+      for security vulnerabilities, hinders collaboration and deployment.
+    required_change: Implement a robust dependency management system using tools like
+      pipenv or poetry, and enforce strict versioning of all dependencies.
+    priority: medium
+  - title: Lack of Consistent Error Handling and Logging Across Components
+    impact: Difficult debugging, inconsistent system behavior, and potential for unhandled
+      exceptions to crash agents or tools. Makes auditing and monitoring difficult.
+    required_change: Implement a centralized and consistent error handling and logging
+      strategy using a library like `structlog` or Python's `logging` module with
+      standardized formats and levels. Ensure all API calls, tool executions, and
+      agent logic are covered.
+    priority: high
+  - title: Tight Coupling and Lack of Abstraction in API Clients
+    impact: Difficult to switch between different API providers (e.g., DeepInfra,
+      OpenRouter, Gemini) without significant code changes. Increases maintenance
+      burden and limits flexibility.
+    required_change: Introduce an abstraction layer (e.g., an interface or abstract
+      class) for API clients. This will allow for easy swapping of API providers and
+      better testability. Implement a strategy for managing API keys and credentials
+      securely, potentially using a secrets management system.
+    priority: medium
+  - title: Unclear Ownership and Maintenance of 'Legacy' Code
+    impact: Potential for bugs, security vulnerabilities, and performance issues in
+      the 'legacy' code. Makes it difficult to integrate new features or refactor
+      existing functionality. Increases technical debt.
+    required_change: Assess the 'legacy' code, identify modules that are still relevant,
+      and either refactor them into the main codebase or archive them. Define clear
+      ownership and maintenance responsibilities for any remaining 'legacy' code.
+    priority: medium
+  - title: Potential Security Risks with Tool Launcher
+    impact: Executing external CLI tools can introduce security vulnerabilities if
+      not handled carefully. Malicious tools could potentially compromise the system.
+    required_change: Implement strict input validation and sanitization for the Tool
+      Launcher. Use a secure execution environment (e.g., sandboxing or containerization)
+      to limit the potential impact of malicious tools. Implement logging and auditing
+      of tool executions.
+    priority: high
+  - title: Lack of Centralized Configuration Management
+    impact: Configuration scattered across environment variables, YAML files, and
+      potentially hardcoded values. Makes it difficult to manage and deploy the system
+      consistently across different environments. Increases the risk of configuration
+      errors.
+    required_change: Implement a centralized configuration management system using
+      a library like `pydantic-settings` or `dynaconf`. Define a clear schema for
+      configuration parameters and use environment variables or configuration files
+      to override default values. Ensure all components access configuration through
+      the centralized system.
+    priority: medium
+  - title: Potential Security Risks in Tool Launcher
+    impact: Executing external CLI tools via `tool_launcher.py` can introduce security
+      vulnerabilities if the arguments passed to the CLI tools are not properly sanitized,
+      it could lead to command injection attacks.
+    required_change: Implement robust input validation and sanitization for all arguments
+      passed to external CLI tools. Use parameterized commands or shell escaping to
+      prevent command injection.
+    priority: high
+  - title: Tight Coupling and Lack of Abstraction in LLM Interaction
+    impact: The `llm_utils.py` file directly uses `dewey.llm.api_clients.deepinfra.DeepInfraClient`.
+      This creates tight coupling to a specific LLM provider, making it difficult
+      to switch or add new LLM providers without modifying core code. It also limits
+      the ability to abstract away LLM-specific details from the rest of the system.
+    required_change: Introduce an abstraction layer (e.g., an interface or abstract
+      class) for LLM clients. The `llm_utils.py` should interact with this abstraction
+      rather than a concrete implementation. Use dependency injection to provide the
+      specific LLM client implementation at runtime.
+    priority: high
+  - title: Legacy Code Integration and Technical Debt
+    impact: The `legacy/` directory indicates a significant amount of technical debt.
+      The presence of outdated dependencies (e.g., Django, older versions of libraries)
+      and potentially different coding styles can lead to maintenance difficulties,
+      security vulnerabilities, and performance bottlenecks. The lack of clear separation
+      of concerns between the legacy code and the new system can also increase complexity.
+    required_change: Gradually refactor or replace the legacy code with modern, well-tested
+      components. Prioritize the most critical and frequently used parts of the legacy
+      code. Create clear interfaces between the legacy code and the new system to
+      minimize dependencies and facilitate future replacement.
+    priority: high
+  - title: Lack of Centralized Configuration Management
+    impact: The system likely relies on scattered configuration files (e.g., for tool
+      loading in `tool_factory.py`, LLM parameters in `llm_utils.py`). This makes
+      it difficult to manage and update configurations across the entire system, leading
+      to inconsistencies and potential errors. It also hinders scalability and deployment
+      automation.
+    required_change: Implement a centralized configuration management system. This
+      could involve using a dedicated configuration library (e.g., `dynaconf`, `pydantic-settings`)
+      or a cloud-based configuration service. All components should retrieve their
+      configuration from this central source.
+    priority: medium
+  - title: Potential Security Risks with Tool Execution
+    impact: Executing external CLI tools via `tool_launcher.py` introduces potential
+      security risks if the tools or their configurations are not properly validated.
+      Malicious or compromised tools could potentially execute arbitrary code on the
+      system. The system is also vulnerable to command injection attacks if user-provided
+      input is used to construct the command-line arguments for the tools.
+    required_change: Implement robust input validation and sanitization for all tool
+      configurations and user-provided input. Use a secure method for executing external
+      tools, such as using a sandboxing environment or a restricted user account.
+      Implement logging and auditing to track tool execution and detect suspicious
+      activity.
+    priority: high
+  - title: Lack of Clear Error Handling Strategy
+    impact: While `api_clients/` mentions error handling, a comprehensive error handling
+      strategy across the entire system is not evident. Inconsistent error handling
+      can lead to unexpected behavior, difficult debugging, and potential data corruption.
+      The absence of centralized error reporting and monitoring can also make it difficult
+      to identify and address issues in a timely manner.
+    required_change: Implement a consistent and comprehensive error handling strategy
+      across the entire system. This should include logging all errors, providing
+      informative error messages to the user, and implementing appropriate retry mechanisms.
+      Implement centralized error reporting and monitoring to track errors and identify
+      trends.
+    priority: medium
+  - title: Tight Coupling and Lack of Abstraction in Agents
+    impact: Agents are tightly coupled to specific dependencies (smolagents, structlog,
+      pydantic, database.models.Contact). This makes it difficult to reuse agents,
+      test them in isolation, and swap out underlying implementations. Changes to
+      dependencies can have cascading effects across multiple agents.
+    required_change: Introduce abstract interfaces and dependency injection to decouple
+      agents from concrete implementations. Define clear contracts for agent behavior
+      and data exchange.
+    priority: high
+  - title: Monolithic Legacy Codebase
+    impact: The 'legacy' directory represents a monolithic architecture. This makes
+      the system harder to understand, maintain, and scale. Deployments are riskier,
+      and adding new features is more complex.
+    required_change: Decompose the legacy code into smaller, independent, and well-defined
+      services or modules. Prioritize based on business value and dependencies.
+    priority: high
+  - title: Inconsistent Error Handling and Rate Limiting in API Clients
+    impact: Lack of consistent error handling and rate limiting in API clients can
+      lead to application instability, performance degradation, and potential abuse
+      of external APIs. Missing retry mechanisms can cause failures during transient
+      network issues.
+    required_change: Implement a standardized error handling and rate limiting mechanism
+      across all API clients. Include retry logic with exponential backoff.
+    priority: medium
+  - title: Lack of Centralized Configuration Management
+    impact: Configuration scattered across different modules (tool_factory.py, llm_utils.py,
+      api_clients directory) makes it difficult to manage and update settings consistently.
+      This can lead to inconsistencies and errors.
+    required_change: Implement a centralized configuration management system using
+      environment variables, configuration files, or a dedicated configuration service.
+    priority: medium
+  - title: Potential Security Vulnerabilities in Tool Launcher
+    impact: Executing external CLI tools (tool_launcher.py) without proper sanitization
+      and validation of inputs can introduce security vulnerabilities, such as command
+      injection. Uncontrolled access to system resources can also be a risk.
+    required_change: Implement strict input validation and sanitization for all CLI
+      tool executions. Use a secure execution environment with limited privileges.
+    priority: high
+executive_summary: 'This PRD details the development of an LLM-based framework designed
+  to enhance internal knowledge management and client-facing financial analysis systems.
+  The framework leverages AI agents and external APIs for tasks like data analysis,
+  email processing, and content generation, utilizing key components such as dynamic
+  tool integration, LLM interaction management, and specialized AI agents built on
+  the smolagents framework. The goal is to improve the efficiency and reliability
+  of these systems, directly impacting client service and internal operations.
+
+
+  The document identifies critical architectural issues that hinder maintainability,
+  scalability, and security. These include a monolithic legacy directory, tight coupling
+  between agents and the framework, inconsistent error handling and logging, lack
+  of dependency management, and potential security risks within the tool launcher.
+  Proposed solutions involve modularizing the legacy code, defining a clear agent-framework
+  interface using DTOs, implementing centralized error handling and logging, adopting
+  a robust dependency management system, and implementing strict input validation
+  and secure execution environments for the tool launcher.
+
+
+  Addressing these architectural issues will improve code maintainability (cyclomatic
+  complexity < 15), LLM response latency (< 2.5s), and data processing throughput
+  (> 100MB/s). The project is estimated to take 6.5 weeks, with data security adhering
+  to FINRA/SEC regulations and a Python 3.11+ runtime environment. Successful implementation
+  will result in a more robust, scalable, and secure platform for delivering AI-powered
+  financial analysis and knowledge management services.'
+requirements:
+- category: Compliance
+  description: Data security must adhere to FINRA/SEC regulations.
+  implementation: Implement appropriate security measures and controls.
+  complexity: High
+  code_link: null
+- category: Technical
+  description: Runtime environment must be Python 3.11+.
+  implementation: Ensure the application runs on Python 3.11 or later.
+  complexity: Low
+  code_link: null
+- category: Technical
+  description: Code maintainability (cyclomatic complexity < 15).
+  implementation: Refactor code to reduce cyclomatic complexity.
+  complexity: Medium
+  code_link: null
+- category: Technical
+  description: LLM response latency < 2.5s.
+  implementation: Optimize LLM interaction to reduce latency.
+  complexity: Medium
+  code_link: null
+- category: Technical
+  description: Data processing throughput > 100MB/s.
+  implementation: Optimize data processing pipelines to increase throughput.
+  complexity: Medium
+  code_link: null

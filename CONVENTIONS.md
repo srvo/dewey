@@ -30,22 +30,28 @@ All system configuration MUST be defined in `config/dewey.yaml` using this struc
 
 **PRD Authoring Standards**
 
-1. Structure:
+1. Location and Tracking:
+   - PRDs must be stored in the `docs` directory within their respective module/target directory
+   - Use standardized naming: `[DirectoryName]_Product_Requirements_Document.{yaml|md}`
+   - All PRDs must be tracked in `config/dewey.yaml` under `prd.tracked_prds`
+   - Both YAML and Markdown versions must be maintained
+   
+2. Structure:
    - Use YAML format with Markdown sections
    - Follow template from config/dewey.yaml
    - Maintain version history in header
    
-2. Stakeholder Handling:
+3. Stakeholder Handling:
    - Default to Sloane Ortel for non-client modules
    - Auto-include legal/compliance stakeholders for financial modules
    - Track stakeholder review dates
 
-3. Requirements:
+4. Requirements:
    - Categorize as Functional/Technical/Compliance
    - Link to implementation code
    - Include complexity metrics
    
-4. Anti-Pattern Avoidance:
+5. Anti-Pattern Avoidance:
    - Validate requirements with LLM before inclusion
    - Auto-generate dependency graphs
    - Enforce timeline realism via historical velocity data

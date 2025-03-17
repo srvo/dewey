@@ -1,142 +1,104 @@
-# Global Dewey configuration
 core:
   project_root: /Users/srvo/dewey
   backup_strategy: 3-2-1
   default_timezone: UTC
   conventions_document: /Users/srvo/dewey/CONVENTIONS.md
-
 logging:
-  level: INFO  # Set the default logging level (e.g., DEBUG, INFO, WARNING, ERROR)
-  format: "%(asctime)s - %(levelname)s - %(name)s - %(message)s"  # Define the log message format
-  datefmt: "%Y-%m-%d %H:%M:%S"  # Define the date format
-
+  level: INFO
+  format: '%(asctime)s - %(levelname)s - %(name)s - %(message)s'
+  datefmt: '%Y-%m-%d %H:%M:%S'
 vector_stores:
   code_consolidation:
-    persist_dir: ".chroma_cache"
-    collection_name: "code_functions"
-    embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+    persist_dir: .chroma_cache
+    collection_name: code_functions
+    embedding_model: sentence-transformers/all-MiniLM-L6-v2
     hnsw_config:
       construction_ef: 300
       search_ef: 200
       M: 24
-      space: "cosine"
+      space: cosine
     similarity_threshold: 0.85
-
   document_store:
-    persist_dir: ".chroma_docs"
-    collection_name: "document_chunks" 
-    embedding_model: "all-mpnet-base-v2"
+    persist_dir: .chroma_docs
+    collection_name: document_chunks
+    embedding_model: all-mpnet-base-v2
     hnsw_config:
       construction_ef: 500
       search_ef: 300
       M: 32
-      space: "cosine"
-
+      space: cosine
 llm:
-  default_provider: "deepinfra"
+  default_provider: deepinfra
   providers:
     deepinfra:
       api_key: ${DEEPINFRA_API_KEY}
-      default_model: "meta-llama/Meta-Llama-3-8B-Instruct"
-      model_limits:
-        "meta-llama/Meta-Llama-3-8B-Instruct":
-          rpm: 15
-          tpm: 1000000
-          rpd: 1500
-      fallback_models: []
-    
+      default_model: google/gemini-2.0-flash-001
+      fallback_models:
+      - deepseek-ai/DeepSeek-R1-Distill-Qwen-32B
     gemini:
       api_key: ${GEMINI_API_KEY}
-      default_model: "gemini-2.0-flash"
+      default_model: gemini-2.0-flash
       model_limits:
-        "gemini-2.0-flash":
-          rpm: 60
+        gemini-2.0-flash:
+          rpm: 15
           tpm: 1000000
-
-pipeline:
-
+pipeline: null
 regex_patterns:
   contact_info:
-    name_email: "([^<\\n]*?)\\s*<([^>]+)>"
-    job_title: "(?i)(CEO|CTO|CFO|Director|Manager|Analyst|Associate|Partner|VP|President|Founder|Co-founder|Principal|Advisor|Consultant)"
-    company: "(?i)(?:at|@)\\s*([A-Za-z0-9][A-Za-z0-9\\s&-]+(?:\\s+(?:LLC|Inc|Ltd|Limited|Corp|Corporation|Capital|Partners|Group|Advisory|Consulting))?)"
-    phone: "Phone:\\s*(\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4})"
-    linkedin: "LinkedIn:\\s*(linkedin\\.com/in/[a-zA-Z0-9_-]+)"
+    name_email: ([^<\n]*?)\s*<([^>]+)>
+    job_title: (?i)(CEO|CTO|CFO|Director|Manager|Analyst|Associate|Partner|VP|President|Founder|Co-founder|Principal|Advisor|Consultant)
+    company: (?i)(?:at|@)\s*([A-Za-z0-9][A-Za-z0-9\s&-]+(?:\s+(?:LLC|Inc|Ltd|Limited|Corp|Corporation|Capital|Partners|Group|Advisory|Consulting))?)
+    phone: Phone:\s*(\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})
+    linkedin: LinkedIn:\s*(linkedin\.com/in/[a-zA-Z0-9_-]+)
   opportunity:
-    demo: "\\bdemo\\b|\\bschedule a demo\\b"
-    cancellation: "\\bcancel\\b|\\bneed to cancel\\b"
-    speaking: "\\bspeaking opportunity\\b|\\bpresentation\\b"
-    publicity: "\\bpublicity opportunity\\b|\\bmedia\\b"
-    submission: "\\bpaper submission\\b|\\bsubmit a paper\\b"
-
+    demo: \bdemo\b|\bschedule a demo\b
+    cancellation: \bcancel\b|\bneed to cancel\b
+    speaking: \bspeaking opportunity\b|\bpresentation\b
+    publicity: \bpublicity opportunity\b|\bmedia\b
+    submission: \bpaper submission\b|\bsubmit a paper\b
 formatting:
   lint_timeout: 120
   formatters:
-    - command: ["ruff", "check", "--fix", "--unsafe-fixes", "--select", "ALL"]
-    - command: ["black"]
-
+  - command:
+    - ruff
+    - check
+    - --fix
+    - --unsafe-fixes
+    - --select
+    - ALL
+  - command:
+    - black
 prd:
   base_template:
     metadata:
-      author: "Sloane Ortel"
-      revision_policy: "Bi-weekly review"
+      author: Sloane Ortel
+      revision_policy: Bi-weekly review
     stakeholders:
-      default: 
-        - name: "Sloane Ortel"
-          role: "Primary Stakeholder"
-          contact: "srvo@domain.com"
+      default:
+      - name: Sloane Ortel
+        role: Primary Stakeholder
+        contact: srvo@domain.com
       client_modules:
-        - name: "Client Services Team"
-          role: "Client Interface"
-    market_assessment: 
-      default: "Internal knowledge management and client-facing financial analysis systems"
-      client_facing: "High-net-worth individuals and institutional investors"
+      - name: Client Services Team
+        role: Client Interface
+    market_assessment:
+      default: Internal knowledge management and client-facing financial analysis
+        systems
+      client_facing: High-net-worth individuals and institutional investors
     assumptions:
-      - "All non-client modules assume single-stakeholder (Sloane Ortel) usage"
-      - "Data security requirements follow FINRA/SEC regulations"
-      - "Python 3.11+ runtime environment"
+    - All non-client modules assume single-stakeholder (Sloane Ortel) usage
+    - Data security requirements follow FINRA/SEC regulations
+    - Python 3.11+ runtime environment
     evaluation_metrics:
-      - "Code maintainability (cyclomatic complexity < 15)"
-      - "LLM response latency < 2.5s"
-      - "Data processing throughput > 100MB/s"
+    - Code maintainability (cyclomatic complexity < 15)
+    - LLM response latency < 2.5s
+    - Data processing throughput > 100MB/s
     timelines:
       discovery: 2
       development: 3
       testing: 1
       deployment: 0.5
-
-formatting:
-  lint_timeout: 120
-  formatters:
-    - command: ["ruff", "check", "--fix", "--unsafe-fixes", "--select", "ALL"]
-    - command: ["black"]
-
-prd:
-  base_template:
-    metadata:
-      author: "Sloane Ortel"
-      revision_policy: "Bi-weekly review"
-    stakeholders:
-      default: 
-        - name: "Sloane Ortel"
-          role: "Primary Stakeholder"
-          contact: "srvo@domain.com"
-      client_modules:
-        - name: "Client Services Team"
-          role: "Client Interface"
-    market_assessment: 
-      default: "Internal knowledge management and client-facing financial analysis systems"
-      client_facing: "High-net-worth individuals and institutional investors"
-    assumptions:
-      - "All non-client modules assume single-stakeholder (Sloane Ortel) usage"
-      - "Data security requirements follow FINRA/SEC regulations"
-      - "Python 3.11+ runtime environment"
-    evaluation_metrics:
-      - "Code maintainability (cyclomatic complexity < 15)"
-      - "LLM response latency < 2.5s"
-      - "Data processing throughput > 100MB/s"
-    timelines:
-      discovery: 2
-      development: 3
-      testing: 1
-      deployment: 0.5
+  tracked_prds:
+  - /Users/srvo/dewey/src/dewey/llm/docs/llm_Product_Requirements_Document.yaml
+  - docs/llm_Product_Requirements_Document.yaml
+  - docs/llm_Product_Requirements_Document.md

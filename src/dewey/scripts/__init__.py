@@ -1,14 +1,16 @@
 # Package initialization for Dewey scripting utilities
 from pathlib import Path
 
-from .prd_builder import PRDManager
-from .prd_builder import app as prd_app
+# Import scripts
+from . import prd_builder
+
+# Export version
+__version__ = "0.1.0"
 
 __all__ = [
     "PRDManager",
     "code_consolidator",
     "duplicate_manager",
-    "prd_app",
     "script_mover",
 ]
 

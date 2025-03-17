@@ -1,933 +1,700 @@
 README.md
 pyproject.toml
-src/document_directory.py
-src/dewey/__init___0ef1c1e6.py
-src/dewey/deepseek_engine_65bc0f66.py
-src/dewey/exceptions_4c7b99b1.py
-src/dewey/financial_pipeline_b9aff2fd.py
-src/dewey/gmail_priority_flow_80cbc058.py
-src/dewey/llm_utils_1cf5a10f.py
-src/dewey/service_manager_ab66eb9e.py
-src/dewey/setup_0019c0f6.py
-src/dewey/setup_026dec54.py
-src/dewey/setup_21389570.py
-src/dewey/streamlit_app_cbcd9ab5.py
-src/dewey/utils.py
 src/dewey.egg-info/PKG-INFO
 src/dewey.egg-info/SOURCES.txt
 src/dewey.egg-info/dependency_links.txt
 src/dewey.egg-info/requires.txt
 src/dewey.egg-info/top_level.txt
-src/dewey/agents/contact_agents_a62b54f1.py
-src/dewey/agents/data_ingestion_agent_6dccc9f9.py
-src/dewey/agents/docstring_agent_dbc16a9b.py
-src/dewey/agents/optimizer_8a990615.py
-src/dewey/agents/sloan_ghostwriter_db1b484b.py
-src/dewey/agents/transcript_analysis_agent_d39dda1f.py
-src/dewey/agents/tests/philosophical_agent_7f1fe39f.py
-src/dewey/api/__init___695e7620.py
-src/dewey/api/rag_service_39815c96.py
-src/dewey/api_management/api_manager_0bcf0553.py
-src/dewey/app/storm_demo_4bbca38e.py
-src/dewey/backend/main_4ce21a72.py
-src/dewey/backend/utils_a7361930.py
-src/dewey/backend/validation_62c18043.py
-src/dewey/backend/analysis/entity_analyzer_ea1b9b5d.py
-src/dewey/bin/verify_transactions_b4bf0508.py
-src/dewey/cli/reset_ecaa3cb6.py
-src/dewey/core/action_manager_fff42dfb.py
-src/dewey/core/api_client_08f243da.py
-src/dewey/core/chat_model_500718b8.py
-src/dewey/core/code_analyzer_6cb1f7c6.py
-src/dewey/core/csv_schema_inference_bb28f4d6.py
-src/dewey/core/data_import_1a125870.py
-src/dewey/core/database_ac882239.py
-src/dewey/core/deepinfra_client_3c70464b.py
-src/dewey/core/duckdb_analyzer_82b4c544.py
-src/dewey/core/duckduckgo_engine_4a32892b.py
-src/dewey/core/email_enrichment_service_8df80750.py
-src/dewey/core/email_prioritization_d2b40d47.py
-src/dewey/core/email_processing_d65e8171.py
-src/dewey/core/email_sync_29541573.py
-src/dewey/core/engines_673fdb17.py
-src/dewey/core/enrichment_engine_49bb84a8.py
-src/dewey/core/enrichment_engine_ff2d5aa6.py
-src/dewey/core/exceptions_0b0e30bb.py
-src/dewey/core/feedback_processor_5e54ba1e.py
-src/dewey/core/fmp_engine_abc64cdd.py
-src/dewey/core/form_detection_11263270.py
-src/dewey/core/form_detection_9f92fc84.py
-src/dewey/core/fred_engine_2a4cfc5c.py
-src/dewey/core/github_integration_80c72da0.py
-src/dewey/core/hello_c8bce3f1.py
-src/dewey/core/hello_lake_9a2a621e.py
-src/dewey/core/hello_lake_a0cbb74f.py
-src/dewey/core/log_analyzer_1a7f2e1d.py
-src/dewey/core/markdown_parser_812fac80.py
-src/dewey/core/markdown_parser_a174924d.py
-src/dewey/core/models_7eb065ea.py
-src/dewey/core/polygon_engine_db79ddc2.py
-src/dewey/core/research_output_handler_cd8c003a.py
-src/dewey/core/rule_engine_40c99c70.py
-src/dewey/core/sec_engine_3385f8f0.py
-src/dewey/core/service_deployment_145972f0.py
-src/dewey/core/tasks_08c5fa60.py
-src/dewey/core/workflow_437751de.py
-src/dewey/core/crm/models.py
-src/dewey/core/db/setup_5a30a089.py
-src/dewey/core/enrichment/contact_enricher_ccb1f4f7.py
-src/dewey/core/ingestion/csv_ingestor_389f459e.py
-src/dewey/core/llm/ai_config_483dd2c5.py
-src/dewey/core/llm/engine/apitube_d7e92871.py
-src/dewey/core/management/commands/setup_gmail_8918c39b.py
-src/dewey/core/management/commands/sync_gmail_ee79d1ee.py
-src/dewey/core/management/commands/sync_gmail_history_2ab63602.py
-src/dewey/core/search/brave_search_engine_1d052741.py
-src/dewey/core/utils/config_utils_291bc678.py
-src/dewey/core/utils/csv_schema_inference_c22bbd1d.py
-src/dewey/core/utils/database_manager_8ed22423.py
-src/dewey/core/utils/db_maintenance_4c7f84cf.py
-src/dewey/core/utils/db_sync_1511845c.py
-src/dewey/core/utils/rule_matcher_e5c89e6f.py
-src/dewey/database/tests_3ce35f7d.py
-src/dewey/deployments/api_manager_deployment_279a867d.py
-src/dewey/email_prioritization/__init___28951fa7.py
-src/dewey/email_processing/apps_ae8de7bf.py
-src/dewey/email_processing/signals_963d020b.py
-src/dewey/email_processing/migrations/0001_initial_3534dec9.py
-src/dewey/email_processing/migrations/0002_contact_enrichmentsource_enrichmenttask_6662d9f4.py
-src/dewey/email_processing/migrations/xxxx_auto_alter_593fae5d.py
-src/dewey/email_processing/tests/test_gmail_client_c8185682.py
-src/dewey/email_sync/gmail_sync_183dfaf7.py
-src/dewey/email_triage/workflow_5f71bad3.py
-src/dewey/emails/models_b6ad9820.py
-src/dewey/engines/__init___42fd3645.py
-src/dewey/engines/exa_c28dd38b.py
-src/dewey/engines/tavily_f1ed97ee.py
-src/dewey/engines/yahoo_finance_engine_02959ebf.py
-src/dewey/ethi_finx/api/routers/companies_e6203760.py
-src/dewey/ethi_finx/core/__init___ed1c2c6e.py
-src/dewey/ethifinx/__init___89275018.py
-src/dewey/ethifinx/exceptions_8201d6dc.py
-src/dewey/ethifinx/utils_29150819.py
-src/dewey/ethifinx/core/api_client_e0b78def.py
-src/dewey/ethifinx/core/logger_utils_de8f2a1c.py
-src/dewey/ethifinx/core/research_workflow_e87d9a2b.py
-src/dewey/ethifinx/core/engine/base_engine_bedb2dd5.py
-src/dewey/ethifinx/core/tests/test_api_client_15ec830b.py
-src/dewey/ethifinx/db/__init___e2fa78b4.py
-src/dewey/ethifinx/db/cli_5138952c.py
-src/dewey/ethifinx/db/tests/test_data_store_0bd7967c.py
-src/dewey/ethifinx/research/cli_631780a7.py
-src/dewey/ethifinx/research/analyzers/api_analyzer_813c6be9.py
-src/dewey/ethifinx/research/engines/test_apitube_837b8e91.py
-src/dewey/ethifinx/research/engines/tests/test_brave_6e7fd32e.py
-src/dewey/ethifinx/research/engines/tests/test_deepseek_2c101964.py
-src/dewey/ethifinx/research/engines/tests/test_exa_a9106157.py
-src/dewey/ethifinx/research/engines/tests/test_fmp_881b55b2.py
-src/dewey/ethifinx/research/engines/tests/test_fred_3cc83477.py
-src/dewey/ethifinx/research/engines/tests/test_openfigi_c4634599.py
-src/dewey/ethifinx/research/engines/tests/test_polygon_02ebdfef.py
-src/dewey/ethifinx/research/engines/tests/test_sec_engine_d4eba80b.py
-src/dewey/ethifinx/research/tests/test_search_workflow_a80fabda.py
-src/dewey/ethifinx/research/tests/test_workflow_4cb6d188.py
-src/dewey/ethifinx/research/workflows/ethical_analysis_5ad99c13.py
-src/dewey/ethifinx/research/workflows/example_usage_8e29fdde.py
-src/dewey/ethifinx/research/workflows/ethical/tests/test_ethical_analysis_workflow_74721201.py
-src/dewey/ethifinx/tests/test_db_data_processing_2639d0c7.py
-src/dewey/ethifinx/tests/test_tavily_engine_f9a82de8.py
-src/dewey/examples/analysis_tagging_ccf07cc8.py
-src/dewey/examples/interactive_plot_a0a56754.py
-src/dewey/flows/api_management_7fcdf790.py
-src/dewey/flows/tests/test_agent_analysis_ae0a25a5.py
-src/dewey/gmail_integration/sync_a3ee5a57.py
-src/dewey/import/mercury/mercury_importer_a76b6379.py
+src/dewey/core/automation/feedback_processor.py
+src/dewey/core/bookkeeping/account_validator.py
+src/dewey/core/bookkeeping/auto_categorize.py
+src/dewey/core/bookkeeping/classification_engine.py
+src/dewey/core/bookkeeping/deferred_revenue.py
+src/dewey/core/bookkeeping/duplicate_checker.py
+src/dewey/core/bookkeeping/forecast_generator.py
+src/dewey/core/bookkeeping/hledger_utils.py
+src/dewey/core/bookkeeping/journal_fixer.py
+src/dewey/core/bookkeeping/journal_splitter.py
+src/dewey/core/bookkeeping/journal_writer.py
+src/dewey/core/bookkeeping/ledger_checker.py
+src/dewey/core/bookkeeping/mercury_data_validator.py
+src/dewey/core/bookkeeping/rules_converter.py
+src/dewey/core/bookkeeping/transaction_categorizer.py
+src/dewey/core/bookkeeping/transaction_verifier.py
+src/dewey/core/crm/action_manager_fff42dfb_1.py
+src/dewey/core/crm/event_manager.py
+src/dewey/core/crm/transcript_matching.py
+src/dewey/core/crm/crm/attio_api_test.py
+src/dewey/core/crm/crm/csv_ingestor.py
+src/dewey/core/crm/crm/csv_schema_infer.py
+src/dewey/core/crm/crm/list_person_records.py
+src/dewey/core/crm/crm/md_schema.py
+src/dewey/core/crm/crm/run_enrichment.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/__init__.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/action_manager.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/add_contact_uuids.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/add_enrichment.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/code_analyzer.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/config.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/copy_emails.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/create_contacts.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/db_connector.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/db_maintenance.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/detect_forms.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/email_analyzer.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/email_analyzer_orm.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/email_operations.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/email_service.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/email_service_daemon.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/enrich_contacts.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/fetch_messages.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/fix_errored_emails.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/format_and_lint.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/generate_test_emails.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/generate_tests.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/gmail_client.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/gmail_label_learner.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/gmail_priority_flow.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/import_clients.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/init_db.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/issue_resolver.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/log_analyzer.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/log_config.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/log_manager.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/manage_migrations.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/merge_contact_tables.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/migrate_contacts.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/migrate_data.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/migrate_db.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/migrate_old_data.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/migrate_to_sqlite.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/models.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/monitor_emails.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/populate_contacts.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/precommit_analyzer.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/priority_manager.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/rule_engine.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/setup_credentials.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/setup_database.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/template.py
+src/dewey/core/crm/crm/archive/email_20250114_scripts/test_analyzer.py
+src/dewey/core/crm/crm/archive/ethifinx/py.typed
+src/dewey/core/crm/crm/archive/ethifinx/run_analysis_tagger.py
+src/dewey/core/crm/crm/archive/ethifinx/run_api.py
+src/dewey/core/crm/crm/archive/ethifinx/setup.py
+src/dewey/core/crm/crm/archive/ethifinx/alembic/env.py
+src/dewey/core/crm/crm/archive/ethifinx/alembic/versions/001_initial_schema.py
+src/dewey/core/crm/crm/archive/ethifinx/alembic/versions/002_add_exclusion_fields.py
+src/dewey/core/crm/crm/archive/ethifinx/alembic/versions/003_complete_exclusions_schema.py
+src/dewey/core/crm/crm/archive/ethifinx/dbt_utils/tests/__init__.py
+src/dewey/core/crm/crm/archive/ethifinx/dbt_utils/tests/conftest.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/__init__.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/analysis/__init__.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/analysis/api_analyzer.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/analysis/data_processor.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/analysis/ethical.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/api/__init__.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/api/companies.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/api/server.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/cli/__init__.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/cli/importer.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/cli/research.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/cli/reset.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/cli/run_background_search.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/core/__init__.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/core/api_client.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/core/config.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/core/data_store.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/core/exceptions.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/core/llm.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/core/logger.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/core/logging_config.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/db/__init__.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/db/check_data.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/db/cleanup.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/db/converters.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/db/data_processing.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/db/data_store.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/db/database_reset.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/db/db.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/db/duckdb_store.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/db/exceptions.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/db/import_tick_history.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/db/init_db.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/db/migrate_to_duckdb.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/db/models.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/db/setup.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/db/setup_db.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/db/sync_to_lake.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/db/test_safety.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/__init__.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/example_workflow.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/init_research_db.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/llm.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/run_analysis_tagger.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/search.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/search_flow.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/workflow.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/analysis/tic_report.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/analysis/tick_report.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/engines/__init__.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/engines/api_docs.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/engines/apitube.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/engines/base.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/engines/brave.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/engines/company_tagger.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/engines/ddg.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/engines/deepseek.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/engines/exa.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/engines/fmp.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/engines/fred.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/engines/inspect_db.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/engines/openfigi.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/engines/polygon.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/engines/sec.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/engines/tavily.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/engines/yahoo_finance.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/loaders/duckdb_loader.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/workflows/__init__.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/workflows/analysis_tagger.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/workflows/base.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/workflows/ethical.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/workflows/ethical_analysis.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/workflows/output_handler.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/workflows/run_ethical_analysis.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/workflows/search.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/research/workflows/tic_delta.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/tests/__init__.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/tui/api_client.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/tui/app.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/utils/__init__.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/utils/debug_path.py
+src/dewey/core/crm/crm/archive/ethifinx/ethifinx/utils/schema.py
+src/dewey/core/crm/crm/archive/ethifinx/models/schema.py
+src/dewey/core/crm/crm/archive/ethifinx/path/to/ethifinx/ethifinx/api/companies.py
+src/dewey/core/crm/crm/archive/ethifinx/path/to/ethifinx/ethifinx/research/analysis/tick_report.py
+src/dewey/core/crm/crm/archive/ethifinx/path/to/ethifinx/tests/test_tick_manager.py
+src/dewey/core/crm/crm/archive/ethifinx/path/to/ethifinx/tests/test_tick_manager_2.py
+src/dewey/core/crm/crm/archive/ethifinx/path/to/local/port5/tick_manager.py
+src/dewey/core/crm/crm/archive/ethifinx/scripts/import_markdown_research.py
+src/dewey/core/crm/crm/archive/ethifinx/scripts/list_tables.py
+src/dewey/core/crm/crm/archive/ethifinx/scripts/merge_podcast_data.py
+src/dewey/core/crm/crm/archive/ethifinx/scripts/merge_port_data.py
+src/dewey/core/crm/crm/archive/ethifinx/scripts/populate_exclusions.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/__init__.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/conftest.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/test_analysis_tagger.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/test_api_client.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/test_config.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/test_core_search_flow.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/test_data_store.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/test_search.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/test_tick_history.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/test_workflow.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/analysis/__init__.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/core/__init__.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/db/test_cleanup.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/db/test_data_processing.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/db/test_integration.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/integration/__init__.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/integration/test_cli.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/research/__init__.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/research/test_search_flow.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/research/engines/test_apitube.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/research/engines/test_brave.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/research/engines/test_deepseek.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/research/engines/test_exa.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/research/engines/test_fmp.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/research/engines/test_fred.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/research/engines/test_openfigi.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/research/engines/test_polygon.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/research/engines/test_sec.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/research/engines/test_tavily.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/research/engines/test_yahoo_finance.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/research/workflows/__init__.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/research/workflows/test_ethical_workflow.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/research/workflows/test_output_handler.py
+src/dewey/core/crm/crm/archive/ethifinx/tests/research/workflows/test_workflow_integration.py
+src/dewey/core/crm/crm/archive/ethifinx/venv/bin/jp.py
+src/dewey/core/crm/crm/archive/ethifinx/venv/bin/pwiz.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/config_and_convert.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/setup_gdocs_converter.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/file_analyzer/__init__.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/file_analyzer/__main__.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/file_analyzer/core.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/file_analyzer/run_obsidian_formatter.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/file_analyzer/file_analyzer/__init__.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/file_analyzer/file_analyzer/core.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/file_analyzer/file_analyzer/obsidian_formatter.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/gdocs_converter/run.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/gdocs_converter/gdocs_converter/__init__.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/gdocs_converter/gdocs_converter/__main__.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/gdocs_converter/gdocs_converter/auth_handler.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/gdocs_converter/gdocs_converter/config.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/gdocs_converter/gdocs_converter/core.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/gdocs_converter/gdocs_converter/document_processor.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/gdocs_converter/gdocs_converter/log_handler.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/gdocs_converter/tests/__init__.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/gdocs_converter/tests/test_gdocs_converter.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/json_analysis/generate_obsidian_notes.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/json_analysis/ingest_analysis_json.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/shared/__init__.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/add_contact_id_to_emails.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/add_email_column.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/add_port45_stocks.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/add_tracked_stocks.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/analyze_libraries.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/analyze_sec_events.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/analyze_skips.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/analyze_stocks.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/analyze_universe_filters.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/associate_relationships.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/calendar_scraper.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/check_analysis.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/check_email_uniqueness.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/check_permissions.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/clean_contacts.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/clean_email_addresses.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/cliui.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/company.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/data_analyze.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/data_infrastructure.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/deep_analysis.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/email_analyzer.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/email_contacts.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/enhance_contacts.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/enhanced_client.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/example.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/example_enhanced.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/example_usage.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/fetch_new_emails.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/fetch_yahoo_prices.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/fix_contact_names.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/fix_contact_names_gmail.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/import_csv_contacts.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/import_data.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/integrate_sec_facts.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/integration.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/ir_rss_feeds.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/link_relationships.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/list_tables.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/map_ir_sites.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/market_data_ingest.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/match_contacts.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/match_emails_and_contacts.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/match_transcripts.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/news_collector.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/organizer.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/podcast_analyzer.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/podcast_analyzer_2.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/portdatabase.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/processing.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/s3_handler.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/scan_meetings.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/search_diagnostics.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/sec_data.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/sec_data_ingest.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/setup.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/stock.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/supabase_client.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/survey.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/sync_gmail_to_supabase.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/technical_events.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/test_queries.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/test_s3.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/test_storj.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/test_supabase.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/test_tables.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/tick_history.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/update_contact_names.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/update_email_clients.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/update_supabase_clients.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/upload_emails.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/todo/low priority/validation.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/transcript_analyzer/run.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/transcript_analyzer/transcript_analyzer/__init__.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/transcript_analyzer/transcript_analyzer/__main__.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/transcript_analyzer/transcript_analyzer/config.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/transcript_analyzer/transcript_analyzer/core.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/video_transcriber/run.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/video_transcriber/video_transcriber/__init__.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/video_transcriber/video_transcriber/deepinfra_api.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/video_transcriber/video_transcriber/find_meetings.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/video_transcriber/video_transcriber/meeting_organizer.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/video_transcriber/video_transcriber/meeting_watcher.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/video_transcriber/video_transcriber/run.py
+src/dewey/core/crm/crm/archive/etl_obsidian_scripts/video_transcriber/video_transcriber/transcriber.py
+src/dewey/core/crm/crm/archive/new_scripts/__init__.py
+src/dewey/core/crm/crm/archive/new_scripts/analyze_relationships.py
+src/dewey/core/crm/crm/archive/new_scripts/detect_opportunities.py
+src/dewey/core/crm/crm/archive/new_scripts/generate_dashboard.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/aider.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/aider_marimo.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/api_manager.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/app.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/company_controversy_analyzer.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/database_manager.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/deep_analysis.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/test_api_manager.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/add_port45_stocks.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/add_tracked_stocks.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/ai_helper_example.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/analyze_stocks.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/api_manager.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/base.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/client.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/csv_reader.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/database_manager.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/deep_analysis.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/deepseek_helper.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/dialpad_downloads.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/dialpad_export.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/dialpad_export3.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/enrich_contacts.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/extract_unique_emails.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/extract_unique_emails_v2.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/field_mappings.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/format_email_metadata.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/forms_and_transcripts.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/gmail_download_all.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/json_to_csv.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/main.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/map_ir_sites.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/market_data_ingest 2.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/market_data_ingest.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/match_contacts.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/merge_production_dotenvs_in_dotenv.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/mosint_enrich.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/nextcloud_meeting_sync.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/openfigi_lookup.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/prioritize_opportunities.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/providers.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/query_gmail.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/spiderfoot_enrich.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/tests -- ai helper/__init__.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/tests -- ai helper/test_api_functions.py
+src/dewey/core/crm/crm/archive/port_scripts/pipeline/notebooks/tests -- ai helper/test_deepseek_helper.py
+src/dewey/core/crm/crm/archive/srvo_utils/__init__.py
+src/dewey/core/crm/crm/archive/srvo_utils/conftest.py
+src/dewey/core/crm/crm/archive/srvo_utils/initialize_db.py
+src/dewey/core/crm/crm/archive/srvo_utils/main.py
+src/dewey/core/crm/crm/archive/srvo_utils/manage.py
+src/dewey/core/crm/crm/archive/srvo_utils/setup.py
+src/dewey/core/crm/crm/archive/srvo_utils/accounts/__init__.py
+src/dewey/core/crm/crm/archive/srvo_utils/accounts/admin.py
+src/dewey/core/crm/crm/archive/srvo_utils/accounts/apps.py
+src/dewey/core/crm/crm/archive/srvo_utils/accounts/forms.py
+src/dewey/core/crm/crm/archive/srvo_utils/accounts/models.py
+src/dewey/core/crm/crm/archive/srvo_utils/accounts/tests.py
+src/dewey/core/crm/crm/archive/srvo_utils/accounts/views.py
+src/dewey/core/crm/crm/archive/srvo_utils/accounts/migrations/0001_initial.py
+src/dewey/core/crm/crm/archive/srvo_utils/accounts/migrations/__init__.py
+src/dewey/core/crm/crm/archive/srvo_utils/blog/__init__.py
+src/dewey/core/crm/crm/archive/srvo_utils/blog/admin.py
+src/dewey/core/crm/crm/archive/srvo_utils/blog/apps.py
+src/dewey/core/crm/crm/archive/srvo_utils/blog/models.py
+src/dewey/core/crm/crm/archive/srvo_utils/blog/urls.py
+src/dewey/core/crm/crm/archive/srvo_utils/blog/views.py
+src/dewey/core/crm/crm/archive/srvo_utils/blog/migrations/0001_initial.py
+src/dewey/core/crm/crm/archive/srvo_utils/blog/migrations/__init__.py
+src/dewey/core/crm/crm/archive/srvo_utils/config/__init__.py
+src/dewey/core/crm/crm/archive/srvo_utils/config/settings.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/__init__.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/admin.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/api.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/apps.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/models.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/tests.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/urls.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/views.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/migrations/0001_initial.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/migrations/0002_alter_responsedraft_context_notes_and_more.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/migrations/0002_cleanup_schema.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/migrations/0002_timeline_view.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/migrations/0003_timelineevent.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/migrations/__init__.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/models/__init__.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/models/base.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/models/metrics.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/models/research.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/models/research_views.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/models/timeline.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/models/tracking.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/models/triage.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/schemas/__init__.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/schemas/ai.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/schemas/base.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/schemas/models.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/tests/__init__.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/tests/settings.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/tests/test_ai_endpoints.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/views/base.py
+src/dewey/core/crm/crm/archive/srvo_utils/syzygy/views/priority_actions.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/__init__.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/conftest.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/test_logical_fallacy_agent.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/fixtures/db.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/integration/test_docker_setup.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/unit/__init__.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/unit/base.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/unit/conftest.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/unit/test_accounts.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/unit/test_accounts_pages.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/unit/test_api_client.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/unit/test_db_connector.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/unit/test_gmail_client.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/unit/test_gmail_history_sync.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/unit/test_imap_sync.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/unit/test_main.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/unit/test_minimal.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/unit/test_models.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/unit/test_service.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/unit/test_sync_emails_command.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/unit/fixtures/__init__.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/unit/fixtures/auth.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/unit/fixtures/base.py
+src/dewey/core/crm/crm/archive/srvo_utils/tests/unit/fixtures/db.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/__init__.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/api_client.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/apps.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/contact_enrichment.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/email_enrichment.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/gmail_auth.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/gmail_client.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/gmail_history_sync.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/gmail_sync.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/imap_sync.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/models.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/service.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/signals.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/tasks.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/management/__init__.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/management/commands/__init__.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/management/commands/initial_gmail_sync.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/management/commands/setup_celery_beat.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/management/commands/setup_gmail.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/management/commands/setup_periodic_tasks.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/management/commands/sync_emails.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/management/commands/sync_gmail_history.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/migrations/0001_initial.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/migrations/0002_contact_enrichmentsource_enrichmenttask_and_more.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/migrations/0003_auto_20250117_1505.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/migrations/__init__.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/prioritization/__init__.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/prioritization/contact_enrichment.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/prioritization/contact_manager.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/prioritization/contact_merger.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/prioritization/email_prioritizer.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/prioritization/models.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/prioritization/priority_rules.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/prioritization/for integration/detect_forms.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/prioritization/for integration/detect_opportunities.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/prioritization/for integration/email_analyzer.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/prioritization/for integration/email_analyzer_orm.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/prioritization/for integration/email_operations.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/prioritization/for integration/email_service.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/prioritization/for integration/generate_dashboard.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/prioritization/for integration/gmail_label_learner.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/prioritization/for integration/gmail_priority_flow.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/prioritization/for integration/priority_manager.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/prioritization/for integration/rule_engine.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/tests/__init__.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/tests/test_gmail_client.py
+src/dewey/core/crm/crm/archive/srvo_utils_email_processing/tests/test_integration.py
+src/dewey/core/crm/crm/archive/szygy_scriptsai/base.py
+src/dewey/core/crm/crm/archive/szygy_scriptsai/config.py
+src/dewey/core/crm/crm/archive/szygy_scriptsai/contact_agents.py
+src/dewey/core/crm/crm/archive/szygy_scriptsai/test_agent.py
+src/dewey/core/crm/crm/archive/szygy_scriptsai/agents/adversarial.py
+src/dewey/core/crm/crm/archive/szygy_scriptsai/agents/agent_creator.py
+src/dewey/core/crm/crm/archive/szygy_scriptsai/agents/chat_history.py
+src/dewey/core/crm/crm/archive/szygy_scriptsai/agents/client_advocate.py
+src/dewey/core/crm/crm/archive/szygy_scriptsai/agents/data_ingestion.py
+src/dewey/core/crm/crm/archive/szygy_scriptsai/agents/developer.py
+src/dewey/core/crm/crm/archive/szygy_scriptsai/agents/docstring.py
+src/dewey/core/crm/crm/archive/szygy_scriptsai/agents/ghostwriter.py
+src/dewey/core/crm/crm/archive/szygy_scriptsai/agents/logical_fallacy.py
+src/dewey/core/crm/crm/archive/szygy_scriptsai/agents/rag.py
+src/dewey/core/crm/crm/archive/szygy_scriptsai/agents/self_care.py
+src/dewey/core/crm/crm/archive/szygy_scriptsai/agents/sloane_optimizer.py
+src/dewey/core/crm/crm/archive/szygy_scriptsai/agents/transcript_analysis.py
+src/dewey/core/crm/crm/archive/szygy_scriptsai/agents/triage.py
+src/dewey/core/crm/crm/archive/szygy_scriptsai/workflows/email_triage.py
+src/dewey/core/crm/crm/archive/szyvore/rxconfig.py
+src/dewey/core/crm/crm/archive/szyvore/app/__init__.py
+src/dewey/core/crm/crm/archive/szyvore/app/app.py
+src/dewey/core/crm/crm/archive/szyvore/app/config.py
+src/dewey/core/crm/crm/archive/szyvore/app/llmhub.py
+src/dewey/core/crm/crm/archive/szyvore/app/settings.py
+src/dewey/core/crm/crm/archive/szyvore/app/api/__init__.py
+src/dewey/core/crm/crm/archive/szyvore/app/api/routers/__init__.py
+src/dewey/core/crm/crm/archive/szyvore/app/api/routers/extractor.py
+src/dewey/core/crm/crm/archive/szyvore/app/api/routers/main.py
+src/dewey/core/crm/crm/archive/szyvore/app/api/routers/models.py
+src/dewey/core/crm/crm/archive/szyvore/app/engine/__init__.py
+src/dewey/core/crm/crm/archive/szyvore/app/engine/engine.py
+src/dewey/core/crm/crm/archive/szyvore/app/engine/generate.py
+src/dewey/core/crm/crm/archive/szyvore/app/engine/index.py
+src/dewey/core/crm/crm/archive/szyvore/app/engine/loaders/__init__.py
+src/dewey/core/crm/crm/archive/szyvore/app/engine/loaders/db.py
+src/dewey/core/crm/crm/archive/szyvore/app/engine/loaders/file.py
+src/dewey/core/crm/crm/archive/szyvore/app/engine/loaders/web.py
+src/dewey/core/crm/crm/archive/szyvore/app/models/output.py
+src/dewey/core/crm/crm/archive/szyvore/app/services/document.py
+src/dewey/core/crm/crm/archive/szyvore/app/services/extractor.py
+src/dewey/core/crm/crm/archive/szyvore/app/services/file.py
+src/dewey/core/crm/crm/archive/szyvore/app/services/model.py
+src/dewey/core/crm/crm/archive/szyvore/app/services/tagging.py
+src/dewey/core/crm/crm/archive/szyvore/app/ui/components/__init__.py
+src/dewey/core/crm/crm/archive/szyvore/app/ui/components/extractor.py
+src/dewey/core/crm/crm/archive/szyvore/app/ui/components/monaco.py
+src/dewey/core/crm/crm/archive/szyvore/app/ui/components/schema_editor.py
+src/dewey/core/crm/crm/archive/szyvore/app/ui/components/upload.py
+src/dewey/core/crm/crm/archive/szyvore/app/ui/pages/__init__.py
+src/dewey/core/crm/crm/archive/szyvore/app/ui/pages/index.py
+src/dewey/core/crm/crm/archive/szyvore/app/ui/templates/__init__.py
+src/dewey/core/crm/crm/archive/szyvore/app/ui/templates/styles.py
+src/dewey/core/crm/crm/archive/szyvore/app/ui/templates/template.py
+src/dewey/core/crm/crm/archive/szyvore/tests/conftest.py
+src/dewey/core/crm/crm/archive/szyvore/tests/unit/test_models.py
+src/dewey/core/crm/crm/archive/szyvore/tests/unit/loaders/test_db.py
+src/dewey/core/crm/crm/old scripts/add_contact_id_to_emails.py
+src/dewey/core/crm/crm/old scripts/add_email_column.py
+src/dewey/core/crm/crm/old scripts/add_port45_stocks.py
+src/dewey/core/crm/crm/old scripts/add_tracked_stocks.py
+src/dewey/core/crm/crm/old scripts/ai_helper_example.py
+src/dewey/core/crm/crm/old scripts/analyze_skips.py
+src/dewey/core/crm/crm/old scripts/analyze_stocks.py
+src/dewey/core/crm/crm/old scripts/api_manager.py
+src/dewey/core/crm/crm/old scripts/associate_relationships.py
+src/dewey/core/crm/crm/old scripts/base.py
+src/dewey/core/crm/crm/old scripts/browserless_scrape.py
+src/dewey/core/crm/crm/old scripts/check_permissions.py
+src/dewey/core/crm/crm/old scripts/check_schemas.py
+src/dewey/core/crm/crm/old scripts/clean_contacts.py
+src/dewey/core/crm/crm/old scripts/clean_email_addresses.py
+src/dewey/core/crm/crm/old scripts/client.py
+src/dewey/core/crm/crm/old scripts/company_controversy_analyzer.py
+src/dewey/core/crm/crm/old scripts/contact_review.py
+src/dewey/core/crm/crm/old scripts/csv_reader.py
+src/dewey/core/crm/crm/old scripts/data_analyze.py
+src/dewey/core/crm/crm/old scripts/data_ops_match_contacts.py
+src/dewey/core/crm/crm/old scripts/database_manager.py
+src/dewey/core/crm/crm/old scripts/deep_analysis.py
+src/dewey/core/crm/crm/old scripts/deepseek_helper.py
+src/dewey/core/crm/crm/old scripts/dialpad_downloads.py
+src/dewey/core/crm/crm/old scripts/dialpad_export.py
+src/dewey/core/crm/crm/old scripts/dialpad_export3.py
+src/dewey/core/crm/crm/old scripts/enhance_contacts.py
+src/dewey/core/crm/crm/old scripts/enrich_contacts.py
+src/dewey/core/crm/crm/old scripts/extract_unique_emails.py
+src/dewey/core/crm/crm/old scripts/extract_unique_emails_v2.py
+src/dewey/core/crm/crm/old scripts/fetch_new_emails.py
+src/dewey/core/crm/crm/old scripts/field_mappings.py
+src/dewey/core/crm/crm/old scripts/fix_contact_names.py
+src/dewey/core/crm/crm/old scripts/fix_contact_names_gmail.py
+src/dewey/core/crm/crm/old scripts/format_email_metadata.py
+src/dewey/core/crm/crm/old scripts/forms_and_transcripts.py
+src/dewey/core/crm/crm/old scripts/gmail_download_all.py
+src/dewey/core/crm/crm/old scripts/import_port.py
+src/dewey/core/crm/crm/old scripts/import_port_companies.py
+src/dewey/core/crm/crm/old scripts/import_universe.py
+src/dewey/core/crm/crm/old scripts/ir_rss_feeds.py
+src/dewey/core/crm/crm/old scripts/json_to_csv.py
+src/dewey/core/crm/crm/old scripts/link_relationships.py
+src/dewey/core/crm/crm/old scripts/list_port_companies.py
+src/dewey/core/crm/crm/old scripts/list_tables.py
+src/dewey/core/crm/crm/old scripts/main.py
+src/dewey/core/crm/crm/old scripts/map_ir_sites.py
+src/dewey/core/crm/crm/old scripts/market_data_ingest 2.py
+src/dewey/core/crm/crm/old scripts/market_data_ingest.py
+src/dewey/core/crm/crm/old scripts/match_contacts.py
+src/dewey/core/crm/crm/old scripts/match_emails_and_contacts.py
+src/dewey/core/crm/crm/old scripts/merge_production_dotenvs_in_dotenv.py
+src/dewey/core/crm/crm/old scripts/monthly_positions.py
+src/dewey/core/crm/crm/old scripts/mosint_enrich.py
+src/dewey/core/crm/crm/old scripts/news_collector.py
+src/dewey/core/crm/crm/old scripts/nextcloud_meeting_sync.py
+src/dewey/core/crm/crm/old scripts/openfigi_lookup.py
+src/dewey/core/crm/crm/old scripts/organizer.py
+src/dewey/core/crm/crm/old scripts/prioritize_opportunities.py
+src/dewey/core/crm/crm/old scripts/providers.py
+src/dewey/core/crm/crm/old scripts/query_gmail.py
+src/dewey/core/crm/crm/old scripts/run_research.py
+src/dewey/core/crm/crm/old scripts/search_diagnostics.py
+src/dewey/core/crm/crm/old scripts/sec_data.py
+src/dewey/core/crm/crm/old scripts/sec_data_ingest.py
+src/dewey/core/crm/crm/old scripts/show_companies.py
+src/dewey/core/crm/crm/old scripts/simple_composite.py
+src/dewey/core/crm/crm/old scripts/spiderfoot_enrich.py
+src/dewey/core/crm/crm/old scripts/supabase_client.py
+src/dewey/core/crm/crm/old scripts/sync_gmail_to_supabase.py
+src/dewey/core/crm/crm/old scripts/technical_events.py
+src/dewey/core/crm/crm/old scripts/test_s3.py
+src/dewey/core/crm/crm/old scripts/test_supabase.py
+src/dewey/core/crm/crm/old scripts/test_tables.py
+src/dewey/core/crm/crm/old scripts/tick_manager.py
+src/dewey/core/crm/crm/old scripts/update_contact_names.py
+src/dewey/core/crm/crm/old scripts/update_email_clients.py
+src/dewey/core/crm/crm/old scripts/update_supabase_clients.py
+src/dewey/core/crm/crm/old scripts/upload_emails.py
+src/dewey/core/crm/crm/old scripts/upload_to_supabase.py
+src/dewey/core/crm/crm/old scripts/verify_data.py
+src/dewey/core/crm/crm/old scripts/api_clients/api_docs_manager.py
+src/dewey/core/crm/crm/old scripts/api_clients/attio_client.py
+src/dewey/core/crm/crm/old scripts/api_clients/onyx_client.py
+src/dewey/core/crm/crm/old scripts/db/db_inspector.py
+src/dewey/core/crm/crm/old scripts/db/init_db.py
+src/dewey/core/crm/crm/old scripts/db/schema.py
+src/dewey/core/crm/crm/old scripts/tests/test_onyx_client.py
+src/dewey/core/crm/email_classifier/email_classifier.py
+src/dewey/core/crm/email_classifier/process_feedback.py
+src/dewey/core/crm/enrichment/add_enrichment.py
+src/dewey/core/crm/enrichment/attio_onyx_enrichment_engine.py
+src/dewey/core/crm/enrichment/contact_enrichment.py
+src/dewey/core/crm/enrichment/email_enrichment_service.py
+src/dewey/core/crm/enrichment/opportunity_detection.py
+src/dewey/core/crm/gmail/email_processor.py
+src/dewey/core/crm/gmail/email_service.py
+src/dewey/core/crm/gmail/gmail_client.py
+src/dewey/core/crm/gmail/gmail_sync.py
+src/dewey/core/crm/gmail/models.py
+src/dewey/core/db/data_handler.py
+src/dewey/core/engines/consolidated_gmail_api.py
+src/dewey/core/engines/pypi_search.py
 src/dewey/llm/exceptions.py
+src/dewey/llm/exceptions_0b0e30bb_1.py
 src/dewey/llm/llm_utils.py
+src/dewey/llm/agents/adversarial_agent.py
+src/dewey/llm/agents/agent_creator_agent.py
+src/dewey/llm/agents/base_agent.py
+src/dewey/llm/agents/client_advocate_agent.py
+src/dewey/llm/agents/contact_agents.py
+src/dewey/llm/agents/data_ingestion_agent.py
+src/dewey/llm/agents/docstring_agent.py
+src/dewey/llm/agents/logical_fallacy_agent.py
+src/dewey/llm/agents/philosophical_agent.py
+src/dewey/llm/agents/rag_agent.py
+src/dewey/llm/agents/self_care_agent.py
+src/dewey/llm/agents/sloane_ghostwriter.py
+src/dewey/llm/agents/sloane_optimizer.py
+src/dewey/llm/agents/transcript_analysis_agent.py
+src/dewey/llm/agents/triage_agent.py
 src/dewey/llm/api_clients/deepinfra.py
 src/dewey/llm/api_clients/gemini.py
 src/dewey/llm/api_clients/openrouter.py
-src/dewey/llm/clients/simulated_llm_client_ff1a061a.py
-src/dewey/management/commands/setup_periodic_tasks_73c33c61.py
-src/dewey/management/commands/setup_periodic_tasks_c636d2a8.py
-src/dewey/management/commands/sync_emails_8f1a5383.py
-src/dewey/mdurl/__init___c01e3663.py
-src/dewey/migrations/env_0801ebe6.py
-src/dewey/migrations/env_4762fff2.py
-src/dewey/migrations/env_b2fffb35.py
-src/dewey/migrations/versions/001_initial_schema_62aeb7eb.py
-src/dewey/monitoring/service_monitoring_f9c68e38.py
-src/dewey/package/__init___74222e90.py
-src/dewey/packaging/__init___c704b6e6.py
-src/dewey/packaging/version_ba760aa0.py
-src/dewey/path/to/data_processor_38a1e2ab.py
-src/dewey/path/to/script_4dd80555.py
-src/dewey/research/__init___3d4c9550.py
 src/dewey/scripts/__init__.py
-src/dewey/scripts/__init___447af098.py
-src/dewey/scripts/add_contact_uuids_5ade26a6.py
-src/dewey/scripts/add_enrichment_a154a675.py
-src/dewey/scripts/attio_api_query_638f7410.py
-src/dewey/scripts/attio_integration_2405fa58.py
-src/dewey/scripts/auto_categorize_7b359726.py
-src/dewey/scripts/beancount_generator_3823664a.py
 src/dewey/scripts/code_consolidator.py
-src/dewey/scripts/contact_creation_bbc4f263.py
-src/dewey/scripts/dashboard_generator_42fbf71f.py
-src/dewey/scripts/data_migration_3fd6ba41.py
-src/dewey/scripts/data_migration_90723451.py
-src/dewey/scripts/db_init_63b44386.py
-src/dewey/scripts/db_init_ce32a0f3.py
-src/dewey/scripts/db_migration_95be8dc1.py
+src/dewey/scripts/code_uniqueness_analyzer.py
+src/dewey/scripts/consolidated_code_analyzer.py
+src/dewey/scripts/consolidated_mover.py
 src/dewey/scripts/document_directory.py
-src/dewey/scripts/dokku_healthchecks_aa1a04b4.py
-src/dewey/scripts/duckdb_data_checker_415cc3ba.py
 src/dewey/scripts/duplicate_manager.py
-src/dewey/scripts/email_analyzer_370ffb3d.py
-src/dewey/scripts/email_analyzer_7c6ec35e.py
-src/dewey/scripts/email_analyzer_85d90d11.py
-src/dewey/scripts/email_analyzer_b93600c8.py
-src/dewey/scripts/email_daemon_faf81dc6.py
-src/dewey/scripts/email_processor_1ac390c9.py
-src/dewey/scripts/email_processor_3fad7b89.py
-src/dewey/scripts/email_processor_b2629bef.py
-src/dewey/scripts/email_recovery_0a95c07f.py
-src/dewey/scripts/email_service_5b517c55.py
-src/dewey/scripts/email_service_71140add.py
-src/dewey/scripts/enrichment_ab6c88c0.py
-src/dewey/scripts/env_info_ae0bbc0b.py
-src/dewey/scripts/ethical_analysis_eabb4224.py
-src/dewey/scripts/extended_sync_d1c5012d.py
-src/dewey/scripts/feedback_processor_40e7ff22.py
-src/dewey/scripts/format_and_lint_46145e3e.py
-src/dewey/scripts/gmail_client_ccd0a54c.py
-src/dewey/scripts/gmail_label_learner_39b36b16.py
-src/dewey/scripts/gmail_label_learner_3aa18d52.py
-src/dewey/scripts/hledger_utils_1f418497.py
-src/dewey/scripts/import_data_9970c919.py
-src/dewey/scripts/init_db_17904100.py
-src/dewey/scripts/init_db_755450f1.py
-src/dewey/scripts/inspect_db_a4de1349.py
-src/dewey/scripts/issue_resolver_d4515e67.py
-src/dewey/scripts/journal_fixer_14a84089.py
-src/dewey/scripts/log_analyzer_92449403.py
-src/dewey/scripts/log_config_8220b62c.py
-src/dewey/scripts/manage_migrations_d7c7dfca.py
-src/dewey/scripts/migration_18474850.py
-src/dewey/scripts/migration_57af2cae.py
-src/dewey/scripts/monitor_emails_a33ca107.py
-src/dewey/scripts/motherduck_sync_43263ed0.py
-src/dewey/scripts/motherduck_sync_cd3d1161.py
-src/dewey/scripts/opportunity_detection_e7e5bbbc.py
-src/dewey/scripts/priority_manager_26631df9.py
-src/dewey/scripts/priority_manager_7aeb5f72.py
-src/dewey/scripts/run_api_1ef78fcd.py
-src/dewey/scripts/run_api_9d29e5f3.py
+src/dewey/scripts/legacy_refactor.py
+src/dewey/scripts/prd_builder.py
 src/dewey/scripts/script_mover.py
-src/dewey/scripts/test_generation_e950cec7.py
-src/dewey/scripts/data_management/merge_data_2d412bcf.py
-src/dewey/scripts/data_migration/merge_contacts_4c1655b1.py
-src/dewey/scripts/data_processing/merge_data_b69dcd78.py
-src/dewey/scripts/email_processing/copy_emails_8010f2ad.py
-src/dewey/scripts/email_processing/template_script_e89ccdd8.py
-src/dewey/scripts/finance/deferred_revenue_e88dafbd.py
-src/dewey/scripts/import/mercury/convert_rules_87ddbffe.py
-src/dewey/scripts/migration/migrate_contacts_05fa38d4.py
-src/dewey/service_manager/core_604b844e.py
-src/dewey/service_manager/manager_c71f79af.py
-src/dewey/service_manager/tests/test_menu_02e5ea12.py
-src/dewey/services/contact_enrichment_f0de086f.py
-src/dewey/src/_musl_17489a29.py
-src/dewey/src/background_search_a7358eb6.py
-src/dewey/src/company_tagger_d205f2b9.py
-src/dewey/src/config_6a4e41c7.py
-src/dewey/src/config_a01ee02e.py
-src/dewey/src/data_models_b6aa1cf8.py
-src/dewey/src/database_9a56bb66.py
-src/dewey/src/email_prioritization_21a13ac6.py
-src/dewey/src/ethical_analyzer_6c094ee6.py
-src/dewey/src/gmail_priority_flow_3fdba4c0.py
-src/dewey/src/gmail_utils_35eb1519.py
-src/dewey/src/imap_connector_b6c295f6.py
-src/dewey/src/journal_writer_fab1858b.py
-src/dewey/src/models_0519cd34.py
-src/dewey/src/models_9c4ec9a4.py
-src/dewey/src/models_a5074cad.py
-src/dewey/src/pipeline_a13db674.py
-src/dewey/src/populate_contacts_ffbf9240.py
-src/dewey/src/rule_engine_e6c69c47.py
-src/dewey/src/transaction_categorizer_81ed60d5.py
-src/dewey/src/agents/base_14916eb4.py
-src/dewey/src/analyzers/__init___601e27dd.py
-src/dewey/src/api/app_3d8aca34.py
-src/dewey/src/api/presidio_service_0e8884ff.py
-src/dewey/src/app/db_converters_19ee0c2b.py
-src/dewey/src/app/tick_manager_69c5ee15.py
-src/dewey/src/beancount_importer/altruist_processor_2bf10734.py
-src/dewey/src/cleanup/database_cleaner_ff526836.py
-src/dewey/src/contact_management/contact_manager_9d30788b.py
-src/dewey/src/core/api_client_6816dc95.py
-src/dewey/src/core/classification_engine_60acc1e2.py
-src/dewey/src/core/db_inspector_cc0339a5.py
-src/dewey/src/core/email_processing_service_93c3a3e2.py
-src/dewey/src/core/workflow_8a68593a.py
-src/dewey/src/core/utils/ledger_checker_b9c283ef.py
-src/dewey/src/data_processing/data_processor_e580d8de.py
-src/dewey/src/database/connection_manager_a1b0a3e7.py
-src/dewey/src/db/duckdb_store_4318af64.py
-src/dewey/src/db/schema_checker_fe997166.py
-src/dewey/src/db/setup_091f43e7.py
-src/dewey/src/db/setup_3099494c.py
-src/dewey/src/email_processing/gmail_client_a647858c.py
-src/dewey/src/engine/openfigi_b1f0797f.py
-src/dewey/src/ethifinx/db/data_store_afc1c297.py
-src/dewey/src/loaders/duckdb_loader_a4a0a340.py
-src/dewey/src/migration/email_rules_migration_7b6ff76c.py
-src/dewey/src/models/company_0c2c0735.py
-src/dewey/src/models/company_fbffde06.py
-src/dewey/src/my_module/__init___50e93f54.py
-src/dewey/src/my_module/research_utils_69011e27.py
-src/dewey/src/pdm/backend/hooks/metadata_4b742992.py
-src/dewey/src/pdm/backend/hooks/vendorize/_parser_fb07fd5c.py
-src/dewey/src/pip/_internal/utils/tags_1d83ab57.py
-src/dewey/src/reporting/report_generator_d729c19e.py
-src/dewey/src/reporting/tick_report_125d2d3d.py
-src/dewey/src/reports/tick_report_0a32d29d.py
-src/dewey/src/service_manager/main_4c0302a6.py
-src/dewey/src/syzygy/agents/adversarial_f704e402.py
-src/dewey/src/syzygy/agents/agent_creator_2383cbb4.py
-src/dewey/src/syzygy/agents/client_advocate_45e36203.py
-src/dewey/src/syzygy/agents/self_care_agent_2e4994a6.py
-src/dewey/src/syzygy/triage/triage_agent_c98168a5.py
-src/dewey/src/ui/textual_ui_62079778.py
-src/dewey/src/utils/csv_ingestor_270cf535.py
-src/dewey/src/utils/imap_connect_03757f4b.py
-src/dewey/src/utils/logging_config_c1741f8b.py
-src/dewey/src/utils/mercury_data_validator_8783fd79.py
-src/dewey/src/utils/precommit_analyzer_62e78dbc.py
-src/dewey/src/utils/rule_matcher_344ce959.py
-src/dewey/src/utils/rule_matcher_a1f3a8ae.py
-src/dewey/src/virtualenv/patches/distutils_13ad5934.py
-src/dewey/src/virtualenv/patches/distutils_30ceddd6.py
-src/dewey/streamlit_apps/storm_demo_31dc18e6.py
-src/dewey/syzygy/core/contact_merger_9b047df9.py
-src/dewey/syzygy/llm/logical_fallacy_agent_2339b1fa.py
-src/dewey/syzygy/rag/agent_95bc1bb1.py
-src/dewey/tests/config_3d138044.py
-src/dewey/tests/conftest_25e117d5.py
-src/dewey/tests/conftest_5cd4dbba.py
-src/dewey/tests/conftest_90854fdc.py
-src/dewey/tests/conftest_d5426b6d.py
-src/dewey/tests/email_analyzer_tests_4692f6ec.py
-src/dewey/tests/fixtures_442848ff.py
-src/dewey/tests/run_tests_986a9337.py
-src/dewey/tests/test_analysis_tagger_463ec735.py
-src/dewey/tests/test_company_analysis_flow_171ac64e.py
-src/dewey/tests/test_company_tracker_2d8fdb0d.py
-src/dewey/tests/test_controversy_analysis_e6df9659.py
-src/dewey/tests/test_deployments_71b19a3f.py
-src/dewey/tests/test_deployments_dcaf7136.py
-src/dewey/tests/test_flow_serving_3045b0e8.py
-src/dewey/tests/test_github_integration_ad62d527.py
-src/dewey/tests/test_mercury_import_7ca21ab0.py
-src/dewey/tests/test_required_attributes_a10f260e.py
-src/dewey/tests/test_service_manager_22f4c6b5.py
-src/dewey/tests/test_service_manager_75034ab5.py
-src/dewey/tests/test_service_manager_95bc65e0.py
-src/dewey/tests/test_service_manager_dd5cb386.py
-src/dewey/tests/test_ui_3d4c2b54.py
-src/dewey/tests/api/attio_integration_test_81b4380a.py
-src/dewey/tests/api/attio_integration_test_fdeb1b54.py
-src/dewey/tests/core/test_config_689f736f.py
-src/dewey/tests/core/test_yahoo_finance_engine_494690b1.py
-src/dewey/tests/db/test_db_safety_bf5e7727.py
-src/dewey/tests/email_processing/__init___59166d0d.py
-src/dewey/tests/functional/fixtures_a1512cb5.py
-src/dewey/tests/integration/dokku_tests_d52f1442.py
-src/dewey/tests/integration/test_minio_e9427108.py
-src/dewey/tests/integration/test_searxng_ef119e4e.py
-src/dewey/tests/mocks/llm_client_5e122dc6.py
-src/dewey/tests/ui/test_tick_manager_ui_56e045a1.py
-src/dewey/tools/database_analyzer_c9b642a9.py
-src/dewey/unmapped_scripts/__init__.py
-src/dewey/unmapped_scripts/migrated_0de604d6.py
-src/dewey/unmapped_scripts/migrated_25e92866.py
-src/dewey/unmapped_scripts/migrated_3dfe5c4e.py
-src/dewey/unmapped_scripts/migrated_52453327.py
-src/dewey/unmapped_scripts/migrated_659b25f3.py
-src/dewey/unmapped_scripts/migrated_b1ffc387.py
-src/dewey/unmapped_scripts/migrated_ce3578fe.py
-src/dewey/unmapped_scripts/migrated_edeb313f.py
-src/dewey/utils/__init__.py
-src/dewey/utils/duplicate_checker_da1c17b0.py
-src/dewey/utils/email_data_generator_b57a1d6e.py
-src/dewey/utils/encode_b7af9008.py
-src/dewey/utils/gmail_auth_621d476b.py
-src/dewey/utils/io.py
-src/dewey/utils/log_manager_fc5f5d52.py
-src/dewey/utils/logging_config_957f5830.py
-src/dewey/utils/pypi_search.py
-src/dewey/utils/six_1a7ee673.py
-src/dewey/utils/six_3691f55b.py
-src/dewey/utils/url_decoding_5a27bd5a.py
-src/dewey/utils/url_formatter_85acfe08.py
-src/dewey/utils/url_parser_bfc24c95.py
 src/dewey/utils/vector_db.py
-src/dewey/workflows/analysis_tagging_workflow_f92e90de.py
-src/dewey/workflows/ethical_analysis_156d7cb5.py
-src/dewey/workflows/example_workflow_245f875d.py
-src/dewey/workflows/search_workflow_f34b7858.py
-src/dewey/workflows/tic_delta_workflow_4753bf87.py
-src/imported_scripts/admin_08da5df4.py
-src/imported_scripts/admin_871aa263.py
-src/imported_scripts/admin_ab63423d.py
-src/imported_scripts/company_analysis_app_ce49ba2d.py
-src/imported_scripts/config_3d5dae93.py
-src/imported_scripts/config_823a4ddb.py
-src/imported_scripts/configargparse_cecefce9.py
-src/imported_scripts/conftest_084f0698.py
-src/imported_scripts/conftest_dfa77e61.py
-src/imported_scripts/llm_interface_df8ad375.py
-src/imported_scripts/llm_utils_5f1800e6.py
-src/imported_scripts/llm_utils_fca2b7a4.py
-src/imported_scripts/main_2604e28f.py
-src/imported_scripts/main_d28f1089.py
-src/imported_scripts/manage_0ba7c003.py
-src/imported_scripts/manage_46616d2b.py
-src/imported_scripts/manage_ff8d9184.py
-src/imported_scripts/mccabe_6616c929.py
-src/imported_scripts/models_7cb4a65a.py
-src/imported_scripts/models_8584f8a4.py
-src/imported_scripts/models_c7bcc2b2.py
-src/imported_scripts/models_fc8e543f.py
-src/imported_scripts/mypy_extensions_fdab7ba2.py
-src/imported_scripts/podcast_analyzer_306a42e7.py
-src/imported_scripts/podcast_utils_b681fe22.py
-src/imported_scripts/rxconfig_3f8b122b.py
-src/imported_scripts/settings_local_4b4efcf9.py
-src/imported_scripts/setup_661df8a6.py
-src/imported_scripts/setup_d27f939b.py
-src/imported_scripts/sounddevice_88be781f.py
-src/imported_scripts/soundfile_243ad43b.py
-src/imported_scripts/tasks_39fabc0d.py
-src/imported_scripts/tasks_55cba788.py
-src/imported_scripts/tasks_ee89fff5.py
-src/imported_scripts/typing_extensions_a06ad8e6.py
-src/imported_scripts/typing_inspect_bca83e27.py
-src/imported_scripts/utils_23d957a4.py
-src/imported_scripts/views_16be6d35.py
-src/imported_scripts/accounts/apps_46215864.py
-src/imported_scripts/accounts/forms_a9052b3a.py
-src/imported_scripts/accounts/managers_bf589a52.py
-src/imported_scripts/accounts/models_91dadf0c.py
-src/imported_scripts/agents/contact_agents_f6322bec.py
-src/imported_scripts/agents/creator_f50f0404.py
-src/imported_scripts/agents/data_ingestion_agent_a5e0a77c.py
-src/imported_scripts/agents/logical_fallacy_agent_7c91080e.py
-src/imported_scripts/agents/philosophical_agent_8977c13a.py
-src/imported_scripts/agents/sloan_optimizer_18d3ed45.py
-src/imported_scripts/agents/ghostwriter/sloan_ghostwriter_116ea036.py
-src/imported_scripts/analysis/template_0861cead.py
-src/imported_scripts/api/companies_1493ebdd.py
-src/imported_scripts/app/main_7499dd81.py
-src/imported_scripts/app/utils_20374d94.py
-src/imported_scripts/app/api/api_fcd55afb.py
-src/imported_scripts/app/api/endpoints/extractor_d802251e.py
-src/imported_scripts/app/api/routers/chat_6a90df51.py
-src/imported_scripts/app/api/routers/config_c8485897.py
-src/imported_scripts/app/api/utils/vercel_stream_40c2d2e3.py
-src/imported_scripts/app/components/structured_query_b4f149ea.py
-src/imported_scripts/app/components/upload_43e91257.py
-src/imported_scripts/app/engine/service_0e05974a.py
-src/imported_scripts/app/engine/service_2b3c2016.py
-src/imported_scripts/app/engine/loaders/document_loader_65f949cd.py
-src/imported_scripts/app/engine/utils/tool_factory_d640dc0e.py
-src/imported_scripts/app/models/chat_32a0ed45.py
-src/imported_scripts/app/services/extractor_2fc1312e.py
-src/imported_scripts/app/ui/schema_editor_a8c50be3.py
-src/imported_scripts/app/utils/file_loader_25577f9f.py
-src/imported_scripts/app/utils/llamacloud_3937e7f5.py
-src/imported_scripts/app/utils/next_question_suggestion_536f7875.py
-src/imported_scripts/app/utils/settings_dc2cf988.py
-src/imported_scripts/app_name/admin_a59e0ae8.py
-src/imported_scripts/app_name/views_412a7547.py
-src/imported_scripts/app_name/views_c53edf32.py
-src/imported_scripts/app_name/migrations/0001_initial_988160b5.py
-src/imported_scripts/apps/company_analysis_manager_14f63b69.py
-src/imported_scripts/apps/contacts/apps_9259e784.py
-src/imported_scripts/backend/main_ddce10fa.py
-src/imported_scripts/backend/models_380338ba.py
-src/imported_scripts/backend/models_d9aa2aa1.py
-src/imported_scripts/backend/utils_ae9098f0.py
-src/imported_scripts/backend/validation_51db5a82.py
-src/imported_scripts/backend/api/api_a96d21e1.py
-src/imported_scripts/backend/chat/pro_chat_1f271237.py
-src/imported_scripts/backend/db/utils_adf1ce03.py
-src/imported_scripts/backend/db/migrations/env_18a7f85d.py
-src/imported_scripts/backend/flows/company_analysis_868b2a5d.py
-src/imported_scripts/backend/search/providers/bing_2e20277d.py
-src/imported_scripts/backend/search/providers/searxng_1749685c.py
-src/imported_scripts/backend/search/providers/serper_3a12f603.py
-src/imported_scripts/backend/search/providers/tavily_bfe85965.py
-src/imported_scripts/blog/apps_d14d424b.py
-src/imported_scripts/blog/models_d4e4911c.py
-src/imported_scripts/blog/urls_b47b2c08.py
-src/imported_scripts/blog/views_1eac50cb.py
-src/imported_scripts/blog/migrations/0001_initial_357fe064.py
-src/imported_scripts/components/monaco_d7a9e053.py
-src/imported_scripts/config/celery_153b5bfb.py
-src/imported_scripts/config/celery_ec9f87ab.py
-src/imported_scripts/config/constants_dbfff33a.py
-src/imported_scripts/config/jupyterhub_config_de68e2cf.py
-src/imported_scripts/config/paths_391216db.py
-src/imported_scripts/config/settings_8ce21c5e.py
-src/imported_scripts/config/settings_b58639ff.py
-src/imported_scripts/config/urls_2c286e04.py
-src/imported_scripts/config/wsgi_bcea670d.py
-src/imported_scripts/config/settings/base_bad4738b.py
-src/imported_scripts/config/settings/dev_60f94875.py
-src/imported_scripts/config/settings/dev_f05ec244.py
-src/imported_scripts/config/settings/production_856bc638.py
-src/imported_scripts/config/settings/production_cc3c827d.py
-src/imported_scripts/config/settings/test_43cdb96f.py
-src/imported_scripts/config/settings/test_821878a2.py
-src/imported_scripts/contacts/signals_30e98ab3.py
-src/imported_scripts/context_processors/allauth_settings_d9280a53.py
-src/imported_scripts/core/__init___fa12bc4e.py
-src/imported_scripts/core/api_client_4ea3f6d8.py
-src/imported_scripts/core/asgi_ec752069.py
-src/imported_scripts/core/bigtable_backup_manager_cfa34087.py
-src/imported_scripts/core/cli_tick_manager_182a41c4.py
-src/imported_scripts/core/client_grants_credential_provider_14e7ab27.py
-src/imported_scripts/core/config_6da0aab6.py
-src/imported_scripts/core/config_ede66a49.py
-src/imported_scripts/core/contact_management_aaf4c489.py
-src/imported_scripts/core/document_processing_c42335cc.py
-src/imported_scripts/core/email_enrichment_service_d371c523.py
-src/imported_scripts/core/email_prioritization_b034be3c.py
-src/imported_scripts/core/email_processing_service_d151ef9a.py
-src/imported_scripts/core/email_sync_350480d0.py
-src/imported_scripts/core/exceptions_dccf6027.py
-src/imported_scripts/core/form_detection_3e8b587d.py
-src/imported_scripts/core/gmail_client_9fe5c89b.py
-src/imported_scripts/core/logging_utils_39dcf841.py
-src/imported_scripts/core/logging_utils_d1e30f26.py
-src/imported_scripts/core/models_24f5da06.py
-src/imported_scripts/core/models_4cbef4c7.py
-src/imported_scripts/core/models_4f771b90.py
-src/imported_scripts/core/models_94af2f3d.py
-src/imported_scripts/core/models_b015c34e.py
-src/imported_scripts/core/models_b2061370.py
-src/imported_scripts/core/models_d70e45f0.py
-src/imported_scripts/core/observability_a4d9afdc.py
-src/imported_scripts/core/podcast_analyzer_4d0a10a1.py
-src/imported_scripts/core/rss_feed_manager_7bbad7e3.py
-src/imported_scripts/core/rule_engine_f81424e3.py
-src/imported_scripts/core/schemas_30063d18.py
-src/imported_scripts/core/search_client_c15ba567.py
-src/imported_scripts/core/sec_filings_manager_c2b7e528.py
-src/imported_scripts/core/settings_545abd8f.py
-src/imported_scripts/core/setup_208c977c.py
-src/imported_scripts/core/ssh_service_ff6d125d.py
-src/imported_scripts/core/sts_xml_parser_b55fa4bd.py
-src/imported_scripts/core/tests_6371ee8f.py
-src/imported_scripts/core/tick_processor_62b7e6ac.py
-src/imported_scripts/core/urls_80bc980f.py
-src/imported_scripts/core/utils_53d5c06c.py
-src/imported_scripts/core/utils_c1c5a6cd.py
-src/imported_scripts/core/views_059854fd.py
-src/imported_scripts/core/wsgi_999c7083.py
-src/imported_scripts/core/agents/transcript_analysis_agent_7cb33e80.py
-src/imported_scripts/core/api/endpoints_dfc91535.py
-src/imported_scripts/core/llm/config_4f0ee8c8.py
-src/imported_scripts/core/llm/rag_agent_83b4f375.py
-src/imported_scripts/core/llm/pipeline/contact_enricher_91cfb3c0.py
-src/imported_scripts/core/management/commands/setup_gmail_540c208a.py
-src/imported_scripts/core/management/commands/sync_gmail_128b7b2c.py
-src/imported_scripts/core/models/mixins_f35c7036.py
-src/imported_scripts/core/pages/apps_2c08f6e6.py
-src/imported_scripts/core/tests/base_4729556f.py
-src/imported_scripts/core/tests/fixtures_c523090a.py
-src/imported_scripts/core/tests/test_ai_endpoints_507e64e0.py
-src/imported_scripts/core/utils/gmail_auth_8b2cdfb8.py
-src/imported_scripts/core/utils/markdown_updater_0ef51ea6.py
-src/imported_scripts/core/utils/test_16b10cf2.py
-src/imported_scripts/core/views/health_41bc2c3f.py
-src/imported_scripts/data_pipelines/sec_etl_7d4a1807.py
-src/imported_scripts/database/__init___e2aa53df.py
-src/imported_scripts/database/apps_a5bab668.py
-src/imported_scripts/database/db_connector_30defc02.py
-src/imported_scripts/database/initialize_db_1b7da45f.py
-src/imported_scripts/database/migrations/0001_initial_defecc72.py
-src/imported_scripts/database/migrations/0002_config_f4f1edca.py
-src/imported_scripts/database/migrations/xxxx_create_timelineevent_4dee8386.py
-src/imported_scripts/database/tests/integration/test_email_processing_adfe82f1.py
-src/imported_scripts/db/migrations/0004_alter_site_options_7ee55bdd.py
-src/imported_scripts/db/migrations/xxxx_create_site_model_eaba89b0.py
-src/imported_scripts/deployments/company_analysis_deployment_ed3c1d9c.py
-src/imported_scripts/docs/conf_1f429c1a.py
-src/imported_scripts/docs/conf_35a9d834.py
-src/imported_scripts/ec1c/users/adapters_3244e8ee.py
-src/imported_scripts/ec1c/users/admin_70ad07ce.py
-src/imported_scripts/ec1c/users/apps_d83ea451.py
-src/imported_scripts/ec1c/users/factories_a6d780a4.py
-src/imported_scripts/ec1c/users/serializers_bc590aa3.py
-src/imported_scripts/ec1c/users/views_5de4ec44.py
-src/imported_scripts/ec1c/users/api/views_8722b273.py
-src/imported_scripts/ec1c/users/migrations/0001_initial_db090e80.py
-src/imported_scripts/ec1c/users/tests/conftest_2c7bf68a.py
-src/imported_scripts/ec1c/users/tests/test_admin_3653b846.py
-src/imported_scripts/ec1c/users/tests/test_forms_f118bf6e.py
-src/imported_scripts/ec1c/users/tests/test_models_6d67c967.py
-src/imported_scripts/ec1c/users/tests/test_tasks_8c4af7cf.py
-src/imported_scripts/ec1c/users/tests/test_urls_e5e8fcf4.py
-src/imported_scripts/ec1c/users/tests/test_urls_f721a407.py
-src/imported_scripts/ec1c/users/tests/test_user_viewset_0d47d3ed.py
-src/imported_scripts/ec1c/users/tests/test_views_7e5d6698.py
-src/imported_scripts/ecic/cli_e6aa7bf7.py
-src/imported_scripts/ecic/version_0cc81eb3.py
-src/imported_scripts/ecic/tests/test_portfolio_widget_4eb02907.py
-src/imported_scripts/email_app/models_aa0aa1f4.py
-src/imported_scripts/email_processing/apps_407bde80.py
-src/imported_scripts/email_processing/email_triage_workflow_3f89fffa.py
-src/imported_scripts/email_processing/gmail_sync_5bac9c7c.py
-src/imported_scripts/email_processing/schemas_660a5a4c.py
-src/imported_scripts/email_processing/migrations/0001_initial_6221cfe8.py
-src/imported_scripts/email_processing/prioritization/views_96d78e2b.py
-src/imported_scripts/email_processing/tests/test_gmail_client_e858efcf.py
-src/imported_scripts/email_processing/tests/test_gmail_history_sync_fe37e167.py
-src/imported_scripts/email_processing/tests/test_imap_sync_517b7855.py
-src/imported_scripts/email_processing/tests/management/commands/test_sync_emails_eb42877e.py
-src/imported_scripts/emails/models_fa58efac.py
-src/imported_scripts/ethical_capital/asgi_e1012ad1.py
-src/imported_scripts/ethical_capital/celery_238dbdbf.py
-src/imported_scripts/ethical_capital/settings_1f03d0f2.py
-src/imported_scripts/ethical_capital/urls_d8306c0a.py
-src/imported_scripts/ethical_capital/wsgi_07be8b4f.py
-src/imported_scripts/examples/ingest_to_postgres_78fda80e.py
-src/imported_scripts/examples/interactive_plot_a842da9f.py
-src/imported_scripts/examples/oauth_sts_s3_222493d9.py
-src/imported_scripts/examples/s3_upload_download_cdf6a8d9.py
-src/imported_scripts/examples/search_api_usage_65e64094.py
-src/imported_scripts/examples/search_example_43d551ef.py
-src/imported_scripts/examples/search_example_a2d98781.py
-src/imported_scripts/flows/controversy_detection_f0ccc937.py
-src/imported_scripts/flows/deploy_controversy_analysis_d6cb7b4a.py
-src/imported_scripts/flows/deploy_controversy_monitoring_8f5969e8.py
-src/imported_scripts/flows/entity_analysis_a902aa8d.py
-src/imported_scripts/flows/hello_flow_0c32cde9.py
-src/imported_scripts/flows/tests/test_agent_analysis_9c139b01.py
-src/imported_scripts/graphite/events/views_8c899151.py
-src/imported_scripts/integrations/apps_8b3e7125.py
-src/imported_scripts/integrations/apps_f43be7c3.py
-src/imported_scripts/integrations/models_b8f8e457.py
-src/imported_scripts/integrations/management/commands/sync_google_99a7ec1a.py
-src/imported_scripts/lib/templates_b21d59c1.py
-src/imported_scripts/logs/apps_1d1cc450.py
-src/imported_scripts/management/commands/hello_10deaedf.py
-src/imported_scripts/management/commands/setup_celery_beat_a36ad9ce.py
-src/imported_scripts/management/commands/setup_periodic_tasks_cb786613.py
-src/imported_scripts/management/commands/sync_emails_f9711982.py
-src/imported_scripts/management/commands/sync_gmail_f17d23a6.py
-src/imported_scripts/migrations/env_d1d779f3.py
-src/imported_scripts/migrations/versions/20231123_03_df89deec.py
-src/imported_scripts/models/event_log_9703bcf1.py
-src/imported_scripts/models/schema_comparison_43767124.py
-src/imported_scripts/models/tick_history_model_ddf05dcb.py
-src/imported_scripts/models/stocks/stock_models_9ea59b27.py
-src/imported_scripts/my_app/urls_4ef706eb.py
-src/imported_scripts/my_project/settings/test_1156ccac.py
-src/imported_scripts/myapp/migrations/0001_initial_9fa0bc60.py
-src/imported_scripts/pages/apps_2bfd01ac.py
-src/imported_scripts/pages/models_4a49e5a8.py
-src/imported_scripts/pages/urls_1d0dae0d.py
-src/imported_scripts/path/to/script_7dd0c97c.py
-src/imported_scripts/path/to/script_b5756864.py
-src/imported_scripts/path/to/script_d9497ee5.py
-src/imported_scripts/path/to/script_ee18e87e.py
-src/imported_scripts/pipelines/controversy_analyzer_83cb47c6.py
-src/imported_scripts/plugins/django_plugin_blog/plugin_db4f2f85.py
-src/imported_scripts/podcast_analysis/data_processing_8112e285.py
-src/imported_scripts/port5/core/github_analysis_e4b9f707.py
-src/imported_scripts/prefect/deployments/deploy_controversy_monitor_60601eb4.py
-src/imported_scripts/project/app/management/commands/setup_periodic_tasks_e22cddda.py
-src/imported_scripts/relative/path/to/script_912dfb4b.py
-src/imported_scripts/research/models_1959d353.py
-src/imported_scripts/schemas/__init___17cf160d.py
-src/imported_scripts/scripts/company_analysis_b33eeb3c.py
-src/imported_scripts/scripts/daily_note_generator_dfa022df.py
-src/imported_scripts/scripts/dashboard_generator_183e6e8f.py
-src/imported_scripts/scripts/data_import_fc4337f1.py
-src/imported_scripts/scripts/data_ingestion_cbf2075b.py
-src/imported_scripts/scripts/data_processing_d1941a9c.py
-src/imported_scripts/scripts/email_analysis_23095820.py
-src/imported_scripts/scripts/email_analyzer_1734a0ce.py
-src/imported_scripts/scripts/email_analyzer_c95bf18b.py
-src/imported_scripts/scripts/email_processor_be50b184.py
-src/imported_scripts/scripts/email_service_275aa152.py
-src/imported_scripts/scripts/generate_index_409c42fc.py
-src/imported_scripts/scripts/github_analyzer_25f42e35.py
-src/imported_scripts/scripts/gmail_label_learner_0b2dfb22.py
-src/imported_scripts/scripts/google_docs_automation_084d2ae7.py
-src/imported_scripts/scripts/merge_dotenvs_5078e0d9.py
-src/imported_scripts/scripts/minio_zip_extraction_55305100.py
-src/imported_scripts/scripts/opportunity_detection_64812914.py
-src/imported_scripts/scripts/priority_manager_d15845cf.py
-src/imported_scripts/scripts/s3_query_90e30347.py
-src/imported_scripts/scripts/setup_17be35d8.py
-src/imported_scripts/scripts/sync_script_85f9c220.py
-src/imported_scripts/scripts/update_readme_2010fb16.py
-src/imported_scripts/scripts/data_analysis/universe_breakdown_118840c6.py
-src/imported_scripts/scripts/data_import/populate_stocks_6420f1e6.py
-src/imported_scripts/scripts/database/upload_to_motherduck_042102bd.py
-src/imported_scripts/services/text_extraction/app_632a8734.py
-src/imported_scripts/src/app_78e685e8.py
-src/imported_scripts/src/calendar_integration_4ece5e1f.py
-src/imported_scripts/src/content_processor_31501000.py
-src/imported_scripts/src/converter_28f257d6.py
-src/imported_scripts/src/data_loader_1b825488.py
-src/imported_scripts/src/data_pipeline_01fced39.py
-src/imported_scripts/src/db_query_5b49a7fd.py
-src/imported_scripts/src/db_setup_7119da48.py
-src/imported_scripts/src/email_analyzer_5294de70.py
-src/imported_scripts/src/email_checker_df5cf9d9.py
-src/imported_scripts/src/email_prioritization_c7f0346b.py
-src/imported_scripts/src/financial_analysis_0d6c19e2.py
-src/imported_scripts/src/gmail_checker_5d039aa6.py
-src/imported_scripts/src/gmail_priority_flow_81bc021b.py
-src/imported_scripts/src/gmail_sync_ecb5b631.py
-src/imported_scripts/src/index_utils_988d2ad0.py
-src/imported_scripts/src/llm_analysis_37326a1e.py
-src/imported_scripts/src/main_3dd6af1e.py
-src/imported_scripts/src/media_scanner_944ad53a.py
-src/imported_scripts/src/metadata_generator_1a849aa8.py
-src/imported_scripts/src/port_cli_3b1a7a6c.py
-src/imported_scripts/src/prompts_4b33c255.py
-src/imported_scripts/src/schema_discovery_722e97c5.py
-src/imported_scripts/src/schemas_3861e3ca.py
-src/imported_scripts/src/tagging_engine_a7498ac6.py
-src/imported_scripts/src/tick_manager_2eb3b13e.py
-src/imported_scripts/src/version_92643719.py
-src/imported_scripts/src/web_loader_f8d9a7b3.py
-src/imported_scripts/src/agents/base_3c6e1562.py
-src/imported_scripts/src/agents/chat_history_2b875762.py
-src/imported_scripts/src/agents/docstring_agent_e10fb6d8.py
-src/imported_scripts/src/analysis/deep_analysis_engine_42f3d236.py
-src/imported_scripts/src/api/processing_config_590e5717.py
-src/imported_scripts/src/config/celery_config_f2fdd943.py
-src/imported_scripts/src/core/scanner_563b4d24.py
-src/imported_scripts/src/core/services/contact_enrichment_3606926d.py
-src/imported_scripts/src/data_loaders/db_loader_cd6084bb.py
-src/imported_scripts/src/data_processing/email_analysis_2ec98e57.py
-src/imported_scripts/src/database/port_database_0ef98aae.py
-src/imported_scripts/src/database/verification_74daf678.py
-src/imported_scripts/src/db/connection_ea993d9f.py
-src/imported_scripts/src/db/database_6f1bac60.py
-src/imported_scripts/src/db/database_manager_523fd301.py
-src/imported_scripts/src/ecic_terminal/app_eb4ad536.py
-src/imported_scripts/src/email_prioritization/__init___039a1606.py
-src/imported_scripts/src/email_processing/init_6e0026e2.py
-src/imported_scripts/src/email_processing/signals_b7d174af.py
-src/imported_scripts/src/models/investments_95767032.py
-src/imported_scripts/src/models/request_3990700d.py
-src/imported_scripts/src/models/validation_060fd67e.py
-src/imported_scripts/src/pages/index_5e425007.py
-src/imported_scripts/src/syzygy/agents/adversarial_59d755b9.py
-src/imported_scripts/src/syzygy/agents/client_advocate_fa974b31.py
-src/imported_scripts/src/syzygy/agents/developer_agent_9e0f7414.py
-src/imported_scripts/src/syzygy/ai/wellness_agent_bea788e9.py
-src/imported_scripts/src/ui/tools_menu_84307150.py
-src/imported_scripts/src/utils/entity_resolver_761b5e24.py
-src/imported_scripts/src/utils/image_processing_73a2dbe4.py
-src/imported_scripts/src/utils/model_config_08876e6d.py
-src/imported_scripts/src/utils/monotonic_7e303481.py
-src/imported_scripts/src/utils/pdf_to_image_converter_960bb6a3.py
-src/imported_scripts/src/utils/pii_handler_7a9c9a18.py
-src/imported_scripts/src/widgets/base_widget_c2c4f780.py
-src/imported_scripts/src/widgets/lunar_widget_90480725.py
-src/imported_scripts/src/widgets/portfolio_widget_cb0a30d4.py
-src/imported_scripts/src/widgets/server_menu_10938691.py
-src/imported_scripts/src/widgets/status_widget_d121f13f.py
-src/imported_scripts/src/widgets/terminal_e93f4c51.py
-src/imported_scripts/srvo_utils/urls_c4751366.py
-src/imported_scripts/styles/styles_7a13d737.py
-src/imported_scripts/syzygy/admin_fb44d673.py
-src/imported_scripts/syzygy/api_6d5f797c.py
-src/imported_scripts/syzygy/apps_8a77bfcc.py
-src/imported_scripts/syzygy/agents/triage_7cb9d554.py
-src/imported_scripts/syzygy/ai/agents/tests/test_logical_fallacy_8fdc77c1.py
-src/imported_scripts/syzygy/core/contact_merger_1d469828.py
-src/imported_scripts/syzygy/migrations/models_65a2d5a1.py
-src/imported_scripts/syzygy/migrations/xxxx_llm_tool_tracking_d6d7c24a.py
-src/imported_scripts/syzygy/models/__init___7cc2556b.py
-src/imported_scripts/syzygy/views/base_99185bca.py
-src/imported_scripts/syzygy/views/priority_actions_f6bb7f79.py
-src/imported_scripts/templates/analysis_template_56cb23e6.py
-src/imported_scripts/templates/analysis_template_d8bd3935.py
-src/imported_scripts/tests/ai_interaction_d6643019.py
-src/imported_scripts/tests/conftest_74046831.py
-src/imported_scripts/tests/conftest_a5554c0f.py
-src/imported_scripts/tests/conftest_c96cac5d.py
-src/imported_scripts/tests/fixtures_02ee4853.py
-src/imported_scripts/tests/fixtures_574021c2.py
-src/imported_scripts/tests/fixtures_6dd4492b.py
-src/imported_scripts/tests/test_ai_client_48d3e500.py
-src/imported_scripts/tests/test_ai_helper_2b1e52d8.py
-src/imported_scripts/tests/test_api_client_c51a32cf.py
-src/imported_scripts/tests/test_app_e912ee69.py
-src/imported_scripts/tests/test_config_f350a370.py
-src/imported_scripts/tests/test_controversy_analysis_2faf8e72.py
-src/imported_scripts/tests/test_database_612071ae.py
-src/imported_scripts/tests/test_environment_3798e373.py
-src/imported_scripts/tests/test_init_a2675981.py
-src/imported_scripts/tests/test_investment_models_9f77dc1a.py
-src/imported_scripts/tests/test_main_6a246fb7.py
-src/imported_scripts/tests/test_merge_production_dotenvs_in_dotenv_17a86ca3.py
-src/imported_scripts/tests/test_models_f1c70d3c.py
-src/imported_scripts/tests/test_package_58223fd9.py
-src/imported_scripts/tests/test_package_a7588abd.py
-src/imported_scripts/tests/test_price_service_c2008247.py
-src/imported_scripts/tests/test_schema_b515bace.py
-src/imported_scripts/tests/test_tick_manager_03c991c0.py
-src/imported_scripts/tests/test_tick_manager_7953fddb.py
-src/imported_scripts/tests/test_tick_manager_d3f2e95b.py
-src/imported_scripts/tests/test_triage_agent_b8230360.py
-src/imported_scripts/tests/user_tests_a190fa39.py
-src/imported_scripts/tests/accounts/test_accounts_9a05626a.py
-src/imported_scripts/tests/core/test_ssh_service_a36eec3e.py
-src/imported_scripts/tests/core/llm/test_ai_helper_2029dc7e.py
-src/imported_scripts/tests/ec1c/users/test_models_f664d7e9.py
-src/imported_scripts/tests/ecic/services/test_tick_processor_34ed4bb9.py
-src/imported_scripts/tests/email_processing/__init___6b6f8547.py
-src/imported_scripts/tests/integration/docker_setup_53d65d59.py
-src/imported_scripts/tests/integration/test_ai_client_9c8fc5e7.py
-src/imported_scripts/tests/models/test_user_model_43b47582.py
-src/imported_scripts/tests/ui/widget_test_base_3a46db35.py
-src/imported_scripts/threadpoolctl/__init___d52f942e.py
-src/imported_scripts/timeline/models_f05db340.py
-src/imported_scripts/tools/__init___f293c7cb.py
-src/imported_scripts/tools/code_generator_6791ce97.py
-src/imported_scripts/tools/document_generator_552915df.py
-src/imported_scripts/tools/duckduckgo_312bbd16.py
-src/imported_scripts/tools/e2b_code_interpreter_973c76c3.py
-src/imported_scripts/tools/form_filling_ea81ac7d.py
-src/imported_scripts/tools/image_generation_50a9d57d.py
-src/imported_scripts/tools/open_meteo_weather_9ff25335.py
-src/imported_scripts/tools/podcast_downloader_0acaca3d.py
-src/imported_scripts/unmapped_scripts/migrated_049b40e3.py
-src/imported_scripts/unmapped_scripts/migrated_085c8ee6.py
-src/imported_scripts/unmapped_scripts/migrated_0a4709d8.py
-src/imported_scripts/unmapped_scripts/migrated_0ac43133.py
-src/imported_scripts/unmapped_scripts/migrated_0b0ae890.py
-src/imported_scripts/unmapped_scripts/migrated_0f48cc7b.py
-src/imported_scripts/unmapped_scripts/migrated_112cd41b.py
-src/imported_scripts/unmapped_scripts/migrated_13d4a55b.py
-src/imported_scripts/unmapped_scripts/migrated_1544ce2d.py
-src/imported_scripts/unmapped_scripts/migrated_195a2af6.py
-src/imported_scripts/unmapped_scripts/migrated_1b5234e7.py
-src/imported_scripts/unmapped_scripts/migrated_1c4fdb2e.py
-src/imported_scripts/unmapped_scripts/migrated_1c592f6c.py
-src/imported_scripts/unmapped_scripts/migrated_1e1a9785.py
-src/imported_scripts/unmapped_scripts/migrated_1f7b0a1c.py
-src/imported_scripts/unmapped_scripts/migrated_251daf7a.py
-src/imported_scripts/unmapped_scripts/migrated_29edb84c.py
-src/imported_scripts/unmapped_scripts/migrated_2e4e1059.py
-src/imported_scripts/unmapped_scripts/migrated_2e945726.py
-src/imported_scripts/unmapped_scripts/migrated_2edf8664.py
-src/imported_scripts/unmapped_scripts/migrated_2ffda9e2.py
-src/imported_scripts/unmapped_scripts/migrated_35b88de6.py
-src/imported_scripts/unmapped_scripts/migrated_3ad8f6ef.py
-src/imported_scripts/unmapped_scripts/migrated_3bed6c92.py
-src/imported_scripts/unmapped_scripts/migrated_403da552.py
-src/imported_scripts/unmapped_scripts/migrated_416671ef.py
-src/imported_scripts/unmapped_scripts/migrated_4765a129.py
-src/imported_scripts/unmapped_scripts/migrated_495b5efc.py
-src/imported_scripts/unmapped_scripts/migrated_4c9f0a08.py
-src/imported_scripts/unmapped_scripts/migrated_4fa4c311.py
-src/imported_scripts/unmapped_scripts/migrated_506261a8.py
-src/imported_scripts/unmapped_scripts/migrated_56d24df2.py
-src/imported_scripts/unmapped_scripts/migrated_63c038cb.py
-src/imported_scripts/unmapped_scripts/migrated_683649fa.py
-src/imported_scripts/unmapped_scripts/migrated_6836f660.py
-src/imported_scripts/unmapped_scripts/migrated_6e191e75.py
-src/imported_scripts/unmapped_scripts/migrated_6f69f878.py
-src/imported_scripts/unmapped_scripts/migrated_76156029.py
-src/imported_scripts/unmapped_scripts/migrated_7d51b924.py
-src/imported_scripts/unmapped_scripts/migrated_7f3eac08.py
-src/imported_scripts/unmapped_scripts/migrated_7f87d5c9.py
-src/imported_scripts/unmapped_scripts/migrated_801d525e.py
-src/imported_scripts/unmapped_scripts/migrated_80e626e0.py
-src/imported_scripts/unmapped_scripts/migrated_80fb34fa.py
-src/imported_scripts/unmapped_scripts/migrated_82503e39.py
-src/imported_scripts/unmapped_scripts/migrated_86297da3.py
-src/imported_scripts/unmapped_scripts/migrated_8bb9dd71.py
-src/imported_scripts/unmapped_scripts/migrated_8d1632a9.py
-src/imported_scripts/unmapped_scripts/migrated_8ee53d08.py
-src/imported_scripts/unmapped_scripts/migrated_90f39365.py
-src/imported_scripts/unmapped_scripts/migrated_916a2a24.py
-src/imported_scripts/unmapped_scripts/migrated_93e1f86e.py
-src/imported_scripts/unmapped_scripts/migrated_947b036f.py
-src/imported_scripts/unmapped_scripts/migrated_967a3f59.py
-src/imported_scripts/unmapped_scripts/migrated_97742070.py
-src/imported_scripts/unmapped_scripts/migrated_98055cd9.py
-src/imported_scripts/unmapped_scripts/migrated_990ff050.py
-src/imported_scripts/unmapped_scripts/migrated_9c0568d1.py
-src/imported_scripts/unmapped_scripts/migrated_9e6039cc.py
-src/imported_scripts/unmapped_scripts/migrated_9fd1b68d.py
-src/imported_scripts/unmapped_scripts/migrated_a19b767b.py
-src/imported_scripts/unmapped_scripts/migrated_a28646ea.py
-src/imported_scripts/unmapped_scripts/migrated_a41901ac.py
-src/imported_scripts/unmapped_scripts/migrated_a6cf517e.py
-src/imported_scripts/unmapped_scripts/migrated_b3884dad.py
-src/imported_scripts/unmapped_scripts/migrated_b5eb3476.py
-src/imported_scripts/unmapped_scripts/migrated_b63e8d1b.py
-src/imported_scripts/unmapped_scripts/migrated_b6418617.py
-src/imported_scripts/unmapped_scripts/migrated_b6c0697c.py
-src/imported_scripts/unmapped_scripts/migrated_bcabfdd5.py
-src/imported_scripts/unmapped_scripts/migrated_bd88d724.py
-src/imported_scripts/unmapped_scripts/migrated_be8228d6.py
-src/imported_scripts/unmapped_scripts/migrated_c0a5d54d.py
-src/imported_scripts/unmapped_scripts/migrated_c4f6dc2b.py
-src/imported_scripts/unmapped_scripts/migrated_c947879b.py
-src/imported_scripts/unmapped_scripts/migrated_ca5675da.py
-src/imported_scripts/unmapped_scripts/migrated_cbe44986.py
-src/imported_scripts/unmapped_scripts/migrated_cdb18f3e.py
-src/imported_scripts/unmapped_scripts/migrated_ce98cda9.py
-src/imported_scripts/unmapped_scripts/migrated_d1f1a881.py
-src/imported_scripts/unmapped_scripts/migrated_dbd29b13.py
-src/imported_scripts/unmapped_scripts/migrated_dcc37bae.py
-src/imported_scripts/unmapped_scripts/migrated_ddf4dc6b.py
-src/imported_scripts/unmapped_scripts/migrated_e2943a23.py
-src/imported_scripts/unmapped_scripts/migrated_e4307b78.py
-src/imported_scripts/unmapped_scripts/migrated_e472d2ba.py
-src/imported_scripts/unmapped_scripts/migrated_e5ab08f4.py
-src/imported_scripts/unmapped_scripts/migrated_e65f58fc.py
-src/imported_scripts/unmapped_scripts/migrated_e66f5197.py
-src/imported_scripts/unmapped_scripts/migrated_e9a5a008.py
-src/imported_scripts/unmapped_scripts/migrated_e9bee6a1.py
-src/imported_scripts/unmapped_scripts/migrated_eb1cac77.py
-src/imported_scripts/unmapped_scripts/migrated_eb2bb46e.py
-src/imported_scripts/unmapped_scripts/migrated_ec7013bd.py
-src/imported_scripts/unmapped_scripts/migrated_ec7f2fba.py
-src/imported_scripts/unmapped_scripts/migrated_ed430643.py
-src/imported_scripts/unmapped_scripts/migrated_f1e726ac.py
-src/imported_scripts/unmapped_scripts/migrated_f2699304.py
-src/imported_scripts/unmapped_scripts/migrated_f51891ca.py
-src/imported_scripts/unmapped_scripts/migrated_fabc6d2d.py
-src/imported_scripts/unmapped_scripts/migrated_fb83cf32.py
-src/imported_scripts/unmapped_scripts/migrated_fbb7fd02.py
-src/imported_scripts/unmapped_scripts/migrated_fdab47fc.py
-src/imported_scripts/users/admin_a635cfcf.py
-src/imported_scripts/users/forms_6d0a0815.py
-src/imported_scripts/users/models_ed2c2cbe.py
-src/imported_scripts/users/urls_e835a6cb.py
-src/imported_scripts/utils/asyncio_patch_b1c8818a.py
-src/imported_scripts/utils/compat_f8807c26.py
-src/imported_scripts/utils/django_schema_1e8d86d6.py
-src/imported_scripts/utils/event_callback_e7ac8299.py
-src/imported_scripts/utils/filter_generator_1b8c6a3d.py
-src/imported_scripts/utils/llamacloud_34d5fa99.py
-src/imported_scripts/utils/media_scanner_2329085c.py
-src/imported_scripts/utils/pdf_to_image_converter_4ec37224.py
-src/imported_scripts/utils/tool_launcher_9fcdbef5.py
-src/imported_scripts/views/company_views_4677aeed.py
+src/dewey/utils/ingestion/data_import_1a125870_1.py
+src/dewey/utils/parsing/markdown.py
+tests/test_ibis_utils.py
+tests/test_utils.py
