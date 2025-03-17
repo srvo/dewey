@@ -1,0 +1,188 @@
+2025-03-17 10:01:49,643 - __main__ - INFO - Successfully connected to MotherDuck database 'dewey'
+2025-03-17 10:01:50,415 - __main__ - INFO - Dropped company_context table
+2025-03-17 10:01:50,739 - __main__ - INFO - Created company_context table
+2025-03-17 10:01:51,425 - __main__ - INFO - All required tables exist
+2025-03-17 10:01:51,433 - __main__ - INFO - Processing directory: /Users/srvo/input_data/json_files
+2025-03-17 10:01:51,449 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/li_research.json
+2025-03-17 10:01:51,831 - __main__ - INFO - Successfully processed context for research: li_research
+2025-03-17 10:01:52,722 - __main__ - INFO - Successfully processed search queries for research: li_research
+2025-03-17 10:01:52,722 - __main__ - ERROR - Error processing research results for research li_research: 'list' object has no attribute 'get'
+2025-03-17 10:01:52,722 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/li_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:01:52,722 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/li_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:01:52,723 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ttek_research.json
+2025-03-17 10:01:53,093 - __main__ - INFO - Successfully processed context for research: ttek_research
+2025-03-17 10:01:53,996 - __main__ - INFO - Successfully processed search queries for research: ttek_research
+2025-03-17 10:01:53,997 - __main__ - ERROR - Error processing research results for research ttek_research: 'list' object has no attribute 'get'
+2025-03-17 10:01:53,998 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ttek_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:01:53,998 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ttek_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:01:53,998 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/elf_research.json
+2025-03-17 10:01:54,662 - __main__ - INFO - Successfully processed context for research: elf_research
+2025-03-17 10:01:55,527 - __main__ - INFO - Successfully processed search queries for research: elf_research
+2025-03-17 10:01:55,528 - __main__ - ERROR - Error processing research results for research elf_research: 'list' object has no attribute 'get'
+2025-03-17 10:01:55,528 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/elf_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:01:55,528 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/elf_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:01:55,530 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/pbp_research.json
+2025-03-17 10:01:55,890 - __main__ - INFO - Successfully processed context for research: pbp_research
+2025-03-17 10:01:56,725 - __main__ - INFO - Successfully processed search queries for research: pbp_research
+2025-03-17 10:01:56,725 - __main__ - ERROR - Error processing research results for research pbp_research: 'list' object has no attribute 'get'
+2025-03-17 10:01:56,726 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pbp_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:01:56,726 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pbp_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:01:56,726 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/vtr_research.json
+2025-03-17 10:01:57,105 - __main__ - INFO - Successfully processed context for research: vtr_research
+2025-03-17 10:01:57,912 - __main__ - INFO - Successfully processed search queries for research: vtr_research
+2025-03-17 10:01:57,913 - __main__ - ERROR - Error processing research results for research vtr_research: 'list' object has no attribute 'get'
+2025-03-17 10:01:57,913 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/vtr_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:01:57,913 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/vtr_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:01:57,913 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/duol_research.json
+2025-03-17 10:01:58,465 - __main__ - INFO - Successfully processed context for research: duol_research
+2025-03-17 10:01:59,759 - __main__ - INFO - Successfully processed search queries for research: duol_research
+2025-03-17 10:01:59,760 - __main__ - ERROR - Error processing research results for research duol_research: 'list' object has no attribute 'get'
+2025-03-17 10:01:59,760 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/duol_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:01:59,761 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/duol_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:01:59,763 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/kegn_research.json
+2025-03-17 10:02:00,373 - __main__ - INFO - Successfully processed context for research: kegn_research
+2025-03-17 10:02:01,101 - __main__ - INFO - Successfully processed search queries for research: kegn_research
+2025-03-17 10:02:01,101 - __main__ - ERROR - Error processing research results for research kegn_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:01,101 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/kegn_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:01,101 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/kegn_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:01,101 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/qcom_research.json
+2025-03-17 10:02:01,488 - __main__ - INFO - Successfully processed context for research: qcom_research
+2025-03-17 10:02:02,300 - __main__ - INFO - Successfully processed search queries for research: qcom_research
+2025-03-17 10:02:02,300 - __main__ - ERROR - Error processing research results for research qcom_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:02,300 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/qcom_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:02,300 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/qcom_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:02,300 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/trmb_research.json
+2025-03-17 10:02:03,477 - __main__ - INFO - Successfully processed context for research: trmb_research
+2025-03-17 10:02:04,325 - __main__ - INFO - Successfully processed search queries for research: trmb_research
+2025-03-17 10:02:04,325 - __main__ - ERROR - Error processing research results for research trmb_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:04,325 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/trmb_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:04,325 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/trmb_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:04,325 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ddog_research.json
+2025-03-17 10:02:04,771 - __main__ - INFO - Successfully processed context for research: ddog_research
+2025-03-17 10:02:05,566 - __main__ - INFO - Successfully processed search queries for research: ddog_research
+2025-03-17 10:02:05,566 - __main__ - ERROR - Error processing research results for research ddog_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:05,566 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ddog_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:05,566 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ddog_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:05,566 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/htgc_research.json
+2025-03-17 10:02:06,299 - __main__ - INFO - Successfully processed context for research: htgc_research
+2025-03-17 10:02:07,041 - __main__ - INFO - Successfully processed search queries for research: htgc_research
+2025-03-17 10:02:07,041 - __main__ - ERROR - Error processing research results for research htgc_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:07,041 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/htgc_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:07,041 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/htgc_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:07,041 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/pwr_research.json
+2025-03-17 10:02:07,423 - __main__ - INFO - Successfully processed context for research: pwr_research
+2025-03-17 10:02:08,110 - __main__ - INFO - Successfully processed search queries for research: pwr_research
+2025-03-17 10:02:08,110 - __main__ - ERROR - Error processing research results for research pwr_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:08,110 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pwr_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:08,110 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pwr_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:08,110 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/shmcf_research.json
+2025-03-17 10:02:08,979 - __main__ - INFO - Successfully processed context for research: shmcf_research
+2025-03-17 10:02:09,823 - __main__ - INFO - Successfully processed search queries for research: shmcf_research
+2025-03-17 10:02:09,823 - __main__ - ERROR - Error processing research results for research shmcf_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:09,823 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/shmcf_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:09,823 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/shmcf_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:09,824 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/beez_research.json
+2025-03-17 10:02:10,022 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/beez_research.json: Query interrupted
+2025-03-17 10:02:10,022 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/beez_research.json: Query interrupted
+2025-03-17 10:02:10,022 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/isnpy_research.json
+2025-03-17 10:02:10,494 - __main__ - INFO - Successfully processed context for research: isnpy_research
+2025-03-17 10:02:11,240 - __main__ - INFO - Successfully processed search queries for research: isnpy_research
+2025-03-17 10:02:11,240 - __main__ - ERROR - Error processing research results for research isnpy_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:11,241 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/isnpy_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:11,241 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/isnpy_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:11,241 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/akblf_research.json
+2025-03-17 10:02:12,900 - __main__ - INFO - Successfully processed context for research: akblf_research
+2025-03-17 10:02:13,730 - __main__ - INFO - Successfully processed search queries for research: akblf_research
+2025-03-17 10:02:13,730 - __main__ - ERROR - Error processing research results for research akblf_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:13,730 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/akblf_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:13,730 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/akblf_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:13,730 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/are_research.json
+2025-03-17 10:02:14,165 - __main__ - INFO - Successfully processed context for research: are_research
+2025-03-17 10:02:14,929 - __main__ - INFO - Successfully processed search queries for research: are_research
+2025-03-17 10:02:14,929 - __main__ - ERROR - Error processing research results for research are_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:14,929 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/are_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:14,929 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/are_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:14,929 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/skm_research.json
+2025-03-17 10:02:15,602 - __main__ - INFO - Successfully processed context for research: skm_research
+2025-03-17 10:02:16,482 - __main__ - INFO - Successfully processed search queries for research: skm_research
+2025-03-17 10:02:16,483 - __main__ - ERROR - Error processing research results for research skm_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:16,483 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/skm_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:16,483 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/skm_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:16,483 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/amx_research.json
+2025-03-17 10:02:17,050 - __main__ - INFO - Successfully processed context for research: amx_research
+2025-03-17 10:02:17,667 - __main__ - INFO - Successfully processed search queries for research: amx_research
+2025-03-17 10:02:17,667 - __main__ - ERROR - Error processing research results for research amx_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:17,667 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/amx_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:17,667 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/amx_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:17,668 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/hafc_research.json
+2025-03-17 10:02:18,241 - __main__ - INFO - Successfully processed context for research: hafc_research
+2025-03-17 10:02:19,481 - __main__ - INFO - Successfully processed search queries for research: hafc_research
+2025-03-17 10:02:19,481 - __main__ - ERROR - Error processing research results for research hafc_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:19,481 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hafc_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:19,481 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hafc_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:19,481 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/crox_research.json
+2025-03-17 10:02:19,883 - __main__ - INFO - Successfully processed context for research: crox_research
+2025-03-17 10:02:20,060 - __main__ - INFO - Successfully processed search queries for research: crox_research
+2025-03-17 10:02:20,060 - __main__ - WARNING - No research results provided for research: crox_research
+2025-03-17 10:02:20,060 - __main__ - INFO - Successfully processed file: /Users/srvo/input_data/json_files/crox_research.json
+2025-03-17 10:02:20,061 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/qcrh_research.json
+2025-03-17 10:02:20,506 - __main__ - INFO - Successfully processed context for research: qcrh_research
+2025-03-17 10:02:21,393 - __main__ - INFO - Successfully processed search queries for research: qcrh_research
+2025-03-17 10:02:21,394 - __main__ - ERROR - Error processing research results for research qcrh_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:21,395 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/qcrh_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:21,395 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/qcrh_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:21,395 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/brx_research.json
+2025-03-17 10:02:22,076 - __main__ - INFO - Successfully processed context for research: brx_research
+2025-03-17 10:02:23,313 - __main__ - INFO - Successfully processed search queries for research: brx_research
+2025-03-17 10:02:23,313 - __main__ - ERROR - Error processing research results for research brx_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:23,313 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/brx_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:23,313 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/brx_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:23,314 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/cdns_research.json
+2025-03-17 10:02:23,650 - __main__ - INFO - Successfully processed context for research: cdns_research
+2025-03-17 10:02:24,546 - __main__ - INFO - Successfully processed search queries for research: cdns_research
+2025-03-17 10:02:24,548 - __main__ - ERROR - Error processing research results for research cdns_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:24,548 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cdns_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:24,549 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cdns_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:24,550 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/wire_research.json
+2025-03-17 10:02:25,071 - __main__ - INFO - Successfully processed context for research: wire_research
+2025-03-17 10:02:26,445 - __main__ - INFO - Successfully processed search queries for research: wire_research
+2025-03-17 10:02:26,445 - __main__ - ERROR - Error processing research results for research wire_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:26,445 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wire_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:26,445 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wire_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:26,445 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/aweg_research.json
+2025-03-17 10:02:26,835 - __main__ - INFO - Successfully processed context for research: aweg_research
+2025-03-17 10:02:27,689 - __main__ - INFO - Successfully processed search queries for research: aweg_research
+2025-03-17 10:02:27,689 - __main__ - ERROR - Error processing research results for research aweg_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:27,689 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/aweg_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:27,689 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/aweg_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:27,690 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ccb_research.json
+2025-03-17 10:02:28,026 - __main__ - INFO - Successfully processed context for research: ccb_research
+2025-03-17 10:02:29,791 - __main__ - INFO - Successfully processed search queries for research: ccb_research
+2025-03-17 10:02:29,792 - __main__ - ERROR - Error processing research results for research ccb_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:29,792 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ccb_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:29,792 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ccb_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:29,793 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/vcisy_research.json
+2025-03-17 10:02:30,300 - __main__ - INFO - Successfully processed context for research: vcisy_research
+2025-03-17 10:02:30,982 - __main__ - INFO - Successfully processed search queries for research: vcisy_research
+2025-03-17 10:02:30,982 - __main__ - ERROR - Error processing research results for research vcisy_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:30,983 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/vcisy_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:30,983 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/vcisy_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:30,983 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/test1_research.json
+2025-03-17 10:02:31,371 - __main__ - INFO - Successfully processed context for research: test1_research
+2025-03-17 10:02:31,597 - __main__ - INFO - Successfully processed search queries for research: test1_research
+2025-03-17 10:02:31,598 - __main__ - WARNING - No research results provided for research: test1_research
+2025-03-17 10:02:31,598 - __main__ - INFO - Successfully processed file: /Users/srvo/input_data/json_files/test1_research.json
+2025-03-17 10:02:31,599 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/cmco_research.json
+2025-03-17 10:02:32,010 - __main__ - INFO - Successfully processed context for research: cmco_research
+2025-03-17 10:02:33,119 - __main__ - INFO - Successfully processed search queries for research: cmco_research
+2025-03-17 10:02:33,119 - __main__ - ERROR - Error processing research results for research cmco_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:33,119 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cmco_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:33,119 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cmco_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:33,119 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/asml_research.json
+2025-03-17 10:02:33,561 - __main__ - INFO - Successfully processed context for research: asml_research
+2025-03-17 10:02:34,610 - __main__ - INFO - Successfully processed search queries for research: asml_research
+2025-03-17 10:02:34,610 - __main__ - ERROR - Error processing research results for research asml_research: 'list' object has no attribute 'get'
+2025-03-17 10:02:34,610 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/asml_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:34,610 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/asml_research.json: 'list' object has no attribute 'get'
+2025-03-17 10:02:34,610 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/agm_research.json
+2025-03-17 10:02:35,193 - __main__ - INFO - Successfully processed context for research: agm_research

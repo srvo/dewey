@@ -1,0 +1,21 @@
+2025-03-17 04:37:56 - Using deduplication strategy: skip
+2025-03-17 04:37:56 - Starting upload of contacts data from /Users/srvo/input_data/nov_30_crm_data/crm/contacts/contacts.duckdb
+2025-03-17 04:37:57,774 - motherduck_uploader - INFO - Database 'dewey' does not exist, creating it
+2025-03-17 04:37:58,699 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 04:37:58,700 - motherduck_uploader - INFO - Uploading file /Users/srvo/input_data/nov_30_crm_data/crm/contacts/contacts.duckdb
+2025-03-17 04:37:59,466 - motherduck_uploader - INFO - Uploaded table contacts to crm_contacts
+2025-03-17 04:37:59,467 - motherduck_uploader - ERROR - Error handling problematic table domain_stats: Binder Error: Referenced column "email_count" not found in FROM clause!
+Candidate bindings: "email", "domain", "created_at", "name"
+2025-03-17 04:37:59,471 - motherduck_uploader - INFO - Successfully uploaded /Users/srvo/input_data/nov_30_crm_data/crm/contacts/contacts.duckdb
+2025-03-17 04:37:59 - Found contacts copy file at /Users/srvo/input_data/nov_30_crm_data/crm/contacts/contacts copy.duckdb
+2025-03-17 04:37:59 - Starting upload of contacts copy data
+2025-03-17 04:37:59 - Using 'version' strategy for contacts copy to handle schema differences
+2025-03-17 04:38:00,517 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 04:38:00,517 - motherduck_uploader - INFO - Uploading file /Users/srvo/input_data/nov_30_crm_data/crm/contacts/contacts copy.duckdb
+2025-03-17 04:38:00,593 - motherduck_uploader - WARNING - Schema mismatch for table crm_contacts
+2025-03-17 04:38:00,593 - motherduck_uploader - WARNING - Existing columns: {'email': 'VARCHAR', 'name': 'VARCHAR', 'domain': 'VARCHAR', 'created_at': 'TIMESTAMP'}
+2025-03-17 04:38:00,593 - motherduck_uploader - WARNING - New columns: {'email': 'VARCHAR', 'name': 'VARCHAR', 'domain': 'VARCHAR', 'source': 'VARCHAR', 'event_id': 'VARCHAR', 'event_summary': 'VARCHAR', 'event_time': 'TIMESTAMP', 'last_updated': 'TIMESTAMP'}
+2025-03-17 04:38:00,593 - motherduck_uploader - INFO - Creating new table crm_contacts_1742207880 with updated schema
+2025-03-17 04:38:01,069 - motherduck_uploader - INFO - Uploaded table contacts to crm_contacts_1742207880
+2025-03-17 04:38:01,070 - motherduck_uploader - INFO - Successfully uploaded /Users/srvo/input_data/nov_30_crm_data/crm/contacts/contacts copy.duckdb
+2025-03-17 04:38:01 - Contacts data upload completed successfully

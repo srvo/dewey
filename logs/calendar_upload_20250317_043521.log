@@ -1,0 +1,11 @@
+2025-03-17 04:35:21 - Using deduplication strategy: skip
+2025-03-17 04:35:21 - Starting upload of calendar data from /Users/srvo/input_data/nov_30_crm_data/crm/calendar/calendar.duckdb
+2025-03-17 04:35:22,521 - motherduck_uploader - ERROR - Error connecting to MotherDuck: Invalid Input Error: Initialization function "motherduck_init" from file "/Users/srvo/.duckdb/extensions/v1.2.1/osx_arm64/motherduck.duckdb_extension" threw an exception: "Initialization function "motherduck_init" from file "/Users/srvo/.duckdb/extensions/v1.2.1/osx_arm64/motherduck.v1.2.1-2025-03-121.duckdb_extension" threw an exception: "Failed to attach 'dewey': no database/share named 'dewey' found""
+2025-03-17 04:35:22,522 - motherduck_uploader - INFO - Using local DuckDB database instead
+2025-03-17 04:35:22,531 - motherduck_uploader - INFO - Uploading file /Users/srvo/input_data/nov_30_crm_data/crm/calendar/calendar.duckdb
+2025-03-17 04:35:22,555 - motherduck_uploader - INFO - Uploaded table attendees to crm_attendees
+2025-03-17 04:35:22,560 - motherduck_uploader - INFO - Uploaded table events to crm_events
+2025-03-17 04:35:22,561 - motherduck_uploader - INFO - Successfully uploaded /Users/srvo/input_data/nov_30_crm_data/crm/calendar/calendar.duckdb
+2025-03-17 04:35:22 - Found SQLite calendar data at /Users/srvo/input_data/nov_30_crm_data/crm/calendar/calendar_data.db
+2025-03-17 04:35:22 - WARNING: Not a valid SQLite database file, skipping
+2025-03-17 04:35:22 - Calendar data upload completed successfully

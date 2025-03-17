@@ -1,0 +1,16 @@
+2025-03-17 03:06:04,338 - gmail_import - INFO - Starting Gmail import: looking back 1 days, max 10 emails
+2025-03-17 03:06:04,338 - gmail_import - INFO - Using database: /Users/srvo/dewey_emails.duckdb
+2025-03-17 03:06:04,391 - gmail_import - INFO - Using credentials from /Users/srvo/dewey/credentials.json
+2025-03-17 03:06:04,392 - gmail_import - INFO - Credentials file format: ['installed']
+2025-03-17 03:06:04,392 - gmail_import - INFO - Using OAuth client credentials from credentials file
+2025-03-17 03:06:09,384 - google_auth_oauthlib.flow - INFO - "GET /?state=wsNsLA7Us9l6vXoRtHy0PHxHRqI8Bp&code=4/0AQSTgQHMMycNZbvCvqP6JcFp27_D1V1jh0RWaJ2ogNl5SW4XHGwWRb6LBK5Nm8G3Z8otYw&scope=https://www.googleapis.com/auth/gmail.readonly HTTP/1.1" 200 65
+2025-03-17 03:06:09,687 - gmail_import - INFO - Saved token to /Users/srvo/dewey/token.json
+2025-03-17 03:06:09,690 - gmail_import - INFO - Importing emails from 2025/03/16 to 2025/03/17
+2025-03-17 03:06:09,933 - gmail_import - INFO - Found 10 emails, fetching details...
+2025-03-17 03:06:11,591 - gmail_import - INFO - Email 195a2612f74e0f2c already exists in database
+2025-03-17 03:06:11,715 - gmail_import - INFO - Email 195a1d777299e927 already exists in database
+2025-03-17 03:06:11,832 - gmail_import - INFO - Email 195a1c0ae7e73467 already exists in database
+2025-03-17 03:06:11,967 - gmail_import - INFO - Email 195a1bab38c60270 already exists in database
+2025-03-17 03:06:12,086 - gmail_import - INFO - Email 195a1aff2933dc4f already exists in database
+2025-03-17 03:06:12,211 - gmail_import - INFO - Email 195a1959fcd09064 already exists in database
+2025-03-17 03:06:12,211 - gmail_import - INFO - Gmail import completed successfully. Imported 0 emails.

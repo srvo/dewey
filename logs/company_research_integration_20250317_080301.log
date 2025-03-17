@@ -1,0 +1,565 @@
+2025-03-17 08:03:02,451 - __main__ - INFO - Successfully connected to MotherDuck database 'dewey'
+2025-03-17 08:03:03,839 - __main__ - INFO - Successfully ensured all required tables exist
+2025-03-17 08:03:03,839 - __main__ - INFO - Processing directory: /Users/srvo/input_data/json_files
+2025-03-17 08:03:03,922 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/li_research.json
+2025-03-17 08:03:04,453 - __main__ - INFO - Successfully processed context for research: li_research
+2025-03-17 08:03:04,941 - __main__ - ERROR - Error processing search queries for research li_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:04,941 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/li_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:04,941 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/li_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:04,941 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ttek_research.json
+2025-03-17 08:03:05,555 - __main__ - INFO - Successfully processed context for research: ttek_research
+2025-03-17 08:03:06,075 - __main__ - ERROR - Error processing search queries for research ttek_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:06,075 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ttek_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:06,075 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ttek_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:06,075 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/elf_research.json
+2025-03-17 08:03:06,699 - __main__ - INFO - Successfully processed context for research: elf_research
+2025-03-17 08:03:07,251 - __main__ - ERROR - Error processing search queries for research elf_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:07,251 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/elf_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:07,251 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/elf_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:07,251 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/pbp_research.json
+2025-03-17 08:03:07,781 - __main__ - INFO - Successfully processed context for research: pbp_research
+2025-03-17 08:03:08,249 - __main__ - ERROR - Error processing search queries for research pbp_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:08,250 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pbp_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:08,250 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pbp_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:08,251 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/vtr_research.json
+2025-03-17 08:03:08,851 - __main__ - INFO - Successfully processed context for research: vtr_research
+2025-03-17 08:03:09,317 - __main__ - ERROR - Error processing search queries for research vtr_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:09,317 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/vtr_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:09,317 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/vtr_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:09,317 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/duol_research.json
+2025-03-17 08:03:10,354 - __main__ - INFO - Successfully processed context for research: duol_research
+2025-03-17 08:03:10,858 - __main__ - ERROR - Error processing search queries for research duol_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:10,859 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/duol_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:10,859 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/duol_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:10,859 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/kegn_research.json
+2025-03-17 08:03:11,422 - __main__ - INFO - Successfully processed context for research: kegn_research
+2025-03-17 08:03:11,839 - __main__ - ERROR - Error processing search queries for research kegn_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:11,839 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/kegn_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:11,839 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/kegn_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:11,840 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/qcom_research.json
+2025-03-17 08:03:12,377 - __main__ - INFO - Successfully processed context for research: qcom_research
+2025-03-17 08:03:12,847 - __main__ - ERROR - Error processing search queries for research qcom_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:12,848 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/qcom_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:12,848 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/qcom_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:12,848 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/trmb_research.json
+2025-03-17 08:03:13,443 - __main__ - INFO - Successfully processed context for research: trmb_research
+2025-03-17 08:03:14,291 - __main__ - ERROR - Error processing search queries for research trmb_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:14,291 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/trmb_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:14,291 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/trmb_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:14,291 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ddog_research.json
+2025-03-17 08:03:14,855 - __main__ - INFO - Successfully processed context for research: ddog_research
+2025-03-17 08:03:15,358 - __main__ - ERROR - Error processing search queries for research ddog_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:15,359 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ddog_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:15,360 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ddog_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:15,361 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/htgc_research.json
+2025-03-17 08:03:16,227 - __main__ - INFO - Successfully processed context for research: htgc_research
+2025-03-17 08:03:16,750 - __main__ - ERROR - Error processing search queries for research htgc_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:16,751 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/htgc_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:16,751 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/htgc_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:16,752 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/pwr_research.json
+2025-03-17 08:03:17,477 - __main__ - INFO - Successfully processed context for research: pwr_research
+2025-03-17 08:03:17,963 - __main__ - ERROR - Error processing search queries for research pwr_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:17,963 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pwr_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:17,963 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pwr_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:17,963 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/shmcf_research.json
+2025-03-17 08:03:19,488 - __main__ - INFO - Successfully processed context for research: shmcf_research
+2025-03-17 08:03:20,063 - __main__ - ERROR - Error processing search queries for research shmcf_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:20,064 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/shmcf_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:20,064 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/shmcf_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:20,064 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/beez_research.json
+2025-03-17 08:03:20,703 - __main__ - INFO - Successfully processed context for research: beez_research
+2025-03-17 08:03:21,123 - __main__ - ERROR - Error processing search queries for research beez_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:21,123 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/beez_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:21,123 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/beez_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:21,123 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/isnpy_research.json
+2025-03-17 08:03:21,736 - __main__ - INFO - Successfully processed context for research: isnpy_research
+2025-03-17 08:03:22,230 - __main__ - ERROR - Error processing search queries for research isnpy_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:22,230 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/isnpy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:22,230 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/isnpy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:22,230 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/akblf_research.json
+2025-03-17 08:03:24,180 - __main__ - INFO - Successfully processed context for research: akblf_research
+2025-03-17 08:03:24,756 - __main__ - ERROR - Error processing search queries for research akblf_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:24,756 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/akblf_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:24,756 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/akblf_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:24,756 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/are_research.json
+2025-03-17 08:03:25,355 - __main__ - INFO - Successfully processed context for research: are_research
+2025-03-17 08:03:25,848 - __main__ - ERROR - Error processing search queries for research are_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:25,848 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/are_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:25,848 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/are_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:25,848 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/skm_research.json
+2025-03-17 08:03:26,741 - __main__ - INFO - Successfully processed context for research: skm_research
+2025-03-17 08:03:27,236 - __main__ - ERROR - Error processing search queries for research skm_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:27,236 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/skm_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:27,236 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/skm_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:27,236 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/amx_research.json
+2025-03-17 08:03:27,891 - __main__ - INFO - Successfully processed context for research: amx_research
+2025-03-17 08:03:29,310 - __main__ - ERROR - Error processing search queries for research amx_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:29,310 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/amx_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:29,310 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/amx_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:29,310 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/hafc_research.json
+2025-03-17 08:03:29,864 - __main__ - INFO - Successfully processed context for research: hafc_research
+2025-03-17 08:03:30,324 - __main__ - ERROR - Error processing search queries for research hafc_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:30,324 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hafc_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:30,324 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hafc_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:30,324 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/crox_research.json
+2025-03-17 08:03:31,003 - __main__ - INFO - Successfully processed context for research: crox_research
+2025-03-17 08:03:31,196 - __main__ - INFO - Successfully processed search queries for research: crox_research
+2025-03-17 08:03:31,454 - __main__ - INFO - Successfully processed research results for research: crox_research
+2025-03-17 08:03:31,455 - __main__ - INFO - Successfully processed file: /Users/srvo/input_data/json_files/crox_research.json
+2025-03-17 08:03:31,456 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/qcrh_research.json
+2025-03-17 08:03:33,011 - __main__ - INFO - Successfully processed context for research: qcrh_research
+2025-03-17 08:03:33,511 - __main__ - ERROR - Error processing search queries for research qcrh_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:33,511 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/qcrh_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:33,511 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/qcrh_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:33,512 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/brx_research.json
+2025-03-17 08:03:34,056 - __main__ - INFO - Successfully processed context for research: brx_research
+2025-03-17 08:03:34,556 - __main__ - ERROR - Error processing search queries for research brx_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:34,556 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/brx_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:34,556 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/brx_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:34,556 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/cdns_research.json
+2025-03-17 08:03:35,286 - __main__ - INFO - Successfully processed context for research: cdns_research
+2025-03-17 08:03:35,785 - __main__ - ERROR - Error processing search queries for research cdns_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:35,785 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cdns_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:35,785 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cdns_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:35,785 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/wire_research.json
+2025-03-17 08:03:36,412 - __main__ - INFO - Successfully processed context for research: wire_research
+2025-03-17 08:03:37,810 - __main__ - ERROR - Error processing search queries for research wire_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:37,810 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wire_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:37,810 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wire_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:37,810 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/aweg_research.json
+2025-03-17 08:03:38,428 - __main__ - INFO - Successfully processed context for research: aweg_research
+2025-03-17 08:03:38,872 - __main__ - ERROR - Error processing search queries for research aweg_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:38,873 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/aweg_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:38,873 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/aweg_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:38,873 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ccb_research.json
+2025-03-17 08:03:40,373 - __main__ - INFO - Successfully processed context for research: ccb_research
+2025-03-17 08:03:40,815 - __main__ - ERROR - Error processing search queries for research ccb_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:40,815 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ccb_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:40,815 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ccb_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:40,815 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/vcisy_research.json
+2025-03-17 08:03:41,473 - __main__ - INFO - Successfully processed context for research: vcisy_research
+2025-03-17 08:03:41,883 - __main__ - ERROR - Error processing search queries for research vcisy_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:41,883 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/vcisy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:41,883 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/vcisy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:41,883 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/test1_research.json
+2025-03-17 08:03:43,325 - __main__ - INFO - Successfully processed context for research: test1_research
+2025-03-17 08:03:43,518 - __main__ - INFO - Successfully processed search queries for research: test1_research
+2025-03-17 08:03:43,711 - __main__ - INFO - Successfully processed research results for research: test1_research
+2025-03-17 08:03:43,711 - __main__ - INFO - Successfully processed file: /Users/srvo/input_data/json_files/test1_research.json
+2025-03-17 08:03:43,711 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/cmco_research.json
+2025-03-17 08:03:44,323 - __main__ - INFO - Successfully processed context for research: cmco_research
+2025-03-17 08:03:44,835 - __main__ - ERROR - Error processing search queries for research cmco_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:44,835 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cmco_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:44,835 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cmco_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:44,835 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/asml_research.json
+2025-03-17 08:03:45,593 - __main__ - INFO - Successfully processed context for research: asml_research
+2025-03-17 08:03:46,089 - __main__ - ERROR - Error processing search queries for research asml_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:46,089 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/asml_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:46,089 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/asml_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:46,090 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/agm_research.json
+2025-03-17 08:03:47,702 - __main__ - INFO - Successfully processed context for research: agm_research
+2025-03-17 08:03:48,198 - __main__ - ERROR - Error processing search queries for research agm_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:48,199 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/agm_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:48,199 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/agm_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:48,199 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/tclaf_research.json
+2025-03-17 08:03:48,788 - __main__ - INFO - Successfully processed context for research: tclaf_research
+2025-03-17 08:03:49,241 - __main__ - ERROR - Error processing search queries for research tclaf_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:49,241 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/tclaf_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:49,241 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/tclaf_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:49,242 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/agx_research.json
+2025-03-17 08:03:50,129 - __main__ - INFO - Successfully processed context for research: agx_research
+2025-03-17 08:03:50,627 - __main__ - ERROR - Error processing search queries for research agx_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:50,628 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/agx_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:50,629 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/agx_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:50,630 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ingr_research.json
+2025-03-17 08:03:52,655 - __main__ - INFO - Successfully processed context for research: ingr_research
+2025-03-17 08:03:53,094 - __main__ - ERROR - Error processing search queries for research ingr_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:53,094 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ingr_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:53,095 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ingr_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:53,095 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ora_research.json
+2025-03-17 08:03:53,691 - __main__ - INFO - Successfully processed context for research: ora_research
+2025-03-17 08:03:54,137 - __main__ - ERROR - Error processing search queries for research ora_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:54,137 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ora_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:54,137 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ora_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:54,137 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/bdory_research.json
+2025-03-17 08:03:54,693 - __main__ - INFO - Successfully processed context for research: bdory_research
+2025-03-17 08:03:55,192 - __main__ - ERROR - Error processing search queries for research bdory_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:55,192 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/bdory_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:55,192 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/bdory_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:55,192 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/hdsn_research.json
+2025-03-17 08:03:55,708 - __main__ - INFO - Successfully processed context for research: hdsn_research
+2025-03-17 08:03:56,725 - __main__ - ERROR - Error processing search queries for research hdsn_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:56,725 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hdsn_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:56,725 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hdsn_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:56,725 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/bfs_research.json
+2025-03-17 08:03:57,324 - __main__ - INFO - Successfully processed context for research: bfs_research
+2025-03-17 08:03:57,825 - __main__ - ERROR - Error processing search queries for research bfs_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:57,825 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/bfs_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:57,825 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/bfs_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:57,825 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/rng_research.json
+2025-03-17 08:03:58,440 - __main__ - INFO - Successfully processed context for research: rng_research
+2025-03-17 08:03:58,860 - __main__ - ERROR - Error processing search queries for research rng_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:58,860 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/rng_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:58,860 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/rng_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:03:58,860 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/mcy_research.json
+2025-03-17 08:03:59,359 - __main__ - INFO - Successfully processed context for research: mcy_research
+2025-03-17 08:04:00,215 - __main__ - ERROR - Error processing search queries for research mcy_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:00,216 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/mcy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:00,216 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/mcy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:00,217 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/tcehy_research.json
+2025-03-17 08:04:00,818 - __main__ - INFO - Successfully processed context for research: tcehy_research
+2025-03-17 08:04:01,375 - __main__ - ERROR - Error processing search queries for research tcehy_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:01,375 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/tcehy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:01,376 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/tcehy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:01,376 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/fgroy_research.json
+2025-03-17 08:04:01,925 - __main__ - INFO - Successfully processed context for research: fgroy_research
+2025-03-17 08:04:02,514 - __main__ - ERROR - Error processing search queries for research fgroy_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:02,514 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fgroy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:02,514 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fgroy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:02,514 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/lqdt_research.json
+2025-03-17 08:04:03,119 - __main__ - INFO - Successfully processed context for research: lqdt_research
+2025-03-17 08:04:03,587 - __main__ - ERROR - Error processing search queries for research lqdt_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:03,587 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lqdt_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:03,587 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lqdt_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:03,587 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/pllif_research.json
+2025-03-17 08:04:04,403 - __main__ - INFO - Successfully processed context for research: pllif_research
+2025-03-17 08:04:04,902 - __main__ - ERROR - Error processing search queries for research pllif_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:04,902 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pllif_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:04,902 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pllif_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:04,902 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/fbms_research.json
+2025-03-17 08:04:05,588 - __main__ - INFO - Successfully processed context for research: fbms_research
+2025-03-17 08:04:07,002 - __main__ - ERROR - Error processing search queries for research fbms_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:07,003 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fbms_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:07,004 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fbms_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:07,004 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ens_research.json
+2025-03-17 08:04:07,604 - __main__ - INFO - Successfully processed context for research: ens_research
+2025-03-17 08:04:08,111 - __main__ - ERROR - Error processing search queries for research ens_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:08,111 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ens_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:08,111 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ens_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:08,111 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/nx_research.json
+2025-03-17 08:04:08,711 - __main__ - INFO - Successfully processed context for research: nx_research
+2025-03-17 08:04:09,153 - __main__ - ERROR - Error processing search queries for research nx_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:09,153 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nx_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:09,153 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nx_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:09,154 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/fele_research.json
+2025-03-17 08:04:09,753 - __main__ - INFO - Successfully processed context for research: fele_research
+2025-03-17 08:04:10,207 - __main__ - ERROR - Error processing search queries for research fele_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:10,207 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fele_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:10,207 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fele_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:10,207 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/test_research.json
+2025-03-17 08:04:11,210 - __main__ - INFO - Successfully processed context for research: test_research
+2025-03-17 08:04:11,703 - __main__ - ERROR - Error processing search queries for research test_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:11,703 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:11,703 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:11,703 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/test2_research.json
+2025-03-17 08:04:12,305 - __main__ - INFO - Successfully processed context for research: test2_research
+2025-03-17 08:04:12,500 - __main__ - INFO - Successfully processed search queries for research: test2_research
+2025-03-17 08:04:12,693 - __main__ - INFO - Successfully processed research results for research: test2_research
+2025-03-17 08:04:12,693 - __main__ - INFO - Successfully processed file: /Users/srvo/input_data/json_files/test2_research.json
+2025-03-17 08:04:12,693 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/yelp_research.json
+2025-03-17 08:04:13,258 - __main__ - INFO - Successfully processed context for research: yelp_research
+2025-03-17 08:04:13,759 - __main__ - ERROR - Error processing search queries for research yelp_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:13,760 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/yelp_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:13,760 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/yelp_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:13,761 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/lc_research.json
+2025-03-17 08:04:14,877 - __main__ - INFO - Successfully processed context for research: lc_research
+2025-03-17 08:04:15,321 - __main__ - ERROR - Error processing search queries for research lc_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:15,321 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lc_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:15,321 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lc_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:15,321 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/efgsy_research.json
+2025-03-17 08:04:16,202 - __main__ - INFO - Successfully processed context for research: efgsy_research
+2025-03-17 08:04:16,712 - __main__ - ERROR - Error processing search queries for research efgsy_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:16,713 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/efgsy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:16,713 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/efgsy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:16,714 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/wts_research.json
+2025-03-17 08:04:17,427 - __main__ - INFO - Successfully processed context for research: wts_research
+2025-03-17 08:04:17,932 - __main__ - ERROR - Error processing search queries for research wts_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:17,932 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wts_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:17,932 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wts_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:17,932 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/amt_research.json
+2025-03-17 08:04:19,473 - __main__ - INFO - Successfully processed context for research: amt_research
+2025-03-17 08:04:19,967 - __main__ - ERROR - Error processing search queries for research amt_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:19,968 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/amt_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:19,968 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/amt_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:19,968 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/alot_research.json
+2025-03-17 08:04:20,541 - __main__ - INFO - Successfully processed context for research: alot_research
+2025-03-17 08:04:21,035 - __main__ - ERROR - Error processing search queries for research alot_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:21,035 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/alot_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:21,035 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/alot_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:21,035 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/omcl_research.json
+2025-03-17 08:04:21,585 - __main__ - INFO - Successfully processed context for research: omcl_research
+2025-03-17 08:04:22,081 - __main__ - ERROR - Error processing search queries for research omcl_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:22,081 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/omcl_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:22,081 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/omcl_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:22,081 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ftnt_research.json
+2025-03-17 08:04:22,668 - __main__ - INFO - Successfully processed context for research: ftnt_research
+2025-03-17 08:04:23,650 - __main__ - ERROR - Error processing search queries for research ftnt_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:23,650 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ftnt_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:23,650 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ftnt_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:23,650 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/oezvy_research.json
+2025-03-17 08:04:24,254 - __main__ - INFO - Successfully processed context for research: oezvy_research
+2025-03-17 08:04:24,751 - __main__ - ERROR - Error processing search queries for research oezvy_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:24,751 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/oezvy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:24,751 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/oezvy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:24,751 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/coco_research.json
+2025-03-17 08:04:25,306 - __main__ - INFO - Successfully processed context for research: coco_research
+2025-03-17 08:04:25,724 - __main__ - ERROR - Error processing search queries for research coco_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:25,724 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/coco_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:25,724 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/coco_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:25,724 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/peco_research.json
+2025-03-17 08:04:26,308 - __main__ - INFO - Successfully processed context for research: peco_research
+2025-03-17 08:04:26,845 - __main__ - ERROR - Error processing search queries for research peco_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:26,845 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/peco_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:26,845 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/peco_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:26,845 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/zm_research.json
+2025-03-17 08:04:29,109 - __main__ - INFO - Successfully processed context for research: zm_research
+2025-03-17 08:04:29,636 - __main__ - ERROR - Error processing search queries for research zm_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:29,637 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/zm_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:29,637 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/zm_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:29,637 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/cprt_research.json
+2025-03-17 08:04:30,620 - __main__ - INFO - Successfully processed context for research: cprt_research
+2025-03-17 08:04:31,079 - __main__ - ERROR - Error processing search queries for research cprt_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:31,079 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cprt_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:31,079 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cprt_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:31,079 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/gmiix_research.json
+2025-03-17 08:04:31,796 - __main__ - INFO - Successfully processed context for research: gmiix_research
+2025-03-17 08:04:33,141 - __main__ - ERROR - Error processing search queries for research gmiix_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:33,144 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/gmiix_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:33,146 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/gmiix_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:33,146 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/rsg_research.json
+2025-03-17 08:04:33,744 - __main__ - INFO - Successfully processed context for research: rsg_research
+2025-03-17 08:04:34,189 - __main__ - ERROR - Error processing search queries for research rsg_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:34,190 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/rsg_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:34,191 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/rsg_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:34,192 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ame_research.json
+2025-03-17 08:04:34,819 - __main__ - INFO - Successfully processed context for research: ame_research
+2025-03-17 08:04:35,319 - __main__ - ERROR - Error processing search queries for research ame_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:35,320 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ame_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:35,320 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ame_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:35,320 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/enph_research.json
+2025-03-17 08:04:36,010 - __main__ - INFO - Successfully processed context for research: enph_research
+2025-03-17 08:04:36,507 - __main__ - ERROR - Error processing search queries for research enph_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:36,508 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/enph_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:36,508 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/enph_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:36,508 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/lmnd_research.json
+2025-03-17 08:04:38,055 - __main__ - INFO - Successfully processed context for research: lmnd_research
+2025-03-17 08:04:38,561 - __main__ - ERROR - Error processing search queries for research lmnd_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:38,562 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lmnd_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:38,562 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lmnd_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:38,562 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/bmi_research.json
+2025-03-17 08:04:39,137 - __main__ - INFO - Successfully processed context for research: bmi_research
+2025-03-17 08:04:39,634 - __main__ - ERROR - Error processing search queries for research bmi_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:39,634 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/bmi_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:39,634 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/bmi_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:39,634 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/test3_research.json
+2025-03-17 08:04:41,003 - __main__ - INFO - Successfully processed context for research: test3_research
+2025-03-17 08:04:41,195 - __main__ - INFO - Successfully processed search queries for research: test3_research
+2025-03-17 08:04:41,333 - __main__ - INFO - Successfully processed research results for research: test3_research
+2025-03-17 08:04:41,333 - __main__ - INFO - Successfully processed file: /Users/srvo/input_data/json_files/test3_research.json
+2025-03-17 08:04:41,333 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/lkq_research.json
+2025-03-17 08:04:42,357 - __main__ - INFO - Successfully processed context for research: lkq_research
+2025-03-17 08:04:42,800 - __main__ - ERROR - Error processing search queries for research lkq_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:42,800 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lkq_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:42,800 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lkq_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:42,800 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/cttof_research.json
+2025-03-17 08:04:43,341 - __main__ - INFO - Successfully processed context for research: cttof_research
+2025-03-17 08:04:43,848 - __main__ - ERROR - Error processing search queries for research cttof_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:43,849 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cttof_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:43,849 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cttof_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:43,849 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/amal_research.json
+2025-03-17 08:04:44,411 - __main__ - INFO - Successfully processed context for research: amal_research
+2025-03-17 08:04:44,828 - __main__ - ERROR - Error processing search queries for research amal_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:44,828 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/amal_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:44,829 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/amal_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:44,830 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/test4_research.json
+2025-03-17 08:04:45,629 - __main__ - INFO - Successfully processed context for research: test4_research
+2025-03-17 08:04:45,839 - __main__ - INFO - Successfully processed search queries for research: test4_research
+2025-03-17 08:04:46,043 - __main__ - INFO - Successfully processed research results for research: test4_research
+2025-03-17 08:04:46,043 - __main__ - INFO - Successfully processed file: /Users/srvo/input_data/json_files/test4_research.json
+2025-03-17 08:04:46,044 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/hy_research.json
+2025-03-17 08:04:46,636 - __main__ - INFO - Successfully processed context for research: hy_research
+2025-03-17 08:04:47,100 - __main__ - ERROR - Error processing search queries for research hy_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:47,102 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:47,103 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:47,104 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/kncay_research.json
+2025-03-17 08:04:47,636 - __main__ - INFO - Successfully processed context for research: kncay_research
+2025-03-17 08:04:48,070 - __main__ - ERROR - Error processing search queries for research kncay_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:48,070 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/kncay_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:48,070 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/kncay_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:48,071 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/test0_research.json
+2025-03-17 08:04:48,668 - __main__ - INFO - Successfully processed context for research: test0_research
+2025-03-17 08:04:49,051 - __main__ - INFO - Successfully processed search queries for research: test0_research
+2025-03-17 08:04:49,244 - __main__ - INFO - Successfully processed research results for research: test0_research
+2025-03-17 08:04:49,244 - __main__ - INFO - Successfully processed file: /Users/srvo/input_data/json_files/test0_research.json
+2025-03-17 08:04:49,244 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ahh_research.json
+2025-03-17 08:04:49,833 - __main__ - INFO - Successfully processed context for research: ahh_research
+2025-03-17 08:04:50,329 - __main__ - ERROR - Error processing search queries for research ahh_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:50,330 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ahh_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:50,330 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ahh_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:50,330 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/phg_research.json
+2025-03-17 08:04:51,186 - __main__ - INFO - Successfully processed context for research: phg_research
+2025-03-17 08:04:51,713 - __main__ - ERROR - Error processing search queries for research phg_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:51,713 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/phg_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:51,714 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/phg_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:51,714 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/uhs_research.json
+2025-03-17 08:04:52,464 - __main__ - INFO - Successfully processed context for research: uhs_research
+2025-03-17 08:04:53,901 - __main__ - ERROR - Error processing search queries for research uhs_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:53,902 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/uhs_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:53,902 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/uhs_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:53,902 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/byddf_research.json
+2025-03-17 08:04:54,554 - __main__ - INFO - Successfully processed context for research: byddf_research
+2025-03-17 08:04:55,060 - __main__ - ERROR - Error processing search queries for research byddf_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:55,060 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/byddf_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:55,061 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/byddf_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:55,061 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/cnm_research.json
+2025-03-17 08:04:55,600 - __main__ - INFO - Successfully processed context for research: cnm_research
+2025-03-17 08:04:56,146 - __main__ - ERROR - Error processing search queries for research cnm_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:56,146 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cnm_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:56,146 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cnm_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:56,146 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/lii_research.json
+2025-03-17 08:04:56,682 - __main__ - INFO - Successfully processed context for research: lii_research
+2025-03-17 08:04:57,295 - __main__ - ERROR - Error processing search queries for research lii_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:57,295 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lii_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:57,295 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lii_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:57,295 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/mli_research.json
+2025-03-17 08:04:58,353 - __main__ - INFO - Successfully processed context for research: mli_research
+2025-03-17 08:04:58,861 - __main__ - ERROR - Error processing search queries for research mli_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:58,861 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/mli_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:58,862 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/mli_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:58,862 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/sbac_research.json
+2025-03-17 08:04:59,398 - __main__ - INFO - Successfully processed context for research: sbac_research
+2025-03-17 08:04:59,931 - __main__ - ERROR - Error processing search queries for research sbac_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:59,931 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/sbac_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:59,931 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/sbac_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:04:59,931 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/tv_research.json
+2025-03-17 08:05:00,771 - __main__ - INFO - Successfully processed context for research: tv_research
+2025-03-17 08:05:01,219 - __main__ - ERROR - Error processing search queries for research tv_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:01,219 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/tv_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:01,219 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/tv_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:01,219 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/yahoy_research.json
+2025-03-17 08:05:02,819 - __main__ - INFO - Successfully processed context for research: yahoy_research
+2025-03-17 08:05:03,317 - __main__ - ERROR - Error processing search queries for research yahoy_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:03,317 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/yahoy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:03,317 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/yahoy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:03,317 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/shls_research.json
+2025-03-17 08:05:03,875 - __main__ - INFO - Successfully processed context for research: shls_research
+2025-03-17 08:05:04,422 - __main__ - ERROR - Error processing search queries for research shls_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:04,422 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/shls_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:04,422 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/shls_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:04,422 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/phprf_research.json
+2025-03-17 08:05:05,092 - __main__ - INFO - Successfully processed context for research: phprf_research
+2025-03-17 08:05:05,659 - __main__ - ERROR - Error processing search queries for research phprf_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:05,660 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/phprf_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:05,660 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/phprf_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:05,660 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/wbd_research.json
+2025-03-17 08:05:06,282 - __main__ - INFO - Successfully processed context for research: wbd_research
+2025-03-17 08:05:07,531 - __main__ - ERROR - Error processing search queries for research wbd_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:07,531 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wbd_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:07,531 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wbd_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:07,531 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/nvri_research.json
+2025-03-17 08:05:08,194 - __main__ - INFO - Successfully processed context for research: nvri_research
+2025-03-17 08:05:08,735 - __main__ - ERROR - Error processing search queries for research nvri_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:08,735 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nvri_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:08,735 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nvri_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:08,735 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/root_research.json
+2025-03-17 08:05:09,286 - __main__ - INFO - Successfully processed context for research: root_research
+2025-03-17 08:05:09,834 - __main__ - ERROR - Error processing search queries for research root_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:09,834 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/root_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:09,834 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/root_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:09,834 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ntdoy_research.json
+2025-03-17 08:05:10,434 - __main__ - INFO - Successfully processed context for research: ntdoy_research
+2025-03-17 08:05:10,626 - __main__ - INFO - Successfully processed search queries for research: ntdoy_research
+2025-03-17 08:05:11,352 - __main__ - INFO - Successfully processed research results for research: ntdoy_research
+2025-03-17 08:05:11,352 - __main__ - INFO - Successfully processed file: /Users/srvo/input_data/json_files/ntdoy_research.json
+2025-03-17 08:05:11,353 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/acgl_research.json
+2025-03-17 08:05:11,950 - __main__ - INFO - Successfully processed context for research: acgl_research
+2025-03-17 08:05:12,449 - __main__ - ERROR - Error processing search queries for research acgl_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:12,450 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/acgl_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:12,450 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/acgl_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:12,451 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/meli_research.json
+2025-03-17 08:05:13,070 - __main__ - INFO - Successfully processed context for research: meli_research
+2025-03-17 08:05:13,263 - __main__ - INFO - Successfully processed search queries for research: meli_research
+2025-03-17 08:05:13,455 - __main__ - INFO - Successfully processed research results for research: meli_research
+2025-03-17 08:05:13,456 - __main__ - INFO - Successfully processed file: /Users/srvo/input_data/json_files/meli_research.json
+2025-03-17 08:05:13,456 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/pastf_research.json
+2025-03-17 08:05:14,008 - __main__ - INFO - Successfully processed context for research: pastf_research
+2025-03-17 08:05:14,726 - __main__ - ERROR - Error processing search queries for research pastf_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:14,726 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pastf_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:14,726 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pastf_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:14,726 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/wina_research.json
+2025-03-17 08:05:15,273 - __main__ - INFO - Successfully processed context for research: wina_research
+2025-03-17 08:05:15,768 - __main__ - ERROR - Error processing search queries for research wina_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:15,768 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wina_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:15,768 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wina_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:15,769 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/hum_research.json
+2025-03-17 08:05:16,313 - __main__ - INFO - Successfully processed context for research: hum_research
+2025-03-17 08:05:16,811 - __main__ - ERROR - Error processing search queries for research hum_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:16,812 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hum_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:16,812 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hum_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:16,812 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/dnzof_research.json
+2025-03-17 08:05:17,462 - __main__ - INFO - Successfully processed context for research: dnzof_research
+2025-03-17 08:05:17,955 - __main__ - ERROR - Error processing search queries for research dnzof_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:17,955 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/dnzof_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:17,955 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/dnzof_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:17,955 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/iipr_research.json
+2025-03-17 08:05:18,837 - __main__ - INFO - Successfully processed context for research: iipr_research
+2025-03-17 08:05:19,260 - __main__ - ERROR - Error processing search queries for research iipr_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:19,260 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/iipr_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:19,260 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/iipr_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:19,260 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/esyjy_research.json
+2025-03-17 08:05:19,802 - __main__ - INFO - Successfully processed context for research: esyjy_research
+2025-03-17 08:05:20,305 - __main__ - ERROR - Error processing search queries for research esyjy_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:20,305 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/esyjy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:20,305 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/esyjy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:20,306 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/dnngy_research.json
+2025-03-17 08:05:20,855 - __main__ - INFO - Successfully processed context for research: dnngy_research
+2025-03-17 08:05:21,352 - __main__ - ERROR - Error processing search queries for research dnngy_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:21,353 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/dnngy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:21,353 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/dnngy_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:21,353 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ait_research.json
+2025-03-17 08:05:22,766 - __main__ - INFO - Successfully processed context for research: ait_research
+2025-03-17 08:05:23,181 - __main__ - ERROR - Error processing search queries for research ait_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:23,181 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ait_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:23,181 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ait_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:23,181 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/iif_research.json
+2025-03-17 08:05:23,794 - __main__ - INFO - Successfully processed context for research: iif_research
+2025-03-17 08:05:24,287 - __main__ - ERROR - Error processing search queries for research iif_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:24,288 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/iif_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:24,288 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/iif_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:24,288 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/thqqf_research.json
+2025-03-17 08:05:24,885 - __main__ - INFO - Successfully processed context for research: thqqf_research
+2025-03-17 08:05:25,349 - __main__ - ERROR - Error processing search queries for research thqqf_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:25,349 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/thqqf_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:25,349 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/thqqf_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:25,349 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/fbasf_research.json
+2025-03-17 08:05:25,906 - __main__ - INFO - Successfully processed context for research: fbasf_research
+2025-03-17 08:05:26,961 - __main__ - ERROR - Error processing search queries for research fbasf_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:26,961 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fbasf_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:26,961 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fbasf_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:26,961 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/caap_research.json
+2025-03-17 08:05:27,471 - __main__ - INFO - Successfully processed context for research: caap_research
+2025-03-17 08:05:28,005 - __main__ - ERROR - Error processing search queries for research caap_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:28,006 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/caap_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:28,006 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/caap_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:28,006 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/nly_research.json
+2025-03-17 08:05:28,608 - __main__ - INFO - Successfully processed context for research: nly_research
+2025-03-17 08:05:29,051 - __main__ - ERROR - Error processing search queries for research nly_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:29,052 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nly_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:29,052 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nly_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:29,053 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/itri_research.json
+2025-03-17 08:05:29,654 - __main__ - INFO - Successfully processed context for research: itri_research
+2025-03-17 08:05:30,531 - __main__ - ERROR - Error processing search queries for research itri_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:30,531 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/itri_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:30,531 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/itri_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:30,531 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/dskif_research.json
+2025-03-17 08:05:31,141 - __main__ - INFO - Successfully processed context for research: dskif_research
+2025-03-17 08:05:31,603 - __main__ - ERROR - Error processing search queries for research dskif_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:31,603 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/dskif_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:31,603 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/dskif_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:31,603 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/nlcp_research.json
+2025-03-17 08:05:32,202 - __main__ - INFO - Successfully processed context for research: nlcp_research
+2025-03-17 08:05:32,694 - __main__ - ERROR - Error processing search queries for research nlcp_research: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:32,694 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nlcp_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:32,694 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nlcp_research.json: Binder Error: Table "company_search_queries" does not have a column with name "rationale"
+2025-03-17 08:05:32,695 - __main__ - INFO - Successfully processed 8 files in directory: /Users/srvo/input_data/json_files
+2025-03-17 08:05:32,695 - __main__ - INFO - Script completed successfully

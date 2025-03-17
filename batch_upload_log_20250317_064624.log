@@ -1,0 +1,148 @@
+2025-03-17 06:46:24,120 - __main__ - DEBUG - Verbose logging enabled
+2025-03-17 06:46:24,120 - __main__ - INFO - Processing csv files
+2025-03-17 06:46:24,750 - __main__ - INFO - Limiting to 10 csv files
+2025-03-17 06:46:24,750 - __main__ - INFO - Found 10 csv files to process
+2025-03-17 06:46:24,750 - __main__ - INFO - Processing batch 1/2 (5 files)
+2025-03-17 06:46:24,750 - __main__ - INFO - Uploading file: /Users/srvo/input_data/market_data_price_history_coverage.csv
+2025-03-17 06:46:27,057 - __main__ - INFO - Successfully uploaded /Users/srvo/input_data/market_data_price_history_coverage.csv
+2025-03-17 06:46:27,057 - __main__ - DEBUG - 
+2025-03-17 06:46:27,057 - __main__ - INFO - Uploading file: /Users/srvo/input_data/blog_signup_form_responses.csv
+2025-03-17 06:46:29,091 - __main__ - INFO - Successfully uploaded /Users/srvo/input_data/blog_signup_form_responses.csv
+2025-03-17 06:46:29,091 - __main__ - DEBUG - 
+2025-03-17 06:46:29,091 - __main__ - INFO - Uploading file: /Users/srvo/input_data/EIvirgin_csvSubscribers.xlsxvirgin_csv-virgin_csvsheet.csv
+2025-03-17 06:46:31,401 - __main__ - INFO - Successfully uploaded /Users/srvo/input_data/EIvirgin_csvSubscribers.xlsxvirgin_csv-virgin_csvsheet.csv
+2025-03-17 06:46:31,402 - __main__ - DEBUG - 
+2025-03-17 06:46:31,402 - __main__ - INFO - Uploading file: /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv
+2025-03-17 06:46:47,955 - __main__ - ERROR - Failed to upload /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv
+2025-03-17 06:46:47,957 - __main__ - ERROR - Error: 2025-03-17 06:46:31,452 - __main__ - DEBUG - Verbose logging enabled
+2025-03-17 06:46:32,711 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 06:46:32,711 - __main__ - INFO - Successfully connected to MotherDuck database dewey
+2025-03-17 06:46:32,713 - __main__ - INFO - Found 1 files to process
+2025-03-17 06:46:32,713 - __main__ - DEBUG - Found file: /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv
+2025-03-17 06:46:32,713 - __main__ - INFO - Processing file: /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv
+2025-03-17 06:46:32,713 - __main__ - DEBUG - Uploading CSV file: /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv
+2025-03-17 06:46:32,713 - motherduck_uploader - INFO - Uploading CSV file /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv
+2025-03-17 06:46:32,714 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 06:46:32,896 - motherduck_uploader - ERROR - Failed to upload /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv: Parser Error: syntax error at or near "-"
+2025-03-17 06:46:32,896 - __main__ - WARNING - Upload failed for /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv
+2025-03-17 06:46:32,896 - __main__ - INFO - Retry attempt 1 for /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv
+2025-03-17 06:46:37,898 - __main__ - DEBUG - Uploading CSV file: /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv
+2025-03-17 06:46:37,898 - motherduck_uploader - INFO - Uploading CSV file /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv
+2025-03-17 06:46:37,900 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 06:46:37,905 - motherduck_uploader - ERROR - Failed to upload /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv: Parser Error: syntax error at or near "-"
+2025-03-17 06:46:37,905 - __main__ - WARNING - Upload failed for /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv
+2025-03-17 06:46:37,905 - __main__ - INFO - Retry attempt 2 for /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv
+2025-03-17 06:46:42,910 - __main__ - DEBUG - Uploading CSV file: /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv
+2025-03-17 06:46:42,911 - motherduck_uploader - INFO - Uploading CSV file /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv
+2025-03-17 06:46:42,912 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 06:46:42,917 - motherduck_uploader - ERROR - Failed to upload /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv: Parser Error: syntax error at or near "-"
+2025-03-17 06:46:42,917 - __main__ - WARNING - Upload failed for /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv
+2025-03-17 06:46:42,917 - __main__ - INFO - Retry attempt 3 for /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv
+2025-03-17 06:46:47,922 - __main__ - DEBUG - Uploading CSV file: /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv
+2025-03-17 06:46:47,923 - motherduck_uploader - INFO - Uploading CSV file /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv
+2025-03-17 06:46:47,927 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 06:46:47,939 - motherduck_uploader - ERROR - Failed to upload /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv: Parser Error: syntax error at or near "-"
+2025-03-17 06:46:47,939 - __main__ - WARNING - Upload failed for /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv
+2025-03-17 06:46:47,940 - __main__ - ERROR - Failed to upload /Users/srvo/input_data/☎️virgin_csvvirgin_csvRadicalvirgin_csvPlannersvirgin_csvDatabasevirgin_csv☎️virgin_csv-virgin_csvRadvirgin_csvPlannersvirgin_csvCommunityvirgin_csvList.csv after 3 retries
+2025-03-17 06:46:47,940 - __main__ - INFO - Upload process completed
+2025-03-17 06:46:47,940 - __main__ - INFO - Total files: 1
+2025-03-17 06:46:47,940 - __main__ - INFO - Successfully uploaded: 0
+2025-03-17 06:46:47,940 - __main__ - INFO - Failed: 1
+2025-03-17 06:46:47,940 - __main__ - INFO - Skipped: 0
+
+2025-03-17 06:46:47,957 - __main__ - INFO - Uploading file: /Users/srvo/input_data/port_file_schemas.csv
+2025-03-17 06:46:50,226 - __main__ - INFO - Successfully uploaded /Users/srvo/input_data/port_file_schemas.csv
+2025-03-17 06:46:50,227 - __main__ - DEBUG - 
+2025-03-17 06:46:50,227 - __main__ - INFO - Processing batch 2/2 (5 files)
+2025-03-17 06:46:50,227 - __main__ - INFO - Uploading file: /Users/srvo/input_data/subscribers.csv
+2025-03-17 06:46:52,384 - __main__ - INFO - Successfully uploaded /Users/srvo/input_data/subscribers.csv
+2025-03-17 06:46:52,384 - __main__ - DEBUG - 
+2025-03-17 06:46:52,384 - __main__ - INFO - Uploading file: /Users/srvo/input_data/Data Master - Contact (1).csv
+2025-03-17 06:47:09,107 - __main__ - ERROR - Failed to upload /Users/srvo/input_data/Data Master - Contact (1).csv
+2025-03-17 06:47:09,107 - __main__ - ERROR - Error: 2025-03-17 06:46:52,441 - __main__ - DEBUG - Verbose logging enabled
+2025-03-17 06:46:53,851 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 06:46:53,851 - __main__ - INFO - Successfully connected to MotherDuck database dewey
+2025-03-17 06:46:53,853 - __main__ - INFO - Found 1 files to process
+2025-03-17 06:46:53,853 - __main__ - DEBUG - Found file: /Users/srvo/input_data/Data Master - Contact (1).csv
+2025-03-17 06:46:53,853 - __main__ - INFO - Processing file: /Users/srvo/input_data/Data Master - Contact (1).csv
+2025-03-17 06:46:53,853 - __main__ - DEBUG - Uploading CSV file: /Users/srvo/input_data/Data Master - Contact (1).csv
+2025-03-17 06:46:53,853 - motherduck_uploader - INFO - Uploading CSV file /Users/srvo/input_data/Data Master - Contact (1).csv
+2025-03-17 06:46:53,854 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 06:46:54,044 - motherduck_uploader - ERROR - Failed to upload /Users/srvo/input_data/Data Master - Contact (1).csv: Parser Error: syntax error at or near "Master"
+2025-03-17 06:46:54,045 - __main__ - WARNING - Upload failed for /Users/srvo/input_data/Data Master - Contact (1).csv
+2025-03-17 06:46:54,045 - __main__ - INFO - Retry attempt 1 for /Users/srvo/input_data/Data Master - Contact (1).csv
+2025-03-17 06:46:59,050 - __main__ - DEBUG - Uploading CSV file: /Users/srvo/input_data/Data Master - Contact (1).csv
+2025-03-17 06:46:59,050 - motherduck_uploader - INFO - Uploading CSV file /Users/srvo/input_data/Data Master - Contact (1).csv
+2025-03-17 06:46:59,053 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 06:46:59,064 - motherduck_uploader - ERROR - Failed to upload /Users/srvo/input_data/Data Master - Contact (1).csv: Parser Error: syntax error at or near "Master"
+2025-03-17 06:46:59,064 - __main__ - WARNING - Upload failed for /Users/srvo/input_data/Data Master - Contact (1).csv
+2025-03-17 06:46:59,064 - __main__ - INFO - Retry attempt 2 for /Users/srvo/input_data/Data Master - Contact (1).csv
+2025-03-17 06:47:04,067 - __main__ - DEBUG - Uploading CSV file: /Users/srvo/input_data/Data Master - Contact (1).csv
+2025-03-17 06:47:04,068 - motherduck_uploader - INFO - Uploading CSV file /Users/srvo/input_data/Data Master - Contact (1).csv
+2025-03-17 06:47:04,071 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 06:47:04,083 - motherduck_uploader - ERROR - Failed to upload /Users/srvo/input_data/Data Master - Contact (1).csv: Parser Error: syntax error at or near "Master"
+2025-03-17 06:47:04,083 - __main__ - WARNING - Upload failed for /Users/srvo/input_data/Data Master - Contact (1).csv
+2025-03-17 06:47:04,083 - __main__ - INFO - Retry attempt 3 for /Users/srvo/input_data/Data Master - Contact (1).csv
+2025-03-17 06:47:09,085 - __main__ - DEBUG - Uploading CSV file: /Users/srvo/input_data/Data Master - Contact (1).csv
+2025-03-17 06:47:09,086 - motherduck_uploader - INFO - Uploading CSV file /Users/srvo/input_data/Data Master - Contact (1).csv
+2025-03-17 06:47:09,087 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 06:47:09,096 - motherduck_uploader - ERROR - Failed to upload /Users/srvo/input_data/Data Master - Contact (1).csv: Parser Error: syntax error at or near "Master"
+2025-03-17 06:47:09,096 - __main__ - WARNING - Upload failed for /Users/srvo/input_data/Data Master - Contact (1).csv
+2025-03-17 06:47:09,096 - __main__ - ERROR - Failed to upload /Users/srvo/input_data/Data Master - Contact (1).csv after 3 retries
+2025-03-17 06:47:09,096 - __main__ - INFO - Upload process completed
+2025-03-17 06:47:09,096 - __main__ - INFO - Total files: 1
+2025-03-17 06:47:09,096 - __main__ - INFO - Successfully uploaded: 0
+2025-03-17 06:47:09,096 - __main__ - INFO - Failed: 1
+2025-03-17 06:47:09,096 - __main__ - INFO - Skipped: 0
+
+2025-03-17 06:47:09,108 - __main__ - INFO - Uploading file: /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv
+2025-03-17 06:47:25,820 - __main__ - ERROR - Failed to upload /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv
+2025-03-17 06:47:25,821 - __main__ - ERROR - Error: 2025-03-17 06:47:09,179 - __main__ - DEBUG - Verbose logging enabled
+2025-03-17 06:47:10,600 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 06:47:10,600 - __main__ - INFO - Successfully connected to MotherDuck database dewey
+2025-03-17 06:47:10,602 - __main__ - INFO - Found 1 files to process
+2025-03-17 06:47:10,602 - __main__ - DEBUG - Found file: /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv
+2025-03-17 06:47:10,602 - __main__ - INFO - Processing file: /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv
+2025-03-17 06:47:10,602 - __main__ - DEBUG - Uploading CSV file: /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv
+2025-03-17 06:47:10,602 - motherduck_uploader - INFO - Uploading CSV file /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv
+2025-03-17 06:47:10,603 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 06:47:10,769 - motherduck_uploader - ERROR - Failed to upload /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv: Parser Error: syntax error at or near "Master"
+2025-03-17 06:47:10,769 - __main__ - WARNING - Upload failed for /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv
+2025-03-17 06:47:10,769 - __main__ - INFO - Retry attempt 1 for /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv
+2025-03-17 06:47:15,770 - __main__ - DEBUG - Uploading CSV file: /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv
+2025-03-17 06:47:15,770 - motherduck_uploader - INFO - Uploading CSV file /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv
+2025-03-17 06:47:15,772 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 06:47:15,779 - motherduck_uploader - ERROR - Failed to upload /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv: Parser Error: syntax error at or near "Master"
+2025-03-17 06:47:15,779 - __main__ - WARNING - Upload failed for /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv
+2025-03-17 06:47:15,779 - __main__ - INFO - Retry attempt 2 for /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv
+2025-03-17 06:47:20,785 - __main__ - DEBUG - Uploading CSV file: /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv
+2025-03-17 06:47:20,785 - motherduck_uploader - INFO - Uploading CSV file /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv
+2025-03-17 06:47:20,786 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 06:47:20,792 - motherduck_uploader - ERROR - Failed to upload /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv: Parser Error: syntax error at or near "Master"
+2025-03-17 06:47:20,793 - __main__ - WARNING - Upload failed for /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv
+2025-03-17 06:47:20,793 - __main__ - INFO - Retry attempt 3 for /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv
+2025-03-17 06:47:25,798 - __main__ - DEBUG - Uploading CSV file: /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv
+2025-03-17 06:47:25,798 - motherduck_uploader - INFO - Uploading CSV file /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv
+2025-03-17 06:47:25,800 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 06:47:25,806 - motherduck_uploader - ERROR - Failed to upload /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv: Parser Error: syntax error at or near "Master"
+2025-03-17 06:47:25,807 - __main__ - WARNING - Upload failed for /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv
+2025-03-17 06:47:25,807 - __main__ - ERROR - Failed to upload /Users/srvo/input_data/Client_Contact Master - 12_6 subscribers.csv after 3 retries
+2025-03-17 06:47:25,807 - __main__ - INFO - Upload process completed
+2025-03-17 06:47:25,807 - __main__ - INFO - Total files: 1
+2025-03-17 06:47:25,807 - __main__ - INFO - Successfully uploaded: 0
+2025-03-17 06:47:25,807 - __main__ - INFO - Failed: 1
+2025-03-17 06:47:25,807 - __main__ - INFO - Skipped: 0
+
+2025-03-17 06:47:25,822 - __main__ - INFO - Uploading file: /Users/srvo/input_data/general_form_responses.csv
+2025-03-17 06:47:27,851 - __main__ - INFO - Successfully uploaded /Users/srvo/input_data/general_form_responses.csv
+2025-03-17 06:47:27,851 - __main__ - DEBUG - 
+2025-03-17 06:47:27,851 - __main__ - INFO - Uploading file: /Users/srvo/input_data/ask_a_question_responses.csv
+2025-03-17 06:47:29,962 - __main__ - INFO - Successfully uploaded /Users/srvo/input_data/ask_a_question_responses.csv
+2025-03-17 06:47:29,962 - __main__ - DEBUG - 
+2025-03-17 06:47:29,963 - __main__ - INFO - Batch upload completed for csv files
+2025-03-17 06:47:29,963 - __main__ - INFO - Total files: 10
+2025-03-17 06:47:29,963 - __main__ - INFO - Successfully uploaded: 7
+2025-03-17 06:47:29,963 - __main__ - INFO - Failed: 3
+2025-03-17 06:47:29,963 - __main__ - INFO - All file types processed
+2025-03-17 06:47:29,964 - __main__ - INFO - Total successfully uploaded: 7
+2025-03-17 06:47:29,964 - __main__ - INFO - Total failed: 3

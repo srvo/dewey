@@ -1,0 +1,11 @@
+2025-03-17 08:59:19,490 - __main__ - INFO - Successfully connected to MotherDuck database 'dewey'
+2025-03-17 08:59:20,989 - __main__ - ERROR - Error ensuring tables exist: Binder Error: Referenced column "context_text" not found in FROM clause!
+Candidate bindings: "context_type", "content", "company_research_id"
+
+LINE 1: SELECT context_text FROM company_context LIMIT 1
+               ^
+2025-03-17 08:59:20,989 - __main__ - ERROR - Script failed: Binder Error: Referenced column "context_text" not found in FROM clause!
+Candidate bindings: "context_type", "content", "company_research_id"
+
+LINE 1: SELECT context_text FROM company_context LIMIT 1
+               ^

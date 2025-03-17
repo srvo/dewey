@@ -1,588 +1,272 @@
-# Formatting failed: LLM generation failed: Gemini API error: Model gemini-2.0-flash in cooldown until Sat Mar 15 00:47:41 2025
-
-"""Contact Enrichment System with Task Tracking and Multiple Data Sources.
-
-This module provides comprehensive contact enrichment capabilities by:
-- Extracting contact information from email signatures and content
-- Managing enrichment tasks with status tracking
-- Storing enrichment results with confidence scoring
-- Integrating with multiple data sources
-- Providing detailed logging and error handling
-
-The system is designed to be:
-- Scalable: Processes emails in batches with configurable size
-- Reliable: Implements task tracking and retry mechanisms
-- Extensible: Supports adding new data sources and extraction patterns
-- Auditable: Maintains detailed logs and task history
-
-Key Features:
-- Regex-based contact information extraction
-- Task management system with status tracking
-- Confidence scoring for extracted data
-- Source versioning and validation
-- Comprehensive logging and error handling
+#!/usr/bin/env python3
 """
-from __future__ import annotations
+Contact Enrichment Module
 
-import json
+This module extracts contact information from emails and enriches the contacts database.
+"""
+
 import re
 import uuid
-
-from scripts.config import config
-from scripts.db_connector import get_db_connection
-from src.dewey.utils.database import get_db_connection
-from config.logging import configure_logging
 import logging
+import duckdb
+import os
 import yaml
-import re
-
-# Load the configuration file
-with open("config/dewey.yaml", "r") as f:
-    config = yaml.safe_load(f)
+import structlog
+from typing import Dict, List, Optional, Any
 
 # Configure logging
-configure_logging(config["logging"])
+logging.basicConfig(level=logging.INFO)
+logger = structlog.get_logger()
 
-# Get logger
-logger = logging.getLogger(__name__)
+# Default regex patterns for contact extraction
+DEFAULT_PATTERNS = {
+    "name": r"(?:^|\n)([A-Z][a-z]+(?: [A-Z][a-z]+)+)(?:\n|$)",
+    "job_title": r"(?:^|\n)([A-Za-z]+(?:\s+[A-Za-z]+){0,3}?)(?:\s+at\s+|\s*[,|]\s*)",
+    "company": r"(?:at|@|with)\s+([A-Z][A-Za-z0-9\s&]+(?:Inc|LLC|Ltd|Co|Corp|Corporation|Company))",
+    "phone": r"(?:Phone|Tel|Mobile|Cell)(?::|.)?(?:\s+)?((?:\+\d{1,3}[-\.\s]?)?(?:\(?\d{3}\)?[-\.\s]?)?\d{3}[-\.\s]?\d{4})",
+    "linkedin_url": r"(?:LinkedIn|Profile)(?::|.)?(?:\s+)?(?:https?://)?(?:www\.)?linkedin\.com/in/([a-zA-Z0-9_-]+)"
+}
 
-# Load regex patterns from config
-PATTERNS = config["regex_patterns"]["contact_info"]
-
-
-def create_enrichment_task(
-    conn,
-    entity_type: str,
-    entity_id: str,
-    task_type: str,
-    metadata: dict | None = None,
-) -> str:
-    """Create a new enrichment task in the database.
-
-    Args:
-    ----
-        conn: Database connection object
-        entity_type: Type of entity being enriched (e.g., 'email', 'contact')
-        entity_id: Unique identifier for the entity
-        task_type: Type of enrichment task (e.g., 'contact_info')
-        metadata: Optional dictionary of task metadata
-
-    Returns:
-    -------
-        str: Unique task ID (UUID)
-
-    Raises:
-    ------
-        Exception: If database operation fails
-
-    Example:
-    -------
-        task_id = create_enrichment_task(
-            conn,
-            entity_type="email",
-            entity_id="12345",
-            task_type="contact_info",
-            metadata={"source": "email_signature"}
-        )
-
-    """
-    task_id = str(uuid.uuid4())
-    cursor = conn.cursor()
-
-    logger.info(f"[TASK] Creating new {task_type} task for {entity_type}:{entity_id}")
-    logger.debug(f"[TASK] Task metadata: {json.dumps(metadata or {})}")
-
-    try:
-        # Insert new task record with initial status 'pending'
-        cursor.execute(
-            """
-        INSERT INTO enrichment_tasks (
-            id, entity_type, entity_id, task_type, status, metadata
-        ) VALUES (?, ?, ?, ?, 'pending', ?)
-        """,
-            (task_id, entity_type, entity_id, task_type, json.dumps(metadata or {})),
-        )
-
-        logger.info(f"[TASK] Created task {task_id}")
-        return task_id
-    except Exception as e:
-        logger.error(f"[TASK] Failed to create task: {e!s}", exc_info=True)
-        raise
-
-
-def update_task_status(
-    conn,
-    task_id: str,
-    status: str,
-    result: dict | None = None,
-    error: str | None = None,
-) -> None:
-    """Update the status and details of an enrichment task.
-
-    Args:
-    ----
-        conn: Database connection object
-        task_id: Unique identifier of the task to update
-        status: New status for the task (e.g., 'completed', 'failed')
-        result: Optional dictionary of task results
-        error: Optional error message if task failed
-
-    Raises:
-    ------
-        Exception: If database operation fails
-
-    Notes:
-    -----
-        - Increments the attempt counter on each update
-        - Updates timestamps for last attempt and modification
-        - Maintains both success results and error messages
-
-    Example:
-    -------
-        update_task_status(
-            conn,
-            task_id="12345",
-            status="completed",
-            result={"name": "John Doe", "company": "ACME Inc"},
-            error=None
-        )
-
-    """
-    cursor = conn.cursor()
-
-    logger.info(f"[TASK] Updating task {task_id} to status: {status}")
-    if result:
-        logger.debug(f"[TASK] Task result: {json.dumps(result)}")
-    if error:
-        logger.warning(f"[TASK] Task error: {error}")
-
-    try:
-        # Update task record with new status and results
-        cursor.execute(
-            """
-        UPDATE enrichment_tasks
-        SET status = ?,
-            attempts = attempts + 1,
-            last_attempt = CURRENT_TIMESTAMP,
-            result = ?,
-            error_message = ?,
-            updated_at = CURRENT_TIMESTAMP
-        WHERE id = ?
-        """,
-            (status, json.dumps(result or {}), error, task_id),
-        )
-
-        if cursor.rowcount == 0:
-            logger.error(f"[TASK] Task {task_id} not found for status update")
-        else:
-            logger.debug(f"[TASK] Successfully updated task {task_id}")
-
-    except Exception as e:
-        logger.error(f"[TASK] Failed to update task status: {e!s}", exc_info=True)
-        raise
-
-
-def store_enrichment_source(
-    conn,
-    source_type: str,
-    entity_type: str,
-    entity_id: str,
-    data: dict,
-    confidence: float,
-):
-    """Store enrichment data from a specific source with version control.
-
-    Args:
-    ----
-        conn: Database connection object
-        source_type: Type of enrichment source (e.g., 'email_signature')
-        entity_type: Type of entity being enriched (e.g., 'contact')
-        entity_id: Unique identifier for the entity
-        data: Dictionary of enrichment data
-        confidence: Confidence score (0.0 to 1.0) for the data quality
-
-    Returns:
-    -------
-        str: Unique source ID (UUID)
-
-    Raises:
-    ------
-        Exception: If database operation fails
-
-    Notes:
-    -----
-        - Implements version control by marking previous sources as invalid
-        - Maintains a complete history of enrichment sources
-        - Supports multiple sources for the same entity
-
-    Example:
-    -------
-        source_id = store_enrichment_source(
-            conn,
-            source_type="email_signature",
-            entity_type="contact",
-            entity_id="12345",
-            data={"name": "John Doe", "company": "ACME Inc"},
-            confidence=0.85
-        )
-
-    """
-    source_id = str(uuid.uuid4())
-    cursor = conn.cursor()
-
-    logger.info(f"[SOURCE] Storing {source_type} data for {entity_type}:{entity_id}")
-    logger.debug(f"[SOURCE] Data: {json.dumps(data)}, Confidence: {confidence}")
-
-    try:
-        # Mark previous source as invalid by setting valid_to timestamp
-        cursor.execute(
-            """
-        UPDATE enrichment_sources
-        SET valid_to = CURRENT_TIMESTAMP
-        WHERE entity_type = ? AND entity_id = ? AND source_type = ? AND valid_to IS NULL
-        """,
-            (entity_type, entity_id, source_type),
-        )
-
-        if cursor.rowcount > 0:
-            logger.info(
-                f"[SOURCE] Marked {cursor.rowcount} previous sources as invalid",
-            )
-
-        # Insert new source with current timestamp
-        cursor.execute(
-            """
-        INSERT INTO enrichment_sources (
-            id, source_type, entity_type, entity_id,
-            data, confidence, valid_from
-        ) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-        """,
-            (
-                source_id,
-                source_type,
-                entity_type,
-                entity_id,
-                json.dumps(data),
-                confidence,
-            ),
-        )
-
-        logger.info(f"[SOURCE] Successfully stored source {source_id}")
-        return source_id
-    except Exception as e:
-        logger.error(f"[SOURCE] Failed to store source: {e!s}", exc_info=True)
-        raise
-
-
-def extract_contact_info(message_text: str) -> dict | None:
-    r"""Extract contact information from email message text using regex patterns.
-
-    Args:
-    ----
-        message_text: Raw text content of the email message
-
-    Returns:
-    -------
-        Optional[Dict]: Dictionary containing extracted contact information with keys:
-            - name: Full name
-            - job_title: Job title
-            - company: Company name
-            - phone: Phone number
-            - linkedin_url: LinkedIn profile URL
-            - confidence: Confidence score (0.0 to 1.0)
-        Returns None if insufficient information is found
-
-    Notes:
-    -----
-        - Uses predefined regex patterns to extract information
-        - Calculates confidence score based on number of fields found
-        - Requires at least 2 valid fields to return results
-        - Handles various text formats and edge cases
-
-    Example:
-    -------
-        info = extract_contact_info("John Doe\nCEO at ACME Inc\nPhone: 555-1234")
-        # Returns: {
-        #     "name": "John Doe",
-        #     "job_title": "CEO",
-        #     "company": "ACME Inc",
-        #     "phone": "555-1234",
-        #     "linkedin_url": None,
-        #     "confidence": 0.75
-        # }
-
-    """
-    if not message_text:
-        logger.warning("[EXTRACT] Empty message text provided")
-        return None
-
-    logger.debug(f"[EXTRACT] Processing message of length {len(message_text)}")
-
-    # Initialize result dictionary with default values
-    info = {
-        "name": None,
-        "job_title": None,
-        "company": None,
-        "phone": None,
-        "linkedin_url": None,
-        "confidence": 0.0,
-    }
-
-    try:
-        # Apply each regex pattern to extract information
-        for field, pattern_str in PATTERNS.items():
-            pattern = re.compile(pattern_str)
-            match = re.search(pattern, message_text)
-            if match:
-                # Extract value from the first matching group
-                value = match.group(1).strip()
-                info[field] = value
-                logger.debug(f"[EXTRACT] Found {field}: {value}")
-            else:
-                logger.debug(f"[EXTRACT] No match for {field}")
-
-        # Calculate confidence score based on number of fields found
-        found_fields = sum(1 for v in info.values() if v is not None)
-        info["confidence"] = found_fields / (len(info) - 1)  # -1 for confidence field
-
-        logger.info(
-            f"[EXTRACT] Extraction completed with confidence {info['confidence']}",
-        )
-        logger.debug(f"[EXTRACT] Extracted info: {json.dumps(info)}")
-
-        # Return results only if we found at least 2 valid fields
-        if found_fields >= 2:
-            return info
-        logger.warning("[EXTRACT] Insufficient fields found (need at least 2)")
-        return None
-
-    except Exception as e:
-        logger.error(
-            f"[EXTRACT] Error extracting contact info: {e!s}",
-            exc_info=True,
-        )
-        return None
-
-
-def process_email_for_enrichment(conn, email_id: str) -> bool:
-    """Process a single email for contact enrichment.
-
-    Args:
-    ----
-        conn: Database connection object
-        email_id: Unique identifier of the email to process
-
-    Returns:
-    -------
-        bool: True if enrichment was successful, False otherwise
-
-    Notes:
-    -----
-        - Retrieves email content from database
-        - Creates enrichment task for tracking
-        - Extracts contact information from email body
-        - Updates contact record with new information
-        - Maintains task status and error handling
-
-    Workflow:
-        1. Retrieve email content from database
-        2. Create enrichment task
-        3. Extract contact information
-        4. Store enrichment source
-        5. Update contact record
-        6. Update task status
-
-    Example:
-    -------
-        success = process_email_for_enrichment(conn, "email_12345")
-
-    """
-    logger.info(f"[PROCESS] Starting enrichment for email {email_id}")
-    cursor = conn.cursor()
-
-    try:
-        # Retrieve email content from database
-        cursor.execute(
-            """
-        SELECT id, from_email, from_name, plain_body, html_body
-        FROM raw_emails WHERE id = ?
-        """,
-            (email_id,),
-        )
-
-        result = cursor.fetchone()
-        if not result:
-            logger.error(f"[PROCESS] Email {email_id} not found")
-            return False
-
-        email_id, from_email, from_name, plain_body, html_body = result
-        logger.info(f"[PROCESS] Processing email from {from_email} ({from_name})")
-
-        # Create enrichment task for tracking
-        task_id = create_enrichment_task(
-            conn,
-            "email",
-            email_id,
-            "contact_info",
-            {"from_email": from_email},
-        )
-
+def load_config() -> Dict[str, Any]:
+    """Load configuration from YAML file."""
+    config_path = os.path.expanduser("~/dewey/config/dewey.yaml")
+    if os.path.exists(config_path):
         try:
-            # Extract contact information from plain text body
-            logger.info("[PROCESS] Attempting contact info extraction")
-            contact_info = extract_contact_info(plain_body or "")
-
-            if contact_info:
-                logger.info("[PROCESS] Contact info found, storing enrichment source")
-                # Store extracted information as enrichment source
-                store_enrichment_source(
-                    conn,
-                    "email_signature",
-                    "contact",
-                    from_email,
-                    contact_info,
-                    contact_info["confidence"],
-                )
-
-                logger.info("[PROCESS] Updating contact record")
-                # Update contact record with new information
-                cursor.execute(
-                    """
-                UPDATE contacts
-                SET name = COALESCE(?, name),
-                    job_title = COALESCE(?, job_title),
-                    company = COALESCE(?, company),
-                    phone = COALESCE(?, phone),
-                    linkedin_url = COALESCE(?, linkedin_url),
-                    enrichment_status = 'enriched',
-                    last_enriched = CURRENT_TIMESTAMP,
-                    enrichment_source = 'email_signature',
-                    confidence_score = ?,
-                    updated_at = CURRENT_TIMESTAMP
-                WHERE email = ?
-                """,
-                    (
-                        contact_info.get("name"),
-                        contact_info.get("job_title"),
-                        contact_info.get("company"),
-                        contact_info.get("phone"),
-                        contact_info.get("linkedin_url"),
-                        contact_info["confidence"],
-                        from_email,
-                    ),
-                )
-
-                if cursor.rowcount == 0:
-                    logger.warning(
-                        f"[PROCESS] No contact record found for {from_email}",
-                    )
-                else:
-                    logger.info(f"[PROCESS] Updated contact record for {from_email}")
-
-                # Update task status to completed
-                update_task_status(conn, task_id, "completed", contact_info)
-                return True
-
-            logger.info("[PROCESS] No contact info found in email")
-            update_task_status(
-                conn,
-                task_id,
-                "skipped",
-                {"reason": "No contact info found"},
-            )
-            return False
-
+            with open(config_path, "r") as f:
+                config = yaml.safe_load(f)
+                return config.get("contact_extraction", {})
         except Exception as e:
-            logger.error(
-                f"[PROCESS] Error processing email {email_id}: {e!s}",
-                exc_info=True,
-            )
-            update_task_status(conn, task_id, "failed", error=str(e))
-            return False
+            logger.error(f"Error loading config: {str(e)}")
+    return {}
 
-    except Exception as e:
-        logger.error(
-            f"[PROCESS] Fatal error processing email {email_id}: {e!s}",
-            exc_info=True,
-        )
-        return False
-
-
-def enrich_contacts(batch_size: int | None = None) -> None:
-    """Process a batch of emails for contact enrichment.
-
-    Args:
-    ----
-        batch_size: Number of emails to process in this batch. If None, uses default from config.
-
-    Notes:
-    -----
-        - Processes emails in batches for better performance and resource management
-        - Only processes emails that haven't been enriched before
-        - Tracks success rate and provides detailed logging
-        - Uses database transactions for atomic operations
-
-    Workflow:
-        1. Get batch of unprocessed emails
-        2. Process each email individually
-        3. Track success/failure statistics
-        4. Log results and handle errors
-
-    Example:
-    -------
-        enrich_contacts(batch_size=100)  # Process 100 emails
-
-    """
-    if batch_size is None:
-        batch_size = config.ENRICHMENT_BATCH_SIZE
-
-    logger.info(f"[BATCH] Starting contact enrichment batch (size={batch_size})")
-
+def get_duckdb_connection(db_path: Optional[str] = None) -> duckdb.DuckDBPyConnection:
+    """Get a connection to the DuckDB database."""
+    if db_path is None:
+        db_path = os.path.expanduser("~/dewey_emails.duckdb")
+    
     try:
-        with get_db_connection() as conn:
-            cursor = conn.cursor()
-
-            # Get batch of unprocessed emails
-            logger.info("[BATCH] Querying for unprocessed emails")
-            cursor.execute(
-                """
-            SELECT e.id
-            FROM raw_emails e
-            LEFT JOIN enrichment_tasks t ON
-                t.entity_type = 'email' AND
-                t.entity_id = e.id AND
-                t.task_type = 'contact_info'
-            WHERE t.id IS NULL
-            LIMIT ?
-            """,
-                (batch_size,),
-            )
-
-            email_ids = [row[0] for row in cursor.fetchall()]
-
-            if not email_ids:
-                logger.info("[BATCH] No new emails to process")
-                return
-
-            logger.info(f"[BATCH] Found {len(email_ids)} emails to process")
-
-            # Process each email in the batch
-            success_count = 0
-            for i, email_id in enumerate(email_ids, 1):
-                logger.info(f"[BATCH] Processing email {i}/{len(email_ids)}")
-                if process_email_for_enrichment(conn, email_id):
-                    success_count += 1
-
-            # Log batch completion statistics
-            logger.info(
-                f"[BATCH] Enrichment completed. Processed {len(email_ids)} emails, {success_count} successful",
-            )
-
+        # Try to connect to MotherDuck first
+        try:
+            conn = duckdb.connect("md:dewey_emails")
+            logger.info("Connected to MotherDuck")
+            return conn
+        except Exception as e:
+            logger.warning(f"Failed to connect to MotherDuck: {str(e)}")
+            
+        # Fall back to local database
+        conn = duckdb.connect(db_path)
+        logger.info(f"Connected to local database at {db_path}")
+        return conn
     except Exception as e:
-        logger.error(
-            f"[BATCH] Fatal error in enrichment batch: {e!s}",
-            exc_info=True,
+        logger.error(f"Error connecting to database: {str(e)}")
+        # Create a new in-memory database as a last resort
+        logger.warning("Creating in-memory database")
+        return duckdb.connect(":memory:")
+
+def extract_contact_info(email_body: str, patterns: Dict[str, str]) -> Dict[str, str]:
+    """
+    Extract contact information from email body using regex patterns.
+    
+    Args:
+        email_body: The plain text body of the email
+        patterns: Dictionary of regex patterns for different contact fields
+        
+    Returns:
+        Dictionary of extracted contact information
+    """
+    contact_info = {}
+    
+    if not email_body:
+        return contact_info
+    
+    # Extract each field using the corresponding pattern
+    for field, pattern in patterns.items():
+        match = re.search(pattern, email_body)
+        if match:
+            contact_info[field] = match.group(1).strip()
+    
+    return contact_info
+
+def create_contacts_table(conn: duckdb.DuckDBPyConnection) -> None:
+    """Create the contacts table if it doesn't exist."""
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS contacts (
+            id VARCHAR PRIMARY KEY,
+            name VARCHAR,
+            email VARCHAR,
+            job_title VARCHAR,
+            company VARCHAR,
+            phone VARCHAR,
+            linkedin_url VARCHAR,
+            last_contact_date TIMESTAMP,
+            email_count INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
+    """)
+
+def update_contact(conn: duckdb.DuckDBPyConnection, email: str, contact_info: Dict[str, str]) -> str:
+    """
+    Update or create a contact in the database.
+    
+    Args:
+        conn: DuckDB connection
+        email: Email address of the contact
+        contact_info: Dictionary of contact information
+        
+    Returns:
+        ID of the updated or created contact
+    """
+    # Check if contact already exists
+    result = conn.execute(
+        "SELECT id FROM contacts WHERE email = ?", [email]
+    ).fetchone()
+    
+    contact_id = result[0] if result else str(uuid.uuid4())
+    
+    if result:
+        # Update existing contact
+        set_clauses = []
+        params = []
+        
+        for field, value in contact_info.items():
+            if value:
+                set_clauses.append(f"{field} = ?")
+                params.append(value)
+        
+        if set_clauses:
+            set_clauses.append("updated_at = CURRENT_TIMESTAMP")
+            set_clauses.append("email_count = email_count + 1")
+            set_clauses.append("last_contact_date = CURRENT_TIMESTAMP")
+            
+            query = f"""
+                UPDATE contacts 
+                SET {', '.join(set_clauses)}
+                WHERE id = ?
+            """
+            params.append(contact_id)
+            conn.execute(query, params)
+            logger.info(f"Updated contact: {email}")
+    else:
+        # Create new contact
+        fields = ["id", "email"]
+        values = [contact_id, email]
+        
+        for field, value in contact_info.items():
+            if value:
+                fields.append(field)
+                values.append(value)
+        
+        fields.extend(["created_at", "updated_at", "email_count", "last_contact_date"])
+        values.extend(["CURRENT_TIMESTAMP", "CURRENT_TIMESTAMP", 1, "CURRENT_TIMESTAMP"])
+        
+        query = f"""
+            INSERT INTO contacts ({', '.join(fields)})
+            VALUES ({', '.join(['?'] * len(values))})
+        """
+        conn.execute(query, values)
+        logger.info(f"Created new contact: {email}")
+    
+    return contact_id
+
+def create_contact_processing_table(conn: duckdb.DuckDBPyConnection) -> None:
+    """Create the contact_processing table if it doesn't exist."""
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS contact_processing (
+            email_id VARCHAR PRIMARY KEY,
+            contact_id VARCHAR,
+            processed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (contact_id) REFERENCES contacts(id)
+        )
+    """)
+
+def enrich_contacts(batch_size: int = 50, max_emails: int = 100) -> None:
+    """
+    Extract and enrich contact information from emails.
+    
+    Args:
+        batch_size: Number of emails to process in each batch
+        max_emails: Maximum number of emails to process
+    """
+    logger.info(f"Starting contact enrichment (batch_size={batch_size}, max_emails={max_emails})")
+    
+    # Load configuration
+    config = load_config()
+    patterns = config.get("patterns", DEFAULT_PATTERNS)
+    
+    try:
+        # Connect to database
+        conn = get_duckdb_connection()
+        
+        # Create tables if they don't exist
+        create_contacts_table(conn)
+        create_contact_processing_table(conn)
+        
+        # Get emails that haven't been processed for contact extraction
+        conn.execute("""
+            CREATE OR REPLACE TEMPORARY VIEW emails_for_contact_extraction AS
+            SELECT e.id, e.from_email, e.plain_body
+            FROM emails e
+            LEFT JOIN contact_processing cp ON e.id = cp.email_id
+            WHERE cp.email_id IS NULL
+            AND e.plain_body IS NOT NULL
+            LIMIT ?
+        """, [max_emails])
+        
+        # Get count
+        count = conn.execute("SELECT COUNT(*) FROM emails_for_contact_extraction").fetchone()[0]
+        logger.info(f"Found {count} emails for contact extraction")
+        
+        if count == 0:
+            logger.info("No emails to process")
+            return
+        
+        # Process in batches
+        processed_count = 0
+        for offset in range(0, count, batch_size):
+            batch = conn.execute(f"""
+                SELECT id, from_email, plain_body
+                FROM emails_for_contact_extraction
+                LIMIT {batch_size} OFFSET {offset}
+            """).fetchall()
+            
+            logger.info(f"Processing batch of {len(batch)} emails (offset {offset})")
+            
+            for row in batch:
+                email_id, from_email, plain_body = row
+                
+                # Extract contact information
+                contact_info = extract_contact_info(plain_body, patterns)
+                
+                # Update or create contact
+                contact_id = update_contact(conn, from_email, contact_info)
+                
+                # Mark email as processed
+                conn.execute(
+                    "INSERT INTO contact_processing (email_id, contact_id) VALUES (?, ?)",
+                    [email_id, contact_id]
+                )
+                
+                processed_count += 1
+            
+            # Commit after each batch
+            conn.commit()
+        
+        logger.info(f"Processed {processed_count} emails for contact extraction")
+    
+    except Exception as e:
+        logger.error(f"Error in contact enrichment: {str(e)}")
         raise
+
+if __name__ == "__main__":
+    import argparse
+    
+    parser = argparse.ArgumentParser(description="Extract and enrich contact information from emails")
+    parser.add_argument("--batch-size", type=int, default=50, help="Batch size for processing emails")
+    parser.add_argument("--max-emails", type=int, default=100, help="Maximum number of emails to process")
+    
+    args = parser.parse_args()
+    
+    enrich_contacts(batch_size=args.batch_size, max_emails=args.max_emails)
 
 

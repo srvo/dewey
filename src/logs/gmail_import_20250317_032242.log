@@ -1,0 +1,16 @@
+2025-03-17 03:22:42,141 - gmail_import - INFO - Starting historical Gmail import, max 500 emails per batch
+2025-03-17 03:22:42,141 - gmail_import - INFO - Using database: /Users/srvo/dewey_emails.duckdb
+2025-03-17 03:22:42,215 - gmail_import - ERROR - Gmail import failed: Binder Error: Referenced column "last_processed_index" not found in FROM clause!
+Candidate bindings: "last_page_token", "last_import_time"
+
+LINE 1: SELECT last_processed_index FROM import_checkpoints ORDER BY id...
+               ^
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/dewey/core/crm/gmail/simple_import.py", line 694, in main
+    result = conn.execute("SELECT last_processed_index FROM import_checkpoints ORDER BY id DESC LIMIT 1").fetchone()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+duckdb.duckdb.BinderException: Binder Error: Referenced column "last_processed_index" not found in FROM clause!
+Candidate bindings: "last_page_token", "last_import_time"
+
+LINE 1: SELECT last_processed_index FROM import_checkpoints ORDER BY id...
+               ^

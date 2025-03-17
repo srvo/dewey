@@ -1,0 +1,26 @@
+2025-03-17 03:02:20,643 - gmail_import - INFO - Starting Gmail import: looking back 1 days, max 10 emails
+2025-03-17 03:02:20,643 - gmail_import - INFO - Using database: /Users/srvo/dewey_emails.duckdb
+2025-03-17 03:02:20,719 - gmail_import - INFO - Using token from /Users/srvo/dewey/token.json
+2025-03-17 03:02:20,722 - gmail_import - INFO - Importing emails from 2025/03/16 to 2025/03/17
+2025-03-17 03:02:20,970 - gmail_import - INFO - Found 10 emails, fetching details...
+2025-03-17 03:02:21,160 - gmail_import - WARNING - Failed to parse date 'Mon, 17 Mar 2025 07:09:17 +0000': can't compare offset-naive and offset-aware datetimes
+2025-03-17 03:02:21,294 - gmail_import - WARNING - Failed to parse date 'Mon, 17 Mar 2025 07:01:19 +0000': can't compare offset-naive and offset-aware datetimes
+2025-03-17 03:02:21,428 - gmail_import - WARNING - Failed to parse date 'Mon, 17 Mar 2025 04:48:08 +0000': can't compare offset-naive and offset-aware datetimes
+2025-03-17 03:02:21,589 - gmail_import - WARNING - Failed to parse date 'Sun, 16 Mar 2025 23:33:51 -0500 (CDT)': can't compare offset-naive and offset-aware datetimes
+2025-03-17 03:02:21,778 - gmail_import - WARNING - Failed to parse date 'Mon, 17 Mar 2025 03:51:11 +0000': can't compare offset-naive and offset-aware datetimes
+2025-03-17 03:02:21,935 - gmail_import - WARNING - Failed to parse date 'Mon, 17 Mar 2025 02:03:26 +0000 (UTC)': can't compare offset-naive and offset-aware datetimes
+2025-03-17 03:02:22,115 - gmail_import - WARNING - Failed to parse date 'Mon, 17 Mar 2025 01:38:33 +0000': can't compare offset-naive and offset-aware datetimes
+2025-03-17 03:02:22,258 - gmail_import - WARNING - Failed to parse date 'Mon, 17 Mar 2025 01:32:02 +0000': can't compare offset-naive and offset-aware datetimes
+2025-03-17 03:02:22,386 - gmail_import - WARNING - Failed to parse date 'Mon, 17 Mar 2025 01:20:17 +0000': can't compare offset-naive and offset-aware datetimes
+2025-03-17 03:02:22,532 - gmail_import - WARNING - Failed to parse date 'Mon, 17 Mar 2025 00:51:31 +0000': can't compare offset-naive and offset-aware datetimes
+2025-03-17 03:02:23,394 - gmail_import - INFO - Stored email 195a2ef7cc9b6f1f in database
+2025-03-17 03:02:23,537 - gmail_import - INFO - Stored email 195a2e95cd7c706f in database
+2025-03-17 03:02:23,682 - gmail_import - INFO - Stored email 195a26e3e1d940cd in database
+2025-03-17 03:02:23,832 - gmail_import - INFO - Stored email 195a2612f74e0f2c in database
+2025-03-17 03:02:23,983 - gmail_import - INFO - Stored email 195a23a24ab4733f in database
+2025-03-17 03:02:24,140 - gmail_import - INFO - Stored email 195a1d777299e927 in database
+2025-03-17 03:02:24,291 - gmail_import - INFO - Stored email 195a1c0ae7e73467 in database
+2025-03-17 03:02:24,433 - gmail_import - INFO - Stored email 195a1bab38c60270 in database
+2025-03-17 03:02:24,574 - gmail_import - INFO - Stored email 195a1aff2933dc4f in database
+2025-03-17 03:02:24,695 - gmail_import - INFO - Stored email 195a1959fcd09064 in database
+2025-03-17 03:02:24,695 - gmail_import - INFO - Gmail import completed successfully. Imported 10 emails.

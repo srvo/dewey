@@ -1,0 +1,68 @@
+2025-03-17 10:40:01,789 - gmail_import - INFO - Starting Gmail import: looking back 1 days, max 100 emails
+2025-03-17 10:40:01,789 - gmail_import - INFO - Using database: /Users/srvo/dewey_emails.duckdb
+2025-03-17 10:40:01,922 - gmail_import - INFO - Using token from /Users/srvo/dewey/token.json
+2025-03-17 10:40:01,930 - gmail_import - INFO - Refreshing expired credentials
+2025-03-17 10:40:02,321 - gmail_import - INFO - Importing emails from 2025/03/16 to 2025/03/17
+2025-03-17 10:40:02,322 - gmail_import - INFO - Including sent emails
+2025-03-17 10:40:02,963 - gmail_import - INFO - Fetched 100 messages, total: 100
+2025-03-17 10:40:02,964 - gmail_import - INFO - Found 100 emails, fetching details...
+2025-03-17 10:40:07,568 - gmail_import - INFO - Processing message 10/100
+2025-03-17 10:40:12,594 - gmail_import - INFO - Processing message 20/100
+2025-03-17 10:40:18,090 - gmail_import - INFO - Processing message 30/100
+2025-03-17 10:40:23,665 - gmail_import - INFO - Processing message 40/100
+2025-03-17 10:40:29,463 - gmail_import - INFO - Processing message 50/100
+2025-03-17 10:40:34,752 - gmail_import - INFO - Processing message 60/100
+2025-03-17 10:40:39,775 - gmail_import - INFO - Processing message 70/100
+2025-03-17 10:40:44,875 - gmail_import - INFO - Processing message 80/100
+2025-03-17 10:40:49,600 - gmail_import - INFO - Processing message 90/100
+2025-03-17 10:40:54,870 - gmail_import - INFO - Processing message 100/100
+2025-03-17 10:40:55,374 - gmail_import - INFO - Found 46 emails to process
+2025-03-17 10:40:55,375 - gmail_import - INFO - Processing batch of 46 emails (indices 0-45)
+2025-03-17 10:40:58,172 - gmail_import - INFO - Stored email 195a4dc18cb1796c in database
+2025-03-17 10:40:58,807 - gmail_import - INFO - Stored email 195a4db746f35315 in database
+2025-03-17 10:40:59,368 - gmail_import - INFO - Stored email 195a4c41cf5a772b in database
+2025-03-17 10:40:59,844 - gmail_import - INFO - Stored email 195a4affb507045c in database
+2025-03-17 10:41:00,376 - gmail_import - INFO - Stored email 195a49fe840f4ff8 in database
+2025-03-17 10:41:00,892 - gmail_import - INFO - Stored email 195a48527a3b6697 in database
+2025-03-17 10:41:01,447 - gmail_import - INFO - Stored email 195a470b189f06f6 in database
+2025-03-17 10:41:01,972 - gmail_import - INFO - Stored email 195a45054830c274 in database
+2025-03-17 10:41:02,624 - gmail_import - INFO - Email 195a428a02559237 already exists in database
+2025-03-17 10:41:03,120 - gmail_import - INFO - Email 195a41c3f90ab669 already exists in database
+2025-03-17 10:41:03,793 - gmail_import - INFO - Email 195a41c2a4a084a1 already exists in database
+2025-03-17 10:41:04,316 - gmail_import - INFO - Email 195a3e148577d5bd already exists in database
+2025-03-17 10:41:04,850 - gmail_import - INFO - Email 195a3932b70eb73f already exists in database
+2025-03-17 10:41:05,362 - gmail_import - INFO - Email 195a38dc5277adb1 already exists in database
+2025-03-17 10:41:05,915 - gmail_import - INFO - Email 195a38cdf5681da1 already exists in database
+2025-03-17 10:41:06,437 - gmail_import - INFO - Email 195a369bdd5177e1 already exists in database
+2025-03-17 10:41:06,952 - gmail_import - INFO - Email 195a363cd752ffff already exists in database
+2025-03-17 10:41:07,367 - gmail_import - INFO - Email 195a363c4486d029 already exists in database
+2025-03-17 10:41:07,781 - gmail_import - INFO - Email 195a2ef7cc9b6f1f already exists in database
+2025-03-17 10:41:08,259 - gmail_import - INFO - Email 195a2e95cd7c706f already exists in database
+2025-03-17 10:41:08,711 - gmail_import - INFO - Email 195a26e3e1d940cd already exists in database
+2025-03-17 10:41:09,306 - gmail_import - INFO - Email 195a2612f74e0f2c already exists in database
+2025-03-17 10:41:09,774 - gmail_import - INFO - Email 195a23a24ab4733f already exists in database
+2025-03-17 10:41:10,286 - gmail_import - INFO - Email 195a1d777299e927 already exists in database
+2025-03-17 10:41:10,678 - gmail_import - INFO - Email 195a1c0ae7e73467 already exists in database
+2025-03-17 10:41:11,131 - gmail_import - INFO - Email 195a1bab38c60270 already exists in database
+2025-03-17 10:41:11,658 - gmail_import - INFO - Email 195a1aff2933dc4f already exists in database
+2025-03-17 10:41:12,064 - gmail_import - INFO - Email 195a1959fcd09064 already exists in database
+2025-03-17 10:41:12,560 - gmail_import - INFO - Email 195a0c650f76ea1f already exists in database
+2025-03-17 10:41:13,107 - gmail_import - INFO - Email 195a0bc6ea1f1009 already exists in database
+2025-03-17 10:41:13,764 - gmail_import - INFO - Email 195a08d16852a601 already exists in database
+2025-03-17 10:41:14,303 - gmail_import - INFO - Email 195a056a82276948 already exists in database
+2025-03-17 10:41:14,829 - gmail_import - INFO - Email 195a0213d8970da9 already exists in database
+2025-03-17 10:41:15,328 - gmail_import - INFO - Email 195a006a3b92c3b4 already exists in database
+2025-03-17 10:41:15,729 - gmail_import - INFO - Email 1959fe5da21e85c1 already exists in database
+2025-03-17 10:41:16,217 - gmail_import - INFO - Email 1959fb1a5c989020 already exists in database
+2025-03-17 10:41:16,736 - gmail_import - INFO - Email 1959fad2760d0db1 already exists in database
+2025-03-17 10:41:17,296 - gmail_import - INFO - Email 1959fa23e8d7df2b already exists in database
+2025-03-17 10:41:17,860 - gmail_import - INFO - Email 1959f7b1d2719e5b already exists in database
+2025-03-17 10:41:18,311 - gmail_import - INFO - Email 1959f7852f0e8200 already exists in database
+2025-03-17 10:41:18,901 - gmail_import - INFO - Email 1959f72b09226031 already exists in database
+2025-03-17 10:41:19,517 - gmail_import - INFO - Email 1959f4c18d0b41c9 already exists in database
+2025-03-17 10:41:20,054 - gmail_import - INFO - Email 1959f49a92f64c77 already exists in database
+2025-03-17 10:41:20,567 - gmail_import - INFO - Email 1959f4766f3848ef already exists in database
+2025-03-17 10:41:20,936 - gmail_import - INFO - Email 1959f36c9cefca39 already exists in database
+2025-03-17 10:41:21,472 - gmail_import - INFO - Email 1959f0a9b985a4dc already exists in database
+2025-03-17 10:41:21,746 - gmail_import - INFO - Batch complete. Imported 8/46 emails
+2025-03-17 10:41:21,747 - gmail_import - INFO - Gmail import completed successfully. Processed 46 emails.

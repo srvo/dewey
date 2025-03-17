@@ -1,0 +1,8 @@
+2025-03-17 08:01:55,541 - __main__ - INFO - Successfully connected to MotherDuck database 'dewey'
+2025-03-17 08:01:57,244 - __main__ - INFO - Successfully ensured all required tables exist
+2025-03-17 08:01:57,244 - __main__ - INFO - Processing directory: /Users/srvo/input_data/json_files
+2025-03-17 08:01:57,323 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/li_research.json
+2025-03-17 08:01:57,694 - __main__ - ERROR - Error processing context for research li_research: 'str' object has no attribute 'items'
+2025-03-17 08:01:57,696 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/li_research.json: 'str' object has no attribute 'items'
+2025-03-17 08:01:57,696 - __main__ - ERROR - Error processing directory /Users/srvo/input_data/json_files: 'str' object has no attribute 'items'
+2025-03-17 08:01:57,696 - __main__ - ERROR - Script failed: 'str' object has no attribute 'items'

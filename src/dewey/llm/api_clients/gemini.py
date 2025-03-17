@@ -20,21 +20,61 @@ class RateLimiter:
 
     _instance = None
     MODEL_LIMITS = {
-        "gemini-2.0-flash-lite": {
-            "rpm": 30,
-            "tpm": 1000000,
-            "rpd": 3000,
-            "min_request_interval": 2,
-            "circuit_breaker_threshold": 5,
-            "circuit_breaker_timeout": 60
-        },
         "gemini-2.0-flash": {
             "rpm": 15,
             "tpm": 1000000,
             "rpd": 1500,
-            "min_request_interval": 5,
+            "min_request_interval": 4,
             "circuit_breaker_threshold": 3,
             "circuit_breaker_timeout": 120
+        },
+        "gemini-2.0-flash-lite": {
+            "rpm": 30,
+            "tpm": 1000000,
+            "rpd": 1500,
+            "min_request_interval": 2,
+            "circuit_breaker_threshold": 5,
+            "circuit_breaker_timeout": 60
+        },
+        "gemini-2.0-pro-experimental-02-05": {
+            "rpm": 2,
+            "tpm": 1000000,
+            "rpd": 50,
+            "min_request_interval": 30,
+            "circuit_breaker_threshold": 2,
+            "circuit_breaker_timeout": 300
+        },
+        "gemini-2.0-flash-thinking-exp-01-21": {
+            "rpm": 10,
+            "tpm": 4000000,
+            "rpd": 1500,
+            "min_request_interval": 6,
+            "circuit_breaker_threshold": 3,
+            "circuit_breaker_timeout": 180
+        },
+        "gemini-1.5-flash": {
+            "rpm": 15,
+            "tpm": 1000000,
+            "rpd": 1500,
+            "min_request_interval": 4,
+            "circuit_breaker_threshold": 3,
+            "circuit_breaker_timeout": 120
+        },
+        "gemini-1.5-flash-8b": {
+            "rpm": 15,
+            "tpm": 1000000,
+            "rpd": 1500,
+            "min_request_interval": 4,
+            "circuit_breaker_threshold": 3,
+            "circuit_breaker_timeout": 120
+        },
+        "gemini-1.5-pro": {
+            "rpm": 2,
+            "tpm": 32000,
+            "rpd": 50,
+            "min_request_interval": 30,
+            "circuit_breaker_threshold": 2,
+            "circuit_breaker_timeout": 300
         }
     }
 
@@ -237,6 +277,16 @@ class RateLimiter:
 class GeminiClient:
     """Production-ready Google Gemini client with rate limiting."""
 
+    SUPPORTED_MODELS = [
+        "gemini-2.0-flash",
+        "gemini-2.0-flash-lite",
+        "gemini-2.0-pro-experimental-02-05",
+        "gemini-2.0-flash-thinking-exp-01-21",
+        "gemini-1.5-flash",
+        "gemini-1.5-flash-8b",
+        "gemini-1.5-pro"
+    ]
+
     def __init__(self, api_key: str | None = None, config: dict | None = None) -> None:
         load_dotenv()  # Ensure .env is loaded
         self.logger = logging.getLogger("GeminiClient")
@@ -267,6 +317,7 @@ class GeminiClient:
             "fallback_model", "gemini-2.0-flash-lite"
         )
         self.models = {}  # Cache for model instances
+        self.context_cache = {}  # Cache for context windows
         self.logger.info(f"Initialized Gemini client with default model: {self.default_model}")
 
     def _get_model(self, model_name: str) -> genai.GenerativeModel:
@@ -275,108 +326,246 @@ class GeminiClient:
             self.models[model_name] = genai.GenerativeModel(model_name)
         return self.models[model_name]
 
+    def _save_llm_output(self, prompt: str, response: str, model: str, metadata: dict | None = None) -> None:
+        """Save LLM interaction to a log file for later reference.
+        
+        Args:
+            prompt: The input prompt
+            response: The LLM's response
+            model: The model used
+            metadata: Optional additional metadata about the request
+        """
+        try:
+            from pathlib import Path
+            import json
+            from datetime import datetime
+            
+            # Get project root from environment or default to current directory
+            project_root = os.getenv("DEWEY_PROJECT_ROOT", os.getcwd())
+            
+            # Create docs/llm_outputs directory if it doesn't exist
+            output_dir = Path(project_root) / "docs" / "llm_outputs"
+            output_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Create a timestamped filename
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+            output_file = output_dir / f"llm_output_{timestamp}.json"
+            
+            # Prepare output data
+            output_data = {
+                "timestamp": datetime.now().isoformat(),
+                "model": model,
+                "prompt": prompt,
+                "response": response,
+                "metadata": metadata or {}
+            }
+            
+            # Save to file
+            with open(output_file, 'w') as f:
+                json.dump(output_data, f, indent=2)
+                
+            self.logger.debug(f"Saved LLM output to {output_file}")
+            
+        except Exception as e:
+            self.logger.warning(f"Failed to save LLM output: {e}")
+
     def generate_content(
         self,
         prompt: str,
         model: str | None = None,
         retries: int = 3,
+        enable_code_execution: bool = False,
+        cache_context: bool = False,
+        cache_key: str | None = None,
+        media_inputs: list | None = None,
         **kwargs,
     ) -> str:
-        """Generate content with automatic rate limiting and token tracking."""
-        model = model or self.default_model
-        last_error = None
-        backoff_time = 1.0
+        """
+        Generate content using Gemini model with support for code execution and context caching.
 
-        for attempt in range(retries + 1):
+        Args:
+            prompt: The prompt to send to the model
+            model: Optional model override (defaults to self.default_model)
+            retries: Number of retries on failure
+            enable_code_execution: Whether to enable code execution tools
+            cache_context: Whether to cache the context for reuse
+            cache_key: Key to use for context caching (required if cache_context=True)
+            media_inputs: List of media inputs (images, video, audio) to include
+            **kwargs: Additional arguments passed to the model
+
+        Returns:
+            Generated content as string
+        """
+        model = model or self.default_model
+        attempt = 0
+        last_error = None
+        
+        # Configure tools if code execution is enabled
+        if enable_code_execution:
+            kwargs["tools"] = [{"code_execution": {}}]
+        
+        # Handle context caching
+        if cache_context:
+            if not cache_key:
+                raise ValueError("cache_key is required when cache_context=True")
+            
+            if cache_key in self.context_cache:
+                # Use cached context
+                self.logger.info(f"Using cached context for key: {cache_key}")
+                kwargs["context"] = self.context_cache[cache_key]
+            else:
+                # Cache new context
+                self.context_cache[cache_key] = prompt
+                self.logger.info(f"Caching new context with key: {cache_key}")
+
+        # Handle media inputs
+        if media_inputs:
+            contents = []
+            for media in media_inputs:
+                if isinstance(media, (str, bytes)):
+                    # Handle raw media data
+                    contents.append({"media": media})
+                elif isinstance(media, dict):
+                    # Handle pre-formatted media input
+                    contents.append(media)
+            contents.append({"text": prompt})
+            kwargs["contents"] = contents
+        else:
+            kwargs["contents"] = prompt
+
+        while attempt < retries:
             try:
-                model_instance = self._get_model(model)
-                
-                generation_config = {
-                    "temperature": kwargs.get("temperature", 0.7),
-                }
-                
-                if "max_output_tokens" in kwargs:
-                    generation_config["max_output_tokens"] = kwargs["max_output_tokens"]
-                
-                self.logger.info(
-                    f"🔄 Generating content | "
-                    f"Model: {model} | "
-                    f"Temperature: {generation_config['temperature']} | "
-                    f"Input length: {len(prompt.split())} words"
-                    + (f" | Attempt: {attempt + 1}/{retries + 1}" if attempt > 0 else "")
-                )
-                
-                # Enforce rate limits before making request
+                # Check rate limits before making request
                 try:
                     self.rate_limiter.check_limit(model, prompt)
                 except LLMError as e:
-                    if "Circuit breaker open" in str(e):
-                        # If circuit breaker is open, try fallback model
-                        if model != self.fallback_model and self.fallback_model:
-                            self.logger.warning(
-                                f"Circuit breaker open for {model}, "
-                                f"trying fallback model {self.fallback_model}"
-                            )
-                            return self.generate_content(
-                                prompt,
-                                model=self.fallback_model,
-                                retries=retries,
-                                **kwargs
-                            )
+                    error_msg = str(e).lower()
+                    if "rate limit" in error_msg or "circuit breaker" in error_msg or "resource has been exhausted" in error_msg:
+                        # Always prompt to switch to DeepInfra on first rate limit error
+                        from rich.prompt import Confirm
+                        if Confirm.ask(
+                            "[yellow]Gemini API is rate limited. Would you like to switch to DeepInfra?[/yellow]"
+                        ):
+                            self.logger.info("Switching to DeepInfra...")
+                            return self._use_deepinfra_fallback(prompt, **kwargs)
+                        # If user declines, continue with retries
                     raise
 
-                response = model_instance.generate_content(
-                    contents=[prompt],
-                    generation_config=genai.types.GenerationConfig(
-                        **generation_config
-                    ),
+                # Get model instance
+                model_instance = self._get_model(model)
+                
+                # Remove unsupported parameters
+                kwargs.pop('temperature', None)  # Gemini doesn't support temperature
+                kwargs.pop('response_format', None)  # Gemini doesn't support response_format
+                
+                # Generate response
+                response = model_instance.generate_content(**kwargs)
+                
+                # Handle code execution results
+                if enable_code_execution and hasattr(response, "candidates"):
+                    for candidate in response.candidates:
+                        for part in candidate.content.parts:
+                            if hasattr(part, "code_execution_result"):
+                                self.logger.info("Code execution result received")
+                                result = part.code_execution_result.output
+                                # Save the output
+                                self._save_llm_output(
+                                    prompt=prompt,
+                                    response=result,
+                                    model=model,
+                                    metadata={
+                                        "type": "code_execution",
+                                        "attempt": attempt + 1,
+                                        "kwargs": {k: str(v) for k, v in kwargs.items()}
+                                    }
+                                )
+                                return result
+                
+                # Get text response
+                result = response.text
+                
+                # Save the output
+                self._save_llm_output(
+                    prompt=prompt,
+                    response=result,
+                    model=model,
+                    metadata={
+                        "attempt": attempt + 1,
+                        "kwargs": {k: str(v) for k, v in kwargs.items()}
+                    }
                 )
-
-                if not response.text:
-                    msg = f"Empty response from Gemini API: {response.prompt_feedback}"
-                    raise LLMError(msg)
-
-                output_length = len(response.text.split())
-                self.logger.info(
-                    f"✅ Response received | "
-                    f"Output length: {output_length} words"
-                )
-
-                return response.text
-
+                
+                return result
+                
             except Exception as e:
+                error_msg = str(e).lower()
+                # Check for rate limit errors in the exception
+                if "rate limit" in error_msg or "circuit breaker" in error_msg or "resource has been exhausted" in error_msg:
+                    # Prompt to switch to DeepInfra on rate limit errors
+                    from rich.prompt import Confirm
+                    if Confirm.ask(
+                        "[yellow]Gemini API is rate limited. Would you like to switch to DeepInfra?[/yellow]"
+                    ):
+                        self.logger.info("Switching to DeepInfra...")
+                        return self._use_deepinfra_fallback(prompt, **kwargs)
+                
+                attempt += 1
                 last_error = e
                 
-                # Don't retry if circuit breaker is open
-                if isinstance(e, LLMError) and "Circuit breaker open" in str(e):
-                    raise
-
                 if attempt < retries:
-                    # Add jitter to backoff
-                    jitter = random.uniform(0.1, 0.5)
-                    sleep_time = backoff_time + jitter
-                    
+                    # Add jitter to retry delay
+                    delay = (2 ** attempt) + random.uniform(0.1, 0.5)
                     self.logger.warning(
-                        f"⚠️  Error on attempt {attempt + 1}/{retries + 1}: {str(e)} | "
-                        f"Retrying in {sleep_time:.1f}s"
+                        f"Attempt {attempt} failed: {str(e)}. "
+                        f"Retrying in {delay:.1f}s..."
                     )
+                    time.sleep(delay)
                     
-                    time.sleep(sleep_time)
-                    backoff_time *= 2  # Exponential backoff
+                    # Try fallback model on last attempt
+                    if attempt == retries - 1 and model != self.fallback_model:
+                        self.logger.info(f"Trying fallback model: {self.fallback_model}")
+                        model = self.fallback_model
+                else:
+                    msg = f"Failed after {retries} attempts. Last error: {str(last_error)}"
+                    raise LLMError(msg)
                     
-                    # Try fallback model if available and not already using it
-                    if model != self.fallback_model and self.fallback_model:
-                        self.logger.warning(
-                            f"Switching to fallback model {self.fallback_model}"
-                        )
-                        return self.generate_content(
-                            prompt,
-                            model=self.fallback_model,
-                            retries=retries,
-                            **kwargs
-                        )
+        msg = f"Failed after {retries} attempts. Last error: {str(last_error)}"
+        raise LLMError(msg)
 
-        # If we get here, all retries failed
-        self.logger.error(f"❌ All {retries + 1} attempts failed")
-        msg = f"Gemini API error after {retries + 1} attempts: {last_error!s}"
-        raise LLMError(msg) from last_error
+    def _use_deepinfra_fallback(self, prompt: str, **kwargs) -> str:
+        """Switch to DeepInfra's models as a fallback."""
+        try:
+            # Import DeepInfra client only when needed
+            from dewey.llm.api_clients.deepinfra import DeepInfraClient
+            
+            # Initialize DeepInfra client
+            deepinfra_client = DeepInfraClient()
+            
+            # Map Gemini parameters to DeepInfra parameters
+            deepinfra_kwargs = {
+                "model": "google/gemini-2.0-flash-001",  # Use DeepInfra's Gemini model
+                "temperature": kwargs.get("temperature", 0.7),
+                "max_tokens": kwargs.get("max_tokens", 1024),
+            }
+            
+            self.logger.info("Using DeepInfra as fallback")
+            return deepinfra_client.generate_content(prompt, **deepinfra_kwargs)
+
+        except Exception as e:
+            self.logger.error(f"DeepInfra fallback failed: {e}")
+            raise LLMError("Both Gemini and DeepInfra fallback failed") from e
+
+    def clear_context_cache(self, cache_key: str | None = None) -> None:
+        """
+        Clear the context cache.
+
+        Args:
+            cache_key: Optional specific cache key to clear. If None, clears entire cache.
+        """
+        if cache_key:
+            if cache_key in self.context_cache:
+                del self.context_cache[cache_key]
+                self.logger.info(f"Cleared cache for key: {cache_key}")
+        else:
+            self.context_cache.clear()
+            self.logger.info("Cleared entire context cache")

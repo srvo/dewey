@@ -1,0 +1,11 @@
+2025-03-17 09:30:01,586 - gmail_import - INFO - Starting Gmail import: looking back 1 days, max 100 emails
+2025-03-17 09:30:01,586 - gmail_import - INFO - Using database: /Users/srvo/dewey_emails.duckdb
+2025-03-17 09:30:01,592 - gmail_import - ERROR - Gmail import failed: IO Error: Could not set lock on file "/Users/srvo/dewey_emails.duckdb": Conflicting lock is held in /Users/srvo/.local/share/uv/python/cpython-3.12.9-macos-aarch64-none/bin/python3.12 (PID 67944) by user srvo. See also https://duckdb.org/docs/connect/concurrency
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/dewey/core/crm/gmail/simple_import.py", line 681, in main
+    conn = get_db_connection(db_path)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/srvo/dewey/src/dewey/core/crm/gmail/simple_import.py", line 104, in get_db_connection
+    conn = duckdb.connect(db_path)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+duckdb.duckdb.IOException: IO Error: Could not set lock on file "/Users/srvo/dewey_emails.duckdb": Conflicting lock is held in /Users/srvo/.local/share/uv/python/cpython-3.12.9-macos-aarch64-none/bin/python3.12 (PID 67944) by user srvo. See also https://duckdb.org/docs/connect/concurrency

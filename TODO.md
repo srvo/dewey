@@ -40,6 +40,23 @@
 ### CRM Module
 - Refactor database connection and error handling in `add_enrichment_a154a675.py` to use centralized utilities
 
+## Import Statements
+When importing from dewey modules, use absolute imports:
+```python
+from dewey.core.architecture import analyze_architecture
+from dewey.maintenance import prd_builder
+from dewey.core.automation import service_deployment
+from dewey.llm import llm_utils
+```
+
+For third-party imports, specify version requirements in pyproject.toml:
+```python
+import click  # For CLI
+import yaml   # For config
+import rich   # For console output
+import typer  # For advanced CLI
+```
+
 ## Pre-commit hook installation
 ```bash
 pip install pre-commit

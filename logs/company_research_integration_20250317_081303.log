@@ -1,0 +1,453 @@
+2025-03-17 08:13:05,083 - __main__ - INFO - Successfully connected to MotherDuck database 'dewey'
+2025-03-17 08:13:06,450 - __main__ - INFO - All required tables exist
+2025-03-17 08:13:06,450 - __main__ - INFO - Processing directory: /Users/srvo/input_data/json_files
+2025-03-17 08:13:06,526 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/li_research.json
+2025-03-17 08:13:07,247 - __main__ - ERROR - Error processing context for research li_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:07,247 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/li_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:07,247 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/li_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:07,247 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ttek_research.json
+2025-03-17 08:13:07,915 - __main__ - ERROR - Error processing context for research ttek_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:07,917 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ttek_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:07,917 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ttek_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:07,918 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/elf_research.json
+2025-03-17 08:13:08,624 - __main__ - ERROR - Error processing context for research elf_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:08,624 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/elf_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:08,625 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/elf_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:08,625 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/pbp_research.json
+2025-03-17 08:13:09,364 - __main__ - ERROR - Error processing context for research pbp_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:09,364 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pbp_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:09,364 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pbp_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:09,364 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/vtr_research.json
+2025-03-17 08:13:10,922 - __main__ - ERROR - Error processing context for research vtr_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:10,922 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/vtr_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:10,922 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/vtr_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:10,922 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/duol_research.json
+2025-03-17 08:13:11,583 - __main__ - ERROR - Error processing context for research duol_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:11,583 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/duol_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:11,583 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/duol_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:11,583 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/kegn_research.json
+2025-03-17 08:13:12,306 - __main__ - ERROR - Error processing context for research kegn_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:12,307 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/kegn_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:12,307 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/kegn_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:12,307 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/qcom_research.json
+2025-03-17 08:13:13,075 - __main__ - ERROR - Error processing context for research qcom_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:13,075 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/qcom_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:13,075 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/qcom_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:13,075 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/trmb_research.json
+2025-03-17 08:13:13,733 - __main__ - ERROR - Error processing context for research trmb_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:13,733 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/trmb_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:13,733 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/trmb_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:13,733 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ddog_research.json
+2025-03-17 08:13:14,387 - __main__ - ERROR - Error processing context for research ddog_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:14,387 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ddog_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:14,387 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ddog_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:14,387 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/htgc_research.json
+2025-03-17 08:13:15,843 - __main__ - ERROR - Error processing context for research htgc_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:15,843 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/htgc_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:15,843 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/htgc_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:15,843 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/pwr_research.json
+2025-03-17 08:13:16,545 - __main__ - ERROR - Error processing context for research pwr_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:16,545 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pwr_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:16,546 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pwr_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:16,546 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/shmcf_research.json
+2025-03-17 08:13:17,225 - __main__ - ERROR - Error processing context for research shmcf_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:17,225 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/shmcf_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:17,225 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/shmcf_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:17,225 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/beez_research.json
+2025-03-17 08:13:17,988 - __main__ - ERROR - Error processing context for research beez_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:17,990 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/beez_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:17,990 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/beez_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:17,991 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/isnpy_research.json
+2025-03-17 08:13:18,649 - __main__ - ERROR - Error processing context for research isnpy_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:18,649 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/isnpy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:18,649 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/isnpy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:18,649 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/akblf_research.json
+2025-03-17 08:13:19,337 - __main__ - ERROR - Error processing context for research akblf_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:19,337 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/akblf_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:19,337 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/akblf_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:19,337 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/are_research.json
+2025-03-17 08:13:20,038 - __main__ - ERROR - Error processing context for research are_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:20,038 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/are_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:20,038 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/are_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:20,038 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/skm_research.json
+2025-03-17 08:13:21,593 - __main__ - ERROR - Error processing context for research skm_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:21,594 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/skm_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:21,594 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/skm_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:21,594 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/amx_research.json
+2025-03-17 08:13:22,227 - __main__ - ERROR - Error processing context for research amx_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:22,227 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/amx_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:22,228 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/amx_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:22,228 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/hafc_research.json
+2025-03-17 08:13:22,898 - __main__ - ERROR - Error processing context for research hafc_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:22,898 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hafc_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:22,898 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hafc_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:22,898 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/crox_research.json
+2025-03-17 08:13:23,549 - __main__ - ERROR - Error processing context for research crox_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:23,549 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/crox_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:23,549 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/crox_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:23,549 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/qcrh_research.json
+2025-03-17 08:13:24,224 - __main__ - ERROR - Error processing context for research qcrh_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:24,224 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/qcrh_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:24,224 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/qcrh_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:24,225 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/brx_research.json
+2025-03-17 08:13:24,888 - __main__ - ERROR - Error processing context for research brx_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:24,888 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/brx_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:24,889 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/brx_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:24,889 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/cdns_research.json
+2025-03-17 08:13:26,391 - __main__ - ERROR - Error processing context for research cdns_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:26,391 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cdns_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:26,391 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cdns_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:26,391 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/wire_research.json
+2025-03-17 08:13:27,091 - __main__ - ERROR - Error processing context for research wire_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:27,091 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wire_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:27,091 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wire_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:27,091 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/aweg_research.json
+2025-03-17 08:13:27,787 - __main__ - ERROR - Error processing context for research aweg_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:27,787 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/aweg_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:27,787 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/aweg_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:27,788 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ccb_research.json
+2025-03-17 08:13:28,452 - __main__ - ERROR - Error processing context for research ccb_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:28,452 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ccb_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:28,452 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ccb_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:28,453 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/vcisy_research.json
+2025-03-17 08:13:29,145 - __main__ - ERROR - Error processing context for research vcisy_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:29,146 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/vcisy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:29,146 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/vcisy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:29,146 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/test1_research.json
+2025-03-17 08:13:29,892 - __main__ - ERROR - Error processing context for research test1_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:29,892 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test1_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:29,892 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test1_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:29,892 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/cmco_research.json
+2025-03-17 08:13:30,605 - __main__ - ERROR - Error processing context for research cmco_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:30,606 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cmco_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:30,606 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cmco_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:30,606 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/asml_research.json
+2025-03-17 08:13:32,075 - __main__ - ERROR - Error processing context for research asml_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:32,075 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/asml_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:32,076 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/asml_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:32,076 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/agm_research.json
+2025-03-17 08:13:32,770 - __main__ - ERROR - Error processing context for research agm_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:32,770 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/agm_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:32,770 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/agm_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:32,770 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/tclaf_research.json
+2025-03-17 08:13:33,384 - __main__ - ERROR - Error processing context for research tclaf_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:33,384 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/tclaf_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:33,384 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/tclaf_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:33,384 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/agx_research.json
+2025-03-17 08:13:34,053 - __main__ - ERROR - Error processing context for research agx_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:34,053 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/agx_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:34,053 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/agx_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:34,053 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ingr_research.json
+2025-03-17 08:13:34,955 - __main__ - ERROR - Error processing context for research ingr_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:34,955 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ingr_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:34,955 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ingr_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:34,955 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ora_research.json
+2025-03-17 08:13:35,661 - __main__ - ERROR - Error processing context for research ora_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:35,661 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ora_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:35,661 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ora_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:35,662 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/bdory_research.json
+2025-03-17 08:13:36,265 - __main__ - ERROR - Error processing context for research bdory_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:36,265 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/bdory_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:36,265 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/bdory_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:36,265 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/hdsn_research.json
+2025-03-17 08:13:36,883 - __main__ - ERROR - Error processing context for research hdsn_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:36,884 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hdsn_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:36,884 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hdsn_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:36,884 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/bfs_research.json
+2025-03-17 08:13:37,608 - __main__ - ERROR - Error processing context for research bfs_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:37,608 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/bfs_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:37,608 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/bfs_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:37,608 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/rng_research.json
+2025-03-17 08:13:38,272 - __main__ - ERROR - Error processing context for research rng_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:38,273 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/rng_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:38,273 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/rng_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:38,273 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/mcy_research.json
+2025-03-17 08:13:38,973 - __main__ - ERROR - Error processing context for research mcy_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:38,975 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/mcy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:38,975 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/mcy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:38,977 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/tcehy_research.json
+2025-03-17 08:13:39,957 - __main__ - ERROR - Error processing context for research tcehy_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:39,957 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/tcehy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:39,957 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/tcehy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:39,957 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/fgroy_research.json
+2025-03-17 08:13:40,650 - __main__ - ERROR - Error processing context for research fgroy_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:40,650 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fgroy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:40,650 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fgroy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:40,650 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/lqdt_research.json
+2025-03-17 08:13:41,347 - __main__ - ERROR - Error processing context for research lqdt_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:41,347 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lqdt_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:41,347 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lqdt_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:41,347 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/pllif_research.json
+2025-03-17 08:13:42,264 - __main__ - ERROR - Error processing context for research pllif_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:42,264 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pllif_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:42,264 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pllif_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:42,264 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/fbms_research.json
+2025-03-17 08:13:43,058 - __main__ - ERROR - Error processing context for research fbms_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:43,058 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fbms_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:43,058 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fbms_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:43,058 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ens_research.json
+2025-03-17 08:13:43,772 - __main__ - ERROR - Error processing context for research ens_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:43,772 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ens_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:43,772 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ens_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:43,772 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/nx_research.json
+2025-03-17 08:13:45,399 - __main__ - ERROR - Error processing context for research nx_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:45,399 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nx_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:45,399 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nx_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:45,399 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/fele_research.json
+2025-03-17 08:13:46,101 - __main__ - ERROR - Error processing context for research fele_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:46,102 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fele_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:46,102 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fele_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:46,102 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/test_research.json
+2025-03-17 08:13:46,793 - __main__ - ERROR - Error processing context for research test_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:46,793 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:46,793 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:46,793 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/test2_research.json
+2025-03-17 08:13:48,278 - __main__ - ERROR - Error processing context for research test2_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:48,278 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test2_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:48,278 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test2_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:48,278 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/yelp_research.json
+2025-03-17 08:13:49,066 - __main__ - ERROR - Error processing context for research yelp_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:49,066 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/yelp_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:49,066 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/yelp_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:49,066 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/lc_research.json
+2025-03-17 08:13:49,867 - __main__ - ERROR - Error processing context for research lc_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:49,867 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lc_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:49,867 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lc_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:49,867 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/efgsy_research.json
+2025-03-17 08:13:50,594 - __main__ - ERROR - Error processing context for research efgsy_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:50,594 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/efgsy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:50,594 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/efgsy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:50,594 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/wts_research.json
+2025-03-17 08:13:52,405 - __main__ - ERROR - Error processing context for research wts_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:52,405 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wts_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:52,405 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wts_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:52,406 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/amt_research.json
+2025-03-17 08:13:53,160 - __main__ - ERROR - Error processing context for research amt_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:53,161 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/amt_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:53,161 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/amt_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:53,161 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/alot_research.json
+2025-03-17 08:13:53,800 - __main__ - ERROR - Error processing context for research alot_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:53,800 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/alot_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:53,800 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/alot_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:53,800 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/omcl_research.json
+2025-03-17 08:13:54,493 - __main__ - ERROR - Error processing context for research omcl_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:54,493 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/omcl_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:54,493 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/omcl_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:54,493 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ftnt_research.json
+2025-03-17 08:13:55,253 - __main__ - ERROR - Error processing context for research ftnt_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:55,253 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ftnt_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:55,253 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ftnt_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:55,253 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/oezvy_research.json
+2025-03-17 08:13:55,896 - __main__ - ERROR - Error processing context for research oezvy_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:55,896 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/oezvy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:55,896 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/oezvy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:55,896 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/coco_research.json
+2025-03-17 08:13:57,062 - __main__ - ERROR - Error processing context for research coco_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:57,062 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/coco_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:57,062 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/coco_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:57,062 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/peco_research.json
+2025-03-17 08:13:58,052 - __main__ - ERROR - Error processing context for research peco_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:58,053 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/peco_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:58,053 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/peco_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:58,053 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/zm_research.json
+2025-03-17 08:13:58,754 - __main__ - ERROR - Error processing context for research zm_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:58,754 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/zm_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:58,754 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/zm_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:58,754 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/cprt_research.json
+2025-03-17 08:13:59,410 - __main__ - ERROR - Error processing context for research cprt_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:59,410 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cprt_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:59,410 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cprt_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:13:59,410 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/gmiix_research.json
+2025-03-17 08:14:00,023 - __main__ - ERROR - Error processing context for research gmiix_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:00,023 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/gmiix_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:00,023 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/gmiix_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:00,023 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/rsg_research.json
+2025-03-17 08:14:00,687 - __main__ - ERROR - Error processing context for research rsg_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:00,687 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/rsg_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:00,687 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/rsg_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:00,687 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ame_research.json
+2025-03-17 08:14:01,388 - __main__ - ERROR - Error processing context for research ame_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:01,388 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ame_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:01,388 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ame_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:01,388 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/enph_research.json
+2025-03-17 08:14:02,653 - __main__ - ERROR - Error processing context for research enph_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:02,654 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/enph_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:02,654 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/enph_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:02,654 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/lmnd_research.json
+2025-03-17 08:14:03,400 - __main__ - ERROR - Error processing context for research lmnd_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:03,400 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lmnd_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:03,400 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lmnd_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:03,401 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/bmi_research.json
+2025-03-17 08:14:03,902 - __main__ - ERROR - Error processing context for research bmi_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:03,902 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/bmi_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:03,902 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/bmi_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:03,902 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/test3_research.json
+2025-03-17 08:14:04,599 - __main__ - ERROR - Error processing context for research test3_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:04,599 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test3_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:04,599 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test3_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:04,599 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/lkq_research.json
+2025-03-17 08:14:05,442 - __main__ - ERROR - Error processing context for research lkq_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:05,442 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lkq_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:05,442 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lkq_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:05,442 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/cttof_research.json
+2025-03-17 08:14:06,141 - __main__ - ERROR - Error processing context for research cttof_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:06,141 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cttof_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:06,141 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cttof_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:06,141 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/amal_research.json
+2025-03-17 08:14:06,756 - __main__ - ERROR - Error processing context for research amal_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:06,756 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/amal_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:06,756 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/amal_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:06,756 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/test4_research.json
+2025-03-17 08:14:07,456 - __main__ - ERROR - Error processing context for research test4_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:07,456 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test4_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:07,456 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test4_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:07,456 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/hy_research.json
+2025-03-17 08:14:08,021 - __main__ - ERROR - Error processing context for research hy_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:08,021 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:08,021 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:08,022 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/kncay_research.json
+2025-03-17 08:14:08,740 - __main__ - ERROR - Error processing context for research kncay_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:08,740 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/kncay_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:08,740 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/kncay_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:08,740 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/test0_research.json
+2025-03-17 08:14:10,720 - __main__ - ERROR - Error processing context for research test0_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:10,720 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test0_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:10,720 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test0_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:10,721 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ahh_research.json
+2025-03-17 08:14:11,377 - __main__ - ERROR - Error processing context for research ahh_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:11,377 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ahh_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:11,377 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ahh_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:11,378 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/phg_research.json
+2025-03-17 08:14:12,099 - __main__ - ERROR - Error processing context for research phg_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:12,099 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/phg_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:12,099 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/phg_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:12,099 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/uhs_research.json
+2025-03-17 08:14:12,754 - __main__ - ERROR - Error processing context for research uhs_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:12,754 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/uhs_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:12,754 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/uhs_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:12,754 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/byddf_research.json
+2025-03-17 08:14:13,476 - __main__ - ERROR - Error processing context for research byddf_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:13,476 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/byddf_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:13,476 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/byddf_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:13,476 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/cnm_research.json
+2025-03-17 08:14:14,149 - __main__ - ERROR - Error processing context for research cnm_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:14,149 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cnm_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:14,149 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cnm_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:14,150 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/lii_research.json
+2025-03-17 08:14:14,848 - __main__ - ERROR - Error processing context for research lii_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:14,848 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lii_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:14,848 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lii_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:14,848 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/mli_research.json
+2025-03-17 08:14:16,413 - __main__ - ERROR - Error processing context for research mli_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:16,414 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/mli_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:16,414 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/mli_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:16,414 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/sbac_research.json
+2025-03-17 08:14:17,090 - __main__ - ERROR - Error processing context for research sbac_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:17,091 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/sbac_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:17,091 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/sbac_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:17,091 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/tv_research.json
+2025-03-17 08:14:17,743 - __main__ - ERROR - Error processing context for research tv_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:17,743 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/tv_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:17,743 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/tv_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:17,743 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/yahoy_research.json
+2025-03-17 08:14:18,384 - __main__ - ERROR - Error processing context for research yahoy_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:18,384 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/yahoy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:18,384 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/yahoy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:18,384 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/shls_research.json
+2025-03-17 08:14:19,102 - __main__ - ERROR - Error processing context for research shls_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:19,103 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/shls_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:19,103 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/shls_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:19,103 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/phprf_research.json
+2025-03-17 08:14:19,737 - __main__ - ERROR - Error processing context for research phprf_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:19,737 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/phprf_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:19,737 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/phprf_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:19,737 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/wbd_research.json
+2025-03-17 08:14:20,887 - __main__ - ERROR - Error processing context for research wbd_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:20,888 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wbd_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:20,888 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wbd_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:20,888 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/nvri_research.json
+2025-03-17 08:14:21,583 - __main__ - ERROR - Error processing context for research nvri_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:21,583 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nvri_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:21,583 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nvri_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:21,583 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/root_research.json
+2025-03-17 08:14:22,240 - __main__ - ERROR - Error processing context for research root_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:22,240 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/root_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:22,241 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/root_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:22,241 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ntdoy_research.json
+2025-03-17 08:14:22,953 - __main__ - ERROR - Error processing context for research ntdoy_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:22,953 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ntdoy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:22,953 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ntdoy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:22,954 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/acgl_research.json
+2025-03-17 08:14:23,610 - __main__ - ERROR - Error processing context for research acgl_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:23,612 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/acgl_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:23,615 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/acgl_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:23,616 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/meli_research.json
+2025-03-17 08:14:24,234 - __main__ - ERROR - Error processing context for research meli_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:24,234 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/meli_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:24,234 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/meli_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:24,234 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/pastf_research.json
+2025-03-17 08:14:24,891 - __main__ - ERROR - Error processing context for research pastf_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:24,891 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pastf_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:24,891 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pastf_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:24,891 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/wina_research.json
+2025-03-17 08:14:26,412 - __main__ - ERROR - Error processing context for research wina_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:26,412 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wina_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:26,412 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wina_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:26,412 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/hum_research.json
+2025-03-17 08:14:27,045 - __main__ - ERROR - Error processing context for research hum_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:27,046 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hum_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:27,046 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hum_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:27,046 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/dnzof_research.json
+2025-03-17 08:14:27,687 - __main__ - ERROR - Error processing context for research dnzof_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:27,687 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/dnzof_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:27,687 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/dnzof_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:27,688 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/iipr_research.json
+2025-03-17 08:14:28,239 - __main__ - ERROR - Error processing context for research iipr_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:28,239 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/iipr_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:28,239 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/iipr_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:28,239 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/esyjy_research.json
+2025-03-17 08:14:28,878 - __main__ - ERROR - Error processing context for research esyjy_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:28,879 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/esyjy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:28,879 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/esyjy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:28,879 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/dnngy_research.json
+2025-03-17 08:14:29,570 - __main__ - ERROR - Error processing context for research dnngy_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:29,570 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/dnngy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:29,570 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/dnngy_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:29,570 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ait_research.json
+2025-03-17 08:14:31,430 - __main__ - ERROR - Error processing context for research ait_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:31,430 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ait_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:31,430 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ait_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:31,430 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/iif_research.json
+2025-03-17 08:14:32,131 - __main__ - ERROR - Error processing context for research iif_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:32,131 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/iif_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:32,131 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/iif_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:32,131 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/thqqf_research.json
+2025-03-17 08:14:32,715 - __main__ - ERROR - Error processing context for research thqqf_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:32,715 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/thqqf_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:32,715 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/thqqf_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:32,715 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/fbasf_research.json
+2025-03-17 08:14:33,382 - __main__ - ERROR - Error processing context for research fbasf_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:33,383 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fbasf_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:33,383 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fbasf_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:33,383 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/caap_research.json
+2025-03-17 08:14:34,079 - __main__ - ERROR - Error processing context for research caap_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:34,079 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/caap_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:34,079 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/caap_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:34,079 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/nly_research.json
+2025-03-17 08:14:34,720 - __main__ - ERROR - Error processing context for research nly_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:34,720 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nly_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:34,720 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nly_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:34,720 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/itri_research.json
+2025-03-17 08:14:36,459 - __main__ - ERROR - Error processing context for research itri_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:36,459 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/itri_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:36,459 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/itri_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:36,459 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/dskif_research.json
+2025-03-17 08:14:37,102 - __main__ - ERROR - Error processing context for research dskif_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:37,102 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/dskif_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:37,102 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/dskif_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:37,102 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/nlcp_research.json
+2025-03-17 08:14:37,797 - __main__ - ERROR - Error processing context for research nlcp_research: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:37,797 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nlcp_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:37,797 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nlcp_research.json: Binder Error: Table "company_context" does not have a column with name "context_text"
+2025-03-17 08:14:37,797 - __main__ - INFO - Successfully processed 0 files in directory: /Users/srvo/input_data/json_files
+2025-03-17 08:14:37,798 - __main__ - INFO - Script completed successfully

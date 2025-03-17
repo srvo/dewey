@@ -1,0 +1,8 @@
+2025-03-17 07:36:05,591 - contact_consolidation - INFO - Connected to MotherDuck database: dewey
+2025-03-17 07:36:06,201 - contact_consolidation - INFO - Created or verified unified_contacts table
+2025-03-17 07:36:06,398 - contact_consolidation - INFO - Extracted 1346 contacts from CRM tables
+2025-03-17 07:36:07,553 - contact_consolidation - INFO - Extracted 49077 contacts from email tables
+2025-03-17 07:36:07,956 - contact_consolidation - INFO - Extracted 1994 contacts from subscriber tables
+2025-03-17 07:36:08,158 - contact_consolidation - INFO - Extracted 3 contacts from blog signup form responses
+2025-03-17 07:36:08,160 - contact_consolidation - INFO - Total contacts extracted: 52420
+2025-03-17 07:36:08,213 - contact_consolidation - ERROR - Error in contact consolidation: '>' not supported between instances of 'str' and 'datetime.datetime'

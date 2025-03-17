@@ -1,0 +1,17 @@
+2025-03-17 04:52:19 - Using deduplication strategy: skip
+2025-03-17 04:52:19 - Continue on error: true
+2025-03-17 04:52:19 - Database: dewey
+2025-03-17 04:52:19 - Input directory: /Users/srvo/input_data/nov_30_crm_data/crm/contacts
+2025-03-17 04:52:19 - Finding all supported files in /Users/srvo/input_data/nov_30_crm_data/crm/contacts
+2025-03-17 04:52:19 - Found        2 supported files
+2025-03-17 04:52:19 - Processing file 1/       2: /Users/srvo/input_data/nov_30_crm_data/crm/contacts/contacts.duckdb
+2025-03-17 04:52:20 - Successfully uploaded file /Users/srvo/input_data/nov_30_crm_data/crm/contacts/contacts.duckdb
+2025-03-17 04:52:20 - ----------------------------------------
+2025-03-17 04:52:20 - Processing file 2/       2: /Users/srvo/input_data/nov_30_crm_data/crm/contacts/contacts
+2025-03-17 04:52:20 - Successfully uploaded file /Users/srvo/input_data/nov_30_crm_data/crm/contacts/contacts
+2025-03-17 04:52:20 - ----------------------------------------
+2025-03-17 04:52:20 - Processing file 3/       2: copy.duckdb
+2025-03-17 04:52:21 - Successfully uploaded file copy.duckdb
+2025-03-17 04:52:21 - ----------------------------------------
+2025-03-17 04:52:21 - Upload complete. Successfully uploaded 3 of        2 files.
+2025-03-17 04:52:21 - All files uploaded successfully.

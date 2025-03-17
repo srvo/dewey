@@ -1,0 +1,341 @@
+2025-03-17 08:11:38,835 - __main__ - INFO - Successfully connected to MotherDuck database 'dewey'
+2025-03-17 08:11:40,132 - __main__ - INFO - Successfully ensured all required tables exist
+2025-03-17 08:11:40,133 - __main__ - INFO - Processing directory: /Users/srvo/input_data/json_files
+2025-03-17 08:11:40,209 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/li_research.json
+2025-03-17 08:11:40,410 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/li_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:40,410 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/li_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:40,410 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ttek_research.json
+2025-03-17 08:11:40,646 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ttek_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:40,646 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ttek_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:40,646 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/elf_research.json
+2025-03-17 08:11:40,912 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/elf_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:40,912 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/elf_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:40,912 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/pbp_research.json
+2025-03-17 08:11:41,180 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pbp_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:41,180 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pbp_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:41,180 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/vtr_research.json
+2025-03-17 08:11:41,492 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/vtr_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:41,492 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/vtr_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:41,492 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/duol_research.json
+2025-03-17 08:11:41,758 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/duol_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:41,758 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/duol_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:41,758 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/kegn_research.json
+2025-03-17 08:11:42,062 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/kegn_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:42,062 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/kegn_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:42,063 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/qcom_research.json
+2025-03-17 08:11:42,332 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/qcom_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:42,333 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/qcom_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:42,333 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/trmb_research.json
+2025-03-17 08:11:42,600 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/trmb_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:42,600 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/trmb_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:42,600 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ddog_research.json
+2025-03-17 08:11:42,843 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ddog_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:42,843 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ddog_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:42,843 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/htgc_research.json
+2025-03-17 08:11:43,128 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/htgc_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:43,128 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/htgc_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:43,128 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/pwr_research.json
+2025-03-17 08:11:43,432 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pwr_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:43,432 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pwr_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:43,432 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/shmcf_research.json
+2025-03-17 08:11:43,699 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/shmcf_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:43,699 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/shmcf_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:43,699 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/beez_research.json
+2025-03-17 08:11:43,969 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/beez_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:43,969 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/beez_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:43,969 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/isnpy_research.json
+2025-03-17 08:11:44,275 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/isnpy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:44,275 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/isnpy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:44,275 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/akblf_research.json
+2025-03-17 08:11:44,548 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/akblf_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:44,550 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/akblf_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:44,551 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/are_research.json
+2025-03-17 08:11:44,814 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/are_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:44,815 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/are_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:44,815 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/skm_research.json
+2025-03-17 08:11:45,139 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/skm_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:45,139 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/skm_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:45,139 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/amx_research.json
+2025-03-17 08:11:45,404 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/amx_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:45,404 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/amx_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:45,404 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/hafc_research.json
+2025-03-17 08:11:45,670 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hafc_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:45,670 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hafc_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:45,670 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/crox_research.json
+2025-03-17 08:11:45,938 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/crox_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:45,938 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/crox_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:45,938 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/qcrh_research.json
+2025-03-17 08:11:46,175 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/qcrh_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:46,176 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/qcrh_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:46,176 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/brx_research.json
+2025-03-17 08:11:46,444 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/brx_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:46,444 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/brx_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:46,444 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/cdns_research.json
+2025-03-17 08:11:46,652 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cdns_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:46,653 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cdns_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:46,653 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/wire_research.json
+2025-03-17 08:11:46,922 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wire_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:46,922 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wire_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:46,922 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/aweg_research.json
+2025-03-17 08:11:47,161 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/aweg_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:47,162 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/aweg_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:47,163 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ccb_research.json
+2025-03-17 08:11:47,426 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ccb_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:47,426 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ccb_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:47,426 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/vcisy_research.json
+2025-03-17 08:11:47,624 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/vcisy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:47,624 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/vcisy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:47,625 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/test1_research.json
+2025-03-17 08:11:47,897 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test1_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:47,897 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test1_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:47,897 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/cmco_research.json
+2025-03-17 08:11:48,190 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cmco_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:48,190 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cmco_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:48,190 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/asml_research.json
+2025-03-17 08:11:48,456 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/asml_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:48,457 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/asml_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:48,457 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/agm_research.json
+2025-03-17 08:11:48,723 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/agm_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:48,723 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/agm_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:48,723 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/tclaf_research.json
+2025-03-17 08:11:48,925 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/tclaf_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:48,926 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/tclaf_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:48,926 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/agx_research.json
+2025-03-17 08:11:49,232 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/agx_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:49,232 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/agx_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:49,232 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ingr_research.json
+2025-03-17 08:11:49,502 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ingr_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:49,503 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ingr_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:49,503 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ora_research.json
+2025-03-17 08:11:49,773 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ora_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:49,773 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ora_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:49,773 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/bdory_research.json
+2025-03-17 08:11:50,055 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/bdory_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:50,055 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/bdory_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:50,055 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/hdsn_research.json
+2025-03-17 08:11:50,486 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hdsn_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:50,486 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hdsn_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:50,486 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/bfs_research.json
+2025-03-17 08:11:50,753 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/bfs_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:50,753 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/bfs_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:50,753 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/rng_research.json
+2025-03-17 08:11:51,017 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/rng_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:51,017 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/rng_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:51,017 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/mcy_research.json
+2025-03-17 08:11:51,286 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/mcy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:51,286 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/mcy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:51,286 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/tcehy_research.json
+2025-03-17 08:11:51,552 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/tcehy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:51,552 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/tcehy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:51,553 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/fgroy_research.json
+2025-03-17 08:11:51,846 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fgroy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:51,846 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fgroy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:51,846 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/lqdt_research.json
+2025-03-17 08:11:52,121 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lqdt_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:52,121 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lqdt_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:52,122 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/pllif_research.json
+2025-03-17 08:11:52,388 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pllif_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:52,388 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pllif_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:52,388 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/fbms_research.json
+2025-03-17 08:11:52,655 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fbms_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:52,655 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fbms_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:52,655 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ens_research.json
+2025-03-17 08:11:52,920 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ens_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:52,920 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ens_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:52,920 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/nx_research.json
+2025-03-17 08:11:53,224 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nx_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:53,224 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nx_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:53,224 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/fele_research.json
+2025-03-17 08:11:53,491 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fele_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:53,491 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fele_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:53,491 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/test_research.json
+2025-03-17 08:11:53,692 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:53,692 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:53,692 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/test2_research.json
+2025-03-17 08:11:53,958 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test2_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:53,958 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test2_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:53,958 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/yelp_research.json
+2025-03-17 08:11:54,226 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/yelp_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:54,227 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/yelp_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:54,228 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/lc_research.json
+2025-03-17 08:11:54,493 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lc_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:54,493 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lc_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:54,493 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/efgsy_research.json
+2025-03-17 08:11:54,727 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/efgsy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:54,727 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/efgsy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:54,727 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/wts_research.json
+2025-03-17 08:11:54,992 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wts_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:54,992 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wts_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:54,992 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/amt_research.json
+2025-03-17 08:11:55,259 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/amt_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:55,259 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/amt_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:55,259 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/alot_research.json
+2025-03-17 08:11:55,629 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/alot_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:55,629 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/alot_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:55,629 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/omcl_research.json
+2025-03-17 08:11:55,828 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/omcl_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:55,828 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/omcl_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:55,828 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ftnt_research.json
+2025-03-17 08:11:56,094 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ftnt_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:56,094 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ftnt_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:56,094 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/oezvy_research.json
+2025-03-17 08:11:56,337 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/oezvy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:56,337 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/oezvy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:56,337 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/coco_research.json
+2025-03-17 08:11:56,604 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/coco_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:56,604 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/coco_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:56,604 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/peco_research.json
+2025-03-17 08:11:56,875 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/peco_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:56,875 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/peco_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:56,875 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/zm_research.json
+2025-03-17 08:11:57,145 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/zm_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:57,145 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/zm_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:57,145 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/cprt_research.json
+2025-03-17 08:11:57,412 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cprt_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:57,412 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cprt_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:57,412 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/gmiix_research.json
+2025-03-17 08:11:57,678 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/gmiix_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:57,678 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/gmiix_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:57,678 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/rsg_research.json
+2025-03-17 08:11:57,930 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/rsg_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:57,930 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/rsg_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:57,931 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ame_research.json
+2025-03-17 08:11:58,197 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ame_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:58,197 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ame_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:58,197 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/enph_research.json
+2025-03-17 08:11:58,463 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/enph_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:58,463 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/enph_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:58,463 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/lmnd_research.json
+2025-03-17 08:11:58,730 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lmnd_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:58,730 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lmnd_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:58,730 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/bmi_research.json
+2025-03-17 08:11:58,995 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/bmi_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:58,995 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/bmi_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:58,995 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/test3_research.json
+2025-03-17 08:11:59,261 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test3_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:59,262 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test3_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:59,262 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/lkq_research.json
+2025-03-17 08:11:59,567 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lkq_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:59,567 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lkq_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:59,567 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/cttof_research.json
+2025-03-17 08:11:59,847 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cttof_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:59,847 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cttof_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:11:59,847 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/amal_research.json
+2025-03-17 08:12:00,118 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/amal_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:00,118 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/amal_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:00,118 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/test4_research.json
+2025-03-17 08:12:00,394 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test4_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:00,394 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test4_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:00,394 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/hy_research.json
+2025-03-17 08:12:00,759 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:00,759 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:00,759 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/kncay_research.json
+2025-03-17 08:12:01,024 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/kncay_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:01,025 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/kncay_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:01,025 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/test0_research.json
+2025-03-17 08:12:01,330 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test0_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:01,331 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/test0_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:01,331 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ahh_research.json
+2025-03-17 08:12:01,597 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ahh_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:01,598 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ahh_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:01,599 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/phg_research.json
+2025-03-17 08:12:01,868 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/phg_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:01,868 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/phg_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:01,868 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/uhs_research.json
+2025-03-17 08:12:02,135 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/uhs_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:02,135 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/uhs_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:02,135 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/byddf_research.json
+2025-03-17 08:12:02,402 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/byddf_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:02,402 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/byddf_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:02,402 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/cnm_research.json
+2025-03-17 08:12:02,673 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cnm_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:02,674 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/cnm_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:02,674 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/lii_research.json
+2025-03-17 08:12:02,943 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lii_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:02,943 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/lii_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:02,943 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/mli_research.json
+2025-03-17 08:12:03,378 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/mli_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:03,378 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/mli_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:03,378 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/sbac_research.json
+2025-03-17 08:12:03,644 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/sbac_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:03,644 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/sbac_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:03,644 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/tv_research.json
+2025-03-17 08:12:03,868 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/tv_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:03,868 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/tv_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:03,868 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/yahoy_research.json
+2025-03-17 08:12:04,066 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/yahoy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:04,067 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/yahoy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:04,067 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/shls_research.json
+2025-03-17 08:12:04,335 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/shls_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:04,335 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/shls_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:04,335 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/phprf_research.json
+2025-03-17 08:12:04,604 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/phprf_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:04,604 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/phprf_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:04,605 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/wbd_research.json
+2025-03-17 08:12:04,874 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wbd_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:04,874 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wbd_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:04,876 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/nvri_research.json
+2025-03-17 08:12:05,143 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nvri_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:05,143 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nvri_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:05,143 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/root_research.json
+2025-03-17 08:12:05,501 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/root_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:05,501 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/root_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:05,501 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ntdoy_research.json
+2025-03-17 08:12:05,900 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ntdoy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:05,901 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ntdoy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:05,901 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/acgl_research.json
+2025-03-17 08:12:06,168 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/acgl_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:06,169 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/acgl_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:06,169 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/meli_research.json
+2025-03-17 08:12:06,434 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/meli_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:06,435 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/meli_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:06,435 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/pastf_research.json
+2025-03-17 08:12:06,703 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pastf_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:06,703 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/pastf_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:06,703 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/wina_research.json
+2025-03-17 08:12:06,980 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wina_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:06,980 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/wina_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:06,980 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/hum_research.json
+2025-03-17 08:12:07,281 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hum_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:07,281 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/hum_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:07,281 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/dnzof_research.json
+2025-03-17 08:12:07,511 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/dnzof_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:07,511 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/dnzof_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:07,511 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/iipr_research.json
+2025-03-17 08:12:07,779 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/iipr_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:07,779 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/iipr_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:07,779 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/esyjy_research.json
+2025-03-17 08:12:08,052 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/esyjy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:08,052 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/esyjy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:08,052 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/dnngy_research.json
+2025-03-17 08:12:08,319 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/dnngy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:08,319 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/dnngy_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:08,319 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/ait_research.json
+2025-03-17 08:12:08,589 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ait_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:08,589 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/ait_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:08,589 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/iif_research.json
+2025-03-17 08:12:08,871 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/iif_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:08,871 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/iif_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:08,871 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/thqqf_research.json
+2025-03-17 08:12:09,136 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/thqqf_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:09,136 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/thqqf_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:09,136 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/fbasf_research.json
+2025-03-17 08:12:09,462 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fbasf_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:09,462 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/fbasf_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:09,464 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/caap_research.json
+2025-03-17 08:12:09,731 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/caap_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:09,732 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/caap_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:09,732 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/nly_research.json
+2025-03-17 08:12:10,000 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nly_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:10,000 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nly_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:10,000 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/itri_research.json
+2025-03-17 08:12:10,267 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/itri_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:10,267 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/itri_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:10,268 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/dskif_research.json
+2025-03-17 08:12:10,534 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/dskif_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:10,534 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/dskif_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:10,535 - __main__ - INFO - Processing file: /Users/srvo/input_data/json_files/nlcp_research.json
+2025-03-17 08:12:10,801 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nlcp_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:10,801 - __main__ - ERROR - Error processing file /Users/srvo/input_data/json_files/nlcp_research.json: Binder Error: Table "company_research" does not have a column with name "created_at"
+2025-03-17 08:12:10,801 - __main__ - INFO - Successfully processed 0 files in directory: /Users/srvo/input_data/json_files
+2025-03-17 08:12:10,801 - __main__ - INFO - Script completed successfully

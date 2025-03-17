@@ -1,369 +1,1298 @@
-metadata:
-  author: Sloane Ortel
-  revision_policy: Bi-weekly review
-  version_history:
-  - version: '1.0'
-    date: '2024-11-06'
-    author: Sloane Ortel
-    changes: Initial draft
-  - version: '1.1'
-    date: '2024-11-07'
-    author: Sloane Ortel
-    changes: Fixed PRD to comply with project conventions
-title: LLM Functions
-description: This PRD details the development of an LLM-based framework designed to
-  enhance internal knowledge management and client-facing financial analysis systems.
-  The framework leverages AI agents and external APIs for tasks like data analysis,
-  email processing, and content generation. It utilizes key components such as dynamic
-  tool integration, LLM interaction management, and specialized AI agents built on
-  the smolagents framework. The goal is to improve the efficiency and reliability
-  of these systems, directly impacting client service and internal operations.
-stakeholders:
-  default:
-  - name: Sloane Ortel
-    role: Primary Stakeholder
-    contact: srvo@domain.com
-    review_date: null
-  client_modules:
-  - name: Client Services Team
-    role: Client Interface
-    review_date: null
-  legal_compliance:
-  - name: Legal & Compliance
-    role: Regulatory Oversight
-    review_date: null
-market_assessment:
-  default: Internal knowledge management and client-facing financial analysis systems
-  client_facing: High-net-worth individuals and institutional investors
-assumptions:
-- All non-client modules assume single-stakeholder (Sloane Ortel) usage
-- Data security requirements follow FINRA/SEC regulations
-- Python 3.11+ runtime environment
-evaluation_metrics:
-- Code maintainability (cyclomatic complexity < 15)
-- LLM response latency < 2.5s
-- Data processing throughput > 100MB/s
-timelines:
-  discovery: 2
-  development: 3
-  testing: 1
-  deployment: 0.5
 components:
   tool_factory.py:
-    description: Dynamically loads and instantiates tools based on configuration files,
-      enabling flexible tool integration.
+    description: No description available.
     responsibilities:
-    - Loading tool configurations
-    - Instantiating tool objects
-    - Managing tool lifecycle
+    - Load and manage available tools.
+    - Load tools.
+    - Create tool instances.
+    - Load tools from a configured file.
     dependencies:
-    - importlib
-    - os
-    - yaml
+    - importlib library
+    - __future__ library
+    - llama_index library
+  exceptions_0b0e30bb_1.py:
+    description: No description available.
+    responsibilities:
+    - Signal that data persistence failed
+    - Base exception for database errors
+    - Signal that data fetching failed
+    - Provides a common type for catching database issues
+    - Indicate a failure during database saving
+    - Indicate a failure during database retrieval
+    dependencies: []
   llm_utils.py:
-    description: Handles interactions with Large Language Models (LLMs), including
-      validation of model parameters and generating responses using DeepInfraClient.
+    description: No description available.
     responsibilities:
-    - Validating LLM parameters
-    - Generating LLM responses
-    - Managing LLM client connections
+    - Manage LLM client configuration.
+    - Execute LLM requests with fallback support.
+    - Parse and clean LLM responses (including JSON).
     dependencies:
-    - logging
-    - json
-    - dewey.llm.api_clients.deepinfra.DeepInfraClient
+    - __future__ library
+    - exceptions.py for llm functionality
+    - dotenv library
+    - api_clients.py for llm functionality
+    - rich library
   tool_launcher.py:
-    description: Manages the execution and monitoring of external CLI tools, providing
-      a mechanism for integrating them into the agent workflow.
+    description: Tool launcher for integrating external CLI tools.
     responsibilities:
-    - Launching external CLI tools
-    - Monitoring tool execution
-    - Managing tool lifecycle
+    - Initialize the tool launcher
+    - Check if a tool is currently running
+    - Manage external CLI tools
+    - Verify that required tools are installed
+    - Launch external CLI tools
+    - Verify required tools are installed
     dependencies:
-    - asyncio
-    - logging
-    - shutil
-  agents/:
-    description: Contains various AI agents built using the smolagents framework,
-      each designed for specific tasks such as docstring generation, self-care, triage,
-      optimization, content creation, and logical fallacy detection.
+    - shutil library
+    - __future__ library
+    - asyncio library
+  exceptions.py:
+    description: No description available.
     responsibilities:
-    - Performing specific tasks using AI
-    - Interacting with other agents
-    - Adapting to changing environments
-    dependencies:
-    - smolagents
-    - structlog
-    - pydantic
-    - base.SyzygyAgent
-    - database.models.Contact
-  api_clients/:
-    description: Provides clients for interacting with external APIs, including OpenRouter,
-      Gemini, and DeepInfra, with rate limiting and error handling.
+    - Provides a common error type for LLM operations
+    - Base class for LLM exceptions
+    dependencies: []
+  legacy/log_analyzer.py:
+    description: 'Mercury Import Log Analyzer.
+
+
+      Monitors mercury_import.log and maintains an error status report.
+
+      Uses external deepinfra_client.py for API interactions.'
     responsibilities:
-    - Interacting with external APIs
-    - Handling API requests
-    - Managing rate limits
-    - Handling API errors
+    - Configure error classification.
+    - Store error tracking information.
+    - Represent a classified error.
     dependencies:
-    - httpx
-    - openai
-    - logging
-    - os
-  legacy/:
-    description: Contains older code related to various functionalities such as log
-      analysis, image generation, database synchronization, email prioritization,
-      data ingestion, company analysis, and more. This section seems to be in the
-      process of being refactored or replaced.
+    - subprocess library
+    - dataclasses library
+    - pathlib library
+    - time library
+  legacy/image_generation.py:
+    description: No description available.
     responsibilities:
-    - Performing various legacy functionalities
-    - Maintaining compatibility with older systems
+    - Interact with the Stability AI API.
+    - Generate images from text prompts.
+    - Manage output directory for generated images.
     dependencies:
-    - json
-    - logging
-    - subprocess
-    - sys
-    - time
-    - requests
-    - sqlalchemy
-    - django
-    - pathlib
-    - duckdb
-    - llama_index
-    - marimo
-    - prefect
-    - aiosqlite
-    - asyncpg
+    - pydantic library
+    - requests library
+    - __future__ library
+    - llama_index library
+    - uuid library
+  legacy/db_sync.py:
+    description: 'Database sync module.
+
+
+      This module handles syncing the local DuckDB database to the data lake.'
+    responsibilities:
+    - Sync local database to data lake
+    - Create timestamped backup
+    - Maintain latest version in data lake
+    dependencies:
+    - subprocess library
+    - pathlib library
+    - datetime library
+  legacy/stock_models.py:
+    description: No description available.
+    responsibilities:
+    - Store stock-related data
+    - Provide recommendations based on analysis
+    - Analyze stock data
+    - Generate insights from stock data
+    - Represent a stock being tracked
+    - Potentially manage updates to stock data
+    dependencies:
+    - sqlalchemy library
+  legacy/xxxx_llm_tool_tracking.py:
+    description: No description available.
+    responsibilities:
+    - Represent a database migration.
+    - Define database schema changes.
+    - Manage migration application and rollback.
+    dependencies:
+    - django library
+  legacy/email_prioritization.py:
+    description: Service for prioritizing emails based on user preferences and patterns.
+    responsibilities:
+    - Score emails based on user preferences.
+    - Prioritize emails based on scoring.
+    - Log an edge case for analysis.
+    - Initialize the prioritizer with configuration.
+    - Score an email using multiple methods.
+    - Score an email based on predefined rules.
+    - Define sources of priority decisions.
+    - Load a JSON configuration file.
+    - Score email using DeepInfra API.
+    - Manage configuration for prioritization.
+    dependencies:
+    - structlog library
+    - requests library
+    - pathlib library
+    - database library
+    - django library
+    - tenacity library
+  legacy/format_and_lint.py:
+    description: "Script to format and lint all Python code in the project.\n\nThis\
+      \ script provides automated code formatting and linting for the entire project\n\
+      using Black (formatter) and Flake8 (linter). It processes all Python files in\
+      \ the\n'scripts' and 'tests' directories.\n\nThe script handles:\n- Formatting\
+      \ code according to PEP 8 standards using Black\n- Checking code quality and\
+      \ style using Flake8\n- Error handling and reporting for both tools\n- Recursive\
+      \ directory traversal for Python files\n\nUsage:\n    python scripts/format_and_lint.py"
+    responsibilities:
+    - Check Python files for style violations with Flake8
+    - Format Python files with Black
+    dependencies:
+    - subprocess library
+    - pathlib library
+  legacy/import_data.py:
+    description: 'Import TICK history from CSV file.
+
+
+      Imports historical TICK data from the CSV file into the database.'
+    responsibilities:
+    - Parse a string into an integer TICK value.
+    - Import TICK history data from a CSV file into a database.
+    dependencies:
+    - pathlib library
+    - __future__ library
+    - sqlalchemy library
+    - data_store library
+    - models library
+    - csv library
+    - datetime library
+  legacy/models.py:
+    description: No description available.
+    responsibilities:
+    - Store creation and update timestamps.
+    - Represent a static page with title, slug, and content.
+    - Specify the app label for the Page model.
+    - Generate the absolute URL for the page.
+    - Return the page title as a string representation.
+    - Define the default ordering for Page objects.
+    - Provide a canonical URL.
+    dependencies:
+    - django library
+  legacy/model_config.py:
+    description: No description available.
+    responsibilities:
+    - Define available chat model options.
+    - Provide a way to represent different chat models.
+    - Act as an enumeration for chat models.
+    dependencies:
+    - enum library
+    - dotenv library
+  legacy/company_analysis_manager.py:
+    description: No description available.
+    responsibilities:
+    - Import necessary libraries.
+    - Handle file uploads.
+    - Trigger the analysis workflow.
+    - Display a preview of the data.
+    - Validate data and prepare it for analysis.
+    - Introduce the application.
+    - Set analysis parameters.
+    - Process the uploaded CSV file.
+    dependencies:
+    - marimo library
+    - pandas library
+    - datetime library
+  legacy/deepinfra_client.py:
+    description: 'DeepInfra API Client (Legacy).
+
+
+      Handles error classification requests through the DeepInfra API with
+
+      improved error handling, retries, and chunking for large files.'
+    responsibilities:
+    - Parse API response into structured error data.
+    - Serve as the main entry point for execution.
+    - Classify errors using the DeepInfra API.
+    - Write classified errors to a markdown file.
+    dependencies:
+    - requests library
+    - hashlib library
+    - pathlib library
+    - time library
+  legacy/db_migration.py:
+    description: 'Database migration script to add enrichment tables and fields.
+
+
+      This script handles the evolution of the database schema to support:
+
+      - Contact enrichment data (job titles, LinkedIn profiles, etc.)
+
+      - Business opportunity tracking
+
+      - Enrichment task management
+
+      - Data source tracking
+
+      - Historical metadata changes
+
+
+      The migration is idempotent - it can be run multiple times safely as it checks
+
+      for existing columns and tables before creating them.
+
+
+      Key Features:
+
+      - Safe schema evolution with existence checks
+
+      - Comprehensive foreign key relationships
+
+      - Indexing for common query patterns
+
+      - JSON support for flexible metadata storage
+
+      - Timestamp tracking for all changes'
+    responsibilities:
+    - Add enrichment-related schema elements to the database.
+    dependencies:
+    - scripts library
+    - sqlite3 library
+  legacy/brave_search_engine.py:
+    description: 'Brave Search Engine.
+
+      ================
+
+
+      Provides functionality to perform web and local searches using the Brave Search
+      API.'
+    responsibilities:
+    - Perform local business searches
+    - Execute web searches using Brave Search API
+    - Handle rate limiting and retries
+    dependencies:
+    - aiohttp library
+    - base library
+    - __future__ library
+    - asyncio library
+  legacy/controversy_analyzer.py:
+    description: No description available.
+    responsibilities:
+    - Categorize a source based on its URL.
+    dependencies:
+    - prefect library
+    - __future__ library
+    - httpx library
+    - dotenv library
+    - datetime library
+  legacy/form_filling.py:
+    description: No description available.
+    responsibilities:
+    - Save the filled-out file.
+    - Fill missing cells in a CSV file.
+    - Extract missing cells and generate questions.
+    - Represent a list of missing cells.
+    - Fill cell values into a CSV file.
+    - Get the file name and extension.
+    - Save the output to a file.
+    - Represent a missing cell in a table.
+    - Represent a cell value.
+    - Extract missing cells and generate questions to fill them.
+    dependencies:
+    - pydantic library
+    - __future__ library
+    - llama_index library
+    - pandas library
+    - textwrap library
+    - app library
+    - uuid library
+  legacy/email_data_generator.py:
+    description: 'Script to generate test email data for processing.
+
+
+      This module provides functionality to create realistic test email data for development
+
+      and testing purposes. It generates random but structured email content and stores
+      it
+
+      in a SQLite database for use in testing email processing pipelines.
+
+
+      The generated data includes:
+
+      - Realistic email addresses with name patterns
+
+      - Varied job titles and company names
+
+      - Random but plausible email content
+
+      - Timestamps spread over a 30-day period
+
+      - Unique message IDs for each email
+
+
+      The data is stored in the ''enriched_raw_emails'' table of the SQLite database.'
+    responsibilities:
+    - Generate and store test emails in a database.
+    - Generate formatted email content with a signature block.
+    dependencies:
+    - uuid library
+    - datetime library
+    - sqlite3 library
+    - random library
+  legacy/data_ingestion.py:
+    description: No description available.
+    responsibilities:
+    - Generate a datasource.
+    - Ensure an index exists.
+    dependencies:
+    - llama_index library
+    - dotenv library
+    - llama_cloud library
+    - app library
+  legacy/mercury_importer.py:
+    description: No description available.
+    responsibilities:
+    - Generate hledger journal entries
+    - Validate transaction data
+    - Process Mercury CSV files
+    - Log audit events
+    - Classify transactions using an AI model
+    - Deduplicate transactions
+    - Get configured categories from classification rules
+    dependencies:
+    - collections library
+    - secrets library
+    - requests library
+    - hashlib library
+    - pathlib library
+    - classification_engine library
+    - __future__ library
+    - bin library
+    - prometheus_client library
+    - src library
+    - re library
+    - shutil library
+    - subprocess library
+    - argparse library
+    - datetime library
+  legacy/event_callback.py:
+    description: No description available.
+    responsibilities:
+    - Provide a base class for event handling
+    - Generate tool messages
+    - Convert to a response object
+    - Generate retrieval messages
+    - Handle event start
+    - Handle event end
+    dependencies:
+    - collections library
+    - pydantic library
+    - contextlib library
+    - __future__ library
+    - llama_index library
+    - asyncio library
+  legacy/tagging_engine.py:
+    description: No description available.
+    responsibilities:
+    - Apply tags to documents.
+    - Parse LLM responses.
+    - Record tagging operations.
+    - Tag financial metrics.
+    - Tag document type.
+    - Create a tagging agent.
+    - Tag data using LLMs.
+    - Clear the tagging history.
+    - Provide a history of tagging events.
+    dependencies:
+    - enum library
+    - datetime library
+    - llama_index library
+  legacy/log_manager.py:
+    description: 'Centralized logging configuration and management.
+
+      Combines functionality from log_config.py and log_manager.py.'
+    responsibilities:
+    - Configure and manage logging.
+    - Analyze log files for errors and statistics.
+    - Rotate log files.
+    dependencies:
+    - pathlib library
+    - __future__ library
+    - scripts library
+    - re library
+    - datetime library
+  legacy/precommit_analyzer.py:
+    description: No description available.
+    responsibilities: []
+    dependencies:
+    - argparse library
+    - dataclasses library
+    - pathlib library
+    - __future__ library
+    - enum library
+    - subprocess library
+    - importlib library
+    - datetime library
+  legacy/prompts.py:
+    description: No description available.
+    responsibilities: []
+    dependencies: []
+  legacy/company_analysis.py:
+    description: No description available.
+    responsibilities:
+    - Read company data from a CSV file.
+    - Save analysis results to JSON and Markdown files.
+    dependencies:
+    - prefect library
+    - __future__ library
+    - asyncio library
+    - csv library
+    - farfalle library
+    - datetime library
+  legacy/pro_chat.py:
+    description: No description available.
+    responsibilities:
+    - Manage dependencies between steps
+    - Manage resources used by a step
+    - Execute a single query plan step
+    - Provide context for query step execution
+    - Handle errors and exceptions during execution
+    - Store and retrieve data relevant to a step
+    - Define the operation to be performed
+    - Organize and sequence query execution steps
+    - Represent a single step in a query plan
+    - Manage the state of a step during execution
+    - Specify dependencies on other steps
+    - Provide an execution order for query steps
+    dependencies:
+    - fastapi library
+    - collections library
+    - pydantic library
+    - backend library
+    - __future__ library
+    - asyncio library
+    - sqlalchemy library
+  legacy/db_maintenance.py:
+    description: 'Database maintenance utilities.
+
+      Handles health checks and optimization tasks.
+
+
+      Note: Most core maintenance functionality is handled by db_connector.py through:
+
+      - WAL mode for better concurrency
+
+      - Connection pooling and retry logic
+
+      - Health checks during connections
+
+      - Automatic transaction management'
+    responsibilities:
+    - Check WAL file size for cleanup.
+    - Determine if WAL file exceeds the size threshold.
+    - Initialize database maintenance helper.
+    - Perform routine database maintenance tasks.
+    - Execute routine database maintenance procedures.
+    - Initialize maintenance helper with optional database path.
+    dependencies:
+    - __future__ library
+    - sqlite3 library
+  legacy/llm_interface.py:
+    description: No description available.
+    responsibilities:
+    - Implement BaseLLM using LiteLLM and Instructor.
+    - Provide a base for structured completion.
+    - Complete prompts using LiteLLM.
+    - Define the interface for LLM implementations.
+    - Provide a base for completing prompts.
+    - Structure completion responses using Instructor.
+    dependencies:
+    - collections library
+    - abc library
+    - instructor library
+    - litellm library
+    - llama_index library
+    - dotenv library
+  legacy/merge_data.py:
+    description: No description available.
+    responsibilities:
+    - Merge podcast data into the research database.
+    dependencies:
+    - duckdb library
+    - pathlib library
+  legacy/base_engine.py:
+    description: 'Base Engine Module
+
+      ================
+
+
+      Provides base classes for all research engines in the EthiFinX platform.'
+    responsibilities:
+    - Define the interface for analysis engines
+    - Require implementation of the 'search' method
+    - Provide basic configuration
+    - Set up logging
+    - Define the interface for search engines
+    - Require implementation of the 'analyze' method
+    - Initialize LLM client
+    dependencies:
+    - core library
+    - abc library
+  legacy/setup.py:
+    description: No description available.
+    responsibilities:
+    - Initialize environment variables
+    - Initialize API tokens
+    dependencies:
+    - pathlib library
+    - posting library
+  legacy/chat.py:
+    description: No description available.
+    responsibilities: []
+    dependencies:
+    - fastapi library
+    - llama_index library
+    - app library
+  legacy/admin.py:
+    description: Admin interface for Syzygy models.
+    responsibilities:
+    - Provide a custom admin site for Syzygy
+    - Manage research results in admin interface
+    - Manage timeline view in admin interface
+    - Control add permission
+    - Configure Syzygy admin interface
+    - Manage tool usage tracking in admin interface
+    - Manage research sources in admin interface
+    - Manage activities in admin interface
+    - Manage email response drafts in admin interface
+    - Manage transcript analysis in admin interface
+    - Control change permission
+    - Manage excluded companies in admin interface
+    - Manage tick history in admin interface
+    - Manage LLM transactions in admin interface
+    - Manage securities in the investment universe in admin interface
+    - Initialize app configuration
+    - Manage research iterations in admin interface
+    - Manage clients in admin interface
+    - Manage transcripts in admin interface
+    dependencies:
+    - django library
+    - models library
+    - markdownx library
+  legacy/data_migration.py:
+    description: No description available.
+    responsibilities:
+    - Import markdown content into research system
+    dependencies:
+    - duckdb library
+  legacy/llm_utils.py:
+    description: No description available.
+    responsibilities:
+    - Represent time series embeddings.
+    dependencies:
+    - llama_index library
+  legacy/rag_agent.py:
+    description: RAG agent for semantic search using pgvector.
+    responsibilities:
+    - Perform semantic search
+    - Facilitate RAG operations
+    - Manage database connection
+    - Initialize the agent
+    - Initialize the RAG agent
+    - Get the system prompt
+    - Represent a single search result
+    - Generate responses using retrieved knowledge
+    dependencies:
+    - structlog library
+    - pydantic library
+    - asyncpg library
+    - dataclasses library
+    - __future__ library
+    - base library
+  legacy/entity_analyzer.py:
+    description: No description available.
+    responsibilities:
+    - Store analysis results
+    - Analyze entities for controversies
+    - Interact with the OpenRouter API
+    - Represent entity analysis results
+    - Track analyzed companies
+    - Represent a source of information
+    - Manage a SQLite database
+    - Format prompts for analysis
+    dependencies:
+    - dataclasses library
+    - __future__ library
+    - backend library
+    - asyncio library
+    - csv library
+    - datetime library
+    - sqlite3 library
+  legacy/company_analysis_deployment.py:
+    description: No description available.
+    responsibilities: []
+    dependencies:
+    - company_analysis library
+    - prefect library
+  legacy/ai_config.py:
+    description: Configuration management for AI models and agents.
+    responsibilities:
+    - Classify models by cost
+    - Centralize configuration for AI agents
+    - Define supported model providers
+    - Centralize configuration for AI models
+    - Estimate cost for a model operation
+    - Get a model configuration for a task
+    - Classify models by capability
+    - Configure a specific model
+    dependencies:
+    - enum library
+    - dataclasses library
+    - __future__ library
+    - structlog library
+  legacy/data_models.py:
+    description: Data models for research and analysis.
+    responsibilities:
+    - Represent an evaluation of a company
+    - Represent a source of information
+    - Represent a link between companies
+    - Represent a research question
+    dependencies:
+    - pydantic library
+    - datetime library
+  legacy/llm_analysis.py:
+    description: No description available.
+    responsibilities: []
+    dependencies:
+    - random library
+    - aiohttp library
+    - asyncio library
+  legacy/e2b_code_interpreter.py:
+    description: No description available.
+    responsibilities:
+    - Initialize the interpreter.
+    - Kill the interpreter.
+    - Return the result, stdout, stderr, display_data, and error.
+    - Save results to disk and return file metadata.
+    - Execute Python code in a Jupyter notebook cell.
+    - Manage files used by the code.
+    dependencies:
+    - pydantic library
+    - e2b_code_interpreter library
+    - __future__ library
+    - llama_index library
+    - base64 library
+    - app library
+    - uuid library
+  legacy/transcript_analysis_agent.py:
+    description: 'Agent for analyzing meeting transcripts to extract action items
+      and content.
+
+
+      This module provides functionality to:
+
+      - Extract actionable items from meeting transcripts
+
+      - Identify potential content opportunities
+
+      - Link analysis results to client records
+
+      - Create follow-up activities in the system
+
+
+      The analysis uses the Phi-2 language model for precise language understanding
+
+      and preservation of original phrasing while extracting key information.
+
+
+      Key Features:
+
+      - Action item extraction with context preservation
+
+      - Content opportunity identification
+
+      - Automatic activity creation
+
+      - Client record linking
+
+      - Confidence scoring for extracted items
+
+      - Transcript location tracking'
+    responsibilities:
+    - Store content opportunity details (topic, source quote, suggested title, etc.)
+    - Store action item details (description, priority, due date, etc.)
+    - Store the content opportunity's location in the transcript
+    - Extract action items from meeting transcripts
+    - Link analysis results to client records
+    - Identify content opportunities in meeting transcripts
+    - Represent a potential content opportunity from a transcript
+    - Initialize the transcript analysis agent with the Phi-2 language model
+    - Store the action item's location in the transcript
+    - Represent an action item from a meeting transcript
+    dependencies:
+    - structlog library
+    - pydantic library
+    - __future__ library
+    - base library
+    - models library
+    - datetime library
+  legacy/db_init.py:
+    description: 'Database initialization script to create all necessary tables and
+      indexes.
+
+
+      This script handles the complete setup of the SQLite database schema including:
+
+      - Core tables for email processing and contact management
+
+      - Enrichment tracking tables
+
+      - Historical metadata tracking
+
+      - Indexes for optimized query performance
+
+      - Foreign key relationships and constraints
+
+
+      The schema is designed to support:
+
+      - Email processing and storage
+
+      - Contact enrichment workflows
+
+      - Opportunity detection and tracking
+
+      - Historical metadata versioning
+
+      - Task management for enrichment processes'
+    responsibilities:
+    - Initialize database tables and indexes
+    dependencies:
+    - scripts library
+    - sqlite3 library
+  legacy/next_question_suggestion.py:
+    description: No description available.
+    responsibilities:
+    - Suggest next questions based on conversation history
+    - Configure the prompt for question suggestion
+    - Extract questions from the language model's response
+    dependencies:
+    - llama_index library
+    - app library
+    - __future__ library
+    - re library
+  legacy/api_manager.py:
+    description: No description available.
+    responsibilities:
+    - Provide data access methods
+    - Manage API data storage
+    - Initialize the database connection
+    dependencies:
+    - marimo library
+    - aiosqlite library
+    - datetime library
+    - asyncio library
+  legacy/priority_manager.py:
+    description: 'Priority management system for email processing.
+
+
+      Functionality:
+
+      - Implements multiple prioritization approaches
+
+      - Combines AI analysis with deterministic rules
+
+      - Handles edge cases and low-confidence decisions
+
+      - Maintains learning from manual corrections
+
+
+      Maintenance Suggestions:
+
+      1. Regularly update priority rules
+
+      2. Monitor AI model performance
+
+      3. Add more sophisticated consensus mechanisms
+
+      4. Implement periodic rule reviews
+
+
+      Integration:
+
+      - Used by email_operations.py during processing
+
+      - Integrated with email_analyzer.py for AI analysis
+
+      - Works with gmail_label_learner.py for corrections
+
+
+      Testing:
+
+      - Unit tests: tests/test_priority_manager.py
+
+      - Test with various email types and priorities
+
+      - Verify rule-based prioritization
+
+      - Test edge case handling'
+    responsibilities:
+    - Prioritize email using deterministic rules from preferences
+    - Store priority, confidence, source, reason, and timestamp
+    - Represent different sources of priority decisions (DeepInfra, Deterministic,
+      LLM, Manual)
+    - Represent the result of a priority calculation
+    - Load prioritization preferences from a configuration file
+    - Log edge cases and priority decisions for future learning
+    - Configure logging for priority decisions and edge cases
+    - Prioritize email using DeepInfra API
+    - Manage email prioritization using multiple approaches
+    - Prioritize an email using specified methods
+    - Initialize the PriorityManager with configuration and logging
+    - Integrate AI analysis and deterministic rules
+    - Determine final priority from multiple prioritization results
+    - Handle edge cases and low-confidence decisions
+    dependencies:
+    - requests library
+    - dataclasses library
+    - __future__ library
+    - scripts library
+    - enum library
+    - tenacity library
+    - datetime library
+  legacy/email_triage_workflow.py:
+    description: Email triage and prioritization workflow.
+    responsibilities:
+    - Store email metadata for triage.
+    - Store a draft response to an email.
+    - Store email type and priority classification.
+    - Draft email responses.
+    - Determine email priority.
+    - Orchestrate email triage.
+    - Store results from batch email processing.
+    - Store email content for analysis.
+    dependencies:
+    - structlog library
+    - pydantic library
+    - __future__ library
+    - asyncio library
+    - email_processing library
+    - sentry_sdk library
+    - base library
+    - agents library
+    - datetime library
+  legacy/base.py:
+    description: Base configuration for PydanticAI agents with DeepInfra integration.
+    responsibilities:
+    - Handle model selection and function calling.
+    - Create an interaction record in the database.
+    - Retrieve the DeepInfra API key.
+    - Update an interaction record in the database.
+    - Manage AI agent interactions with DeepInfra.
+    - Provide the system prompt for the agent.
+    - Track metrics and monitor costs.
+    - Initialize the agent with configuration parameters.
+    - Define a callable function for the model.
+    dependencies:
+    - structlog library
+    - pydantic library
+    - logging.py for config functionality
+    - __future__ library
+    - django library
+    - sentry_sdk library
+    - httpx library
+    - asgiref library
+    - models library
+    - config library
+    - load_config.py for config functionality
+    - ulid library
+    - time library
+  legacy/db_converters.py:
+    description: 'Database Format Converters.
+
+      ======================
+
+
+      Handles conversion between workflow outputs and database formats.
+
+      Ensures consistent data structure and safe database operations.
+
+
+      This module is specifically for converting between different data formats
+
+      and the database schema. It works in conjunction with data_processing.py
+
+      which handles the general data processing pipeline.'
+    responsibilities:
+    - Represent analysis data in a database-compatible format
+    - Serve as a data transfer object for database interactions
+    - Map to the database schema
+    dependencies:
+    - datetime library
+    - research library
+    - core library
+    - __future__ library
+  legacy/controversy_detection.py:
+    description: Controversy detection flows for monitoring specific companies.
+    responsibilities: []
+    dependencies:
+    - openai library
+    - prefect_sqlalchemy library
+    - prefect library
+    - pandas library
+    - aiohttp library
+    - datetime library
+  legacy/validation.py:
+    description: No description available.
+    responsibilities:
+    - Validate local model by checking if local models are enabled.
+    - Validate the given chat model based on its type and environment variables.
+    - Validate Groq model by checking for API key.
+    - Validate OpenAI model by checking API key and GPT-4o enablement.
+    dependencies:
+    - backend library
+  legacy/code_generator.py:
+    description: No description available.
+    responsibilities:
+    - Handle optional sandbox files and existing code.
+    - Generate code artifacts based on input.
+    - Generate a code artifact.
+    - Initialize the code generator.
+    dependencies:
+    - pydantic library
+    - __future__ library
+    - llama_index library
+  agents/docstring_agent.py:
+    description: No description available.
+    responsibilities:
+    - Analyze and improve docstrings
+    - Check docstring style compliance
+    - Calculates cyclomatic complexity of an AST node
+    - Analyzes a file and improves its documentation
+    - Initializes the DocstringAgent
+    - Extracts code context using AST analysis
+    - Analyze code complexity
+    dependencies:
+    - base_agent library
+    - smolagents library
+    - pathlib library
+    - ast library
+  agents/self_care_agent.py:
+    description: Wellness monitoring and self-care intervention agent using smolagents.
+    responsibilities:
+    - Monitor work patterns
+    - Suggest a break if needed
+    - Monitor user wellness
+    - Initialize the SelfCareAgent
+    - Suggest self-care interventions
+    dependencies:
+    - smolagents library
+    - base_agent library
+  agents/triage_agent.py:
+    description: Triage agent for initial analysis and delegation of incoming items
+      using smolagents.
+    responsibilities:
+    - Determines appropriate actions for the item
+    - Analyzes an item and determines appropriate actions
+    - Analyzes an item
+    - Initializes the TriageAgent
+    - Initializes the agent
+    dependencies:
+    - smolagents library
+    - base_agent library
+  agents/sloane_optimizer.py:
+    description: Strategic optimization and prioritization agent using smolagents.
+    responsibilities:
+    - Optimize tasks based on strategic priorities
+    - Suggest breaks based on work patterns
+    - Analyze current state and provide optimization recommendations
+    - Suggest optimal break times and activities
+    dependencies:
+    - structlog library
+    - smolagents library
+    - base_agent library
+  agents/agent_creator_agent.py:
+    description: Agent creator for dynamically generating and configuring AI agents
+      using smolagents.
+    responsibilities:
+    - Define the structure of agent configurations.
+    - Create and configure new AI agents.
+    - Serve as a data transfer object for agent settings.
+    - Generate function definitions for agents.
+    - Craft system prompts for agents.
+    - Hold configuration data for an agent.
+    dependencies:
+    - structlog library
+    - smolagents library
+    - pydantic library
+    - base_agent library
+    - __future__ library
+  agents/philosophical_agent.py:
+    description: Philosophical agent using smolagents.
+    responsibilities:
+    - Generates philosophical discussion content.
+    - Engages in philosophical discussions.
+    - Initializes the agent.
+    dependencies:
+    - smolagents library
+    - base_agent library
+  agents/base_agent.py:
+    description: Base agent configuration using smolagents framework.
+    responsibilities:
+    - Initialize agent with task type and model.
+    - Generate the system prompt based on the task type.
+    - Define available tools for the agent.
+    - Return a list of tools available to the agent.
+    - Return the system prompt for the agent based on the task type.
+    - Initialize the agent with task type and model name.
+    dependencies:
+    - smolagents library
+  agents/client_advocate_agent.py:
+    description: Client relationship and task prioritization agent using smolagents.
+    responsibilities:
+    - Prioritize client work
+    - Initialize the ClientAdvocateAgent
+    - Analyze client relationship and generate insights
+    - Manage client relationships
+    - Analyze client relationships and generate insights
+    dependencies:
+    - smolagents library
+    - base_agent library
+  agents/data_ingestion_agent.py:
+    description: 'Data analysis and schema recommendation agent.
+
+
+      This module provides tools for analyzing data structures and recommending database
+      schema changes.
+
+      It includes functionality for:
+
+      - Data structure analysis
+
+      - Schema recommendations
+
+      - Data quality assessment
+
+      - Integration planning
+
+      - Impact analysis
+
+
+      The main class is DataIngestionAgent which provides methods to:
+
+      - Analyze data structure and content
+
+      - Recommend optimal table structures
+
+      - Plan necessary schema changes
+
+      - Generate migration plans
+
+
+      Key Features:
+
+      - Automatic data type inference
+
+      - Schema normalization recommendations
+
+      - Data quality metrics
+
+      - Migration plan generation
+
+      - Impact analysis for schema changes'
+    responsibilities:
+    - Represent a recommended database table structure
+    - Store column definitions and constraints
+    - Represent a recommended schema change
+    - Initialize the data ingestion agent
+    - Represent analysis of a data column
+    - Recommend schema changes
+    - Assess data quality
+    - Store column statistics (unique ratio, sample values, summary)
+    - Store column metadata (name, type, nullability)
+    - Store recommendations for keys, indexes, and partitioning
+    - Analyze data structure
+    dependencies:
+    - structlog library
+    - pydantic library
+    - pathlib library
+    - __future__ library
+    - pandas library
+    - base library
+  agents/rag_agent.py:
+    description: RAG agent for semantic search using pgvector (DEPRECATED).
+    responsibilities:
+    - Logs deprecation warning during initialization.
+    - Searches the knowledge base based on a query.
+    - Searches the knowledge base using semantic similarity.
+    - Initializes the RAGAgent and logs deprecation warning.
+    - Filters search results by content type.
+    dependencies:
+    - structlog library
+    - smolagents library
+    - base_agent library
+  agents/adversarial_agent.py:
+    description: Critical analysis and risk identification agent using smolagents.
+    responsibilities:
+    - Analyze potential risks in a proposal
+    - Initialize the AdversarialAgent
+    - Analyze risks and issues in a proposal
+    - Provide risk analysis with issues and recommendations
+    - Initialize with risk analysis tool
+    dependencies:
+    - structlog library
+    - smolagents library
+    - base_agent library
+  agents/sloane_ghostwriter.py:
+    description: Content generation and refinement agent in Sloan's voice.
+    responsibilities:
+    - Define writing style preferences
+    - Refine content iteratively
+    - Initialize the ghostwriter agent
+    - Store generated content
+    - Generate content in Sloan's voice
+    - Define the scope of the content
+    - Adapt to specific content formats
+    - Enforce stylistic consistency
+    - Facilitate content refinement
+    - Provide context for content creation
+    - Specify writing patterns
+    - Represent content generation instructions
+    - Represent a preliminary version of content
+    dependencies:
+    - structlog library
+    - pydantic library
+    - __future__ library
+    - base library
+    - chat_history library
+  agents/transcript_analysis_agent.py:
+    description: No description available.
+    responsibilities:
+    - Extract content from meeting transcripts
+    - Extract action items from meeting transcripts
+    - Analyze meeting transcripts to provide actionable insights
+    dependencies:
+    - smolagents library
+    - base_agent library
+  agents/contact_agents.py:
+    description: Contact-related AI agents.
+    responsibilities:
+    - Analyze contact merges.
+    - Decide on contact merges.
+    - Analyze similarity between two contacts.
+    dependencies:
+    - pydantic library
+    - base library
+    - database library
+  agents/logical_fallacy_agent.py:
+    description: Logical fallacy detection agent for analyzing reasoning and arguments.
+    responsibilities:
+    - Store results of fallacy detection
+    - Store information about a fallacy type
+    - Detect logical fallacies in text
+    - Analyze logical fallacies in text
+    - Load definitions and examples for fallacy types
+    - Represent a type of logical fallacy
+    - Construct the prompt for fallacy analysis
+    - Represent a detected fallacy in text
+    - Suggest improvements for argumentation
+    - Initialize the logical fallacy detection agent
+    - Represent a complete fallacy analysis of text
+    - Store information about a specific fallacy instance
+    - Normalize fallacy analysis data
+    dependencies:
+    - structlog library
+    - pydantic library
+    - base library
+    - __future__ library
+  api_clients/openrouter.py:
+    description: OpenRouter API client with rate limiting.
+    responsibilities:
+    - Track rate limits for models.
+    - Fetch rate limits (RPM, TPM) for a model.
+    - Implement rate limiting.
+    - Handle retries for failed requests.
+    - Generate content using OpenRouter's API.
+    - Check if rate limits are exceeded for a model and prompt.
+    - Generate content from a prompt using a specified model.
+    - Check if rate limits have been exceeded.
+    - Manage cooldown periods.
+    - Check if a model is in cooldown.
+    dependencies:
+    - httpx library
+    - time library
+    - __future__ library
+  api_clients/gemini.py:
+    description: No description available.
+    responsibilities:
+    - Enforce rate limits (RPM, TPM, RPD).
+    - Implement circuit breaking for overloaded models.
+    - Track API usage across instances.
+    - Generate content using Google Gemini models.
+    - Cache context for improved performance.
+    - Handle rate limiting and fallback mechanisms.
+    dependencies:
+    - datetime library
+    - pathlib library
+    - google library
+    - __future__ library
+    - exceptions.py for llm functionality
+    - api_clients.py for llm functionality
+    - random library
+    - rich library
+    - threading library
+    - dotenv library
+    - time library
+  api_clients/deepinfra.py:
+    description: No description available.
+    responsibilities:
+    - Generate content using DeepInfra's API (alias for chat_completion).
+    - Provide a streaming version of chat completion.
+    - Generate a chat completion response from DeepInfra.
+    - Generate chat completion responses.
+    - Interact with DeepInfra's OpenAI-compatible API.
+    - Initialize the DeepInfra client with an API key.
+    - Save LLM interaction data to a log file.
+    - Authenticate with the DeepInfra API using an API key.
+    dependencies:
+    - openai library
+    - pathlib library
+    - __future__ library
+    - exceptions.py for llm functionality
+    - re library
+    - time library
+    - dotenv library
+    - datetime library
+title: LLM Utility Functions
 decisions:
-  patterns:
-  - Factory Pattern
-  - Agent-Based Architecture
-  - API Client Pattern
-  - Modular Design
-  - Microservices Architecture
-  - Legacy Code Integration
-  - Data Ingestion Pipeline
-  issues:
-  - title: Monolithic 'legacy/' Directory
-    impact: High coupling, increased complexity, difficult to test and maintain, potential
-      dependency conflicts, hinders future development and refactoring.
-    required_change: Decompose the 'legacy/' directory into smaller, well-defined
-      modules or services with clear responsibilities and minimal dependencies.
-    priority: high
-  - title: Lack of clear separation of concerns and potential for tight coupling between
-      agents and the underlying framework.
-    impact: Reduced reusability of agents, increased complexity in modifying the framework,
-      potential for unintended side effects when changing agent behavior, limits scalability
-      and maintainability.
-    required_change: Define a clear and well-defined interface between agents and
-      the framework, promoting loose coupling and allowing for independent development
-      and deployment.
-    priority: medium
-  - title: Inconsistent error handling and logging across different components.
-    impact: Difficult to diagnose and debug issues, reduced system reliability, potential
-      for data loss or corruption, hinders monitoring and alerting.
-    required_change: Implement a consistent and centralized error handling and logging
-      strategy across the entire codebase.
-    priority: medium
-  - title: Lack of explicit dependency management and versioning.
-    impact: Dependency conflicts, difficulty in reproducing environments, potential
-      for security vulnerabilities, hinders collaboration and deployment.
-    required_change: Implement a robust dependency management system using tools like
-      pipenv or poetry, and enforce strict versioning of all dependencies.
-    priority: medium
-  - title: Lack of Consistent Error Handling and Logging Across Components
-    impact: Difficult debugging, inconsistent system behavior, and potential for unhandled
-      exceptions to crash agents or tools. Makes auditing and monitoring difficult.
-    required_change: Implement a centralized and consistent error handling and logging
-      strategy using a library like `structlog` or Python's `logging` module with
-      standardized formats and levels. Ensure all API calls, tool executions, and
-      agent logic are covered.
-    priority: high
-  - title: Tight Coupling and Lack of Abstraction in API Clients
-    impact: Difficult to switch between different API providers (e.g., DeepInfra,
-      OpenRouter, Gemini) without significant code changes. Increases maintenance
-      burden and limits flexibility.
-    required_change: Introduce an abstraction layer (e.g., an interface or abstract
-      class) for API clients. This will allow for easy swapping of API providers and
-      better testability. Implement a strategy for managing API keys and credentials
-      securely, potentially using a secrets management system.
-    priority: medium
-  - title: Unclear Ownership and Maintenance of 'Legacy' Code
-    impact: Potential for bugs, security vulnerabilities, and performance issues in
-      the 'legacy' code. Makes it difficult to integrate new features or refactor
-      existing functionality. Increases technical debt.
-    required_change: Assess the 'legacy' code, identify modules that are still relevant,
-      and either refactor them into the main codebase or archive them. Define clear
-      ownership and maintenance responsibilities for any remaining 'legacy' code.
-    priority: medium
-  - title: Potential Security Risks with Tool Launcher
-    impact: Executing external CLI tools can introduce security vulnerabilities if
-      not handled carefully. Malicious tools could potentially compromise the system.
-    required_change: Implement strict input validation and sanitization for the Tool
-      Launcher. Use a secure execution environment (e.g., sandboxing or containerization)
-      to limit the potential impact of malicious tools. Implement logging and auditing
-      of tool executions.
-    priority: high
-  - title: Lack of Centralized Configuration Management
-    impact: Configuration scattered across environment variables, YAML files, and
-      potentially hardcoded values. Makes it difficult to manage and deploy the system
-      consistently across different environments. Increases the risk of configuration
-      errors.
-    required_change: Implement a centralized configuration management system using
-      a library like `pydantic-settings` or `dynaconf`. Define a clear schema for
-      configuration parameters and use environment variables or configuration files
-      to override default values. Ensure all components access configuration through
-      the centralized system.
-    priority: medium
-  - title: Potential Security Risks in Tool Launcher
-    impact: Executing external CLI tools via `tool_launcher.py` can introduce security
-      vulnerabilities if the arguments passed to the CLI tools are not properly sanitized,
-      it could lead to command injection attacks.
-    required_change: Implement robust input validation and sanitization for all arguments
-      passed to external CLI tools. Use parameterized commands or shell escaping to
-      prevent command injection.
-    priority: high
-  - title: Tight Coupling and Lack of Abstraction in LLM Interaction
-    impact: The `llm_utils.py` file directly uses `dewey.llm.api_clients.deepinfra.DeepInfraClient`.
-      This creates tight coupling to a specific LLM provider, making it difficult
-      to switch or add new LLM providers without modifying core code. It also limits
-      the ability to abstract away LLM-specific details from the rest of the system.
-    required_change: Introduce an abstraction layer (e.g., an interface or abstract
-      class) for LLM clients. The `llm_utils.py` should interact with this abstraction
-      rather than a concrete implementation. Use dependency injection to provide the
-      specific LLM client implementation at runtime.
-    priority: high
-  - title: Legacy Code Integration and Technical Debt
-    impact: The `legacy/` directory indicates a significant amount of technical debt.
-      The presence of outdated dependencies (e.g., Django, older versions of libraries)
-      and potentially different coding styles can lead to maintenance difficulties,
-      security vulnerabilities, and performance bottlenecks. The lack of clear separation
-      of concerns between the legacy code and the new system can also increase complexity.
-    required_change: Gradually refactor or replace the legacy code with modern, well-tested
-      components. Prioritize the most critical and frequently used parts of the legacy
-      code. Create clear interfaces between the legacy code and the new system to
-      minimize dependencies and facilitate future replacement.
-    priority: high
-  - title: Lack of Centralized Configuration Management
-    impact: The system likely relies on scattered configuration files (e.g., for tool
-      loading in `tool_factory.py`, LLM parameters in `llm_utils.py`). This makes
-      it difficult to manage and update configurations across the entire system, leading
-      to inconsistencies and potential errors. It also hinders scalability and deployment
-      automation.
-    required_change: Implement a centralized configuration management system. This
-      could involve using a dedicated configuration library (e.g., `dynaconf`, `pydantic-settings`)
-      or a cloud-based configuration service. All components should retrieve their
-      configuration from this central source.
-    priority: medium
-  - title: Potential Security Risks with Tool Execution
-    impact: Executing external CLI tools via `tool_launcher.py` introduces potential
-      security risks if the tools or their configurations are not properly validated.
-      Malicious or compromised tools could potentially execute arbitrary code on the
-      system. The system is also vulnerable to command injection attacks if user-provided
-      input is used to construct the command-line arguments for the tools.
-    required_change: Implement robust input validation and sanitization for all tool
-      configurations and user-provided input. Use a secure method for executing external
-      tools, such as using a sandboxing environment or a restricted user account.
-      Implement logging and auditing to track tool execution and detect suspicious
-      activity.
-    priority: high
-  - title: Lack of Clear Error Handling Strategy
-    impact: While `api_clients/` mentions error handling, a comprehensive error handling
-      strategy across the entire system is not evident. Inconsistent error handling
-      can lead to unexpected behavior, difficult debugging, and potential data corruption.
-      The absence of centralized error reporting and monitoring can also make it difficult
-      to identify and address issues in a timely manner.
-    required_change: Implement a consistent and comprehensive error handling strategy
-      across the entire system. This should include logging all errors, providing
-      informative error messages to the user, and implementing appropriate retry mechanisms.
-      Implement centralized error reporting and monitoring to track errors and identify
-      trends.
-    priority: medium
-  - title: Tight Coupling and Lack of Abstraction in Agents
-    impact: Agents are tightly coupled to specific dependencies (smolagents, structlog,
-      pydantic, database.models.Contact). This makes it difficult to reuse agents,
-      test them in isolation, and swap out underlying implementations. Changes to
-      dependencies can have cascading effects across multiple agents.
-    required_change: Introduce abstract interfaces and dependency injection to decouple
-      agents from concrete implementations. Define clear contracts for agent behavior
-      and data exchange.
-    priority: high
-  - title: Monolithic Legacy Codebase
-    impact: The 'legacy' directory represents a monolithic architecture. This makes
-      the system harder to understand, maintain, and scale. Deployments are riskier,
-      and adding new features is more complex.
-    required_change: Decompose the legacy code into smaller, independent, and well-defined
-      services or modules. Prioritize based on business value and dependencies.
-    priority: high
-  - title: Inconsistent Error Handling and Rate Limiting in API Clients
-    impact: Lack of consistent error handling and rate limiting in API clients can
-      lead to application instability, performance degradation, and potential abuse
-      of external APIs. Missing retry mechanisms can cause failures during transient
-      network issues.
-    required_change: Implement a standardized error handling and rate limiting mechanism
-      across all API clients. Include retry logic with exponential backoff.
-    priority: medium
-  - title: Lack of Centralized Configuration Management
-    impact: Configuration scattered across different modules (tool_factory.py, llm_utils.py,
-      api_clients directory) makes it difficult to manage and update settings consistently.
-      This can lead to inconsistencies and errors.
-    required_change: Implement a centralized configuration management system using
-      environment variables, configuration files, or a dedicated configuration service.
-    priority: medium
-  - title: Potential Security Vulnerabilities in Tool Launcher
-    impact: Executing external CLI tools (tool_launcher.py) without proper sanitization
-      and validation of inputs can introduce security vulnerabilities, such as command
-      injection. Uncontrolled access to system resources can also be a risk.
-    required_change: Implement strict input validation and sanitization for all CLI
-      tool executions. Use a secure execution environment with limited privileges.
-    priority: high
-executive_summary: 'This PRD details the development of an LLM-based framework designed
-  to enhance internal knowledge management and client-facing financial analysis systems.
-  The framework leverages AI agents and external APIs for tasks like data analysis,
-  email processing, and content generation, utilizing key components such as dynamic
-  tool integration, LLM interaction management, and specialized AI agents built on
-  the smolagents framework. The goal is to improve the efficiency and reliability
-  of these systems, directly impacting client service and internal operations.
-
-
-  The document identifies critical architectural issues that hinder maintainability,
-  scalability, and security. These include a monolithic legacy directory, tight coupling
-  between agents and the framework, inconsistent error handling and logging, lack
-  of dependency management, and potential security risks within the tool launcher.
-  Proposed solutions involve modularizing the legacy code, defining a clear agent-framework
-  interface using DTOs, implementing centralized error handling and logging, adopting
-  a robust dependency management system, and implementing strict input validation
-  and secure execution environments for the tool launcher.
-
-
-  Addressing these architectural issues will improve code maintainability (cyclomatic
-  complexity < 15), LLM response latency (< 2.5s), and data processing throughput
-  (> 100MB/s). The project is estimated to take 6.5 weeks, with data security adhering
-  to FINRA/SEC regulations and a Python 3.11+ runtime environment. Successful implementation
-  will result in a more robust, scalable, and secure platform for delivering AI-powered
-  financial analysis and knowledge management services.'
-requirements:
-- category: Compliance
-  description: Data security must adhere to FINRA/SEC regulations.
-  implementation: Implement appropriate security measures and controls.
-  complexity: High
-  code_link: null
-- category: Technical
-  description: Runtime environment must be Python 3.11+.
-  implementation: Ensure the application runs on Python 3.11 or later.
-  complexity: Low
-  code_link: null
-- category: Technical
-  description: Code maintainability (cyclomatic complexity < 15).
-  implementation: Refactor code to reduce cyclomatic complexity.
-  complexity: Medium
-  code_link: null
-- category: Technical
-  description: LLM response latency < 2.5s.
-  implementation: Optimize LLM interaction to reduce latency.
-  complexity: Medium
-  code_link: null
-- category: Technical
-  description: Data processing throughput > 100MB/s.
-  implementation: Optimize data processing pipelines to increase throughput.
-  complexity: Medium
-  code_link: null
+  patterns: []
+  issues: []
+executive_summary:
+  executive_summary:
+    overview: This project encompasses a wide range of LLM-related utilities, agents,
+      and API clients, designed to enhance various aspects of research, analysis,
+      and automation. The scope includes tools for interacting with LLMs, managing
+      data, analyzing content, and creating specialized agents for diverse tasks.
+      The primary goal is to provide a comprehensive suite of components that leverage
+      LLMs to improve efficiency and decision-making across different domains.
+    architecture: The architecture is component-based, with a mix of core utilities,
+      legacy modules, agent frameworks (smolagents), and API client integrations.
+      Key architectural decisions involve the use of Pydantic for data modeling, structlog
+      for structured logging, and various libraries for LLM interaction (e.g., llama_index,
+      litellm, openai). No specific architectural patterns are explicitly identified,
+      suggesting a more pragmatic approach to component design and integration.
+    components: 'Major components include: 1) `tool_factory.py` and `tool_launcher.py`
+      for managing and launching external tools; 2) `llm_utils.py` for LLM client
+      configuration and request handling; 3) `agents/*` for various AI agents built
+      on smolagents; 4) `api_clients/*` for interacting with different LLM providers
+      (OpenRouter, Gemini, DeepInfra); and 5) a collection of `legacy/*` modules covering
+      tasks like data ingestion, email prioritization, company analysis, and database
+      management. Interactions between components are primarily dependency-based,
+      with agents utilizing tools and API clients to perform specific tasks.'
+    issues: No critical issues are explicitly identified in the provided data. However,
+      the presence of a large number of `legacy/*` modules suggests potential areas
+      for refactoring and modernization. The lack of explicitly defined architectural
+      patterns could also lead to inconsistencies and maintainability challenges in
+      the long run.
+    next_steps: 'Recommended next steps include: 1) Conduct a thorough review of the
+      `legacy/*` modules to identify opportunities for refactoring and integration
+      with the core components; 2) Define clear architectural patterns and guidelines
+      to ensure consistency and maintainability; 3) Implement comprehensive testing
+      and monitoring to ensure the reliability and performance of the LLM-based utilities
+      and agents; and 4) Explore opportunities for further modularization and abstraction
+      to improve code reusability and reduce dependencies.'

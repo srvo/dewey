@@ -1,0 +1,5 @@
+2025-03-17 05:02:49 - Starting domain stats upload with deduplication strategy: skip
+2025-03-17 05:02:49 - Target database: dewey
+2025-03-17 05:02:49 - Uploading domain stats data from /Users/srvo/input_data/domain_stats.db
+2025-03-17 05:02:52 - Domain stats upload completed successfully
+2025-03-17 05:02:52 - Domain stats upload process completed

@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Your rule content
+
+- all project decisions, context etc are in [conventions.md](mdc:input_data/md_files/conventions.md)
+- config is centralized in [dewey.yaml](mdc:dewey/config/dewey.yaml)   
+- keep todo list [TODO.md](mdc:dewey/TODO.md) updated with a prioritized task list.  
+

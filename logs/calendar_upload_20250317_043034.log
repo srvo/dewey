@@ -1,0 +1,16 @@
+2025-03-17 04:30:34 - Using deduplication strategy: skip
+2025-03-17 04:30:34 - Starting upload of calendar data from /Users/srvo/input_data/nov_30_crm_data/crm/calendar/calendar.duckdb
+2025-03-17 04:30:35,523 - motherduck_uploader - ERROR - Error connecting to MotherDuck: Invalid Input Error: Initialization function "motherduck_init" from file "/Users/srvo/.duckdb/extensions/v1.2.1/osx_arm64/motherduck.duckdb_extension" threw an exception: "Initialization function "motherduck_init" from file "/Users/srvo/.duckdb/extensions/v1.2.1/osx_arm64/motherduck.v1.2.1-2025-03-121.duckdb_extension" threw an exception: "Failed to attach 'dewey': no database/share named 'dewey' found""
+2025-03-17 04:30:35,523 - motherduck_uploader - INFO - Using local DuckDB database instead
+2025-03-17 04:30:35,530 - motherduck_uploader - INFO - Uploading file /Users/srvo/input_data/nov_30_crm_data/crm/calendar/calendar.duckdb
+2025-03-17 04:30:35,563 - motherduck_uploader - ERROR - Error uploading table attendees: Parser Error: syntax error at or near "."
+2025-03-17 04:30:35,564 - motherduck_uploader - ERROR - Error uploading table events: Parser Error: syntax error at or near "."
+2025-03-17 04:30:35,565 - motherduck_uploader - INFO - Successfully uploaded /Users/srvo/input_data/nov_30_crm_data/crm/calendar/calendar.duckdb
+2025-03-17 04:30:35 - Found SQLite calendar data at /Users/srvo/input_data/nov_30_crm_data/crm/calendar/calendar_data.db
+2025-03-17 04:30:35 - Starting upload of SQLite calendar data
+2025-03-17 04:30:36,522 - motherduck_uploader - ERROR - Error connecting to MotherDuck: Invalid Input Error: Initialization function "motherduck_init" from file "/Users/srvo/.duckdb/extensions/v1.2.1/osx_arm64/motherduck.duckdb_extension" threw an exception: "Initialization function "motherduck_init" from file "/Users/srvo/.duckdb/extensions/v1.2.1/osx_arm64/motherduck.v1.2.1-2025-03-121.duckdb_extension" threw an exception: "Failed to attach 'dewey': no database/share named 'dewey' found""
+2025-03-17 04:30:36,523 - motherduck_uploader - INFO - Using local DuckDB database instead
+2025-03-17 04:30:36,531 - motherduck_uploader - INFO - Uploading file /Users/srvo/input_data/nov_30_crm_data/crm/calendar/calendar_data.db
+2025-03-17 04:30:36,537 - motherduck_uploader - ERROR - Error uploading SQLite file /Users/srvo/input_data/nov_30_crm_data/crm/calendar/calendar_data.db: file is not a database
+2025-03-17 04:30:36,537 - motherduck_uploader - ERROR - Failed to upload /Users/srvo/input_data/nov_30_crm_data/crm/calendar/calendar_data.db
+2025-03-17 04:30:36 - Calendar data upload completed successfully

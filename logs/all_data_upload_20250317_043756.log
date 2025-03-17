@@ -1,0 +1,51 @@
+2025-03-17 04:37:56 - Using deduplication strategy: skip
+2025-03-17 04:37:56 - Continue on error: true
+2025-03-17 04:37:56 - Running upload script: src/dewey/core/data_upload/upload_contacts.sh
+2025-03-17 04:37:56 - Using deduplication strategy: skip
+2025-03-17 04:37:56 - Starting upload of contacts data from /Users/srvo/input_data/nov_30_crm_data/crm/contacts/contacts.duckdb
+2025-03-17 04:37:57,774 - motherduck_uploader - INFO - Database 'dewey' does not exist, creating it
+2025-03-17 04:37:58,699 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 04:37:58,700 - motherduck_uploader - INFO - Uploading file /Users/srvo/input_data/nov_30_crm_data/crm/contacts/contacts.duckdb
+2025-03-17 04:37:59,466 - motherduck_uploader - INFO - Uploaded table contacts to crm_contacts
+2025-03-17 04:37:59,467 - motherduck_uploader - ERROR - Error handling problematic table domain_stats: Binder Error: Referenced column "email_count" not found in FROM clause!
+Candidate bindings: "email", "domain", "created_at", "name"
+2025-03-17 04:37:59,471 - motherduck_uploader - INFO - Successfully uploaded /Users/srvo/input_data/nov_30_crm_data/crm/contacts/contacts.duckdb
+2025-03-17 04:37:59 - Found contacts copy file at /Users/srvo/input_data/nov_30_crm_data/crm/contacts/contacts copy.duckdb
+2025-03-17 04:37:59 - Starting upload of contacts copy data
+2025-03-17 04:37:59 - Using 'version' strategy for contacts copy to handle schema differences
+2025-03-17 04:38:00,517 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 04:38:00,517 - motherduck_uploader - INFO - Uploading file /Users/srvo/input_data/nov_30_crm_data/crm/contacts/contacts copy.duckdb
+2025-03-17 04:38:00,593 - motherduck_uploader - WARNING - Schema mismatch for table crm_contacts
+2025-03-17 04:38:00,593 - motherduck_uploader - WARNING - Existing columns: {'email': 'VARCHAR', 'name': 'VARCHAR', 'domain': 'VARCHAR', 'created_at': 'TIMESTAMP'}
+2025-03-17 04:38:00,593 - motherduck_uploader - WARNING - New columns: {'email': 'VARCHAR', 'name': 'VARCHAR', 'domain': 'VARCHAR', 'source': 'VARCHAR', 'event_id': 'VARCHAR', 'event_summary': 'VARCHAR', 'event_time': 'TIMESTAMP', 'last_updated': 'TIMESTAMP'}
+2025-03-17 04:38:00,593 - motherduck_uploader - INFO - Creating new table crm_contacts_1742207880 with updated schema
+2025-03-17 04:38:01,069 - motherduck_uploader - INFO - Uploaded table contacts to crm_contacts_1742207880
+2025-03-17 04:38:01,070 - motherduck_uploader - INFO - Successfully uploaded /Users/srvo/input_data/nov_30_crm_data/crm/contacts/contacts copy.duckdb
+2025-03-17 04:38:01 - Contacts data upload completed successfully
+2025-03-17 04:38:01 - Upload script src/dewey/core/data_upload/upload_contacts.sh completed successfully
+2025-03-17 04:38:01 - ----------------------------------------
+2025-03-17 04:38:01 - Running upload script: src/dewey/core/data_upload/upload_emails.sh
+2025-03-17 04:38:01 - Using deduplication strategy: skip
+2025-03-17 04:38:01 - Starting upload of emails data from /Users/srvo/input_data/nov_30_crm_data/crm/emails/emails.duckdb
+2025-03-17 04:38:01 - This may take some time as the file is large (88MB)
+2025-03-17 04:38:02,097 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 04:38:02,097 - motherduck_uploader - INFO - Uploading file /Users/srvo/input_data/nov_30_crm_data/crm/emails/emails.duckdb
+2025-03-17 04:38:12,163 - motherduck_uploader - INFO - Uploaded table emails to crm_emails
+2025-03-17 04:38:12,168 - motherduck_uploader - INFO - Successfully uploaded /Users/srvo/input_data/nov_30_crm_data/crm/emails/emails.duckdb
+2025-03-17 04:38:12 - Emails data upload completed successfully
+2025-03-17 04:38:12 - Upload script src/dewey/core/data_upload/upload_emails.sh completed successfully
+2025-03-17 04:38:12 - ----------------------------------------
+2025-03-17 04:38:12 - Running upload script: src/dewey/core/data_upload/upload_calendar.sh
+2025-03-17 04:38:12 - Using deduplication strategy: skip
+2025-03-17 04:38:12 - Starting upload of calendar data from /Users/srvo/input_data/nov_30_crm_data/crm/calendar/calendar.duckdb
+2025-03-17 04:38:13,185 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
+2025-03-17 04:38:13,185 - motherduck_uploader - INFO - Uploading file /Users/srvo/input_data/nov_30_crm_data/crm/calendar/calendar.duckdb
+2025-03-17 04:38:15,390 - motherduck_uploader - INFO - Uploaded table attendees to crm_attendees
+2025-03-17 04:38:16,076 - motherduck_uploader - INFO - Uploaded table events to crm_events
+2025-03-17 04:38:16,078 - motherduck_uploader - INFO - Successfully uploaded /Users/srvo/input_data/nov_30_crm_data/crm/calendar/calendar.duckdb
+2025-03-17 04:38:16 - Found SQLite calendar data at /Users/srvo/input_data/nov_30_crm_data/crm/calendar/calendar_data.db
+2025-03-17 04:38:16 - WARNING: Not a valid SQLite database file, skipping
+2025-03-17 04:38:16 - Calendar data upload completed successfully
+2025-03-17 04:38:16 - Upload script src/dewey/core/data_upload/upload_calendar.sh completed successfully
+2025-03-17 04:38:16 - ----------------------------------------
+2025-03-17 04:38:16 - All data upload scripts have been executed successfully
