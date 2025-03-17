@@ -29,8 +29,7 @@ except ImportError as e:
         f"Original error: {str(e)}"
     )
 
-from dewey.utils import load_config, get_deepinfra_client, validate_test_output
-from dewey.llm.api_clients.deepinfra import DeepInfraClient
+from dewey.utils import load_config, get_llm_client, validate_test_output
 from dewey.core.automation import rate_limiter
 
 
@@ -47,7 +46,7 @@ class TestWriter:
         self.io = InputOutput(yes=True)
         self.max_workers = max_workers
         self.test_root = Path(self.config["project_root"]) / "tests"
-        self.llm_client = get_deepinfra_client()
+        self.llm_client = get_llm_client()
         
         self._init_model()
         self._validate_config()
