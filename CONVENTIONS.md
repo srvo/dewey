@@ -35,6 +35,7 @@ All system configuration MUST be defined in `config/dewey.yaml` using this struc
    - Use standardized naming: `[DirectoryName]_Product_Requirements_Document.{yaml|md}`
    - All PRDs must be tracked in `config/dewey.yaml` under `prd.tracked_prds`
    - Both YAML and Markdown versions must be maintained
+   - All components must have complete descriptions
    
 2. Structure:
    - Use YAML format with Markdown sections

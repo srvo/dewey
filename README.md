@@ -104,30 +104,10 @@ For more details, see [Data Upload README](src/dewey/core/data_upload/README.md)
 python src/dewey/core/data_upload/upload.py --input_dir /path/to/data --target_db your_database
 ```
 
-## Setup
-
-1. Set the `MOTHERDUCK_TOKEN` environment variable with your MotherDuck token:
-   ```bash
-   export MOTHERDUCK_TOKEN=your_token_here
-   ```
-
-2. Ensure all required Python packages are installed:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
 ## Development
 
 ### Running Tests
 
 ```bash
 pytest
-```
-
-### Code Style
-
-We follow PEP 8 guidelines for Python code. Use `black` for formatting:
-
-```bash
-black src/
 ```
