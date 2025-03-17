@@ -86,17 +86,33 @@ All system configuration MUST be defined in `config/dewey.yaml` using this struc
 
 ## Core Development Guidelines
 
-### Script Implementation Standards
-1. **Base Script Requirement:**
-   - ALL non-test scripts MUST inherit from `/Users/srvo/dewey/src/dewey/core/base_script.py`
-   - Absolute requirement with no exceptions except for experimental code in `/sandbox`
-   - Violations will break CI/CD pipelines and trigger code reviews
+### Mandatory Base Script Framework
+**STRICTLY ENFORCED** - All non-test scripts MUST use:
+```python
+from dewey.core.base_script import BaseScript
 
-2. **Implementation Rules:**
-   ```python
-   from dewey.core import base_script
+class CustomScript(BaseScript):
+    def __init__(self):
+        super().__init__(config_section='custom')
+        
+    def run(self):
+        # Implement script logic here
+```
 
-   class CustomScript(base_script.BaseScript):
+**Enforcement Rules:**
+1. Absolute requirement for all production code
+2. Zero exceptions except temporary code in `/sandbox` (must be moved within 7 days)
+3. Violations will:
+   - Fail CI/CD pipelines
+   - Block PR merges
+   - Trigger mandatory code reviews
+4. Required inherited functionality:
+   - Centralized configuration
+   - Standardized logging
+   - Connection pooling
+   - Error handling framework
+
+**Implementation Rules:**
        def __init__(self):
            super().__init__(
                config_section='custom',
