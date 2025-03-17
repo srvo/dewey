@@ -13,6 +13,10 @@ from .models import Service
 
 
 class ServiceDeployment:
+    """Manages service deployment, updates, backups, and restores using Docker Compose."""
+
+
+class ServiceDeployment:
     """Service deployment and configuration management."""
 
     def __init__(self, service_manager) -> None:

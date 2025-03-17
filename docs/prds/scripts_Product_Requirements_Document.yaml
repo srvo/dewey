@@ -74,52 +74,62 @@ components:
     - pathlib library
     - hashlib library
   service_deployment.py:
-    description: No description available.
+    description: Manages service deployment, updates, backups, and restores using
+      Docker Compose.
     responsibilities:
     - Restore service from backup
     - Deploy or update a service
     - Create backup of service configuration and data
     dependencies:
-    - models library
+    - src/dewey/core/models.py
     - datetime library
     - pathlib library
     - tempfile library
     - shutil library
   consolidated_code_analyzer.py:
-    description: Placeholder for LLM content generation.
+    description: Analyzes consolidated code for quality, security vulnerabilities,
+      and adherence to project conventions using LLMs.
     responsibilities: []
     dependencies:
     - subprocess library
     - shutil library
     - pathlib library
     - hashlib library
+    - src/dewey/llm/llm_utils.py
+    - src/dewey/llm/api_clients.py
   script_mover.py:
-    description: No description available.
+    description: Analyzes and refactors standalone scripts into the Dewey project
+      structure, managing dependencies and updating references.
     responsibilities:
     - Manage dependencies in pyproject.toml.
     - Analyze scripts using LLM.
     - Refactor scripts into a project structure.
     dependencies:
-    - exceptions.py for llm functionality
+    - src/dewey/llm/exceptions.py
     - argparse library
     - __future__ library
     - re library
     - ast library
     - uuid library
     - time library
-    - pypi_search.py for utils functionality
+    - src/dewey/utils/pypi_search.py
     - pathlib library
     - hashlib library
-    - llm_utils.py for llm functionality
+    - src/dewey/llm/llm_utils.py
     - tomli_w library
-    - api_clients.py for llm functionality
+    - src/dewey/llm/api_clients.py
     - tomli library
   consolidated_mover.py:
-    description: No description available.
+    description: Relocates consolidated code to appropriate modules, updating PRD
+      documentation and removing duplicates.
     responsibilities: []
-    dependencies: []
+    dependencies:
+    - src/dewey/core/architecture.py
+    - src/dewey/maintenance/prd_builder.py
+    - src/dewey/core/automation/duplicate_manager.py
   document_directory.py:
-    description: No description available.
+    description: Generates comprehensive directory documentation, analyzes code quality,
+      and enforces project conventions.
     responsibilities:
     - Check if a file has been processed based on content hash.
     - Generate a README with quality and structure analysis.
@@ -142,14 +152,14 @@ components:
     - Save checkpoint data to file.
     - Checkpoint a file by saving its content hash.
     dependencies:
-    - exceptions.py for llm functionality
+    - src/dewey/llm/exceptions.py
     - argparse library
     - subprocess library
     - __future__ library
     - pathlib library
     - hashlib library
     - dotenv library
-    - api_clients.py for llm functionality
+    - src/dewey/llm/api_clients.py
     - shutil library
   analyze_architecture.py:
     description: 'Repository architecture analyzer using PRDs and Gemini API.

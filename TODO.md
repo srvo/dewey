@@ -76,6 +76,7 @@
 
 ### CRM Module
 - Refactor database connection and error handling in `add_enrichment_a154a675.py` to use centralized utilities
+- Move `src/dewey/core/automation/service_deployment.py` to `src/dewey/core/automation/`
 
 ## Import Statements
 When importing from dewey modules, use absolute imports:

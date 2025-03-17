@@ -39,7 +39,7 @@ The `src/dewey/scripts` directory contains a collection of sophisticated managem
 
 ### Documentation and Deployment
 - **Document Directory** (`document_directory.py`): Generates comprehensive directory documentation
-- **Service Deployment** (`service_deployment.py`): Manages service deployment and configuration
+- **Service Deployment** (`src/dewey/core/automation/service_deployment.py`): Manages service deployment and configuration
 
 ### Key Features Across Scripts
 1. **LLM Integration**
