@@ -52,7 +52,7 @@ class TestWriter:
 
     def _init_model(self):
         """Initialize LLM model using aider's native configuration."""
-        model_name = self.config["llm"]["providers"]["deepinfra"]["default_model"]
+        model_name = "Qwen/QwQ-32B"
         self.model = Model(f"deepinfra/{model_name}")
 
     def _validate_config(self):
