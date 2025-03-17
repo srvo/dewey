@@ -50,7 +50,7 @@ dependencies = [
     "humanize",
     "spacy>=3.8.4",
     "black>=25.1.0",
-    "numpy==1.26.0",  # Pinned for spaCy compatibility
+    "numpy==1.26.4",  # Updated for aider-chat compatibility while maintaining spaCy support
     "chromadb>=0.4.15",
     "sentence-transformers>=2.2.2",
     "typer>=0.9.0",
