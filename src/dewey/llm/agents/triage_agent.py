@@ -8,12 +8,14 @@ class TriageAgent(DeweyBaseAgent):
     
     def __init__(self, config: Dict[str, Any]):
         """
-        Initialize the TriageAgent with configuration.
+        Initialize the TriageAgent with merged configurations.
 
         Args:
-            config: Configuration dictionary from dewey.yaml
+            config: Merged configuration from dewey.yaml and local aider configs
         """
         super().__init__(config=config, task_type="triage")
+        # Set up routing rules from config
+        self.routing_rules = self.config.get("triage", {}).get("routing_rules", [])
         self.add_tools([
             Tool.from_function(
                 self.analyze_item,

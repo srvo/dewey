@@ -7,7 +7,19 @@ class TranscriptAnalysisAgent(DeweyBaseAgent):
     """Extracts actionable insights and content opportunities from meeting transcripts."""
     
     def __init__(self, config: Dict[str, Any]):
+        """
+        Initialize with merged configurations and analysis settings.
+        
+        Args:
+            config: Merged configuration from dewey.yaml and local aider configs
+        """
         super().__init__(config=config, task_type="transcript_analysis")
+        # Set analysis parameters from config
+        self.analysis_params = self.config.get("transcript_analysis", {}).get("params", {
+            "max_action_items": 10,
+            "content_types": ["blog", "newsletter", "knowledge_base"],
+            "sentiment_levels": ["positive", "neutral", "negative"]
+        })
         self.add_tools([
             Tool.from_function(
                 self.analyze_meeting,

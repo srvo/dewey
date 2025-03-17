@@ -11,12 +11,17 @@ class AdversarialAgent(DeweyBaseAgent):
     
     def __init__(self, config: Dict[str, Any]):
         """
-        Initialize the AdversarialAgent with configuration.
+        Initialize the AdversarialAgent with merged configurations.
 
         Args:
-            config: Configuration dictionary from dewey.yaml
+            config: Merged configuration from dewey.yaml and local aider configs
         """
         super().__init__(config=config, task_type="critical_analysis")
+        # Set analysis parameters from config
+        self.analysis_params = self.config.get("adversarial", {}).get("analysis_params", {
+            "max_issues": 5,
+            "severity_levels": ["low", "medium", "high", "critical"]
+        })
         self.add_tools([
             Tool.from_function(
                 self.analyze_risks,
