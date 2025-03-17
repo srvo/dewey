@@ -1,36 +1,58 @@
-"""Triage agent for initial analysis and delegation of incoming items using smolagents."""
-from typing import List, Dict, Any, Optional
+"""Initial analysis and routing agent for incoming items."""
+from typing import Dict, Any
 from smolagents import Tool
 from .base_agent import DeweyBaseAgent
 
 class TriageAgent(DeweyBaseAgent):
-    """
-    Agent for triaging incoming items and determining appropriate actions.
-    """
-
-    def __init__(self):
-        """Initializes the TriageAgent."""
-        super().__init__(task_type="triage")
+    """Analyzes and routes incoming items to appropriate handlers."""
+    
+    def __init__(self, config: Dict[str, Any]):
+        super().__init__(config=config, task_type="triage")
         self.add_tools([
-            Tool.from_function(self.triage_item, description="Analyzes an item and determines appropriate actions.")
+            Tool.from_function(
+                self.analyze_item,
+                description="Analyzes incoming items and determines appropriate actions",
+                args_schema={
+                    "content": {
+                        "type": "string",
+                        "description": "Content of the item to analyze"
+                    },
+                    "context": {
+                        "type": "object",
+                        "description": "Additional context for analysis"
+                    }
+                }
+            )
         ])
 
-    def triage_item(self, content: str, context: Optional[Dict[str, Any]] = None) -> str:
+    def analyze_item(self, content: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
         """
-        Analyzes an item and determines appropriate actions.
-
+        Analyze incoming item and determine appropriate routing.
+        
         Args:
-            content (str): The content to analyze.
-            context (Optional[Dict[str, Any]], optional): Optional context for the analysis. Defaults to None.
-
+            content: Text content of the item
+            context: Additional analysis context
+            
         Returns:
-            str: A string containing the triage results.
+            Dictionary containing analysis results and routing instructions
         """
-        prompt = f"""
-        Analyze the following item:
+        prompt = f"""Analyze this incoming item and determine appropriate actions:
         {content}
-
-        Context: {context or "None"}
+        
+        Context: {context or 'None'}
+        
+        Return JSON with:
+        - category (str)
+        - urgency (1-5)
+        - recommended_actions (list)
+        - suggested_handlers (list)
+        - follow_up_required (bool)
+        - analysis_summary (str)
         """
-        result = self.run(prompt)
-        return result
+        
+        return self.generate_response(
+            prompt=prompt,
+            response_format={"type": "json_object"},
+            temperature=0.2,
+            max_tokens=600
+        )
