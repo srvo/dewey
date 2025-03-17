@@ -86,6 +86,11 @@ class TestWriter:
         </function_to_test>
         
         Please ensure:
+        - Tests inherit from BaseScript when appropriate
+        - All error handling uses try-except blocks with proper logging
+        - Structured logging follows config/dewey.yaml settings
+        - Type hints are strictly enforced for all function signatures
+        - Configuration is loaded from central config (never hardcoded)
         - Tests cover normal cases, edge cases, and error handling
         - Use pytest fixtures where appropriate
         - Avoid mocking external dependencies - test against real implementations
@@ -96,6 +101,13 @@ class TestWriter:
         - Include integration tests for critical paths
         - Use Ibis testing framework for database interactions
         - Follow DuckDB SQL Logic Test patterns where applicable
+        - Adhere to all conventions in CONVENTIONS.md including:
+          * PEP8 style guidelines
+          * Google-style docstrings
+          * 4-space indentation
+          * 100 character line length
+          * Explicit type hints
+          * Error handling best practices
         
         Generate the test suite in a single file with:
         - All necessary imports
