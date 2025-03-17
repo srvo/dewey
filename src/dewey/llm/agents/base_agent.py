@@ -19,6 +19,10 @@ class EngineTool(Tool):
         self.name = f"{self.engine.get_name()}_{self.method.__name__}"
         self.description = (self.method.__doc__ or "").strip()
         self.inputs = {}
+        
+        # Get method signature first
+        sig = signature(self.method)
+        
         # Generate more precise output type from method return annotation
         return_type = sig.return_annotation
         if hasattr(return_type, "__name__"):
@@ -27,8 +31,6 @@ class EngineTool(Tool):
             self.output_type = return_type._name.lower()  # Handle typing.* types
         else:
             self.output_type = "dict"
-        
-        sig = signature(self.method)
         for name, param in sig.parameters.items():
             if name == "self": continue
             self.inputs[name] = {
