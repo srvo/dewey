@@ -3,6 +3,14 @@ core:
   conventions_document: /Users/srvo/dewey/CONVENTIONS.md
   default_timezone: UTC
   project_root: /Users/srvo/dewey
+  # ABSOLUTE REQUIREMENT - All scripts must inherit from this base class
+  base_script: /Users/srvo/dewey/src/dewey/core/base_script.py
+  script_enforcement:
+    validation_hooks:
+      - pre-commit
+      - pre-push
+      - ci-pipeline
+    failure_action: hard-fail
   base_script: /Users/srvo/dewey/src/dewey/core/base_script.py
 formatting:
   formatters:
