@@ -89,6 +89,7 @@ class TestWriter:
         Please ensure:
         - Tests cover normal cases, edge cases, and error handling
         - Use pytest fixtures where appropriate
+        - Avoid mocking external dependencies - test against real implementations
         - Follow Arrange-Act-Assert pattern
         - Include type hints and descriptive docstrings
         - Validate both happy paths and error conditions
