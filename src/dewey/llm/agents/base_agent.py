@@ -22,9 +22,13 @@ class DeweyBaseAgent(CodeAgent):
         Args:
             config: Configuration dictionary from dewey.yaml
             task_type: The type of task the agent will perform
+
+        Raises:
+            ValueError: If required configuration is missing or invalid
         """
         self.config = config
         self.task_type = task_type
+        self._validate_config()
         self.llm_handler = LLMHandler(config.get("llm", {}))
 
         # Initialize model with config values
@@ -93,3 +97,74 @@ class DeweyBaseAgent(CodeAgent):
             max_tokens=self.config.get("max_tokens", 1000),
             **kwargs
         )
+
+    @property
+    def agent_config(self) -> Dict[str, Any]:
+        """Get agent-specific configuration."""
+        return self.config.get("agents", {}).get(self.task_type, {})
+
+    def _validate_config(self) -> None:
+        """Validate the agent configuration.
+        
+        Raises:
+            ValueError: If required configuration is missing or invalid
+        """
+        required_keys = {
+            "llm": ["client", "default_provider"],
+            f"agents.{self.task_type}": ["enabled", "version"]
+        }
+        
+        errors = []
+        for section, keys in required_keys.items():
+            current = self.config
+            for part in section.split('.'):
+                current = current.get(part, {})
+            
+            for key in keys:
+                if key not in current:
+                    errors.append(f"Missing required config key: {section}.{key}")
+        
+        if errors:
+            raise ValueError(f"Invalid configuration:\n" + "\n".join(errors))
+
+    def get_config_value(self, path: str, default: Any = None) -> Any:
+        """Get a configuration value using dot notation path.
+        
+        Args:
+            path: Dot notation path to config value (e.g. "llm.providers.deepinfra.api_key")
+            default: Default value if path not found
+            
+        Returns:
+            The config value or default if not found
+        """
+        current = self.config
+        for part in path.split('.'):
+            if not isinstance(current, dict):
+                return default
+            current = current.get(part, default)
+        return current
+
+    def ensure_config_section(self, path: str, default: Dict[str, Any] = None) -> Dict[str, Any]:
+        """Ensure a configuration section exists, creating it if needed.
+        
+        Args:
+            path: Dot notation path to config section
+            default: Default value to create if section doesn't exist
+            
+        Returns:
+            The existing or created config section
+        """
+        if default is None:
+            default = {}
+            
+        current = self.config
+        parts = path.split('.')
+        for part in parts[:-1]:
+            if part not in current:
+                current[part] = {}
+            current = current[part]
+            
+        if parts[-1] not in current:
+            current[parts[-1]] = default
+            
+        return current[parts[-1]]
