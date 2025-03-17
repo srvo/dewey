@@ -106,7 +106,7 @@ class TestWriter:
 
     def _get_test_path(self, source_path: Path) -> Path:
         """Mirror source directory structure under tests directory with '_test' suffix."""
-        relative_path = source_path.relative_to(self.config["project_root"])
+        relative_path = source_path.relative_to(self.config["core"]["project_root"])
         test_dir = self.test_root / relative_path.parent.name
         test_file = test_dir / f"test_{relative_path.name}"
         return test_file
