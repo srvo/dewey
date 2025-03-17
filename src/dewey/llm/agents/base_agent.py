@@ -1,52 +1,54 @@
 """Base agent configuration using smolagents framework."""
+from typing import Dict, Any, List, Optional
 import os
-from smolagents import CodeAgent, HfApiModel, LiteLLMModel
+from smolagents import CodeAgent, Tool, LiteLLMModel
 from smolagents.tools import PythonREPLTool
+from dewey.llm.llm_utils import LLMHandler
 
 class DeweyBaseAgent(CodeAgent):
     """
     Base agent for all Dewey agents using the smolagents framework.
 
     Attributes:
-        task_type (str): The type of task the agent is designed to perform.
-        model_name (str): The name of the language model to use.
+        config (Dict[str, Any]): Configuration dictionary
+        task_type (str): The type of task the agent is designed to perform
+        llm_handler (LLMHandler): Centralized LLM handler instance
     """
 
-    def __init__(self, task_type: str, model_name: str = "Qwen/Qwen2.5-Coder-32B-Instruct"):
+    def __init__(self, config: Dict[str, Any], task_type: str):
         """
-        Initializes the DeweyBaseAgent with a task type and model.
+        Initializes the DeweyBaseAgent with configuration and task type.
 
         Args:
-            task_type (str): The type of task the agent will perform.
-            model_name (str, optional): The name of the language model to use.
-                Defaults to "Qwen/Qwen2.5-Coder-32B-Instruct".
+            config: Configuration dictionary from dewey.yaml
+            task_type: The type of task the agent will perform
         """
+        self.config = config
+        self.task_type = task_type
+        self.llm_handler = LLMHandler(config.get("llm", {}))
 
-        # Use LiteLLMModel for accessing models via API keys
+        # Initialize model with config values
         model = LiteLLMModel(
-            model_id=model_name,
+            model_id=config.get("model", "Qwen/Qwen2.5-Coder-32B-Instruct"),
             api_key=os.environ.get("DEEPINFRA_API_KEY"),
-            temperature=0.3,
-            max_tokens=4096,
+            temperature=config.get("temperature", 0.3),
+            max_tokens=config.get("max_tokens", 4096),
         )
 
         super().__init__(
             model=model,
             tools=self._get_tools(),
             system_prompt=self._get_system_prompt(task_type),
-            safe_mode="e2b",  # Use a sandboxed environment for code execution
+            safe_mode="e2b",
         )
 
-    def _get_tools(self):
+    def _get_tools(self) -> List[Tool]:
         """
         Returns a list of tools available to the agent.
 
-        This method can be overridden in subclasses to add or remove tools.
-
         Returns:
-            list: A list of tools.
+            List of Tool instances
         """
-        # Add PythonREPLTool for code execution
         return [PythonREPLTool()]
 
     def _get_system_prompt(self, task_type: str) -> str:
@@ -54,10 +56,10 @@ class DeweyBaseAgent(CodeAgent):
         Returns the system prompt for the agent based on the task type.
 
         Args:
-            task_type (str): The type of task the agent will perform.
+            task_type: The type of task the agent will perform
 
         Returns:
-            str: The system prompt.
+            System prompt string
         """
         prompts = {
             "docstring": "You are an expert at analyzing and generating Python docstrings. Your goal is to improve code documentation.",
@@ -73,3 +75,21 @@ class DeweyBaseAgent(CodeAgent):
             "wellness_monitoring": "You are an expert in wellness monitoring. Your goal is to monitor user work patterns and suggest self-care interventions."
         }
         return prompts.get(task_type, "You are a helpful AI assistant.")
+
+    def generate_response(self, prompt: str, **kwargs) -> Any:
+        """
+        Generate response using centralized LLM handler.
+
+        Args:
+            prompt: Input prompt
+            **kwargs: Additional parameters for the LLM
+
+        Returns:
+            Generated response
+        """
+        return self.llm_handler.generate_response(
+            prompt,
+            temperature=self.config.get("temperature", 0.3),
+            max_tokens=self.config.get("max_tokens", 1000),
+            **kwargs
+        )
