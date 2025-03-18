@@ -656,4 +656,194 @@ def main():
         sys.exit(1)
 
 if __name__ == "__main__":
-    main() 
+    main()
+
+import pytest
+import pandas as pd
+import duckdb
+from datetime import datetime
+from pathlib import Path
+from src.dewey.core.crm.csv_contact_integration import (
+    process_client_intake_questionnaire,
+    process_client_contact_master,
+    process_blog_signup_form,
+    process_onboarding_form,
+    merge_contacts,
+    update_unified_contacts,
+    connect_to_motherduck
+)
+
+@pytest.fixture
+def tmp_csv(tmp_path):
+    """Create temporary CSV files for testing"""
+    def _create(data, filename='test.csv'):
+        df = pd.DataFrame(data)
+        path = tmp_path / filename
+        df.to_csv(path, index=False)
+        return str(path)
+    return _create
+
+@pytest.fixture
+def duckdb_connection(tmp_path):
+    """DuckDB connection with unified_contacts table"""
+    conn = duckdb.connect(':memory:')
+    conn.execute('''
+        CREATE TABLE unified_contacts (
+            email VARCHAR PRIMARY KEY,
+            first_name VARCHAR,
+            last_name VARCHAR,
+            full_name VARCHAR,
+            company VARCHAR,
+            job_title VARCHAR,
+            phone VARCHAR,
+            country VARCHAR,
+            source VARCHAR,
+            domain VARCHAR,
+            last_interaction_date VARCHAR,
+            first_seen_date VARCHAR,
+            last_updated VARCHAR,
+            tags VARCHAR,
+            notes VARCHAR,
+            metadata VARCHAR
+        )
+    ''')
+    yield conn
+    conn.close()
+
+def test_process_client_intake_questionnaire_valid(tmp_csv):
+    """Test valid client intake questionnaire processing"""
+    data = [{
+        'Email Address': 'john@example.com',
+        "What's your name?": 'John Doe',
+        "What's the best phone number to reach you on?": '555-1234',
+        "What do you do for a living? ": 'Developer',
+        "What's your home address (including City, State, and ZIP code)": '123 Main St',
+        "What are your pronouns? ": 'He/Him'
+    }]
+    file_path = tmp_csv(data, 'client_intake.csv')
+    
+    contacts = process_client_intake_questionnaire(file_path)
+    assert len(contacts) == 1
+    contact = contacts[0]
+    assert contact['email'] == 'john@example.com'
+    assert contact['full_name'] == 'John Doe'
+    assert contact['metadata'] == json.dumps({
+        'pronouns': 'He/Him',
+        'job_title': 'Developer',
+        'address': '123 Main St'
+    })
+
+def test_process_client_intake_missing_email(tmp_csv):
+    """Test handling of missing email in intake questionnaire"""
+    data = [{
+        'Email Address': None,
+        "What's your name?": 'Jane Doe'
+    }]
+    file_path = tmp_csv(data, 'invalid_intake.csv')
+    contacts = process_client_intake_questionnaire(file_path)
+    assert len(contacts) == 0
+
+def test_process_client_contact_master_missing_subscriber(tmp_csv):
+    """Test contact master with missing Subscriber field"""
+    data = [{
+        'Subscriber': None,
+        'first_name': 'Alex'
+    }]
+    file_path = tmp_csv(data, 'invalid_contact.csv')
+    contacts = process_client_contact_master(file_path)
+    assert len(contacts) == 0
+
+def test_merge_contacts_multiple_overrides(tmp_csv):
+    """Test merging contacts with multiple field overrides"""
+    contact1 = {
+        'email': 'merge@example.com',
+        'first_name': 'Original',
+        'last_name': None,
+        'country': 'USA'
+    }
+    contact2 = {
+        'email': 'merge@example.com',
+        'first_name': None,
+        'last_name': 'Merged',
+        'country': None
+    }
+    
+    merged = merge_contacts([contact1, contact2])
+    assert merged['merge@example.com']['last_name'] == 'Merged'
+    assert merged['merge@example.com']['first_name'] == 'Original'
+    assert merged['merge@example.com']['country'] == 'USA'
+
+def test_update_unified_contacts_update_existing(duckdb_connection):
+    """Test updating existing contact in database"""
+    initial_contact = {
+        'email': 'existing@example.com',
+        'first_name': 'Old',
+        'last_updated': datetime.now().isoformat()
+    }
+    duckdb_connection.execute("""
+        INSERT INTO unified_contacts VALUES (
+            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+        )
+    """, [
+        initial_contact['email'],
+        initial_contact['first_name'],
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        'initial_source',
+        None,
+        None,
+        None,
+        initial_contact['last_updated'],
+        None,
+        None,
+        None
+    ])
+    
+    updated_contact = {
+        'email': 'existing@example.com',
+        'first_name': None,
+        'last_name': 'New',
+        'source': 'updated_source'
+    }
+    contacts = {updated_contact['email']: updated_contact}
+    update_unified_contacts(duckdb_connection, contacts)
+    
+    result = duckdb_connection.execute(
+        "SELECT last_name, source FROM unified_contacts WHERE email = ?",
+        [updated_contact['email']]
+    ).fetchone()
+    assert result == ('New', 'initial_source,updated_source')
+
+def test_main_missing_files(tmp_path, monkeypatch):
+    """Test main function with missing input files"""
+    monkeypatch.setattr(
+        'src.dewey.core.crm.csv_contact_integration.connect_to_motherduck',
+        lambda *a: duckdb.connect(':memory:')
+    )
+    
+    # Create empty input dir with no files
+    main_dir = tmp_path / 'empty'
+    main_dir.mkdir()
+    
+    from src.dewey.core.crm.csv_contact_integration import main
+    main(['--input-dir', str(main_dir)])
+    
+    # Verify no contacts were processed
+    conn = duckdb.connect(':memory:')
+    assert conn.execute("SELECT COUNT(*) FROM unified_contacts").fetchone()[0] == 0
+
+def test_database_connection_failure():
+    """Test database connection error handling"""
+    with pytest.raises(Exception, match='Error connecting to MotherDuck database'):
+        connect_to_motherduck('invalid_database')
+
+def test_missing_table(duckdb_connection):
+    """Test database update when table doesn't exist"""
+    duckdb_connection.execute("DROP TABLE unified_contacts")
+    contacts = {'test@example.com': {'email': 'test@example.com'}}
+    update_unified_contacts(duckdb_connection, contacts)
+    assert duckdb_connection.execute("SELECT COUNT(*) FROM unified_contacts").fetchone()[0] == 0

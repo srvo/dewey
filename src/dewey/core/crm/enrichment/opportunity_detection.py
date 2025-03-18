@@ -262,3 +262,160 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     detect_opportunities(batch_size=args.batch_size, max_emails=args.max_emails)
+import pytest
+import duckdb
+import structlog
+import os
+import json
+from pathlib import Path
+from src.dewey.core.crm.enrichment.opportunity_detection import (
+    detect_opportunities_in_email,
+    update_contact_opportunities,
+    detect_opportunities,
+    load_config,
+    get_duckdb_connection,
+    create_contacts_table,
+    create_opportunity_processing_table
+)
+import yaml
+
+@pytest.fixture
+def temp_duckdb_conn():
+    """Create in-memory DuckDB connection for each test."""
+    conn = duckdb.connect(':memory:')
+    yield conn
+    conn.close()
+
+@pytest.fixture
+def mock_config(tmp_path):
+    """Create mock config file with custom patterns."""
+    config_dir = tmp_path / "dewey" / "config"
+    config_dir.mkdir(parents=True)
+    config_path = config_dir / "dewey.yaml"
+    custom_patterns = {
+        "patterns": {
+            "demo_request": r"(?i)demo",
+            "test_pattern": r"(?i)test"
+        }
+    }
+    with open(config_path, "w") as f:
+        yaml.safe_dump({"opportunity_detection": custom_patterns}, f)
+    original_path = os.environ.get("DEWEY_CONFIG_PATH")
+    os.environ["DEWEY_CONFIG_PATH"] = str(tmp_path)
+    yield
+    if original_path:
+        os.environ["DEWEY_CONFIG_PATH"] = original_path
+    else:
+        del os.environ["DEWEY_CONFIG_PATH"]
+
+@pytest.fixture
+def setup_tables(temp_duckdb_conn):
+    """Create necessary database tables."""
+    conn = temp_duckdb_conn
+    create_contacts_table(conn)
+    create_opportunity_processing_table(conn)
+    # Create emails table (required by main function)
+    conn.execute('''
+        CREATE TABLE emails (
+            id VARCHAR PRIMARY KEY,
+            from_email VARCHAR,
+            plain_body TEXT
+        )
+    ''')
+    return conn
+
+def test_detect_opportunities_in_email_positive():
+    """Test pattern matching with positive examples."""
+    email_body = "Schedule a demo. Cancel old plan. Need pricing info."
+    expected = {
+        "demo_request": True,
+        "cancellation": True,
+        "pricing_inquiry": True
+    }
+    actual = detect_opportunities_in_email(email_body, DEFAULT_PATTERNS)
+    assert all([actual[k] == v for k, v in expected.items()])
+
+def test_detect_opportunities_in_email_negative():
+    """Test no matches return empty dict."""
+    email_body = "This email has no opportunities mentioned"
+    result = detect_opportunities_in_email(email_body, DEFAULT_PATTERNS)
+    assert not any(result.values())
+
+def test_update_contact_opportunities_new_contact(setup_tables):
+    """Test creating new contact with opportunities."""
+    conn = setup_tables
+    email = "test@example.com"
+    opportunities = {"demo_request": True}
+    
+    update_contact_opportunities(conn, email, opportunities)
+    
+    # Verify new contact created
+    contact = conn.execute("SELECT * FROM contacts WHERE email=?", [email]).fetchone()
+    assert contact["has_demo_request"] is True
+    assert conn.execute("SELECT COUNT(*) FROM contacts").fetchone()[0] == 1
+
+def test_update_contact_opportunities_existing_contact(setup_tables):
+    """Test updating existing contact with new opportunities."""
+    conn = setup_tables
+    email = "existing@example.com"
+    initial_ops = {"demo_request": True}
+    update_ops = {"cancellation": True}
+    
+    # Create initial contact
+    update_contact_opportunities(conn, email, initial_ops)
+    
+    # Update with new opportunities
+    update_contact_opportunities(conn, email, update_ops)
+    
+    contact = conn.execute("SELECT * FROM contacts WHERE email=?", [email]).fetchone()
+    assert contact["has_demo_request"] is True
+    assert contact["has_cancellation"] is True
+
+def test_detect_opportunities_happy_path(setup_tables):
+    """Test full workflow with sample emails."""
+    conn = setup_tables
+    emails_to_insert = [
+        ("email1", "user1@example.com", "Schedule demo please"),
+        ("email2", "user2@example.com", "Cancel my subscription"),
+        ("email3", "user3@example.com", "Need pricing details")
+    ]
+    conn.executemany(
+        "INSERT INTO emails (id, from_email, plain_body) VALUES (?, ?, ?)",
+        emails_to_insert
+    )
+    
+    detect_opportunities(batch_size=2, max_emails=3)
+    
+    processed = conn.execute("SELECT * FROM opportunity_processing").fetchall()
+    assert len(processed) == 3
+    
+    contacts = conn.execute("SELECT * FROM contacts").fetchall()
+    assert len(contacts) == 3
+    assert any(c["has_demo_request"] for c in contacts)
+    assert any(c["has_cancellation"] for c in contacts)
+    assert any(c["has_pricing_inquiry"] for c in contacts)
+
+def test_load_config_with_custom_patterns(mock_config):
+    """Test loading custom patterns from config file."""
+    config = load_config()
+    assert "test_pattern" in config["patterns"]
+    assert config["patterns"]["demo_request"] == r"(?i)demo"
+
+def test_get_duckdb_connection_motherduck_failure(monkeypatch):
+    """Test fallback to local connection when MotherDuck fails."""
+    def mock_connect(*args):
+        if args[0] == "md:dewey_emails":
+            raise Exception("MotherDuck connection failed")
+        return duckdb.connect(*args)
+    
+    monkeypatch.setattr(duckdb, "connect", mock_connect)
+    
+    conn = get_duckdb_connection()
+    assert conn.execute("pragma;").fetchone()["memory"] == True
+
+def test_detect_opportunities_no_emails(setup_tables):
+    """Test when no emails to process."""
+    detect_opportunities()
+    
+    count = setup_tables.execute("SELECT COUNT(*) FROM opportunity_processing").fetchone()[0]
+    assert count == 0

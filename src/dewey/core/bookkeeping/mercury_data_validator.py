@@ -1,12 +1,9 @@
-import logging
 import re
 from datetime import datetime
 from typing import Any
+from dewey.utils import get_logger
 
 # File header: Validates raw transaction data from Mercury CSV files.
-
-logger = logging.getLogger(__name__)
-
 
 class DataValidationError(Exception):
     """Exception for invalid transaction data."""
@@ -24,10 +21,15 @@ def normalize_description(description: str) -> str:
         The normalized transaction description string.
 
     """
+    logger = get_logger('mercury_validator')
+    
     if not description:
+        logger.debug("Empty description provided")
         return ""
     # Remove extra whitespace and normalize case
-    return re.sub(r"\s{2,}", " ", description.strip())
+    normalized = re.sub(r"\s{2,}", " ", description.strip())
+    logger.debug(f"Normalized description: '{description}' -> '{normalized}'")
+    return normalized
 
 
 def _parse_and_validate_date(date_str: str) -> datetime.date:
@@ -46,15 +48,20 @@ def _parse_and_validate_date(date_str: str) -> datetime.date:
         ValueError: If the date is invalid or outside the allowed range.
 
     """
-    date_obj = datetime.strptime(date_str, "%Y-%m-%d")
-    if date_obj.year < 2000 or date_obj > datetime.now():
-        msg = f"Invalid date {date_str}"
-        raise ValueError(msg)
-    return date_obj.date()
+    logger = get_logger('mercury_validator')
+    
+    try:
+        date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+        if date_obj.year < 2000 or date_obj > datetime.now():
+            raise ValueError(f"Date {date_str} is outside allowed range")
+        return date_obj.date()
+    except ValueError as e:
+        logger.error(f"Invalid date format: {date_str}")
+        raise
 
 
 def _normalize_amount(amount_str: str) -> float:
-    """Normalize the amount string.
+    """Normalize and validate amount string.
 
     Args:
     ----
@@ -64,12 +71,29 @@ def _normalize_amount(amount_str: str) -> float:
     -------
         The normalized amount as a float.
 
+    Raises:
+    ------
+        ValueError: If the amount format is invalid.
+
     """
-    return float(amount_str.replace(",", "").strip())
+    logger = get_logger('mercury_validator')
+    
+    try:
+        # Remove currency symbols and commas
+        cleaned = amount_str.replace('$', '').replace(',', '').strip()
+        amount = float(cleaned)
+        logger.debug(f"Normalized amount: '{amount_str}' -> {amount}")
+        return amount
+    except ValueError:
+        logger.error(f"Invalid amount format: {amount_str}")
+        raise ValueError(f"Invalid amount format: {amount_str}")
 
 
 class MercuryDataValidator:
     """Validates raw transaction data from Mercury CSV files."""
+
+    def __init__(self):
+        self.logger = get_logger('mercury_validator')
 
     def validate_row(self, row: dict[str, str]) -> dict[str, Any]:
         """Validate and normalize a transaction row.
@@ -88,30 +112,31 @@ class MercuryDataValidator:
 
         """
         try:
-            # Clean and validate fields
-            date_str = row["date"].strip()
-            description = _normalize_description(row["description"])
-            amount_str = row["amount"].replace(",", "").strip()
-            account_id = row["account_id"].strip()
-
-            # Parse date with validation
-            date_obj = parse_and_validate_date(date_str)
-
-            # Normalize amount with type detection
-            amount = normalize_amount(amount_str)
-            is_income = amount > 0
-            abs_amount = abs(amount)
-
-            return  {
-                "date": date_obj.isoformat(),
-                "description": description,
-                "amount": abs_amount,
-                "is_income": is_income,
-                "account_id": account_id,
-                "raw": row,  # Keep original for error context
+            # Required fields
+            if not all(key in row for key in ['date', 'description', 'amount']):
+                missing = [k for k in ['date', 'description', 'amount'] if k not in row]
+                self.logger.error(f"Missing required fields: {missing}")
+                raise DataValidationError(f"Missing required fields: {missing}")
+            
+            # Validate and normalize fields
+            validated = {
+                'date': _parse_and_validate_date(row['date']),
+                'description': normalize_description(row['description']),
+                'amount': _normalize_amount(row['amount'])
             }
-
-        except (KeyError, ValueError) as e:
-            logger.exception("CSV validation error: %s", str(e))
-            msg = f"Invalid transaction data: {e!s}"
-            raise DataValidationError(msg)
+            
+            # Optional fields
+            if 'category' in row:
+                validated['category'] = row['category'].strip()
+            if 'notes' in row:
+                validated['notes'] = row['notes'].strip()
+                
+            self.logger.debug(f"Validated row: {validated}")
+            return validated
+            
+        except (ValueError, DataValidationError) as e:
+            self.logger.error(f"Validation failed: {str(e)}")
+            raise DataValidationError(f"Validation failed: {str(e)}")
+        except Exception as e:
+            self.logger.exception(f"Unexpected error during validation: {str(e)}")
+            raise

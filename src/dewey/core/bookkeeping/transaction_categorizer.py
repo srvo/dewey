@@ -1,208 +1,177 @@
 #!/usr/bin/env python3
 
 import json
-import logging
 import os
 import re
 from pathlib import Path
 import shutil
 import sys
 from typing import Any
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-logger = logging.getLogger(__name__)
-
+from dewey.utils import get_logger
 
 def load_classification_rules(rules_file: str) -> dict[str, Any]:
-    """Load classification rules from JSON file.
-
-    Args:
-    ----
-        rules_file: Path to the JSON file containing classification rules.
-
-    Returns:
-    -------
-        A dictionary containing the classification rules.
-
-    Raises:
-    ------
-        FileNotFoundError: If the rules file does not exist.
-        json.JSONDecodeError: If the rules file is not a valid JSON.
-
-    """
-    logger.info("Loading classification rules from %s", rules_file)
+    """Load classification rules from JSON file."""
+    logger = get_logger('transaction_categorizer')
+    logger.info(f"Loading classification rules from {rules_file}")
+    
     try:
         with open(rules_file) as f:
             return json.load(f)
     except FileNotFoundError:
-        logger.exception("Classification rules file not found: %s", rules_file)
+        logger.exception(f"Classification rules file not found: {rules_file}")
         raise
     except json.JSONDecodeError as e:
-        logger.exception("Failed to load classification rules: %s", str(e))
+        logger.exception(f"Failed to load classification rules: {str(e)}")
         raise
 
 
 def create_backup(file_path: Path) -> str:
-    """Create a backup of the journal file.
-
-    Args:
-    ----
-        file_path: Path to the journal file.
-
-    Returns:
-    -------
-        The path to the backup file.
-
-    Raises:
-    ------
-        Exception: If the backup creation fails.
-
-    """
-    backup_path = file_path + ".bak"
+    """Create a backup of the file before processing."""
+    logger = get_logger('transaction_categorizer')
+    backup_path = str(file_path) + '.bak'
+    
     try:
         shutil.copy2(file_path, backup_path)
-        logger.debug("Created backup at %s", backup_path)
+        logger.info(f"Created backup at {backup_path}")
         return backup_path
     except Exception as e:
-        logger.exception("Backup failed for %s: %s", file_path, str(e))
+        logger.exception(f"Failed to create backup: {str(e)}")
         raise
 
 
 def classify_transaction(transaction: dict[str, Any], rules: dict[str, Any]) -> str:
-    """Classify a transaction based on the provided rules.
-
-    Args:
-    ----
-        transaction: A dictionary representing the transaction.
-        rules: A dictionary containing the classification rules.
-
-    Returns:
-    -------
-        The category to which the transaction belongs.
-
-    """
-    description = transaction["description"].lower()
-    for pattern in rules["patterns"]:
-        if re.search(pattern["regex"], description):
-            return pattern["category"]
-    return rules["default_category"]
+    """Classify a transaction based on rules."""
+    logger = get_logger('transaction_categorizer')
+    
+    description = transaction.get('description', '').lower()
+    amount = transaction.get('amount', 0)
+    
+    for rule in rules.get('rules', []):
+        pattern = rule.get('pattern', '').lower()
+        if pattern in description:
+            category = rule.get('category', '')
+            logger.debug(f"Matched rule '{pattern}' for transaction '{description}'")
+            return category
+    
+    logger.debug(f"No matching rule found for transaction '{description}'")
+    return 'expenses:unclassified'
 
 
 def process_journal_file(file_path: Path, rules: dict[str, Any]) -> bool:
-    """Process a journal file and categorize its transactions.
-
-    Args:
-    ----
-        file_path: Path to the journal file.
-        rules: A dictionary containing the classification rules.
-
-    Returns:
-    -------
-        True if the processing was successful, False otherwise.
-
-    """
-    logger.info("Processing journal file: %s", file_path)
-
+    """Process a journal file and classify transactions."""
+    logger = get_logger('transaction_categorizer')
+    logger.info(f"Processing journal file: {file_path}")
+    
     try:
+        # Create backup
         backup_path = create_backup(file_path)
-    except Exception:
-        return False
-
-    try:
+        
+        # Read and process file
         with open(file_path) as f:
-            journal = json.load(f)
+            content = f.read()
+        
+        # Split into transactions
+        transactions = []
+        current_transaction = {'lines': []}
+        
+        for line in content.split('\n'):
+            if line.strip() and not line.startswith(' '):
+                # Start of new transaction
+                if current_transaction['lines']:
+                    transactions.append(current_transaction)
+                    current_transaction = {'lines': []}
+                
+                # Parse date and description
+                match = re.match(r'(\d{4}-\d{2}-\d{2})\s+(.+)', line)
+                if match:
+                    current_transaction['date'] = match.group(1)
+                    current_transaction['description'] = match.group(2)
+                current_transaction['lines'].append(line)
+            else:
+                current_transaction['lines'].append(line)
+        
+        # Add final transaction
+        if current_transaction['lines']:
+            transactions.append(current_transaction)
+        
+        # Process transactions
+        classified_content = []
+        classified_count = 0
+        
+        for tx in transactions:
+            if 'description' in tx:
+                category = classify_transaction(tx, rules)
+                if category != 'expenses:unclassified':
+                    classified_count += 1
+                
+                # Update transaction lines
+                new_lines = []
+                for line in tx['lines']:
+                    if line.strip().startswith('expenses:unclassified'):
+                        line = line.replace('expenses:unclassified', category)
+                    new_lines.append(line)
+                classified_content.extend(new_lines)
+            else:
+                classified_content.extend(tx['lines'])
+            classified_content.append('')  # Empty line between transactions
+        
+        # Write updated content
+        with open(file_path, 'w') as f:
+            f.write('\n'.join(classified_content))
+        
+        logger.info(f"Classified {classified_count} transactions in {file_path}")
+        return True
+        
     except Exception as e:
-        logger.exception("Failed to load journal file: %s", str(e))
-        return False
-
-    modified = False
-    for trans in journal["transactions"]:
-        if "category" not in trans:
-            new_category = classify_transaction(trans, rules)
-            trans["category"] = new_category
-            modified = True
-
-            logger.debug(
-                "Classifying transaction: %s ($%.2f)",
-                trans["description"],
-                trans["amount"],
-            )
-            logger.debug("Classified as: %s", new_category)
-
-    if modified:
-        try:
-            with open(file_path, "w") as f:
-                json.dump(journal, f, indent=4)
-            logger.info("Journal file updated: %s", file_path)
-        except Exception as e:
-            logger.exception("Failed to update journal file: %s", str(e))
-            # Restore from backup
+        logger.exception(f"Error processing file {file_path}: {str(e)}")
+        # Restore from backup if exists
+        if 'backup_path' in locals() and os.path.exists(backup_path):
             try:
                 shutil.copy2(backup_path, file_path)
-                logger.warning("Journal file restored from backup.")
-            except Exception as restore_e:
-                logger.exception(
-                    "Failed to restore journal from backup: %s",
-                    str(restore_e),
-                )
-            return False
-
-    return True
+                logger.info(f"Restored from backup: {backup_path}")
+            except Exception as restore_error:
+                logger.exception(f"Failed to restore from backup: {str(restore_error)}")
+        return False
 
 
 def process_by_year_files(base_dir: Path, rules: dict[str, Any]) -> None:
-    """Process all journal files within a base directory, organized by year.
-
-    Args:
-    ----
-        base_dir: The base directory containing the journal files.
-        rules: A dictionary containing the classification rules.
-
-    """
-    for year_dir in os.listdir(base_dir):
-        year_path = os.path.join(base_dir, year_dir)
-        if os.path.isdir(year_path):
-            for filename in os.listdir(year_path):
-                if filename.endswith(".json"):
-                    file_path = os.path.join(year_path, filename)
-                    process_journal_file(file_path, rules)
+    """Process all by-year journal files in a directory."""
+    logger = get_logger('transaction_categorizer')
+    logger.info(f"Processing by-year files in {base_dir}")
+    
+    try:
+        for file_path in base_dir.glob('*.journal'):
+            if re.match(r'\d{4}\.journal$', file_path.name):
+                success = process_journal_file(file_path, rules)
+                if not success:
+                    logger.error(f"Failed to process {file_path}")
+                    
+    except Exception as e:
+        logger.exception(f"Error processing by-year files: {str(e)}")
+        sys.exit(1)
 
 
 def main() -> int:
-    """Main function to process all journal files.
-
-    Returns
-    -------
-        0 if the process was successful, 1 otherwise.
-
-    """
-    logger.info("Starting transaction categorization")
-
-    base_dir = os.environ.get("JOURNAL_BASE_DIR", ".")
-    rules_file = os.environ.get("CLASSIFICATION_RULES", "classification_rules.json")
-
-    logger.info("Using base directory: %s", base_dir)
-    logger.info("Using classification rules file: %s", rules_file)
-
+    """Main entry point."""
+    # Set up logging
+    log_dir = os.path.join(os.getenv('DEWEY_DIR', os.path.expanduser('~/dewey')), 'logs')
+    logger = get_logger('transaction_categorizer', log_dir)
+    
     try:
+        # Load rules
+        rules_file = os.path.expanduser('~/dewey/config/classification_rules.json')
         rules = load_classification_rules(rules_file)
-        logger.info(
-            "Processing files with %d classification patterns",
-            len(rules["patterns"]),
-        )
-        process_by_year_files(base_dir, rules)
+        
+        # Process journal files
+        journal_dir = Path(os.path.expanduser('~/dewey/data/journals'))
+        process_by_year_files(journal_dir, rules)
+        
+        return 0
+        
     except Exception as e:
-        logger.error("Categorization failed: %s", str(e), exc_info=True)
+        logger.exception(f"Error in main: {str(e)}")
         return 1
 
-    logger.info("Transaction categorization completed successfully")
-    return 0
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     sys.exit(main())

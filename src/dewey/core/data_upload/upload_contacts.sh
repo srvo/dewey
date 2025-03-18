@@ -6,7 +6,7 @@
 # Set the path to the Dewey directory
 DEWEY_DIR="/Users/srvo/dewey"
 LOG_DIR="${DEWEY_DIR}/logs"
-LOG_FILE="${LOG_DIR}/contacts_upload_$(date +%Y%m%d_%H%M%S).log"
+LOG_FILE="${LOG_DIR}/contacts_$(date +%Y%m%d).log"
 
 # Create logs directory if it doesn't exist
 mkdir -p "${LOG_DIR}"
@@ -67,7 +67,7 @@ fi
 log "Starting upload of contacts data from ${CONTACTS_FILE}"
 
 # For the first contacts file, we'll use the specified deduplication strategy
-python -m src.dewey.core.data_upload.motherduck_uploader --file "${CONTACTS_FILE}" --database "dewey" --dedup-strategy "${DEDUP_STRATEGY}" 2>&1 | tee -a "${LOG_FILE}"
+python -m dewey.core.data_upload.upload --file "${CONTACTS_FILE}" --target_db "dewey" --dedup_strategy "${DEDUP_STRATEGY}" 2>&1 | tee -a "${LOG_FILE}"
 
 # Check the exit status
 EXIT_CODE=${PIPESTATUS[0]}
@@ -83,7 +83,7 @@ if [ -f "${CONTACTS_COPY_FILE}" ]; then
     
     # For the copy file, we'll always use the 'version' strategy to handle schema differences
     log "Using 'version' strategy for contacts copy to handle schema differences"
-    python -m src.dewey.core.data_upload.motherduck_uploader --file "${CONTACTS_COPY_FILE}" --database "dewey" --dedup-strategy "version" 2>&1 | tee -a "${LOG_FILE}"
+    python -m dewey.core.data_upload.upload --file "${CONTACTS_COPY_FILE}" --target_db "dewey" --dedup_strategy "version" 2>&1 | tee -a "${LOG_FILE}"
     
     # Check the exit status
     EXIT_CODE=${PIPESTATUS[0]}

@@ -590,4 +590,302 @@ def main():
         sys.exit(1)
 
 if __name__ == "__main__":
-    main() 
+    main() import pytest
+import duckdb
+from datetime import datetime
+from src.dewey.core.crm.contact_consolidation import (
+    connect_to_motherduck,
+    create_unified_contacts_table,
+    extract_contacts_from_crm,
+    extract_contacts_from_emails,
+    extract_contacts_from_subscribers,
+    extract_contacts_from_blog_signups,
+    merge_contacts,
+    insert_unified_contacts
+)
+
+@pytest.fixture
+def test_db():
+    """Fixture providing in-memory DuckDB connection with test tables"""
+    conn = duckdb.connect(':memory:')
+    # Create test tables
+    conn.execute("""
+        CREATE TABLE crm_contacts (
+            email VARCHAR,
+            name VARCHAR,
+            source VARCHAR,
+            domain VARCHAR,
+            event_time TIMESTAMP,
+            event_summary VARCHAR,
+            last_updated TIMESTAMP
+        );
+    """)
+    conn.execute("INSERT INTO crm_contacts VALUES ('test@example.com', 'John Doe', 'CRM', 'example.com', '2023-01-01', 'Test', '2023-01-01')")
+    
+    conn.execute("""
+        CREATE TABLE crm_emails (
+            from_email VARCHAR,
+            from_name VARCHAR,
+            date TIMESTAMP,
+            subject VARCHAR
+        );
+    """)
+    conn.execute("INSERT INTO crm_emails VALUES ('sender@example.com', 'Alice Smith', '2023-01-02', 'Hello')")
+    
+    conn.execute("""
+        CREATE TABLE input_data_subscribers (
+            email VARCHAR,
+            name VARCHAR,
+            created_at TIMESTAMP,
+            updated_at TIMESTAMP,
+            status VARCHAR,
+            attributes VARCHAR
+        );
+    """)
+    conn.execute("INSERT INTO input_data_subscribers VALUES ('subscriber@example.com', 'Bob Brown', '2023-01-03', '2023-01-03', 'active', 'test')")
+    
+    conn.execute("""
+        CREATE TABLE input_data_blog_signup_form_responses (
+            email VARCHAR,
+            name VARCHAR,
+            company VARCHAR,
+            phone VARCHAR,
+            date TIMESTAMP,
+            wants_newsletter BOOLEAN,
+            message VARCHAR,
+            raw_content VARCHAR
+        );
+    """)
+    conn.execute("INSERT INTO input_data_blog_signup_form_responses VALUES ('blog@example.com', 'Charlie', 'Widgets Inc', '555-1234', '2023-01-04', true, 'Sign me up', 'raw data')")
+    
+    # Create activedata_email_analyses table
+    conn.execute("""
+        CREATE TABLE activedata_email_analyses (
+            from_address VARCHAR,
+            analysis_date TIMESTAMP,
+            subject VARCHAR,
+            raw_analysis VARCHAR
+        );
+    """)
+    conn.execute("INSERT INTO activedata_email_analyses VALUES ('test_analysis@example.com', '2023-01-02', 'Analysis Subject', '{\"key\": \"value\"}')")
+    
+    # Create input_data_EIvirgin_csvSubscribers table
+    conn.execute("""
+        CREATE TABLE input_data_EIvirgin_csvSubscribers (
+            "Email Address" VARCHAR,
+            "Name" VARCHAR,
+            "ContactExport_20160912_First Name" VARCHAR,
+            "ContactExport_20160912_Last Name" VARCHAR,
+            "EmployerName" VARCHAR,
+            "Job Title" VARCHAR,
+            "Country" VARCHAR,
+            "Email Domain" VARCHAR,
+            "LAST_CHANGED" TIMESTAMP,
+            "OPTIN_TIME" TIMESTAMP,
+            "NOTES" VARCHAR
+        );
+    """)
+    conn.execute("INSERT INTO input_data_EIvirgin_csvSubscribers VALUES ('ei@example.com', 'EI Contact', 'First', 'Last', 'Company', 'Title', 'Country', 'domain.com', '2023-01-01', '2023-01-02', 'Notes')")
+    
+    yield conn
+    conn.close()
+
+def test_connect_to_motherduck():
+    """Verify database connection establishment"""
+    conn = connect_to_motherduck()
+    assert isinstance(conn, duckdb.DuckDBPyConnection)
+    conn.close()
+
+def test_create_unified_contacts_table(test_db):
+    """Validate unified_contacts table creation"""
+    create_unified_contacts_table(test_db)
+    tables = test_db.execute("SHOW TABLES;").fetchall()
+    assert ('unified_contacts',) in tables
+
+def test_extract_crm_contacts(test_db):
+    """Verify CRM contact extraction"""
+    contacts = extract_contacts_from_crm(test_db)
+    assert len(contacts) == 1
+    contact = contacts[0]
+    assert contact['email'] == 'test@example.com'
+    assert contact['first_name'] == 'John'
+    assert contact['last_name'] == 'Doe'
+    assert contact['source'] == 'CRM'
+
+def test_extract_email_contacts(test_db):
+    """Verify email contact extraction"""
+    contacts = extract_contacts_from_emails(test_db)
+    assert len(contacts) == 1
+    contact = contacts[0]
+    assert contact['email'] == 'sender@example.com'
+    assert contact['source'] == 'email'
+    assert contact['domain'] == 'example.com'
+
+def test_extract_subscriber_contacts(test_db):
+    """Validate subscriber data extraction"""
+    contacts = extract_contacts_from_subscribers(test_db)
+    assert len(contacts) == 1
+    contact = contacts[0]
+    assert contact['email'] == 'subscriber@example.com'
+    assert contact['tags'] == 'active'
+    assert contact['source'] == 'subscriber'
+
+def test_extract_blog_contacts(test_db):
+    """Test blog signup extraction"""
+    contacts = extract_contacts_from_blog_signups(test_db)
+    assert len(contacts) == 1
+    contact = contacts[0]
+    assert contact['company'] == 'Widgets Inc'
+    assert contact['tags'] == 'newsletter'
+    assert contact['phone'] == '555-1234'
+
+def test_merge_contacts():
+    """Test contact merging logic"""
+    contact1 = {
+        'email': 'test@example.com',
+        'first_name': 'John',
+        'last_name': None,
+        'company': 'ABC'
+    }
+    contact2 = {
+        'email': 'test@example.com',
+        'first_name': None,
+        'last_name': 'Doe',
+        'company': None
+    }
+    
+    merged = merge_contacts([contact1, contact2])
+    merged_contact = merged['test@example.com']
+    assert merged_contact['first_name'] == 'John'
+    assert merged_contact['last_name'] == 'Doe'
+    assert merged_contact['company'] == 'ABC'
+
+def test_insert_contacts(test_db):
+    """Validate unified contacts insertion"""
+    create_unified_contacts_table(test_db)
+    test_contacts = {
+        'test@example.com': {
+            'email': 'test@example.com',
+            'first_name': 'Alice',
+            'last_name': 'Smith',
+            'domain': 'test.com',
+            'metadata': {'test': True}
+        }
+    }
+    
+    insert_unified_contacts(test_db, test_contacts)
+    result = test_db.execute("SELECT * FROM unified_contacts").fetchall()
+    assert len(result) == 1
+    row = result[0]
+    assert row.email == 'test@example.com'
+    assert row.metadata == '{"test": true}'
+
+def test_full_consolidation_flow(test_db):
+    """End-to-end consolidation test"""
+    create_unified_contacts_table(test_db)
+    
+    crm_contacts = extract_contacts_from_crm(test_db)
+    email_contacts = extract_contacts_from_emails(test_db)
+    subscriber_contacts = extract_contacts_from_subscribers(test_db)
+    blog_contacts = extract_contacts_from_blog_signups(test_db)
+    
+    merged = merge_contacts(crm_contacts + email_contacts + subscriber_contacts + blog_contacts)
+    insert_unified_contacts(test_db, merged)
+    
+    count = test_db.execute("SELECT COUNT(*) FROM unified_contacts").fetchone()[0]
+    assert count == 5  # Now includes EI and activedata sources
+    
+    # Verify merged data
+    alice = test_db.execute("SELECT * FROM unified_contacts WHERE email='sender@example.com'").fetchone()
+    assert alice.first_name == 'Alice'
+    assert alice.source == 'email'
+
+# New test for activedata extraction
+def test_extract_email_contacts_activedata(test_db):
+    """Verify extraction from activedata_email_analyses"""
+    contacts = extract_contacts_from_emails(test_db)
+    assert len(contacts) == 2
+    activedata_contact = next(c for c in contacts if c['source'] == 'email_analysis')
+    assert activedata_contact['email'] == 'test_analysis@example.com'
+    assert activedata_contact['metadata'] == '{"key": "value"}'
+
+# New test for EIvirgin subscribers
+def test_extract_subscribers_ei(test_db):
+    """Test extraction from input_data_EIvirgin_csvSubscribers"""
+    contacts = extract_contacts_from_subscribers(test_db)
+    assert len(contacts) == 2
+    ei_contact = next(c for c in contacts if c['source'] == 'EI_subscriber')
+    assert ei_contact['email'] == 'ei@example.com'
+    assert ei_contact['company'] == 'Company'
+    assert ei_contact['job_title'] == 'Title'
+
+# Test merging with case-insensitive email
+def test_merge_case_insensitive_email():
+    """Test merging contacts with same email in different cases"""
+    contact1 = {'email': 'Test@example.com', 'first_name': 'John'}
+    contact2 = {'email': 'test@example.com', 'last_name': 'Doe'}
+    merged = merge_contacts([contact1, contact2])
+    assert len(merged) == 1
+    merged_contact = merged['test@example.com']
+    assert merged_contact['first_name'] == 'John'
+    assert merged_contact['last_name'] == 'Doe'
+
+# Test inserting with null metadata
+def test_insert_contacts_with_null_metadata(test_db):
+    """Test inserting contact with null metadata"""
+    create_unified_contacts_table(test_db)
+    test_contacts = {
+        'test@example.com': {
+            'email': 'test@example.com',
+            'first_name': 'Alice',
+            'metadata': None
+        }
+    }
+    insert_unified_contacts(test_db, test_contacts)
+    result = test_db.execute("SELECT metadata FROM unified_contacts WHERE email=?", ('test@example.com',)).fetchone()
+    assert result[0] is None
+
+# Test extracting CRM with no data
+def test_extract_crm_no_data(test_db):
+    """Test extracting CRM contacts with no data"""
+    test_db.execute("DELETE FROM crm_contacts")
+    contacts = extract_contacts_from_crm(test_db)
+    assert len(contacts) == 0
+
+# Add test helper functions
+def get_test_data():
+    return {
+        "crm_contacts": [
+            {"email": "test@example.com", "name": "John Doe", "source": "CRM", "domain": "example.com",
+             "event_time": datetime(2023, 1, 1), "event_summary": "Test", "last_updated": datetime(2023, 1, 1)},
+        ],
+        "crm_emails": [
+            {"from_email": "sender@example.com", "from_name": "Alice Smith", "date": datetime(2023, 1, 2),
+             "subject": "Hello"},
+        ],
+        "input_data_subscribers": [
+            {"email": "subscriber@example.com", "name": "Bob Brown", "created_at": datetime(2023, 1, 3),
+             "updated_at": datetime(2023, 1, 3), "status": "active", "attributes": "test"},
+        ],
+        "blog_signups": [
+            {"email": "blog@example.com", "name": "Charlie", "company": "Widgets Inc", "phone": "555-1234",
+             "date": datetime(2023, 1, 4), "wants_newsletter": True, "message": "Sign me up", "raw_content": "raw data"}
+        ]
+    }
+import duckdb
+from datetime import datetime
+
+def create_test_tables(conn):
+    """Helper function to create standardized test tables"""
+    conn.execute("""
+        CREATE TABLE crm_contacts (
+            email VARCHAR,
+            name VARCHAR,
+            source VARCHAR,
+            domain VARCHAR,
+            event_time TIMESTAMP,
+            event_summary VARCHAR,
+            last_updated TIMESTAMP
+        );
+    """)
+    # Create other test tables here

@@ -6,7 +6,7 @@
 # Set the path to the Dewey directory
 DEWEY_DIR="/Users/srvo/dewey"
 LOG_DIR="${DEWEY_DIR}/logs"
-LOG_FILE="${LOG_DIR}/calendar_upload_$(date +%Y%m%d_%H%M%S).log"
+LOG_FILE="${LOG_DIR}/calendar_$(date +%Y%m%d).log"
 
 # Create logs directory if it doesn't exist
 mkdir -p "${LOG_DIR}"
@@ -68,7 +68,7 @@ if [ -f "${CALENDAR_DUCKDB}" ]; then
     log "Starting upload of calendar data from ${CALENDAR_DUCKDB}"
     
     # Run the uploader for the calendar DuckDB file
-    python -m src.dewey.core.data_upload.motherduck_uploader --file "${CALENDAR_DUCKDB}" --database "dewey" --dedup-strategy "${DEDUP_STRATEGY}" 2>&1 | tee -a "${LOG_FILE}"
+    python -m dewey.core.data_upload.upload --file "${CALENDAR_DUCKDB}" --target_db "dewey" --dedup_strategy "${DEDUP_STRATEGY}" 2>&1 | tee -a "${LOG_FILE}"
     
     # Check the exit status
     EXIT_CODE=${PIPESTATUS[0]}
@@ -94,7 +94,7 @@ if [ -f "${CALENDAR_SQLITE}" ]; then
             log "Starting upload of SQLite calendar data"
             
             # Run the uploader for the calendar SQLite file
-            python -m src.dewey.core.data_upload.motherduck_uploader --file "${CALENDAR_SQLITE}" --database "dewey" --dedup-strategy "${DEDUP_STRATEGY}" 2>&1 | tee -a "${LOG_FILE}"
+            python -m dewey.core.data_upload.upload --file "${CALENDAR_SQLITE}" --target_db "dewey" --dedup_strategy "${DEDUP_STRATEGY}" 2>&1 | tee -a "${LOG_FILE}"
             
             # Check the exit status
             EXIT_CODE=${PIPESTATUS[0]}

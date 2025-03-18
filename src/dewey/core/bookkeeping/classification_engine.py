@@ -1,16 +1,15 @@
 import json
-import logging
 import re
 from datetime import datetime
 from pathlib import Path
 from re import Pattern
 import fnmatch
-from typing import TYPE_CHECKING, List, Tuple, Dict
+from typing import TYPE_CHECKING, List, Tuple, Dict, Optional, Any
+
+from dewey.utils import get_logger
 
 if TYPE_CHECKING:
     from src.dewey.core.bookkeeping.writers.journal_writer_fab1858b import JournalWriter
-
-logger = logging.getLogger(__name__)
 
 
 class ClassificationError(Exception):
@@ -21,357 +20,236 @@ class ClassificationEngine:
     """Handles transaction categorization logic."""
 
     def __init__(self, rules_path: Path, ledger_file: Path) -> None:
-        """Initializes the ClassificationEngine.
-
-        Args:
-        ----
-            rules_path: Path to the JSON file containing classification rules.
-
-        """
+        """Initialize the ClassificationEngine."""
+        self.logger = get_logger('classification_engine')
         self.ledger_file = ledger_file
-        self.rules: dict = self._load_rules(rules_path)
-        self.compiled_patterns: dict[str, Pattern] = self._compile_patterns()
-        self._valid_categories: list[str] = self.rules["categories"]
+        self.rules: Dict[str, Any] = self._load_rules(rules_path)
+        self.compiled_patterns: Dict[str, Pattern] = self._compile_patterns()
+        self._valid_categories: List[str] = self.rules["categories"]
         self.RULE_SOURCES = [
             ("overrides.json", 0),  # Highest priority
             ("manual_rules.json", 1),
-            ("base_rules.json", 2)]  # Lowest priority
+            ("base_rules.json", 2)   # Lowest priority
+        ]
+        self.logger.info(f"Initialized with {len(self.rules['patterns'])} patterns")
 
     @property
-    def categories(self) -> list[str]:
-        """Accessor for valid classification categories.
-
-        Returns
-        -------
-            A list of valid classification categories.
-
-        """
+    def categories(self) -> List[str]:
+        """Get valid classification categories."""
         return self._valid_categories
 
-    def _load_rules(self, rules_path: Path) -> dict:
-        """Load classification rules from JSON file.
-
-        Args:
-        ----
-            rules_path: Path to the JSON file.
-
-        Returns:
-        -------
-            A dictionary containing the loaded rules.  Returns default rules on failure.
-
-        """
+    def _load_rules(self, rules_path: Path) -> Dict[str, Any]:
+        """Load classification rules from JSON file."""
         try:
             with open(rules_path) as f:
-                rules: dict = json.load(f)
-
-            loaded_rules: dict = {
-                "patterns": rules.get("patterns", {}),
-                "categories": rules.get("categories", []),
-                "defaults": rules.get(
-                    "defaults",
-                    {"positive": "income:unknown", "negative": "expenses:unknown"},
-                ),
-                "overrides": rules.get("overrides", {}),
-                "sources": rules.get("sources", []),
-            }
-
-            if "source" not in loaded_rules:
-                loaded_rules["source"] = str(rules_path)
-
-            return loaded_rules
+                rules = json.load(f)
+            self.logger.debug(f"Loaded {len(rules['patterns'])} rules from {rules_path}")
+            return rules
         except Exception as e:
-            logger.exception(f"Failed to load classification rules: {e!s}")
-            return {
-                "patterns": {},
-                "categories": [],
-                "defaults": {
-                    "positive": "income:unknown",
-                    "negative": "expenses:unknown",
-                },
-                "overrides": {},
-                "sources": [],
-            }
+            self.logger.exception(f"Failed to load rules from {rules_path}: {str(e)}")
+            raise ClassificationError(f"Failed to load rules: {str(e)}")
 
-    def _compile_patterns(self) -> dict[str, Pattern]:
-        """Compile regex patterns for classification.
+    def _compile_patterns(self) -> Dict[str, Pattern]:
+        """Compile regex patterns for efficient matching."""
+        try:
+            patterns = {}
+            for pattern_str in self.rules["patterns"]:
+                try:
+                    patterns[pattern_str] = re.compile(pattern_str, re.IGNORECASE)
+                except re.error as e:
+                    self.logger.warning(f"Invalid regex pattern '{pattern_str}': {str(e)}")
+                    continue
+            self.logger.debug(f"Compiled {len(patterns)} regex patterns")
+            return patterns
+        except Exception as e:
+            self.logger.exception(f"Failed to compile patterns: {str(e)}")
+            raise ClassificationError(f"Failed to compile patterns: {str(e)}")
 
-        Returns
-        -------
-            A dictionary mapping patterns to compiled regex objects.
+    def load_classification_rules(self) -> List[Tuple[Pattern, str, int]]:
+        """Load and prioritize classification rules from multiple sources."""
+        try:
+            rules = []
+            for source, priority in self.RULE_SOURCES:
+                try:
+                    with open(source) as f:
+                        source_rules = json.load(f)
+                        for pattern_str, rule in source_rules.items():
+                            try:
+                                pattern = re.compile(pattern_str, re.IGNORECASE)
+                                rules.append((pattern, rule["category"], priority))
+                            except re.error as e:
+                                self.logger.warning(f"Invalid regex in {source}: {pattern_str} - {str(e)}")
+                except FileNotFoundError:
+                    self.logger.debug(f"Rules file not found: {source}")
+                    continue
+                except json.JSONDecodeError as e:
+                    self.logger.warning(f"Invalid JSON in {source}: {str(e)}")
+                    continue
+            
+            self.logger.info(f"Loaded {len(rules)} classification rules")
+            return sorted(rules, key=lambda x: x[2])  # Sort by priority
+            
+        except Exception as e:
+            self.logger.exception(f"Failed to load classification rules: {str(e)}")
+            raise ClassificationError(f"Failed to load classification rules: {str(e)}")
 
-        Raises
-        ------
-            ClassificationError: If an invalid regex pattern is encountered.
-
-        """
-        compiled: dict[str, Pattern] = {}
-        for pattern in self.rules["patterns"]:
-            try:
-                compiled[pattern] = re.compile(pattern, re.IGNORECASE)
-            except re.error as e:
-                logger.exception("Invalid regex pattern '%s': %s", pattern, str(e))
-                msg = f"Invalid regex pattern '{pattern}': {e!s}"
-                raise ClassificationError(
-                    msg,
-                ) from None
-        return compiled
-
-   def load_classification_rules(self) -> List[Tuple[Pattern, str, int]]:
-       """Load and compile classification rules with priority.
-
-       Returns
-       -------
-           A list of compiled rules with their associated category and priority.
-
-       """
-       logger.info("Loading classification rules with priority system")
-
-       rules = self.load_prioritized_rules()
-       compiled_rules = []
-
-       for (pattern, data), priority in rules:
-           category = data["category"]
-           formatted_category = self.format_category(category)
-
-           # Handle different pattern types
-           compiled = self.compile_pattern(pattern)
-
-           compiled_rules.append((compiled, formatted_category, priority))
-
-       logger.info(f"Loaded {len(compiled_rules)} classification rules")
-   def export_hledger_rules(self, output_path: Path) -> None:
-       """Export rules in hledger's CSV format.
-
-        Args:
-        ----
-            output_path: Path to the output file.
-
-        """
-        logger.info("📝 Generating hledger rules file at: %s", output_path)
-
-        rules: list[str] = [
-            "skip 1",
-            "separator ,",
-            "fields date,description,amount",
-            f"currency {self.rules.get('hledger', {}).get('currency', '$')}",
-            f"date-format {self.rules.get('hledger', {}).get('date_format', '%Y-%m-%d')}",
-            "account1 assets:mercury:checking",
-        ]
-
-        rules.extend(
-            [
-                "if %amount < 0",
-                "    account2 expenses:unknown",
-                "if %amount > 0",
-                "    account2 income:unknown",
-            ],
-        )
-
-        logger.debug(
-            "Converting %d patterns to hledger rules",
-            len(self.rules["patterns"]),
-        )
-        for pattern, account in self.rules["patterns"].items():
-            rules.append(f"if {pattern}")
-            rules.append(f"    account2 {account}")
-            logger.debug("Added pattern: %s => %s", pattern, account)
-
-        logger.debug("Adding amount-based account switching")
-
-        with open(output_path, "w") as f:
-            f.write("\n".join(rules))
-        logger.info("Successfully wrote %d lines to rules file", len(rules))
+    def export_hledger_rules(self, output_path: Path) -> None:
+        """Export rules in hledger format."""
+        try:
+            rules_text = []
+            
+            # Add header
+            rules_text.append("; Generated by Dewey Classification Engine")
+            rules_text.append(f"; Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            rules_text.append("")
+            
+            # Add rules sorted by category
+            for category in sorted(self._valid_categories):
+                rules_text.append(f"; {category}")
+                for pattern, rule in self.rules["patterns"].items():
+                    if rule["category"] == category:
+                        rules_text.append(f"if /{pattern}/ then account2 {category}")
+                rules_text.append("")
+            
+            # Write to file
+            with open(output_path, 'w') as f:
+                f.write('\n'.join(rules_text))
+            
+            self.logger.info(f"Exported {len(self.rules['patterns'])} rules to {output_path}")
+            
+        except Exception as e:
+            self.logger.exception(f"Failed to export hledger rules: {str(e)}")
+            raise ClassificationError(f"Failed to export hledger rules: {str(e)}")
 
     def export_paisa_template(self, output_path: Path) -> None:
-        """Export rules in Paisa's template format.
+        """Export rules in Paisa template format."""
+        try:
+            template = {
+                "version": "1.0",
+                "rules": []
+            }
+            
+            # Convert rules to Paisa format
+            for pattern, rule in self.rules["patterns"].items():
+                template["rules"].append({
+                    "pattern": pattern,
+                    "category": rule["category"],
+                    "examples": rule.get("examples", [])
+                })
+            
+            # Write to file
+            with open(output_path, 'w') as f:
+                json.dump(template, f, indent=2)
+            
+            self.logger.info(f"Exported {len(template['rules'])} rules to {output_path}")
+            
+        except Exception as e:
+            self.logger.exception(f"Failed to export Paisa template: {str(e)}")
+            raise ClassificationError(f"Failed to export Paisa template: {str(e)}")
 
-        Args:
-        ----
-            output_path: Path to the output file.
-
-        """
-        logger.info("📝 Generating Paisa template at: %s", output_path)
-
-        template: list[str] = [
-            "{{#if (isDate ROW.A date_format)}}",
-            "{{date ROW.A date_format}} {{ROW.B}}",
-            "    {{match ROW.B",
-        ]
-
-        for pattern, account in self.rules["patterns"].items():
-            clean_pattern: str = pattern.replace("|", "\\\\|")
-            template.append(f'        {account}="{clean_pattern}" \\')
-
-        template.extend(
-            [
-                "    }}",
-                "    Assets:Mercury:Checking  {{negate (amount ROW.C)}}",
-                "{{/if}}",
-            ],
-        )
-
-        template_str: str = "\n".join(template).replace(
-            "date_format",
-            f'"{self.rules.get("hledger", {}).get("date_format", "%Y-%m-%d")}"',
-        )
-
-        with open(output_path, "w") as f:
-            f.write(template_str)
-        logger.info(
-            "Generated Paisa template with %d patterns",
-            len(self.rules["patterns"]),
-        )
-
-    def classify(self, description: str, amount: float) -> tuple[str, str, float]:
-        """Classify transaction using rules and AI fallback.
-
-        Args:
-        ----
-            description: Transaction description.
-            amount: Transaction amount.
-
-        Returns:
-        -------
-            A tuple containing the income account, expense account, and absolute amount.
-
-        """
-        for pattern, compiled in self.compiled_patterns.items():
-            if compiled.search(description):
-                account: str = self.rules["patterns"][pattern]
-                if amount < 0:
-                    return (account, self.rules["defaults"]["negative"], abs(amount))
-                return (self.rules["defaults"]["positive"], account, amount)
-
-        if amount < 0:
-            return (
-                self.rules["defaults"]["negative"],
-                self.rules["defaults"]["negative"],
-                abs(amount),
-            )
-        return (
-            self.rules["defaults"]["positive"],
-            self.rules["defaults"]["positive"],
-            amount,
-        )
+    def classify(self, description: str, amount: float) -> Tuple[str, str, float]:
+        """Classify a transaction based on its description and amount."""
+        try:
+            # Try each pattern in priority order
+            for pattern_str, pattern in self.compiled_patterns.items():
+                if pattern.search(description):
+                    rule = self.rules["patterns"][pattern_str]
+                    category = rule["category"]
+                    self.logger.debug(f"Matched pattern '{pattern_str}' for '{description}'")
+                    return category, pattern_str, amount
+            
+            # No match found
+            self.logger.warning(f"No matching pattern for '{description}'")
+            return "expenses:unknown", "", amount
+            
+        except Exception as e:
+            self.logger.exception(f"Classification failed for '{description}': {str(e)}")
+            raise ClassificationError(f"Classification failed: {str(e)}")
 
     def process_feedback(self, feedback: str, journal_writer: "JournalWriter") -> None:
-        """Process user feedback to improve classification rules.
-
-        Args:
-        ----
-            feedback: User feedback string.
-            journal_writer: JournalWriter instance for logging.
-
-        """
+        """Process user feedback to improve classification."""
         try:
-            parsed: tuple[str, str] = self._parse_feedback(feedback)
-        except ClassificationError:
-            parsed = self._parse_with_ai(feedback)
-
-        pattern, category = parsed
-        self._validate_category(category)
-
-        self.rules["overrides"][pattern] = {
-            "category": category,
-            "examples": [feedback],
-            "timestamp": datetime.now().isoformat(),
-        }
-
-        journal_writer.log_classification_decision(
-            tx_hash="feedback_system",
-            pattern=pattern,
-            category=category,
-        )
-
-        self._save_overrides()
-        self._compile_patterns()
-        logger.info(f"Processed feedback: {pattern} → {category}")
-
-    def _parse_feedback(self, feedback: str) -> tuple[str, str]:
-        """Parse natural language feedback.
-
-        Args:
-        ----
-            feedback: User feedback string.
-
-        Returns:
-        -------
-            A tuple containing the pattern and category.
-
-        Raises:
-        ------
-            ClassificationError: If the feedback format is invalid.
-
-        """
-        match: re.Match = re.search(
-            r'(?i)classify\s+[\'"](.+?)[\'"].+?as\s+([\w:]+)',
-            feedback,
-        )
-        if not match:
-            msg = f"Invalid feedback format: {feedback}"
-            raise ClassificationError(msg)
-        return match.group(1).strip(), match.group(2).lower()
-
-    def _parse_with_ai(self, feedback: str) -> tuple[str, str]:
-        """Use DeepInfra to parse complex feedback.
-
-        Args:
-        ----
-            feedback: User feedback string.
-
-        Returns:
-        -------
-            A tuple containing the pattern and category.
-
-        Raises:
-        ------
-            ClassificationError: If AI parsing fails.
-
-        """
-        from bin.deepinfra_client import classify_errors
-
-        prompt: list[str] = [
-            "Convert this accounting feedback to a classification rule:",
-            f"Original feedback: {feedback}",
-            "Respond ONLY with JSON: {'pattern': string, 'category': string}",
-        ]
-
-        try:
-            response: list[dict] = classify_errors(prompt)
-            if not response:
-                msg = "No response from AI"
-                raise ClassificationError(msg)
-
-            result: dict = json.loads(response[0]["example"])
-            return result["pattern"], result["category"]
+            # Parse feedback
+            pattern, category = self._parse_feedback(feedback)
+            
+            # Validate category
+            self._validate_category(category)
+            
+            # Add override rule
+            self.rules["patterns"][pattern] = {
+                "category": category,
+                "source": "user_feedback",
+                "added": datetime.now().isoformat()
+            }
+            
+            # Update compiled patterns
+            try:
+                self.compiled_patterns[pattern] = re.compile(pattern, re.IGNORECASE)
+            except re.error as e:
+                self.logger.error(f"Invalid regex pattern '{pattern}': {str(e)}")
+                raise ClassificationError(f"Invalid regex pattern: {str(e)}")
+            
+            # Save overrides
+            self._save_overrides()
+            
+            self.logger.info(f"Added override rule: '{pattern}' -> {category}")
+            
         except Exception as e:
-            msg = f"AI parsing failed: {e!s}"
-            raise ClassificationError(msg)
+            self.logger.exception(f"Failed to process feedback: {str(e)}")
+            raise ClassificationError(f"Failed to process feedback: {str(e)}")
+
+    def _parse_feedback(self, feedback: str) -> Tuple[str, str]:
+        """Parse user feedback into pattern and category."""
+        try:
+            # Try direct parsing
+            if ' -> ' in feedback:
+                pattern, category = feedback.split(' -> ')
+                return pattern.strip(), category.strip()
+            
+            # Try AI-assisted parsing
+            return self._parse_with_ai(feedback)
+            
+        except Exception as e:
+            self.logger.exception(f"Failed to parse feedback '{feedback}': {str(e)}")
+            raise ClassificationError(f"Failed to parse feedback: {str(e)}")
+
+    def _parse_with_ai(self, feedback: str) -> Tuple[str, str]:
+        """Use AI to parse ambiguous feedback."""
+        try:
+            # TODO: Implement AI parsing
+            raise NotImplementedError("AI parsing not implemented yet")
+        except Exception as e:
+            self.logger.exception(f"AI parsing failed for '{feedback}': {str(e)}")
+            raise ClassificationError(f"AI parsing failed: {str(e)}")
 
     def _save_overrides(self) -> None:
-        """Persist override rules to file."""
-        overrides_file: Path = Path(__file__).parent.parent / "rules" / "overrides.json"
-        data: dict = {
-            "patterns": self.rules["overrides"],
-            "categories": list(set(self.rules["overrides"].values())),
-            "last_updated": datetime.now().isoformat(),
-        }
-
-        with open(overrides_file, "w") as f:
-            json.dump(data, f, indent=2)
+        """Save override rules to file."""
+        try:
+            overrides = {
+                pattern: rule
+                for pattern, rule in self.rules["patterns"].items()
+                if rule.get("source") == "user_feedback"
+            }
+            
+            with open("overrides.json", 'w') as f:
+                json.dump(overrides, f, indent=2)
+                
+            self.logger.debug(f"Saved {len(overrides)} override rules")
+            
+        except Exception as e:
+            self.logger.exception(f"Failed to save overrides: {str(e)}")
+            raise ClassificationError(f"Failed to save overrides: {str(e)}")
 
     def _validate_category(self, category: str) -> None:
-        """Validate if a category is in the allowed categories.
-
-        Args:
-        ----
-            category: Category to validate.
-
-        Raises:
-        ------
-            ValueError: If category is not in allowed categories.
-
-        """
-        if category not in self.categories:
-            msg = f"Category {category} is not an allowed category."
-            raise ValueError(msg)
+        """Validate a category string."""
+        try:
+            if category not in self._valid_categories:
+                closest = fnmatch.filter(self._valid_categories, f"*{category}*")
+                if closest:
+                    suggestion = f"Did you mean one of these? {', '.join(closest)}"
+                else:
+                    suggestion = f"Valid categories: {', '.join(self._valid_categories)}"
+                raise ClassificationError(f"Invalid category '{category}'. {suggestion}")
+        except Exception as e:
+            self.logger.exception(f"Category validation failed for '{category}': {str(e)}")
+            raise ClassificationError(f"Category validation failed: {str(e)}")

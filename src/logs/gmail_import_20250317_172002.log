@@ -1,0 +1,601 @@
+2025-03-17 17:20:02,680 - gmail_import - INFO - Connecting to MotherDuck database: md:dewey
+2025-03-17 17:20:03,577 - gmail_import - INFO - Successfully connected to MotherDuck
+2025-03-17 17:20:05,185 - gmail_import - INFO - Connected to database at md:dewey
+2025-03-17 17:20:05,186 - gmail_import - INFO - Using token from /Users/srvo/dewey/token.json
+2025-03-17 17:20:05,193 - gmail_import - INFO - Refreshing expired credentials
+2025-03-17 17:20:05,446 - gmail_import - INFO - Importing all historical emails
+2025-03-17 17:20:05,446 - gmail_import - INFO - Including sent emails
+2025-03-17 17:20:05,888 - gmail_import - INFO - Fetched 500 messages, total: 500
+2025-03-17 17:20:06,684 - gmail_import - INFO - Fetched 500 messages, total: 1000
+2025-03-17 17:20:07,409 - gmail_import - INFO - Fetched 500 messages, total: 1500
+2025-03-17 17:20:08,178 - gmail_import - INFO - Fetched 500 messages, total: 2000
+2025-03-17 17:20:08,937 - gmail_import - INFO - Fetched 500 messages, total: 2500
+2025-03-17 17:20:09,698 - gmail_import - INFO - Fetched 500 messages, total: 3000
+2025-03-17 17:20:10,481 - gmail_import - INFO - Fetched 500 messages, total: 3500
+2025-03-17 17:20:11,278 - gmail_import - INFO - Fetched 500 messages, total: 4000
+2025-03-17 17:20:12,051 - gmail_import - INFO - Fetched 500 messages, total: 4500
+2025-03-17 17:20:12,841 - gmail_import - INFO - Fetched 500 messages, total: 5000
+2025-03-17 17:20:13,664 - gmail_import - INFO - Fetched 500 messages, total: 5500
+2025-03-17 17:20:14,445 - gmail_import - INFO - Fetched 500 messages, total: 6000
+2025-03-17 17:20:15,317 - gmail_import - INFO - Fetched 500 messages, total: 6500
+2025-03-17 17:20:16,131 - gmail_import - INFO - Fetched 500 messages, total: 7000
+2025-03-17 17:20:16,901 - gmail_import - INFO - Fetched 500 messages, total: 7500
+2025-03-17 17:20:17,737 - gmail_import - INFO - Fetched 500 messages, total: 8000
+2025-03-17 17:20:18,572 - gmail_import - INFO - Fetched 500 messages, total: 8500
+2025-03-17 17:20:19,392 - gmail_import - INFO - Fetched 500 messages, total: 9000
+2025-03-17 17:20:20,172 - gmail_import - INFO - Fetched 500 messages, total: 9500
+2025-03-17 17:20:20,928 - gmail_import - INFO - Fetched 500 messages, total: 10000
+2025-03-17 17:20:21,706 - gmail_import - INFO - Fetched 500 messages, total: 10500
+2025-03-17 17:20:22,516 - gmail_import - INFO - Fetched 500 messages, total: 11000
+2025-03-17 17:20:23,342 - gmail_import - INFO - Fetched 500 messages, total: 11500
+2025-03-17 17:20:24,166 - gmail_import - INFO - Fetched 500 messages, total: 12000
+2025-03-17 17:20:24,948 - gmail_import - INFO - Fetched 500 messages, total: 12500
+2025-03-17 17:20:25,743 - gmail_import - INFO - Fetched 500 messages, total: 13000
+2025-03-17 17:20:26,520 - gmail_import - INFO - Fetched 500 messages, total: 13500
+2025-03-17 17:20:27,303 - gmail_import - INFO - Fetched 500 messages, total: 14000
+2025-03-17 17:20:28,112 - gmail_import - INFO - Fetched 500 messages, total: 14500
+2025-03-17 17:20:28,888 - gmail_import - INFO - Fetched 500 messages, total: 15000
+2025-03-17 17:20:29,660 - gmail_import - INFO - Fetched 500 messages, total: 15500
+2025-03-17 17:20:30,434 - gmail_import - INFO - Fetched 500 messages, total: 16000
+2025-03-17 17:20:31,219 - gmail_import - INFO - Fetched 500 messages, total: 16500
+2025-03-17 17:20:31,981 - gmail_import - INFO - Fetched 500 messages, total: 17000
+2025-03-17 17:20:32,757 - gmail_import - INFO - Fetched 500 messages, total: 17500
+2025-03-17 17:20:33,523 - gmail_import - INFO - Fetched 500 messages, total: 18000
+2025-03-17 17:20:34,293 - gmail_import - INFO - Fetched 500 messages, total: 18500
+2025-03-17 17:20:35,097 - gmail_import - INFO - Fetched 500 messages, total: 19000
+2025-03-17 17:20:35,881 - gmail_import - INFO - Fetched 500 messages, total: 19500
+2025-03-17 17:20:36,683 - gmail_import - INFO - Fetched 500 messages, total: 20000
+2025-03-17 17:20:37,440 - gmail_import - INFO - Fetched 500 messages, total: 20500
+2025-03-17 17:20:38,228 - gmail_import - INFO - Fetched 500 messages, total: 21000
+2025-03-17 17:20:38,990 - gmail_import - INFO - Fetched 500 messages, total: 21500
+2025-03-17 17:20:39,818 - gmail_import - INFO - Fetched 500 messages, total: 22000
+2025-03-17 17:20:40,609 - gmail_import - INFO - Fetched 500 messages, total: 22500
+2025-03-17 17:20:41,417 - gmail_import - INFO - Fetched 500 messages, total: 23000
+2025-03-17 17:20:42,158 - gmail_import - INFO - Fetched 500 messages, total: 23500
+2025-03-17 17:20:42,935 - gmail_import - INFO - Fetched 500 messages, total: 24000
+2025-03-17 17:20:43,719 - gmail_import - INFO - Fetched 500 messages, total: 24500
+2025-03-17 17:20:44,531 - gmail_import - INFO - Fetched 500 messages, total: 25000
+2025-03-17 17:20:45,337 - gmail_import - INFO - Fetched 500 messages, total: 25500
+2025-03-17 17:20:46,169 - gmail_import - INFO - Fetched 500 messages, total: 26000
+2025-03-17 17:20:46,991 - gmail_import - INFO - Fetched 500 messages, total: 26500
+2025-03-17 17:20:47,780 - gmail_import - INFO - Fetched 500 messages, total: 27000
+2025-03-17 17:20:48,574 - gmail_import - INFO - Fetched 500 messages, total: 27500
+2025-03-17 17:20:49,398 - gmail_import - INFO - Fetched 500 messages, total: 28000
+2025-03-17 17:20:50,178 - gmail_import - INFO - Fetched 500 messages, total: 28500
+2025-03-17 17:20:50,958 - gmail_import - INFO - Fetched 500 messages, total: 29000
+2025-03-17 17:20:51,772 - gmail_import - INFO - Fetched 500 messages, total: 29500
+2025-03-17 17:20:52,571 - gmail_import - INFO - Fetched 500 messages, total: 30000
+2025-03-17 17:20:53,377 - gmail_import - INFO - Fetched 500 messages, total: 30500
+2025-03-17 17:20:54,173 - gmail_import - INFO - Fetched 500 messages, total: 31000
+2025-03-17 17:20:54,999 - gmail_import - INFO - Fetched 500 messages, total: 31500
+2025-03-17 17:20:55,806 - gmail_import - INFO - Fetched 500 messages, total: 32000
+2025-03-17 17:20:56,606 - gmail_import - INFO - Fetched 500 messages, total: 32500
+2025-03-17 17:20:57,396 - gmail_import - INFO - Fetched 500 messages, total: 33000
+2025-03-17 17:20:58,153 - gmail_import - INFO - Fetched 500 messages, total: 33500
+2025-03-17 17:20:58,930 - gmail_import - INFO - Fetched 500 messages, total: 34000
+2025-03-17 17:20:59,704 - gmail_import - INFO - Fetched 500 messages, total: 34500
+2025-03-17 17:21:00,474 - gmail_import - INFO - Fetched 500 messages, total: 35000
+2025-03-17 17:21:01,265 - gmail_import - INFO - Fetched 500 messages, total: 35500
+2025-03-17 17:21:02,055 - gmail_import - INFO - Fetched 500 messages, total: 36000
+2025-03-17 17:21:02,845 - gmail_import - INFO - Fetched 500 messages, total: 36500
+2025-03-17 17:21:03,622 - gmail_import - INFO - Fetched 500 messages, total: 37000
+2025-03-17 17:21:04,388 - gmail_import - INFO - Fetched 500 messages, total: 37500
+2025-03-17 17:21:05,516 - gmail_import - INFO - Fetched 500 messages, total: 38000
+2025-03-17 17:21:06,273 - gmail_import - INFO - Fetched 500 messages, total: 38500
+2025-03-17 17:21:07,033 - gmail_import - INFO - Fetched 500 messages, total: 39000
+2025-03-17 17:21:07,783 - gmail_import - INFO - Fetched 500 messages, total: 39500
+2025-03-17 17:21:08,561 - gmail_import - INFO - Fetched 500 messages, total: 40000
+2025-03-17 17:21:09,341 - gmail_import - INFO - Fetched 500 messages, total: 40500
+2025-03-17 17:21:10,046 - gmail_import - INFO - Fetched 500 messages, total: 41000
+2025-03-17 17:21:10,807 - gmail_import - INFO - Fetched 500 messages, total: 41500
+2025-03-17 17:21:11,555 - gmail_import - INFO - Fetched 500 messages, total: 42000
+2025-03-17 17:21:12,332 - gmail_import - INFO - Fetched 500 messages, total: 42500
+2025-03-17 17:21:13,134 - gmail_import - INFO - Fetched 500 messages, total: 43000
+2025-03-17 17:21:13,897 - gmail_import - INFO - Fetched 500 messages, total: 43500
+2025-03-17 17:21:14,705 - gmail_import - INFO - Fetched 500 messages, total: 44000
+2025-03-17 17:21:15,479 - gmail_import - INFO - Fetched 500 messages, total: 44500
+2025-03-17 17:21:16,279 - gmail_import - INFO - Fetched 500 messages, total: 45000
+2025-03-17 17:21:17,068 - gmail_import - INFO - Fetched 500 messages, total: 45500
+2025-03-17 17:21:17,900 - gmail_import - INFO - Fetched 500 messages, total: 46000
+2025-03-17 17:21:18,713 - gmail_import - INFO - Fetched 500 messages, total: 46500
+2025-03-17 17:21:19,521 - gmail_import - INFO - Fetched 500 messages, total: 47000
+2025-03-17 17:21:20,330 - gmail_import - INFO - Fetched 500 messages, total: 47500
+2025-03-17 17:21:21,090 - gmail_import - INFO - Fetched 500 messages, total: 48000
+2025-03-17 17:21:21,884 - gmail_import - INFO - Fetched 500 messages, total: 48500
+2025-03-17 17:21:22,681 - gmail_import - INFO - Fetched 500 messages, total: 49000
+2025-03-17 17:21:23,480 - gmail_import - INFO - Fetched 500 messages, total: 49500
+2025-03-17 17:21:24,401 - gmail_import - INFO - Fetched 500 messages, total: 50000
+2025-03-17 17:21:25,180 - gmail_import - INFO - Fetched 500 messages, total: 50500
+2025-03-17 17:21:25,970 - gmail_import - INFO - Fetched 500 messages, total: 51000
+2025-03-17 17:21:26,747 - gmail_import - INFO - Fetched 500 messages, total: 51500
+2025-03-17 17:21:27,507 - gmail_import - INFO - Fetched 500 messages, total: 52000
+2025-03-17 17:21:28,298 - gmail_import - INFO - Fetched 500 messages, total: 52500
+2025-03-17 17:21:29,098 - gmail_import - INFO - Fetched 500 messages, total: 53000
+2025-03-17 17:21:29,871 - gmail_import - INFO - Fetched 500 messages, total: 53500
+2025-03-17 17:21:30,646 - gmail_import - INFO - Fetched 500 messages, total: 54000
+2025-03-17 17:21:31,460 - gmail_import - INFO - Fetched 500 messages, total: 54500
+2025-03-17 17:21:32,216 - gmail_import - INFO - Fetched 500 messages, total: 55000
+2025-03-17 17:21:32,982 - gmail_import - INFO - Fetched 500 messages, total: 55500
+2025-03-17 17:21:33,749 - gmail_import - INFO - Fetched 500 messages, total: 56000
+2025-03-17 17:21:34,525 - gmail_import - INFO - Fetched 500 messages, total: 56500
+2025-03-17 17:21:35,283 - gmail_import - INFO - Fetched 500 messages, total: 57000
+2025-03-17 17:21:36,047 - gmail_import - INFO - Fetched 237 messages, total: 57237
+2025-03-17 17:21:36,047 - gmail_import - INFO - Found 57237 emails, fetching details...
+2025-03-17 17:21:38,452 - gmail_import - INFO - Processing message 10/57237
+2025-03-17 17:21:41,166 - gmail_import - INFO - Processing message 20/57237
+2025-03-17 17:21:43,864 - gmail_import - INFO - Processing message 30/57237
+2025-03-17 17:21:46,520 - gmail_import - INFO - Processing message 40/57237
+2025-03-17 17:21:49,233 - gmail_import - INFO - Processing message 50/57237
+2025-03-17 17:21:51,939 - gmail_import - INFO - Processing message 60/57237
+2025-03-17 17:21:54,609 - gmail_import - INFO - Processing message 70/57237
+2025-03-17 17:21:57,307 - gmail_import - INFO - Processing message 80/57237
+2025-03-17 17:22:00,008 - gmail_import - INFO - Processing message 90/57237
+2025-03-17 17:22:02,669 - gmail_import - INFO - Processing message 100/57237
+2025-03-17 17:22:05,294 - gmail_import - INFO - Processing message 110/57237
+2025-03-17 17:22:07,992 - gmail_import - INFO - Processing message 120/57237
+2025-03-17 17:22:10,590 - gmail_import - INFO - Processing message 130/57237
+2025-03-17 17:22:13,273 - gmail_import - INFO - Processing message 140/57237
+2025-03-17 17:22:15,964 - gmail_import - INFO - Processing message 150/57237
+2025-03-17 17:22:18,654 - gmail_import - INFO - Processing message 160/57237
+2025-03-17 17:22:21,356 - gmail_import - INFO - Processing message 170/57237
+2025-03-17 17:22:24,000 - gmail_import - INFO - Processing message 180/57237
+2025-03-17 17:22:26,676 - gmail_import - INFO - Processing message 190/57237
+2025-03-17 17:22:29,345 - gmail_import - INFO - Processing message 200/57237
+2025-03-17 17:22:31,998 - gmail_import - INFO - Processing message 210/57237
+2025-03-17 17:22:34,641 - gmail_import - INFO - Processing message 220/57237
+2025-03-17 17:22:37,330 - gmail_import - INFO - Processing message 230/57237
+2025-03-17 17:22:40,018 - gmail_import - INFO - Processing message 240/57237
+2025-03-17 17:22:42,715 - gmail_import - INFO - Processing message 250/57237
+2025-03-17 17:22:45,409 - gmail_import - INFO - Processing message 260/57237
+2025-03-17 17:22:48,055 - gmail_import - INFO - Processing message 270/57237
+2025-03-17 17:22:50,775 - gmail_import - INFO - Processing message 280/57237
+2025-03-17 17:22:53,459 - gmail_import - INFO - Processing message 290/57237
+2025-03-17 17:22:56,159 - gmail_import - INFO - Processing message 300/57237
+2025-03-17 17:22:58,810 - gmail_import - INFO - Processing message 310/57237
+2025-03-17 17:23:01,504 - gmail_import - INFO - Processing message 320/57237
+2025-03-17 17:23:04,186 - gmail_import - INFO - Processing message 330/57237
+2025-03-17 17:23:06,869 - gmail_import - INFO - Processing message 340/57237
+2025-03-17 17:23:09,573 - gmail_import - INFO - Processing message 350/57237
+2025-03-17 17:23:12,275 - gmail_import - INFO - Processing message 360/57237
+2025-03-17 17:23:14,959 - gmail_import - INFO - Processing message 370/57237
+2025-03-17 17:23:17,656 - gmail_import - INFO - Processing message 380/57237
+2025-03-17 17:23:20,322 - gmail_import - INFO - Processing message 390/57237
+2025-03-17 17:23:23,018 - gmail_import - INFO - Processing message 400/57237
+2025-03-17 17:23:25,714 - gmail_import - INFO - Processing message 410/57237
+2025-03-17 17:23:28,389 - gmail_import - INFO - Processing message 420/57237
+2025-03-17 17:23:31,100 - gmail_import - INFO - Processing message 430/57237
+2025-03-17 17:23:33,817 - gmail_import - INFO - Processing message 440/57237
+2025-03-17 17:23:36,475 - gmail_import - INFO - Processing message 450/57237
+2025-03-17 17:23:39,161 - gmail_import - INFO - Processing message 460/57237
+2025-03-17 17:23:41,733 - gmail_import - INFO - Processing message 470/57237
+2025-03-17 17:23:44,312 - gmail_import - INFO - Processing message 480/57237
+2025-03-17 17:23:46,991 - gmail_import - INFO - Processing message 490/57237
+2025-03-17 17:23:49,650 - gmail_import - INFO - Processing message 500/57237
+2025-03-17 17:23:52,301 - gmail_import - INFO - Processing message 510/57237
+2025-03-17 17:23:54,984 - gmail_import - INFO - Processing message 520/57237
+2025-03-17 17:23:57,671 - gmail_import - INFO - Processing message 530/57237
+2025-03-17 17:24:00,363 - gmail_import - INFO - Processing message 540/57237
+2025-03-17 17:24:03,056 - gmail_import - INFO - Processing message 550/57237
+2025-03-17 17:24:05,725 - gmail_import - INFO - Processing message 560/57237
+2025-03-17 17:24:08,409 - gmail_import - INFO - Processing message 570/57237
+2025-03-17 17:24:11,066 - gmail_import - INFO - Processing message 580/57237
+2025-03-17 17:24:13,738 - gmail_import - INFO - Processing message 590/57237
+2025-03-17 17:24:16,443 - gmail_import - INFO - Processing message 600/57237
+2025-03-17 17:24:19,154 - gmail_import - INFO - Processing message 610/57237
+2025-03-17 17:24:21,863 - gmail_import - INFO - Processing message 620/57237
+2025-03-17 17:24:24,545 - gmail_import - INFO - Processing message 630/57237
+2025-03-17 17:24:27,202 - gmail_import - INFO - Processing message 640/57237
+2025-03-17 17:24:29,844 - gmail_import - INFO - Processing message 650/57237
+2025-03-17 17:24:32,493 - gmail_import - INFO - Processing message 660/57237
+2025-03-17 17:24:35,186 - gmail_import - INFO - Processing message 670/57237
+2025-03-17 17:24:37,908 - gmail_import - INFO - Processing message 680/57237
+2025-03-17 17:24:40,567 - gmail_import - INFO - Processing message 690/57237
+2025-03-17 17:24:43,269 - gmail_import - INFO - Processing message 700/57237
+2025-03-17 17:24:45,952 - gmail_import - INFO - Processing message 710/57237
+2025-03-17 17:24:48,618 - gmail_import - INFO - Processing message 720/57237
+2025-03-17 17:24:51,328 - gmail_import - INFO - Processing message 730/57237
+2025-03-17 17:24:54,028 - gmail_import - INFO - Processing message 740/57237
+2025-03-17 17:24:56,728 - gmail_import - INFO - Processing message 750/57237
+2025-03-17 17:24:59,409 - gmail_import - INFO - Processing message 760/57237
+2025-03-17 17:25:02,065 - gmail_import - INFO - Processing message 770/57237
+2025-03-17 17:25:04,771 - gmail_import - INFO - Processing message 780/57237
+2025-03-17 17:25:07,466 - gmail_import - INFO - Processing message 790/57237
+2025-03-17 17:25:10,184 - gmail_import - INFO - Processing message 800/57237
+2025-03-17 17:25:12,848 - gmail_import - INFO - Processing message 810/57237
+2025-03-17 17:25:15,524 - gmail_import - INFO - Processing message 820/57237
+2025-03-17 17:25:18,203 - gmail_import - INFO - Processing message 830/57237
+2025-03-17 17:25:20,832 - gmail_import - INFO - Processing message 840/57237
+2025-03-17 17:25:23,544 - gmail_import - INFO - Processing message 850/57237
+2025-03-17 17:25:26,231 - gmail_import - INFO - Processing message 860/57237
+2025-03-17 17:25:28,913 - gmail_import - INFO - Processing message 870/57237
+2025-03-17 17:25:31,626 - gmail_import - INFO - Processing message 880/57237
+2025-03-17 17:25:34,325 - gmail_import - INFO - Processing message 890/57237
+2025-03-17 17:25:37,009 - gmail_import - INFO - Processing message 900/57237
+2025-03-17 17:25:39,715 - gmail_import - INFO - Processing message 910/57237
+2025-03-17 17:25:42,352 - gmail_import - INFO - Processing message 920/57237
+2025-03-17 17:25:45,068 - gmail_import - INFO - Processing message 930/57237
+2025-03-17 17:25:47,772 - gmail_import - INFO - Processing message 940/57237
+2025-03-17 17:25:50,476 - gmail_import - INFO - Processing message 950/57237
+2025-03-17 17:25:53,128 - gmail_import - INFO - Processing message 960/57237
+2025-03-17 17:25:55,825 - gmail_import - INFO - Processing message 970/57237
+2025-03-17 17:25:58,459 - gmail_import - INFO - Processing message 980/57237
+2025-03-17 17:26:01,169 - gmail_import - INFO - Processing message 990/57237
+2025-03-17 17:26:03,838 - gmail_import - INFO - Processing message 1000/57237
+2025-03-17 17:26:06,545 - gmail_import - INFO - Processing message 1010/57237
+2025-03-17 17:26:09,257 - gmail_import - INFO - Processing message 1020/57237
+2025-03-17 17:26:11,955 - gmail_import - INFO - Processing message 1030/57237
+2025-03-17 17:26:14,626 - gmail_import - INFO - Processing message 1040/57237
+2025-03-17 17:26:17,342 - gmail_import - INFO - Processing message 1050/57237
+2025-03-17 17:26:20,026 - gmail_import - INFO - Processing message 1060/57237
+2025-03-17 17:26:22,686 - gmail_import - INFO - Processing message 1070/57237
+2025-03-17 17:26:25,359 - gmail_import - INFO - Processing message 1080/57237
+2025-03-17 17:26:28,039 - gmail_import - INFO - Processing message 1090/57237
+2025-03-17 17:26:30,744 - gmail_import - INFO - Processing message 1100/57237
+2025-03-17 17:26:33,454 - gmail_import - INFO - Processing message 1110/57237
+2025-03-17 17:26:36,153 - gmail_import - INFO - Processing message 1120/57237
+2025-03-17 17:26:38,748 - gmail_import - INFO - Processing message 1130/57237
+2025-03-17 17:26:41,458 - gmail_import - INFO - Processing message 1140/57237
+2025-03-17 17:26:44,181 - gmail_import - INFO - Processing message 1150/57237
+2025-03-17 17:26:46,845 - gmail_import - INFO - Processing message 1160/57237
+2025-03-17 17:26:49,525 - gmail_import - INFO - Processing message 1170/57237
+2025-03-17 17:26:52,106 - gmail_import - INFO - Processing message 1180/57237
+2025-03-17 17:26:54,816 - gmail_import - INFO - Processing message 1190/57237
+2025-03-17 17:26:57,543 - gmail_import - INFO - Processing message 1200/57237
+2025-03-17 17:27:00,121 - gmail_import - INFO - Processing message 1210/57237
+2025-03-17 17:27:02,969 - gmail_import - INFO - Processing message 1220/57237
+2025-03-17 17:27:05,667 - gmail_import - INFO - Processing message 1230/57237
+2025-03-17 17:27:08,329 - gmail_import - INFO - Processing message 1240/57237
+2025-03-17 17:27:10,971 - gmail_import - INFO - Processing message 1250/57237
+2025-03-17 17:27:13,619 - gmail_import - INFO - Processing message 1260/57237
+2025-03-17 17:27:16,273 - gmail_import - INFO - Processing message 1270/57237
+2025-03-17 17:27:18,943 - gmail_import - INFO - Processing message 1280/57237
+2025-03-17 17:27:21,558 - gmail_import - INFO - Processing message 1290/57237
+2025-03-17 17:27:24,223 - gmail_import - INFO - Processing message 1300/57237
+2025-03-17 17:27:26,919 - gmail_import - INFO - Processing message 1310/57237
+2025-03-17 17:27:29,596 - gmail_import - INFO - Processing message 1320/57237
+2025-03-17 17:27:32,284 - gmail_import - INFO - Processing message 1330/57237
+2025-03-17 17:27:34,873 - gmail_import - INFO - Processing message 1340/57237
+2025-03-17 17:27:37,509 - gmail_import - INFO - Processing message 1350/57237
+2025-03-17 17:27:40,166 - gmail_import - INFO - Processing message 1360/57237
+2025-03-17 17:27:42,820 - gmail_import - INFO - Processing message 1370/57237
+2025-03-17 17:27:45,520 - gmail_import - INFO - Processing message 1380/57237
+2025-03-17 17:27:48,114 - gmail_import - INFO - Processing message 1390/57237
+2025-03-17 17:27:50,794 - gmail_import - INFO - Processing message 1400/57237
+2025-03-17 17:27:53,487 - gmail_import - INFO - Processing message 1410/57237
+2025-03-17 17:27:56,143 - gmail_import - INFO - Processing message 1420/57237
+2025-03-17 17:27:58,787 - gmail_import - INFO - Processing message 1430/57237
+2025-03-17 17:28:01,479 - gmail_import - INFO - Processing message 1440/57237
+2025-03-17 17:28:04,122 - gmail_import - INFO - Processing message 1450/57237
+2025-03-17 17:28:06,766 - gmail_import - INFO - Processing message 1460/57237
+2025-03-17 17:28:09,417 - gmail_import - INFO - Processing message 1470/57237
+2025-03-17 17:28:12,122 - gmail_import - INFO - Processing message 1480/57237
+2025-03-17 17:28:14,811 - gmail_import - INFO - Processing message 1490/57237
+2025-03-17 17:28:17,515 - gmail_import - INFO - Processing message 1500/57237
+2025-03-17 17:28:20,238 - gmail_import - INFO - Processing message 1510/57237
+2025-03-17 17:28:22,918 - gmail_import - INFO - Processing message 1520/57237
+2025-03-17 17:28:25,637 - gmail_import - INFO - Processing message 1530/57237
+2025-03-17 17:28:28,265 - gmail_import - INFO - Processing message 1540/57237
+2025-03-17 17:28:30,835 - gmail_import - INFO - Processing message 1550/57237
+2025-03-17 17:28:33,522 - gmail_import - INFO - Processing message 1560/57237
+2025-03-17 17:28:36,195 - gmail_import - INFO - Processing message 1570/57237
+2025-03-17 17:28:38,839 - gmail_import - INFO - Processing message 1580/57237
+2025-03-17 17:28:41,515 - gmail_import - INFO - Processing message 1590/57237
+2025-03-17 17:28:44,209 - gmail_import - INFO - Processing message 1600/57237
+2025-03-17 17:28:46,781 - gmail_import - INFO - Processing message 1610/57237
+2025-03-17 17:28:49,421 - gmail_import - INFO - Processing message 1620/57237
+2025-03-17 17:28:52,053 - gmail_import - INFO - Processing message 1630/57237
+2025-03-17 17:28:54,734 - gmail_import - INFO - Processing message 1640/57237
+2025-03-17 17:28:57,420 - gmail_import - INFO - Processing message 1650/57237
+2025-03-17 17:29:00,110 - gmail_import - INFO - Processing message 1660/57237
+2025-03-17 17:29:02,787 - gmail_import - INFO - Processing message 1670/57237
+2025-03-17 17:29:05,441 - gmail_import - INFO - Processing message 1680/57237
+2025-03-17 17:29:08,091 - gmail_import - INFO - Processing message 1690/57237
+2025-03-17 17:29:10,713 - gmail_import - INFO - Processing message 1700/57237
+2025-03-17 17:29:13,324 - gmail_import - INFO - Processing message 1710/57237
+2025-03-17 17:29:15,948 - gmail_import - INFO - Processing message 1720/57237
+2025-03-17 17:29:18,597 - gmail_import - INFO - Processing message 1730/57237
+2025-03-17 17:29:21,202 - gmail_import - INFO - Processing message 1740/57237
+2025-03-17 17:29:23,893 - gmail_import - INFO - Processing message 1750/57237
+2025-03-17 17:29:26,584 - gmail_import - INFO - Processing message 1760/57237
+2025-03-17 17:29:29,214 - gmail_import - INFO - Processing message 1770/57237
+2025-03-17 17:29:31,922 - gmail_import - INFO - Processing message 1780/57237
+2025-03-17 17:29:34,627 - gmail_import - INFO - Processing message 1790/57237
+2025-03-17 17:29:37,293 - gmail_import - INFO - Processing message 1800/57237
+2025-03-17 17:29:39,929 - gmail_import - INFO - Processing message 1810/57237
+2025-03-17 17:29:42,480 - gmail_import - INFO - Processing message 1820/57237
+2025-03-17 17:29:45,110 - gmail_import - INFO - Processing message 1830/57237
+2025-03-17 17:29:47,698 - gmail_import - INFO - Processing message 1840/57237
+2025-03-17 17:29:50,368 - gmail_import - INFO - Processing message 1850/57237
+2025-03-17 17:29:53,052 - gmail_import - INFO - Processing message 1860/57237
+2025-03-17 17:29:55,729 - gmail_import - INFO - Processing message 1870/57237
+2025-03-17 17:29:58,432 - gmail_import - INFO - Processing message 1880/57237
+2025-03-17 17:30:01,127 - gmail_import - INFO - Processing message 1890/57237
+2025-03-17 17:30:03,814 - gmail_import - INFO - Processing message 1900/57237
+2025-03-17 17:30:06,501 - gmail_import - INFO - Processing message 1910/57237
+2025-03-17 17:30:09,133 - gmail_import - INFO - Processing message 1920/57237
+2025-03-17 17:30:11,797 - gmail_import - INFO - Processing message 1930/57237
+2025-03-17 17:30:14,464 - gmail_import - INFO - Processing message 1940/57237
+2025-03-17 17:30:17,109 - gmail_import - INFO - Processing message 1950/57237
+2025-03-17 17:30:19,753 - gmail_import - INFO - Processing message 1960/57237
+2025-03-17 17:30:22,433 - gmail_import - INFO - Processing message 1970/57237
+2025-03-17 17:30:25,102 - gmail_import - INFO - Processing message 1980/57237
+2025-03-17 17:30:27,766 - gmail_import - INFO - Processing message 1990/57237
+2025-03-17 17:30:30,411 - gmail_import - INFO - Processing message 2000/57237
+2025-03-17 17:30:33,109 - gmail_import - INFO - Processing message 2010/57237
+2025-03-17 17:30:35,836 - gmail_import - INFO - Processing message 2020/57237
+2025-03-17 17:30:38,525 - gmail_import - INFO - Processing message 2030/57237
+2025-03-17 17:30:41,221 - gmail_import - INFO - Processing message 2040/57237
+2025-03-17 17:30:43,843 - gmail_import - INFO - Processing message 2050/57237
+2025-03-17 17:30:46,494 - gmail_import - INFO - Processing message 2060/57237
+2025-03-17 17:30:49,187 - gmail_import - INFO - Processing message 2070/57237
+2025-03-17 17:30:51,885 - gmail_import - INFO - Processing message 2080/57237
+2025-03-17 17:30:54,563 - gmail_import - INFO - Processing message 2090/57237
+2025-03-17 17:30:57,259 - gmail_import - INFO - Processing message 2100/57237
+2025-03-17 17:30:59,950 - gmail_import - INFO - Processing message 2110/57237
+2025-03-17 17:31:02,649 - gmail_import - INFO - Processing message 2120/57237
+2025-03-17 17:31:05,285 - gmail_import - INFO - Processing message 2130/57237
+2025-03-17 17:31:07,962 - gmail_import - INFO - Processing message 2140/57237
+2025-03-17 17:31:10,610 - gmail_import - INFO - Processing message 2150/57237
+2025-03-17 17:31:13,297 - gmail_import - INFO - Processing message 2160/57237
+2025-03-17 17:31:15,869 - gmail_import - INFO - Processing message 2170/57237
+2025-03-17 17:31:18,524 - gmail_import - INFO - Processing message 2180/57237
+2025-03-17 17:31:21,179 - gmail_import - INFO - Processing message 2190/57237
+2025-03-17 17:31:23,872 - gmail_import - INFO - Processing message 2200/57237
+2025-03-17 17:31:26,493 - gmail_import - INFO - Processing message 2210/57237
+2025-03-17 17:31:29,151 - gmail_import - INFO - Processing message 2220/57237
+2025-03-17 17:31:31,847 - gmail_import - INFO - Processing message 2230/57237
+2025-03-17 17:31:34,460 - gmail_import - INFO - Processing message 2240/57237
+2025-03-17 17:31:37,171 - gmail_import - INFO - Processing message 2250/57237
+2025-03-17 17:31:39,851 - gmail_import - INFO - Processing message 2260/57237
+2025-03-17 17:31:42,533 - gmail_import - INFO - Processing message 2270/57237
+2025-03-17 17:31:45,174 - gmail_import - INFO - Processing message 2280/57237
+2025-03-17 17:31:47,854 - gmail_import - INFO - Processing message 2290/57237
+2025-03-17 17:31:50,535 - gmail_import - INFO - Processing message 2300/57237
+2025-03-17 17:31:53,174 - gmail_import - INFO - Processing message 2310/57237
+2025-03-17 17:31:55,819 - gmail_import - INFO - Processing message 2320/57237
+2025-03-17 17:31:58,467 - gmail_import - INFO - Processing message 2330/57237
+2025-03-17 17:32:01,165 - gmail_import - INFO - Processing message 2340/57237
+2025-03-17 17:32:03,795 - gmail_import - INFO - Processing message 2350/57237
+2025-03-17 17:32:06,518 - gmail_import - INFO - Processing message 2360/57237
+2025-03-17 17:32:09,199 - gmail_import - INFO - Processing message 2370/57237
+2025-03-17 17:32:11,767 - gmail_import - INFO - Processing message 2380/57237
+2025-03-17 17:32:14,472 - gmail_import - INFO - Processing message 2390/57237
+2025-03-17 17:32:17,142 - gmail_import - INFO - Processing message 2400/57237
+2025-03-17 17:32:19,826 - gmail_import - INFO - Processing message 2410/57237
+2025-03-17 17:32:22,519 - gmail_import - INFO - Processing message 2420/57237
+2025-03-17 17:32:25,170 - gmail_import - INFO - Processing message 2430/57237
+2025-03-17 17:32:27,848 - gmail_import - INFO - Processing message 2440/57237
+2025-03-17 17:32:30,554 - gmail_import - INFO - Processing message 2450/57237
+2025-03-17 17:32:33,230 - gmail_import - INFO - Processing message 2460/57237
+2025-03-17 17:32:35,926 - gmail_import - INFO - Processing message 2470/57237
+2025-03-17 17:32:38,597 - gmail_import - INFO - Processing message 2480/57237
+2025-03-17 17:32:41,265 - gmail_import - INFO - Processing message 2490/57237
+2025-03-17 17:32:43,953 - gmail_import - INFO - Processing message 2500/57237
+2025-03-17 17:32:46,669 - gmail_import - INFO - Processing message 2510/57237
+2025-03-17 17:32:49,338 - gmail_import - INFO - Processing message 2520/57237
+2025-03-17 17:32:52,052 - gmail_import - INFO - Processing message 2530/57237
+2025-03-17 17:32:54,671 - gmail_import - INFO - Processing message 2540/57237
+2025-03-17 17:32:57,369 - gmail_import - INFO - Processing message 2550/57237
+2025-03-17 17:33:00,054 - gmail_import - INFO - Processing message 2560/57237
+2025-03-17 17:33:02,750 - gmail_import - INFO - Processing message 2570/57237
+2025-03-17 17:33:05,369 - gmail_import - INFO - Processing message 2580/57237
+2025-03-17 17:33:08,070 - gmail_import - INFO - Processing message 2590/57237
+2025-03-17 17:33:10,711 - gmail_import - INFO - Processing message 2600/57237
+2025-03-17 17:33:13,397 - gmail_import - INFO - Processing message 2610/57237
+2025-03-17 17:33:16,070 - gmail_import - INFO - Processing message 2620/57237
+2025-03-17 17:33:18,760 - gmail_import - INFO - Processing message 2630/57237
+2025-03-17 17:33:21,441 - gmail_import - INFO - Processing message 2640/57237
+2025-03-17 17:33:24,139 - gmail_import - INFO - Processing message 2650/57237
+2025-03-17 17:33:26,783 - gmail_import - INFO - Processing message 2660/57237
+2025-03-17 17:33:29,458 - gmail_import - INFO - Processing message 2670/57237
+2025-03-17 17:33:32,111 - gmail_import - INFO - Processing message 2680/57237
+2025-03-17 17:33:34,778 - gmail_import - INFO - Processing message 2690/57237
+2025-03-17 17:33:37,475 - gmail_import - INFO - Processing message 2700/57237
+2025-03-17 17:33:40,192 - gmail_import - INFO - Processing message 2710/57237
+2025-03-17 17:33:43,255 - gmail_import - INFO - Processing message 2720/57237
+2025-03-17 17:33:46,628 - gmail_import - INFO - Processing message 2730/57237
+2025-03-17 17:33:50,026 - gmail_import - INFO - Processing message 2740/57237
+2025-03-17 17:33:53,489 - gmail_import - INFO - Processing message 2750/57237
+2025-03-17 17:33:56,951 - gmail_import - INFO - Processing message 2760/57237
+2025-03-17 17:34:00,376 - gmail_import - INFO - Processing message 2770/57237
+2025-03-17 17:34:03,773 - gmail_import - INFO - Processing message 2780/57237
+2025-03-17 17:34:07,224 - gmail_import - INFO - Processing message 2790/57237
+2025-03-17 17:34:10,655 - gmail_import - INFO - Processing message 2800/57237
+2025-03-17 17:34:14,067 - gmail_import - INFO - Processing message 2810/57237
+2025-03-17 17:34:17,505 - gmail_import - INFO - Processing message 2820/57237
+2025-03-17 17:34:20,952 - gmail_import - INFO - Processing message 2830/57237
+2025-03-17 17:34:24,361 - gmail_import - INFO - Processing message 2840/57237
+2025-03-17 17:34:27,781 - gmail_import - INFO - Processing message 2850/57237
+2025-03-17 17:34:31,176 - gmail_import - INFO - Processing message 2860/57237
+2025-03-17 17:34:34,561 - gmail_import - INFO - Processing message 2870/57237
+2025-03-17 17:34:37,978 - gmail_import - INFO - Processing message 2880/57237
+2025-03-17 17:34:41,367 - gmail_import - INFO - Processing message 2890/57237
+2025-03-17 17:34:44,773 - gmail_import - INFO - Processing message 2900/57237
+2025-03-17 17:34:48,176 - gmail_import - INFO - Processing message 2910/57237
+2025-03-17 17:34:51,636 - gmail_import - INFO - Processing message 2920/57237
+2025-03-17 17:34:55,024 - gmail_import - INFO - Processing message 2930/57237
+2025-03-17 17:34:58,455 - gmail_import - INFO - Processing message 2940/57237
+2025-03-17 17:35:01,279 - gmail_import - INFO - Processing message 2950/57237
+2025-03-17 17:35:03,984 - gmail_import - INFO - Processing message 2960/57237
+2025-03-17 17:35:06,641 - gmail_import - INFO - Processing message 2970/57237
+2025-03-17 17:35:09,342 - gmail_import - INFO - Processing message 2980/57237
+2025-03-17 17:35:12,025 - gmail_import - INFO - Processing message 2990/57237
+2025-03-17 17:35:14,689 - gmail_import - INFO - Processing message 3000/57237
+2025-03-17 17:35:17,382 - gmail_import - INFO - Processing message 3010/57237
+2025-03-17 17:35:20,095 - gmail_import - INFO - Processing message 3020/57237
+2025-03-17 17:35:22,751 - gmail_import - INFO - Processing message 3030/57237
+2025-03-17 17:35:25,390 - gmail_import - INFO - Processing message 3040/57237
+2025-03-17 17:35:28,063 - gmail_import - INFO - Processing message 3050/57237
+2025-03-17 17:35:30,728 - gmail_import - INFO - Processing message 3060/57237
+2025-03-17 17:35:33,406 - gmail_import - INFO - Processing message 3070/57237
+2025-03-17 17:35:36,098 - gmail_import - INFO - Processing message 3080/57237
+2025-03-17 17:35:38,750 - gmail_import - INFO - Processing message 3090/57237
+2025-03-17 17:35:41,476 - gmail_import - INFO - Processing message 3100/57237
+2025-03-17 17:35:44,144 - gmail_import - INFO - Processing message 3110/57237
+2025-03-17 17:35:46,822 - gmail_import - INFO - Processing message 3120/57237
+2025-03-17 17:35:49,477 - gmail_import - INFO - Processing message 3130/57237
+2025-03-17 17:35:52,170 - gmail_import - INFO - Processing message 3140/57237
+2025-03-17 17:35:54,867 - gmail_import - INFO - Processing message 3150/57237
+2025-03-17 17:35:57,519 - gmail_import - INFO - Processing message 3160/57237
+2025-03-17 17:36:00,253 - gmail_import - INFO - Processing message 3170/57237
+2025-03-17 17:36:02,905 - gmail_import - INFO - Processing message 3180/57237
+2025-03-17 17:36:05,596 - gmail_import - INFO - Processing message 3190/57237
+2025-03-17 17:36:08,298 - gmail_import - INFO - Processing message 3200/57237
+2025-03-17 17:36:10,968 - gmail_import - INFO - Processing message 3210/57237
+2025-03-17 17:36:13,666 - gmail_import - INFO - Processing message 3220/57237
+2025-03-17 17:36:16,355 - gmail_import - INFO - Processing message 3230/57237
+2025-03-17 17:36:19,041 - gmail_import - INFO - Processing message 3240/57237
+2025-03-17 17:36:21,699 - gmail_import - INFO - Processing message 3250/57237
+2025-03-17 17:36:24,367 - gmail_import - INFO - Processing message 3260/57237
+2025-03-17 17:36:27,048 - gmail_import - INFO - Processing message 3270/57237
+2025-03-17 17:36:29,706 - gmail_import - INFO - Processing message 3280/57237
+2025-03-17 17:36:32,363 - gmail_import - INFO - Processing message 3290/57237
+2025-03-17 17:36:35,047 - gmail_import - INFO - Processing message 3300/57237
+2025-03-17 17:36:37,735 - gmail_import - INFO - Processing message 3310/57237
+2025-03-17 17:36:40,433 - gmail_import - INFO - Processing message 3320/57237
+2025-03-17 17:36:43,134 - gmail_import - INFO - Processing message 3330/57237
+2025-03-17 17:36:45,805 - gmail_import - INFO - Processing message 3340/57237
+2025-03-17 17:36:48,499 - gmail_import - INFO - Processing message 3350/57237
+2025-03-17 17:36:51,199 - gmail_import - INFO - Processing message 3360/57237
+2025-03-17 17:36:53,916 - gmail_import - INFO - Processing message 3370/57237
+2025-03-17 17:36:56,542 - gmail_import - INFO - Processing message 3380/57237
+2025-03-17 17:36:59,204 - gmail_import - INFO - Processing message 3390/57237
+2025-03-17 17:37:01,875 - gmail_import - INFO - Processing message 3400/57237
+2025-03-17 17:37:04,598 - gmail_import - INFO - Processing message 3410/57237
+2025-03-17 17:37:07,240 - gmail_import - INFO - Processing message 3420/57237
+2025-03-17 17:37:09,910 - gmail_import - INFO - Processing message 3430/57237
+2025-03-17 17:37:12,609 - gmail_import - INFO - Processing message 3440/57237
+2025-03-17 17:37:15,262 - gmail_import - INFO - Processing message 3450/57237
+2025-03-17 17:37:17,964 - gmail_import - INFO - Processing message 3460/57237
+2025-03-17 17:37:20,629 - gmail_import - INFO - Processing message 3470/57237
+2025-03-17 17:37:23,284 - gmail_import - INFO - Processing message 3480/57237
+2025-03-17 17:37:25,970 - gmail_import - INFO - Processing message 3490/57237
+2025-03-17 17:37:28,696 - gmail_import - INFO - Processing message 3500/57237
+2025-03-17 17:37:31,386 - gmail_import - INFO - Processing message 3510/57237
+2025-03-17 17:37:34,072 - gmail_import - INFO - Processing message 3520/57237
+2025-03-17 17:37:36,768 - gmail_import - INFO - Processing message 3530/57237
+2025-03-17 17:37:39,419 - gmail_import - INFO - Processing message 3540/57237
+2025-03-17 17:37:42,116 - gmail_import - INFO - Processing message 3550/57237
+2025-03-17 17:37:44,836 - gmail_import - INFO - Processing message 3560/57237
+2025-03-17 17:37:47,529 - gmail_import - INFO - Processing message 3570/57237
+2025-03-17 17:37:50,227 - gmail_import - INFO - Processing message 3580/57237
+2025-03-17 17:37:52,869 - gmail_import - INFO - Processing message 3590/57237
+2025-03-17 17:37:55,558 - gmail_import - INFO - Processing message 3600/57237
+2025-03-17 17:37:58,266 - gmail_import - INFO - Processing message 3610/57237
+2025-03-17 17:38:00,984 - gmail_import - INFO - Processing message 3620/57237
+2025-03-17 17:38:03,595 - gmail_import - INFO - Processing message 3630/57237
+2025-03-17 17:38:06,246 - gmail_import - INFO - Processing message 3640/57237
+2025-03-17 17:38:08,946 - gmail_import - INFO - Processing message 3650/57237
+2025-03-17 17:38:11,632 - gmail_import - INFO - Processing message 3660/57237
+2025-03-17 17:38:14,318 - gmail_import - INFO - Processing message 3670/57237
+2025-03-17 17:38:17,039 - gmail_import - INFO - Processing message 3680/57237
+2025-03-17 17:38:19,628 - gmail_import - INFO - Processing message 3690/57237
+2025-03-17 17:38:22,287 - gmail_import - INFO - Processing message 3700/57237
+2025-03-17 17:38:24,966 - gmail_import - INFO - Processing message 3710/57237
+2025-03-17 17:38:27,579 - gmail_import - INFO - Processing message 3720/57237
+2025-03-17 17:38:30,252 - gmail_import - INFO - Processing message 3730/57237
+2025-03-17 17:38:32,921 - gmail_import - INFO - Processing message 3740/57237
+2025-03-17 17:38:35,566 - gmail_import - INFO - Processing message 3750/57237
+2025-03-17 17:38:38,272 - gmail_import - INFO - Processing message 3760/57237
+2025-03-17 17:38:40,958 - gmail_import - INFO - Processing message 3770/57237
+2025-03-17 17:38:43,630 - gmail_import - INFO - Processing message 3780/57237
+2025-03-17 17:38:46,325 - gmail_import - INFO - Processing message 3790/57237
+2025-03-17 17:38:49,016 - gmail_import - INFO - Processing message 3800/57237
+2025-03-17 17:38:51,699 - gmail_import - INFO - Processing message 3810/57237
+2025-03-17 17:38:54,391 - gmail_import - INFO - Processing message 3820/57237
+2025-03-17 17:38:57,052 - gmail_import - INFO - Processing message 3830/57237
+2025-03-17 17:38:59,675 - gmail_import - INFO - Processing message 3840/57237
+2025-03-17 17:39:02,257 - gmail_import - INFO - Processing message 3850/57237
+2025-03-17 17:39:04,918 - gmail_import - INFO - Processing message 3860/57237
+2025-03-17 17:39:07,606 - gmail_import - INFO - Processing message 3870/57237
+2025-03-17 17:39:10,265 - gmail_import - INFO - Processing message 3880/57237
+2025-03-17 17:39:12,879 - gmail_import - INFO - Processing message 3890/57237
+2025-03-17 17:39:15,598 - gmail_import - INFO - Processing message 3900/57237
+2025-03-17 17:39:18,291 - gmail_import - INFO - Processing message 3910/57237
+2025-03-17 17:39:20,932 - gmail_import - INFO - Processing message 3920/57237
+2025-03-17 17:39:23,579 - gmail_import - INFO - Processing message 3930/57237
+2025-03-17 17:39:26,247 - gmail_import - INFO - Processing message 3940/57237
+2025-03-17 17:39:28,896 - gmail_import - INFO - Processing message 3950/57237
+2025-03-17 17:39:31,591 - gmail_import - INFO - Processing message 3960/57237
+2025-03-17 17:39:34,269 - gmail_import - INFO - Processing message 3970/57237
+2025-03-17 17:39:36,950 - gmail_import - INFO - Processing message 3980/57237
+2025-03-17 17:39:39,615 - gmail_import - INFO - Processing message 3990/57237
+2025-03-17 17:39:42,293 - gmail_import - INFO - Processing message 4000/57237
+2025-03-17 17:39:44,980 - gmail_import - INFO - Processing message 4010/57237
+2025-03-17 17:39:47,690 - gmail_import - INFO - Processing message 4020/57237
+2025-03-17 17:39:50,382 - gmail_import - INFO - Processing message 4030/57237
+2025-03-17 17:39:53,047 - gmail_import - INFO - Processing message 4040/57237
+2025-03-17 17:39:55,727 - gmail_import - INFO - Processing message 4050/57237
+2025-03-17 17:39:58,409 - gmail_import - INFO - Processing message 4060/57237
+2025-03-17 17:40:01,060 - gmail_import - INFO - Processing message 4070/57237
+2025-03-17 17:40:03,748 - gmail_import - INFO - Processing message 4080/57237
+2025-03-17 17:40:07,058 - gmail_import - INFO - Processing message 4090/57237
+2025-03-17 17:40:10,475 - gmail_import - INFO - Processing message 4100/57237
+2025-03-17 17:40:13,902 - gmail_import - INFO - Processing message 4110/57237
+2025-03-17 17:40:17,336 - gmail_import - INFO - Processing message 4120/57237
+2025-03-17 17:40:20,732 - gmail_import - INFO - Processing message 4130/57237
+2025-03-17 17:40:24,153 - gmail_import - INFO - Processing message 4140/57237
+2025-03-17 17:40:27,594 - gmail_import - INFO - Processing message 4150/57237
+2025-03-17 17:40:30,972 - gmail_import - INFO - Processing message 4160/57237
+2025-03-17 17:40:34,386 - gmail_import - INFO - Processing message 4170/57237
+2025-03-17 17:40:37,806 - gmail_import - INFO - Processing message 4180/57237
+2025-03-17 17:40:41,209 - gmail_import - INFO - Processing message 4190/57237
+2025-03-17 17:40:44,610 - gmail_import - INFO - Processing message 4200/57237
+2025-03-17 17:40:48,044 - gmail_import - INFO - Processing message 4210/57237
+2025-03-17 17:40:50,935 - gmail_import - INFO - Processing message 4220/57237
+2025-03-17 17:40:53,620 - gmail_import - INFO - Processing message 4230/57237
+2025-03-17 17:40:56,307 - gmail_import - INFO - Processing message 4240/57237
+2025-03-17 17:40:58,943 - gmail_import - INFO - Processing message 4250/57237
+2025-03-17 17:41:01,636 - gmail_import - INFO - Processing message 4260/57237
+2025-03-17 17:41:04,307 - gmail_import - INFO - Processing message 4270/57237
+2025-03-17 17:41:06,996 - gmail_import - INFO - Processing message 4280/57237
+2025-03-17 17:41:09,671 - gmail_import - INFO - Processing message 4290/57237
+2025-03-17 17:41:12,327 - gmail_import - INFO - Processing message 4300/57237
+2025-03-17 17:41:14,994 - gmail_import - INFO - Processing message 4310/57237
+2025-03-17 17:41:17,701 - gmail_import - INFO - Processing message 4320/57237
+2025-03-17 17:41:20,370 - gmail_import - INFO - Processing message 4330/57237
+2025-03-17 17:41:22,999 - gmail_import - INFO - Processing message 4340/57237
+2025-03-17 17:41:25,638 - gmail_import - INFO - Processing message 4350/57237
+2025-03-17 17:41:28,307 - gmail_import - INFO - Processing message 4360/57237
+2025-03-17 17:41:31,029 - gmail_import - INFO - Processing message 4370/57237
+2025-03-17 17:41:33,654 - gmail_import - INFO - Processing message 4380/57237
+2025-03-17 17:41:36,315 - gmail_import - INFO - Processing message 4390/57237
+2025-03-17 17:41:38,988 - gmail_import - INFO - Processing message 4400/57237
+2025-03-17 17:41:41,641 - gmail_import - INFO - Processing message 4410/57237
+2025-03-17 17:41:44,354 - gmail_import - INFO - Processing message 4420/57237
+2025-03-17 17:41:47,017 - gmail_import - INFO - Processing message 4430/57237
+2025-03-17 17:41:49,696 - gmail_import - INFO - Processing message 4440/57237
+2025-03-17 17:41:52,410 - gmail_import - INFO - Processing message 4450/57237
+2025-03-17 17:41:55,097 - gmail_import - INFO - Processing message 4460/57237
+2025-03-17 17:41:57,808 - gmail_import - INFO - Processing message 4470/57237
+2025-03-17 17:42:00,461 - gmail_import - INFO - Processing message 4480/57237
+2025-03-17 17:42:03,095 - gmail_import - INFO - Processing message 4490/57237
+2025-03-17 17:42:05,788 - gmail_import - INFO - Processing message 4500/57237
+2025-03-17 17:42:08,434 - gmail_import - INFO - Processing message 4510/57237
+2025-03-17 17:42:11,118 - gmail_import - INFO - Processing message 4520/57237
+2025-03-17 17:42:13,805 - gmail_import - INFO - Processing message 4530/57237
+2025-03-17 17:42:16,504 - gmail_import - INFO - Processing message 4540/57237
+2025-03-17 17:42:19,180 - gmail_import - INFO - Processing message 4550/57237
+2025-03-17 17:42:21,877 - gmail_import - INFO - Processing message 4560/57237
+2025-03-17 17:42:24,579 - gmail_import - INFO - Processing message 4570/57237
+2025-03-17 17:42:27,230 - gmail_import - INFO - Processing message 4580/57237
+2025-03-17 17:42:29,926 - gmail_import - INFO - Processing message 4590/57237
+2025-03-17 17:42:32,597 - gmail_import - INFO - Processing message 4600/57237
+2025-03-17 17:42:35,297 - gmail_import - INFO - Processing message 4610/57237
+2025-03-17 17:42:38,003 - gmail_import - INFO - Processing message 4620/57237
+2025-03-17 17:42:40,683 - gmail_import - INFO - Processing message 4630/57237
+2025-03-17 17:42:43,408 - gmail_import - INFO - Processing message 4640/57237
+2025-03-17 17:42:46,102 - gmail_import - INFO - Processing message 4650/57237
+2025-03-17 17:42:48,807 - gmail_import - INFO - Processing message 4660/57237
+2025-03-17 17:42:51,460 - gmail_import - INFO - Processing message 4670/57237
+2025-03-17 17:42:54,059 - gmail_import - INFO - Processing message 4680/57237
+2025-03-17 17:42:56,632 - gmail_import - INFO - Processing message 4690/57237
+2025-03-17 17:42:59,280 - gmail_import - INFO - Processing message 4700/57237
+2025-03-17 17:43:01,960 - gmail_import - INFO - Processing message 4710/57237
+2025-03-17 17:43:04,592 - gmail_import - INFO - Processing message 4720/57237
+2025-03-17 17:43:07,251 - gmail_import - INFO - Processing message 4730/57237
+2025-03-17 17:43:09,934 - gmail_import - INFO - Processing message 4740/57237
+2025-03-17 17:43:12,663 - gmail_import - INFO - Processing message 4750/57237
+2025-03-17 17:43:15,342 - gmail_import - INFO - Processing message 4760/57237
+2025-03-17 17:43:18,038 - gmail_import - INFO - Processing message 4770/57237
+2025-03-17 17:43:20,719 - gmail_import - INFO - Processing message 4780/57237

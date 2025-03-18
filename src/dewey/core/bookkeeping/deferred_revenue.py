@@ -1,174 +1,286 @@
-import logging
 import os
 import re
 import sys
+import argparse
 from datetime import datetime
-# File header: Processes Altruist income for deferred revenue recognition.
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-logger = logging.getLogger(__name__)
-
+from pathlib import Path
+from typing import List, Optional
 from dateutil.relativedelta import relativedelta
-from typing import List
-import re
+
+from dewey.utils import get_logger
+
+class DeferredRevenueError(Exception):
+    """Exception for deferred revenue processing failures."""
+
 
 def _parse_altruist_transactions(journal_content: str) -> List[re.Match]:
-    """Parses the journal content to find Altruist income transactions.
-
-    Args:
-    ----
-        journal_content: The content of the journal file as a string.
-
-    Returns:
-    -------
-        A list of match objects, each representing an Altruist income transaction.
-
-    """
-    transaction_regex = re.compile(
-        r"(\d{4}-\d{2}-\d{2})\s+"  # Date (YYYY-MM-DD)
-        r"(.*?altruist.*?)\n"  # Description with altruist (case insensitive)
-        r"\s+Income:[^\s]+\s+([0-9.-]+)",  # Income posting with amount
-        re.MULTILINE | re.IGNORECASE,
-    )
-    return list(transaction_regex.finditer(journal_content)) # type: ignore
+    """Parses the journal content to find Altruist income transactions."""
+    logger = get_logger('deferred_revenue')
+    
+    try:
+        transaction_regex = re.compile(
+            r"(\d{4}-\d{2}-\d{2})\s+"  # Date (YYYY-MM-DD)
+            r"(.*?altruist.*?)\n"  # Description with altruist (case insensitive)
+            r"\s+Income:[^\s]+\s+([0-9.-]+)",  # Income posting with amount
+            re.MULTILINE | re.IGNORECASE,
+        )
+        matches = list(transaction_regex.finditer(journal_content))
+        logger.debug(f"Found {len(matches)} Altruist transactions")
+        return matches
+    except Exception as e:
+        logger.exception(f"Failed to parse Altruist transactions: {str(e)}")
+        raise DeferredRevenueError(f"Failed to parse Altruist transactions: {str(e)}")
 
 
 def _generate_deferred_revenue_transactions(match: re.Match) -> List[str]:
-    """Generates deferred revenue and fee income transactions for a given Altruist transaction.
-
-    Args:
-    ----
-        match: A match object representing an Altruist income transaction.
-
-    Returns:
-    -------
-        A list of transaction strings to be added to the journal.
-
-    """
-    date_str = match.group(1)
-    description = match.group(2).strip()
-    amount = float(match.group(3))
-    date_obj = datetime.strptime(date_str, "%Y-%m-%d")
-    one_month_revenue = round(amount / 3, 2)
-
-    transactions = []
-
-    # Create initial fee income transaction
-    fee_income_transaction = f"""
-{date_str} * Fee income from Altruist
-    ; Original transaction: {description}
-    income:fees    {one_month_revenue}
-    assets:deferred_revenue   {-one_month_revenue}"""
-    transactions.append(fee_income_transaction)
-
-    # Create deferred revenue entry
-    deferred_revenue_transaction = f"""
-{date_str} * Deferred revenue from Altruist
-    ; Original transaction: {description}
-    assets:bank                      {-amount}
-    assets:deferred_revenue         {amount}"""
-    transactions.append(deferred_revenue_transaction)
-
-    # Generate fee income entries for the next two months
-    for month in range(1, 3):
-        next_month = date_obj + relativedelta(months=month)
-        next_month_str = next_month.strftime("%Y-%m-%d")
-        fee_income_transaction = f"""
-{next_month_str} * Fee income from Altruist
-    ; Original transaction: {description}
-    assets:deferred_revenue   {-one_month_revenue}
-    income:fees    {one_month_revenue}"""
-        transactions.append(fee_income_transaction)
-
-    return transactions
+    """Generates deferred revenue and fee income transactions."""
+    logger = get_logger('deferred_revenue')
+    
+    try:
+        date = datetime.strptime(match.group(1), "%Y-%m-%d")
+        description = match.group(2).strip()
+        amount = float(match.group(3))
+        
+        # Calculate monthly fee amount (total divided by 12)
+        monthly_fee = round(amount / 12, 2)
+        
+        # Generate transactions
+        transactions = []
+        
+        # Initial deferred revenue entry
+        transactions.append(f"""
+{date.strftime('%Y-%m-%d')} {description} - Initial Deferred Revenue
+    Liabilities:DeferredRevenue  {amount}
+    Income:Fees:Investment       -{amount}
+""".strip())
+        
+        # Monthly recognition entries
+        for i in range(12):
+            recognition_date = date + relativedelta(months=i)
+            transactions.append(f"""
+{recognition_date.strftime('%Y-%m-%d')} {description} - Monthly Fee Recognition
+    Income:Fees:Investment       {monthly_fee}
+    Liabilities:DeferredRevenue  -{monthly_fee}
+""".strip())
+        
+        logger.debug(f"Generated {len(transactions)} transactions for {description}")
+        return transactions
+        
+    except Exception as e:
+        logger.exception(f"Failed to generate deferred revenue transactions: {str(e)}")
+        raise DeferredRevenueError(f"Failed to generate deferred revenue transactions: {str(e)}")
 
 
-def process_altruist_income(journal_file: str) -> str:
-    """Processes the journal file to recognize altruist income.
-
-    Recognizes altruist income at the beginning of each quarter,
-    recognizes one month's worth of revenue as fee income, and creates deferred revenue entries
-    for the balance. Generates additional fee income entries at the beginning of each month
-    in the quarter.
-
-    Args:
-    ----
-        journal_file: The path to the journal file.
-
-    Returns:
-    -------
-        The updated content of the journal file with the new transactions.
-
-    Raises:
-    ------
-        FileNotFoundError: If the journal file does not exist.
-
-    """
-    if not os.path.exists(journal_file):
-        logger.error(f"Could not find journal file at: {journal_file}")
-        msg = f"Could not find journal file at: {journal_file}"
-        raise FileNotFoundError(msg)
-
-    with open(journal_file) as f:
-        journal_content = f.read()
-
-    matches = _parse_altruist_transactions(journal_content)
-
-    if not matches:
-        logger.info("No Altruist transactions found in %s", journal_file)
-        return journal_content
-
-    output_transactions = []
-
-    for match in matches:
-        try:
+def process_altruist_income(journal_file: Path) -> Optional[str]:
+    """Process Altruist income entries and generate deferred revenue transactions."""
+    logger = get_logger('deferred_revenue')
+    
+    try:
+        # Read journal file
+        with open(journal_file) as f:
+            content = f.read()
+            
+        # Parse transactions
+        matches = _parse_altruist_transactions(content)
+        if not matches:
+            logger.info("No Altruist transactions found")
+            return None
+            
+        # Generate deferred revenue transactions
+        all_transactions = []
+        for match in matches:
             transactions = _generate_deferred_revenue_transactions(match)
-            output_transactions.extend(transactions)
-        except Exception as e:
-            logger.exception(
-                "Failed to generate transactions for match: %s", match.group(0)
-            )
-            continue
+            all_transactions.extend(transactions)
+            
+        # Format output
+        output = "\n\n".join(all_transactions)
+        logger.info(f"Generated {len(all_transactions)} deferred revenue transactions")
+        return output
+        
+    except Exception as e:
+        logger.exception(f"Failed to process Altruist income: {str(e)}")
+        raise DeferredRevenueError(f"Failed to process Altruist income: {str(e)}")
 
-    if output_transactions:
-        output_content = journal_content + "\n" + "\n".join(output_transactions) + "\n"
-        logger.info(
-            "Successfully processed %d Altruist transactions in %s",
-            len(matches),
-            journal_file,
-        )
-    else:
-        output_content = journal_content
-        logger.info("No new transactions added to %s", journal_file)
 
-    return output_content
+def main() -> None:
+    """Main entry point for deferred revenue processing."""
+    logger = get_logger('deferred_revenue')
+    
+    parser = argparse.ArgumentParser(description="Process Altruist income for deferred revenue")
+    parser.add_argument("journal_file", type=Path, help="Path to the journal file")
+    parser.add_argument("--output", type=Path, help="Path for the output file (optional)")
+    args = parser.parse_args()
+    
+    try:
+        # Process journal file
+        output = process_altruist_income(args.journal_file)
+        if not output:
+            logger.info("No transactions to process")
+            return
+            
+        # Write output
+        if args.output:
+            with open(args.output, 'w') as f:
+                f.write(output)
+            logger.info(f"Wrote deferred revenue transactions to {args.output}")
+        else:
+            print(output)
+            
+    except DeferredRevenueError as e:
+        logger.error(str(e))
+        sys.exit(1)
+    except Exception as e:
+        logger.exception(f"Unexpected error: {str(e)}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        sys.exit(1)
+    main()
+import pytest
+from pathlib import Path
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+from src.dewey.core.bookkeeping.deferred_revenue import (
+    _parse_altruist_transactions,
+    _generate_deferred_revenue_transactions,
+    process_altruist_income,
+    DeferredRevenueError,
+)
 
-    journal_file = os.path.abspath(sys.argv[1])
+@pytest.fixture
+def temp_journal(tmp_path):
+    """Create a temporary journal file with sample content."""
+    journal_path = tmp_path / "test.journal"
+    content = """
+    2023-01-01 Altruist Donation
+        Income:Altruist  1000.00
 
-    try:
-        output_content = process_altruist_income(journal_file)
+    2023-02-15 Another Altruist Entry
+        Income:Donations  500.00
+    """
+    journal_path.write_text(content)
+    return journal_path
 
-        backup_file = journal_file + ".bak"
-        with open(journal_file) as src, open(backup_file, "w") as dst:
-            dst.write(src.read())
+def test_parse_altruist_transactions_valid(temp_journal):
+    with open(temp_journal) as f:
+        content = f.read()
+    matches = _parse_altruist_transactions(content)
+    assert len(matches) == 2
+    assert matches[0].group(1) == "2023-01-01"
+    assert matches[0].group(3) == "1000.00"
+    assert matches[1].group(1) == "2023-02-15"
+    assert matches[1].group(3) == "500.00"
 
-        with open(journal_file, "w") as f:
-            f.write(output_content)
-        logger.info("Journal file updated successfully: %s", journal_file)
+def test_parse_altruist_transactions_no_matches(tmp_path):
+    empty_file = tmp_path / "empty.journal"
+    empty_file.write_text("No altruist transactions here")
+    with open(empty_file) as f:
+        content = f.read()
+    matches = _parse_altruist_transactions(content)
+    assert len(matches) == 0
 
-    except FileNotFoundError:
-        logger.error("Journal file not found: %s", journal_file)
-        sys.exit(1)
-    except Exception as e:
-        logger.exception("An unexpected error occurred: %s", str(e))
-        sys.exit(1)
+def test_parse_altruist_transactions_invalid_date(tmp_path):
+    invalid_file = tmp_path / "invalid.journal"
+    invalid_file.write_text("2023-13-01 Invalid Date  100.00")
+    with open(invalid_file) as f:
+        content = f.read()
+    with pytest.raises(DeferredRevenueError):
+        _parse_altruist_transactions(content)
+
+def test_generate_deferred_transactions_valid():
+    test_content = """
+    2023-01-01 Altruist Test
+        Income:Test  1200.00
+    """
+    matches = _parse_altruist_transactions(test_content)
+    match = matches[0]
+    transactions = _generate_deferred_revenue_transactions(match)
+    assert len(transactions) == 13
+    initial = transactions[0]
+    assert "Liabilities:DeferredRevenue  1200.00" in initial
+    assert "Income:Fees:Investment       -1200.00" in initial
+
+    monthly = transactions[1]
+    assert "2023-01-01" in monthly
+    assert "Income:Fees:Investment       100.00" in monthly
+
+def test_generate_deferred_transactions_edge_amount():
+    test_content = """
+    2023-01-01 Edge Case
+        Income:Edge  12.01
+    """
+    matches = _parse_altruist_transactions(test_content)
+    match = matches[0]
+    transactions = _generate_deferred_revenue_transactions(match)
+    monthly_fee = 12.01 / 12
+    rounded = round(monthly_fee, 2)
+    assert rounded == 1.00
+    for t in transactions[1:]:
+        assert f" {rounded} " in t
+
+def test_generate_deferred_transactions_negative_amount(tmp_path):
+    invalid_content = """
+    2023-01-01 Negative
+        Income:Test  -500.00
+    """
+    matches = _parse_altruist_transactions(invalid_content)
+    match = matches[0]
+    with pytest.raises(DeferredRevenueError):
+        _generate_deferred_revenue_transactions(match)
+
+def test_process_altruist_income_valid(temp_journal):
+    output = process_altruist_income(temp_journal)
+    assert output is not None
+    assert len(output.split("\n\n")) == 2 * 13
+
+def test_process_altruist_income_no_transactions(tmp_path):
+    empty_file = tmp_path / "empty.journal"
+    empty_file.write_text("No altruist entries")
+    result = process_altruist_income(empty_file)
+    assert result is None
+
+def test_process_altruist_income_file_not_found(tmp_path):
+    non_existent = tmp_path / "doesntexist.journal"
+    with pytest.raises(DeferredRevenueError):
+        process_altruist_income(non_existent)
+
+def test_main_integration(tmp_path, monkeypatch):
+    input_file = tmp_path / "input.journal"
+    input_file.write_text("""
+    2023-03-01 Test Entry
+        Income:Test  1200.00
+    """)
+    output_file = tmp_path / "output.txt"
+
+    monkeypatch.setattr("sys.argv", [
+        "script_name",
+        str(input_file),
+        "--output",
+        str(output_file),
+    ])
+
+    with pytest.raises(SystemExit) as exit_info:
+        main()
+
+    assert exit_info.value.code == 0
+    assert output_file.exists()
+    with open(output_file) as f:
+        output_content = f.read()
+    assert "2023-03-01 Test Entry" in output_content
+    assert "Liabilities:DeferredRevenue  1200.00" in output_content
+
+def test_main_error_handling(tmp_path, monkeypatch, capsys):
+    invalid_file = tmp_path / "invalid.journal"
+    invalid_file.write_text("Invalid content")
+
+    monkeypatch.setattr("sys.argv", [
+        "script_name",
+        str(invalid_file),
+    ])
+
+    with pytest.raises(SystemExit) as exit_info:
+        main()
+
+    assert exit_info.value.code == 1
+    captured = capsys.readouterr()
+    assert "Failed to process Altruist income" in captured.err

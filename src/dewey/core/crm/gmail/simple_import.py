@@ -26,7 +26,10 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.discovery_cache.base import Cache
 import duckdb
-from dateutil import parser
+from dateutil import parser as date_parser
+
+from dewey.core.db.config import get_db_config, validate_config
+from dewey.utils import get_logger
 
 # Disable file cache warning
 class MemoryCache(Cache):
@@ -88,25 +91,122 @@ CREATE TABLE IF NOT EXISTS email_analyses (
 """
 
 
-def get_db_connection(db_path: str) -> duckdb.DuckDBPyConnection:
-    """Get a DuckDB connection.
+def get_db_connection(db_path: str, max_retries: int = 3, retry_delay: int = 5) -> duckdb.DuckDBPyConnection:
+    """Get a DuckDB/MotherDuck connection with retry logic.
     
     Args:
-        db_path: Path to the database file
+        db_path: Path to the database file or MotherDuck connection string
+        max_retries: Maximum number of connection attempts
+        retry_delay: Delay in seconds between retries
         
     Returns:
         A DuckDB connection
+        
+    Raises:
+        ValueError: If MOTHERDUCK_TOKEN is not set when using MotherDuck
+        Exception: If connection fails after max retries
     """
-    # Ensure the directory exists
-    os.makedirs(os.path.dirname(os.path.abspath(db_path)), exist_ok=True)
-    
-    # Connect to the database
-    conn = duckdb.connect(db_path)
-    
-    # Create the table if it doesn't exist
-    conn.execute(EMAIL_ANALYSES_SCHEMA)
-    
-    return conn
+    for attempt in range(max_retries):
+        try:
+            # Check if using MotherDuck
+            if db_path.startswith('md:'):
+                logger.info(f"Connecting to MotherDuck database: {db_path}")
+                # Get token from environment variable
+                token = os.getenv('MOTHERDUCK_TOKEN')
+                if not token:
+                    raise ValueError(
+                        "MOTHERDUCK_TOKEN environment variable not set. "
+                        "Please set it using: export MOTHERDUCK_TOKEN='your_token'"
+                    )
+                
+                if token.strip() == '':
+                    raise ValueError("MOTHERDUCK_TOKEN environment variable is empty")
+                    
+                # Set up MotherDuck connection with token validation
+                try:
+                    conn = duckdb.connect(db_path, config={'motherduck_token': token})
+                    # Test the connection
+                    conn.execute("SELECT 1")
+                    logger.info("Successfully connected to MotherDuck")
+                except Exception as e:
+                    if "token" in str(e).lower():
+                        raise ValueError(
+                            f"Invalid MotherDuck token. Please check your token is correct. Error: {e}"
+                        )
+                    raise
+            else:
+                # Local DuckDB connection
+                logger.info(f"Connecting to local database: {db_path}")
+                os.makedirs(os.path.dirname(os.path.abspath(db_path)), exist_ok=True)
+                conn = duckdb.connect(db_path)
+            
+            # Drop and recreate email_analyses table
+            try:
+                conn.execute("DROP TABLE IF EXISTS email_analyses")
+                logger.info("Dropped existing email_analyses table")
+            except Exception as e:
+                logger.warning(f"Failed to drop table: {e}")
+            
+            # Create email_analyses table with correct schema
+            conn.execute("""
+            CREATE TABLE IF NOT EXISTS email_analyses (
+                msg_id VARCHAR PRIMARY KEY,
+                thread_id VARCHAR,
+                subject VARCHAR,
+                from_address VARCHAR,
+                analysis_date TIMESTAMP,
+                raw_analysis JSON,
+                automation_score FLOAT,
+                content_value FLOAT,
+                human_interaction FLOAT,
+                time_value FLOAT,
+                business_impact FLOAT,
+                uncertainty_score FLOAT,
+                metadata JSON,
+                priority INTEGER,
+                label_ids JSON,
+                snippet TEXT,
+                internal_date BIGINT,
+                size_estimate INTEGER,
+                message_parts JSON,
+                draft_id VARCHAR,
+                draft_message JSON,
+                attachments JSON,
+                status VARCHAR DEFAULT 'new',
+                error_message VARCHAR,
+                batch_id VARCHAR,
+                import_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """)
+            logger.info("Created email_analyses table with updated schema")
+            
+            # Create indexes
+            for idx in [
+                "CREATE INDEX IF NOT EXISTS idx_email_analyses_thread_id ON email_analyses(thread_id)",
+                "CREATE INDEX IF NOT EXISTS idx_email_analyses_from_address ON email_analyses(from_address)",
+                "CREATE INDEX IF NOT EXISTS idx_email_analyses_internal_date ON email_analyses(internal_date)",
+                "CREATE INDEX IF NOT EXISTS idx_email_analyses_status ON email_analyses(status)",
+                "CREATE INDEX IF NOT EXISTS idx_email_analyses_batch_id ON email_analyses(batch_id)",
+                "CREATE INDEX IF NOT EXISTS idx_email_analyses_import_timestamp ON email_analyses(import_timestamp)"
+            ]:
+                try:
+                    conn.execute(idx)
+                except Exception as e:
+                    logger.warning(f"Failed to create index: {e}")
+            
+            return conn
+            
+        except Exception as e:
+            if "Conflicting lock" in str(e):
+                if attempt < max_retries - 1:
+                    logger.warning(f"Database lock conflict, retrying in {retry_delay} seconds...")
+                    time.sleep(retry_delay)
+                    continue
+            raise
+            
+    raise Exception(f"Failed to connect to database after {max_retries} attempts")
 
 
 def build_gmail_service(user_email: Optional[str] = None):
@@ -395,28 +495,23 @@ def fetch_emails(service, days_back=7, max_emails=100, user_id="me", historical=
         return []
 
 
-def fetch_email(service, msg_id, user_id="me"):
-    """Fetch a single email from Gmail API.
+def fetch_email(service, msg_id, user_id='me'):
+    """Fetch a single email message from Gmail API.
     
     Args:
-        service: Gmail API service
-        msg_id: Message ID
-        user_id: User ID (default: "me")
+        service: Gmail API service instance
+        msg_id: ID of message to fetch
+        user_id: User's email address. The special value "me" can be used to indicate the authenticated user.
         
     Returns:
-        Email data dictionary
+        A dict containing the email data, or None if the fetch failed
     """
     try:
-        # Request full message format to get content
-        message = service.users().messages().get(
-            userId=user_id,
-            id=msg_id,
-            format='full'
-        ).execute()
-        
+        # Get the email message
+        message = service.users().messages().get(userId=user_id, id=msg_id, format='full').execute()
         return message
     except Exception as e:
-        logger.error(f"Error fetching email {msg_id}: {e}")
+        logger.error(f"Error fetching message {msg_id}: {e}")
         return None
 
 
@@ -432,6 +527,9 @@ def parse_email(message: Dict) -> Dict[str, Any]:
     headers = {header['name'].lower(): header['value'] 
               for header in message.get('payload', {}).get('headers', [])}
     
+    # Extract body
+    body = extract_body(message.get('payload', {}))
+    
     # Extract email data
     email_data = {
         'id': message['id'],
@@ -445,54 +543,56 @@ def parse_email(message: Dict) -> Dict[str, Any]:
         'labelIds': message.get('labelIds', []),
         'internalDate': message.get('internalDate', ''),
         'sizeEstimate': message.get('sizeEstimate', 0),
-        'body': extract_body(message.get('payload', {})),
+        'body': {
+            'text': body['text'],
+            'html': body['html']
+        },
         'attachments': extract_attachments(message.get('payload', {}))
     }
     
     return email_data
 
 
-def extract_body(payload: Dict) -> str:
+def extract_body(payload: Dict) -> Dict[str, str]:
     """Extract the email body from the payload.
     
     Args:
         payload: Gmail message payload
         
     Returns:
-        Email body as text
+        Dictionary with 'text' and 'html' versions of the body
     """
+    result = {'text': '', 'html': ''}
+    
     if not payload:
-        return ""
+        return result
     
-    # Check if this part has a body
-    if 'body' in payload and 'data' in payload['body']:
-        data = payload['body']['data']
-        text = base64.urlsafe_b64decode(data).decode('utf-8')
-        return text
+    def decode_part(part):
+        if 'body' in part and 'data' in part['body']:
+            try:
+                data = part['body']['data']
+                return base64.urlsafe_b64decode(data).decode('utf-8')
+            except Exception as e:
+                logger.warning(f"Failed to decode email part: {e}")
+                return ''
+        return ''
     
-    # Check for multipart
-    if 'parts' in payload:
-        text_parts = []
-        for part in payload['parts']:
-            # Prefer text/plain parts
-            if part.get('mimeType') == 'text/plain':
-                if 'body' in part and 'data' in part['body']:
-                    data = part['body']['data']
-                    text = base64.urlsafe_b64decode(data).decode('utf-8')
-                    text_parts.append(text)
-            # Fallback to text/html
-            elif part.get('mimeType') == 'text/html':
-                if 'body' in part and 'data' in part['body']:
-                    data = part['body']['data']
-                    text = base64.urlsafe_b64decode(data).decode('utf-8')
-                    text_parts.append(text)
-            # Recursive for nested multipart
-            elif 'parts' in part:
-                text_parts.append(extract_body(part))
-        
-        return "\n".join(text_parts)
+    def process_part(part):
+        mime_type = part.get('mimeType', '')
+        if mime_type == 'text/plain':
+            if not result['text']:  # Only set if not already set
+                result['text'] = decode_part(part)
+        elif mime_type == 'text/html':
+            if not result['html']:  # Only set if not already set
+                result['html'] = decode_part(part)
+        elif 'parts' in part:
+            for subpart in part['parts']:
+                process_part(subpart)
     
-    return ""
+    # Process the main payload
+    process_part(payload)
+    
+    return result
 
 
 def extract_attachments(payload: Dict) -> List[Dict[str, Any]]:
@@ -526,101 +626,200 @@ def extract_attachments(payload: Dict) -> List[Dict[str, Any]]:
     return attachments
 
 
-def store_email(conn, email_data):
-    """Store email data in DuckDB.
-    
+def store_emails_batch(conn, email_batch, batch_id: str):
+    """Store a batch of emails with improved error handling and batching.
+
     Args:
         conn: DuckDB connection
-        email_data: Email data dictionary from Gmail API
-        
+        email_batch: List of email data dictionaries
+        batch_id: Unique identifier for this batch
+
     Returns:
-        True if successful, False otherwise
+        tuple: (success_count, error_count)
+    """
+    success_count = 0
+    error_count = 0
+    retry_count = 0
+    max_retries = 3
+    
+    while retry_count < max_retries:
+        try:
+            # Begin transaction for the entire batch
+            conn.execute("BEGIN TRANSACTION")
+            
+            # Process emails in smaller sub-batches
+            sub_batch_size = 100
+            for i in range(0, len(email_batch), sub_batch_size):
+                sub_batch = email_batch[i:i + sub_batch_size]
+                
+                for email_data in sub_batch:
+                    try:
+                        if store_email(conn, email_data, batch_id):
+                            success_count += 1
+                        else:
+                            error_count += 1
+                    except Exception as e:
+                        logger.error(f"Error storing email: {e}")
+                        error_count += 1
+                        continue
+                
+                # Commit each sub-batch
+                conn.execute("COMMIT")
+                conn.execute("BEGIN TRANSACTION")
+                
+                logger.info(f"Processed sub-batch {i//sub_batch_size + 1}, "
+                          f"Success: {success_count}, Errors: {error_count}")
+            
+            # Final commit
+            conn.execute("COMMIT")
+            break
+            
+        except Exception as e:
+            retry_count += 1
+            conn.execute("ROLLBACK")
+            
+            if retry_count < max_retries:
+                wait_time = retry_count * 5  # Exponential backoff
+                logger.warning(f"Batch failed, retrying in {wait_time} seconds... ({retry_count}/{max_retries})")
+                time.sleep(wait_time)
+            else:
+                logger.error(f"Failed to process batch after {max_retries} attempts")
+                raise
+    
+    return success_count, error_count
+
+
+def store_email(conn, email_data, batch_id: str):
+    """Store a single email with improved error handling.
+
+    Args:
+        conn: DuckDB connection
+        email_data: Dictionary containing email data
+        batch_id: Unique identifier for this import batch
+
+    Returns:
+        bool: True if email was stored successfully
     """
     try:
-        # Extract email metadata
-        email_id = email_data.get('id')
-        thread_id = email_data.get('threadId')
+        # Debug logging
+        logger.info(f"Email data type: {type(email_data)}")
+        if isinstance(email_data, dict):
+            logger.info(f"Email data keys: {list(email_data.keys())}")
+            if 'payload' in email_data:
+                logger.info(f"Payload type: {type(email_data['payload'])}")
         
-        # Extract headers
-        headers = {}
-        for header in email_data.get('payload', {}).get('headers', []):
-            headers[header['name'].lower()] = header['value']
-            
-        # Extract basic email fields
-        from_email = headers.get('from', '')
-        to_email = headers.get('to', '')
-        cc_email = headers.get('cc', '')
-        bcc_email = headers.get('bcc', '')
-        subject = headers.get('subject', '')
-        date_str = headers.get('date', '')
+        # Handle string input
+        if isinstance(email_data, str):
+            try:
+                logger.info(f"Attempting to parse string email data: {email_data[:100]}...")
+                email_data = json.loads(email_data)
+            except json.JSONDecodeError as e:
+                logger.error(f"Failed to parse email_data string as JSON: {e}")
+                return False
         
-        # Parse date
-        try:
-            date = parse_email_date(date_str) if date_str else None
-            date_str = date.isoformat() if date else None
-        except Exception as e:
-            logger.warning(f"Failed to parse date '{date_str}': {e}")
-            date_str = None
-            
-        # Extract labels
-        labels = email_data.get('labelIds', [])
-        labels_str = ','.join(labels) if labels else None
+        if not isinstance(email_data, dict):
+            logger.error(f"Invalid email data type: {type(email_data)}")
+            return False
         
-        # Extract message body
-        body = extract_body(email_data.get('payload', {}))
-        
-        # Extract attachments
-        attachments = extract_attachments(email_data.get('payload', {}))
-        
-        # Create emails table if it doesn't exist
-        conn.execute("""
-        CREATE TABLE IF NOT EXISTS emails (
-            id VARCHAR PRIMARY KEY,
-            thread_id VARCHAR,
-            from_email VARCHAR,
-            to_email VARCHAR,
-            cc_email VARCHAR,
-            bcc_email VARCHAR,
-            subject VARCHAR,
-            date TIMESTAMP,
-            labels VARCHAR,
-            snippet VARCHAR,
-            body TEXT,
-            attachments VARCHAR,
-            raw_data VARCHAR
-        )
-        """)
-        
-        # Check if email already exists
-        result = conn.execute(f"SELECT id FROM emails WHERE id = '{email_id}'").fetchone()
-        if result:
-            logger.info(f"Email {email_id} already exists in database")
+        # Extract and validate required fields
+        msg_id = email_data.get('id')
+        if not msg_id:
+            logger.error("Missing required field: id")
             return False
             
-        # Insert email data
-        conn.execute("""
-        INSERT INTO emails (id, thread_id, from_email, to_email, cc_email, bcc_email, subject, date, labels, snippet, body, attachments, raw_data)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, [
-            email_id,
-            thread_id,
-            from_email,
-            to_email,
-            cc_email,
-            bcc_email,
-            subject,
-            date_str,
-            labels_str,
-            email_data.get('snippet'),
-            body,
-            json.dumps(attachments),
-            json.dumps(email_data)
-        ])
+        # Extract headers
+        payload = email_data.get('payload')
+        if not isinstance(payload, dict):
+            logger.error(f"Invalid payload type: {type(payload)}")
+            return False
+            
+        headers = {
+            header['name'].lower(): header['value']
+            for header in payload.get('headers', [])
+        }
         
-        logger.info(f"Stored email {email_id} in database")
+        # Parse addresses
+        from_str = headers.get('from', '')
+        if '<' in from_str:
+            from_name = from_str.split('<')[0].strip(' "\'')
+            from_email = from_str.split('<')[1].split('>')[0].strip()
+        else:
+            from_name = ''
+            from_email = from_str.strip()
+        
+        # Check if email already exists
+        result = conn.execute(
+            "SELECT msg_id FROM email_analyses WHERE msg_id = ?", 
+            [msg_id]
+        ).fetchone()
+        
+        if result:
+            logger.info(f"Email {msg_id} already exists, skipping")
+            return False
+        
+        # Extract body and attachments
+        body = extract_body(payload)  # Now returns a dict with 'text' and 'html'
+        attachments = extract_attachments(payload)
+        
+        # Parse email date
+        try:
+            received_date = parse_email_date(headers.get('date', ''))
+        except ValueError as e:
+            logger.warning(f"Failed to parse date for email {msg_id}: {e}")
+            received_date = datetime.fromtimestamp(int(email_data.get('internalDate', '0'))/1000)
+        
+        # Prepare data for insertion
+        insert_data = {
+            'msg_id': msg_id,
+            'thread_id': email_data.get('threadId'),
+            'subject': headers.get('subject', ''),
+            'from_address': from_email,
+            'analysis_date': datetime.now().isoformat(),
+            'raw_analysis': json.dumps(email_data),
+            'automation_score': 0.0,  # Will be set by enrichment
+            'content_value': 0.0,     # Will be set by enrichment
+            'human_interaction': 0.0,  # Will be set by enrichment
+            'time_value': 0.0,        # Will be set by enrichment
+            'business_impact': 0.0,    # Will be set by enrichment
+            'uncertainty_score': 0.0,  # Will be set by enrichment
+            'metadata': json.dumps({
+                'from_name': from_name,
+                'to_addresses': [addr.strip() for addr in headers.get('to', '').split(',') if addr.strip()],
+                'cc_addresses': [addr.strip() for addr in headers.get('cc', '').split(',') if addr.strip()],
+                'bcc_addresses': [addr.strip() for addr in headers.get('bcc', '').split(',') if addr.strip()],
+                'received_date': received_date.isoformat(),
+                'body_text': body['text'],
+                'body_html': body['html']
+            }),
+            'priority': 0,  # Will be set by enrichment
+            'label_ids': json.dumps(email_data.get('labelIds', [])),
+            'snippet': email_data.get('snippet', ''),
+            'internal_date': int(email_data.get('internalDate', 0)),
+            'size_estimate': email_data.get('sizeEstimate', 0),
+            'message_parts': json.dumps(payload),
+            'draft_id': None,  # Will be set if this is a draft
+            'draft_message': None,  # Will be set if this is a draft
+            'attachments': json.dumps(attachments),
+            'status': 'new',
+            'error_message': None,
+            'batch_id': batch_id,
+            'import_timestamp': datetime.now().isoformat()
+        }
+        
+        # Insert the email
+        placeholders = ', '.join(['?' for _ in insert_data])
+        columns = ', '.join(insert_data.keys())
+        
+        conn.execute(f"""
+        INSERT INTO email_analyses ({columns})
+        VALUES ({placeholders})
+        """, list(insert_data.values()))
+        
+        logger.info(f"Stored email {msg_id} successfully")
         return True
+        
     except Exception as e:
-        logger.error(f"Error storing email: {e}")
+        logger.error(f"Error storing email {email_data.get('id', 'unknown')}: {e}")
         return False
 
 
@@ -646,18 +845,99 @@ def parse_email_date(date_str):
             continue
             
     # If all formats fail, use dateutil parser as fallback
-    return parser.parse(date_str)
+    try:
+        # Remove parenthetical timezone names like (UTC), (EDT) etc
+        cleaned_date_str = ' '.join([part for part in date_str.split(' ') if not (part.startswith('(') and part.endswith(')'))])
+        return date_parser.parse(cleaned_date_str)
+    except Exception as e:
+        raise ValueError(f"Could not parse date string: {date_str}") from e
 
 
-def main():
-    """Run the Gmail import process."""
+def main(args):
+    """Run the Gmail import process with improved error handling."""
+    try:
+        # Get database configuration
+        db_config = get_db_config()
+        if not validate_config():
+            logger.error("Invalid database configuration")
+            sys.exit(1)
+
+        # Use MotherDuck connection string if available
+        db_path = args.db or db_config.get('motherduck_db') or db_config['local_db_path']
+        if not db_path.startswith('md:'):
+            db_path = os.path.expanduser(db_path)
+
+        # Connect to database with retry logic
+        conn = get_db_connection(db_path)
+        logger.info(f"Connected to database at {db_path}")
+        
+        # Generate unique batch ID
+        batch_id = f"import_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{os.getpid()}"
+        
+        try:
+            # Rest of the main function remains similar, but pass batch_id to store_emails_batch
+            service = build_gmail_service(args.user)
+            email_ids = fetch_emails(
+                service, 
+                days_back=args.days, 
+                max_emails=args.max, 
+                user_id=args.user_id,
+                historical=args.historical,
+                include_sent=not args.no_sent
+            )
+            
+            total_emails = len(email_ids)
+            logger.info(f"Found {total_emails} emails to process")
+            
+            # Process in batches
+            start_idx = args.start_from
+            while start_idx < total_emails:
+                end_idx = min(start_idx + args.batch_size, total_emails)
+                batch = email_ids[start_idx:end_idx]
+                
+                # Fetch emails for this batch
+                email_batch = []
+                for email_id in batch:
+                    try:
+                        msg = fetch_email(service, email_id, args.user_id)
+                        if msg:
+                            email_batch.append(msg)
+                        time.sleep(0.2)  # Rate limiting
+                    except Exception as e:
+                        logger.error(f"Error fetching email {email_id}: {e}")
+                        if "Rate Limit Exceeded" in str(e):
+                            time.sleep(60)  # Wait longer on rate limit
+                
+                # Store the batch
+                if email_batch:
+                    success_count, error_count = store_emails_batch(conn, email_batch, batch_id)
+                    logger.info(f"Batch {start_idx}-{end_idx}: Success={success_count}, Errors={error_count}")
+                
+                start_idx = end_idx
+                
+                # Add delay between batches
+                if start_idx < total_emails:
+                    time.sleep(5)
+            
+            logger.info(f"Import batch {batch_id} completed successfully")
+            
+        finally:
+            # Always close the connection
+            conn.close()
+            logger.info("Database connection closed")
+        
+    except Exception as e:
+        logger.error(f"Gmail import failed: {e}", exc_info=True)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Import emails from Gmail")
     parser.add_argument("--days", type=int, default=7, help="Number of days to look back")
     parser.add_argument("--max", type=int, default=1000, help="Maximum number of emails to import")
     parser.add_argument("--user", type=str, help="User email to impersonate (for domain-wide delegation)")
     parser.add_argument("--user-id", type=str, default="me", help="User ID to fetch emails for (default: 'me')")
-    parser.add_argument("--db-path", type=str, default="~/input_data/duckdb_files/emails.duckdb", 
-                        help="Path to the database file")
+    parser.add_argument("--db", type=str, help="Path to the database file (overrides central config)")
     parser.add_argument("--historical", action="store_true", help="Import all historical emails")
     parser.add_argument("--no-sent", action="store_true", help="Exclude sent emails")
     parser.add_argument("--checkpoint", action="store_true", help="Use checkpoint to resume interrupted imports")
@@ -666,115 +946,4 @@ def main():
     
     args = parser.parse_args()
     
-    # Expand the database path
-    db_path = os.path.expanduser(args.db_path)
-    
-    if args.historical:
-        logger.info(f"Starting historical Gmail import, max {args.max} emails per batch")
-    else:
-        logger.info(f"Starting Gmail import: looking back {args.days} days, max {args.max} emails")
-    
-    logger.info(f"Using database: {db_path}")
-    
-    try:
-        # Get database connection
-        conn = get_db_connection(db_path)
-        
-        # Create checkpoint table if using checkpoints
-        if args.checkpoint:
-            conn.execute("""
-            CREATE TABLE IF NOT EXISTS import_checkpoints (
-                id INTEGER PRIMARY KEY,
-                last_processed_index INTEGER,
-                last_import_time TIMESTAMP
-            )
-            """)
-            
-            # Get last checkpoint if it exists
-            result = conn.execute("SELECT last_processed_index FROM import_checkpoints ORDER BY id DESC LIMIT 1").fetchone()
-            if result and args.start_from == 0:  # Only use checkpoint if start_from not specified
-                args.start_from = result[0]
-                logger.info(f"Resuming from checkpoint: starting at index {args.start_from}")
-        
-        # Build Gmail service
-        service = build_gmail_service(args.user)
-        
-        # Fetch emails
-        email_ids = fetch_emails(
-            service, 
-            days_back=args.days, 
-            max_emails=args.max, 
-            user_id=args.user_id,
-            historical=args.historical,
-            include_sent=not args.no_sent
-        )
-        
-        total_emails = len(email_ids)
-        logger.info(f"Found {total_emails} emails to process")
-        
-        # Process emails in batches
-        start_idx = args.start_from
-        end_idx = min(start_idx + args.batch_size, total_emails)
-        
-        while start_idx < total_emails:
-            batch = email_ids[start_idx:end_idx]
-            logger.info(f"Processing batch of {len(batch)} emails (indices {start_idx}-{end_idx-1})")
-            
-            # Process and store emails in this batch
-            imported_count = 0
-            for email_id in batch:
-                try:
-                    msg = fetch_email(service, email_id, args.user_id)
-                    if msg and store_email(conn, msg):
-                        imported_count += 1
-                        
-                        # Log progress every 10 emails
-                        if imported_count % 10 == 0:
-                            logger.info(f"Imported {imported_count}/{len(batch)} emails in current batch")
-                            
-                    # Add a small delay to avoid rate limiting
-                    time.sleep(0.2)
-                except Exception as e:
-                    logger.error(f"Error processing email {email_id}: {e}")
-                    # If we hit a rate limit, wait and retry
-                    if "Rate Limit Exceeded" in str(e) or "quota" in str(e).lower():
-                        wait_time = 60  # Wait 60 seconds before retrying
-                        logger.info(f"Rate limit exceeded. Waiting {wait_time} seconds before retrying...")
-                        time.sleep(wait_time)
-                        # Try again with this email
-                        try:
-                            msg = fetch_email(service, email_id, args.user_id)
-                            if msg and store_email(conn, msg):
-                                imported_count += 1
-                        except:
-                            # If it fails again, skip this email
-                            pass
-            
-            logger.info(f"Batch complete. Imported {imported_count}/{len(batch)} emails")
-            
-            # Update checkpoint
-            if args.checkpoint:
-                conn.execute("""
-                INSERT INTO import_checkpoints (last_processed_index, last_import_time)
-                VALUES (?, ?)
-                """, [end_idx, datetime.now().isoformat()])
-                logger.info(f"Updated checkpoint: processed up to index {end_idx}")
-            
-            # Move to next batch
-            start_idx = end_idx
-            end_idx = min(start_idx + args.batch_size, total_emails)
-            
-            # Add a delay between batches to avoid rate limiting
-            if start_idx < total_emails:
-                logger.info("Waiting 5 seconds before processing next batch...")
-                time.sleep(5)
-        
-        logger.info(f"Gmail import completed successfully. Processed {total_emails} emails.")
-        
-    except Exception as e:
-        logger.error(f"Gmail import failed: {e}", exc_info=True)
-        sys.exit(1)
-
-
-if __name__ == "__main__":
-    main() 
+    main(args) 

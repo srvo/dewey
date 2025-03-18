@@ -6,7 +6,7 @@
 # Set the path to the Dewey directory
 DEWEY_DIR="/Users/srvo/dewey"
 LOG_DIR="${DEWEY_DIR}/logs"
-LOG_FILE="${LOG_DIR}/emails_upload_$(date +%Y%m%d_%H%M%S).log"
+LOG_FILE="${LOG_DIR}/emails_$(date +%Y%m%d).log"
 
 # Create logs directory if it doesn't exist
 mkdir -p "${LOG_DIR}"
@@ -67,7 +67,7 @@ log "Starting upload of emails data from ${EMAILS_FILE}"
 log "This may take some time as the file is large (88MB)"
 
 # Run the uploader for the emails file
-python -m src.dewey.core.data_upload.motherduck_uploader --file "${EMAILS_FILE}" --database "dewey" --dedup-strategy "${DEDUP_STRATEGY}" 2>&1 | tee -a "${LOG_FILE}"
+python -m dewey.core.data_upload.upload --file "${EMAILS_FILE}" --target_db "dewey" --dedup_strategy "${DEDUP_STRATEGY}" 2>&1 | tee -a "${LOG_FILE}"
 
 # Check the exit status
 EXIT_CODE=${PIPESTATUS[0]}

@@ -638,3 +638,111 @@ Traceback (most recent call last):
     import structlog
 ModuleNotFoundError: No module named 'structlog'
 Mon Mar 17 11:00:30 MDT 2025: Email enrichment pipeline failed with exit code 1.
+Mon Mar 17 11:05:30 MDT 2025: Starting email enrichment pipeline (batch_size=50, max_emails=100)...
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/dewey/core/crm/enrichment/run_enrichment.py", line 19, in <module>
+    import structlog
+ModuleNotFoundError: No module named 'structlog'
+Mon Mar 17 11:05:30 MDT 2025: Email enrichment pipeline failed with exit code 1.
+Mon Mar 17 11:10:30 MDT 2025: Starting email enrichment pipeline (batch_size=50, max_emails=100)...
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/dewey/core/crm/enrichment/run_enrichment.py", line 19, in <module>
+    import structlog
+ModuleNotFoundError: No module named 'structlog'
+Mon Mar 17 11:10:30 MDT 2025: Email enrichment pipeline failed with exit code 1.
+Mon Mar 17 11:15:30 MDT 2025: Starting email enrichment pipeline (batch_size=50, max_emails=100)...
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/dewey/core/crm/enrichment/run_enrichment.py", line 19, in <module>
+    import structlog
+ModuleNotFoundError: No module named 'structlog'
+Mon Mar 17 11:15:31 MDT 2025: Email enrichment pipeline failed with exit code 1.
+Mon Mar 17 11:20:31 MDT 2025: Starting email enrichment pipeline (batch_size=50, max_emails=100)...
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/dewey/core/crm/enrichment/run_enrichment.py", line 19, in <module>
+    import structlog
+ModuleNotFoundError: No module named 'structlog'
+Mon Mar 17 11:20:31 MDT 2025: Email enrichment pipeline failed with exit code 1.
+Mon Mar 17 11:25:31 MDT 2025: Starting email enrichment pipeline (batch_size=50, max_emails=100)...
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/dewey/core/crm/enrichment/run_enrichment.py", line 19, in <module>
+    import structlog
+ModuleNotFoundError: No module named 'structlog'
+Mon Mar 17 11:25:31 MDT 2025: Email enrichment pipeline failed with exit code 1.
+Mon Mar 17 11:30:30 MDT 2025: Starting email enrichment pipeline (batch_size=50, max_emails=100)...
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/dewey/core/crm/enrichment/run_enrichment.py", line 19, in <module>
+    import structlog
+ModuleNotFoundError: No module named 'structlog'
+Mon Mar 17 11:30:30 MDT 2025: Email enrichment pipeline failed with exit code 1.
+Mon Mar 17 11:35:30 MDT 2025: Starting email enrichment pipeline (batch_size=50, max_emails=100)...
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/dewey/core/crm/enrichment/run_enrichment.py", line 19, in <module>
+    import structlog
+ModuleNotFoundError: No module named 'structlog'
+Mon Mar 17 11:35:30 MDT 2025: Email enrichment pipeline failed with exit code 1.
+Mon Mar 17 11:40:31 MDT 2025: Starting email enrichment pipeline (batch_size=50, max_emails=100)...
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/dewey/core/crm/enrichment/run_enrichment.py", line 19, in <module>
+    import structlog
+ModuleNotFoundError: No module named 'structlog'
+Mon Mar 17 11:40:31 MDT 2025: Email enrichment pipeline failed with exit code 1.
+Mon Mar 17 11:45:31 MDT 2025: Starting email enrichment pipeline (batch_size=50, max_emails=100)...
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/dewey/core/crm/enrichment/run_enrichment.py", line 19, in <module>
+    import structlog
+ModuleNotFoundError: No module named 'structlog'
+Mon Mar 17 11:45:31 MDT 2025: Email enrichment pipeline failed with exit code 1.
+Mon Mar 17 11:50:31 MDT 2025: Starting email enrichment pipeline (batch_size=50, max_emails=100)...
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/dewey/core/crm/enrichment/run_enrichment.py", line 19, in <module>
+    import structlog
+ModuleNotFoundError: No module named 'structlog'
+Mon Mar 17 11:50:31 MDT 2025: Email enrichment pipeline failed with exit code 1.
+Mon Mar 17 11:55:30 MDT 2025: Starting email enrichment pipeline (batch_size=50, max_emails=100)...
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/dewey/core/crm/enrichment/run_enrichment.py", line 19, in <module>
+    import structlog
+ModuleNotFoundError: No module named 'structlog'
+Mon Mar 17 11:55:30 MDT 2025: Email enrichment pipeline failed with exit code 1.
+Mon Mar 17 12:00:31 MDT 2025: Starting email enrichment pipeline (batch_size=50, max_emails=100)...
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/dewey/core/crm/enrichment/run_enrichment.py", line 19, in <module>
+    import structlog
+ModuleNotFoundError: No module named 'structlog'
+Mon Mar 17 12:00:31 MDT 2025: Email enrichment pipeline failed with exit code 1.
+Mon Mar 17 12:05:31 MDT 2025: Starting email enrichment pipeline (batch_size=50, max_emails=100)...
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/dewey/core/crm/enrichment/run_enrichment.py", line 19, in <module>
+    import structlog
+ModuleNotFoundError: No module named 'structlog'
+Mon Mar 17 12:05:31 MDT 2025: Email enrichment pipeline failed with exit code 1.
+Mon Mar 17 12:10:31 MDT 2025: Starting email enrichment pipeline (batch_size=50, max_emails=100)...
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/dewey/core/crm/enrichment/run_enrichment.py", line 19, in <module>
+    import structlog
+ModuleNotFoundError: No module named 'structlog'
+Mon Mar 17 12:10:31 MDT 2025: Email enrichment pipeline failed with exit code 1.
+Mon Mar 17 12:15:30 MDT 2025: Starting email enrichment pipeline (batch_size=50, max_emails=100)...
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/dewey/core/crm/enrichment/run_enrichment.py", line 19, in <module>
+    import structlog
+ModuleNotFoundError: No module named 'structlog'
+Mon Mar 17 12:15:30 MDT 2025: Email enrichment pipeline failed with exit code 1.
+Mon Mar 17 12:20:30 MDT 2025: Starting email enrichment pipeline (batch_size=50, max_emails=100)...
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/dewey/core/crm/enrichment/run_enrichment.py", line 19, in <module>
+    import structlog
+ModuleNotFoundError: No module named 'structlog'
+Mon Mar 17 12:20:30 MDT 2025: Email enrichment pipeline failed with exit code 1.
+Mon Mar 17 12:25:31 MDT 2025: Starting email enrichment pipeline (batch_size=50, max_emails=100)...
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/dewey/core/crm/enrichment/run_enrichment.py", line 19, in <module>
+    import structlog
+ModuleNotFoundError: No module named 'structlog'
+Mon Mar 17 12:25:31 MDT 2025: Email enrichment pipeline failed with exit code 1.
+Mon Mar 17 12:30:31 MDT 2025: Starting email enrichment pipeline (batch_size=50, max_emails=100)...
+Traceback (most recent call last):
+  File "/Users/srvo/dewey/src/dewey/core/crm/enrichment/run_enrichment.py", line 19, in <module>
+    import structlog
+ModuleNotFoundError: No module named 'structlog'
+Mon Mar 17 12:30:31 MDT 2025: Email enrichment pipeline failed with exit code 1.

@@ -4,13 +4,13 @@
 # Set the path to the dewey directory
 DEWEY_DIR="$HOME/dewey"
 LOG_DIR="$DEWEY_DIR/logs"
-LOG_FILE="$LOG_DIR/motherduck_sync.log"
+LOG_FILE="$LOG_DIR/motherduck_sync_$(date +%Y%m%d).log"
 
 # Create logs directory if it doesn't exist
 mkdir -p "$LOG_DIR"
 
 # Check if another sync is already running
-PID=$(pgrep -f "python.*motherduck_sync.py")
+PID=$(pgrep -f "python.*email_sync.py")
 if [ -n "$PID" ]; then
     echo "$(date): Another sync is already running (PID: $PID). Exiting." >> "$LOG_FILE"
     exit 0
@@ -38,7 +38,7 @@ fi
 
 # Run the sync script
 echo "$(date): Starting MotherDuck sync..." >> "$LOG_FILE"
-nohup python src/dewey/core/crm/gmail/motherduck_sync.py >> "$LOG_FILE" 2>&1 &
+nohup python src/dewey/core/crm/gmail/email_sync.py --dedup-strategy "update" >> "$LOG_FILE" 2>&1 &
 
 # Wait for the sync to complete
 wait $!

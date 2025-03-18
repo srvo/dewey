@@ -26,6 +26,8 @@ from typing import Dict, List, Optional, Tuple, Any, Union
 import structlog
 
 from src.dewey.core.db import get_duckdb_connection
+from dewey.utils import get_logger
+from dewey.core.engines import MotherDuckEngine
 
 logger = structlog.get_logger(__name__)
 
@@ -370,90 +372,104 @@ class ContactEnrichmentService:
             return False
 
 
-def enrich_contacts(batch_size: int = 50) -> int:
-    """Process a batch of emails for contact enrichment.
+def enrich_contacts(engine, dedup_strategy='update'):
+    """Enrich contact data with additional information."""
+    # Extract company information from email domains
+    engine.execute_query("""
+        UPDATE contacts c
+        SET company = CASE 
+            WHEN email LIKE '%@%' THEN 
+                REGEXP_REPLACE(SPLIT_PART(email, '@', 2), '\..*$', '')
+            ELSE NULL
+        END
+        WHERE company IS NULL
+    """)
     
-    Args:
-        batch_size: Number of emails to process in this batch
-        
-    Returns:
-        Number of contacts successfully enriched
-    """
-    enrichment_service = ContactEnrichmentService()
-    logger.info("Starting contact enrichment batch", batch_size=batch_size)
+    # Extract job titles
+    engine.execute_query("""
+        UPDATE contacts c
+        SET job_title = llm_extract_job_title(email_signature)
+        WHERE job_title IS NULL AND email_signature IS NOT NULL
+    """)
     
-    try:
-        with get_duckdb_connection() as conn:
-            # Create a table to track processed emails if it doesn't exist
-            conn.execute("""
-                CREATE TABLE IF NOT EXISTS processed_emails (
-                    email_id VARCHAR PRIMARY KEY,
-                    process_type VARCHAR,
-                    processed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            """)
-            
-            # Get emails that haven't been processed for contact enrichment yet
-            result = conn.execute("""
-                SELECT e.id, e.from_email
-                FROM emails e
-                LEFT JOIN processed_emails p ON e.id = p.email_id AND p.process_type = 'contact_enrichment'
-                WHERE p.email_id IS NULL
-                AND e.plain_body IS NOT NULL
-                LIMIT ?
-            """, (batch_size,)).fetchall()
-            
-            if not result:
-                logger.info("No emails to process for contact enrichment")
-                return 0
-                
-            logger.info(f"Found {len(result)} emails to process for contact enrichment")
-            
-            success_count = 0
-            for row in result:
-                email_id, from_email = row
-                
-                try:
-                    success = enrichment_service.process_email(email_id)
-                    
-                    # Mark email as processed regardless of success
-                    conn.execute("""
-                        INSERT INTO processed_emails (email_id, process_type)
-                        VALUES (?, ?)
-                    """, (email_id, "contact_enrichment"))
-                    
-                    if success:
-                        success_count += 1
-                except Exception as e:
-                    logger.exception(
-                        "Contact enrichment failed",
-                        email_id=email_id,
-                        from_email=from_email,
-                        error=str(e),
-                        error_type=type(e).__name__,
-                    )
-            
-            logger.info(
-                "Completed contact enrichment batch",
-                processed=len(result),
-                successful=success_count
-            )
-            return success_count
-            
-    except Exception as e:
-        logger.exception(
-            "Contact enrichment batch failed",
-            error=str(e),
-            error_type=type(e).__name__,
-        )
-        return 0
+    # Extract phone numbers
+    engine.execute_query("""
+        UPDATE contacts c
+        SET phone = llm_extract_phone(email_signature)
+        WHERE phone IS NULL AND email_signature IS NOT NULL
+    """)
+    
+    # Extract LinkedIn profiles
+    engine.execute_query("""
+        UPDATE contacts c
+        SET linkedin = llm_extract_linkedin(email_signature)
+        WHERE linkedin IS NULL AND email_signature IS NOT NULL
+    """)
+    
+    # Consolidate company information
+    engine.execute_query("""
+        UPDATE contacts c
+        SET company_id = co.id
+        FROM companies co
+        WHERE c.company = co.name
+        AND c.company_id IS NULL
+    """)
 
-
-if __name__ == "__main__":
-    import argparse
-    
-    parser = argparse.ArgumentParser(description="Enrich contacts from emails in the database")
-    parser.add_argument("--batch-size", type=int, default=50, help="Number of emails to process")
+def main():
+    parser = argparse.ArgumentParser(description='Enrich contact data with additional information')
+    parser.add_argument('--target_db', help='Target database name', default='dewey')
+    parser.add_argument('--dedup_strategy', choices=['none', 'update', 'ignore'], default='update',
+                       help='Deduplication strategy: none, update, or ignore')
     args = parser.parse_args()
-    
-    enrich_contacts(args.batch_size) 
+
+    # Set up logging
+    log_dir = os.path.join(os.getenv('DEWEY_DIR', os.path.expanduser('~/dewey')), 'logs')
+    logger = get_logger('contact_enrichment', log_dir)
+
+    try:
+        engine = MotherDuckEngine(args.target_db)
+        
+        logger.info("Starting contact enrichment process")
+        
+        # Get initial counts
+        contact_count = engine.execute_query("SELECT COUNT(*) FROM contacts").fetchone()[0]
+        enriched_count = engine.execute_query("""
+            SELECT COUNT(*) FROM contacts 
+            WHERE company IS NOT NULL 
+            AND job_title IS NOT NULL 
+            AND phone IS NOT NULL 
+            AND linkedin IS NOT NULL
+            AND company_id IS NOT NULL
+        """).fetchone()[0]
+        
+        logger.info(f"Total contacts: {contact_count}")
+        logger.info(f"Already enriched: {enriched_count}")
+        logger.info(f"Contacts to process: {contact_count - enriched_count}")
+        
+        # Perform enrichment
+        enrich_contacts(engine, args.dedup_strategy)
+        
+        # Get final counts
+        final_enriched = engine.execute_query("""
+            SELECT COUNT(*) FROM contacts 
+            WHERE company IS NOT NULL 
+            AND job_title IS NOT NULL 
+            AND phone IS NOT NULL 
+            AND linkedin IS NOT NULL
+            AND company_id IS NOT NULL
+        """).fetchone()[0]
+        
+        logger.info("\nEnrichment completed:")
+        logger.info(f"Total contacts processed: {contact_count}")
+        logger.info(f"Newly enriched: {final_enriched - enriched_count}")
+        logger.info(f"Total enriched: {final_enriched}")
+        
+    except Exception as e:
+        logger.error(f"Error during contact enrichment: {str(e)}", exc_info=True)
+        sys.exit(1)
+    finally:
+        if 'engine' in locals():
+            engine.close()
+
+if __name__ == '__main__':
+    main() 

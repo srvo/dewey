@@ -6,7 +6,7 @@ authors = [
 ]
 description = "A personal finance and research assistant"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -48,6 +48,7 @@ dependencies = [
     "openai",
     "humanize",
     "spacy>=3.8.4",
+    "chardet>=5.2.0",  # For CSV encoding detection
     "black>=25.1.0",
     "numpy==1.26.4",  # Updated for aider-chat compatibility while maintaining spaCy support
     "chromadb>=0.4.15",

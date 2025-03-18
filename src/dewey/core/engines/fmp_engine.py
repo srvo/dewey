@@ -1,8 +1,7 @@
-
 # Refactored from: fmp_engine
 # Date: 2025-03-16T16:19:12.007578
 # Refactor Version: 1.0
-```python
+
 """Financial Modeling Prep Engine
 ==========================
 

@@ -1,138 +1,123 @@
-import logging
 import shutil
 from collections import defaultdict
 from typing import Any
 from datetime import datetime
 from pathlib import Path
-
-from dewey.config import logging  # Centralized logging
-
-logger = logging.getLogger(__name__)
-
-# File header: Handles journal file writing and management.
-
+from dewey.utils import get_logger
 
 class JournalWriteError(Exception):
     """Exception for journal writing failures."""
 
 
 def _load_processed_hashes(processed_hashes_file: Path) -> set[str]:
-    """Load previously processed transaction hashes.
-
-    Args:
-    ----
-        processed_hashes_file: Path to the file containing processed hashes.
-
-    Returns:
-    -------
-        A set of processed transaction hashes.
-
-    """
+    """Load previously processed transaction hashes."""
+    logger = get_logger('journal_writer')
+    
     try:
         if processed_hashes_file.exists():
             with open(processed_hashes_file) as f:
                 return set(f.read().splitlines())
         return set()
     except Exception as e:
-        logging.exception(f"Failed to load processed hashes: {e!s}")
+        logger.exception(f"Failed to load processed hashes: {str(e)}")
         return set()
 
 
 def _save_processed_hashes(processed_hashes_file: Path, seen_hashes: set[str]) -> None:
-    """Persist processed hashes between runs.
-
-    Args:
-    ----
-        processed_hashes_file: Path to the file to save processed hashes.
-        seen_hashes: Set of processed transaction hashes to save.
-
-    """
+    """Persist processed hashes between runs."""
+    logger = get_logger('journal_writer')
+    
     try:
-        with open(processed_hashes_file, "w") as f:
-            f.write("\n".join(seen_hashes))
+        with open(processed_hashes_file, 'w') as f:
+            f.write('\n'.join(sorted(seen_hashes)))
+        logger.debug(f"Saved {len(seen_hashes)} processed hashes")
     except Exception as e:
-        logging.exception(f"Failed to save processed hashes: {e!s}")
+        logger.exception(f"Failed to save processed hashes: {str(e)}")
+        raise JournalWriteError(f"Failed to save processed hashes: {str(e)}")
 
 
 def _write_file_with_backup(filename: Path, entries: list[str]) -> None:
-    """Write file with versioned backup if it exists.
-
-    Args:
-    ----
-        filename: Path to the file to write.
-        entries: List of journal entries to write.
-
-    """
+    """Write entries to file with backup of existing file."""
+    logger = get_logger('journal_writer')
+    
     try:
+        # Create backup if file exists
         if filename.exists():
-            timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-            backup_name = f"{filename.stem}_{timestamp}{filename.suffix}"
-            shutil.copy(filename, filename.parent / backup_name)
-
-        with open(filename, "a", encoding="utf-8") as f:
-            f.write("\n".join(entries) + "\n")
+            backup = filename.with_suffix('.bak')
+            shutil.copy2(filename, backup)
+            logger.debug(f"Created backup at {backup}")
+        
+        # Write new content
+        with open(filename, 'w') as f:
+            f.write('\n'.join(entries))
+        logger.info(f"Wrote {len(entries)} entries to {filename}")
+        
     except Exception as e:
-        logging.exception(f"Failed to write file with backup: {e!s}")
+        logger.exception(f"Failed to write file {filename}: {str(e)}")
+        raise JournalWriteError(f"Failed to write file {filename}: {str(e)}")
 
 
 def _group_entries_by_account_and_year(
     entries: dict[str, list[str]],
 ) -> dict[tuple[str, str], list[str]]:
-    """Organize entries by account ID and year.
-
-    Args:
-    ----
-        entries: Dictionary of journal entries, keyed by year.
-
-    Returns:
-    -------
-        A dictionary of grouped entries, keyed by (account_id, year).
-
-    """
+    """Group journal entries by account and year."""
+    logger = get_logger('journal_writer')
     grouped = defaultdict(list)
-    for year, entries in entries.items():
-        for entry in entries:
-            # Extract account ID from entry metadata
-            account_id = "8542"  # TODO: Get from transaction data
-            grouped[(account_id, year)].append(entry)
-    return grouped
+    
+    try:
+        for account, account_entries in entries.items():
+            for entry in account_entries:
+                # Extract year from first line of entry
+                first_line = entry.split('\n')[0]
+                try:
+                    date_str = first_line.split()[0]
+                    year = datetime.strptime(date_str, '%Y-%m-%d').strftime('%Y')
+                    grouped[(account, year)].append(entry)
+                except (IndexError, ValueError) as e:
+                    logger.warning(f"Could not parse date from entry: {first_line}")
+                    continue
+                    
+        logger.debug(f"Grouped entries into {len(grouped)} account-year combinations")
+        return dict(grouped)
+        
+    except Exception as e:
+        logger.exception(f"Error grouping entries: {str(e)}")
+        raise JournalWriteError(f"Error grouping entries: {str(e)}")
 
 
 class JournalWriter:
-    """Handles journal file writing and management."""
+    """Handles writing and organizing journal entries."""
 
     def __init__(self, output_dir: Path) -> None:
-        """Initializes the JournalWriter.
-
-        Args:
-        ----
-            output_dir: The directory to write journal files to.
-
-        """
-        self.output_dir = output_dir
+        self.output_dir = Path(output_dir)
+        self.logger = get_logger('journal_writer')
+        self.processed_hashes_file = self.output_dir / '.processed_hashes'
+        self.seen_hashes = _load_processed_hashes(self.processed_hashes_file)
+        self.classifications = defaultdict(lambda: defaultdict(int))
+        
+        # Create output directory if it doesn't exist
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        self.processed_hashes_file = output_dir / ".processed_hashes"
-        self.seen_hashes: set[str] = _load_processed_hashes(self.processed_hashes_file)
-        self.audit_log: list[dict[str, str]] = []
+        self.logger.info(f"Initialized journal writer with output directory: {output_dir}")
 
     def write_entries(self, entries: dict[str, list[str]]) -> None:
-        """Write journal entries to appropriate files.
-
-        Args:
-        ----
-            entries: Dictionary of journal entries, keyed by year.
-
-        """
-        total_entries = sum(len(e) for e in entries.values())
-        logging.info(f"Writing {total_entries} journal entries")
-
-        for (account_id, year), entries in _group_entries_by_account_and_year(
-            entries,
-        ).items():
-            filename = self.output_dir / f"{account_id}_{year}.journal"
-            _write_file_with_backup(filename, entries)
-
-        _save_processed_hashes(self.processed_hashes_file, self.seen_hashes)
+        """Write journal entries to appropriate files."""
+        try:
+            # Group entries by account and year
+            grouped = _group_entries_by_account_and_year(entries)
+            
+            # Write each group to its own file
+            for (account, year), group_entries in grouped.items():
+                filename = self.output_dir / f"{account}_{year}.journal"
+                _write_file_with_backup(filename, group_entries)
+            
+            # Save processed hashes
+            _save_processed_hashes(self.processed_hashes_file, self.seen_hashes)
+            
+            self.logger.info(f"Successfully wrote entries to {len(grouped)} files")
+            
+        except Exception as e:
+            self.logger.exception(f"Failed to write entries: {str(e)}")
+            raise JournalWriteError(f"Failed to write entries: {str(e)}")
 
     def log_classification_decision(
         self,
@@ -140,39 +125,33 @@ class JournalWriter:
         pattern: str,
         category: str,
     ) -> None:
-        """Record classification decisions for quality tracking.
+        """Log a classification decision for reporting."""
+        try:
+            if tx_hash not in self.seen_hashes:
+                self.seen_hashes.add(tx_hash)
+                self.classifications[pattern][category] += 1
+                self.logger.debug(
+                    f"Logged classification: {pattern} -> {category} (hash: {tx_hash})"
+                )
+        except Exception as e:
+            self.logger.exception(f"Failed to log classification: {str(e)}")
 
-        Args:
-        ----
-            tx_hash: The transaction hash.
-            pattern: The pattern that matched.
-            category: The category the transaction was classified into.
-
-        """
-        self.audit_log.append(
-            {
-                "timestamp": datetime.now().isoformat(),
-                "tx_hash": tx_hash,
-                "pattern": pattern,
-                "category": category,
-            },
-        )
-
-    def get_classification_report(self) -> dict[str, any]:
-        """Generate classification quality metrics.
-
-        Returns
-        -------
-            A dictionary containing classification quality metrics.
-
-        """
-        unique_rules = len({entry["pattern"] for entry in self.audit_log})
-        categories = [entry["category"] for entry in self.audit_log]
-
-        return {
-            "total_transactions": len(self.audit_log),
-            "unique_rules_applied": unique_rules,
-            "category_distribution": {
-                cat: categories.count(cat) for cat in set(categories)
-            },
-        }
+    def get_classification_report(self) -> dict[str, Any]:
+        """Generate a report of classification decisions."""
+        try:
+            report = {
+                'total_transactions': len(self.seen_hashes),
+                'patterns': {
+                    pattern: dict(categories)
+                    for pattern, categories in self.classifications.items()
+                }
+            }
+            self.logger.debug(f"Generated classification report: {report}")
+            return report
+        except Exception as e:
+            self.logger.exception(f"Failed to generate classification report: {str(e)}")
+            return {
+                'total_transactions': 0,
+                'patterns': {},
+                'error': str(e)
+            }

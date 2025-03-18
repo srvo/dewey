@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Use UV for package management and pip functinos
+
+- config files are in pyproject.toml

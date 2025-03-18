@@ -1,0 +1,646 @@
+2025-03-17 17:18:47,878 - gmail_import - INFO - Connecting to MotherDuck database: md:dewey
+2025-03-17 17:18:48,888 - gmail_import - INFO - Successfully connected to MotherDuck
+2025-03-17 17:18:50,830 - gmail_import - INFO - Connected to database at md:dewey
+2025-03-17 17:18:50,830 - gmail_import - INFO - Using token from /Users/srvo/dewey/token.json
+2025-03-17 17:18:50,832 - gmail_import - INFO - Refreshing expired credentials
+2025-03-17 17:18:51,064 - gmail_import - INFO - Importing emails from 2025/03/10 to 2025/03/17
+2025-03-17 17:18:51,064 - gmail_import - INFO - Including sent emails
+2025-03-17 17:18:51,418 - gmail_import - INFO - Fetched 500 messages, total: 500
+2025-03-17 17:18:52,113 - gmail_import - INFO - Fetched 500 messages, total: 1000
+2025-03-17 17:18:52,114 - gmail_import - INFO - Found 1000 emails, fetching details...
+2025-03-17 17:18:55,510 - gmail_import - INFO - Processing message 10/1000
+2025-03-17 17:18:59,206 - gmail_import - INFO - Processing message 20/1000
+2025-03-17 17:19:02,993 - gmail_import - INFO - Processing message 30/1000
+2025-03-17 17:19:06,617 - gmail_import - INFO - Processing message 40/1000
+2025-03-17 17:19:10,281 - gmail_import - INFO - Processing message 50/1000
+2025-03-17 17:19:13,922 - gmail_import - INFO - Processing message 60/1000
+2025-03-17 17:19:17,600 - gmail_import - INFO - Processing message 70/1000
+2025-03-17 17:19:21,333 - gmail_import - INFO - Processing message 80/1000
+2025-03-17 17:19:24,965 - gmail_import - INFO - Processing message 90/1000
+2025-03-17 17:19:28,507 - gmail_import - INFO - Processing message 100/1000
+2025-03-17 17:19:32,404 - gmail_import - INFO - Processing message 110/1000
+2025-03-17 17:19:36,100 - gmail_import - INFO - Processing message 120/1000
+2025-03-17 17:19:39,965 - gmail_import - INFO - Processing message 130/1000
+2025-03-17 17:19:43,573 - gmail_import - INFO - Processing message 140/1000
+2025-03-17 17:19:47,272 - gmail_import - INFO - Processing message 150/1000
+2025-03-17 17:19:50,898 - gmail_import - INFO - Processing message 160/1000
+2025-03-17 17:19:54,536 - gmail_import - INFO - Processing message 170/1000
+2025-03-17 17:19:58,311 - gmail_import - INFO - Processing message 180/1000
+2025-03-17 17:20:01,907 - gmail_import - INFO - Processing message 190/1000
+2025-03-17 17:20:05,721 - gmail_import - INFO - Processing message 200/1000
+2025-03-17 17:20:09,370 - gmail_import - INFO - Processing message 210/1000
+2025-03-17 17:20:12,962 - gmail_import - INFO - Processing message 220/1000
+2025-03-17 17:20:16,750 - gmail_import - INFO - Processing message 230/1000
+2025-03-17 17:20:20,374 - gmail_import - INFO - Processing message 240/1000
+2025-03-17 17:20:24,078 - gmail_import - INFO - Processing message 250/1000
+2025-03-17 17:20:27,893 - gmail_import - INFO - Processing message 260/1000
+2025-03-17 17:20:31,531 - gmail_import - INFO - Processing message 270/1000
+2025-03-17 17:20:35,219 - gmail_import - INFO - Processing message 280/1000
+2025-03-17 17:20:38,781 - gmail_import - INFO - Processing message 290/1000
+2025-03-17 17:20:42,456 - gmail_import - INFO - Processing message 300/1000
+2025-03-17 17:20:46,151 - gmail_import - INFO - Processing message 310/1000
+2025-03-17 17:20:49,728 - gmail_import - INFO - Processing message 320/1000
+2025-03-17 17:20:53,384 - gmail_import - INFO - Processing message 330/1000
+2025-03-17 17:20:57,187 - gmail_import - INFO - Processing message 340/1000
+2025-03-17 17:21:00,918 - gmail_import - INFO - Processing message 350/1000
+2025-03-17 17:21:04,589 - gmail_import - INFO - Processing message 360/1000
+2025-03-17 17:21:08,157 - gmail_import - INFO - Processing message 370/1000
+2025-03-17 17:21:11,859 - gmail_import - INFO - Processing message 380/1000
+2025-03-17 17:21:15,594 - gmail_import - INFO - Processing message 390/1000
+2025-03-17 17:21:19,092 - gmail_import - INFO - Processing message 400/1000
+2025-03-17 17:21:22,599 - gmail_import - INFO - Processing message 410/1000
+2025-03-17 17:21:26,266 - gmail_import - INFO - Processing message 420/1000
+2025-03-17 17:21:30,055 - gmail_import - INFO - Processing message 430/1000
+2025-03-17 17:21:33,933 - gmail_import - INFO - Processing message 440/1000
+2025-03-17 17:21:37,564 - gmail_import - INFO - Processing message 450/1000
+2025-03-17 17:21:41,114 - gmail_import - INFO - Processing message 460/1000
+2025-03-17 17:21:44,673 - gmail_import - INFO - Processing message 470/1000
+2025-03-17 17:21:48,387 - gmail_import - INFO - Processing message 480/1000
+2025-03-17 17:21:52,033 - gmail_import - INFO - Processing message 490/1000
+2025-03-17 17:21:55,668 - gmail_import - INFO - Processing message 500/1000
+2025-03-17 17:21:59,430 - gmail_import - INFO - Processing message 510/1000
+2025-03-17 17:22:03,074 - gmail_import - INFO - Processing message 520/1000
+2025-03-17 17:22:07,050 - gmail_import - INFO - Processing message 530/1000
+2025-03-17 17:22:10,791 - gmail_import - INFO - Processing message 540/1000
+2025-03-17 17:22:14,584 - gmail_import - INFO - Processing message 550/1000
+2025-03-17 17:22:18,424 - gmail_import - INFO - Processing message 560/1000
+2025-03-17 17:22:22,095 - gmail_import - INFO - Processing message 570/1000
+2025-03-17 17:22:25,987 - gmail_import - INFO - Processing message 580/1000
+2025-03-17 17:22:29,765 - gmail_import - INFO - Processing message 590/1000
+2025-03-17 17:22:33,359 - gmail_import - INFO - Processing message 600/1000
+2025-03-17 17:22:37,086 - gmail_import - INFO - Processing message 610/1000
+2025-03-17 17:22:40,802 - gmail_import - INFO - Processing message 620/1000
+2025-03-17 17:22:44,419 - gmail_import - INFO - Processing message 630/1000
+2025-03-17 17:22:48,090 - gmail_import - INFO - Processing message 640/1000
+2025-03-17 17:22:51,949 - gmail_import - INFO - Processing message 650/1000
+2025-03-17 17:22:55,625 - gmail_import - INFO - Processing message 660/1000
+2025-03-17 17:22:59,521 - gmail_import - INFO - Processing message 670/1000
+2025-03-17 17:23:03,095 - gmail_import - INFO - Processing message 680/1000
+2025-03-17 17:23:06,780 - gmail_import - INFO - Processing message 690/1000
+2025-03-17 17:23:10,357 - gmail_import - INFO - Processing message 700/1000
+2025-03-17 17:23:13,964 - gmail_import - INFO - Processing message 710/1000
+2025-03-17 17:23:17,655 - gmail_import - INFO - Processing message 720/1000
+2025-03-17 17:23:21,210 - gmail_import - INFO - Processing message 730/1000
+2025-03-17 17:23:24,935 - gmail_import - INFO - Processing message 740/1000
+2025-03-17 17:23:28,569 - gmail_import - INFO - Processing message 750/1000
+2025-03-17 17:23:32,243 - gmail_import - INFO - Processing message 760/1000
+2025-03-17 17:23:36,154 - gmail_import - INFO - Processing message 770/1000
+2025-03-17 17:23:40,046 - gmail_import - INFO - Processing message 780/1000
+2025-03-17 17:23:43,758 - gmail_import - INFO - Processing message 790/1000
+2025-03-17 17:23:47,517 - gmail_import - INFO - Processing message 800/1000
+2025-03-17 17:23:51,273 - gmail_import - INFO - Processing message 810/1000
+2025-03-17 17:23:54,973 - gmail_import - INFO - Processing message 820/1000
+2025-03-17 17:23:58,690 - gmail_import - INFO - Processing message 830/1000
+2025-03-17 17:24:02,208 - gmail_import - INFO - Processing message 840/1000
+2025-03-17 17:24:05,751 - gmail_import - INFO - Processing message 850/1000
+2025-03-17 17:24:09,768 - gmail_import - INFO - Processing message 860/1000
+2025-03-17 17:24:13,613 - gmail_import - INFO - Processing message 870/1000
+2025-03-17 17:24:17,429 - gmail_import - INFO - Processing message 880/1000
+2025-03-17 17:24:21,053 - gmail_import - INFO - Processing message 890/1000
+2025-03-17 17:24:24,680 - gmail_import - INFO - Processing message 900/1000
+2025-03-17 17:24:28,423 - gmail_import - INFO - Processing message 910/1000
+2025-03-17 17:24:32,074 - gmail_import - INFO - Processing message 920/1000
+2025-03-17 17:24:35,670 - gmail_import - INFO - Processing message 930/1000
+2025-03-17 17:24:39,344 - gmail_import - INFO - Processing message 940/1000
+2025-03-17 17:24:43,173 - gmail_import - INFO - Processing message 950/1000
+2025-03-17 17:24:46,997 - gmail_import - INFO - Processing message 960/1000
+2025-03-17 17:24:50,884 - gmail_import - INFO - Processing message 970/1000
+2025-03-17 17:24:54,852 - gmail_import - INFO - Processing message 980/1000
+2025-03-17 17:24:58,567 - gmail_import - INFO - Processing message 990/1000
+2025-03-17 17:25:02,313 - gmail_import - INFO - Processing message 1000/1000
+2025-03-17 17:25:02,816 - gmail_import - INFO - Found 511 emails to process
+2025-03-17 17:25:22,355 - gmail_import - ERROR - Error storing email 195a624ae1603e5d: 'str' object has no attribute 'get'
+2025-03-17 17:25:22,464 - gmail_import - ERROR - Error storing email 195a5b328cf91f36: 'str' object has no attribute 'get'
+2025-03-17 17:25:22,568 - gmail_import - ERROR - Error storing email 195a59035340eb23: 'str' object has no attribute 'get'
+2025-03-17 17:25:22,670 - gmail_import - ERROR - Error storing email 195a57d41c98636c: 'str' object has no attribute 'get'
+2025-03-17 17:25:22,772 - gmail_import - ERROR - Error storing email 195a57bb930ad7da: 'str' object has no attribute 'get'
+2025-03-17 17:25:22,874 - gmail_import - ERROR - Error storing email 195a51a01aaacf41: 'str' object has no attribute 'get'
+2025-03-17 17:25:22,979 - gmail_import - ERROR - Error storing email 195a512eb1c90e66: 'str' object has no attribute 'get'
+2025-03-17 17:25:23,086 - gmail_import - ERROR - Error storing email 195a512be70048bd: 'str' object has no attribute 'get'
+2025-03-17 17:25:23,193 - gmail_import - ERROR - Error storing email 195a50ea9ab13cb2: 'str' object has no attribute 'get'
+2025-03-17 17:25:23,296 - gmail_import - ERROR - Error storing email 195a50e95deb424d: 'str' object has no attribute 'get'
+2025-03-17 17:25:23,400 - gmail_import - ERROR - Error storing email 195a50e682137e83: 'str' object has no attribute 'get'
+2025-03-17 17:25:23,626 - gmail_import - ERROR - Error storing email 195a50cd0a0e207e: 'str' object has no attribute 'get'
+2025-03-17 17:25:23,731 - gmail_import - ERROR - Error storing email 195a5043f6459a8c: 'str' object has no attribute 'get'
+2025-03-17 17:25:23,837 - gmail_import - ERROR - Error storing email 195a504304583da4: 'str' object has no attribute 'get'
+2025-03-17 17:25:23,939 - gmail_import - ERROR - Error storing email 195a502db0d5ea73: 'str' object has no attribute 'get'
+2025-03-17 17:25:24,041 - gmail_import - ERROR - Error storing email 195a5014ff26580d: 'str' object has no attribute 'get'
+2025-03-17 17:25:24,148 - gmail_import - ERROR - Error storing email 195a4eb132f96ab3: 'str' object has no attribute 'get'
+2025-03-17 17:25:24,254 - gmail_import - ERROR - Error storing email 195a4ea48f3eaab0: 'str' object has no attribute 'get'
+2025-03-17 17:25:24,359 - gmail_import - ERROR - Error storing email 195a4e589d04139c: 'str' object has no attribute 'get'
+2025-03-17 17:25:24,465 - gmail_import - ERROR - Error storing email 195a4df3696e868d: 'str' object has no attribute 'get'
+2025-03-17 17:25:24,645 - gmail_import - ERROR - Error storing email 195a4de344211317: 'str' object has no attribute 'get'
+2025-03-17 17:25:24,750 - gmail_import - ERROR - Error storing email 195a4de0d8d196fa: 'str' object has no attribute 'get'
+2025-03-17 17:25:24,965 - gmail_import - ERROR - Error storing email 195a4dc18cb1796c: 'str' object has no attribute 'get'
+2025-03-17 17:25:25,070 - gmail_import - ERROR - Error storing email 195a4db746f35315: 'str' object has no attribute 'get'
+2025-03-17 17:25:25,179 - gmail_import - ERROR - Error storing email 195a4da942a243ff: 'str' object has no attribute 'get'
+2025-03-17 17:25:25,283 - gmail_import - ERROR - Error storing email 195a4d789a920b4a: 'str' object has no attribute 'get'
+2025-03-17 17:25:25,392 - gmail_import - ERROR - Error storing email 195a4d76dfcec1f0: 'str' object has no attribute 'get'
+2025-03-17 17:25:25,496 - gmail_import - ERROR - Error storing email 195a4d6cdfdba5af: 'str' object has no attribute 'get'
+2025-03-17 17:25:25,600 - gmail_import - ERROR - Error storing email 195a4d608429e130: 'str' object has no attribute 'get'
+2025-03-17 17:25:25,816 - gmail_import - ERROR - Error storing email 195a4d560d83c850: 'str' object has no attribute 'get'
+2025-03-17 17:25:25,922 - gmail_import - ERROR - Error storing email 195a4d25c17a50b2: 'str' object has no attribute 'get'
+2025-03-17 17:25:26,030 - gmail_import - ERROR - Error storing email 195a4cfdaba7e10b: 'str' object has no attribute 'get'
+2025-03-17 17:25:26,134 - gmail_import - ERROR - Error storing email 195a4c41cf5a772b: 'str' object has no attribute 'get'
+2025-03-17 17:25:26,237 - gmail_import - ERROR - Error storing email 195a4c13cf25ffff: 'str' object has no attribute 'get'
+2025-03-17 17:25:26,456 - gmail_import - ERROR - Error storing email 195a4bb00a8393ed: 'str' object has no attribute 'get'
+2025-03-17 17:25:26,561 - gmail_import - ERROR - Error storing email 195a4b3faf6aa7cf: 'str' object has no attribute 'get'
+2025-03-17 17:25:26,664 - gmail_import - ERROR - Error storing email 195a4affb507045c: 'str' object has no attribute 'get'
+2025-03-17 17:25:26,769 - gmail_import - ERROR - Error storing email 195a4ab849144425: 'str' object has no attribute 'get'
+2025-03-17 17:25:26,874 - gmail_import - ERROR - Error storing email 195a4a0c907ec783: 'str' object has no attribute 'get'
+2025-03-17 17:25:26,987 - gmail_import - ERROR - Error storing email 195a4a08bb0c05e5: 'str' object has no attribute 'get'
+2025-03-17 17:25:27,478 - gmail_import - ERROR - Error storing email 195a49fe840f4ff8: 'str' object has no attribute 'get'
+2025-03-17 17:25:27,582 - gmail_import - ERROR - Error storing email 195a49f633e230be: 'str' object has no attribute 'get'
+2025-03-17 17:25:27,689 - gmail_import - ERROR - Error storing email 195a49eceee001eb: 'str' object has no attribute 'get'
+2025-03-17 17:25:27,793 - gmail_import - ERROR - Error storing email 195a49ec037e2935: 'str' object has no attribute 'get'
+2025-03-17 17:25:27,895 - gmail_import - ERROR - Error storing email 195a492f6b58d6c5: 'str' object has no attribute 'get'
+2025-03-17 17:25:28,000 - gmail_import - ERROR - Error storing email 195a48527a3b6697: 'str' object has no attribute 'get'
+2025-03-17 17:25:28,106 - gmail_import - ERROR - Error storing email 195a470b189f06f6: 'str' object has no attribute 'get'
+2025-03-17 17:25:28,211 - gmail_import - ERROR - Error storing email 195a46f7e7fb1af1: 'str' object has no attribute 'get'
+2025-03-17 17:25:28,317 - gmail_import - ERROR - Error storing email 195a46c07db8be0e: 'str' object has no attribute 'get'
+2025-03-17 17:25:28,420 - gmail_import - ERROR - Error storing email 195a468d93d50e2a: 'str' object has no attribute 'get'
+2025-03-17 17:25:28,620 - gmail_import - INFO - Processed sub-batch 1, Success: 0, Errors: 50
+2025-03-17 17:25:28,621 - gmail_import - INFO - Batch 0-50: Success=0, Errors=50
+2025-03-17 17:25:52,236 - gmail_import - ERROR - Error storing email 195a468c2d2035dc: 'str' object has no attribute 'get'
+2025-03-17 17:25:52,434 - gmail_import - ERROR - Error storing email 195a467c709f11cc: 'str' object has no attribute 'get'
+2025-03-17 17:25:52,540 - gmail_import - ERROR - Error storing email 195a465ab430fe6d: 'str' object has no attribute 'get'
+2025-03-17 17:25:52,644 - gmail_import - ERROR - Error storing email 195a45a21e32c2df: 'str' object has no attribute 'get'
+2025-03-17 17:25:52,876 - gmail_import - ERROR - Error storing email 195a4549302079bc: 'str' object has no attribute 'get'
+2025-03-17 17:25:52,985 - gmail_import - ERROR - Error storing email 195a45054830c274: 'str' object has no attribute 'get'
+2025-03-17 17:25:53,157 - gmail_import - ERROR - Error storing email 195a44792693c098: 'str' object has no attribute 'get'
+2025-03-17 17:25:53,262 - gmail_import - ERROR - Error storing email 195a433869d11e86: 'str' object has no attribute 'get'
+2025-03-17 17:25:53,364 - gmail_import - ERROR - Error storing email 195a430a4e1943ed: 'str' object has no attribute 'get'
+2025-03-17 17:25:53,596 - gmail_import - ERROR - Error storing email 195a428a02559237: 'str' object has no attribute 'get'
+2025-03-17 17:25:53,718 - gmail_import - ERROR - Error storing email 195a426e0a740579: 'str' object has no attribute 'get'
+2025-03-17 17:25:53,825 - gmail_import - ERROR - Error storing email 195a41fa7886d263: 'str' object has no attribute 'get'
+2025-03-17 17:25:53,931 - gmail_import - ERROR - Error storing email 195a41c3f90ab669: 'str' object has no attribute 'get'
+2025-03-17 17:25:54,038 - gmail_import - ERROR - Error storing email 195a41c2a4a084a1: 'str' object has no attribute 'get'
+2025-03-17 17:25:54,144 - gmail_import - ERROR - Error storing email 195a40a427db439b: 'str' object has no attribute 'get'
+2025-03-17 17:25:54,357 - gmail_import - ERROR - Error storing email 195a40a2160120f0: 'str' object has no attribute 'get'
+2025-03-17 17:25:54,463 - gmail_import - ERROR - Error storing email 195a409b4f1dcb5b: 'str' object has no attribute 'get'
+2025-03-17 17:25:54,686 - gmail_import - ERROR - Error storing email 195a4023d3ed0a31: 'str' object has no attribute 'get'
+2025-03-17 17:25:54,790 - gmail_import - ERROR - Error storing email 195a4013a8b3161b: 'str' object has no attribute 'get'
+2025-03-17 17:25:54,939 - gmail_import - ERROR - Error storing email 195a3fc101785d73: 'str' object has no attribute 'get'
+2025-03-17 17:25:55,078 - gmail_import - ERROR - Error storing email 195a3eb51f0a1ed5: 'str' object has no attribute 'get'
+2025-03-17 17:25:55,186 - gmail_import - ERROR - Error storing email 195a3e148577d5bd: 'str' object has no attribute 'get'
+2025-03-17 17:25:55,290 - gmail_import - ERROR - Error storing email 195a3932b70eb73f: 'str' object has no attribute 'get'
+2025-03-17 17:25:55,396 - gmail_import - ERROR - Error storing email 195a38dc5277adb1: 'str' object has no attribute 'get'
+2025-03-17 17:25:55,500 - gmail_import - ERROR - Error storing email 195a38cdf5681da1: 'str' object has no attribute 'get'
+2025-03-17 17:25:55,604 - gmail_import - ERROR - Error storing email 195a369bdd5177e1: 'str' object has no attribute 'get'
+2025-03-17 17:25:55,708 - gmail_import - ERROR - Error storing email 195a363cd752ffff: 'str' object has no attribute 'get'
+2025-03-17 17:25:55,811 - gmail_import - ERROR - Error storing email 195a363c4486d029: 'str' object has no attribute 'get'
+2025-03-17 17:25:55,913 - gmail_import - ERROR - Error storing email 195a2ef7cc9b6f1f: 'str' object has no attribute 'get'
+2025-03-17 17:25:56,018 - gmail_import - ERROR - Error storing email 195a2e95cd7c706f: 'str' object has no attribute 'get'
+2025-03-17 17:25:56,122 - gmail_import - ERROR - Error storing email 195a26e3e1d940cd: 'str' object has no attribute 'get'
+2025-03-17 17:25:56,228 - gmail_import - ERROR - Error storing email 195a2612f74e0f2c: 'str' object has no attribute 'get'
+2025-03-17 17:25:56,331 - gmail_import - ERROR - Error storing email 195a23a24ab4733f: 'str' object has no attribute 'get'
+2025-03-17 17:25:56,461 - gmail_import - ERROR - Error storing email 195a1d777299e927: 'str' object has no attribute 'get'
+2025-03-17 17:25:56,564 - gmail_import - ERROR - Error storing email 195a1c0ae7e73467: 'str' object has no attribute 'get'
+2025-03-17 17:25:56,667 - gmail_import - ERROR - Error storing email 195a1bab38c60270: 'str' object has no attribute 'get'
+2025-03-17 17:25:56,774 - gmail_import - ERROR - Error storing email 195a1aff2933dc4f: 'str' object has no attribute 'get'
+2025-03-17 17:25:56,877 - gmail_import - ERROR - Error storing email 195a1959fcd09064: 'str' object has no attribute 'get'
+2025-03-17 17:25:56,985 - gmail_import - ERROR - Error storing email 195a0c650f76ea1f: 'str' object has no attribute 'get'
+2025-03-17 17:25:57,096 - gmail_import - ERROR - Error storing email 195a0bc6ea1f1009: 'str' object has no attribute 'get'
+2025-03-17 17:25:57,273 - gmail_import - ERROR - Error storing email 195a08d16852a601: 'str' object has no attribute 'get'
+2025-03-17 17:25:57,379 - gmail_import - ERROR - Error storing email 195a056a82276948: 'str' object has no attribute 'get'
+2025-03-17 17:25:57,482 - gmail_import - ERROR - Error storing email 195a0213d8970da9: 'str' object has no attribute 'get'
+2025-03-17 17:25:57,706 - gmail_import - ERROR - Error storing email 195a006a3b92c3b4: 'str' object has no attribute 'get'
+2025-03-17 17:25:57,814 - gmail_import - ERROR - Error storing email 1959fe5da21e85c1: 'str' object has no attribute 'get'
+2025-03-17 17:25:57,918 - gmail_import - ERROR - Error storing email 1959fb5d1370a8ba: 'str' object has no attribute 'get'
+2025-03-17 17:25:58,020 - gmail_import - ERROR - Error storing email 1959fb1a5c989020: 'str' object has no attribute 'get'
+2025-03-17 17:25:58,129 - gmail_import - ERROR - Error storing email 1959fad2760d0db1: 'str' object has no attribute 'get'
+2025-03-17 17:25:58,300 - gmail_import - ERROR - Error storing email 1959fa23e8d7df2b: 'str' object has no attribute 'get'
+2025-03-17 17:25:58,403 - gmail_import - ERROR - Error storing email 1959f8757c8a4066: 'str' object has no attribute 'get'
+2025-03-17 17:25:58,509 - gmail_import - INFO - Processed sub-batch 1, Success: 0, Errors: 50
+2025-03-17 17:25:58,510 - gmail_import - INFO - Batch 50-100: Success=0, Errors=50
+2025-03-17 17:26:22,707 - gmail_import - ERROR - Error storing email 1959f7b1d2719e5b: 'str' object has no attribute 'get'
+2025-03-17 17:26:22,814 - gmail_import - ERROR - Error storing email 1959f7852f0e8200: 'str' object has no attribute 'get'
+2025-03-17 17:26:22,919 - gmail_import - ERROR - Error storing email 1959f72b09226031: 'str' object has no attribute 'get'
+2025-03-17 17:26:23,025 - gmail_import - ERROR - Error storing email 1959f4c18d0b41c9: 'str' object has no attribute 'get'
+2025-03-17 17:26:23,199 - gmail_import - ERROR - Error storing email 1959f49a92f64c77: 'str' object has no attribute 'get'
+2025-03-17 17:26:23,305 - gmail_import - ERROR - Error storing email 1959f4766f3848ef: 'str' object has no attribute 'get'
+2025-03-17 17:26:23,410 - gmail_import - ERROR - Error storing email 1959f36c9cefca39: 'str' object has no attribute 'get'
+2025-03-17 17:26:23,514 - gmail_import - ERROR - Error storing email 1959f0a9b985a4dc: 'str' object has no attribute 'get'
+2025-03-17 17:26:23,619 - gmail_import - ERROR - Error storing email 1959ea8650a432b0: 'str' object has no attribute 'get'
+2025-03-17 17:26:23,726 - gmail_import - ERROR - Error storing email 1959e700ecd72cc1: 'str' object has no attribute 'get'
+2025-03-17 17:26:23,831 - gmail_import - ERROR - Error storing email 1959e6dc3ecf6ded: 'str' object has no attribute 'get'
+2025-03-17 17:26:23,934 - gmail_import - ERROR - Error storing email 1959e6605d784566: 'str' object has no attribute 'get'
+2025-03-17 17:26:24,037 - gmail_import - ERROR - Error storing email 1959dcd47dce0829: 'str' object has no attribute 'get'
+2025-03-17 17:26:24,143 - gmail_import - ERROR - Error storing email 1959cae4c7c73843: 'str' object has no attribute 'get'
+2025-03-17 17:26:24,256 - gmail_import - ERROR - Error storing email 1959c853675510e6: 'str' object has no attribute 'get'
+2025-03-17 17:26:24,367 - gmail_import - ERROR - Error storing email 1959bd603351bd15: 'str' object has no attribute 'get'
+2025-03-17 17:26:24,475 - gmail_import - ERROR - Error storing email 1959b9f3c6f42356: 'str' object has no attribute 'get'
+2025-03-17 17:26:24,581 - gmail_import - ERROR - Error storing email 1959b9d2599ca470: 'str' object has no attribute 'get'
+2025-03-17 17:26:24,690 - gmail_import - ERROR - Error storing email 1959b677f064a6e5: 'str' object has no attribute 'get'
+2025-03-17 17:26:25,009 - gmail_import - ERROR - Error storing email 1959b21544e725ab: 'str' object has no attribute 'get'
+2025-03-17 17:26:25,138 - gmail_import - ERROR - Error storing email 1959afda7353488c: 'str' object has no attribute 'get'
+2025-03-17 17:26:25,240 - gmail_import - ERROR - Error storing email 1959ae37f4741f7b: 'str' object has no attribute 'get'
+2025-03-17 17:26:25,357 - gmail_import - ERROR - Error storing email 1959ab9eaa52effe: 'str' object has no attribute 'get'
+2025-03-17 17:26:25,559 - gmail_import - ERROR - Error storing email 1959aa4de818cfa0: 'str' object has no attribute 'get'
+2025-03-17 17:26:25,775 - gmail_import - ERROR - Error storing email 1959a90007d610b7: 'str' object has no attribute 'get'
+2025-03-17 17:26:25,879 - gmail_import - ERROR - Error storing email 1959a6f0ee17b54f: 'str' object has no attribute 'get'
+2025-03-17 17:26:26,105 - gmail_import - ERROR - Error storing email 1959a635a4a8ca20: 'str' object has no attribute 'get'
+2025-03-17 17:26:26,211 - gmail_import - ERROR - Error storing email 1959a55b610604ac: 'str' object has no attribute 'get'
+2025-03-17 17:26:26,319 - gmail_import - ERROR - Error storing email 1959a52f65300721: 'str' object has no attribute 'get'
+2025-03-17 17:26:26,425 - gmail_import - ERROR - Error storing email 1959a4a6ff992b52: 'str' object has no attribute 'get'
+2025-03-17 17:26:26,530 - gmail_import - ERROR - Error storing email 1959a424cd196e2a: 'str' object has no attribute 'get'
+2025-03-17 17:26:26,633 - gmail_import - ERROR - Error storing email 1959a16e7930e4c3: 'str' object has no attribute 'get'
+2025-03-17 17:26:26,737 - gmail_import - ERROR - Error storing email 1959a15a14557330: 'str' object has no attribute 'get'
+2025-03-17 17:26:26,843 - gmail_import - ERROR - Error storing email 19599f9a357fd8dd: 'str' object has no attribute 'get'
+2025-03-17 17:26:26,948 - gmail_import - ERROR - Error storing email 19599eeabc6dc21b: 'str' object has no attribute 'get'
+2025-03-17 17:26:27,168 - gmail_import - ERROR - Error storing email 19599e452eab47ee: 'str' object has no attribute 'get'
+2025-03-17 17:26:27,277 - gmail_import - ERROR - Error storing email 19599bfdeed5bdbc: 'str' object has no attribute 'get'
+2025-03-17 17:26:27,507 - gmail_import - ERROR - Error storing email 195998f987756302: 'str' object has no attribute 'get'
+2025-03-17 17:26:27,615 - gmail_import - ERROR - Error storing email 195997ac4b231245: 'str' object has no attribute 'get'
+2025-03-17 17:26:27,724 - gmail_import - ERROR - Error storing email 1959961f0bd273c9: 'str' object has no attribute 'get'
+2025-03-17 17:26:27,899 - gmail_import - ERROR - Error storing email 1959961a57e426b2: 'str' object has no attribute 'get'
+2025-03-17 17:26:28,006 - gmail_import - ERROR - Error storing email 1959948c91951eb2: 'str' object has no attribute 'get'
+2025-03-17 17:26:28,111 - gmail_import - ERROR - Error storing email 1959940ffdb6b033: 'str' object has no attribute 'get'
+2025-03-17 17:26:28,218 - gmail_import - ERROR - Error storing email 195993fe761af487: 'str' object has no attribute 'get'
+2025-03-17 17:26:28,324 - gmail_import - ERROR - Error storing email 195992245810962f: 'str' object has no attribute 'get'
+2025-03-17 17:26:28,432 - gmail_import - ERROR - Error storing email 19599083122fb2bc: 'str' object has no attribute 'get'
+2025-03-17 17:26:28,657 - gmail_import - ERROR - Error storing email 19598dd744ba900e: 'str' object has no attribute 'get'
+2025-03-17 17:26:28,762 - gmail_import - ERROR - Error storing email 19598cf792618a5e: 'str' object has no attribute 'get'
+2025-03-17 17:26:28,975 - gmail_import - ERROR - Error storing email 1959806b8710ffed: 'str' object has no attribute 'get'
+2025-03-17 17:26:29,079 - gmail_import - ERROR - Error storing email 19597f514a97af76: 'str' object has no attribute 'get'
+2025-03-17 17:26:29,244 - gmail_import - INFO - Processed sub-batch 1, Success: 0, Errors: 50
+2025-03-17 17:26:29,245 - gmail_import - INFO - Batch 100-150: Success=0, Errors=50
+2025-03-17 17:26:53,321 - gmail_import - ERROR - Error storing email 19597aa6efe9ff1b: 'str' object has no attribute 'get'
+2025-03-17 17:26:53,430 - gmail_import - ERROR - Error storing email 195979bda5e7d4d6: 'str' object has no attribute 'get'
+2025-03-17 17:26:53,581 - gmail_import - ERROR - Error storing email 195977a0b393a909: 'str' object has no attribute 'get'
+2025-03-17 17:26:53,698 - gmail_import - ERROR - Error storing email 1959773e994d8158: 'str' object has no attribute 'get'
+2025-03-17 17:26:53,807 - gmail_import - ERROR - Error storing email 195976abc4d7f880: 'str' object has no attribute 'get'
+2025-03-17 17:26:53,913 - gmail_import - ERROR - Error storing email 195975bccecf89a8: 'str' object has no attribute 'get'
+2025-03-17 17:26:54,022 - gmail_import - ERROR - Error storing email 195975a568fe8297: 'str' object has no attribute 'get'
+2025-03-17 17:26:54,128 - gmail_import - ERROR - Error storing email 1959757ab612b834: 'str' object has no attribute 'get'
+2025-03-17 17:26:54,230 - gmail_import - ERROR - Error storing email 19597290a401d912: 'str' object has no attribute 'get'
+2025-03-17 17:26:54,445 - gmail_import - ERROR - Error storing email 19597220d43b87f5: 'str' object has no attribute 'get'
+2025-03-17 17:26:54,667 - gmail_import - ERROR - Error storing email 195971f58f024ecf: 'str' object has no attribute 'get'
+2025-03-17 17:26:54,771 - gmail_import - ERROR - Error storing email 19596df7e4cb61a0: 'str' object has no attribute 'get'
+2025-03-17 17:26:54,874 - gmail_import - ERROR - Error storing email 19596bda74c69498: 'str' object has no attribute 'get'
+2025-03-17 17:26:54,980 - gmail_import - ERROR - Error storing email 19596b15743afd84: 'str' object has no attribute 'get'
+2025-03-17 17:26:55,199 - gmail_import - ERROR - Error storing email 1959681fa4fb79f3: 'str' object has no attribute 'get'
+2025-03-17 17:26:55,303 - gmail_import - ERROR - Error storing email 195967e333f70bbb: 'str' object has no attribute 'get'
+2025-03-17 17:26:55,408 - gmail_import - ERROR - Error storing email 195966cb19c56e7e: 'str' object has no attribute 'get'
+2025-03-17 17:26:55,511 - gmail_import - ERROR - Error storing email 19596454120baa06: 'str' object has no attribute 'get'
+2025-03-17 17:26:55,615 - gmail_import - ERROR - Error storing email 195962c992f35de1: 'str' object has no attribute 'get'
+2025-03-17 17:26:55,835 - gmail_import - ERROR - Error storing email 195961be0c78def8: 'str' object has no attribute 'get'
+2025-03-17 17:26:56,007 - gmail_import - ERROR - Error storing email 195960afb05893e9: 'str' object has no attribute 'get'
+2025-03-17 17:26:56,112 - gmail_import - ERROR - Error storing email 195960a3291be1cf: 'str' object has no attribute 'get'
+2025-03-17 17:26:56,216 - gmail_import - ERROR - Error storing email 1959603cbbcffabb: 'str' object has no attribute 'get'
+2025-03-17 17:26:56,320 - gmail_import - ERROR - Error storing email 19595f8242a58bbf: 'str' object has no attribute 'get'
+2025-03-17 17:26:56,460 - gmail_import - ERROR - Error storing email 19595e90f678ee6b: 'str' object has no attribute 'get'
+2025-03-17 17:26:56,562 - gmail_import - ERROR - Error storing email 19595d2a47784c31: 'str' object has no attribute 'get'
+2025-03-17 17:26:56,668 - gmail_import - ERROR - Error storing email 19595c61920f14d2: 'str' object has no attribute 'get'
+2025-03-17 17:26:56,771 - gmail_import - ERROR - Error storing email 195959213b0d4daa: 'str' object has no attribute 'get'
+2025-03-17 17:26:56,875 - gmail_import - ERROR - Error storing email 1959583e5c7b19dd: 'str' object has no attribute 'get'
+2025-03-17 17:26:56,979 - gmail_import - ERROR - Error storing email 19595835657c016f: 'str' object has no attribute 'get'
+2025-03-17 17:26:57,152 - gmail_import - ERROR - Error storing email 19595715c8ff6a5c: 'str' object has no attribute 'get'
+2025-03-17 17:26:57,294 - gmail_import - ERROR - Error storing email 1959566f8bf73f57: 'str' object has no attribute 'get'
+2025-03-17 17:26:57,425 - gmail_import - ERROR - Error storing email 195956384229a8dd: 'str' object has no attribute 'get'
+2025-03-17 17:26:57,666 - gmail_import - ERROR - Error storing email 1959562aa2141fb0: 'str' object has no attribute 'get'
+2025-03-17 17:26:57,793 - gmail_import - ERROR - Error storing email 19595558b9d3d785: 'str' object has no attribute 'get'
+2025-03-17 17:26:57,921 - gmail_import - ERROR - Error storing email 1959554039a6b409: 'str' object has no attribute 'get'
+2025-03-17 17:26:58,145 - gmail_import - ERROR - Error storing email 195954e94cb7bf11: 'str' object has no attribute 'get'
+2025-03-17 17:26:58,274 - gmail_import - ERROR - Error storing email 195954ba76bdecf5: 'str' object has no attribute 'get'
+2025-03-17 17:26:58,400 - gmail_import - ERROR - Error storing email 1959538881187bb9: 'str' object has no attribute 'get'
+2025-03-17 17:26:58,526 - gmail_import - ERROR - Error storing email 19595370c885e239: 'str' object has no attribute 'get'
+2025-03-17 17:26:59,939 - gmail_import - ERROR - Error storing email 19595341c01ec95b: 'str' object has no attribute 'get'
+2025-03-17 17:27:00,888 - gmail_import - ERROR - Error storing email 195952ef99698891: 'str' object has no attribute 'get'
+2025-03-17 17:27:01,065 - gmail_import - ERROR - Error storing email 195952e26e3f3dc0: 'str' object has no attribute 'get'
+2025-03-17 17:27:01,520 - gmail_import - ERROR - Error storing email 19595262e85ce020: 'str' object has no attribute 'get'
+2025-03-17 17:27:01,634 - gmail_import - ERROR - Error storing email 19595229087e8f4b: 'str' object has no attribute 'get'
+2025-03-17 17:27:01,888 - gmail_import - ERROR - Error storing email 195951d82b439a05: 'str' object has no attribute 'get'
+2025-03-17 17:27:02,254 - gmail_import - ERROR - Error storing email 19594fd69e2e1e97: 'str' object has no attribute 'get'
+2025-03-17 17:27:02,366 - gmail_import - ERROR - Error storing email 19594fc6fafd2e22: 'str' object has no attribute 'get'
+2025-03-17 17:27:02,479 - gmail_import - ERROR - Error storing email 19594fbf43b05ba5: 'str' object has no attribute 'get'
+2025-03-17 17:27:02,774 - gmail_import - ERROR - Error storing email 19594f7db68dab4f: 'str' object has no attribute 'get'
+2025-03-17 17:27:02,932 - gmail_import - INFO - Processed sub-batch 1, Success: 0, Errors: 50
+2025-03-17 17:27:02,932 - gmail_import - INFO - Batch 150-200: Success=0, Errors=50
+2025-03-17 17:27:27,148 - gmail_import - ERROR - Error storing email 19594f7762216e47: 'str' object has no attribute 'get'
+2025-03-17 17:27:27,365 - gmail_import - ERROR - Error storing email 19594f3604666867: 'str' object has no attribute 'get'
+2025-03-17 17:27:27,476 - gmail_import - ERROR - Error storing email 19594f226cc25bb2: 'str' object has no attribute 'get'
+2025-03-17 17:27:27,705 - gmail_import - ERROR - Error storing email 19594e9833abe244: 'str' object has no attribute 'get'
+2025-03-17 17:27:27,816 - gmail_import - ERROR - Error storing email 19594e96263d453e: 'str' object has no attribute 'get'
+2025-03-17 17:27:27,928 - gmail_import - ERROR - Error storing email 19594e061a336043: 'str' object has no attribute 'get'
+2025-03-17 17:27:28,146 - gmail_import - ERROR - Error storing email 19594dedef03ba94: 'str' object has no attribute 'get'
+2025-03-17 17:27:28,255 - gmail_import - ERROR - Error storing email 19594de1fe2e3cd0: 'str' object has no attribute 'get'
+2025-03-17 17:27:28,479 - gmail_import - ERROR - Error storing email 19594d9b0736a23b: 'str' object has no attribute 'get'
+2025-03-17 17:27:28,593 - gmail_import - ERROR - Error storing email 19594cba78801566: 'str' object has no attribute 'get'
+2025-03-17 17:27:28,709 - gmail_import - ERROR - Error storing email 19594ca4fa1ee3ab: 'str' object has no attribute 'get'
+2025-03-17 17:27:28,823 - gmail_import - ERROR - Error storing email 19594c168b85f66f: 'str' object has no attribute 'get'
+2025-03-17 17:27:28,935 - gmail_import - ERROR - Error storing email 19594bdc17db9cf3: 'str' object has no attribute 'get'
+2025-03-17 17:27:29,050 - gmail_import - ERROR - Error storing email 19594a6491ec73f2: 'str' object has no attribute 'get'
+2025-03-17 17:27:29,163 - gmail_import - ERROR - Error storing email 1959499e93d256ca: 'str' object has no attribute 'get'
+2025-03-17 17:27:29,340 - gmail_import - ERROR - Error storing email 195948bb516e7b83: 'str' object has no attribute 'get'
+2025-03-17 17:27:29,485 - gmail_import - ERROR - Error storing email 19594715811a1a4b: 'str' object has no attribute 'get'
+2025-03-17 17:27:29,619 - gmail_import - ERROR - Error storing email 19594317f73648a4: 'str' object has no attribute 'get'
+2025-03-17 17:27:29,747 - gmail_import - ERROR - Error storing email 19594287120c9c08: 'str' object has no attribute 'get'
+2025-03-17 17:27:30,227 - gmail_import - ERROR - Error storing email 1959426b96e067aa: 'str' object has no attribute 'get'
+2025-03-17 17:27:30,366 - gmail_import - ERROR - Error storing email 195941d0d3486656: 'str' object has no attribute 'get'
+2025-03-17 17:27:31,470 - gmail_import - ERROR - Error storing email 195941cb5db39946: 'str' object has no attribute 'get'
+2025-03-17 17:27:31,733 - gmail_import - ERROR - Error storing email 195941b54abc8569: 'str' object has no attribute 'get'
+2025-03-17 17:27:31,846 - gmail_import - ERROR - Error storing email 195941a775da4c96: 'str' object has no attribute 'get'
+2025-03-17 17:27:31,961 - gmail_import - ERROR - Error storing email 195937667e99408e: 'str' object has no attribute 'get'
+2025-03-17 17:27:32,071 - gmail_import - ERROR - Error storing email 195936085ab7aeb4: 'str' object has no attribute 'get'
+2025-03-17 17:27:32,183 - gmail_import - ERROR - Error storing email 19593096b31e2a36: 'str' object has no attribute 'get'
+2025-03-17 17:27:32,295 - gmail_import - ERROR - Error storing email 19593093e4ebb0bd: 'str' object has no attribute 'get'
+2025-03-17 17:27:32,406 - gmail_import - ERROR - Error storing email 19592ee6b1faaf0f: 'str' object has no attribute 'get'
+2025-03-17 17:27:32,636 - gmail_import - ERROR - Error storing email 195924c5a773347b: 'str' object has no attribute 'get'
+2025-03-17 17:27:32,749 - gmail_import - ERROR - Error storing email 195922a2f136caeb: 'str' object has no attribute 'get'
+2025-03-17 17:27:32,866 - gmail_import - ERROR - Error storing email 19591fa18d3772ea: 'str' object has no attribute 'get'
+2025-03-17 17:27:32,992 - gmail_import - ERROR - Error storing email 19591e5e50ed63b7: 'str' object has no attribute 'get'
+2025-03-17 17:27:33,106 - gmail_import - ERROR - Error storing email 19591cfebce0b042: 'str' object has no attribute 'get'
+2025-03-17 17:27:33,218 - gmail_import - ERROR - Error storing email 19591cb0c5ffb326: 'str' object has no attribute 'get'
+2025-03-17 17:27:33,329 - gmail_import - ERROR - Error storing email 195919d891f65d73: 'str' object has no attribute 'get'
+2025-03-17 17:27:33,548 - gmail_import - ERROR - Error storing email 195919c13ffee636: 'str' object has no attribute 'get'
+2025-03-17 17:27:33,676 - gmail_import - ERROR - Error storing email 195918a24f06cddb: 'str' object has no attribute 'get'
+2025-03-17 17:27:33,799 - gmail_import - ERROR - Error storing email 19591867df592f4e: 'str' object has no attribute 'get'
+2025-03-17 17:27:33,910 - gmail_import - ERROR - Error storing email 1959183913eee11b: 'str' object has no attribute 'get'
+2025-03-17 17:27:34,496 - gmail_import - ERROR - Error storing email 195917f272b4b2d7: 'str' object has no attribute 'get'
+2025-03-17 17:27:34,603 - gmail_import - ERROR - Error storing email 195917df04ba423d: 'str' object has no attribute 'get'
+2025-03-17 17:27:34,708 - gmail_import - ERROR - Error storing email 195917106a595fb7: 'str' object has no attribute 'get'
+2025-03-17 17:27:34,817 - gmail_import - ERROR - Error storing email 195915ba0caa9ec0: 'str' object has no attribute 'get'
+2025-03-17 17:27:34,923 - gmail_import - ERROR - Error storing email 1959151a5011c844: 'str' object has no attribute 'get'
+2025-03-17 17:27:35,027 - gmail_import - ERROR - Error storing email 195913915cd5642a: 'str' object has no attribute 'get'
+2025-03-17 17:27:35,134 - gmail_import - ERROR - Error storing email 195912b8b696fbe2: 'str' object has no attribute 'get'
+2025-03-17 17:27:35,239 - gmail_import - ERROR - Error storing email 195911bb9ffa688b: 'str' object has no attribute 'get'
+2025-03-17 17:27:35,344 - gmail_import - ERROR - Error storing email 19591027a4a1465f: 'str' object has no attribute 'get'
+2025-03-17 17:27:35,567 - gmail_import - ERROR - Error storing email 19590ff26972b22b: 'str' object has no attribute 'get'
+2025-03-17 17:27:35,760 - gmail_import - INFO - Processed sub-batch 1, Success: 0, Errors: 50
+2025-03-17 17:27:35,761 - gmail_import - INFO - Batch 200-250: Success=0, Errors=50
+2025-03-17 17:28:00,713 - gmail_import - ERROR - Error storing email 19590ff1b4a35c88: 'str' object has no attribute 'get'
+2025-03-17 17:28:00,877 - gmail_import - ERROR - Error storing email 19590fc71eecfd4e: 'str' object has no attribute 'get'
+2025-03-17 17:28:01,016 - gmail_import - ERROR - Error storing email 19590f1241ffbca3: 'str' object has no attribute 'get'
+2025-03-17 17:28:01,126 - gmail_import - ERROR - Error storing email 19590ef97dfff5ff: 'str' object has no attribute 'get'
+2025-03-17 17:28:01,229 - gmail_import - ERROR - Error storing email 19590ef45640170a: 'str' object has no attribute 'get'
+2025-03-17 17:28:01,336 - gmail_import - ERROR - Error storing email 19590ef3d0b0b559: 'str' object has no attribute 'get'
+2025-03-17 17:28:01,458 - gmail_import - ERROR - Error storing email 19590e57287cec47: 'str' object has no attribute 'get'
+2025-03-17 17:28:01,647 - gmail_import - ERROR - Error storing email 19590cf7e88d07f7: 'str' object has no attribute 'get'
+2025-03-17 17:28:01,752 - gmail_import - ERROR - Error storing email 19590cc1d2452649: 'str' object has no attribute 'get'
+2025-03-17 17:28:01,854 - gmail_import - ERROR - Error storing email 19590b087dc2533f: 'str' object has no attribute 'get'
+2025-03-17 17:28:01,959 - gmail_import - ERROR - Error storing email 19590a97dcf492b2: 'str' object has no attribute 'get'
+2025-03-17 17:28:02,067 - gmail_import - ERROR - Error storing email 19590a843657cd5f: 'str' object has no attribute 'get'
+2025-03-17 17:28:02,175 - gmail_import - ERROR - Error storing email 19590970da2237e6: 'str' object has no attribute 'get'
+2025-03-17 17:28:02,284 - gmail_import - ERROR - Error storing email 19590933cfafcbc3: 'str' object has no attribute 'get'
+2025-03-17 17:28:02,424 - gmail_import - ERROR - Error storing email 195908d950a15b8e: 'str' object has no attribute 'get'
+2025-03-17 17:28:02,528 - gmail_import - ERROR - Error storing email 19590892e42f339d: 'str' object has no attribute 'get'
+2025-03-17 17:28:02,633 - gmail_import - ERROR - Error storing email 19590851abe982c5: 'str' object has no attribute 'get'
+2025-03-17 17:28:02,738 - gmail_import - ERROR - Error storing email 195907c7b0d6f041: 'str' object has no attribute 'get'
+2025-03-17 17:28:02,844 - gmail_import - ERROR - Error storing email 19590792723abfc2: 'str' object has no attribute 'get'
+2025-03-17 17:28:03,223 - gmail_import - ERROR - Error storing email 1959073319f49469: 'str' object has no attribute 'get'
+2025-03-17 17:28:03,329 - gmail_import - ERROR - Error storing email 1959059d6ca72757: 'str' object has no attribute 'get'
+2025-03-17 17:28:03,434 - gmail_import - ERROR - Error storing email 1959053bf1113dac: 'str' object has no attribute 'get'
+2025-03-17 17:28:03,539 - gmail_import - ERROR - Error storing email 1959044b05d73725: 'str' object has no attribute 'get'
+2025-03-17 17:28:03,643 - gmail_import - ERROR - Error storing email 19590449ade98d43: 'str' object has no attribute 'get'
+2025-03-17 17:28:03,856 - gmail_import - ERROR - Error storing email 1959042ba0afa8fb: 'str' object has no attribute 'get'
+2025-03-17 17:28:03,960 - gmail_import - ERROR - Error storing email 19590405ccdd1c63: 'str' object has no attribute 'get'
+2025-03-17 17:28:04,065 - gmail_import - ERROR - Error storing email 195903d2408c1610: 'str' object has no attribute 'get'
+2025-03-17 17:28:04,232 - gmail_import - ERROR - Error storing email 195903d12dd7da98: 'str' object has no attribute 'get'
+2025-03-17 17:28:04,342 - gmail_import - ERROR - Error storing email 195903c90d1a17de: 'str' object has no attribute 'get'
+2025-03-17 17:28:04,450 - gmail_import - ERROR - Error storing email 1959037313beb5d0: 'str' object has no attribute 'get'
+2025-03-17 17:28:04,552 - gmail_import - ERROR - Error storing email 1959016877433736: 'str' object has no attribute 'get'
+2025-03-17 17:28:04,656 - gmail_import - ERROR - Error storing email 1959012622139ec6: 'str' object has no attribute 'get'
+2025-03-17 17:28:04,761 - gmail_import - ERROR - Error storing email 195900c5175dea0f: 'str' object has no attribute 'get'
+2025-03-17 17:28:04,988 - gmail_import - ERROR - Error storing email 195900ac581d1e0d: 'str' object has no attribute 'get'
+2025-03-17 17:28:05,096 - gmail_import - ERROR - Error storing email 195900777b29b354: 'str' object has no attribute 'get'
+2025-03-17 17:28:05,260 - gmail_import - ERROR - Error storing email 1958ff771a21effa: 'str' object has no attribute 'get'
+2025-03-17 17:28:05,363 - gmail_import - ERROR - Error storing email 1958fe3353596756: 'str' object has no attribute 'get'
+2025-03-17 17:28:05,467 - gmail_import - ERROR - Error storing email 1958fd600dd80d8e: 'str' object has no attribute 'get'
+2025-03-17 17:28:05,570 - gmail_import - ERROR - Error storing email 1958fd058077cece: 'str' object has no attribute 'get'
+2025-03-17 17:28:05,896 - gmail_import - ERROR - Error storing email 1958fcecfb7b11b7: 'str' object has no attribute 'get'
+2025-03-17 17:28:05,999 - gmail_import - ERROR - Error storing email 1958fcba47b9f763: 'str' object has no attribute 'get'
+2025-03-17 17:28:06,172 - gmail_import - ERROR - Error storing email 1958fc31b5bc6f48: 'str' object has no attribute 'get'
+2025-03-17 17:28:06,277 - gmail_import - ERROR - Error storing email 1958fbbcaa72d06b: 'str' object has no attribute 'get'
+2025-03-17 17:28:06,381 - gmail_import - ERROR - Error storing email 1958fb95fd11bfef: 'str' object has no attribute 'get'
+2025-03-17 17:28:06,488 - gmail_import - ERROR - Error storing email 1958fb3c15ce9fd7: 'str' object has no attribute 'get'
+2025-03-17 17:28:06,592 - gmail_import - ERROR - Error storing email 1958fb3a8fb1e9c1: 'str' object has no attribute 'get'
+2025-03-17 17:28:06,700 - gmail_import - ERROR - Error storing email 1958fa9405fa9a86: 'str' object has no attribute 'get'
+2025-03-17 17:28:06,803 - gmail_import - ERROR - Error storing email 1958f9f74a8b3917: 'str' object has no attribute 'get'
+2025-03-17 17:28:07,038 - gmail_import - ERROR - Error storing email 1958f9ae65ee8e9d: 'str' object has no attribute 'get'
+2025-03-17 17:28:07,141 - gmail_import - ERROR - Error storing email 1958f97b8ecdf054: 'str' object has no attribute 'get'
+2025-03-17 17:28:07,341 - gmail_import - INFO - Processed sub-batch 1, Success: 0, Errors: 50
+2025-03-17 17:28:07,341 - gmail_import - INFO - Batch 250-300: Success=0, Errors=50
+2025-03-17 17:28:31,035 - gmail_import - ERROR - Error storing email 1958f977575384f6: 'str' object has no attribute 'get'
+2025-03-17 17:28:31,139 - gmail_import - ERROR - Error storing email 1958f913adadad5b: 'str' object has no attribute 'get'
+2025-03-17 17:28:31,241 - gmail_import - ERROR - Error storing email 1958f7e0300ca22e: 'str' object has no attribute 'get'
+2025-03-17 17:28:31,347 - gmail_import - ERROR - Error storing email 1958f6b38572ddbd: 'str' object has no attribute 'get'
+2025-03-17 17:28:31,448 - gmail_import - ERROR - Error storing email 1958f538e587ff5d: 'str' object has no attribute 'get'
+2025-03-17 17:28:31,668 - gmail_import - ERROR - Error storing email 1958f36f70e44da9: 'str' object has no attribute 'get'
+2025-03-17 17:28:31,772 - gmail_import - ERROR - Error storing email 1958f2da7f5bfe3d: 'str' object has no attribute 'get'
+2025-03-17 17:28:31,875 - gmail_import - ERROR - Error storing email 1958f239b9ce346e: 'str' object has no attribute 'get'
+2025-03-17 17:28:32,096 - gmail_import - ERROR - Error storing email 1958f06cca6303b8: 'str' object has no attribute 'get'
+2025-03-17 17:28:32,316 - gmail_import - ERROR - Error storing email 1958ef9eaeaf6113: 'str' object has no attribute 'get'
+2025-03-17 17:28:32,424 - gmail_import - ERROR - Error storing email 1958ef67c06072c2: 'str' object has no attribute 'get'
+2025-03-17 17:28:32,532 - gmail_import - ERROR - Error storing email 1958ef4c99266676: 'str' object has no attribute 'get'
+2025-03-17 17:28:32,638 - gmail_import - ERROR - Error storing email 1958ef3b4c42944b: 'str' object has no attribute 'get'
+2025-03-17 17:28:32,747 - gmail_import - ERROR - Error storing email 1958e4f522bcafcf: 'str' object has no attribute 'get'
+2025-03-17 17:28:32,851 - gmail_import - ERROR - Error storing email 1958e42e96ce5c0d: 'str' object has no attribute 'get'
+2025-03-17 17:28:32,959 - gmail_import - ERROR - Error storing email 1958e2e26de29044: 'str' object has no attribute 'get'
+2025-03-17 17:28:33,073 - gmail_import - ERROR - Error storing email 1958e2052a2a67dd: 'str' object has no attribute 'get'
+2025-03-17 17:28:33,181 - gmail_import - ERROR - Error storing email 1958dd0e6a1ee7a1: 'str' object has no attribute 'get'
+2025-03-17 17:28:33,288 - gmail_import - ERROR - Error storing email 1958d3ba3da2eee6: 'str' object has no attribute 'get'
+2025-03-17 17:28:33,393 - gmail_import - ERROR - Error storing email 1958d359ee13f4ab: 'str' object has no attribute 'get'
+2025-03-17 17:28:33,500 - gmail_import - ERROR - Error storing email 1958d25d12e4c279: 'str' object has no attribute 'get'
+2025-03-17 17:28:33,786 - gmail_import - ERROR - Error storing email 1958d00ed6685e63: 'str' object has no attribute 'get'
+2025-03-17 17:28:33,889 - gmail_import - ERROR - Error storing email 1958cf9fbcfc9b9f: 'str' object has no attribute 'get'
+2025-03-17 17:28:33,991 - gmail_import - ERROR - Error storing email 1958cf9e8fd648a3: 'str' object has no attribute 'get'
+2025-03-17 17:28:34,094 - gmail_import - ERROR - Error storing email 1958cd4ddceba3e3: 'str' object has no attribute 'get'
+2025-03-17 17:28:34,270 - gmail_import - ERROR - Error storing email 1958cadcd3c6c479: 'str' object has no attribute 'get'
+2025-03-17 17:28:34,373 - gmail_import - ERROR - Error storing email 1958c6392534b41f: 'str' object has no attribute 'get'
+2025-03-17 17:28:34,477 - gmail_import - ERROR - Error storing email 1958c602a745c17f: 'str' object has no attribute 'get'
+2025-03-17 17:28:34,582 - gmail_import - ERROR - Error storing email 1958c28c833d43cf: 'str' object has no attribute 'get'
+2025-03-17 17:28:34,803 - gmail_import - ERROR - Error storing email 1958c18eb663ef49: 'str' object has no attribute 'get'
+2025-03-17 17:28:34,907 - gmail_import - ERROR - Error storing email 1958bf9d2885628e: 'str' object has no attribute 'get'
+2025-03-17 17:28:35,047 - gmail_import - ERROR - Error storing email 1958bdf38eaadde3: 'str' object has no attribute 'get'
+2025-03-17 17:28:35,285 - gmail_import - ERROR - Error storing email 1958bca8e33b8378: 'str' object has no attribute 'get'
+2025-03-17 17:28:35,386 - gmail_import - ERROR - Error storing email 1958bc82ec126ac4: 'str' object has no attribute 'get'
+2025-03-17 17:28:35,488 - gmail_import - ERROR - Error storing email 1958bc45b7dbc714: 'str' object has no attribute 'get'
+2025-03-17 17:28:35,707 - gmail_import - ERROR - Error storing email 1958bb04cb7da744: 'str' object has no attribute 'get'
+2025-03-17 17:28:35,843 - gmail_import - ERROR - Error storing email 1958ba54fa60797f: 'str' object has no attribute 'get'
+2025-03-17 17:28:36,070 - gmail_import - ERROR - Error storing email 1958b91c358f7e2e: 'str' object has no attribute 'get'
+2025-03-17 17:28:36,211 - gmail_import - ERROR - Error storing email 1958b81fb7213274: 'str' object has no attribute 'get'
+2025-03-17 17:28:36,345 - gmail_import - ERROR - Error storing email 1958b70cfdbb16e8: 'str' object has no attribute 'get'
+2025-03-17 17:28:36,576 - gmail_import - ERROR - Error storing email 1958b70675507f23: 'str' object has no attribute 'get'
+2025-03-17 17:28:37,916 - gmail_import - ERROR - Error storing email 1958b5ed90ff62ff: 'str' object has no attribute 'get'
+2025-03-17 17:28:38,204 - gmail_import - ERROR - Error storing email 1958b5ba4d23bc24: 'str' object has no attribute 'get'
+2025-03-17 17:28:38,317 - gmail_import - ERROR - Error storing email 1958b510c758b2ff: 'str' object has no attribute 'get'
+2025-03-17 17:28:38,429 - gmail_import - ERROR - Error storing email 1958b4291b518827: 'str' object has no attribute 'get'
+2025-03-17 17:28:38,542 - gmail_import - ERROR - Error storing email 1958b3a75890d18b: 'str' object has no attribute 'get'
+2025-03-17 17:28:38,659 - gmail_import - ERROR - Error storing email 1958b388c929b783: 'str' object has no attribute 'get'
+2025-03-17 17:28:38,810 - gmail_import - ERROR - Error storing email 1958b332fe96ad73: 'str' object has no attribute 'get'
+2025-03-17 17:28:38,921 - gmail_import - ERROR - Error storing email 1958b20fedb7a359: 'str' object has no attribute 'get'
+2025-03-17 17:28:39,032 - gmail_import - ERROR - Error storing email 1958b1ad801d812b: 'str' object has no attribute 'get'
+2025-03-17 17:28:39,176 - gmail_import - INFO - Processed sub-batch 1, Success: 0, Errors: 50
+2025-03-17 17:28:39,177 - gmail_import - INFO - Batch 300-350: Success=0, Errors=50
+2025-03-17 17:29:03,254 - gmail_import - ERROR - Error storing email 1958b13a7b897c13: 'str' object has no attribute 'get'
+2025-03-17 17:29:03,359 - gmail_import - ERROR - Error storing email 1958b0fc957b632b: 'str' object has no attribute 'get'
+2025-03-17 17:29:03,463 - gmail_import - ERROR - Error storing email 1958afd1bd086180: 'str' object has no attribute 'get'
+2025-03-17 17:29:03,566 - gmail_import - ERROR - Error storing email 1958afcf636f0093: 'str' object has no attribute 'get'
+2025-03-17 17:29:03,669 - gmail_import - ERROR - Error storing email 1958af2972a28bf2: 'str' object has no attribute 'get'
+2025-03-17 17:29:03,885 - gmail_import - ERROR - Error storing email 1958af22e00cc237: 'str' object has no attribute 'get'
+2025-03-17 17:29:03,997 - gmail_import - ERROR - Error storing email 1958af0dabbc0da2: 'str' object has no attribute 'get'
+2025-03-17 17:29:04,103 - gmail_import - ERROR - Error storing email 1958ae615562e767: 'str' object has no attribute 'get'
+2025-03-17 17:29:04,207 - gmail_import - ERROR - Error storing email 1958ae1501a9766c: 'str' object has no attribute 'get'
+2025-03-17 17:29:04,311 - gmail_import - ERROR - Error storing email 1958adb924a32346: 'str' object has no attribute 'get'
+2025-03-17 17:29:04,424 - gmail_import - ERROR - Error storing email 1958adaa4d65c971: 'str' object has no attribute 'get'
+2025-03-17 17:29:04,527 - gmail_import - ERROR - Error storing email 1958ada2e9971a8a: 'str' object has no attribute 'get'
+2025-03-17 17:29:05,370 - gmail_import - ERROR - Error storing email 1958ad664229555e: 'str' object has no attribute 'get'
+2025-03-17 17:29:05,476 - gmail_import - ERROR - Error storing email 1958ac615d129267: 'str' object has no attribute 'get'
+2025-03-17 17:29:05,584 - gmail_import - ERROR - Error storing email 1958ab93f48700c5: 'str' object has no attribute 'get'
+2025-03-17 17:29:05,807 - gmail_import - ERROR - Error storing email 1958ab43697a2fb3: 'str' object has no attribute 'get'
+2025-03-17 17:29:05,913 - gmail_import - ERROR - Error storing email 1958aae4af19a391: 'str' object has no attribute 'get'
+2025-03-17 17:29:06,028 - gmail_import - ERROR - Error storing email 1958aa8c667f7fbb: 'str' object has no attribute 'get'
+2025-03-17 17:29:06,138 - gmail_import - ERROR - Error storing email 1958aa212882f1aa: 'str' object has no attribute 'get'
+2025-03-17 17:29:06,667 - gmail_import - ERROR - Error storing email 1958aa210ed36b24: 'str' object has no attribute 'get'
+2025-03-17 17:29:08,077 - gmail_import - ERROR - Error storing email 1958aa16eba1450e: 'str' object has no attribute 'get'
+2025-03-17 17:29:08,555 - gmail_import - ERROR - Error storing email 1958a9aed3cf1dad: 'str' object has no attribute 'get'
+2025-03-17 17:29:08,681 - gmail_import - ERROR - Error storing email 1958a73dce5a517b: 'str' object has no attribute 'get'
+2025-03-17 17:29:08,793 - gmail_import - ERROR - Error storing email 1958a712add10104: 'str' object has no attribute 'get'
+2025-03-17 17:29:08,916 - gmail_import - ERROR - Error storing email 1958a62ef8db1b72: 'str' object has no attribute 'get'
+2025-03-17 17:29:09,053 - gmail_import - ERROR - Error storing email 1958a58a2567fbbc: 'str' object has no attribute 'get'
+2025-03-17 17:29:09,407 - gmail_import - ERROR - Error storing email 1958a57a83136b5b: 'str' object has no attribute 'get'
+2025-03-17 17:29:09,523 - gmail_import - ERROR - Error storing email 1958a4ef3a8095c8: 'str' object has no attribute 'get'
+2025-03-17 17:29:09,642 - gmail_import - ERROR - Error storing email 1958a3e3149dfa68: 'str' object has no attribute 'get'
+2025-03-17 17:29:09,756 - gmail_import - ERROR - Error storing email 1958a2cb5a1d5f84: 'str' object has no attribute 'get'
+2025-03-17 17:29:09,870 - gmail_import - ERROR - Error storing email 1958a1730c257529: 'str' object has no attribute 'get'
+2025-03-17 17:29:09,985 - gmail_import - ERROR - Error storing email 1958a16026ad9ab8: 'str' object has no attribute 'get'
+2025-03-17 17:29:10,201 - gmail_import - ERROR - Error storing email 19589e7a8c105e63: 'str' object has no attribute 'get'
+2025-03-17 17:29:10,493 - gmail_import - ERROR - Error storing email 19589dfbf6146001: 'str' object has no attribute 'get'
+2025-03-17 17:29:10,608 - gmail_import - ERROR - Error storing email 19589d33b389f1b8: 'str' object has no attribute 'get'
+2025-03-17 17:29:10,723 - gmail_import - ERROR - Error storing email 19589ce4bd814b08: 'str' object has no attribute 'get'
+2025-03-17 17:29:10,837 - gmail_import - ERROR - Error storing email 19589ccf6729020e: 'str' object has no attribute 'get'
+2025-03-17 17:29:10,951 - gmail_import - ERROR - Error storing email 19589c261218ce2e: 'str' object has no attribute 'get'
+2025-03-17 17:29:11,222 - gmail_import - ERROR - Error storing email 1958928acafeda7e: 'str' object has no attribute 'get'
+2025-03-17 17:29:11,334 - gmail_import - ERROR - Error storing email 19589169e45d8129: 'str' object has no attribute 'get'
+2025-03-17 17:29:12,012 - gmail_import - ERROR - Error storing email 19588b65d4b85222: 'str' object has no attribute 'get'
+2025-03-17 17:29:12,242 - gmail_import - ERROR - Error storing email 19588b6541a8b790: 'str' object has no attribute 'get'
+2025-03-17 17:29:12,465 - gmail_import - ERROR - Error storing email 19588375b2d9c4de: 'str' object has no attribute 'get'
+2025-03-17 17:29:12,567 - gmail_import - ERROR - Error storing email 195881517a94163c: 'str' object has no attribute 'get'
+2025-03-17 17:29:12,669 - gmail_import - ERROR - Error storing email 195881491fbe8060: 'str' object has no attribute 'get'
+2025-03-17 17:29:12,950 - gmail_import - ERROR - Error storing email 19588015a61118db: 'str' object has no attribute 'get'
+2025-03-17 17:29:13,054 - gmail_import - ERROR - Error storing email 19587bced0461f77: 'str' object has no attribute 'get'
+2025-03-17 17:29:13,286 - gmail_import - ERROR - Error storing email 195875b8ebb4ec43: 'str' object has no attribute 'get'
+2025-03-17 17:29:13,391 - gmail_import - ERROR - Error storing email 1958750305c4d787: 'str' object has no attribute 'get'
+2025-03-17 17:29:13,606 - gmail_import - ERROR - Error storing email 195874762c551dd0: 'str' object has no attribute 'get'
+2025-03-17 17:29:14,107 - gmail_import - INFO - Processed sub-batch 1, Success: 0, Errors: 50
+2025-03-17 17:29:14,107 - gmail_import - INFO - Batch 350-400: Success=0, Errors=50
+2025-03-17 17:29:39,041 - gmail_import - ERROR - Error storing email 195873cd65a70e5c: 'str' object has no attribute 'get'
+2025-03-17 17:29:39,144 - gmail_import - ERROR - Error storing email 195873aa012de0c0: 'str' object has no attribute 'get'
+2025-03-17 17:29:39,338 - gmail_import - ERROR - Error storing email 195871a16aaea511: 'str' object has no attribute 'get'
+2025-03-17 17:29:39,575 - gmail_import - ERROR - Error storing email 1958703d0d51a0c6: 'str' object has no attribute 'get'
+2025-03-17 17:29:39,677 - gmail_import - ERROR - Error storing email 19586fb8885d2360: 'str' object has no attribute 'get'
+2025-03-17 17:29:39,778 - gmail_import - ERROR - Error storing email 19586e740db05f33: 'str' object has no attribute 'get'
+2025-03-17 17:29:40,025 - gmail_import - ERROR - Error storing email 19586dbc9eb3cf0a: 'str' object has no attribute 'get'
+2025-03-17 17:29:40,281 - gmail_import - ERROR - Error storing email 19586d76cfdb16a9: 'str' object has no attribute 'get'
+2025-03-17 17:29:40,505 - gmail_import - ERROR - Error storing email 19586c0d80c44943: 'str' object has no attribute 'get'
+2025-03-17 17:29:40,609 - gmail_import - ERROR - Error storing email 19586b2754252948: 'str' object has no attribute 'get'
+2025-03-17 17:29:40,713 - gmail_import - ERROR - Error storing email 19586ad80be2cbcb: 'str' object has no attribute 'get'
+2025-03-17 17:29:40,820 - gmail_import - ERROR - Error storing email 19586ad1d3af5661: 'str' object has no attribute 'get'
+2025-03-17 17:29:40,925 - gmail_import - ERROR - Error storing email 19586ac85af2fb9a: 'str' object has no attribute 'get'
+2025-03-17 17:29:41,029 - gmail_import - ERROR - Error storing email 195869ee26650bb4: 'str' object has no attribute 'get'
+2025-03-17 17:29:41,251 - gmail_import - ERROR - Error storing email 19586971a16c6a88: 'str' object has no attribute 'get'
+2025-03-17 17:29:41,425 - gmail_import - ERROR - Error storing email 1958683350bf8450: 'str' object has no attribute 'get'
+2025-03-17 17:29:41,648 - gmail_import - ERROR - Error storing email 195867dd4aa66456: 'str' object has no attribute 'get'
+2025-03-17 17:29:41,786 - gmail_import - ERROR - Error storing email 1958662f386a588d: 'str' object has no attribute 'get'
+2025-03-17 17:29:41,916 - gmail_import - ERROR - Error storing email 195865e1b0f0c0ce: 'str' object has no attribute 'get'
+2025-03-17 17:29:43,267 - gmail_import - ERROR - Error storing email 195865c461c95139: 'str' object has no attribute 'get'
+2025-03-17 17:29:43,671 - gmail_import - ERROR - Error storing email 195865889fdaf20a: 'str' object has no attribute 'get'
+2025-03-17 17:29:43,784 - gmail_import - ERROR - Error storing email 195865333f34103a: 'str' object has no attribute 'get'
+2025-03-17 17:29:44,065 - gmail_import - ERROR - Error storing email 1958646b51590005: 'str' object has no attribute 'get'
+2025-03-17 17:29:44,177 - gmail_import - ERROR - Error storing email 1958635e88e53caf: 'str' object has no attribute 'get'
+2025-03-17 17:29:44,456 - gmail_import - ERROR - Error storing email 195862af2e2ffa1d: 'str' object has no attribute 'get'
+2025-03-17 17:29:44,568 - gmail_import - ERROR - Error storing email 1958629939574791: 'str' object has no attribute 'get'
+2025-03-17 17:29:44,682 - gmail_import - ERROR - Error storing email 19586295a25c73ca: 'str' object has no attribute 'get'
+2025-03-17 17:29:44,796 - gmail_import - ERROR - Error storing email 1958626e37da33d1: 'str' object has no attribute 'get'
+2025-03-17 17:29:44,910 - gmail_import - ERROR - Error storing email 19586212a1f95882: 'str' object has no attribute 'get'
+2025-03-17 17:29:45,021 - gmail_import - ERROR - Error storing email 195861f031cea479: 'str' object has no attribute 'get'
+2025-03-17 17:29:45,238 - gmail_import - ERROR - Error storing email 195861b84a88c0a8: 'str' object has no attribute 'get'
+2025-03-17 17:29:45,348 - gmail_import - ERROR - Error storing email 195860f8ee498250: 'str' object has no attribute 'get'
+2025-03-17 17:29:45,459 - gmail_import - ERROR - Error storing email 195860a225cb742e: 'str' object has no attribute 'get'
+2025-03-17 17:29:45,931 - gmail_import - ERROR - Error storing email 19586078d5871c27: 'str' object has no attribute 'get'
+2025-03-17 17:29:46,042 - gmail_import - ERROR - Error storing email 1958604d904f6129: 'str' object has no attribute 'get'
+2025-03-17 17:29:46,264 - gmail_import - ERROR - Error storing email 19585e7bb5a1e4b7: 'str' object has no attribute 'get'
+2025-03-17 17:29:46,490 - gmail_import - ERROR - Error storing email 19585e7bafb12faf: 'str' object has no attribute 'get'
+2025-03-17 17:29:46,600 - gmail_import - ERROR - Error storing email 19585cc375399868: 'str' object has no attribute 'get'
+2025-03-17 17:29:46,816 - gmail_import - ERROR - Error storing email 19585cc22e991f71: 'str' object has no attribute 'get'
+2025-03-17 17:29:47,489 - gmail_import - ERROR - Error storing email 19585c65407d1eab: 'str' object has no attribute 'get'
+2025-03-17 17:29:47,677 - gmail_import - ERROR - Error storing email 19585c244b4ba823: 'str' object has no attribute 'get'
+2025-03-17 17:29:47,781 - gmail_import - ERROR - Error storing email 19585a8ff99bcb29: 'str' object has no attribute 'get'
+2025-03-17 17:29:47,885 - gmail_import - ERROR - Error storing email 1958599a5f837544: 'str' object has no attribute 'get'
+2025-03-17 17:29:47,988 - gmail_import - ERROR - Error storing email 195858a62f40176b: 'str' object has no attribute 'get'
+2025-03-17 17:29:48,093 - gmail_import - ERROR - Error storing email 19585854635201ee: 'str' object has no attribute 'get'
+2025-03-17 17:29:48,199 - gmail_import - ERROR - Error storing email 195858523ad7c524: 'str' object has no attribute 'get'
+2025-03-17 17:29:48,303 - gmail_import - ERROR - Error storing email 1958583a754f83df: 'str' object has no attribute 'get'
+2025-03-17 17:29:48,410 - gmail_import - ERROR - Error storing email 1958581dd22c9334: 'str' object has no attribute 'get'
+2025-03-17 17:29:48,515 - gmail_import - ERROR - Error storing email 19585726824d726c: 'str' object has no attribute 'get'
+2025-03-17 17:29:48,620 - gmail_import - ERROR - Error storing email 195856fda0d526c4: 'str' object has no attribute 'get'
+2025-03-17 17:29:48,797 - gmail_import - INFO - Processed sub-batch 1, Success: 0, Errors: 50
+2025-03-17 17:29:48,797 - gmail_import - INFO - Batch 400-450: Success=0, Errors=50
+2025-03-17 17:30:13,000 - gmail_import - ERROR - Error storing email 195856c2e2327fc7: 'str' object has no attribute 'get'
+2025-03-17 17:30:13,105 - gmail_import - ERROR - Error storing email 195856adbf5882ef: 'str' object has no attribute 'get'
+2025-03-17 17:30:13,211 - gmail_import - ERROR - Error storing email 19585682a0e462c4: 'str' object has no attribute 'get'
+2025-03-17 17:30:13,323 - gmail_import - ERROR - Error storing email 1958565e855bff19: 'str' object has no attribute 'get'
+2025-03-17 17:30:13,429 - gmail_import - ERROR - Error storing email 1958565640d3ec8d: 'str' object has no attribute 'get'
+2025-03-17 17:30:13,532 - gmail_import - ERROR - Error storing email 1958559a1accd2d1: 'str' object has no attribute 'get'
+2025-03-17 17:30:13,637 - gmail_import - ERROR - Error storing email 19585587031b7e6f: 'str' object has no attribute 'get'
+2025-03-17 17:30:13,746 - gmail_import - ERROR - Error storing email 1958555e227da377: 'str' object has no attribute 'get'
+2025-03-17 17:30:13,854 - gmail_import - ERROR - Error storing email 195854eb23db56c4: 'str' object has no attribute 'get'
+2025-03-17 17:30:13,958 - gmail_import - ERROR - Error storing email 195854d980ebbfa6: 'str' object has no attribute 'get'
+2025-03-17 17:30:15,591 - gmail_import - ERROR - Error storing email 195854aeb99d764f: 'str' object has no attribute 'get'
+2025-03-17 17:30:16,192 - gmail_import - ERROR - Error storing email 195854ab8bdc65a0: 'str' object has no attribute 'get'
+2025-03-17 17:30:16,301 - gmail_import - ERROR - Error storing email 1958540a29d5ec29: 'str' object has no attribute 'get'
+2025-03-17 17:30:16,524 - gmail_import - ERROR - Error storing email 19585314086da5d8: 'str' object has no attribute 'get'
+2025-03-17 17:30:16,628 - gmail_import - ERROR - Error storing email 195852e0cdbf7ff6: 'str' object has no attribute 'get'
+2025-03-17 17:30:16,733 - gmail_import - ERROR - Error storing email 1958522dc780e4ab: 'str' object has no attribute 'get'
+2025-03-17 17:30:16,840 - gmail_import - ERROR - Error storing email 1958515797aa2be5: 'str' object has no attribute 'get'
+2025-03-17 17:30:17,059 - gmail_import - ERROR - Error storing email 19584f605b7755c3: 'str' object has no attribute 'get'
+2025-03-17 17:30:17,163 - gmail_import - ERROR - Error storing email 19584ebec073b778: 'str' object has no attribute 'get'
+2025-03-17 17:30:17,267 - gmail_import - ERROR - Error storing email 19584ea2d12a52ad: 'str' object has no attribute 'get'
+2025-03-17 17:30:17,372 - gmail_import - ERROR - Error storing email 19584b3f553b17d3: 'str' object has no attribute 'get'
+2025-03-17 17:30:17,758 - gmail_import - ERROR - Error storing email 19584ae39c9becf4: 'str' object has no attribute 'get'
+2025-03-17 17:30:17,862 - gmail_import - ERROR - Error storing email 19584a7a9ca13dd6: 'str' object has no attribute 'get'
+2025-03-17 17:30:17,969 - gmail_import - ERROR - Error storing email 19584a70a19f71df: 'str' object has no attribute 'get'
+2025-03-17 17:30:18,073 - gmail_import - ERROR - Error storing email 19584812d609ffd7: 'str' object has no attribute 'get'
+2025-03-17 17:30:18,289 - gmail_import - ERROR - Error storing email 1958467eb94560bb: 'str' object has no attribute 'get'
+2025-03-17 17:30:18,688 - gmail_import - ERROR - Error storing email 19584444c9ab22cd: 'str' object has no attribute 'get'
+2025-03-17 17:30:18,793 - gmail_import - ERROR - Error storing email 19584444b2eab266: 'str' object has no attribute 'get'
+2025-03-17 17:30:18,898 - gmail_import - ERROR - Error storing email 19584257a6237cb7: 'str' object has no attribute 'get'
+2025-03-17 17:30:19,088 - gmail_import - ERROR - Error storing email 1958401d3ecc997e: 'str' object has no attribute 'get'
+2025-03-17 17:30:19,395 - gmail_import - ERROR - Error storing email 19583629d29d1aa6: 'str' object has no attribute 'get'
+2025-03-17 17:30:19,497 - gmail_import - ERROR - Error storing email 195834f952346d8a: 'str' object has no attribute 'get'
+2025-03-17 17:30:19,736 - gmail_import - ERROR - Error storing email 19583328dfbf014a: 'str' object has no attribute 'get'
+2025-03-17 17:30:20,023 - gmail_import - ERROR - Error storing email 19583308ef8643db: 'str' object has no attribute 'get'
+2025-03-17 17:30:20,126 - gmail_import - ERROR - Error storing email 195830fa5b727f90: 'str' object has no attribute 'get'
+2025-03-17 17:30:20,345 - gmail_import - ERROR - Error storing email 19582e486d2e0baf: 'str' object has no attribute 'get'
+2025-03-17 17:30:20,449 - gmail_import - ERROR - Error storing email 19582da578dc5c4b: 'str' object has no attribute 'get'
+2025-03-17 17:30:20,744 - gmail_import - ERROR - Error storing email 19582cf829bdd60b: 'str' object has no attribute 'get'
+2025-03-17 17:30:20,966 - gmail_import - ERROR - Error storing email 19582c6037bff6b3: 'str' object has no attribute 'get'
+2025-03-17 17:30:21,185 - gmail_import - ERROR - Error storing email 19582b479ae56b7f: 'str' object has no attribute 'get'
+2025-03-17 17:30:21,736 - gmail_import - ERROR - Error storing email 1958296ca43dc22f: 'str' object has no attribute 'get'
+2025-03-17 17:30:21,840 - gmail_import - ERROR - Error storing email 1958296c48278ccb: 'str' object has no attribute 'get'
+2025-03-17 17:30:21,945 - gmail_import - ERROR - Error storing email 195828696b588544: 'str' object has no attribute 'get'
+2025-03-17 17:30:22,055 - gmail_import - ERROR - Error storing email 1958274ae2959815: 'str' object has no attribute 'get'
+2025-03-17 17:30:22,159 - gmail_import - ERROR - Error storing email 195824a93611041b: 'str' object has no attribute 'get'
+2025-03-17 17:30:22,264 - gmail_import - ERROR - Error storing email 195824a76afbf5b1: 'str' object has no attribute 'get'
+2025-03-17 17:30:22,371 - gmail_import - ERROR - Error storing email 1958243117c29d1b: 'str' object has no attribute 'get'
+2025-03-17 17:30:22,476 - gmail_import - ERROR - Error storing email 1958220c31b7bef4: 'str' object has no attribute 'get'
+2025-03-17 17:30:22,580 - gmail_import - ERROR - Error storing email 195821af4a06899f: 'str' object has no attribute 'get'
+2025-03-17 17:30:22,693 - gmail_import - ERROR - Error storing email 19581d3daf194aeb: 'str' object has no attribute 'get'
+2025-03-17 17:30:22,838 - gmail_import - INFO - Processed sub-batch 1, Success: 0, Errors: 50
+2025-03-17 17:30:22,838 - gmail_import - INFO - Batch 450-500: Success=0, Errors=50
+2025-03-17 17:30:34,052 - gmail_import - ERROR - Error storing email 19581aa589288178: 'str' object has no attribute 'get'
+2025-03-17 17:30:34,160 - gmail_import - ERROR - Error storing email 19581a18f67a3ee4: 'str' object has no attribute 'get'
+2025-03-17 17:30:34,638 - gmail_import - ERROR - Error storing email 19581954b76568dc: 'str' object has no attribute 'get'
+2025-03-17 17:30:34,789 - gmail_import - ERROR - Error storing email 19581891e5e44df6: 'str' object has no attribute 'get'
+2025-03-17 17:30:34,921 - gmail_import - ERROR - Error storing email 19581622bcfaacc2: 'str' object has no attribute 'get'
+2025-03-17 17:30:35,259 - gmail_import - ERROR - Error storing email 1958154c2e29f365: 'str' object has no attribute 'get'
+2025-03-17 17:30:35,382 - gmail_import - ERROR - Error storing email 1958143bb995f31d: 'str' object has no attribute 'get'
+2025-03-17 17:30:35,503 - gmail_import - ERROR - Error storing email 1958139c925d4fcc: 'str' object has no attribute 'get'
+2025-03-17 17:30:35,715 - gmail_import - ERROR - Error storing email 1958136654853802: 'str' object has no attribute 'get'
+2025-03-17 17:30:36,820 - gmail_import - ERROR - Error storing email 1958135c272db0e3: 'str' object has no attribute 'get'
+2025-03-17 17:30:36,931 - gmail_import - ERROR - Error storing email 1958128b89e02762: 'str' object has no attribute 'get'
+2025-03-17 17:30:37,083 - gmail_import - INFO - Processed sub-batch 1, Success: 0, Errors: 11
+2025-03-17 17:30:37,083 - gmail_import - INFO - Batch 500-511: Success=0, Errors=11
+2025-03-17 17:30:37,083 - gmail_import - INFO - Import batch import_20250317_171850_50605 completed successfully
+2025-03-17 17:30:37,083 - gmail_import - INFO - Database connection closed

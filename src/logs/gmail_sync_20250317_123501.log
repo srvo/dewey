@@ -1,0 +1,2 @@
+2025-03-17 12:35:01,320 - dewey.core.crm.gmail.gmail_sync_manager - ERROR - Failed to build Gmail service: name 'google' is not defined
+2025-03-17 12:35:01,322 - gmail_sync - ERROR - Sync failed: Gmail service initialization failed: name 'google' is not defined

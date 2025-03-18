@@ -1,2 +1,6 @@
 .aider*
 .env
+build/*
+!build/build.xml
+
+

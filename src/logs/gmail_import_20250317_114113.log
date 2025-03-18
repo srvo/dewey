@@ -1,0 +1,25 @@
+2025-03-17 11:41:13,877 - gmail_import - ERROR - Error reading checkpoint: Binder Error: Referenced column "batch_size" not found in FROM clause!
+Candidate bindings: "last_import_time", "last_processed_index"
+
+LINE 2: ...                SELECT last_processed_index, last_import_time, batch_size, total_emails, 
+                                                                          ^
+2025-03-17 11:41:13,878 - gmail_import - INFO - Using token from /Users/srvo/dewey/token.json
+2025-03-17 11:41:13,879 - gmail_import - INFO - Refreshing expired credentials
+2025-03-17 11:41:14,129 - gmail_import - INFO - Importing emails from 2025/03/10 to 2025/03/17
+2025-03-17 11:41:14,129 - gmail_import - INFO - Including sent emails
+2025-03-17 11:41:14,525 - gmail_import - INFO - Fetched 500 messages, total: 500
+2025-03-17 11:41:15,253 - gmail_import - INFO - Fetched 500 messages, total: 1000
+2025-03-17 11:41:15,253 - gmail_import - INFO - Found 1000 emails, fetching details...
+2025-03-17 11:41:18,749 - gmail_import - INFO - Processing message 10/1000
+2025-03-17 11:41:23,147 - gmail_import - INFO - Processing message 20/1000
+2025-03-17 11:41:26,981 - gmail_import - INFO - Processing message 30/1000
+2025-03-17 11:41:30,788 - gmail_import - INFO - Processing message 40/1000
+2025-03-17 11:41:35,003 - gmail_import - INFO - Processing message 50/1000
+2025-03-17 11:41:39,371 - gmail_import - INFO - Processing message 60/1000
+2025-03-17 11:41:43,387 - gmail_import - INFO - Processing message 70/1000
+2025-03-17 11:41:47,386 - gmail_import - INFO - Processing message 80/1000
+2025-03-17 11:41:51,419 - gmail_import - INFO - Processing message 90/1000
+2025-03-17 11:41:55,424 - gmail_import - INFO - Processing message 100/1000
+2025-03-17 11:41:59,446 - gmail_import - INFO - Processing message 110/1000
+2025-03-17 11:42:03,812 - gmail_import - INFO - Processing message 120/1000
+2025-03-17 11:42:07,485 - gmail_import - INFO - Processing message 130/1000

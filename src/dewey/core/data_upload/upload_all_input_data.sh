@@ -6,8 +6,7 @@
 DEWEY_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 DEFAULT_INPUT_DIR="/Users/srvo/input_data"
 LOG_DIR="${DEWEY_DIR}/logs"
-TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-LOG_FILE="${LOG_DIR}/all_input_data_upload_${TIMESTAMP}.log"
+LOG_FILE="${LOG_DIR}/all_input_data_$(date +%Y%m%d).log"
 
 # Create log directory if it doesn't exist
 mkdir -p "${LOG_DIR}"
@@ -194,10 +193,10 @@ if [ "${PROCESS_DUCKDB}" = true ] && [ ${DUCKDB_COUNT} -gt 0 ]; then
         file="${DUCKDB_FILES[i]}"
         if [ -n "${file}" ]; then
             log_message "Uploading DuckDB file: ${file}"
-            python -m dewey.core.data_upload.motherduck_uploader \
+            python -m dewey.core.data_upload.upload \
                 --file "${file}" \
-                --database "${DATABASE}" \
-                --dedup-strategy "${DEDUP_STRATEGY}"
+                --target_db "${DATABASE}" \
+                --dedup_strategy "${DEDUP_STRATEGY}"
             
             if [ $? -eq 0 ]; then
                 log_message "Successfully uploaded ${file}"
@@ -234,10 +233,10 @@ if [ "${PROCESS_SQLITE}" = true ] && [ ${SQLITE_COUNT} -gt 0 ]; then
         file="${SQLITE_FILES[i]}"
         if [ -n "${file}" ]; then
             log_message "Uploading SQLite file: ${file}"
-            python -m dewey.core.data_upload.motherduck_uploader \
+            python -m dewey.core.data_upload.upload \
                 --file "${file}" \
-                --database "${DATABASE}" \
-                --dedup-strategy "${DEDUP_STRATEGY}"
+                --target_db "${DATABASE}" \
+                --dedup_strategy "${DEDUP_STRATEGY}"
             
             if [ $? -eq 0 ]; then
                 log_message "Successfully uploaded ${file}"
@@ -274,10 +273,10 @@ if [ "${PROCESS_CSV}" = true ] && [ ${CSV_COUNT} -gt 0 ]; then
         file="${CSV_FILES[i]}"
         if [ -n "${file}" ]; then
             log_message "Uploading CSV file: ${file}"
-            python -m dewey.core.data_upload.motherduck_uploader \
+            python -m dewey.core.data_upload.upload \
                 --file "${file}" \
-                --database "${DATABASE}" \
-                --dedup-strategy "${DEDUP_STRATEGY}"
+                --target_db "${DATABASE}" \
+                --dedup_strategy "${DEDUP_STRATEGY}"
             
             if [ $? -eq 0 ]; then
                 log_message "Successfully uploaded ${file}"
@@ -314,10 +313,10 @@ if [ "${PROCESS_JSON}" = true ] && [ ${JSON_COUNT} -gt 0 ]; then
         file="${JSON_FILES[i]}"
         if [ -n "${file}" ]; then
             log_message "Uploading JSON file: ${file}"
-            python -m dewey.core.data_upload.motherduck_uploader \
+            python -m dewey.core.data_upload.upload \
                 --file "${file}" \
-                --database "${DATABASE}" \
-                --dedup-strategy "${DEDUP_STRATEGY}"
+                --target_db "${DATABASE}" \
+                --dedup_strategy "${DEDUP_STRATEGY}"
             
             if [ $? -eq 0 ]; then
                 log_message "Successfully uploaded ${file}"

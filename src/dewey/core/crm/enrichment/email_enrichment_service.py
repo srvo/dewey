@@ -16,6 +16,11 @@ import uuid
 from typing import Dict, List, Optional, Any
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
+import sys
+import argparse
+from pathlib import Path
+from dewey.utils import get_logger
+from dewey.core.engines import MotherDuckEngine
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -348,14 +353,97 @@ class EmailEnrichmentService:
             logger.error(f"Error in email enrichment: {str(e)}")
             raise
 
-if __name__ == "__main__":
-    import argparse
+def enrich_emails(engine, dedup_strategy='update'):
+    """Enrich email data with additional information."""
+    # Add contact information
+    engine.execute_query("""
+        UPDATE emails e
+        SET contact_id = c.id
+        FROM contacts c
+        WHERE e.from_email = c.email
+        AND e.contact_id IS NULL
+    """)
     
-    parser = argparse.ArgumentParser(description="Enrich emails with full content from Gmail")
-    parser.add_argument("--batch-size", type=int, default=50, help="Batch size for processing emails")
-    parser.add_argument("--max-emails", type=int, default=100, help="Maximum number of emails to process")
+    # Add company information
+    engine.execute_query("""
+        UPDATE emails e
+        SET company_id = c.company_id
+        FROM contacts c
+        WHERE e.contact_id = c.id
+        AND e.company_id IS NULL
+    """)
     
+    # Extract topics and sentiment
+    engine.execute_query("""
+        UPDATE emails e
+        SET 
+            topics = llm_extract_topics(e.body),
+            sentiment = llm_analyze_sentiment(e.body)
+        WHERE topics IS NULL OR sentiment IS NULL
+    """)
+    
+    # Detect opportunities
+    engine.execute_query("""
+        UPDATE emails e
+        SET opportunities = llm_detect_opportunities(e.body)
+        WHERE opportunities IS NULL
+    """)
+
+def main():
+    parser = argparse.ArgumentParser(description='Enrich email data with additional information')
+    parser.add_argument('--target_db', help='Target database name', default='dewey')
+    parser.add_argument('--dedup_strategy', choices=['none', 'update', 'ignore'], default='update',
+                       help='Deduplication strategy: none, update, or ignore')
     args = parser.parse_args()
-    
-    service = EmailEnrichmentService()
-    service.enrich_emails(batch_size=args.batch_size, max_emails=args.max_emails)
+
+    # Set up logging
+    log_dir = os.path.join(os.getenv('DEWEY_DIR', os.path.expanduser('~/dewey')), 'logs')
+    logger = get_logger('email_enrichment', log_dir)
+
+    try:
+        engine = MotherDuckEngine(args.target_db)
+        
+        logger.info("Starting email enrichment process")
+        
+        # Get initial counts
+        email_count = engine.execute_query("SELECT COUNT(*) FROM emails").fetchone()[0]
+        enriched_count = engine.execute_query("""
+            SELECT COUNT(*) FROM emails 
+            WHERE contact_id IS NOT NULL 
+            AND company_id IS NOT NULL 
+            AND topics IS NOT NULL 
+            AND sentiment IS NOT NULL 
+            AND opportunities IS NOT NULL
+        """).fetchone()[0]
+        
+        logger.info(f"Total emails: {email_count}")
+        logger.info(f"Already enriched: {enriched_count}")
+        logger.info(f"Emails to process: {email_count - enriched_count}")
+        
+        # Perform enrichment
+        enrich_emails(engine, args.dedup_strategy)
+        
+        # Get final counts
+        final_enriched = engine.execute_query("""
+            SELECT COUNT(*) FROM emails 
+            WHERE contact_id IS NOT NULL 
+            AND company_id IS NOT NULL 
+            AND topics IS NOT NULL 
+            AND sentiment IS NOT NULL 
+            AND opportunities IS NOT NULL
+        """).fetchone()[0]
+        
+        logger.info("\nEnrichment completed:")
+        logger.info(f"Total emails processed: {email_count}")
+        logger.info(f"Newly enriched: {final_enriched - enriched_count}")
+        logger.info(f"Total enriched: {final_enriched}")
+        
+    except Exception as e:
+        logger.error(f"Error during email enrichment: {str(e)}", exc_info=True)
+        sys.exit(1)
+    finally:
+        if 'engine' in locals():
+            engine.close()
+
+if __name__ == '__main__':
+    main()
