@@ -213,9 +213,19 @@ class TestWriter:
 if __name__ == "__main__":
     import argparse
     
-    parser = argparse.ArgumentParser(description="Generate test suites using LLM-powered test writer")
-    parser.add_argument("source", help="Source directory or file to process")
-    parser.add_argument("--test-root", help="Root directory for test output")
+    parser = argparse.ArgumentParser(
+        description="Generate test suites using LLM-powered test writer",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument(
+        "source", 
+        help="Root directory to recursively process (e.g. src/dewey) or specific file"
+    )
+    parser.add_argument(
+        "--test-root", 
+        default="tests",
+        help="Root directory for test output (mirrors source structure)"
+    )
     
     args = parser.parse_args()
     
