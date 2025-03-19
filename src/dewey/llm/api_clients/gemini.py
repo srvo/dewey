@@ -3,32 +3,25 @@ from typing import Any, Dict
 
 
 class GeminiClient(BaseScript):
-    """
-    A client for interacting with the Gemini LLM API.
-    """
+    """A client for interacting with the Gemini LLM API."""
 
     def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
-        """
-        Initializes the GeminiClient.
+        """Initializes the GeminiClient.
 
         Args:
-            config (Dict[str, Any]): The configuration dictionary.
-            **kwargs (Any): Additional keyword arguments.
+            config: The configuration dictionary.
+            **kwargs: Additional keyword arguments.
         """
         super().__init__(config=config, **kwargs)
 
     def run(self) -> None:
-        """
-        Executes the core logic of the Gemini client.
+        """Executes the core logic of the Gemini client.
 
         This method retrieves configuration values, interacts with the Gemini API,
         and logs relevant information.
 
         Raises:
             Exception: If there is an error during API interaction.
-
-        Returns:
-            None
         """
         try:
             api_key = self.get_config_value("gemini_api_key")
@@ -47,16 +40,15 @@ class GeminiClient(BaseScript):
             raise
 
     def _interact_with_gemini(self, api_key: str, model_name: str, prompt: str) -> Dict:
-        """
-        Simulates interaction with the Gemini API.
+        """Simulates interaction with the Gemini API.
 
         Args:
-            api_key (str): The Gemini API key.
-            model_name (str): The name of the Gemini model to use.
-            prompt (str): The prompt to send to the Gemini API.
+            api_key: The Gemini API key.
+            model_name: The name of the Gemini model to use.
+            prompt: The prompt to send to the Gemini API.
 
         Returns:
-            Dict: A dictionary containing the simulated API response.
+            A dictionary containing the simulated API response.
         """
         # Replace this with actual API interaction logic
         response = {
