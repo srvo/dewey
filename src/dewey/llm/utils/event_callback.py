@@ -3,30 +3,26 @@ from typing import Any, Dict
 
 
 class EventCallback(BaseScript):
-    """
-    A class for handling event callbacks within the Dewey framework.
+    """A class for handling event callbacks within the Dewey framework.
 
     This class inherits from BaseScript and provides a structured way to
     manage event-driven logic, utilizing Dewey's configuration and logging
     capabilities.
     """
 
-    def __init__(self, config: Dict[str, Any], event_data: Dict[str, Any]):
-        """
-        Initializes the EventCallback with configuration and event data.
+    def __init__(self, config_section: str, event_data: Dict[str, Any]) -> None:
+        """Initializes the EventCallback with configuration and event data.
 
         Args:
-            config (Dict[str, Any]): A dictionary containing configuration
-                parameters for the script.
+            config_section (str): The configuration section for the script.
             event_data (Dict[str, Any]): A dictionary containing data
                 associated with the event.
         """
-        super().__init__(config)
+        super().__init__(config_section=config_section)
         self.event_data = event_data
 
     def run(self) -> None:
-        """
-        Executes the core logic of the event callback.
+        """Executes the core logic of the event callback.
 
         This method retrieves configuration values, processes event data,
         and logs relevant information using the Dewey logging system.
