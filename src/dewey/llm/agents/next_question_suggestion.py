@@ -1,32 +1,34 @@
 from dewey.core.base_script import BaseScript
 from typing import Any, Dict, List, Optional
 
+
 class NextQuestionSuggestion(BaseScript):
-    """
-    Suggests the next question to ask based on the current conversation.
+    """Suggests the next question to ask based on the current conversation.
+
+    Inherits from BaseScript for standardized configuration and logging.
     """
 
     def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
-        """
-        Initializes the NextQuestionSuggestion script.
+        """Initializes the NextQuestionSuggestion script.
 
         Args:
             config (Dict[str, Any]): The configuration dictionary.
             **kwargs (Any): Additional keyword arguments.
+
         """
         super().__init__(config=config, **kwargs)
 
     def run(self, conversation_history: List[str]) -> str:
-        """
-        Executes the next question suggestion logic.
+        """Executes the next question suggestion logic.
 
         Args:
-            conversation_history (List[str]): The history of the conversation.
+            conversation_history: The history of the conversation.
 
         Returns:
-            str: The suggested next question.
+            The suggested next question.
 
         Raises:
+            ValueError: If the prompt template is not found in the configuration.
             Exception: If there is an error during question suggestion.
         """
         try:
@@ -39,19 +41,21 @@ class NextQuestionSuggestion(BaseScript):
             llm_response = self._call_llm(prompt)
 
             return llm_response.strip()
+        except ValueError as ve:
+            self.logger.error(f"Configuration error: {ve}")
+            raise
         except Exception as e:
             self.logger.exception(f"Error suggesting next question: {e}")
             raise
 
     def _call_llm(self, prompt: str) -> str:
-        """
-        Calls the LLM to generate the next question.
+        """Calls the LLM to generate the next question.
 
         Args:
-            prompt (str): The prompt to send to the LLM.
+            prompt: The prompt to send to the LLM.
 
         Returns:
-            str: The LLM's response.
+            The LLM's response.
 
         Raises:
             Exception: If the LLM call fails.
