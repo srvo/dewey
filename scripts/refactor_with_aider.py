@@ -26,13 +26,16 @@ TEMP_DIR = CURRENT_REPO / "refactor_temp"
 class ScriptRefactorer(BaseScript):
     config_section = "script_refactorer"
 
-    def __init__(self, dry_run: bool = False, **kwargs: Any):
+    def __init__(self, dry_run: bool = False, **kwargs: Any) -> None:
         """
         Initializes the ScriptRefactorer.
 
         Args:
             dry_run (bool): If True, simulates changes without modifying files.
             **kwargs (Any): Additional keyword arguments for BaseScript.
+
+        Returns:
+            None
         """
         super().__init__(**kwargs)
         self.dry_run = dry_run
@@ -166,6 +169,9 @@ class ScriptRefactorer(BaseScript):
         Args:
             current_file (Path): The path to the file in the current repository.
             original_file (Path): The path to the original file in the original repository.
+
+        Returns:
+            None
         """
         try:
             refactored_file = TEMP_DIR / original_file.name
@@ -210,13 +216,24 @@ class ScriptRefactorer(BaseScript):
         if self.dry_run:
             self.logger.info("DRY RUN COMPLETE - No changes made")
 
-def main():
-    parser = argparse.ArgumentParser(description="Refactor scripts using original versions")
-    parser.add_argument("--dry-run", action="store_true", help="Simulate changes")
-    args = parser.parse_args()
+    def main(self) -> None:
+        """
+        Main entrypoint for the script.
 
-    refactorer = ScriptRefactorer(dry_run=args.dry_run)
-    refactorer.run()
+        Returns:
+            None
+        """
+        parser = argparse.ArgumentParser(description="Refactor scripts using original versions")
+        parser.add_argument("--dry-run", action="store_true", help="Simulate changes")
+        args = parser.parse_args()
+
+        self.dry_run = args.dry_run  # Set dry_run from command-line argument
+        self.run()
+
+
+def main():
+    refactorer = ScriptRefactorer()
+    refactorer.main()
 
 if __name__ == "__main__":
     main()
