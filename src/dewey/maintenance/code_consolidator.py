@@ -3,13 +3,14 @@ from typing import Any, Dict
 
 
 class CodeConsolidator(BaseScript):
-    """
-    A script to consolidate code.
+    """A script to consolidate code.
+
+    Inherits from BaseScript for standardized configuration, logging,
+    and database connections.
     """
 
-    def __init__(self, config: Dict[str, Any], dry_run: bool = False):
-        """
-        Initializes the CodeConsolidator.
+    def __init__(self, config: Dict[str, Any], dry_run: bool = False) -> None:
+        """Initializes the CodeConsolidator.
 
         Args:
             config (Dict[str, Any]): The configuration dictionary.
@@ -18,8 +19,7 @@ class CodeConsolidator(BaseScript):
         super().__init__(config=config, dry_run=dry_run)
 
     def run(self) -> None:
-        """
-        Executes the code consolidation process.
+        """Executes the code consolidation process.
 
         This method contains the core logic of the script.
 
@@ -33,7 +33,7 @@ class CodeConsolidator(BaseScript):
             self.logger.info("Starting code consolidation process.")
 
             # Example of accessing a config value
-            some_config_value = self.get_config_value("some_config_key", default="default_value")
+            some_config_value: str = self.get_config_value("some_config_key", default="default_value")
             self.logger.info(f"Some config value: {some_config_value}")
 
             # Add your code consolidation logic here
