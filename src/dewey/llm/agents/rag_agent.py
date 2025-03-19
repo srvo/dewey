@@ -1,75 +1,58 @@
+"""RAG agent for semantic search using the smolagents framework."""
+from typing import List, Dict, Any, Optional
+import structlog
+from smolagents import Tool
+
+from .base_agent import DeweyBaseAgent
 from dewey.core.base_script import BaseScript
-from typing import Any, Dict
 
-
-class RAGAgent(BaseScript):
-    """
-    A Retrieval-Augmented Generation (RAG) agent built on Dewey's BaseScript.
-
-    This agent integrates retrieval mechanisms to augment the generation process,
-    allowing it to leverage external knowledge sources.
-    """
-
-    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
-        """
-        Initializes the RAGAgent.
-
-        Args:
-            config (Dict[str, Any]): Configuration dictionary for the agent.
-            **kwargs (Any): Additional keyword arguments.
-        """
-        super().__init__(config=config, **kwargs)
+logger = structlog.get_logger(__name__)
 
     def run(self) -> None:
         """
-        Executes the RAG agent's core logic.
-
-        This method orchestrates the retrieval and generation steps, leveraging
-        the configurations and resources managed by the BaseScript.
-
-        Raises:
-            Exception: If a critical error occurs during the RAG process.
-
-        Returns:
-            None
+        Run the script.
         """
-        try:
-            # Access configuration values using self.get_config_value()
-            model_name = self.get_config_value("model_name", default="gpt-3.5-turbo")
-            self.logger.info(f"Starting RAG agent with model: {model_name}")
+        # TODO: Implement script logic here
+        raise NotImplementedError("The run method must be implemented")
 
-            # Placeholder for RAG logic (retrieval and generation)
-            self.logger.info("Executing retrieval step...")
-            retrieved_data = self._retrieve_data()  # Example retrieval
+class RAGAgent(BaseScript, DeweyBaseAgent):
+    """
+    RAG agent for semantic search and knowledge retrieval.
+    
+    Features:
+    - Semantic search capabilities
+    - Content type filtering
+    - Relevance scoring
+    - Knowledge base integration
+    - Query refinement
+    """
 
-            self.logger.info("Executing generation step...")
-            generated_text = self._generate_text(retrieved_data)  # Example generation
+    def __init__(self) -> None:
+        """Initializes the RAGAgent with search capabilities."""
+        super().__init__(task_type="rag_search")
+        self.add_tools([
+            Tool.from_function(
+                self.search, 
+                description="Searches the knowledge base using semantic similarity."
+            )
+        ])
 
-            self.logger.info(f"Generated text: {generated_text}")
-
-        except Exception as e:
-            self.logger.exception(f"An error occurred during RAG execution: {e}")
-            raise
-
-    def _retrieve_data(self) -> str:
+    def search(self, query: str, content_type: Optional[str] = None, limit: int = 5) -> Dict[str, Any]:
         """
-        Placeholder for data retrieval logic.
-
-        Returns:
-            str: Retrieved data.
-        """
-        # Replace with actual retrieval implementation
-        return "Retrieved context data."
-
-    def _generate_text(self, data: str) -> str:
-        """
-        Placeholder for text generation logic.
+        Searches the knowledge base using semantic similarity.
 
         Args:
-            data (str): Data to be used for text generation.
+            query (str): The search query.
+            content_type (Optional[str], optional): Content type filter. Defaults to None.
+            limit (int, optional): Maximum number of results. Defaults to 5.
 
         Returns:
-            str: Generated text.
+            Dict[str, Any]: The search results with relevance scores.
         """
-        # Replace with actual generation implementation
-        return f"Generated text based on: {data}"
+        prompt = f"""
+        Search the knowledge base for: {query}
+        Content Type: {content_type or "any"}
+        Limit: {limit}
+        """
+        result = self.run(prompt)
+        return result
