@@ -2,26 +2,26 @@ from dewey.core.base_script import BaseScript
 from typing import Any, Dict
 
 class Prompts(BaseScript):
-    """
-    A class for managing and executing prompt-related tasks.
+    """A class for managing and executing prompt-related tasks.
+
+    Inherits from:
+        BaseScript
     """
 
-    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
-        """
-        Initializes the Prompts class.
+    def __init__(self, config_section: str = 'prompts', **kwargs: Any) -> None:
+        """Initializes the Prompts class.
 
         Args:
-            config (Dict[str, Any]): A dictionary containing configuration parameters.
+            config_section (str): The configuration section to use. Defaults to 'prompts'.
             **kwargs (Any): Additional keyword arguments.
         """
-        super().__init__(config=config, **kwargs)
+        super().__init__(config_section=config_section, **kwargs)
 
     def run(self) -> None:
-        """
-        Executes the core logic of the Prompts script.
+        """Executes the core logic of the Prompts script.
 
-        This method retrieves a prompt from the configuration, logs it,
-        and then retrieves and logs an API key.
+        This method retrieves a prompt and an API key from the configuration,
+        and logs them.
 
         Raises:
             ValueError: If the 'prompt' configuration value is not found.
@@ -31,15 +31,15 @@ class Prompts(BaseScript):
             None
         """
         try:
-            prompt = self.get_config_value("prompt")
-            self.logger.info(f"Retrieved prompt: {prompt}")
+            prompt: str = self.get_config_value("prompt")
+            self.info(f"Retrieved prompt: {prompt}")
         except ValueError as e:
-            self.logger.error(f"Error retrieving prompt: {e}")
+            self.error(f"Error retrieving prompt: {e}")
             raise
 
         try:
-            api_key = self.get_config_value("api_key")
-            self.logger.info(f"Retrieved API key: {api_key}")
+            api_key: str = self.get_config_value("api_key")
+            self.info(f"Retrieved API key: {api_key}")
         except ValueError as e:
-            self.logger.error(f"Error retrieving API key: {e}")
+            self.error(f"Error retrieving API key: {e}")
             raise
