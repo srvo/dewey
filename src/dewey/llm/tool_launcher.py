@@ -1,27 +1,26 @@
-from dewey.core.base_script import BaseScript
 from typing import Any, Dict
 
+from dewey.core.base_script import BaseScript
+
+
 class ToolLauncher(BaseScript):
-    """
-    A class for launching tools using LLMs.
+    """A class for launching tools using LLMs.
 
     This class inherits from BaseScript and provides a structured way to
     initialize and run tool-related workflows.
     """
 
-    def __init__(self, config_path: str, **kwargs: Any) -> None:
-        """
-        Initializes the ToolLauncher with a configuration path.
+    def __init__(self, config_section: str = 'tool_launcher', **kwargs: Any) -> None:
+        """Initializes the ToolLauncher.
 
         Args:
-            config_path: Path to the configuration file.
+            config_section: The configuration section to use.
             **kwargs: Additional keyword arguments to pass to BaseScript.
         """
-        super().__init__(config_path, **kwargs)
+        super().__init__(config_section=config_section, **kwargs)
 
     def run(self, tool_name: str, input_data: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Executes the tool launching workflow.
+        """Executes the tool launching workflow.
 
         Args:
             tool_name: The name of the tool to launch.
@@ -53,8 +52,7 @@ class ToolLauncher(BaseScript):
             raise
 
     def _execute_tool(self, tool_name: str, input_data: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Placeholder method for executing the tool.
+        """Placeholder method for executing the tool.
 
         Args:
             tool_name: The name of the tool to execute.
