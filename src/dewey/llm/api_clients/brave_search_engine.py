@@ -1,15 +1,13 @@
 from dewey.core.base_script import BaseScript
 from typing import Any, Dict, Optional
+import requests
 
 
 class BraveSearchEngine(BaseScript):
-    """
-    A class for interacting with the Brave search engine.
-    """
+    """A class for interacting with the Brave search engine."""
 
     def __init__(self, config: Dict[str, Any], name: str = "BraveSearchEngine") -> None:
-        """
-        Initializes the BraveSearchEngine.
+        """Initializes the BraveSearchEngine.
 
         Args:
             config (Dict[str, Any]): A dictionary containing configuration parameters.
@@ -18,14 +16,13 @@ class BraveSearchEngine(BaseScript):
         super().__init__(config=config, name=name)
 
     def run(self, query: str) -> Optional[str]:
-        """
-        Executes a search query using the Brave search engine.
+        """Executes a search query using the Brave search engine.
 
         Args:
-            query (str): The search query.
+            query: The search query.
 
         Returns:
-            Optional[str]: The search results, or None if an error occurred.
+            The search results as a string, or None if an error occurred.
 
         Raises:
             Exception: If there is an issue with the search query or API request.
@@ -48,25 +45,34 @@ class BraveSearchEngine(BaseScript):
                 results = response.json()
                 return str(results)  # Returning the results as a string
             else:
-                self.logger.error(f"Brave Search API request failed with status code: {response.status_code}")
+                self.logger.error(
+                    f"Brave Search API request failed with status code: {response.status_code}"
+                )
                 return None
 
         except Exception as e:
-            self.logger.exception(f"An error occurred during the Brave Search API request: {e}")
+            self.logger.exception(
+                f"An error occurred during the Brave Search API request: {e}"
+            )
             return None
 
-    def make_request(self, url: str, headers: Dict[str, str]) -> Any:
-        """
-        Makes an HTTP request to the specified URL.
+    def make_request(self, url: str, headers: Dict[str, str]) -> requests.Response:
+        """Makes an HTTP request to the specified URL.
 
         Args:
-            url (str): The URL to make the request to.
-            headers (Dict[str, str]): The headers to include in the request.
+            url: The URL to make the request to.
+            headers: The headers to include in the request.
 
         Returns:
-            Any: The response object.
+            The response object.
 
         Raises:
-            Exception: If there is an issue with the request.
+            requests.RequestException: If there is an issue with the request.
         """
-        pass
+        try:
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
+            return response
+        except requests.RequestException as e:
+            self.logger.error(f"Request failed: {e}")
+            raise
