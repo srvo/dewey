@@ -3,17 +3,18 @@ from typing import Any, Dict
 
 
 class LegacyRefactor(BaseScript):
-    """
-    Refactors legacy code to adhere to Dewey conventions.
+    """Refactors legacy code to adhere to Dewey conventions.
 
     This script handles the process of updating older codebases to align with
     current Dewey standards, including logging, configuration, and database
     interactions.
+
+    Attributes:
+        dry_run (bool): If True, prevents actual database modifications.
     """
 
     def __init__(self, config_path: str, dry_run: bool = False) -> None:
-        """
-        Initializes the LegacyRefactor script.
+        """Initializes the LegacyRefactor script.
 
         Args:
             config_path (str): Path to the configuration file.
@@ -23,8 +24,7 @@ class LegacyRefactor(BaseScript):
         self.dry_run = dry_run
 
     def run(self) -> None:
-        """
-        Executes the legacy refactoring process.
+        """Executes the legacy refactoring process.
 
         This method orchestrates the steps required to refactor the legacy code,
         including configuration loading, database updates, and any necessary
@@ -57,4 +57,3 @@ class LegacyRefactor(BaseScript):
         except Exception as e:
             self.logger.exception(f"An error occurred during refactoring: {e}")
             raise
-
