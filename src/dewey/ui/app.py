@@ -3,16 +3,14 @@ from typing import Any, Dict
 
 
 class App(BaseScript):
-    """
-    A sample application script inheriting from BaseScript.
-    """
+    """A sample application script inheriting from BaseScript."""
 
     def __init__(self, config: Dict[str, Any], args: Dict[str, Any]) -> None:
         """Initializes the App script.
 
         Args:
-            config (Dict[str, Any]): The configuration dictionary.
-            args (Dict[str, Any]): The arguments dictionary.
+            config: The configuration dictionary.
+            args: The arguments dictionary.
         """
         super().__init__(config=config, args=args)
 
