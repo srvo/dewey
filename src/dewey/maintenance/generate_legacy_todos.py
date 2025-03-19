@@ -2,23 +2,14 @@ from dewey.core.base_script import BaseScript
 from typing import Any, Dict, List
 
 class GenerateLegacyTodos(BaseScript):
-    """
-    A script to generate legacy todos.
-    """
+    """A script to generate legacy todos."""
 
-    def __init__(self, config: Dict[str, Any], dry_run: bool = False) -> None:
-        """
-        Initializes the GenerateLegacyTodos script.
-
-        Args:
-            config (Dict[str, Any]): The configuration dictionary.
-            dry_run (bool, optional): If True, the script will not make any actual changes. Defaults to False.
-        """
-        super().__init__(config=config, dry_run=dry_run)
+    def __init__(self) -> None:
+        """Initializes the GenerateLegacyTodos script."""
+        super().__init__(config_section='generate_legacy_todos')
 
     def run(self) -> None:
-        """
-        Executes the legacy todo generation process.
+        """Executes the legacy todo generation process.
 
         This method retrieves configuration values, iterates through data,
         and generates todos based on certain conditions.
@@ -61,9 +52,6 @@ class GenerateLegacyTodos(BaseScript):
 
 # Example usage (for demonstration purposes)
 if __name__ == "__main__":
-    # Create a dummy config for testing
-    dummy_config = {"example_config_key": "example_value"}
-
     # Initialize and run the script
-    script = GenerateLegacyTodos(config=dummy_config, dry_run=True)
+    script = GenerateLegacyTodos()
     script.run()
