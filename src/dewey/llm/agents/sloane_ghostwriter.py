@@ -3,16 +3,14 @@ from typing import Any, Dict
 
 
 class SloaneGhostwriter(BaseScript):
-    """
-    A script for generating text using a language model.
+    """A script for generating text using a language model.
 
     This class inherits from BaseScript and implements the Dewey conventions
     for logging, configuration, and script execution.
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        """
-        Initializes the SloaneGhostwriter script.
+        """Initializes the SloaneGhostwriter script.
 
         Args:
             **kwargs: Keyword arguments passed to the BaseScript constructor.
@@ -20,8 +18,7 @@ class SloaneGhostwriter(BaseScript):
         super().__init__(**kwargs)
 
     def run(self) -> Dict[str, Any]:
-        """
-        Executes the core logic of the SloaneGhostwriter script.
+        """Executes the core logic of the SloaneGhostwriter script.
 
         This method retrieves configuration values, generates text using a
         language model, and returns the generated text.
