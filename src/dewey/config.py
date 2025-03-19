@@ -1,15 +1,10 @@
-"""Config module to provide access to centralized configuration."""
+"""Config class to provide access to centralized configuration."""
+from dewey.core.base_script import BaseScript
 
-import os
-import yaml
-from pathlib import Path
-from typing import Dict, Any
+class CustomScript(BaseScript):
+    def __init__(self):
+        super().__init__(config_section='custom')
 
-def load_config() -> Dict[str, Any]:
-    """Load configuration from dewey.yaml."""
-    config_path = Path(os.getcwd()) / "config" / "dewey.yaml"
-    if not config_path.exists():
-        raise RuntimeError("Please run this script from the project root directory (config/dewey.yaml not found)")
-        
-    with open(config_path) as f:
-        return yaml.safe_load(f) 
+    def run(self):
+        # Implement script logic here
+        self.logger.info("Custom script running")
