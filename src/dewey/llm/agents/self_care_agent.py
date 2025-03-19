@@ -1,33 +1,24 @@
 """Wellness monitoring and self-care intervention agent using smolagents."""
 from typing import List, Dict, Any, Optional
-import structlog
 from smolagents import Tool
 
-from .base_agent import DeweyBaseAgent
 from dewey.core.base_script import BaseScript
+from dewey.llm.agents.base_agent import DeweyBaseAgent
 
-logger = structlog.get_logger(__name__)
-
-    def run(self) -> None:
-        """
-        Run the script.
-        """
-        # TODO: Implement script logic here
-        raise NotImplementedError("The run method must be implemented")
 
 class SelfCareAgent(BaseScript, DeweyBaseAgent):
     """
     Agent for monitoring user wellness and suggesting self-care interventions.
-    
+
     Features:
-    - Work pattern monitoring
-    - Break timing recommendations
-    - Wellness activity suggestions
-    - Stress indicator detection
-    - Productivity optimization
+        - Work pattern monitoring
+        - Break timing recommendations
+        - Wellness activity suggestions
+        - Stress indicator detection
+        - Productivity optimization
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initializes the SelfCareAgent."""
         super().__init__(task_type="wellness_monitoring")
         self.add_tools([
@@ -35,22 +26,34 @@ class SelfCareAgent(BaseScript, DeweyBaseAgent):
             Tool.from_function(self.suggest_break, description="Suggests a break based on current work patterns.")
         ])
 
+    def run(self, prompt: str) -> Dict[str, Any]:
+        """Runs the agent with the given prompt.
+
+        Args:
+            prompt: The prompt to run the agent with.
+
+        Returns:
+            The result of running the agent.
+        """
+        return super().run(prompt)
+
     def monitor_and_intervene(self, work_patterns: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         Monitors work patterns and intervenes if needed.
 
         Args:
-            work_patterns (Optional[Dict[str, Any]], optional): Information about recent work patterns. 
+            work_patterns: Information about recent work patterns.
                 Defaults to None.
 
         Returns:
-            Dict[str, Any]: Assessment and recommendations for self-care.
+            Assessment and recommendations for self-care.
         """
+        self.logger.info("Monitoring work patterns and intervening if needed.")
         patterns_str = str(work_patterns) if work_patterns else "No specific patterns provided"
         prompt = f"""
         Monitor these work patterns and suggest self-care interventions:
         {patterns_str}
-        
+
         Provide:
         1. Pattern assessment
         2. Potential wellness concerns
@@ -60,25 +63,26 @@ class SelfCareAgent(BaseScript, DeweyBaseAgent):
         """
         result = self.run(prompt)
         return result
-        
+
     def suggest_break(self, work_duration: int = 0, break_history: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
         """
         Suggests a break based on current work patterns.
-        
+
         Args:
-            work_duration (int, optional): Minutes of continuous work. Defaults to 0.
-            break_history (Optional[List[Dict[str, Any]]], optional): Recent break history. 
+            work_duration: Minutes of continuous work. Defaults to 0.
+            break_history: Recent break history.
                 Defaults to None.
-                
+
         Returns:
-            Dict[str, Any]: Break recommendation with activity suggestion and duration.
+            Break recommendation with activity suggestion and duration.
         """
+        self.logger.info("Suggesting a break based on current work patterns.")
         history_str = str(break_history) if break_history else "No recent breaks"
         prompt = f"""
         Suggest an optimal break based on:
         - Work duration: {work_duration} minutes
         - Break history: {history_str}
-        
+
         Provide:
         1. Recommended break duration
         2. Suggested break activities
