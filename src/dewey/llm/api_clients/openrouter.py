@@ -3,23 +3,19 @@ from typing import Any, Dict
 
 
 class OpenRouterClient(BaseScript):
-    """
-    A client for interacting with the OpenRouter API.
-    """
+    """A client for interacting with the OpenRouter API."""
 
-    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
-        """
-        Initializes the OpenRouterClient.
+    def __init__(self, config_section: str = "openrouter", **kwargs: Any) -> None:
+        """Initializes the OpenRouterClient.
 
         Args:
-            config (Dict[str, Any]): A dictionary containing configuration parameters.
-            **kwargs (Any): Additional keyword arguments.
+            config_section (str): The configuration section to use.
+            **kwargs: Additional keyword arguments.
         """
-        super().__init__(config=config, **kwargs)
+        super().__init__(config_section=config_section, **kwargs)
 
     def run(self) -> None:
-        """
-        Executes the main logic of the OpenRouter client.
+        """Executes the main logic of the OpenRouter client.
 
         This method retrieves the API key from the configuration, logs a message,
         and then could perform other operations with the OpenRouter API.
