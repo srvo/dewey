@@ -1,25 +1,21 @@
-from dewey.core.base_script import BaseScript
 from typing import Any, Dict
+from dewey.core.base_script import BaseScript
 
 
 class ProChat(BaseScript):
-    """
-    A class for professional chat interactions, inheriting from BaseScript.
-    """
+    """A class for professional chat interactions, inheriting from BaseScript."""
 
-    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
-        """
-        Initializes the ProChat agent.
+    def __init__(self, config_section: str = 'pro_chat', **kwargs: Any) -> None:
+        """Initializes the ProChat agent.
 
         Args:
-            config (Dict[str, Any]): Configuration dictionary.
+            config_section (str): Configuration section name. Defaults to 'pro_chat'.
             **kwargs (Any): Additional keyword arguments.
         """
-        super().__init__(config=config, **kwargs)
+        super().__init__(config_section=config_section, **kwargs)
 
     def run(self) -> None:
-        """
-        Executes the core logic of the ProChat agent.
+        """Executes the core logic of the ProChat agent.
 
         This method retrieves configuration values, initializes necessary components,
         and performs the main operations of the chat agent.
@@ -45,11 +41,12 @@ class ProChat(BaseScript):
             self.logger.exception(f"An error occurred during ProChat execution: {e}")
             raise
 
+
 if __name__ == "__main__":
     # Example usage (replace with actual configuration)
     config: Dict[str, Any] = {
         "model_name": "gpt-4",
         "temperature": 0.8
     }
-    agent = ProChat(config=config)
+    agent = ProChat()
     agent.run()
