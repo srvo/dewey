@@ -9,33 +9,42 @@ import argparse
 import logging
 import shutil
 from pathlib import Path
-from typing import Optional, Set
+from typing import Optional, Set, List, Dict, Any
 import difflib
 
 from aider.coders import Coder
 from aider.models import Model
 from aider.io import InputOutput
+from dewey.core.base_script import BaseScript
 
-# Setup logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-logger = logging.getLogger("refactor_with_aider")
 
 # Paths
 CURRENT_REPO = Path.cwd()
 ORIGINAL_REPO = Path("/Users/srvo/dewey/dewey_original")
 TEMP_DIR = CURRENT_REPO / "refactor_temp"
 
-class ScriptRefactorer:
-    def __init__(self, dry_run: bool = False):
+class ScriptRefactorer(BaseScript):
+    config_section = "script_refactorer"
+
+    def __init__(self, dry_run: bool = False, **kwargs: Any):
+        """
+        Initializes the ScriptRefactorer.
+
+        Args:
+            dry_run (bool): If True, simulates changes without modifying files.
+            **kwargs (Any): Additional keyword arguments for BaseScript.
+        """
+        super().__init__(**kwargs)
         self.dry_run = dry_run
         self.processed_files: Set[Path] = set()
         
     def find_basescript_imports(self) -> Set[Path]:
-        """Find files with only BaseScript import and no proper implementation."""
+        """
+        Finds files with only BaseScript import and no proper implementation.
+
+        Returns:
+            Set[Path]: A set of file paths that import BaseScript but don't implement it correctly.
+        """
         target_files = set()
         current_script = Path(__file__).resolve()
         
@@ -52,17 +61,25 @@ class ScriptRefactorer:
                 if "from dewey.core.base_script import BaseScript" in content:
                     if not re.search(r"class \w+\(BaseScript\):", content):
                         target_files.add(py_file)
-                        logger.info(f"Found incomplete BaseScript file: {py_file}")
+                        self.logger.info(f"Found incomplete BaseScript file: {py_file}")
                         
             except UnicodeDecodeError:
-                logger.warning(f"Skipping {py_file} - invalid UTF-8 encoding")
+                self.logger.warning(f"Skipping {py_file} - invalid UTF-8 encoding")
             except Exception as e:
-                logger.error(f"Error reading {py_file}: {e}")
+                self.logger.error(f"Error reading {py_file}: {e}")
             
         return target_files
 
     def find_original_file(self, current_file: Path) -> Optional[Path]:
-        """Find matching file in original repository."""
+        """
+        Finds the matching file in the original repository.
+
+        Args:
+            current_file (Path): The path to the file in the current repository.
+
+        Returns:
+            Optional[Path]: The path to the matching file in the original repository, or None if not found.
+        """
         rel_path = current_file.relative_to(CURRENT_REPO)
         original_path = ORIGINAL_REPO / rel_path
         
@@ -77,13 +94,21 @@ class ScriptRefactorer:
             return possible_matches[0]
             
         if len(possible_matches) > 1:
-            logger.warning(f"Multiple matches for {filename} in original repo")
+            self.logger.warning(f"Multiple matches for {filename} in original repo")
             return None
             
         return None
 
     def refactor_with_aider(self, original_file: Path) -> bool:
-        """Refactor a file using Aider's Python API."""
+        """
+        Refactors a file using Aider's Python API.
+
+        Args:
+            original_file (Path): The path to the original file to refactor.
+
+        Returns:
+            bool: True if refactoring was successful, False otherwise.
+        """
         try:
             # Skip binary files
             if original_file.suffix != ".py":
@@ -117,7 +142,7 @@ class ScriptRefactorer:
             )
 
             if self.dry_run:
-                logger.info(f"[DRY RUN] Would refactor {original_file.name}")
+                self.logger.info(f"[DRY RUN] Would refactor {original_file.name}")
                 return True
 
             # Execute single focused instruction
@@ -131,37 +156,45 @@ class ScriptRefactorer:
             return False
 
         except Exception as e:
-            logger.error(f"Error refactoring {original_file}: {e}")
+            self.logger.error(f"Error refactoring {original_file}: {e}")
             return False
 
     def replace_current_file(self, current_file: Path, original_file: Path) -> None:
-        """Replace current file with refactored original."""
+        """
+        Replaces the current file with the refactored original.
+
+        Args:
+            current_file (Path): The path to the file in the current repository.
+            original_file (Path): The path to the original file in the original repository.
+        """
         try:
             refactored_file = TEMP_DIR / original_file.name
             
             if self.dry_run:
-                logger.info(f"[DRY RUN] Would replace {current_file} with refactored version")
+                self.logger.info(f"[DRY RUN] Would replace {current_file} with refactored version")
                 return
 
             shutil.copy2(refactored_file, current_file)
-            logger.info(f"Successfully updated {current_file}")
+            self.logger.info(f"Successfully updated {current_file}")
 
         except Exception as e:
-            logger.error(f"Error replacing file: {e}")
+            self.logger.error(f"Error replacing file: {e}")
 
-    def run(self):
-        """Main refactoring workflow."""
-        logger.info("Starting simplified refactoring process")
+    def run(self) -> None:
+        """
+        Main refactoring workflow.
+        """
+        self.logger.info("Starting simplified refactoring process")
         
         # Find all current files with incomplete BaseScript usage
         current_files = self.find_basescript_imports()
-        logger.info(f"Found {len(current_files)} files needing refactoring")
+        self.logger.info(f"Found {len(current_files)} files needing refactoring")
 
         for current_file in current_files:
             # Find matching original file
             original_file = self.find_original_file(current_file)
             if not original_file:
-                logger.warning(f"No original found for {current_file}")
+                self.logger.warning(f"No original found for {current_file}")
                 continue
 
             # Refactor original file
@@ -173,9 +206,9 @@ class ScriptRefactorer:
             self.replace_current_file(current_file, original_file)
             self.processed_files.add(current_file)
 
-        logger.info(f"Processed {len(self.processed_files)} files")
+        self.logger.info(f"Processed {len(self.processed_files)} files")
         if self.dry_run:
-            logger.info("DRY RUN COMPLETE - No changes made")
+            self.logger.info("DRY RUN COMPLETE - No changes made")
 
 def main():
     parser = argparse.ArgumentParser(description="Refactor scripts using original versions")
@@ -186,4 +219,4 @@ def main():
     refactorer.run()
 
 if __name__ == "__main__":
-    main() 
+    main()
