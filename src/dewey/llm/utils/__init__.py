@@ -3,13 +3,10 @@ from typing import Any, Dict
 
 
 class LLMUtils(BaseScript):
-    """
-    A utility class for interacting with Language Models (LLMs).
-    """
+    """A utility class for interacting with Language Models (LLMs)."""
 
-    def __init__(self, config: Dict[str, Any], dry_run: bool = False):
-        """
-        Initializes the LLMUtils class.
+    def __init__(self, config: Dict[str, Any], dry_run: bool = False) -> None:
+        """Initializes the LLMUtils class.
 
         Args:
             config (Dict[str, Any]): A dictionary containing the configuration parameters.
@@ -18,8 +15,7 @@ class LLMUtils(BaseScript):
         super().__init__(config=config, dry_run=dry_run)
 
     def run(self) -> None:
-        """
-        Executes the main logic of the LLM utility.
+        """Executes the main logic of the LLM utility.
 
         This method demonstrates the usage of various features such as accessing configuration values
         and logging messages.
