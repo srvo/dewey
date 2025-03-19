@@ -1,27 +1,22 @@
+from typing import Any
 from dewey.core.base_script import BaseScript
-from typing import Any, Dict
 
 
 class ConsolidatedMover(BaseScript):
-    """
-    A script to move consolidated data.
-    """
+    """A script to move consolidated data."""
 
-    def __init__(self, config_path: str, **kwargs: Any) -> None:
-        """
-        Initializes the ConsolidatedMover script.
+    def __init__(self, **kwargs: Any) -> None:
+        """Initializes the ConsolidatedMover script.
 
         Args:
-            config_path (str): Path to the configuration file.
-            **kwargs (Any): Additional keyword arguments.
+            **kwargs: Additional keyword arguments passed to BaseScript.
         """
-        super().__init__(config_path=config_path, **kwargs)
+        super().__init__(config_section='consolidated_mover', **kwargs)
 
     def run(self) -> None:
-        """
-        Executes the core logic of the consolidated mover script.
+        """Executes the core logic of the consolidated mover script.
 
-        This method retrieves configuration values, initializes necessary components,
+        Retrieves configuration values, initializes necessary components,
         and performs the data movement operation.
 
         Raises:
@@ -31,9 +26,9 @@ class ConsolidatedMover(BaseScript):
             None
         """
         try:
-            # Example of accessing configuration values
-            source_path = self.get_config_value("source_path")
-            destination_path = self.get_config_value("destination_path")
+            # Access configuration values using self.get_config_value
+            source_path: str = self.get_config_value("source_path")
+            destination_path: str = self.get_config_value("destination_path")
 
             self.logger.info(f"Moving data from {source_path} to {destination_path}")
 
@@ -47,12 +42,11 @@ class ConsolidatedMover(BaseScript):
             raise
 
     def move_data(self, source: str, destination: str) -> None:
-        """
-        Simulates moving data from source to destination.
+        """Simulates moving data from source to destination.
 
         Args:
-            source (str): The source path.
-            destination (str): The destination path.
+            source: The source path.
+            destination: The destination path.
 
         Returns:
             None
