@@ -8,7 +8,7 @@ class LLMScript(BaseScript):
     utilizing Dewey's configuration and logging mechanisms.
     """
 
-    def __init__(self, script_name: str, config: Dict[str, Any]):
+    def __init__(self, script_name: str, config: Dict[str, Any]) -> None:
         """
         Initializes the LLMScript with a script name and configuration.
 
@@ -20,17 +20,23 @@ class LLMScript(BaseScript):
 
     def run(self) -> None:
         """
-        Executes the core logic of the LLM script.  This method should be
+        Executes the core logic of the LLM script. This method should be
         overridden by subclasses to implement specific LLM-related tasks.
 
         Raises:
             NotImplementedError: If the method is not implemented in the subclass.
         """
-        raise NotImplementedError("Subclasses must implement the run method.")
+        prompt = self.get_config_value("prompt")
+        if not prompt:
+            self.logger.error("Prompt not found in configuration.")
+            return
+
+        response = self.get_llm_response(prompt)
+        self.logger.info(f"LLM Response: {response}")
 
     def get_llm_response(self, prompt: str) -> str:
         """
-        Placeholder method to interact with an LLM.  This should be replaced
+        Placeholder method to interact with an LLM. This should be replaced
         with actual LLM interaction logic in subclasses.
 
         Args:
