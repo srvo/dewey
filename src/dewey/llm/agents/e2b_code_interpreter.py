@@ -3,29 +3,25 @@ from typing import Any, Dict
 
 
 class E2BCodeInterpreter(BaseScript):
-    """
-    A class for interacting with the E2B code interpreter.
+    """A class for interacting with the E2B code interpreter.
+
+    Inherits from BaseScript for standardized configuration and logging.
     """
 
-    def __init__(self, config: Dict[str, Any], name: str = "E2BCodeInterpreter") -> None:
-        """
-        Initializes the E2BCodeInterpreter.
+    def __init__(self, config_section: str = "E2BCodeInterpreter", name: str = "E2BCodeInterpreter") -> None:
+        """Initializes the E2BCodeInterpreter.
 
         Args:
-            config (Dict[str, Any]): A dictionary containing configuration parameters.
+            config_section (str): The configuration section to use.
             name (str): The name of the script.
         """
-        super().__init__(config=config, name=name)
+        super().__init__(config_section=config_section, name=name)
 
     def run(self) -> None:
-        """
-        Executes the core logic of the E2B code interpreter.
+        """Executes the core logic of the E2B code interpreter.
 
-        This method retrieves configuration values, initializes necessary components,
+        Retrieves configuration values, initializes necessary components,
         and performs the main operations of the code interpreter.
-
-        Returns:
-            None
 
         Raises:
             Exception: If an error occurs during execution.
@@ -49,8 +45,7 @@ class E2BCodeInterpreter(BaseScript):
             raise
 
     def interpret_code(self, code: str) -> str:
-        """
-        Interprets the given code using the E2B code interpreter.
+        """Interprets the given code using the E2B code interpreter.
 
         Args:
             code (str): The code to interpret.
