@@ -3,8 +3,7 @@ from typing import Any, Dict
 
 
 class DashboardGenerator(BaseScript):
-    """
-    Generates research dashboards.
+    """Generates research dashboards.
 
     This class inherits from BaseScript and implements the Dewey conventions
     for script execution, including configuration loading, logging, and
@@ -12,8 +11,7 @@ class DashboardGenerator(BaseScript):
     """
 
     def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
-        """
-        Initializes the DashboardGenerator.
+        """Initializes the DashboardGenerator.
 
         Args:
             config (Dict[str, Any]): The configuration dictionary.
@@ -22,8 +20,7 @@ class DashboardGenerator(BaseScript):
         super().__init__(config=config, **kwargs)
 
     def run(self) -> None:
-        """
-        Executes the dashboard generation process.
+        """Executes the dashboard generation process.
 
         This method retrieves configuration values, initializes necessary
         components, and performs the core logic of generating research
@@ -49,8 +46,7 @@ class DashboardGenerator(BaseScript):
             raise
 
     def _generate_dashboard(self) -> None:
-        """
-        Placeholder method for the core dashboard generation logic.
+        """Placeholder method for the core dashboard generation logic.
 
         This method should be replaced with the actual implementation for
         generating research dashboards.
