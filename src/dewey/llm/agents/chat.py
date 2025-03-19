@@ -3,16 +3,14 @@ from typing import Any, Dict
 
 
 class ChatAgent(BaseScript):
-    """
-    A chat agent that interacts with the user.
+    """A chat agent that interacts with the user.
 
     This class inherits from BaseScript and implements the Dewey conventions
     for logging, configuration, and script execution.
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        """
-        Initializes the ChatAgent.
+        """Initializes the ChatAgent.
 
         Args:
             **kwargs: Keyword arguments passed to the BaseScript constructor.
@@ -20,8 +18,7 @@ class ChatAgent(BaseScript):
         super().__init__(**kwargs)
 
     def run(self) -> None:
-        """
-        Executes the core logic of the chat agent.
+        """Executes the core logic of the chat agent.
 
         This method retrieves configuration values, interacts with the user,
         and logs the interaction.
@@ -49,8 +46,7 @@ class ChatAgent(BaseScript):
             raise
 
     def _process_input(self, user_input: str) -> str:
-        """
-        Processes the user input and generates a response.
+        """Processes the user input and generates a response.
 
         Args:
             user_input: The input message from the user.
