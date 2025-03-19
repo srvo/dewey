@@ -2,29 +2,25 @@ from dewey.core.base_script import BaseScript
 from typing import Any, Dict
 
 class LLMScript(BaseScript):
-    """
-    A base class for LLM-related scripts within the Dewey framework.
+    """A base class for LLM-related scripts within the Dewey framework.
+
     Inherits from BaseScript and provides a structured way to interact with LLMs,
     utilizing Dewey's configuration and logging mechanisms.
     """
 
-    def __init__(self, script_name: str, config: Dict[str, Any]) -> None:
-        """
-        Initializes the LLMScript with a script name and configuration.
+    def __init__(self, config_section: str = 'llm') -> None:
+        """Initializes the LLMScript with a configuration section.
 
         Args:
-            script_name (str): The name of the script.
-            config (Dict[str, Any]): The configuration dictionary for the script.
+            config_section (str): The configuration section for the script.
         """
-        super().__init__(script_name, config)
+        super().__init__(config_section=config_section)
 
     def run(self) -> None:
-        """
-        Executes the core logic of the LLM script. This method should be
-        overridden by subclasses to implement specific LLM-related tasks.
+        """Executes the core logic of the LLM script.
 
-        Raises:
-            NotImplementedError: If the method is not implemented in the subclass.
+        This method retrieves a prompt from the configuration, sends it to the LLM,
+        and logs the LLM's response.
         """
         prompt = self.get_config_value("prompt")
         if not prompt:
@@ -35,15 +31,15 @@ class LLMScript(BaseScript):
         self.logger.info(f"LLM Response: {response}")
 
     def get_llm_response(self, prompt: str) -> str:
-        """
-        Placeholder method to interact with an LLM. This should be replaced
-        with actual LLM interaction logic in subclasses.
+        """Placeholder method to interact with an LLM.
+
+        This should be replaced with actual LLM interaction logic in subclasses.
 
         Args:
-            prompt (str): The prompt to send to the LLM.
+            prompt: The prompt to send to the LLM.
 
         Returns:
-            str: The LLM's response.
+            The LLM's response.
         """
         self.logger.info(f"Sending prompt to LLM: {prompt}")
         # Replace with actual LLM interaction
