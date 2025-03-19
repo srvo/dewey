@@ -2,29 +2,28 @@ from dewey.core.base_script import BaseScript
 from typing import Dict, Any
 
 class ImageGeneration(BaseScript):
-    """
-    A class for generating images using an external API.
+    """A class for generating images using an external API.
+
+    Inherits from BaseScript for standardized configuration and logging.
     """
 
-    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
-        """
-        Initializes the ImageGeneration class.
+    def __init__(self, **kwargs: Any) -> None:
+        """Initializes the ImageGeneration class.
 
         Args:
-            config (Dict[str, Any]): A dictionary containing configuration parameters.
-            **kwargs (Any): Additional keyword arguments.
+            **kwargs: Additional keyword arguments passed to BaseScript.
         """
-        super().__init__(config=config, **kwargs)
+        super().__init__(config_section='image_generation', **kwargs)
 
     def run(self) -> None:
-        """
-        Executes the image generation process.
+        """Executes the image generation process.
 
         Retrieves the API key and prompt from the configuration,
         then calls the image generation API.
 
         Raises:
-            Exception: If the API key is missing or the image generation fails.
+            ValueError: If the API key is missing in the configuration.
+            Exception: If the image generation fails.
 
         Returns:
             None
@@ -44,12 +43,11 @@ class ImageGeneration(BaseScript):
             raise
 
     def _generate_image(self, api_key: str, prompt: str) -> None:
-        """
-        Generates an image using the specified API key and prompt.
+        """Generates an image using the specified API key and prompt.
 
         Args:
-            api_key (str): The API key for accessing the image generation service.
-            prompt (str): The prompt to use for generating the image.
+            api_key: The API key for accessing the image generation service.
+            prompt: The prompt to use for generating the image.
 
         Raises:
             Exception: If the image generation fails.
