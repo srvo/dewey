@@ -3,13 +3,14 @@ from typing import Any, Dict
 
 
 class ModelConfig(BaseScript):
-    """
-    A script for managing LLM model configurations.
+    """A script for managing LLM model configurations.
+
+    Inherits from BaseScript for standardized configuration, logging,
+    and other utilities.
     """
 
     def __init__(self, config: Dict[str, Any], dry_run: bool = False) -> None:
-        """
-        Initializes the ModelConfig script.
+        """Initializes the ModelConfig script.
 
         Args:
             config (Dict[str, Any]): The configuration dictionary.
@@ -19,8 +20,7 @@ class ModelConfig(BaseScript):
         super().__init__(config=config, dry_run=dry_run)
 
     def run(self) -> None:
-        """
-        Executes the model configuration logic.
+        """Executes the model configuration logic.
 
         This method retrieves model parameters from the configuration and
         logs them. In a real implementation, this could involve loading
