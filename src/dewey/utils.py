@@ -8,8 +8,7 @@ class Utils(BaseScript):
     """
 
     def __init__(self, config: Dict[str, Any], name: str = "Utils") -> None:
-        """
-        Initializes the Utils script.
+        """Initializes the Utils script.
 
         Args:
             config (Dict[str, Any]): The configuration dictionary.
@@ -18,10 +17,12 @@ class Utils(BaseScript):
         super().__init__(config, name)
 
     def run(self) -> None:
-        """
-        Executes the core logic of the Utils script.
+        """Executes the core logic of the Utils script.
 
         This example demonstrates accessing configuration values and using the logger.
+
+        Raises:
+            Exception: If an error occurs during execution.
         """
         try:
             example_config_value = self.get_config_value("example_config_key")
