@@ -3,25 +3,24 @@ from typing import Any, Dict
 
 
 class VectorDB(BaseScript):
-    """
-    A utility script for interacting with a vector database.
+    """A utility script for interacting with a vector database.
+
+    Inherits from BaseScript for standardized configuration, logging,
+    and database connections.
     """
 
-    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
-        """
-        Initializes the VectorDB script.
+    def __init__(self, **kwargs: Any) -> None:
+        """Initializes the VectorDB script.
 
         Args:
-            config (Dict[str, Any]): The configuration dictionary for the script.
-            **kwargs (Any): Additional keyword arguments.
+            **kwargs: Additional keyword arguments passed to BaseScript.
         """
-        super().__init__(config=config, **kwargs)
+        super().__init__(config_section='vector_db', **kwargs)
 
     def run(self) -> None:
-        """
-        Executes the main logic of the VectorDB script.
+        """Executes the main logic of the VectorDB script.
 
-        This method retrieves configuration values, initializes the database and LLM,
+        Retrieves configuration values, initializes the database and LLM,
         and performs vector operations.
 
         Raises:
