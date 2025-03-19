@@ -16,6 +16,7 @@ from typing import Dict, List, Optional, Any
 
 import duckdb
 import pandas as pd
+import logging
 
 from dewey.core.base_script import BaseScript
 
