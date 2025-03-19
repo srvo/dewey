@@ -7,9 +7,8 @@ class App(BaseScript):
     A sample application script inheriting from BaseScript.
     """
 
-    def __init__(self, config: Dict[str, Any], args: Dict[str, Any]):
-        """
-        Initializes the App script.
+    def __init__(self, config: Dict[str, Any], args: Dict[str, Any]) -> None:
+        """Initializes the App script.
 
         Args:
             config (Dict[str, Any]): The configuration dictionary.
@@ -18,13 +17,15 @@ class App(BaseScript):
         super().__init__(config=config, args=args)
 
     def run(self) -> None:
-        """
-        Executes the main logic of the application.
+        """Executes the main logic of the application.
 
         This example demonstrates accessing configuration values and using the logger.
 
         Returns:
             None
+
+        Raises:
+            Exception: If an error occurs during script execution.
         """
         try:
             # Access a configuration value
@@ -36,6 +37,7 @@ class App(BaseScript):
         except Exception as e:
             self.logger.exception("An error occurred during script execution.")
             raise
+
 
 if __name__ == "__main__":
     # Example usage (replace with your actual config and args)
