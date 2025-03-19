@@ -3,8 +3,7 @@ from typing import Any, Dict
 
 
 class CodeGenerator(BaseScript):
-    """
-    A script for generating code based on a given prompt.
+    """A script for generating code based on a given prompt.
 
     This class inherits from BaseScript and implements the run() method
     to execute the code generation logic. It uses the script's logger for
@@ -12,8 +11,7 @@ class CodeGenerator(BaseScript):
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        """
-        Initializes the CodeGenerator script.
+        """Initializes the CodeGenerator script.
 
         Args:
             **kwargs: Keyword arguments passed to the BaseScript constructor.
@@ -21,8 +19,7 @@ class CodeGenerator(BaseScript):
         super().__init__(**kwargs)
 
     def run(self) -> None:
-        """
-        Executes the code generation process.
+        """Executes the code generation process.
 
         Retrieves the prompt from the configuration, generates code using
         the LLM, and logs the generated code.
@@ -44,8 +41,7 @@ class CodeGenerator(BaseScript):
             raise
 
     def _generate_code(self, prompt: str) -> str:
-        """
-        Generates code based on the given prompt.
+        """Generates code based on the given prompt.
 
         Args:
             prompt: The prompt to use for code generation.
