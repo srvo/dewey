@@ -67,4 +67,6 @@ class BraveSearchEngine(BaseScript):
             Any: The response object.
 
         Raises:
-            Exception: If there is an issue with the request
+            Exception: If there is an issue with the request.
+        """
+        pass
