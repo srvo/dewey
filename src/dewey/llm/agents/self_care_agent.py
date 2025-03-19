@@ -1,63 +1,89 @@
+"""Wellness monitoring and self-care intervention agent using smolagents."""
+from typing import List, Dict, Any, Optional
+import structlog
+from smolagents import Tool
+
+from .base_agent import DeweyBaseAgent
 from dewey.core.base_script import BaseScript
-from typing import Any, Dict
 
+logger = structlog.get_logger(__name__)
 
-class SelfCareAgent(BaseScript):
-    """
-    An agent designed to provide self-care recommendations.
-
-    This agent leverages the Dewey framework to access configuration,
-    logging, and other utilities for generating personalized self-care
-    suggestions.
-    """
-
-    def __init__(self, **kwargs: Any) -> None:
+    def run(self) -> None:
         """
-        Initializes the SelfCareAgent.
+        Run the script.
+        """
+        # TODO: Implement script logic here
+        raise NotImplementedError("The run method must be implemented")
+
+class SelfCareAgent(BaseScript, DeweyBaseAgent):
+    """
+    Agent for monitoring user wellness and suggesting self-care interventions.
+    
+    Features:
+    - Work pattern monitoring
+    - Break timing recommendations
+    - Wellness activity suggestions
+    - Stress indicator detection
+    - Productivity optimization
+    """
+
+    def __init__(self):
+        """Initializes the SelfCareAgent."""
+        super().__init__(task_type="wellness_monitoring")
+        self.add_tools([
+            Tool.from_function(self.monitor_and_intervene, description="Monitors work patterns and intervenes if needed."),
+            Tool.from_function(self.suggest_break, description="Suggests a break based on current work patterns.")
+        ])
+
+    def monitor_and_intervene(self, work_patterns: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """
+        Monitors work patterns and intervenes if needed.
 
         Args:
-            **kwargs: Keyword arguments passed to the BaseScript constructor.
-        """
-        super().__init__(**kwargs)
-
-    def run(self, user_profile: Dict[str, Any]) -> Dict[str, str]:
-        """
-        Executes the self-care agent to generate recommendations.
-
-        Args:
-            user_profile (Dict[str, Any]): A dictionary containing user profile information.
+            work_patterns (Optional[Dict[str, Any]], optional): Information about recent work patterns. 
+                Defaults to None.
 
         Returns:
-            Dict[str, str]: A dictionary containing self-care recommendations.
-
-        Raises:
-            ValueError: If the user profile is invalid or incomplete.
+            Dict[str, Any]: Assessment and recommendations for self-care.
         """
-        try:
-            # Access configuration values
-            recommendation_count = self.get_config_value("self_care.recommendation_count", default=3)
-
-            # Generate self-care recommendations based on the user profile
-            recommendations = self._generate_recommendations(user_profile, recommendation_count)
-
-            self.logger.info(f"Generated self-care recommendations: {recommendations}")
-            return recommendations
-
-        except Exception as e:
-            self.logger.exception(f"An error occurred during self-care recommendation generation: {e}")
-            raise
-
-    def _generate_recommendations(self, user_profile: Dict[str, Any], count: int) -> Dict[str, str]:
+        patterns_str = str(work_patterns) if work_patterns else "No specific patterns provided"
+        prompt = f"""
+        Monitor these work patterns and suggest self-care interventions:
+        {patterns_str}
+        
+        Provide:
+        1. Pattern assessment
+        2. Potential wellness concerns
+        3. Self-care recommendations
+        4. Break timing suggestions
+        5. Productivity optimization tips
         """
-        Generates self-care recommendations based on the user profile.
-
+        result = self.run(prompt)
+        return result
+        
+    def suggest_break(self, work_duration: int = 0, break_history: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
+        """
+        Suggests a break based on current work patterns.
+        
         Args:
-            user_profile (Dict[str, Any]): A dictionary containing user profile information.
-            count (int): The number of recommendations to generate.
-
+            work_duration (int, optional): Minutes of continuous work. Defaults to 0.
+            break_history (Optional[List[Dict[str, Any]]], optional): Recent break history. 
+                Defaults to None.
+                
         Returns:
-            Dict[str, str]: A dictionary containing self-care recommendations.
+            Dict[str, Any]: Break recommendation with activity suggestion and duration.
         """
-        # Placeholder for actual recommendation logic
-        recommendations = {f"recommendation_{i}": f"Take a {user_profile.get('activity', 'walk')} in the park" for i in range(count)}
-        return recommendations
+        history_str = str(break_history) if break_history else "No recent breaks"
+        prompt = f"""
+        Suggest an optimal break based on:
+        - Work duration: {work_duration} minutes
+        - Break history: {history_str}
+        
+        Provide:
+        1. Recommended break duration
+        2. Suggested break activities
+        3. Optimal timing
+        4. Expected benefits
+        """
+        result = self.run(prompt)
+        return result
