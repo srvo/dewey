@@ -3,26 +3,23 @@ from typing import Any, Dict
 
 
 class SearchAnalysisIntegration(BaseScript):
-    """
-    Integrates search functionality with analysis tools within the Dewey framework.
+    """Integrates search functionality with analysis tools within the Dewey framework.
+
     This script handles search queries, retrieves results, and performs analysis
     based on the configured tools and settings.
     """
 
-    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
-        """
-        Initializes the SearchAnalysisIntegration script.
+    def __init__(self, config_section: str = 'search_analysis', **kwargs: Any) -> None:
+        """Initializes the SearchAnalysisIntegration script.
 
         Args:
-            config (Dict[str, Any]): A dictionary containing the configuration
-                parameters for the script.
+            config_section (str): The configuration section for the script.
             **kwargs (Any): Additional keyword arguments.
         """
-        super().__init__(config, **kwargs)
+        super().__init__(config_section=config_section, **kwargs)
 
     def run(self) -> None:
-        """
-        Executes the search analysis integration process.
+        """Executes the search analysis integration process.
 
         This method orchestrates the search query, result retrieval, and
         subsequent analysis. It leverages the Dewey framework's configuration
@@ -50,14 +47,13 @@ class SearchAnalysisIntegration(BaseScript):
             raise
 
     def _perform_search(self, query: str) -> Any:
-        """
-        Performs the search query and retrieves results.
+        """Performs the search query and retrieves results.
 
         Args:
-            query (str): The search query string.
+            query: The search query string.
 
         Returns:
-            Any: The search results.  The type will depend on the search engine being used.
+            The search results. The type will depend on the search engine being used.
 
         Raises:
             NotImplementedError: This method is abstract and must be implemented
@@ -70,14 +66,13 @@ class SearchAnalysisIntegration(BaseScript):
         raise NotImplementedError("Search logic not implemented.")
 
     def _analyze_results(self, results: Any) -> Dict:
-        """
-        Analyzes the search results.
+        """Analyzes the search results.
 
         Args:
-            results (Any): The search results to analyze.
+            results: The search results to analyze.
 
         Returns:
-            Dict: A dictionary containing the analysis results.
+            A dictionary containing the analysis results.
 
         Raises:
             NotImplementedError: This method is abstract and must be implemented
