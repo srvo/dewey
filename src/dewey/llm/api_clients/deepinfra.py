@@ -1,25 +1,22 @@
-from dewey.core.base_script import BaseScript
 from typing import Any, Dict
+
+from dewey.core.base_script import BaseScript
 
 
 class DeepInfraClient(BaseScript):
-    """
-    A client for interacting with the DeepInfra API.
-    """
+    """A client for interacting with the DeepInfra API."""
 
-    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
-        """
-        Initializes the DeepInfraClient.
+    def __init__(self, config_section: str = "deepinfra", **kwargs: Any) -> None:
+        """Initializes the DeepInfraClient.
 
         Args:
-            config (Dict[str, Any]): The configuration dictionary.
-            **kwargs (Any): Additional keyword arguments.
+            config_section: The configuration section name.
+            **kwargs: Additional keyword arguments.
         """
-        super().__init__(config=config, **kwargs)
+        super().__init__(config_section=config_section, **kwargs)
 
     def run(self) -> None:
-        """
-        Executes the main logic of the DeepInfra client.
+        """Executes the main logic of the DeepInfra client.
 
         This method retrieves configuration values, interacts with the
         DeepInfra API, and logs relevant information.
@@ -47,15 +44,14 @@ class DeepInfraClient(BaseScript):
             raise
 
     def _simulate_api_call(self, model_name: str, api_key: str) -> Dict[str, str]:
-        """
-        Simulates an API call to DeepInfra.
+        """Simulates an API call to DeepInfra.
 
         Args:
-            model_name (str): The name of the model to use.
-            api_key (str): The DeepInfra API key.
+            model_name: The name of the model to use.
+            api_key: The DeepInfra API key.
 
         Returns:
-            Dict[str, str]: A dictionary containing the simulated API response.
+            A dictionary containing the simulated API response.
         """
         # Replace this with actual API call logic
         return {"status": "success", "model": model_name, "api_key": api_key}
