@@ -1,45 +1,97 @@
+"""Client relationship and task prioritization agent using smolagents."""
+from typing import List, Dict, Any, Optional
+import structlog
+from smolagents import Tool
+
+from .base_agent import DeweyBaseAgent
 from dewey.core.base_script import BaseScript
-from typing import Any, Dict
 
-
-class ClientAdvocateAgent(BaseScript):
-    """
-    A client advocate agent that interacts with LLMs to provide support and guidance.
-    """
-
-    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
-        """
-        Initializes the ClientAdvocateAgent.
-
-        Args:
-            config (Dict[str, Any]): Configuration dictionary.
-            **kwargs (Any): Additional keyword arguments.
-        """
-        super().__init__(config=config, **kwargs)
+logger = structlog.get_logger(__name__)
 
     def run(self) -> None:
         """
-        Executes the core logic of the client advocate agent.
+        Run the script.
+        """
+        # TODO: Implement script logic here
+        raise NotImplementedError("The run method must be implemented")
 
-        This method retrieves configuration values, interacts with LLMs,
-        and performs necessary actions based on the agent's objectives.
+class ClientAdvocateAgent(BaseScript, DeweyBaseAgent):
+    """
+    Agent for managing client relationships and prioritizing client work.
+    
+    Features:
+    - Client relationship analysis
+    - Task prioritization
+    - Communication guidance
+    - Opportunity identification
+    - Risk assessment
+    """
 
-        Raises:
-            Exception: If there is an error during the agent's execution.
+    def __init__(self):
+        """Initializes the ClientAdvocateAgent."""
+        super().__init__(task_type="client_advocacy")
+        self.add_tools([
+            Tool.from_function(
+                self.analyze_client, 
+                description="Analyzes client relationship and generates insights."
+            ),
+            Tool.from_function(
+                self.prioritize_tasks, 
+                description="Prioritizes tasks based on client importance and deadlines."
+            )
+        ])
+
+    def analyze_client(self, profile: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Analyzes client relationship and generates insights.
+
+        Args:
+            profile (Dict[str, Any]): The client profile containing relationship history,
+                preferences, and business details.
 
         Returns:
-            None
+            Dict[str, Any]: Relationship insights and recommendations for engagement.
         """
-        try:
-            agent_name = self.get_config_value("agent_name", default="Client Advocate")
-            self.logger.info(f"Starting {agent_name}...")
-
-            # Example of accessing a config value
-            llm_model = self.get_config_value("llm_model", default="gpt-3.5-turbo")
-            self.logger.info(f"Using LLM model: {llm_model}")
-
-            # Add your core logic here, using self.logger for logging
-            self.logger.info("Performing client advocacy tasks...")
-
-        except Exception as e:
-            self.logger.exception(f"An error occurred during execution: {e}")
+        prompt = f"""
+        Analyze this client relationship:
+        {profile}
+        
+        Provide:
+        1. Relationship strength assessment
+        2. Key relationship factors
+        3. Communication preferences
+        4. Potential opportunities
+        5. Relationship improvement recommendations
+        """
+        result = self.run(prompt)
+        return result
+        
+    def prioritize_tasks(self, tasks: List[Dict[str, Any]], client_priorities: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Prioritizes tasks based on client importance and deadlines.
+        
+        Args:
+            tasks (List[Dict[str, Any]]): List of tasks to prioritize.
+            client_priorities (Dict[str, Any]): Information about client priorities and importance.
+            
+        Returns:
+            List[Dict[str, Any]]: Prioritized tasks with reasoning.
+        """
+        prompt = f"""
+        Prioritize these tasks based on client importance and deadlines:
+        
+        Tasks:
+        {tasks}
+        
+        Client Priorities:
+        {client_priorities}
+        
+        For each task, provide:
+        1. Priority level (High/Medium/Low)
+        2. Recommended sequence
+        3. Rationale for prioritization
+        4. Client impact assessment
+        5. Resource allocation recommendation
+        """
+        result = self.run(prompt)
+        return result
