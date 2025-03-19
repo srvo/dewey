@@ -3,22 +3,21 @@ from typing import Any, Dict
 
 
 class LLMAnalysis(BaseScript):
-    """
-    A script for performing LLM analysis.
+    """A script for performing LLM analysis.
+
+    Inherits from BaseScript for standardized configuration and logging.
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        """
-        Initializes the LLMAnalysis script.
+        """Initializes the LLMAnalysis script.
 
         Args:
             **kwargs: Keyword arguments to pass to the BaseScript constructor.
         """
-        super().__init__(**kwargs)
+        super().__init__(config_section='llm_analysis', **kwargs)
 
     def run(self) -> Dict[str, Any]:
-        """
-        Executes the LLM analysis.
+        """Executes the LLM analysis.
 
         Returns:
             A dictionary containing the analysis results.
