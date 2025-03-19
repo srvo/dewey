@@ -1,31 +1,26 @@
-from dewey.core.base_script import BaseScript
 from typing import Any, Dict
+
+from dewey.core.base_script import BaseScript
 
 
 class AIConfig(BaseScript):
-    """
-    A class to manage AI configurations, inheriting from BaseScript.
-    """
+    """A class to manage AI configurations, inheriting from BaseScript."""
 
-    def __init__(self, script_name: str, config: Dict[str, Any]):
-        """
-        Initializes the AIConfig script.
+    def __init__(self, script_name: str, config: Dict[str, Any]) -> None:
+        """Initializes the AIConfig script.
 
         Args:
-            script_name (str): The name of the script.
-            config (Dict[str, Any]): The configuration dictionary.
+            script_name: The name of the script.
+            config: The configuration dictionary.
         """
-        super().__init__(script_name=script_name, config=config)
+        super().__init__(script_name=script_name, config_section="ai_config")
+        self.config_data = config  # Store the config data
 
     def run(self) -> None:
-        """
-        Executes the AI configuration logic.
+        """Executes the AI configuration logic.
 
-        This method demonstrates accessing configuration values and logging messages
-        using the BaseScript's utilities.
-
-        Returns:
-            None
+        This method demonstrates accessing configuration values and logging
+        messages using the BaseScript's utilities.
 
         Raises:
             ValueError: If a required configuration value is missing or invalid.
