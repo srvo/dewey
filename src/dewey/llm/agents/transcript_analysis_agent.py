@@ -1,59 +1,68 @@
+"""Transcript analysis agent for extracting action items and insights from meetings."""
+from typing import List, Dict, Any, Optional
+import structlog
+from smolagents import Tool
+
+from .base_agent import DeweyBaseAgent
 from dewey.core.base_script import BaseScript
-from typing import Any, Dict
 
+logger = structlog.get_logger(__name__)
 
-class TranscriptAnalysisAgent(BaseScript):
-    """
-    A script for analyzing transcripts using LLMs.
-
-    This class inherits from BaseScript and implements the Dewey conventions
-    for logging, configuration, and execution.
-    """
-
-    def __init__(self, **kwargs: Any) -> None:
+    def run(self) -> None:
         """
-        Initializes the TranscriptAnalysisAgent.
+        Run the script.
+        """
+        # TODO: Implement script logic here
+        raise NotImplementedError("The run method must be implemented")
+
+class TranscriptAnalysisAgent(BaseScript, DeweyBaseAgent):
+    """
+    Agent for analyzing meeting transcripts to extract action items and content.
+    
+    Features:
+    - Action item extraction
+    - Topic identification
+    - Decision tracking
+    - Speaker contribution analysis
+    - Follow-up recommendations
+    """
+
+    def __init__(self):
+        """Initializes the TranscriptAnalysisAgent."""
+        super().__init__(task_type="transcript_analysis")
+        self.add_tools([
+            Tool.from_function(self.analyze_transcript, description="Analyzes a meeting transcript to extract actionable insights.")
+        ])
+
+    def analyze_transcript(self, transcript: str) -> Dict[str, Any]:
+        """
+        Analyzes a meeting transcript to extract actionable insights.
 
         Args:
-            **kwargs: Keyword arguments passed to the BaseScript constructor.
-        """
-        super().__init__(**kwargs)
-
-    def run(self) -> Dict[str, Any]:
-        """
-        Executes the transcript analysis workflow.
-
-        This method retrieves configuration values, performs the analysis,
-        and returns the results.
+            transcript (str): The meeting transcript.
 
         Returns:
-            A dictionary containing the analysis results.
-
-        Raises:
-            Exception: If an error occurs during the analysis.
+            Dict[str, Any]: The analysis results including action items, topics, decisions, and follow-ups.
         """
-        try:
-            self.logger.info("Starting transcript analysis workflow.")
-
-            # Example of accessing configuration values
-            model_name = self.get_config_value("llm.model_name", default="gpt-3.5-turbo")
-            self.logger.info(f"Using LLM model: {model_name}")
-
-            # Placeholder for actual transcript analysis logic
-            analysis_results = {"status": "success", "message": "Transcript analysis completed."}
-            self.logger.info("Transcript analysis completed successfully.")
-
-            return analysis_results
-
-        except Exception as e:
-            self.logger.exception(f"An error occurred during transcript analysis: {e}")
-            raise
+        prompt = f"""
+        Analyze this meeting transcript and extract:
+        1. Action items with assignees and deadlines
+        2. Key topics discussed
+        3. Decisions made
+        4. Outstanding questions
+        5. Follow-up recommendations
+        
+        Transcript:
+        {transcript}
+        """
+        result = self.run(prompt)
+        return result
 
 if __name__ == "__main__":
     # Example usage (replace with actual arguments)
-    agent = TranscriptAnalysisAgent(script_name="transcript_analysis_agent")
+    agent = TranscriptAnalysisAgent()
     try:
-        results = agent.run()
+        results = agent.analyze_transcript("Example transcript text here...")
         print(results)  # Or handle results appropriately
     except Exception as e:
         print(f"Error: {e}")
