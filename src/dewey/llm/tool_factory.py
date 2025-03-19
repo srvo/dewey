@@ -3,23 +3,19 @@ from typing import Any, Dict
 
 
 class ToolFactory(BaseScript):
-    """
-    A class for creating and managing tools, adhering to Dewey conventions.
-    """
+    """A class for creating and managing tools, adhering to Dewey conventions."""
 
     def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
-        """
-        Initializes the ToolFactory with configuration and optional keyword arguments.
+        """Initializes the ToolFactory with configuration and optional keyword arguments.
 
         Args:
-            config (Dict[str, Any]): A dictionary containing configuration parameters.
-            **kwargs (Any): Additional keyword arguments.
+            config: A dictionary containing configuration parameters.
+            **kwargs: Additional keyword arguments.
         """
         super().__init__(config=config, **kwargs)
 
     def run(self) -> None:
-        """
-        Executes the core logic of the ToolFactory.
+        """Executes the core logic of the ToolFactory.
 
         This method orchestrates the tool creation process, utilizing configurations
         and logging mechanisms provided by the BaseScript.
@@ -45,4 +41,3 @@ class ToolFactory(BaseScript):
         except Exception as e:
             self.logger.exception(f"An error occurred: {e}")
             raise
-
