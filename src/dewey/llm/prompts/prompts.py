@@ -3,23 +3,22 @@ from typing import Any, Dict
 
 
 class Prompts(BaseScript):
-    """
-    A class for managing and generating prompts using LLMs.
+    """A class for managing and generating prompts using LLMs.
+
+    Inherits from:
+        BaseScript
     """
 
-    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
-        """
-        Initializes the Prompts class.
+    def __init__(self, **kwargs: Any) -> None:
+        """Initializes the Prompts class.
 
         Args:
-            config (Dict[str, Any]): A dictionary containing configuration parameters.
-            **kwargs (Any): Additional keyword arguments.
+            **kwargs: Additional keyword arguments.
         """
-        super().__init__(config=config, **kwargs)
+        super().__init__(config_section='prompts', **kwargs)
 
     def run(self) -> None:
-        """
-        Executes the core logic of the Prompts script.
+        """Executes the core logic of the Prompts script.
 
         This method retrieves configuration values, generates prompts,
         and logs relevant information.
@@ -46,15 +45,17 @@ class Prompts(BaseScript):
             raise ValueError(f"Missing configuration value: {e}")
 
     def generate_prompt(self, template: str, data: Dict[str, str]) -> str:
-        """
-        Generates a prompt by populating a template with data.
+        """Generates a prompt by populating a template with data.
 
         Args:
-            template (str): The prompt template.
-            data (Dict[str, str]): A dictionary containing the data to populate the template.
+            template: The prompt template.
+            data: A dictionary containing the data to populate the template.
 
         Returns:
-            str: The generated prompt.
+            The generated prompt.
+
+        Raises:
+            ValueError: If a required key is missing in the data.
         """
         try:
             prompt = template.format(**data)
