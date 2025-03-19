@@ -1,28 +1,25 @@
-from dewey.core.base_script import BaseScript
 from typing import Any, Dict
+
+from dewey.core.base_script import BaseScript
 
 
 class LLMUtils(BaseScript):
-    """
-    A utility class for interacting with Large Language Models (LLMs).
-    """
+    """A utility class for interacting with Large Language Models (LLMs)."""
 
-    def __init__(self, config: Dict[str, Any], dry_run: bool = False):
-        """
-        Initializes the LLMUtils class.
+    def __init__(self, config_section: str = "llm_utils", dry_run: bool = False) -> None:
+        """Initializes the LLMUtils class.
 
         Args:
-            config (Dict[str, Any]): A dictionary containing configuration parameters.
-            dry_run (bool, optional): If True, the script will not perform any actions. Defaults to False.
+            config_section: The configuration section to use.
+            dry_run: If True, the script will not perform any actions.
         """
-        super().__init__(config=config, dry_run=dry_run)
+        super().__init__(config_section=config_section, dry_run=dry_run)
 
     def run(self) -> None:
-        """
-        Executes the main logic of the LLM utility.
+        """Executes the main logic of the LLM utility.
 
-        This method retrieves configuration values, initializes necessary components,
-        and performs the core operations of the LLM utility.
+        This method retrieves configuration values, initializes necessary
+        components, and performs the core operations of the LLM utility.
 
         Returns:
             None
@@ -31,7 +28,7 @@ class LLMUtils(BaseScript):
             Exception: If there is an error during execution.
         """
         try:
-            example_config_value = self.get_config_value("example_config")
+            example_config_value: Any = self.get_config_value("example_config")
             self.logger.info(f"Retrieved example_config: {example_config_value}")
 
             # Add your LLM utility logic here, using self.logger for logging
@@ -43,6 +40,6 @@ class LLMUtils(BaseScript):
 
 if __name__ == "__main__":
     # Example usage (replace with your actual configuration)
-    config = {"example_config": "example_value"}
-    llm_utils = LLMUtils(config=config)
+    config: Dict[str, Any] = {"example_config": "example_value"}
+    llm_utils = LLMUtils()
     llm_utils.run()
