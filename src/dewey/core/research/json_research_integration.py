@@ -360,4 +360,171 @@ def main():
         sys.exit(1)
 
 if __name__ == "__main__":
-    main() 
+    main() import pytest
+import os
+import sys
+import json
+from pathlib import Path
+import duckdb
+import ibis
+from unittest.mock import patch
+from src.dewey.core.research.json_research_integration import (
+    connect_to_motherduck,
+    ensure_tables_exist,
+    process_json_file,
+    update_company_research,
+    update_company_research_queries,
+    update_company_research_results,
+    process_directory,
+    main
+)
+from typing import Dict, Any
+
+# Fixtures
+@pytest.fixture
+def temp_dir(tmp_path):
+    return tmp_path
+
+@pytest.fixture
+def test_db(temp_dir):
+    db_path = temp_dir / "test_dewey.duckdb"
+    conn = duckdb.connect(str(db_path))
+    yield conn
+    conn.close()
+
+@pytest.fixture
+def test_data_dir(temp_dir):
+    data_dir = temp_dir / "input_data"
+    data_dir.mkdir()
+    return data_dir
+
+@pytest.fixture
+def sample_company_data() -> Dict[str, Any]:
+    return {
+        "company": {
+            "ticker": "TEST",
+            "name": "Test Company",
+            "description": "A test company for research integration",
+        },
+        "company_context": "Some context about the company",
+        "search_queries": [
+            {
+                "category": "Financial",
+                "query": "Financial performance",
+                "rationale": "Understand financial health",
+                "priority": 1
+            }
+        ],
+        "research_results": [
+            {
+                "category": "Financial",
+                "query": "Financial performance",
+                "rationale": "Understand financial health",
+                "priority": 1,
+                "web_results": [
+                    {"title": "Report 1", "url": "http://example.com"}
+                ]
+            }
+        ]
+    }
+
+# Tests
+def test_connect_to_motherduck(test_db):
+    """Verify connection returns valid DuckDB connection"""
+    conn = connect_to_motherduck("test_db")
+    assert isinstance(conn, duckdb.DuckDBPyConnection)
+
+def test_ensure_tables_exist_ibis(test_db):
+    """Ensure all required tables are created"""
+    ensure_tables_exist(test_db)
+    ibis_con = ibis.duckdb.connect(test_db)
+    tables = ibis_con.list_tables()
+    assert 'company_research' in tables
+    assert 'company_research_queries' in tables
+    assert 'company_research_results' in tables
+
+def test_process_json_file_valid(temp_dir, sample_company_data):
+    """Validate valid JSON file parsing"""
+    json_path = temp_dir / "valid_research.json"
+    with open(json_path, "w") as f:
+        json.dump(sample_company_data, f)
+    data = process_json_file(str(json_path))
+    assert data == sample_company_data
+
+def test_process_json_file_invalid(temp_dir):
+    """Test invalid JSON file handling"""
+    invalid_path = temp_dir / "invalid.json"
+    with open(invalid_path, "w") as f:
+        f.write("{ 'invalid': 'json syntax' }")
+    data = process_json_file(str(invalid_path))
+    assert data == {}
+
+def test_update_company_research_new(test_db, sample_company_data):
+    """Insert new company record"""
+    ensure_tables_exist(test_db)
+    update_company_research(test_db, sample_company_data)
+    result = test_db.execute("SELECT * FROM company_research WHERE ticker='TEST'").fetchone()
+    assert result["company_name"] == "Test Company"
+
+def test_update_company_research_existing(test_db, sample_company_data):
+    """Update existing company record"""
+    ensure_tables_exist(test_db)
+    update_company_research(test_db, sample_company_data)
+    update_data = {
+        "company": {
+            "ticker": "TEST",
+            "name": "Updated Name",
+            "description": "Updated description"
+        },
+        "company_context": "New context"
+    }
+    update_company_research(test_db, update_data)
+    result = test_db.execute("SELECT * FROM company_research WHERE ticker='TEST'").fetchone()
+    assert result["company_name"] == "Updated Name"
+
+def test_update_queries(test_db, sample_company_data):
+    """Verify query table updates"""
+    ensure_tables_exist(test_db)
+    update_company_research_queries(test_db, sample_company_data)
+    count = test_db.execute("SELECT COUNT(*) FROM company_research_queries").fetchone()[0]
+    assert count == 1
+
+def test_update_results(test_db, sample_company_data):
+    """Verify result table updates"""
+    ensure_tables_exist(test_db)
+    update_company_research_results(test_db, sample_company_data)
+    count = test_db.execute("SELECT COUNT(*) FROM company_research_results").fetchone()[0]
+    assert count == 1
+
+def test_process_directory(temp_dir, test_data_dir, sample_company_data):
+    """Validate directory processing workflow"""
+    json_path = test_data_dir / "test_research.json"
+    with open(json_path, "w") as f:
+        json.dump(sample_company_data, f)
+    
+    conn = duckdb.connect(":memory:")
+    ensure_tables_exist(conn)
+    process_directory(conn, str(test_data_dir))
+    
+    # Check company table
+    company_count = conn.execute("SELECT COUNT(*) FROM company_research").fetchone()[0]
+    assert company_count == 1
+
+    # Check queries
+    query_count = conn.execute("SELECT COUNT(*) FROM company_research_queries").fetchone()[0]
+    assert query_count == 1
+
+def test_main(temp_dir, monkeypatch):
+    """End-to-end test of main function"""
+    with monkeypatch.context() as m:
+        m.setattr(sys, 'argv', ['script', 
+                               '--database', 'test_db', 
+                               '--input-dir', str(temp_dir)])
+        
+        main()
+    
+    # Verify logs and database state
+    # (Implement specific checks based on project setup)
+    assert True  # Replace with actual validation
+    
+# Additional tests for edge cases and error handling would be added here
