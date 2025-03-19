@@ -3,28 +3,27 @@ from typing import Any, Dict
 
 
 class CodeUniquenessAnalyzer(BaseScript):
-    """
-    Analyzes code uniqueness within a project.
+    """Analyzes code uniqueness within a project.
 
     This class inherits from BaseScript and implements the Dewey conventions
     for script structure, logging, and configuration.
     """
 
     def __init__(self, config_path: str, **kwargs: Any) -> None:
-        """
-        Initializes the CodeUniquenessAnalyzer.
+        """Initializes the CodeUniquenessAnalyzer.
 
         Args:
-            config_path (str): Path to the configuration file.
-            **kwargs (Any): Additional keyword arguments.
+            config_path: Path to the configuration file.
+            **kwargs: Additional keyword arguments.
         """
-        super().__init__(config_path, **kwargs)
+        super().__init__()
+        self.config_path = config_path
+        self.kwargs = kwargs
 
     def run(self) -> None:
-        """
-        Executes the code uniqueness analysis.
+        """Executes the code uniqueness analysis.
 
-        This method contains the core logic of the script.  It retrieves
+        This method contains the core logic of the script. It retrieves
         configuration values, analyzes code, and logs the results.
 
         Raises:
