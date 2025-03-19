@@ -1,2 +1,1 @@
-class LLMError(Exception):
-    """Base exception class for all LLM-related errors."""
+from dewey.core.base_script import BaseScript
