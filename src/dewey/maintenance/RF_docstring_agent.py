@@ -3,24 +3,20 @@ from typing import Any, Dict
 
 
 class RFDocstringAgent(BaseScript):
-    """
-    Refactors docstrings in a codebase.
-    """
+    """Refactors docstrings in a codebase."""
 
     def __init__(self, config_path: str, dry_run: bool = False) -> None:
-        """
-        Initializes the RFDocstringAgent.
+        """Initializes the RFDocstringAgent.
 
         Args:
-            config_path (str): Path to the configuration file.
-            dry_run (bool): If True, the script will not make any changes.
+            config_path: Path to the configuration file.
+            dry_run: If True, the script will not make any changes.
         """
-        super().__init__(config_path=config_path)
+        super().__init__(config_section='rf_docstring_agent')
         self.dry_run = dry_run
 
     def run(self) -> None:
-        """
-        Executes the docstring refactoring process.
+        """Executes the docstring refactoring process.
 
         Raises:
             Exception: If an error occurs during the process.
@@ -48,6 +44,7 @@ class RFDocstringAgent(BaseScript):
         except Exception as e:
             self.logger.exception(f"An error occurred: {e}")
             raise
+
 
 if __name__ == "__main__":
     # Example usage (replace with actual config path and dry_run flag)
