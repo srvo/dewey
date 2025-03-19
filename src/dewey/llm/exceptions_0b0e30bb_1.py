@@ -3,8 +3,7 @@ from typing import Any, Dict
 
 
 class ExceptionsScript(BaseScript):
-    """
-    A script to handle exceptions using LLMs.
+    """A script to handle exceptions using LLMs.
 
     This script inherits from BaseScript and implements the run() method
     to execute the core logic. It uses the self.logger for logging,
@@ -13,8 +12,7 @@ class ExceptionsScript(BaseScript):
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        """
-        Initializes the ExceptionsScript.
+        """Initializes the ExceptionsScript.
 
         Args:
             **kwargs: Keyword arguments passed to the BaseScript constructor.
@@ -22,8 +20,7 @@ class ExceptionsScript(BaseScript):
         super().__init__(**kwargs)
 
     def run(self) -> Dict[str, Any]:
-        """
-        Executes the core logic of the ExceptionsScript.
+        """Executes the core logic of the ExceptionsScript.
 
         This method retrieves configuration values, processes data, and
         handles exceptions using LLMs.
@@ -36,13 +33,13 @@ class ExceptionsScript(BaseScript):
         """
         try:
             # Retrieve configuration values
-            model_name = self.get_config_value("model_name")
-            temperature = self.get_config_value("temperature")
+            model_name: str = self.get_config_value("model_name")
+            temperature: float = self.get_config_value("temperature")
 
             self.logger.info(f"Using model: {model_name} with temperature: {temperature}")
 
             # Placeholder for core logic
-            result = {"status": "success", "message": "Exceptions handled successfully."}
+            result: Dict[str, Any] = {"status": "success", "message": "Exceptions handled successfully."}
 
             return result
 
