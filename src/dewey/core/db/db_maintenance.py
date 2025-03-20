@@ -1,8 +1,6 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import get_connection
 from dewey.core.db.utils import execute_query
 from dewey.llm.llm_utils import generate_text
-from typing import Any, Dict
 
 
 class DbMaintenance(BaseScript):
@@ -15,7 +13,9 @@ class DbMaintenance(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the DbMaintenance class."""
-        super().__init__(config_section='db_maintenance', requires_db=True, enable_llm=True)
+        super().__init__(
+            config_section="db_maintenance", requires_db=True, enable_llm=True
+        )
 
     def run(self) -> None:
         """
@@ -26,7 +26,7 @@ class DbMaintenance(BaseScript):
         """
         self.logger.info("Starting database maintenance...")
 
-        retention_period = self.get_config_value('retention_period', 30)
+        retention_period = self.get_config_value("retention_period", 30)
         self.logger.info(f"Retention period: {retention_period} days")
 
         self.check_table_sizes()
@@ -42,7 +42,9 @@ class DbMaintenance(BaseScript):
         Logs a warning if any table exceeds a configured threshold.
         """
         self.logger.info("Checking table sizes...")
-        size_threshold = self.get_config_value('size_threshold', 1000000)  # Example threshold
+        size_threshold = self.get_config_value(
+            "size_threshold", 1000000
+        )  # Example threshold
 
         try:
             # Example query to get table sizes (specific to your DB)
@@ -50,9 +52,11 @@ class DbMaintenance(BaseScript):
             results = execute_query(self.db_conn, query)
 
             for table_name, size in results:
-                size_bytes = int(size.split(' ')[0])  # Simplified size extraction
+                size_bytes = int(size.split(" ")[0])  # Simplified size extraction
                 if size_bytes > size_threshold:
-                    self.logger.warning(f"Table {table_name} exceeds size threshold: {size}")
+                    self.logger.warning(
+                        f"Table {table_name} exceeds size threshold: {size}"
+                    )
         except Exception as e:
             self.logger.error(f"Error checking table sizes: {e}")
 
@@ -91,7 +95,9 @@ class DbMaintenance(BaseScript):
 
         try:
             # Example: Archive old data
-            archive_query = "DELETE FROM your_table WHERE date < NOW() - INTERVAL '1 year';"
+            archive_query = (
+                "DELETE FROM your_table WHERE date < NOW() - INTERVAL '1 year';"
+            )
             execute_query(self.db_conn, archive_query)
             self.logger.info("Old data archived.")
 
