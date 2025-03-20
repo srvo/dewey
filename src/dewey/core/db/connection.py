@@ -10,7 +10,7 @@ import time
 import logging
 import subprocess
 from pathlib import Path
-from typing import Any, Dict, Optional, Union, List, Set, Tuple
+from typing import Any, Dict, Optional, Union, List, Set, Tuple, Protocol
 
 import duckdb
 import pandas as pd
@@ -27,13 +27,17 @@ CREATE_PATTERN = re.compile(r"^\s*CREATE\s+TABLE", re.IGNORECASE)
 DROP_PATTERN = re.compile(r"^\s*DROP\s+TABLE", re.IGNORECASE)
 ALTER_PATTERN = re.compile(r"^\s*ALTER\s+TABLE", re.IGNORECASE)
 
-# Set to track tables modified locally
-_locally_modified_tables: Set[str] = set()
-
 logger = logging.getLogger(__name__)
 
 # Additional import for sync functionality
 from datetime import datetime
+
+class DuckDBSyncInterface(Protocol):
+    """Interface for DuckDB sync operations."""
+    def mark_table_modified(self, table_name: str) -> None:
+        ...
+    def sync_modified_to_motherduck(self) -> None:
+        ...
 
 class DatabaseConnection(BaseScript):
     """Database connection wrapper for DuckDB/MotherDuck.
@@ -48,13 +52,24 @@ class DatabaseConnection(BaseScript):
         auto_sync: Whether to automatically sync modified tables
     """
 
-    def __init__(self, connection_string: Optional[str] = None, **kwargs):
+    # Set to track tables modified locally
+    _locally_modified_tables: Set[str] = set()
+
+    def __init__(
+        self,
+        connection_string: Optional[str] = None,
+        db_connection: Optional[duckdb.DuckDBPyConnection] = None,
+        duckdb_sync: Optional[DuckDBSyncInterface] = None,
+        **kwargs
+    ):
         """Initialize a database connection.
 
         Args:
             connection_string: Connection string for the database.
                 For DuckDB, this is a path to the database file.
                 For MotherDuck, this is a URL starting with "md:".
+            db_connection: Optional DuckDB connection object (for testing).
+            duckdb_sync: Optional DuckDBSyncInterface instance (for testing).
             **kwargs: Additional connection parameters to pass to DuckDB.
 
         Raises:
@@ -65,9 +80,11 @@ class DatabaseConnection(BaseScript):
         self.is_motherduck = connection_string and self.connection_string.startswith(
             self.get_config_value('default_motherduck_prefix', 'md:')
         )
-        self.conn = None
+        self.conn = db_connection
         self.auto_sync = kwargs.pop('auto_sync', True)
-        self._connect(**kwargs)
+        self._duckdb_sync = duckdb_sync
+        if self.conn is None:
+            self._connect(**kwargs)
 
     def _connect(self, **kwargs) -> None:
         """Establish a database connection.
@@ -204,8 +221,7 @@ class DatabaseConnection(BaseScript):
                 return
                 
             # Add to the set of modified tables
-            global _locally_modified_tables
-            _locally_modified_tables.add(clean_table)
+            DatabaseConnection._locally_modified_tables.add(clean_table)
             
             self.logger.debug(f"Tracked modification to table: {clean_table}")
             
@@ -225,8 +241,10 @@ class DatabaseConnection(BaseScript):
             # Import here to avoid circular imports
             from dewey.core.db.duckdb_sync import get_duckdb_sync
             
+            # Use injected sync instance or get default
+            sync_instance: DuckDBSyncInterface = self._duckdb_sync or get_duckdb_sync()
+            
             # Mark table as modified
-            sync_instance = get_duckdb_sync()
             sync_instance.mark_table_modified(table_name)
             
             self.logger.debug(f"Triggered sync for modified table: {table_name}")
@@ -237,7 +255,7 @@ class DatabaseConnection(BaseScript):
         """Close the database connection."""
         if self.conn:
             try:
-                if not self.is_motherduck and self.auto_sync and _locally_modified_tables:
+                if not self.is_motherduck and self.auto_sync and DatabaseConnection._locally_modified_tables:
                     # Trigger final sync before closing
                     self._sync_modified_tables()
                 
@@ -254,10 +272,11 @@ class DatabaseConnection(BaseScript):
             # Import here to avoid circular imports
             from dewey.core.db.duckdb_sync import get_duckdb_sync
             
-            sync_instance = get_duckdb_sync()
+            # Use injected sync instance or get default
+            sync_instance: DuckDBSyncInterface = self._duckdb_sync or get_duckdb_sync()
             
-            if _locally_modified_tables:
-                self.logger.info(f"Syncing {len(_locally_modified_tables)} modified tables before closing")
+            if DatabaseConnection._locally_modified_tables:
+                self.logger.info(f"Syncing {len(DatabaseConnection._locally_modified_tables)} modified tables before closing")
                 sync_instance.sync_modified_to_motherduck()
         except Exception as e:
             self.logger.warning(f"Error syncing modified tables: {e}")
@@ -400,5 +419,4 @@ def get_modified_tables() -> List[str]:
     Returns:
         List of modified table names
     """
-    global _locally_modified_tables
-    return list(_locally_modified_tables)
+    return list(DatabaseConnection._locally_modified_tables)
