@@ -1,12 +1,8 @@
-"""
-Company Analysis Deployment Script
-================================
-
-This script sets up a Prefect deployment for company analysis.
-"""
+"""Company Analysis Deployment Script."""
 
 import os
 from pathlib import Path
+from typing import Any, Optional
 
 from prefect.deployments import Deployment
 from prefect.filesystems import LocalFileSystem
@@ -16,29 +12,40 @@ from prefect.server.schemas.schedules import CronSchedule
 from dewey.core.base_script import BaseScript
 from dewey.core.research.analysis.company_analysis import analyze_companies
 
+
 class CompanyAnalysisDeployment(BaseScript):
-    """Handles deployment of company analysis flow."""
+    """Handles deployment of company analysis flow.
 
-    def __init__(self):
+    Inherits from BaseScript for standardized configuration and logging.
+    """
+
+    def __init__(self) -> None:
+        """Initializes the CompanyAnalysisDeployment."""
         super().__init__()
-        self.logger = self.get_logger()
-        self.config = self.get_config()
 
-    def run(self, args):
-        """Main execution method."""
+    def run(self, args: Optional[Any] = None) -> None:
+        """Main execution method to deploy the company analysis flow.
+
+        Args:
+            args: Optional arguments (not used in this implementation).
+        """
+        self.deploy()
+
+    def deploy(self) -> None:
+        """Deploys the company analysis flow to Prefect."""
         # Get auth credentials from environment
         prefect_user = os.getenv("PREFECT_AUTH_USER", "srvo")
         prefect_pass = os.getenv("BASIC_AUTH_PASSWORD", "")
 
         # Get API URL from config
-        api_base = self.config.settings.prefect_api_base
+        api_base = self.get_config_value("settings.prefect_api_base")
         api_url = api_base
         if prefect_user and prefect_pass:
             api_url = f"https://{prefect_user}:{prefect_pass}@{api_base.replace('https://', '')}"
 
         # Get paths from config
-        flows_path = Path(self.config.paths.prefect_flows_dir)
-        config_path = Path(self.config.paths.prefect_configs_dir) / "latest_config.json"
+        flows_path = Path(self.get_config_value("paths.prefect_flows_dir"))
+        config_path = Path(self.get_config_value("paths.prefect_configs_dir")) / "latest_config.json"
 
         # Create a local storage block for our flow code
         storage = LocalFileSystem(
@@ -75,10 +82,12 @@ class CompanyAnalysisDeployment(BaseScript):
         deployment.apply()
         self.logger.info("Company analysis deployment created successfully")
 
-def main():
+
+def main() -> None:
     """Main entry point."""
     deployment = CompanyAnalysisDeployment()
     deployment.run(None)
+
 
 if __name__ == "__main__":
     main()
