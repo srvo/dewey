@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db import connection, utils
+from dewey.core.db.connection import DatabaseConnection, get_connection
 from dewey.llm import llm_utils
 
 
@@ -53,13 +53,14 @@ class Validation(BaseScript):
             True if the data is valid, False otherwise.
 
         Raises:
+            ValueError: If the input data is not a dictionary.
             Exception: If an error occurs during validation.
         """
         try:
             # Add your validation logic here
             if not isinstance(data, dict):
                 self.logger.error("Data is not a dictionary.")
-                return False
+                raise ValueError("Data must be a dictionary.")
 
             # Example LLM call
             prompt = "Is this data valid?"
@@ -67,15 +68,25 @@ class Validation(BaseScript):
             self.logger.info(f"LLM Response: {response}")
 
             # Example database operation
-            with self.db_conn.cursor() as cur:
+            db_conn: DatabaseConnection = get_connection(self.config.get("database", {}))
+            with db_conn.cursor() as cur:
                 cur.execute("SELECT 1;")
                 result = cur.fetchone()
                 self.logger.info(f"Database check: {result}")
 
             return True  # Placeholder for actual validation logic
+        except ValueError as ve:
+            self.logger.error(f"Invalid data format: {ve}")
+            return False
         except Exception as e:
             self.logger.exception(f"An error occurred during validation: {e}")
             return False
+
+    def execute(self) -> None:
+        """
+        Executes the validation script.
+        """
+        super().execute()
 
 
 if __name__ == "__main__":
