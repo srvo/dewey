@@ -6,15 +6,15 @@ Dependencies:
 - pandas for data manipulation
 """
 
-import sqlite3
 import logging
 import re
-from typing import Dict, Any
+import sqlite3
+from typing import Any, Dict
 
 import pandas as pd
 
 from dewey.core.base_script import BaseScript
-from src.dewey.utils.database import get_db_connection
+from dewey.core.db.connection import get_db_connection
 
 
 class OpportunityDetector(BaseScript):
@@ -22,9 +22,9 @@ class OpportunityDetector(BaseScript):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initializes the OpportunityDetector."""
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, config_section="regex_patterns", **kwargs)
         self.opportunity_patterns: Dict[str, str] = self.get_config_value(
-            "regex_patterns:opportunity"
+            "opportunity"
         )
 
     def extract_opportunities(self, email_text: str) -> Dict[str, bool]:
@@ -42,7 +42,9 @@ class OpportunityDetector(BaseScript):
             opportunities[key] = bool(pattern.search(email_text))
         return opportunities
 
-    def update_contacts_db(self, opportunities_df: pd.DataFrame, conn: sqlite3.Connection) -> None:
+    def update_contacts_db(
+        self, opportunities_df: pd.DataFrame, conn: sqlite3.Connection
+    ) -> None:
         """Updates the contacts table in the database with detected opportunities.
 
         Args:
@@ -79,7 +81,8 @@ class OpportunityDetector(BaseScript):
     def detect_opportunities(self, conn: sqlite3.Connection) -> None:
         """Detects and flags business opportunities within emails.
 
-        Fetches emails, identifies opportunities based on regex patterns, and updates the contacts database.
+        Fetches emails, identifies opportunities based on regex patterns, and
+        updates the contacts database.
 
         Args:
             conn: Database connection.
