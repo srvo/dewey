@@ -16,6 +16,9 @@ class AdminTasks(BaseScript):
         """
         super().__init__(config_section="admin", requires_db=True)
         self.logger = logging.getLogger(__name__)  # Get logger instance
+        if self.db_conn is None:
+            self.logger.error("Database connection is not established during initialization.")
+            raise ValueError("Database connection is not established during initialization.")
 
     def run(self) -> None:
         """
