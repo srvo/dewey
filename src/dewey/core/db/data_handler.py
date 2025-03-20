@@ -1,7 +1,5 @@
-from typing import Any, Dict, List, Optional, Union
-
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
+from dewey.core.db.connection import get_connection
 from dewey.core.db.utils import create_table, execute_query
 
 
@@ -88,7 +86,9 @@ class DataHandler(BaseScript):
                 insert_query = f"INSERT INTO {table_name} (id, name) VALUES (?, ?)"
                 execute_query(conn, insert_query, (data["id"], data["name"]))
 
-                self.logger.info(f"Successfully created table and inserted data into {table_name}")
+                self.logger.info(
+                    f"Successfully created table and inserted data into {table_name}"
+                )
 
         except Exception as e:
             self.logger.error(f"Error during database operation: {e}")
