@@ -1,2 +1,1 @@
-"""Config class to provide access to centralized configuration."""
-"""Config class to provide access to centralized configuration."""
+from dewey.core.base_script import BaseScript
