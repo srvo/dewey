@@ -3,23 +3,19 @@ from typing import Any, Dict
 
 
 class OutputHandler(BaseScript):
-    """
-    Handles the output of research tasks, ensuring proper logging and configuration.
-    """
+    """Handles the output of research tasks, ensuring proper logging and configuration."""
 
     def __init__(self, config_path: str, **kwargs: Any) -> None:
-        """
-        Initializes the OutputHandler.
+        """Initializes the OutputHandler.
 
         Args:
-            config_path (str): Path to the configuration file.
-            **kwargs (Any): Additional keyword arguments.
+            config_path: Path to the configuration file.
+            **kwargs: Additional keyword arguments.
         """
         super().__init__(config_path, **kwargs)
 
     def run(self) -> None:
-        """
-        Executes the core logic of the output handler.
+        """Executes the core logic of the output handler.
 
         This method retrieves configuration values, processes data,
         and logs relevant information.
@@ -42,12 +38,11 @@ class OutputHandler(BaseScript):
             self.logger.exception(f"An unexpected error occurred: {e}")
 
     def write_output(self, output_path: str, data: Dict[str, Any]) -> None:
-        """
-        Writes the output data to the specified path.
+        """Writes the output data to the specified path.
 
         Args:
-            output_path (str): The path to write the output data.
-            data (Dict[str, Any]): The data to write.
+            output_path: The path to write the output data.
+            data: The data to write.
         """
         try:
             # In a real implementation, this would write to a file or database.
