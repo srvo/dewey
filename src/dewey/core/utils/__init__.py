@@ -43,14 +43,16 @@ class MyUtils(BaseScript):
 
             # Example database operation
             if self.db_conn:
-                self.logger.info("Executing example database operation...")
-                # Example: Fetching data (replace with your actual query)
-                # Assuming you have a table named 'example_table'
                 try:
-                    with self.db_conn.cursor() as cursor:
-                        cursor.execute("SELECT 1")
-                        result = cursor.fetchone()
-                        self.logger.info(f"Database query result: {result}")
+                    self.logger.info("Executing example database operation...")
+                    # Check if the connection is valid before proceeding
+                    if self.db_conn.closed == 0:
+                        with self.db_conn.cursor() as cursor:
+                            cursor.execute("SELECT 1")
+                            result = cursor.fetchone()
+                            self.logger.info(f"Database query result: {result}")
+                    else:
+                        self.logger.error("Database connection is closed.")
                 except Exception as e:
                     self.logger.error(f"Error executing database query: {e}")
             else:
