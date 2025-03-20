@@ -12,7 +12,7 @@ class AutomationModule(BaseScript):
     execute the script's primary logic.
     """
 
-    def __init__(self, config_section: str = 'automation'):
+    def __init__(self, config_section: str = 'automation') -> None:
         """
         Initializes the AutomationModule.
 
@@ -27,6 +27,15 @@ class AutomationModule(BaseScript):
 
         This method should be overridden by subclasses to implement
         the specific automation tasks.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            Exception: If something goes wrong.
         """
         self.logger.info("Automation module started.")
         # Add your automation logic here
