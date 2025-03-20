@@ -4,9 +4,10 @@
 import json
 import shutil
 import tempfile
+from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Protocol
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection
@@ -17,16 +18,106 @@ from dewey.core.db.connection import (
 from .models import Service
 
 
+class ServiceManagerInterface(Protocol):
+    """Interface for Service Managers."""
+
+    def run_command(self, command: str) -> None:
+        ...
+
+
+class FileSystemInterface(Protocol):
+    """Interface for file system operations."""
+
+    def exists(self, path: Path) -> bool:
+        ...
+
+    def mkdir(self, path: Path, parents: bool = False, exist_ok: bool = False) -> None:
+        ...
+
+    def copytree(self, src: Path, dst: Path, dirs_exist_ok: bool = False) -> None:
+        ...
+
+    def copy2(self, src: Path, dst: Path) -> None:
+        ...
+
+    def unpack_archive(self, filename: str, extract_dir: str) -> None:
+        ...
+
+    def make_archive(self, base_name: str, format: str, root_dir: str) -> str:
+        ...
+
+    def rmtree(self, path: Path) -> None:
+        ...
+
+    def write_text(self, path: Path, data: str) -> None:
+        ...
+
+    def read_text(self, path: Path) -> str:
+        ...
+
+    def iterdir(self, path: Path):
+        ...
+
+    def is_file(self, path: Path) -> bool:
+        ...
+
+    def is_dir(self, path: Path) -> bool:
+        ...
+
+
+class RealFileSystem:
+    """Real file system operations."""
+
+    def exists(self, path: Path) -> bool:
+        return path.exists()
+
+    def mkdir(self, path: Path, parents: bool = False, exist_ok: bool = False) -> None:
+        path.mkdir(parents=parents, exist_ok=exist_ok)
+
+    def copytree(self, src: Path, dst: Path, dirs_exist_ok: bool = False) -> None:
+        shutil.copytree(src, dst, dirs_exist_ok=dirs_exist_ok)
+
+    def copy2(self, src: Path, dst: Path) -> None:
+        shutil.copy2(src, dst)
+
+    def unpack_archive(self, filename: str, extract_dir: str) -> None:
+        shutil.unpack_archive(filename, extract_dir)
+
+    def make_archive(self, base_name: str, format: str, root_dir: str) -> str:
+        return shutil.make_archive(base_name, format, root_dir)
+
+    def rmtree(self, path: Path) -> None:
+        shutil.rmtree(path)
+
+    def write_text(self, path: Path, data: str) -> None:
+        path.write_text(data)
+
+    def read_text(self, path: Path) -> str:
+        return path.read_text()
+
+    def iterdir(self, path: Path):
+        return path.iterdir()
+
+    def is_file(self, path: Path) -> bool:
+        return path.is_file()
+
+    def is_dir(self, path: Path) -> bool:
+        return path.is_dir()
+
+
 class ServiceDeployment(BaseScript):
     """Service deployment and configuration management.
 
     Implements centralized configuration and error handling via BaseScript.
-
-    Attributes:
-        service_manager: ServiceManager instance
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        service_manager: ServiceManagerInterface,
+        fs: FileSystemInterface,
+        json_lib=json,
+        shutil_lib=shutil,
+    ) -> None:
         """Initialize ServiceDeployment."""
         super().__init__(
             name="service_deployment",
@@ -35,7 +126,7 @@ class ServiceDeployment(BaseScript):
             requires_db=False,
             enable_llm=False,
         )
-        self.service_manager = None  # Initialize to None, set in run()
+        self.service_manager = service_manager
         self.workspace_dir = (
             Path(self.get_config_value("paths.project_root")) / "workspace"
         )
@@ -43,15 +134,20 @@ class ServiceDeployment(BaseScript):
             Path(self.get_config_value("paths.project_root")) / "config"
         )
         self.backups_dir = self.workspace_dir / "backups"
-        self.backups_dir.mkdir(parents=True, exist_ok=True)
+        fs.mkdir(self.backups_dir, parents=True, exist_ok=True)
+        self.fs = fs
+        self.json = json_lib
+        self.shutil = shutil_lib
 
-    def run(self, service_manager: Any) -> None:
+    def run(self, service_manager: ServiceManagerInterface) -> None:
         """Runs the service deployment process.
 
         Args:
             service_manager: ServiceManager instance.
         """
-        self.service_manager = service_manager
+        # self.service_manager = service_manager # No longer needed
+
+        pass
 
     def _ensure_service_dirs(self, service: Service) -> None:
         """Ensure service directories exist.
@@ -64,12 +160,12 @@ class ServiceDeployment(BaseScript):
         """
         try:
             # Create parent directories first
-            service.path.parent.mkdir(parents=True, exist_ok=True)
-            service.config_path.parent.mkdir(parents=True, exist_ok=True)
+            self.fs.mkdir(service.path.parent, parents=True, exist_ok=True)
+            self.fs.mkdir(service.config_path.parent, parents=True, exist_ok=True)
 
             # Then create the actual service directories
-            service.path.mkdir(exist_ok=True)
-            service.config_path.mkdir(exist_ok=True)
+            self.fs.mkdir(service.path, exist_ok=True)
+            self.fs.mkdir(service.config_path, exist_ok=True)
         except OSError as e:
             self.logger.error(f"Failed to create service directories: {e}")
             raise RuntimeError(f"Failed to create service directories: {e}")
@@ -143,7 +239,11 @@ class ServiceDeployment(BaseScript):
             config: Docker Compose configuration.
         """
         compose_file = service.config_path / "docker-compose.yml"
-        compose_file.write_text(json.dumps(config, indent=2))
+        self.fs.write_text(compose_file, self.json.dumps(config, indent=2))
+
+    def _generate_timestamp(self) -> str:
+        """Generate a timestamp string."""
+        return datetime.now().strftime("%Y%m%d_%H%M%S")
 
     def _create_archive(self, service: Service, backup_dir: Path) -> Path:
         """Create a backup archive from a backup directory.
@@ -160,15 +260,15 @@ class ServiceDeployment(BaseScript):
         """
         try:
             # Ensure backups directory exists
-            self.backups_dir.mkdir(parents=True, exist_ok=True)
+            self.fs.mkdir(self.backups_dir, parents=True, exist_ok=True)
 
             # Generate archive name with timestamp
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            timestamp = self._generate_timestamp()
             archive_name = f"{service.name}_backup_{timestamp}.tar.gz"
             archive_path = self.backups_dir / archive_name
 
             # Create archive
-            shutil.make_archive(
+            self.fs.make_archive(
                 str(archive_path.with_suffix("")),
                 "gztar",
                 str(backup_dir),
@@ -212,7 +312,7 @@ class ServiceDeployment(BaseScript):
             RuntimeError: If restore fails.
             FileNotFoundError: If backup file doesn't exist.
         """
-        if not backup_path.exists():
+        if not self.fs.exists(backup_path):
             self.logger.error(f"Backup file not found: {backup_path}")
             raise FileNotFoundError(f"Backup file not found: {backup_path}")
 
@@ -223,7 +323,7 @@ class ServiceDeployment(BaseScript):
 
                 # Stop service and restore from backup
                 self._stop_service(service)
-                shutil.unpack_archive(str(backup_path), str(backup_dir))
+                self.fs.unpack_archive(str(backup_path), str(backup_dir))
                 self._restore_config(service, backup_dir)
                 self._restore_data_volumes(service, backup_dir)
                 self._start_service(service)
@@ -260,11 +360,11 @@ class ServiceDeployment(BaseScript):
         try:
             # Create config backup directory
             config_backup = backup_dir / "config"
-            config_backup.mkdir(parents=True, exist_ok=True)
+            self.fs.mkdir(config_backup, parents=True, exist_ok=True)
 
             # Copy config if it exists
-            if service.config_path.exists():
-                shutil.copytree(service.config_path, config_backup, dirs_exist_ok=True)
+            if self.fs.exists(service.config_path):
+                self.fs.copytree(service.config_path, config_backup, dirs_exist_ok=True)
         except Exception as e:
             self.logger.exception(f"Failed to backup config: {str(e)}")
             raise RuntimeError(f"Failed to backup config: {str(e)}") from e
@@ -282,7 +382,7 @@ class ServiceDeployment(BaseScript):
         try:
             # Create data backup directory
             data_backup = backup_dir / "data"
-            data_backup.mkdir(parents=True, exist_ok=True)
+            self.fs.mkdir(data_backup, parents=True, exist_ok=True)
 
             # Backup each container's volumes
             for container in service.containers:
@@ -294,8 +394,8 @@ class ServiceDeployment(BaseScript):
                     continue
 
                 try:
-                    inspect_data = json.loads(inspect)[0]
-                except (json.JSONDecodeError, IndexError):
+                    inspect_data = self.json.loads(inspect)[0]
+                except (self.json.JSONDecodeError, IndexError):
                     continue
 
                 # Copy volume data
@@ -305,12 +405,12 @@ class ServiceDeployment(BaseScript):
 
                     volume_name = mount["Name"]
                     volume_path = data_backup / volume_name
-                    volume_path.mkdir(parents=True, exist_ok=True)
+                    self.fs.mkdir(volume_path, parents=True, exist_ok=True)
 
                     # Copy volume contents
                     source_path = mount["Source"]
-                    if Path(source_path).exists():
-                        shutil.copytree(source_path, volume_path, dirs_exist_ok=True)
+                    if self.fs.exists(Path(source_path)):
+                        self.fs.copytree(Path(source_path), volume_path, dirs_exist_ok=True)
         except Exception as e:
             self.logger.exception(f"Failed to backup data volumes: {str(e)}")
             raise RuntimeError(f"Failed to backup data volumes: {str(e)}") from e
@@ -327,17 +427,18 @@ class ServiceDeployment(BaseScript):
         """
         try:
             config_backup = backup_dir / "config"
-            if config_backup.exists():
+            if self.fs.exists(config_backup):
                 # Ensure config directory exists
-                service.config_path.mkdir(parents=True, exist_ok=True)
+                self.fs.mkdir(service.config_path, parents=True, exist_ok=True)
 
                 # Copy config files
-                for item in config_backup.iterdir():
-                    if item.is_file():
-                        shutil.copy2(item, service.config_path)
+                for item in self.fs.iterdir(config_backup):
+                    item_path = Path(item)
+                    if self.fs.is_file(item_path):
+                        self.fs.copy2(item_path, service.config_path)
                     else:
-                        shutil.copytree(
-                            item, service.config_path / item.name, dirs_exist_ok=True
+                        self.fs.copytree(
+                            item_path, service.config_path / item_path.name, dirs_exist_ok=True
                         )
         except Exception as e:
             self.logger.exception(f"Failed to restore config: {str(e)}")
@@ -355,15 +456,16 @@ class ServiceDeployment(BaseScript):
         """
         try:
             data_backup = backup_dir / "data"
-            if not data_backup.exists():
+            if not self.fs.exists(data_backup):
                 return
 
             # Restore each volume
-            for volume_backup in data_backup.iterdir():
-                if not volume_backup.is_dir():
+            for volume_backup in self.fs.iterdir(data_backup):
+                volume_backup_path = Path(volume_backup)
+                if not self.fs.is_dir(volume_backup_path):
                     continue
 
-                volume_name = volume_backup.name
+                volume_name = volume_backup_path.name
 
                 # Recreate volume
                 self.service_manager.run_command(f"docker volume rm -f {volume_name}")
@@ -374,14 +476,14 @@ class ServiceDeployment(BaseScript):
                     f"docker volume inspect {volume_name}",
                 )
                 try:
-                    mount_point = json.loads(inspect)[0]["Mountpoint"]
-                except (json.JSONDecodeError, IndexError, KeyError):
+                    mount_point = self.json.loads(inspect)[0]["Mountpoint"]
+                except (self.json.JSONDecodeError, IndexError, KeyError):
                     continue
 
                 # Copy data to volume
                 mount_path = Path(mount_point)
-                if mount_path.exists():
-                    shutil.copytree(volume_backup, mount_path, dirs_exist_ok=True)
+                if self.fs.exists(mount_path):
+                    self.fs.copytree(volume_backup_path, mount_path, dirs_exist_ok=True)
         except Exception as e:
             self.logger.exception(f"Failed to restore data volumes: {str(e)}")
             raise RuntimeError(f"Failed to restore data volumes: {str(e)}") from e
@@ -395,9 +497,10 @@ class ServiceDeployment(BaseScript):
         self.service_manager.run_command(f"mkdir -p {service.path}")
 
         compose_path = service.config_path / "docker-compose.yml"
-        if compose_path.exists():
+        if self.fs.exists(compose_path):
             remote_path = service.path / "docker-compose.yml"
-            compose_content = compose_path.read_text()
+            compose_content = self.fs.read_text(compose_path)
             self.service_manager.run_command(
                 f"cat > {remote_path} << 'EOL'\n{compose_content}\nEOL",
             )
+
