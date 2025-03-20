@@ -6,6 +6,9 @@ from pathlib import Path
 from typing import Any, Dict, Set
 import logging
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
+from dewey.core.db import utils as db_utils
+from dewey.llm import llm_utils
 
 
 class RulesConverter(BaseScript):
