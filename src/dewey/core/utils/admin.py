@@ -1,4 +1,5 @@
 from dewey.core.base_script import BaseScript
+import logging
 
 
 class AdminTasks(BaseScript):
@@ -12,14 +13,19 @@ class AdminTasks(BaseScript):
         Initializes the AdminTasks script.
         """
         super().__init__(config_section="admin", requires_db=True)
+        self.logger = logging.getLogger(__name__)  # Get logger instance
 
     def run(self):
         """
         Executes the administrative tasks.
         """
         self.logger.info("Starting administrative tasks...")
-        self.perform_database_maintenance()
-        self.logger.info("Administrative tasks completed.")
+        try:
+            self.perform_database_maintenance()
+            self.logger.info("Administrative tasks completed.")
+        except Exception as e:
+            self.logger.error(f"Error during administrative tasks: {e}")
+            raise
 
     def perform_database_maintenance(self):
         """
@@ -30,11 +36,14 @@ class AdminTasks(BaseScript):
             self.logger.info("Performing database maintenance...")
             with self.db_conn.cursor() as cursor:
                 cursor.execute("VACUUM;")
+                self.logger.info("VACUUM completed.")
                 cursor.execute("ANALYZE;")
+                self.logger.info("ANALYZE completed.")
             self.db_conn.commit()
             self.logger.info("Database maintenance completed.")
         except Exception as e:
             self.logger.error(f"Error performing database maintenance: {e}")
+            self.db_conn.rollback()  # Rollback in case of error
             raise
 
     def add_user(self, username, password):
@@ -59,4 +68,5 @@ class AdminTasks(BaseScript):
             self.logger.info(f"User {username} added successfully.")
         except Exception as e:
             self.logger.error(f"Error adding user {username}: {e}")
+            self.db_conn.rollback()  # Rollback in case of error
             raise
