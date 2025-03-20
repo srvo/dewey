@@ -25,27 +25,32 @@ class ServiceDeployment(BaseScript):
         service_manager: ServiceManager instance
     """
 
-    def __init__(self, service_manager) -> None:
-        """Initialize ServiceDeployment.
-
-        Args:
-            service_manager: ServiceManager instance
-        """
+    def __init__(self) -> None:
+        """Initialize ServiceDeployment."""
         super().__init__(
             name="service_deployment",
-            description="Service deployment and configuration management"
+            description="Service deployment and configuration management",
+            config_section="service_deployment"
         )
-        self.service_manager = service_manager
+        self.service_manager = None  # Initialize to None, set in run()
         self.workspace_dir = Path(os.getenv("DEWEY_DIR", os.path.expanduser("~/dewey"))) / "workspace"
         self.config_dir = Path(os.getenv("DEWEY_DIR", os.path.expanduser("~/dewey"))) / "config"
         self.backups_dir = self.workspace_dir / "backups"
         self.backups_dir.mkdir(parents=True, exist_ok=True)
 
+    def run(self, service_manager) -> None:
+        """Runs the service deployment process.
+
+        Args:
+            service_manager: ServiceManager instance.
+        """
+        self.service_manager = service_manager
+
     def _ensure_service_dirs(self, service: Service) -> None:
         """Ensure service directories exist.
 
         Args:
-            service: Service to create directories for
+            service: Service to create directories for.
         """
         try:
             # Create parent directories first
@@ -62,11 +67,11 @@ class ServiceDeployment(BaseScript):
         """Deploy or update a service.
 
         Args:
-            service: Service to deploy
-            config: Service configuration
+            service: Service to deploy.
+            config: Service configuration.
 
         Raises:
-            RuntimeError: If deployment steps fail
+            RuntimeError: If deployment steps fail.
         """
         try:
             self._ensure_service_dirs(service)
@@ -81,10 +86,10 @@ class ServiceDeployment(BaseScript):
         """Generate docker-compose configuration.
 
         Args:
-            config: Service configuration
+            config: Service configuration.
 
         Returns:
-            Docker Compose configuration dictionary
+            Docker Compose configuration dictionary.
         """
         compose_config = {"version": "3", "services": {}}
 
@@ -117,8 +122,8 @@ class ServiceDeployment(BaseScript):
         """Write docker-compose configuration to file.
 
         Args:
-            service: Service to write config for
-            config: Docker Compose configuration
+            service: Service to write config for.
+            config: Docker Compose configuration.
         """
         compose_file = service.config_path / "docker-compose.yml"
         compose_file.write_text(json.dumps(config, indent=2))
@@ -127,14 +132,14 @@ class ServiceDeployment(BaseScript):
         """Create a backup archive from a backup directory.
 
         Args:
-            service: Service being backed up
-            backup_dir: Directory containing files to archive
+            service: Service being backed up.
+            backup_dir: Directory containing files to archive.
 
         Returns:
-            Path to created archive
+            Path to created archive.
 
         Raises:
-            RuntimeError: If archive creation fails
+            RuntimeError: If archive creation fails.
         """
         try:
             # Ensure backups directory exists
@@ -160,13 +165,13 @@ class ServiceDeployment(BaseScript):
         """Back up service configuration and data.
 
         Args:
-            service: Service to back up
+            service: Service to back up.
 
         Returns:
-            Path to backup archive
+            Path to backup archive.
 
         Raises:
-            RuntimeError: If backup fails
+            RuntimeError: If backup fails.
         """
         try:
             with tempfile.TemporaryDirectory() as temp_dir:
@@ -182,12 +187,12 @@ class ServiceDeployment(BaseScript):
         """Restore service from backup.
 
         Args:
-            service: Service to restore
-            backup_path: Path to backup archive
+            service: Service to restore.
+            backup_path: Path to backup archive.
 
         Raises:
-            RuntimeError: If restore fails
-            FileNotFoundError: If backup file doesn't exist
+            RuntimeError: If restore fails.
+            FileNotFoundError: If backup file doesn't exist.
         """
         if not backup_path.exists():
             raise FileNotFoundError(f"Backup file not found: {backup_path}")
@@ -211,7 +216,6 @@ class ServiceDeployment(BaseScript):
         """Start the service using docker-compose.
 
         Args:
-        ----
             service: The service to start.
 
         """
@@ -221,7 +225,6 @@ class ServiceDeployment(BaseScript):
         """Stop the service using docker-compose.
 
         Args:
-        ----
             service: The service to stop.
 
         """
@@ -231,11 +234,11 @@ class ServiceDeployment(BaseScript):
         """Backup service configuration.
 
         Args:
-            service: Service to backup
-            backup_dir: Directory to store backup
+            service: Service to backup.
+            backup_dir: Directory to store backup.
 
         Raises:
-            RuntimeError: If backup fails
+            RuntimeError: If backup fails.
         """
         try:
             # Create config backup directory
@@ -252,11 +255,11 @@ class ServiceDeployment(BaseScript):
         """Backup the service's data volumes.
 
         Args:
-            service: The service to backup
-            backup_dir: The directory to store the backup
+            service: The service to backup.
+            backup_dir: The directory to store the backup.
 
         Raises:
-            RuntimeError: If backup fails
+            RuntimeError: If backup fails.
         """
         try:
             # Create data backup directory
@@ -297,11 +300,11 @@ class ServiceDeployment(BaseScript):
         """Restore service configuration from backup.
 
         Args:
-            service: Service to restore
-            backup_dir: Directory containing backup
+            service: Service to restore.
+            backup_dir: Directory containing backup.
 
         Raises:
-            RuntimeError: If restore fails
+            RuntimeError: If restore fails.
         """
         try:
             config_backup = backup_dir / "config"
@@ -322,11 +325,11 @@ class ServiceDeployment(BaseScript):
         """Restore service data volumes from backup.
 
         Args:
-            service: Service to restore
-            backup_dir: Directory containing backup
+            service: Service to restore.
+            backup_dir: Directory containing backup.
 
         Raises:
-            RuntimeError: If restore fails
+            RuntimeError: If restore fails.
         """
         try:
             data_backup = backup_dir / "data"
@@ -365,7 +368,7 @@ class ServiceDeployment(BaseScript):
 
         Args:
         ----
-            service: Service to sync configuration for
+            service: Service to sync configuration for.
 
         """
         self.service_manager.run_command(f"mkdir -p {service.path}")
