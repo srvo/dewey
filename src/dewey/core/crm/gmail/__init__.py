@@ -13,7 +13,12 @@ class GmailModule(BaseScript):
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initializes the GmailModule."""
+        """Initializes the GmailModule.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        """
         super().__init__(*args, **kwargs)
 
     def run(self) -> None:
