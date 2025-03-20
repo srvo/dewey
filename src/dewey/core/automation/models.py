@@ -1,6 +1,7 @@
 from dataclasses import dataclass
-from typing import Optional, Dict, Any, List
 from pathlib import Path
+from typing import Any, Dict, List, Optional
+
 from dewey.core.base_script import BaseScript
 
 
@@ -38,20 +39,28 @@ class Service(BaseScript):
     status: str = "inactive"
     version: str = "1.0.0"
 
-    def __init__(self, name: str, path: Path, config_path: Path, containers: List[Any],
-                 description: Optional[str] = None, config: Optional[Dict[str, Any]] = None,
-                 status: str = "inactive", version: str = "1.0.0"):
+    def __init__(
+        self,
+        name: str,
+        path: Path,
+        config_path: Path,
+        containers: List[Any],
+        description: Optional[str] = None,
+        config: Optional[Dict[str, Any]] = None,
+        status: str = "inactive",
+        version: str = "1.0.0",
+    ) -> None:
         """Initializes a Service instance.
 
         Args:
-            name (str): The name of the service.
-            path (Path): The path to the service.
-            config_path (Path): The path to the service configuration.
-            containers (List[Any]): The containers associated with the service.
-            description (Optional[str]): A description of the service.
-            config (Optional[Dict[str, Any]]): The configuration for the service.
-            status (str): The status of the service.
-            version (str): The version of the service.
+            name: The name of the service.
+            path: The path to the service.
+            config_path: The path to the service configuration.
+            containers: The containers associated with the service.
+            description: A description of the service.
+            config: The configuration for the service.
+            status: The status of the service.
+            version: The version of the service.
         """
         super().__init__(config_section=name)
         self.name = name
@@ -67,7 +76,7 @@ class Service(BaseScript):
         """Convert the service to a dictionary.
 
         Returns:
-            Dict[str, Any]: A dictionary representation of the service.
+            A dictionary representation of the service.
         """
         return {
             "name": self.name,
@@ -77,7 +86,7 @@ class Service(BaseScript):
             "description": self.description,
             "config": self.config,
             "status": self.status,
-            "version": self.version
+            "version": self.version,
         }
 
     @classmethod
@@ -85,10 +94,10 @@ class Service(BaseScript):
         """Create a service from a dictionary.
 
         Args:
-            data (Dict[str, Any]): A dictionary containing the service data.
+            data: A dictionary containing the service data.
 
         Returns:
-            Service: A Service instance created from the dictionary.
+            A Service instance created from the dictionary.
         """
         return cls(
             name=data["name"],
@@ -98,7 +107,7 @@ class Service(BaseScript):
             description=data.get("description"),
             config=data.get("config"),
             status=data.get("status", "inactive"),
-            version=data.get("version", "1.0.0")
+            version=data.get("version", "1.0.0"),
         )
 
     def run(self) -> None:
