@@ -1,9 +1,6 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
-from dewey.core.db.utils import create_table, execute_query
-from dewey.llm import llm_utils
-import logging
-from typing import Any, Dict, Optional
+from typing import Optional
+
 
 class ImportData(BaseScript):
     """
@@ -21,7 +18,9 @@ class ImportData(BaseScript):
             config_section (Optional[str]): The section in the config file to use for this script.
                                             Defaults to "import_data".
         """
-        super().__init__(config_section=config_section, requires_db=True, enable_llm=False)
+        super().__init__(
+            config_section=config_section, requires_db=True, enable_llm=False
+        )
         self.name = "ImportData"  # Set the script name for logging
 
     def run(self) -> None:
@@ -56,6 +55,7 @@ class ImportData(BaseScript):
         except Exception as e:
             self.logger.error(f"Error during {self.name} script: {e}", exc_info=True)
             raise
+
 
 if __name__ == "__main__":
     script = ImportData()
