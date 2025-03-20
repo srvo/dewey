@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
 
-#!/usr/bin/env python3
-
 import json
 import subprocess
 import sys
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List
 
 from dewey.core.base_script import BaseScript
 
 
 class AccountValidator(BaseScript):
-    """Validates accounts in the Hledger journal against predefined rules."""
+    """Validates accounts in the Hledger journal against predefined rules.
 
-    def __init__(self):
+    Inherits from BaseScript for standardized configuration and logging.
+    """
+
+    def __init__(self) -> None:
         """Initializes the AccountValidator with bookkeeping configuration."""
         super().__init__(config_section='bookkeeping')
 
@@ -22,16 +23,16 @@ class AccountValidator(BaseScript):
         """Load classification rules from a JSON file.
 
         Args:
-            rules_file (Path): The path to the JSON rules file.
+            rules_file: The path to the JSON rules file.
 
         Returns:
-            Dict: A dictionary containing the classification rules.
+            A dictionary containing the classification rules.
 
         Raises:
             SystemExit: If the rules file cannot be loaded.
         """
         try:
-            with open(rules_file) as f:  # type: ignore
+            with open(rules_file) as f:
                 return json.load(f)
         except Exception as e:
             self.logger.exception(f"Failed to load rules: {e!s}")
@@ -41,15 +42,15 @@ class AccountValidator(BaseScript):
         """Verify that all accounts in the rules exist in the journal file.
 
         Args:
-            journal_file (Path): The path to the hledger journal file.
-            rules (Dict): A dictionary containing the classification rules.
+            journal_file: The path to the hledger journal file.
+            rules: A dictionary containing the classification rules.
 
         Returns:
-            bool: True if all accounts are valid, False otherwise.
+            True if all accounts are valid, False otherwise.
         """
         try:
             # Get both declared and used accounts
-            result = subprocess.run(  # type: ignore
+            result = subprocess.run(
                 ["hledger", "accounts", "-f", journal_file, "--declared", "--used"],
                 capture_output=True,
                 text=True,
@@ -58,7 +59,7 @@ class AccountValidator(BaseScript):
             existing_accounts = set(result.stdout.splitlines())
 
             # Check all categories from rules
-            missing = [
+            missing: List[str] = [
                 acc for acc in rules["categories"] if acc not in existing_accounts
             ]
 
@@ -72,13 +73,17 @@ class AccountValidator(BaseScript):
                 return False
 
             return True
+        except subprocess.CalledProcessError as e:
+            self.logger.exception(f"Hledger command failed: {e!s}")
+            return False
         except Exception as e:
             self.logger.exception(f"Account validation failed: {e!s}")
             return False
 
     def run(self) -> None:
         """Main function to execute the hledger classification process."""
-        if len(sys.argv) != 3:  # type: ignore
+        if len(sys.argv) != 3:
+            self.logger.error("Usage: account_validator.py <journal_file> <rules_file>")
             sys.exit(1)
 
         journal_file = Path(sys.argv[1])
@@ -100,4 +105,4 @@ class AccountValidator(BaseScript):
 
 if __name__ == "__main__":
     validator = AccountValidator()
-    validator.execute()
+    validator.run()
