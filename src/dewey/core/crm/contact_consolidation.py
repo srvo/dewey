@@ -15,8 +15,12 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
+import logging
+from dewey.core.base_script import BaseScript
 
 import duckdb
+import logging
+from dewey.core.base_script import BaseScript
 
 # Add the project root to the Python path
 project_root = Path(__file__).resolve().parent.parent.parent.parent.parent
@@ -50,10 +54,10 @@ def connect_to_motherduck(database_name: str = "dewey") -> duckdb.DuckDBPyConnec
     """
     try:
         conn = duckdb.connect(f"md:{database_name}")
-        logger.info(f"Connected to MotherDuck database: {database_name}")
+        self.logger.info(f"Connected to MotherDuck database: {database_name}")
         return conn
     except Exception as e:
-        logger.error(f"Error connecting to MotherDuck database: {e}")
+        self.logger.error(f"Error connecting to MotherDuck database: {e}")
         raise
 
 def create_unified_contacts_table(conn: duckdb.DuckDBPyConnection) -> None:
@@ -83,9 +87,9 @@ def create_unified_contacts_table(conn: duckdb.DuckDBPyConnection) -> None:
             metadata JSON
         )
         """)
-        logger.info("Created or verified unified_contacts table")
+        self.logger.info("Created or verified unified_contacts table")
     except Exception as e:
-        logger.error(f"Error creating unified_contacts table: {e}")
+        self.logger.error(f"Error creating unified_contacts table: {e}")
         raise
 
 def extract_contacts_from_crm(conn: duckdb.DuckDBPyConnection) -> List[Dict]:
@@ -150,10 +154,10 @@ def extract_contacts_from_crm(conn: duckdb.DuckDBPyConnection) -> List[Dict]:
             }
             contacts.append(contact)
         
-        logger.info(f"Extracted {len(contacts)} contacts from CRM tables")
+        self.logger.info(f"Extracted {len(contacts)} contacts from CRM tables")
         return contacts
     except Exception as e:
-        logger.error(f"Error extracting contacts from CRM tables: {e}")
+        self.logger.error(f"Error extracting contacts from CRM tables: {e}")
         return []
 
 def extract_contacts_from_emails(conn: duckdb.DuckDBPyConnection) -> List[Dict]:
@@ -263,10 +267,10 @@ def extract_contacts_from_emails(conn: duckdb.DuckDBPyConnection) -> List[Dict]:
             }
             contacts.append(contact)
         
-        logger.info(f"Extracted {len(contacts)} contacts from email tables")
+        self.logger.info(f"Extracted {len(contacts)} contacts from email tables")
         return contacts
     except Exception as e:
-        logger.error(f"Error extracting contacts from email tables: {e}")
+        self.logger.error(f"Error extracting contacts from email tables: {e}")
         return []
 
 def extract_contacts_from_subscribers(conn: duckdb.DuckDBPyConnection) -> List[Dict]:
@@ -377,10 +381,10 @@ def extract_contacts_from_subscribers(conn: duckdb.DuckDBPyConnection) -> List[D
             }
             contacts.append(contact)
         
-        logger.info(f"Extracted {len(contacts)} contacts from subscriber tables")
+        self.logger.info(f"Extracted {len(contacts)} contacts from subscriber tables")
         return contacts
     except Exception as e:
-        logger.error(f"Error extracting contacts from subscriber tables: {e}")
+        self.logger.error(f"Error extracting contacts from subscriber tables: {e}")
         return []
 
 def extract_contacts_from_blog_signups(conn: duckdb.DuckDBPyConnection) -> List[Dict]:
@@ -445,10 +449,10 @@ def extract_contacts_from_blog_signups(conn: duckdb.DuckDBPyConnection) -> List[
             }
             contacts.append(contact)
         
-        logger.info(f"Extracted {len(contacts)} contacts from blog signup form responses")
+        self.logger.info(f"Extracted {len(contacts)} contacts from blog signup form responses")
         return contacts
     except Exception as e:
-        logger.error(f"Error extracting contacts from blog signup form responses: {e}")
+        self.logger.error(f"Error extracting contacts from blog signup form responses: {e}")
         return []
 
 def merge_contacts(contacts: List[Dict]) -> Dict[str, Dict]:
@@ -483,7 +487,7 @@ def merge_contacts(contacts: List[Dict]) -> Dict[str, Dict]:
             if value is not None and existing[key] is None:
                 existing[key] = value
                 
-    logger.info(f"Merged contacts into {len(merged_contacts)} unique contacts")
+    self.logger.info(f"Merged contacts into {len(merged_contacts)} unique contacts")
     return merged_contacts
 
 def insert_unified_contacts(conn: duckdb.DuckDBPyConnection, contacts: Dict[str, Dict]) -> None:
@@ -496,7 +500,7 @@ def insert_unified_contacts(conn: duckdb.DuckDBPyConnection, contacts: Dict[str,
     try:
         # Clear existing data
         conn.execute("DELETE FROM unified_contacts")
-        logger.info("Cleared existing data from unified_contacts table")
+        self.logger.info("Cleared existing data from unified_contacts table")
         
         # Insert new data in batches
         batch_size = 100
@@ -504,14 +508,14 @@ def insert_unified_contacts(conn: duckdb.DuckDBPyConnection, contacts: Dict[str,
         total_contacts = len(contact_items)
         total_batches = (total_contacts + batch_size - 1) // batch_size
         
-        logger.info(f"Inserting {total_contacts} contacts in {total_batches} batches of {batch_size}")
+        self.logger.info(f"Inserting {total_contacts} contacts in {total_batches} batches of {batch_size}")
         
         for batch_idx in range(0, total_batches):
             start_idx = batch_idx * batch_size
             end_idx = min(start_idx + batch_size, total_contacts)
             batch = contact_items[start_idx:end_idx]
             
-            logger.info(f"Processing batch {batch_idx + 1}/{total_batches} ({start_idx} to {end_idx - 1})")
+            self.logger.info(f"Processing batch {batch_idx + 1}/{total_batches} ({start_idx} to {end_idx - 1})")
             
             for email, contact in batch:
                 try:
@@ -540,13 +544,13 @@ def insert_unified_contacts(conn: duckdb.DuckDBPyConnection, contacts: Dict[str,
                         json.dumps(contact['metadata']) if contact['metadata'] is not None else None
                     ])
                 except Exception as e:
-                    logger.error(f"Error inserting contact {email}: {e}")
+                    self.logger.error(f"Error inserting contact {email}: {e}")
             
-            logger.info(f"Completed batch {batch_idx + 1}/{total_batches}")
+            self.logger.info(f"Completed batch {batch_idx + 1}/{total_batches}")
         
-        logger.info(f"Inserted {total_contacts} contacts into unified_contacts table")
+        self.logger.info(f"Inserted {total_contacts} contacts into unified_contacts table")
     except Exception as e:
-        logger.error(f"Error inserting contacts into unified_contacts table: {e}")
+        self.logger.error(f"Error inserting contacts into unified_contacts table: {e}")
         raise
 
 def main():
@@ -575,7 +579,7 @@ def main():
         
         # Combine all contacts
         all_contacts = crm_contacts + email_contacts + subscriber_contacts + blog_signup_contacts
-        logger.info(f"Total contacts extracted: {len(all_contacts)}")
+        self.logger.info(f"Total contacts extracted: {len(all_contacts)}")
         
         # Merge contacts
         merged_contacts = merge_contacts(all_contacts)
@@ -583,10 +587,10 @@ def main():
         # Insert into unified_contacts table
         insert_unified_contacts(conn, merged_contacts)
         
-        logger.info("Contact consolidation completed successfully")
+        self.logger.info("Contact consolidation completed successfully")
         
     except Exception as e:
-        logger.error(f"Error in contact consolidation: {e}")
+        self.logger.error(f"Error in contact consolidation: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":
@@ -874,6 +878,8 @@ def get_test_data():
     }
 import duckdb
 from datetime import datetime
+import logging
+from dewey.core.base_script import BaseScript
 
 def create_test_tables(conn):
     """Helper function to create standardized test tables"""
