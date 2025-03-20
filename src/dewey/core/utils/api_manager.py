@@ -12,7 +12,7 @@ class ApiManager(BaseScript):
 
     def __init__(self, logger: logging.Logger = None):
         """Initializes the ApiManager."""
-        super().__init__(config_section='api_manager')
+        super().__init__(config_section='api_manager', logger=logger)
         if logger:
             self.logger = logger
 
