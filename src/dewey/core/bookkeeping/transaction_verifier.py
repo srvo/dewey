@@ -4,82 +4,86 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any
-import logging
-from dewey.core.base_script import BaseScript
+from typing import Any, Dict, List
 
 from prompt_toolkit import prompt
 from prompt_toolkit.shortcuts import confirm
-import logging
+
 from dewey.core.base_script import BaseScript
-
-# Absolute path to project root
-project_root = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(project_root))
-
-from src.dewey.core.bookkeeping.classification_engine import ClassificationEngine, ClassificationError # type: ignore
-from src.dewey.llm.api_clients.deepinfra import classify_errors
-import logging
-from dewey.core.base_script import BaseScript
-
-# Import AFTER path configuration
-from dotenv import find_dotenv, load_dotenv
-from src.dewey.core.bookkeeping.writers.journal_writer_fab1858b import JournalWriter
-import logging
-from dewey.core.base_script import BaseScript
-
-# Load environment variables from nearest .env file
-# File header: Verifies transaction classifications and allows for correction via user feedback.
-load_dotenv(find_dotenv())
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
+from dewey.core.bookkeeping.classification_engine import (
+    ClassificationEngine,
+    ClassificationError,
 )
-logger = logging.getLogger(__name__)
+from dewey.core.bookkeeping.writers.journal_writer_fab1858b import JournalWriter
+from dewey.llm.llm_utils import classify_text
 
 
-deepinfra_api_key = os.getenv("DEEPINFRA_API_KEY")
-model_name = os.getenv("DEEPINFRA_DEFAULT_MODEL")
+class ClassificationVerifier(BaseScript):
+    """Verifies transaction classifications and allows for correction via user feedback."""
 
-if not deepinfra_api_key:
-    self.logger.error("DEEPINFRA_API_KEY environment variable not set.")
-    sys.exit(1)
-if not model_name:
-    self.logger.error("DEEPINFRA_DEFAULT_MODEL environment variable not set.")
-    sys.exit(1)
-
-
-class ClassificationVerifier(BaseScript): # type: ignore
-    def __init__(self):
-        super().__init__(config_section='bookkeeping')
-
-    def __init__(self, rules_path: Path, journal_path: Path) -> None:
-        self.engine = ClassificationEngine(rules_path)
-        self.writer = JournalWriter(journal_path.parent)
-        self.journal_path = journal_path
+    def __init__(self) -> None:
+        """Initializes the ClassificationVerifier."""
+        super().__init__(config_section="bookkeeping")
+        self.rules_path = self.get_path(
+            self.get_config_value("rules_path", "import/mercury/classification_rules.json")
+        )
+        self.journal_path = self.get_path(
+            self.get_config_value("journal_path", "~/.hledger.journal")
+        ).expanduser()
+        self.engine = ClassificationEngine(self.rules_path)
+        self.writer = JournalWriter(self.journal_path.parent)
         self.processed_feedback = 0
 
+        if not self.rules_path.exists():
+            self.logger.error("Missing classification rules at %s", self.rules_path.resolve())
+            sys.exit(1)
+
+        if not self.journal_path.exists():
+            self.logger.error(
+                "Journal file not found at %s (using LEDGER_FILE environment variable)",
+                self.journal_path.resolve(),
+            )
+            sys.exit(1)
+
     @property
-    def valid_categories(self) -> list[str]:
-        """Get valid classification categories from engine."""
+    def valid_categories(self) -> List[str]:
+        """Get valid classification categories from engine.
+
+        Returns:
+            list[str]: List of valid classification categories.
+        """
         return self.engine.categories
 
     def get_ai_suggestion(self, description: str) -> str:
-        """Get AI classification suggestion using DeepInfra. """
+        """Get AI classification suggestion using DeepInfra.
+
+        Args:
+            description (str): Transaction description.
+
+        Returns:
+            str: AI classification suggestion.
+        """
         try:
-            response = classify_errors(
-                [f"Classify transaction: '{description}'"],
-                instructions="Return ONLY the account path as category1:category2",
+            instructions = "Return ONLY the account path as category1:category2"
+            response = classify_text(
+                text=f"Classify transaction: '{description}'",
+                instructions=instructions,
+                llm_client=self.llm_client,
             )
-            return response[0]["category"] if response else ""
+            return response if response else ""
         except Exception as e:
             self.logger.exception("AI classification failed: %s", str(e))
             return ""
 
-    def get_transaction_samples(self, limit: int = 50) -> list[dict]:
-        """Get sample transactions using hledger + DuckDB. """
+    def get_transaction_samples(self, limit: int = 50) -> List[Dict[str, Any]]:
+        """Get sample transactions using hledger + DuckDB.
+
+        Args:
+            limit (int, optional): Maximum number of transactions to retrieve. Defaults to 50.
+
+        Returns:
+            list[dict]: List of transaction dictionaries.
+        """
         try:
             # Get CSV data directly from hledger
             cmd = [
@@ -100,8 +104,6 @@ class ClassificationVerifier(BaseScript): # type: ignore
 
             # Connect to in-memory DuckDB database
             import duckdb
-import logging
-from dewey.core.base_script import BaseScript
 
             with duckdb.connect(":memory:") as con:
                 # Create temp table from CSV data
@@ -137,8 +139,12 @@ from dewey.core.base_script import BaseScript
             self.logger.exception("DuckDB processing failed: %s", str(e))
             return []
 
-    def prompt_for_feedback(self, tx: dict) -> None:
-        """Interactive prompt for transaction verification. """
+    def prompt_for_feedback(self, tx: Dict[str, Any]) -> None:
+        """Interactive prompt for transaction verification.
+
+        Args:
+            tx (dict): Transaction dictionary.
+        """
         if not isinstance(tx, dict):
             self.logger.error("Invalid transaction format - expected dict, got %s", type(tx))
             return
@@ -184,11 +190,15 @@ from dewey.core.base_script import BaseScript
             self.logger.debug("Problematic transaction data: %s", tx)
 
     def generate_report(self, total: int) -> None:
-        """Generate verification session summary. """
+        """Generate verification session summary.
+
+        Args:
+            total (int): Total number of transactions processed.
+        """
         if self.processed_feedback > 0:
             pass
 
-    def main(self) -> None:
+    def run(self) -> None:
         """Interactive verification workflow."""
         samples = self.get_transaction_samples()
 
@@ -203,21 +213,5 @@ from dewey.core.base_script import BaseScript
 
 
 if __name__ == "__main__":
-    rules_path = Path("import/mercury/classification_rules.json")
-    journal_path = Path(
-        os.environ.get("LEDGER_FILE", "~/.hledger.journal"),
-    ).expanduser()
-
-    if not rules_path.exists():
-        self.logger.error("Missing classification rules at %s", rules_path.resolve())
-        sys.exit(1)
-
-    if not journal_path.exists():
-        self.logger.error(
-            "Journal file not found at %s (using LEDGER_FILE environment variable)",
-            journal_path.resolve(),
-        )
-        sys.exit(1)
-
-    verifier = ClassificationVerifier(rules_path, journal_path)
-    verifier.main() # type: ignore
+    verifier = ClassificationVerifier()
+    verifier.execute()
