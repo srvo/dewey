@@ -1,3 +1,5 @@
+from typing import Any, Dict, Optional
+
 from dewey.core.base_script import BaseScript
 
 
@@ -11,18 +13,28 @@ class EmailSync(BaseScript):
     primary logic.
     """
 
-    def __init__(self, *args, **kwargs):
-        """Initializes the EmailSync module."""
-        super().__init__(*args, **kwargs)
+    def __init__(self, config_section: Optional[str] = None, *args: Any, **kwargs: Any) -> None:
+        """Initializes the EmailSync module.
+
+        Args:
+            config_section: Section in dewey.yaml to load for this script. Defaults to None.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+        """
+        super().__init__(config_section=config_section, *args, **kwargs)
 
     def run(self) -> None:
         """
         Executes the email synchronization process.
+
+        This method retrieves the Gmail API key from the configuration,
+        logs the start and completion of the synchronization process,
+        and includes the core logic for synchronizing emails.
         """
         self.logger.info("Starting email synchronization...")
 
-        # Example of accessing configuration values
-        api_key = self.get_config_value("gmail_api_key")
+        # Accessing configuration values
+        api_key = self.get_config_value("settings.gmail_api_key")
         if api_key:
             self.logger.debug("Gmail API key found in configuration.")
         else:
