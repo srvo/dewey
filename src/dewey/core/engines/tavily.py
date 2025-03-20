@@ -15,7 +15,7 @@ class Tavily(BaseScript):
 
         Calls the superclass constructor to initialize the BaseScript.
         """
-        super().__init__()
+        super().__init__(config_section="tavily")
 
     def run(self) -> None:
         """
@@ -24,7 +24,7 @@ class Tavily(BaseScript):
         This method is the entry point for the script and should be
         implemented to perform the desired actions.
         """
-        api_key = self.get_config_value("tavily_api_key")
+        api_key = self.get_config_value("api_key")
         self.logger.info(f"Tavily API Key: {api_key}")
         # Implement Tavily API interaction here
         pass
