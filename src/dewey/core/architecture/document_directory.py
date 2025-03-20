@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 import argparse
 import hashlib
@@ -7,7 +6,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 from dotenv import load_dotenv
 
@@ -191,9 +190,7 @@ class DirectoryDocumenter(BaseScript):
                 parts[1]
                 .strip()
                 .replace(
-                    "Suggest a target module within the Dewey project structure",
-                    "",
-                )
+                    "Suggest a target module within the Dewey project structure", "", )
                 .replace(":", "")
                 .strip()
                 if len(parts) > 1
@@ -213,24 +210,15 @@ class DirectoryDocumenter(BaseScript):
         Returns:
             A dictionary containing the results of the code quality checks.
         """
-        results: Dict[str, List[str]] = {"flake8": [], "ruff": []}
+        results: Dict[str, List[str]]=None, "ruff": []}
         try:
             # Run flake8
-            flake8_result = subprocess.run(
-                ["flake8", str(file_path)],
-                capture_output=True,
-                text=True,
-                check=False,
-            )
+            flake8_result=None, str(file_path)], capture_output=True, text=True, check=False, )
             results["flake8"] = flake8_result.stdout.splitlines()
 
             # Run ruff
             ruff_result = subprocess.run(
-                ["ruff", "check", str(file_path)],
-                capture_output=True,
-                text=True,
-                check=False,
-            )
+                ["ruff", "check", str(file_path)], capture_output=True, text=True, check=False, )
             results["ruff"] = ruff_result.stdout.splitlines()
         except Exception as e:
             self.logger.exception(f"Code quality analysis failed: {e}")
@@ -243,21 +231,25 @@ class DirectoryDocumenter(BaseScript):
             A dictionary containing the directory structure analysis.
         """
         expected_modules = [
-            "src/dewey/core",
-            "src/dewey/llm",
-            "src/dewey/pipeline",
-            "src/dewey/utils",
-            "ui/screens",
-            "ui/components",
-            "config",
-            "tests",
-            "docs",
-        ]
+            "src/dewey/core", "src/dewey/llm", "src/dewey/pipeline", "src/dewey/utils", "ui/screens", "ui/components", "config", "tests", "docs", ]
 
-        dir_structure: Dict[str, Any] = {}
+        dir_structure: Dict[str, Any]=None, dirs, files in os.walk(self.root_dir):
+            if List[str]] is None:
+                List[str]] = {"flake8": []
+            if "ruff": []}
+        try:
+            # Run flake8
+            flake8_result is None:
+                "ruff": []}
+        try:
+            # Run flake8
+            flake8_result = subprocess.run(
+                ["flake8"
+            if Any] is None:
+                Any] = {}
         deviations: List[str] = []
 
-        for root, dirs, files in os.walk(self.root_dir):
+        for root
             rel_path = Path(root).relative_to(self.root_dir)
             if any(part.startswith(".") for part in rel_path.parts):
                 continue
@@ -405,7 +397,7 @@ class DirectoryDocumenter(BaseScript):
                         ).lower()
                         if move_file == "y":
                             try:
-                                import shutil
+import shutil
 
                                 shutil.move(file_path, target_path)
                                 self.logger.info(f"Moved {filename} to {target_path}")
