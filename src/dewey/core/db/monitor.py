@@ -1,7 +1,16 @@
 from dewey.core.base_script import BaseScript
-import logging
 import time
 from typing import Any, Dict
+
+from dewey.core.db.connection import DatabaseConnection, get_connection
+from dewey.core.db.utils import (
+    build_insert_query,
+    create_table,
+    drop_table,
+    execute_query,
+    get_table_schema,
+)
+from dewey.llm.llm_utils import generate_text
 
 
 class Monitor(BaseScript):
@@ -13,7 +22,10 @@ class Monitor(BaseScript):
         self.interval: int = self.get_config_value('interval', 60)
 
     def run(self) -> None:
-        """Runs the database monitor."""
+        """Runs the database monitor.
+
+        Monitors the database at a set interval, logging any changes.
+        """
         self.logger.info("Starting database monitor...")
         while True:
             try:
@@ -24,7 +36,10 @@ class Monitor(BaseScript):
                 time.sleep(self.interval)
 
     def monitor_database(self) -> None:
-        """Monitors the database for changes."""
+        """Monitors the database for changes.
+
+        Logs database monitoring information.
+        """
         self.logger.info("Monitoring database...")
         # Add your database monitoring logic here
         pass
