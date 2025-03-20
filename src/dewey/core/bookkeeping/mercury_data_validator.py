@@ -1,113 +1,99 @@
 import logging
 import re
 from datetime import datetime
-from typing import Any
-import logging
+from typing import Any, Dict
+
 from dewey.core.base_script import BaseScript
 
-# File header: Validates raw transaction data from Mercury CSV files.
 
-logger = logging.getLogger(__name__)
-
-
-class DataValidationError(BaseScript):
+class DataValidationError(Exception):
     """Exception for invalid transaction data."""
 
-
-    def __init__(self):
-        super().__init__(config_section='bookkeeping')
-
-def normalize_description(description: str) -> str:
-    """Normalize transaction description.
-
-    Args:
-    ----
-        description: The transaction description string.
-
-    Returns:
-    -------
-        The normalized transaction description string.
-
-    """
-    if not description:
-        return ""
-    # Remove extra whitespace and normalize case
-    return re.sub(r"\s{2,}", " ", description.strip())
-
-
-def _parse_and_validate_date(date_str: str) -> datetime.date:
-    """Parse and validate the date string.
-
-    Args:
-    ----
-        date_str: The date string in 'YYYY-MM-DD' format.
-
-    Returns:
-    -------
-        The datetime.date object.
-
-    Raises:
-    ------
-        ValueError: If the date is invalid or outside the allowed range.
-
-    """
-    date_obj = datetime.strptime(date_str, "%Y-%m-%d")
-    if date_obj.year < 2000 or date_obj > datetime.now():
-        msg = f"Invalid date {date_str}"
-        raise ValueError(msg)
-    return date_obj.date()
-
-
-def _normalize_amount(amount_str: str) -> float:
-    """Normalize the amount string.
-
-    Args:
-    ----
-        amount_str: The amount string.
-
-    Returns:
-    -------
-        The normalized amount as a float.
-
-    """
-    return float(amount_str.replace(",", "").strip())
+    pass
 
 
 class MercuryDataValidator(BaseScript):
     """Validates raw transaction data from Mercury CSV files."""
 
-    def validate_row(self, row: dict[str, str]) -> dict[str, Any]:
+    def __init__(self) -> None:
+        """Initializes the MercuryDataValidator."""
+        super().__init__(config_section="bookkeeping")
+
+    def run(self) -> None:
+        """Placeholder for the main execution logic."""
+        self.logger.info("MercuryDataValidator is running.")
+
+    def normalize_description(self, description: str) -> str:
+        """Normalize transaction description.
+
+        Args:
+            description: The transaction description string.
+
+        Returns:
+            The normalized transaction description string.
+        """
+        if not description:
+            return ""
+        # Remove extra whitespace and normalize case
+        return re.sub(r"\s{2,}", " ", description.strip())
+
+    def _parse_and_validate_date(self, date_str: str) -> datetime.date:
+        """Parse and validate the date string.
+
+        Args:
+            date_str: The date string in 'YYYY-MM-DD' format.
+
+        Returns:
+            The datetime.date object.
+
+        Raises:
+            ValueError: If the date is invalid or outside the allowed range.
+        """
+        date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+        if date_obj.year < 2000 or date_obj > datetime.now():
+            msg = f"Invalid date {date_str}"
+            raise ValueError(msg)
+        return date_obj.date()
+
+    def normalize_amount(self, amount_str: str) -> float:
+        """Normalize the amount string.
+
+        Args:
+            amount_str: The amount string.
+
+        Returns:
+            The normalized amount as a float.
+        """
+        return float(amount_str.replace(",", "").strip())
+
+    def validate_row(self, row: Dict[str, str]) -> Dict[str, Any]:
         """Validate and normalize a transaction row.
 
         Args:
-        ----
             row: A dictionary representing a transaction row.
 
         Returns:
-        -------
             A dictionary containing the validated and normalized transaction data.
 
         Raises:
-        ------
             DataValidationError: If the transaction data is invalid.
-
         """
         try:
             # Clean and validate fields
             date_str = row["date"].strip()
-            description = _normalize_description(row["description"])
+            description = self.normalize_description(row["description"])
             amount_str = row["amount"].replace(",", "").strip()
             account_id = row["account_id"].strip()
 
             # Parse date with validation
-            date_obj = parse_and_validate_date(date_str)
+            date_obj = self._parse_and_validate_date(date_str)
 
             # Normalize amount with type detection
-            amount = normalize_amount(amount_str)
+            amount = self.normalize_amount(amount_str)
             is_income = amount > 0
             abs_amount = abs(amount)
 
-            return  {
+            return {
                 "date": date_obj.isoformat(),
                 "description": description,
                 "amount": abs_amount,
