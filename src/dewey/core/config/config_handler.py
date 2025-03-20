@@ -1,3 +1,5 @@
+from typing import Any
+
 from dewey.core.base_script import BaseScript
 
 
@@ -11,7 +13,7 @@ class ConfigHandler(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the ConfigHandler."""
-        super().__init__(config_section='config_handler')
+        super().__init__(config_section="config_handler")
 
     def run(self) -> None:
         """
@@ -19,7 +21,7 @@ class ConfigHandler(BaseScript):
         """
         self.logger.info("ConfigHandler is running.")
 
-    def get_value(self, key: str, default: any = None) -> any:
+    def get_value(self, key: str, default: Any = None) -> Any:
         """
         Retrieves a configuration value by key.
 
