@@ -1,9 +1,15 @@
+"""Tests for dewey.core.bookkeeping.deferred_revenue."""
+
 import os
 import re
-from unittest.mock import MagicMock, patch
+import sys
+from typing import Any, Dict, List, Optional
+from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
+from dateutil.relativedelta import relativedelta
 
+from dewey.core.base_script import BaseScript
 from dewey.core.bookkeeping.deferred_revenue import AltruistIncomeProcessor
 
 
@@ -20,12 +26,22 @@ class TestAltruistIncomeProcessor:
         assert processor.name == "Altruist Income Processor"
         assert processor.description == "Processes Altruist income for deferred revenue recognition."
         assert processor.config_section == "bookkeeping"
+        assert processor.requires_db is False
+        assert processor.enable_llm is False
 
     def test_parse_altruist_transactions_empty(self, processor: AltruistIncomeProcessor) -> None:
         """Test _parse_altruist_transactions with empty journal content."""
-        journal_content=None, processor: AltruistIncomeProcessor) -> None:
+        journal_content = ""
+        matches = processor._parse_altruist_transactions(journal_content)
+        assert matches == []
+
+    def test_parse_altruist_transactions_no_match(self, processor: AltruistIncomeProcessor) -> None:
         """Test _parse_altruist_transactions with no matching transactions."""
-        journal_content=None, processor: AltruistIncomeProcessor) -> None:
+        journal_content = "2024-01-01 Some other transaction 100.00"
+        matches = processor._parse_altruist_transactions(journal_content)
+        assert matches == []
+
+    def test_parse_altruist_transactions_single_match(self, processor: AltruistIncomeProcessor) -> None:
         """Test _parse_altruist_transactions with a single matching transaction."""
         journal_content = "2024-01-01 Altruist transaction description\n    Income:Altruist  123.45"
         matches = processor._parse_altruist_transactions(journal_content)
@@ -87,12 +103,14 @@ class TestAltruistIncomeProcessor:
         assert "assets:deferred_revenue   -33.33" in transactions[3]
         assert "income:fees    33.33" in transactions[3]
 
-    def test_process_altruist_income_file_not_found(self, processor: AltruistIncomeProcessor, tmp_path) -> None:
+    @patch("os.path.exists", return_value=False)
+    def test_process_altruist_income_file_not_found(self, mock_exists: MagicMock, processor: AltruistIncomeProcessor, tmp_path) -> None:
         """Test process_altruist_income when the journal file is not found."""
         journal_file = str(tmp_path / "nonexistent_journal.txt")
         with pytest.raises(FileNotFoundError) as excinfo:
             processor.process_altruist_income(journal_file)
         assert str(excinfo.value) == f"Could not find journal file at: {journal_file}"
+        mock_exists.assert_called_once_with(journal_file)
 
     @patch("os.path.exists", return_value=True)
     def test_process_altruist_income_no_matches(self, mock_exists: MagicMock, processor: AltruistIncomeProcessor, tmp_path) -> None:
@@ -102,6 +120,7 @@ class TestAltruistIncomeProcessor:
             f.write("Some other transaction")
         result = processor.process_altruist_income(journal_file)
         assert result == "Some other transaction"
+        mock_exists.assert_called_once_with(journal_file)
 
     @patch("os.path.exists", return_value=True)
     def test_process_altruist_income_single_match(self, mock_exists: MagicMock, processor: AltruistIncomeProcessor, tmp_path) -> None:
@@ -115,6 +134,7 @@ class TestAltruistIncomeProcessor:
             result = processor.process_altruist_income(journal_file)
             assert "transaction1" in result
             assert "transaction2" in result
+        mock_exists.assert_called_once_with(journal_file)
 
     @patch("os.path.exists", return_value=True)
     def test_process_altruist_income_multiple_matches(self, mock_exists: MagicMock, processor: AltruistIncomeProcessor, tmp_path) -> None:
@@ -132,6 +152,7 @@ class TestAltruistIncomeProcessor:
             assert "transaction2" in result
             assert "transaction3" in result
             assert "transaction4" in result
+        mock_exists.assert_called_once_with(journal_file)
 
     @patch("os.path.exists", return_value=True)
     def test_process_altruist_income_generate_transactions_error(self, mock_exists: MagicMock, processor: AltruistIncomeProcessor, tmp_path) -> None:
@@ -144,6 +165,7 @@ class TestAltruistIncomeProcessor:
             mock_generate.side_effect = Exception("Failed to generate transactions")
             result = processor.process_altruist_income(journal_file)
             assert result == "2024-01-01 Altruist transaction\n    Income:Altruist  300.00"
+        mock_exists.assert_called_once_with(journal_file)
 
     @patch("os.path.exists", return_value=True)
     def test_process_altruist_income_no_new_transactions(self, mock_exists: MagicMock, processor: AltruistIncomeProcessor, tmp_path) -> None:
@@ -153,123 +175,124 @@ class TestAltruistIncomeProcessor:
             f.write("2024-01-01 Altruist transaction\n    Income:Altruist  300.00")
 
         with patch.object(processor, "_generate_deferred_revenue_transactions") as mock_generate:
-            mock_generate.return_value=None, return_value=True)
-    def test_process_altruist_income_success(self, mock_exists: MagicMock, processor: AltruistIncomeProcessor, tmp_path, caplog) -> None:
-        """Test process_altruist_income when the processing is successful."""
-        journal_file = str(tmp_path / "journal.txt")
-        with open(journal_file, "w") as f:
-            f.write("Initial journal content")
-
-        with patch.object(processor, "_parse_altruist_transactions") as mock_parse, \
-             patch.object(processor, "_generate_deferred_revenue_transactions") as mock_generate:
-            mock_parse.return_value = [MagicMock()]
-            mock_generate.return_value = ["transaction1", "transaction2"]
-
-            result = processor.process_altruist_income(journal_file)
-
-            assert "Initial journal content" in result
-            assert "transaction1" in result
-            assert "transaction2" in result
-            assert "Successfully processed 1 Altruist transactions" in caplog.text
-
-    @patch("os.path.exists", return_value=True)
-    def test_run_success(self, mock_exists: MagicMock, processor: AltruistIncomeProcessor, tmp_path, capsys) -> None:
-        """Test the run method with successful processing."""
-        journal_file = str(tmp_path / "journal.txt")
-        with open(journal_file, "w") as f:
-            f.write("Initial journal content")
-
-        # Mock sys.argv to simulate command-line arguments
-        with patch("sys.argv", ["script.py", journal_file]):
-            if processor: AltruistIncomeProcessor) -> None:
-        """Test _parse_altruist_transactions with empty journal content."""
-        journal_content is None:
-                processor: AltruistIncomeProcessor) -> None:
-        """Test _parse_altruist_transactions with empty journal content."""
-        journal_content = ""
-        matches = processor._parse_altruist_transactions(journal_content)
-        assert matches == []
-
-    def test_parse_altruist_transactions_no_match(self
-            if processor: AltruistIncomeProcessor) -> None:
-        """Test _parse_altruist_transactions with no matching transactions."""
-        journal_content is None:
-                processor: AltruistIncomeProcessor) -> None:
-        """Test _parse_altruist_transactions with no matching transactions."""
-        journal_content = "2024-01-01 Some other transaction 100.00"
-        matches = processor._parse_altruist_transactions(journal_content)
-        assert matches == []
-
-    def test_parse_altruist_transactions_single_match(self
-            if "_generate_deferred_revenue_transactions") as mock_generate:
-            mock_generate.return_value is None:
-                "_generate_deferred_revenue_transactions") as mock_generate:
             mock_generate.return_value = []
             result = processor.process_altruist_income(journal_file)
             assert result == "2024-01-01 Altruist transaction\n    Income:Altruist  300.00"
-
-    @patch("os.path.exists"
-            # Mock the process_altruist_income method to avoid actual file processing
-            with patch.object(processor, "process_altruist_income", return_value="Updated journal content"):
-                processor.run()
-
-        # Capture the output and check for success messages
-        captured = capsys.readouterr()
-        assert "Journal file updated successfully" in captured.out
-
-        # Verify that the journal file was backed up and updated
-        backup_file = journal_file + ".bak"
-        assert os.path.exists(backup_file)
-        with open(journal_file, "r") as f:
-            assert f.read() == "Updated journal content"
+        mock_exists.assert_called_once_with(journal_file)
 
     @patch("os.path.exists", return_value=True)
-    def test_run_file_not_found(self, mock_exists: MagicMock, processor: AltruistIncomeProcessor, tmp_path, capsys) -> None:
+    @patch("builtins.open", new_callable=mock_open, read_data="Initial journal content")
+    @patch.object(AltruistIncomeProcessor, "_parse_altruist_transactions")
+    @patch.object(AltruistIncomeProcessor, "_generate_deferred_revenue_transactions")
+    def test_process_altruist_income_success(
+        self,
+        mock_generate: MagicMock,
+        mock_parse: MagicMock,
+        mock_file_open: MagicMock,
+        mock_exists: MagicMock,
+        processor: AltruistIncomeProcessor,
+        tmp_path: pytest.TempPathFactory,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        """Test process_altruist_income when the processing is successful."""
+        journal_file = str(tmp_path / "journal.txt")
+        mock_parse.return_value = [MagicMock()]
+        mock_generate.return_value = ["transaction1", "transaction2"]
+
+        result = processor.process_altruist_income(journal_file)
+
+        assert "Initial journal content" in result
+        assert "transaction1" in result
+        assert "transaction2" in result
+        assert "Successfully processed 1 Altruist transactions" in caplog.text
+        mock_exists.assert_called_once_with(journal_file)
+        mock_file_open.assert_called_with(journal_file)
+        mock_parse.assert_called_once()
+        mock_generate.assert_called_once()
+
+    @patch("os.path.exists", return_value=True)
+    @patch("sys.argv", ["script.py", "journal.txt"])
+    @patch.object(AltruistIncomeProcessor, "process_altruist_income", return_value="Updated journal content")
+    def test_run_success(
+        self,
+        mock_process_altruist_income: MagicMock,
+        mock_exists: MagicMock,
+        processor: AltruistIncomeProcessor,
+        tmp_path: pytest.TempPathFactory,
+        capsys: pytest.CaptureFixture,
+    ) -> None:
+        """Test the run method with successful processing."""
+        journal_file = str(tmp_path / "journal.txt")
+        backup_file = journal_file + ".bak"
+
+        with patch("builtins.open", new_callable=mock_open) as mock_open_func, \
+             patch("os.rename") as mock_rename:
+            processor.run()
+
+        captured = capsys.readouterr()
+        assert "Journal file updated successfully" in captured.out
+        mock_exists.assert_called_with("journal.txt")
+        mock_process_altruist_income.assert_called_once_with("journal.txt")
+        assert mock_open_func.call_count == 2  # Called twice (read and write)
+        assert mock_rename.call_count == 0
+
+    @patch("os.path.exists", return_value=True)
+    @patch("sys.argv", ["script.py", "nonexistent_journal.txt"])
+    @patch.object(AltruistIncomeProcessor, "process_altruist_income", side_effect=FileNotFoundError("File not found"))
+    def test_run_file_not_found(
+        self,
+        mock_process_altruist_income: MagicMock,
+        mock_exists: MagicMock,
+        processor: AltruistIncomeProcessor,
+        tmp_path: pytest.TempPathFactory,
+        capsys: pytest.CaptureFixture,
+    ) -> None:
         """Test the run method when the journal file is not found."""
         journal_file = str(tmp_path / "nonexistent_journal.txt")
 
-        # Mock sys.argv to simulate command-line arguments
-        with patch("sys.argv", ["script.py", journal_file]):
-            # Mock the process_altruist_income method to raise FileNotFoundError
-            with patch.object(processor, "process_altruist_income", side_effect=FileNotFoundError("File not found")):
-                with pytest.raises(SystemExit) as excinfo:
-                    processor.run()
-                assert excinfo.value.code == 1
+        with pytest.raises(SystemExit) as excinfo:
+            processor.run()
+        assert excinfo.value.code == 1
 
-        # Capture the output and check for error messages
         captured = capsys.readouterr()
         assert "Journal file not found" in captured.err
+        mock_exists.assert_called_with("nonexistent_journal.txt")
+        mock_process_altruist_income.assert_called_once_with("nonexistent_journal.txt")
 
     @patch("os.path.exists", return_value=True)
-    def test_run_unexpected_error(self, mock_exists: MagicMock, processor: AltruistIncomeProcessor, tmp_path, capsys) -> None:
+    @patch("sys.argv", ["script.py", "journal.txt"])
+    @patch.object(AltruistIncomeProcessor, "process_altruist_income", side_effect=Exception("Unexpected error"))
+    def test_run_unexpected_error(
+        self,
+        mock_process_altruist_income: MagicMock,
+        mock_exists: MagicMock,
+        processor: AltruistIncomeProcessor,
+        tmp_path: pytest.TempPathFactory,
+        capsys: pytest.CaptureFixture,
+    ) -> None:
         """Test the run method when an unexpected error occurs."""
         journal_file = str(tmp_path / "journal.txt")
 
-        # Mock sys.argv to simulate command-line arguments
-        with patch("sys.argv", ["script.py", journal_file]):
-            # Mock the process_altruist_income method to raise an unexpected exception
-            with patch.object(processor, "process_altruist_income", side_effect=Exception("Unexpected error")):
-                with pytest.raises(SystemExit) as excinfo:
-                    processor.run()
-                assert excinfo.value.code == 1
+        with pytest.raises(SystemExit) as excinfo:
+            processor.run()
+        assert excinfo.value.code == 1
 
-        # Capture the output and check for error messages
         captured = capsys.readouterr()
         assert "An unexpected error occurred" in captured.err
+        mock_exists.assert_called_with("journal.txt")
+        mock_process_altruist_income.assert_called_once_with("journal.txt")
 
-    def test_run_usage_error(self, processor: AltruistIncomeProcessor, capsys) -> None:
+    @patch("sys.argv", ["script.py"])
+    def test_run_usage_error(self, processor: AltruistIncomeProcessor, capsys: pytest.CaptureFixture) -> None:
         """Test the run method when the usage is incorrect."""
-        # Mock sys.argv to simulate incorrect command-line arguments
-        with patch("sys.argv", ["script.py"]):
-            with pytest.raises(SystemExit) as excinfo:
-                processor.run()
-            assert excinfo.value.code == 1
+        with pytest.raises(SystemExit) as excinfo:
+            processor.run()
+        assert excinfo.value.code == 1
 
-        # Capture the output and check for usage error message
         captured = capsys.readouterr()
         assert "Usage: python script.py <journal_file>" in captured.err
 
-    def test_get_path_absolute(self, processor: AltruistIncomeProcessor, tmp_path) -> None:
+    def test_get_path_absolute(self, processor: AltruistIncomeProcessor, tmp_path: pytest.TempPathFactory) -> None:
         """Test get_path with an absolute path."""
         absolute_path = tmp_path / "test.txt"
         resolved_path = processor.get_path(str(absolute_path))
@@ -321,7 +344,7 @@ class TestAltruistIncomeProcessor:
             mock_set_level.assert_called_once_with(10)  # DEBUG = 10
 
     @patch("argparse.ArgumentParser.parse_args")
-    def test_parse_args_config(self, mock_parse_args: MagicMock, processor: AltruistIncomeProcessor, tmp_path) -> None:
+    def test_parse_args_config(self, mock_parse_args: MagicMock, processor: AltruistIncomeProcessor, tmp_path: pytest.TempPathFactory) -> None:
         """Test parse_args with config argument."""
         config_file = tmp_path / "config.yaml"
         with open(config_file, "w") as f:
@@ -338,7 +361,7 @@ class TestAltruistIncomeProcessor:
         assert processor.config == {"test": "value"}
 
     @patch("argparse.ArgumentParser.parse_args")
-    def test_parse_args_config_not_found(self, mock_parse_args: MagicMock, processor: AltruistIncomeProcessor, tmp_path, capsys) -> None:
+    def test_parse_args_config_not_found(self, mock_parse_args: MagicMock, processor: AltruistIncomeProcessor, tmp_path: pytest.TempPathFactory, capsys: pytest.CaptureFixture) -> None:
         """Test parse_args when the config file is not found."""
         config_file = tmp_path / "nonexistent_config.yaml"
 
@@ -419,7 +442,7 @@ class TestAltruistIncomeProcessor:
         processor._cleanup()
         # Assert that no exception is raised
 
-    def test_cleanup_db_conn_error(self, processor: AltruistIncomeProcessor, caplog) -> None:
+    def test_cleanup_db_conn_error(self, processor: AltruistIncomeProcessor, caplog: pytest.LogCaptureFixture) -> None:
         """Test _cleanup method when db_conn.close() raises an exception."""
         mock_db_conn = MagicMock()
         mock_db_conn.close.side_effect = Exception("Failed to close connection")
