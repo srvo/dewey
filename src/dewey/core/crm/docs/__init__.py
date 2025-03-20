@@ -1,6 +1,6 @@
 from dewey.core.base_script import BaseScript
-import logging
 from typing import Any
+
 
 class DocsModule(BaseScript):
     """
@@ -12,11 +12,19 @@ class DocsModule(BaseScript):
     primary logic.
     """
 
-    def __init__(self, name: str = "CRM Docs Module", description: str = "Manages CRM documentation tasks.") -> None:
+    def __init__(
+        self,
+        name: str = "CRM Docs Module",
+        description: str = "Manages CRM documentation tasks.",
+    ) -> None:
         """
         Initializes the DocsModule.
+
+        Args:
+            name: The name of the module.
+            description: A description of the module.
         """
-        super().__init__(name, description)
+        super().__init__(name=name, description=description, config_section="crm_docs")
 
     def run(self) -> None:
         """
@@ -25,7 +33,7 @@ class DocsModule(BaseScript):
         self.logger.info("Running CRM Docs Module...")
 
         # Example of accessing configuration values
-        example_config_value = self.get_config_value("crm_docs.example_setting", "default_value")
+        example_config_value = self.get_config_value("example_setting", "default_value")
         self.logger.info(f"Example configuration value: {example_config_value}")
 
         # Add your documentation management logic here
