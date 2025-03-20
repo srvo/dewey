@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import base64
+from typing import Tuple, Any
 
 from dewey.core.base_script import BaseScript
 import structlog
@@ -12,21 +13,43 @@ from django.utils import timezone
 from .gmail_history_sync import get_gmail_service
 from .prioritization import EmailPrioritizer
 
-# Initialize logger (structlog)
-logger = structlog.get_logger(__name__)
-
 
 class EmailEnrichmentService(BaseScript):
-    """Service for enriching email metadata like message bodies."""
+    """Service for enriching email metadata like message bodies.
 
-    def __init__(self) -> None:
-        """Initialize EmailEnrichmentService."""
-        super().__init__(config_section='crm')
+    Inherits from BaseScript and provides methods to extract email content,
+    prioritize emails, and update email records in the database.
+    """
+
+    def __init__(self, config_section: str = 'crm') -> None:
+        """Initialize EmailEnrichmentService.
+
+        Args:
+            config_section: The configuration section to use. Defaults to 'crm'.
+        """
+        super().__init__(config_section=config_section)
         self.service = get_gmail_service()
         self.prioritizer = EmailPrioritizer()
 
-    def extract_message_bodies(self, message_data: dict) -> tuple[str, str]:
-        """Extract plain and HTML message bodies from Gmail message data."""
+    def run(self) -> None:
+        """Placeholder for a run method.
+
+        In a real implementation, this would likely drive the email
+        enrichment process, possibly by querying for emails that need
+        enrichment and calling `enrich_email` on them.
+        """
+        self.logger.info("EmailEnrichmentService run method called.")
+        pass
+
+    def extract_message_bodies(self, message_data: dict) -> Tuple[str, str]:
+        """Extract plain and HTML message bodies from Gmail message data.
+
+        Args:
+            message_data: A dictionary containing the Gmail message data.
+
+        Returns:
+            A tuple containing the plain text body and the HTML body.
+        """
         plain_body = ""
         html_body = ""
 
@@ -70,17 +93,14 @@ class EmailEnrichmentService(BaseScript):
         """Enrich an email with message body content and priority score.
 
         Args:
-        ----
-            email: The email to enrich
+            email: The email to enrich.
 
         Returns:
-        -------
-            bool: True if enrichment was successful
-
+            True if enrichment was successful, False otherwise.
         """
-        try:
-            enrichment_task = self.create_enrichment_task(email.id)
+        enrichment_task = self.create_enrichment_task(email.id)
 
+        try:
             # Get full message data
             message_data = (
                 self.service.users()
