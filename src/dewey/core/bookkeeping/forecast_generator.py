@@ -1,6 +1,3 @@
-from __future__ import annotations
-
-import argparse
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any, Dict, Tuple
@@ -30,8 +27,12 @@ class JournalEntryGenerator(BaseScript):
     def __init__(self) -> None:
         """Initializes the JournalEntryGenerator with bookkeeping configurations."""
         super().__init__(config_section="bookkeeping")
-        self.complete_ledger_file: str = self.get_config_value("complete_ledger_file", "")
-        self.forecast_ledger_file: str = self.get_config_value("forecast_ledger_file", "")
+        self.complete_ledger_file: str = self.get_config_value(
+            "complete_ledger_file", ""
+        )
+        self.forecast_ledger_file: str = self.get_config_value(
+            "forecast_ledger_file", ""
+        )
 
     def validate_assumptions(self) -> None:
         """Validates key assumptions with user input."""
@@ -66,7 +67,9 @@ class JournalEntryGenerator(BaseScript):
 
 """
 
-    def append_acquisition_entry(self, complete_ledger_file: str, acquisition_entry: str) -> None:
+    def append_acquisition_entry(
+        self, complete_ledger_file: str, acquisition_entry: str
+    ) -> None:
         """Append the acquisition entry to the complete ledger file if it doesn't
         already exist.
 
@@ -182,7 +185,11 @@ account Expenses:Hosting:Mormair_E650
             f"    Assets:Cash                           £-{hosting_fee:.2f}\n\n"
         )
 
-        return lease_income_entry, revenue_share_payment_entry, hosting_fee_payment_entry
+        return (
+            lease_income_entry,
+            revenue_share_payment_entry,
+            hosting_fee_payment_entry,
+        )
 
     def generate_journal_entries(
         self,
@@ -225,7 +232,9 @@ account Expenses:Hosting:Mormair_E650
                     f.write(hosting_fee_payment_entry)
 
             current_date += relativedelta(months=1)
-            current_date = current_date.replace(day=1) + relativedelta(months=1, days=-1)
+            current_date = current_date.replace(day=1) + relativedelta(
+                months=1, days=-1
+            )
 
     def run(self) -> None:
         """Runs the journal entry generation process."""
