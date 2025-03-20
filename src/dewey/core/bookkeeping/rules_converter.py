@@ -1,173 +1,208 @@
 #!/usr/bin/env python3
 
 import json
+import logging
 import re
-import argparse
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
+import logging
+from dewey.core.base_script import BaseScript
 
-from dewey.utils import get_logger
+# File header: Converts legacy rule formats to the current JSON format.
 
-class RuleConversionError(Exception):
-    """Exception for rule conversion failures."""
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
 
 
 def clean_category(category: str) -> str:
-    """Cleans and standardizes the category string."""
-    category_map = {
-        "expenses:draw:all": "expenses:draw",
-        "expenses:tech:all": "expenses:software:subscription",
-        "expenses:food:all": "expenses:food:meals",
-        "expenses:debt:all": "expenses:financial:debt",
-        "expenses:fees:all": "expenses:financial:fees",
-        "expenses:compliance:all": "expenses:professional:compliance",
-        "expenses:taxes:all": "expenses:taxes",
-        "expenses:insurance:all": "expenses:insurance",
-        "expenses:travel:all": "expenses:travel"
-    }
-    
-    for prefix, replacement in category_map.items():
-        if category.startswith(prefix):
-            return replacement
+    """Cleans and standardizes the category string.
+
+    Args:
+    ----
+        category: The category string to clean.
+
+    Returns:
+    -------
+        The cleaned category string.
+
+    """
+    if category.startswith("expenses:draw:all"):
+        return "expenses:draw"
+    if category.startswith("expenses:tech:all"):
+        return "expenses:software:subscription"
+    if category.startswith("expenses:food:all"):
+        return "expenses:food:meals"
+    if category.startswith("expenses:debt:all"):
+        return "expenses:financial:debt"
+    if category.startswith("expenses:fees:all"):
+        return "expenses:financial:fees"
+    if category.startswith("expenses:compliance:all"):
+        return "expenses:professional:compliance"
+    if category.startswith("expenses:taxes:all"):
+        return "expenses:taxes"
+    if category.startswith("expenses:insurance:all"):
+        return "expenses:insurance"
+    if category.startswith("expenses:travel:all"):
+        return "expenses:travel"
     return category
 
 
-def parse_rules_file(rules_file: Path) -> Dict[str, Dict[str, Any]]:
-    """Parse the legacy rules file format."""
-    logger = get_logger('rules_converter')
-    classifications = {}
-    
-    try:
-        with open(rules_file) as f:
-            for line in f:
-                line = line.strip()
-                if not line or line.startswith('#'):
-                    continue
-                
-                try:
-                    pattern, category = line.split(' -> ')
-                    pattern = pattern.strip()
-                    category = clean_category(category.strip())
-                    
-                    classifications[pattern] = {
-                        'category': category,
-                        'pattern': pattern,
-                        'transactions': 0,
-                        'total_amount': 0.0
-                    }
-                except ValueError:
-                    logger.warning(f"Skipping invalid rule: {line}")
-                    continue
-        
-        logger.info(f"Parsed {len(classifications)} rules from {rules_file}")
-        return classifications
-        
-    except Exception as e:
-        logger.exception(f"Failed to parse rules file: {str(e)}")
-        raise RuleConversionError(f"Failed to parse rules file: {str(e)}")
+def parse_rules_file(rules_file: Path) -> dict[str, dict[str, Any]]:
+    """Parses the old_mercury.rules file and extracts classification patterns.
+
+    Args:
+    ----
+        rules_file: Path to the rules file.
+
+    Returns:
+    -------
+        A dictionary containing classification patterns and their associated categories and examples.
+
+    """
+    classifications: dict[str, dict[str, Any]] = {}
+
+    with open(rules_file) as f:
+        for line in f:
+            line = line.strip()
+
+            # Skip empty lines and comments that don't start with #
+            if not line or (line.startswith("#") and "based on" not in line.lower()):
+                continue
+
+            # Check for category headers in comments
+            if line.startswith("# Expense transactions based on"):
+                continue
+
+            # Parse classification rules
+            if line.startswith("if") and "then account2" in line:
+                # Extract pattern and category
+                pattern_match = re.search(r'if /(.+?)/ then account2 "([^"]+)"', line)
+                if pattern_match:
+                    # Escape regex special characters and normalize whitespace
+                    pattern = re.escape(pattern_match.group(1)).replace(r"\ ", "\\s+")
+                    category = pattern_match.group(2)
+
+                    # Validate regex syntax
+                    try:
+                        re.compile(pattern, re.IGNORECASE)
+                    except re.error as e:
+                        self.logger.exception(
+                            "Skipping invalid regex pattern '%s': %s",
+                            pattern,
+                            str(e),
+                        )
+                        continue
+
+                    # Convert old category format to new format
+                    category = category.replace(">", ":")
+
+                    # Clean up the category
+                    category = clean_category(category)
+
+                    # Store in classifications
+                    if pattern not in classifications:
+                        classifications[pattern] = {
+                            "category": category,
+                            "examples": [],
+                        }
+
+    return classifications
 
 
 def analyze_transactions(
     journal_dir: Path,
-    classifications: Dict[str, Dict[str, Any]]
+    classifications: dict[str, dict[str, Any]],
 ) -> None:
-    """Analyze transactions to gather statistics for each rule."""
-    logger = get_logger('rules_converter')
-    
-    try:
-        total_transactions = 0
-        matched_transactions = 0
-        
-        for journal_file in journal_dir.glob('*.journal'):
-            with open(journal_file) as f:
-                for line in f:
-                    line = line.strip()
-                    if not line or line.startswith(';'):
-                        continue
-                        
-                    total_transactions += 1
-                    for pattern, rule in classifications.items():
-                        if re.search(pattern, line, re.IGNORECASE):
-                            rule['transactions'] += 1
-                            matched_transactions += 1
-                            # TODO: Extract and sum transaction amounts
-                            break
-        
-        logger.info(f"Analyzed {total_transactions} transactions")
-        logger.info(f"Matched {matched_transactions} transactions ({matched_transactions/total_transactions*100:.1f}%)")
-        
-    except Exception as e:
-        logger.exception(f"Failed to analyze transactions: {str(e)}")
-        raise RuleConversionError(f"Failed to analyze transactions: {str(e)}")
+    """Analyzes existing transactions to find examples for each pattern.
+
+    Args:
+    ----
+        journal_dir: Path to the directory containing journal files.
+        classifications: A dictionary containing classification patterns.
+
+    """
+    for journal_file in journal_dir.glob("**/*.journal"):
+        with open(journal_file) as f:
+            content = f.read()
+
+            # Find all transactions
+            transactions = re.findall(
+                r"\d{4}-\d{2}-\d{2}\s+(.+?)\n\s+[^\\n]+\n\s+[^\\n]+",
+                content,
+                re.MULTILINE,
+            )
+
+            # Match transactions against patterns
+            for desc in transactions:
+                desc = desc.strip()
+                for pattern, data in classifications.items():
+                    if re.search(pattern, desc, re.IGNORECASE):
+                        if desc not in data["examples"]:
+                            data["examples"].append(desc)
 
 
 def generate_rules_json(
-    classifications: Dict[str, Dict[str, Any]],
-    output_file: Path
+    classifications: dict[str, dict[str, Any]],
+    output_file: Path,
 ) -> None:
-    """Generate the JSON rules file."""
-    logger = get_logger('rules_converter')
-    
-    try:
-        # Sort rules by number of transactions (most used first)
-        sorted_rules = dict(
-            sorted(
-                classifications.items(),
-                key=lambda x: x[1]['transactions'],
-                reverse=True
-            )
-        )
-        
-        # Write JSON file
-        with open(output_file, 'w') as f:
-            json.dump(
-                sorted_rules,
-                f,
-                indent=2,
-                sort_keys=True
-            )
-        
-        logger.info(f"Generated rules JSON file: {output_file}")
-        
-        # Log statistics
-        total_rules = len(sorted_rules)
-        active_rules = sum(1 for rule in sorted_rules.values() if rule['transactions'] > 0)
-        logger.info(f"Total rules: {total_rules}")
-        logger.info(f"Active rules: {active_rules} ({active_rules/total_rules*100:.1f}%)")
-        
-    except Exception as e:
-        logger.exception(f"Failed to generate rules JSON: {str(e)}")
-        raise RuleConversionError(f"Failed to generate rules JSON: {str(e)}")
+    """Generates a JSON file with classification rules.
+
+    Args:
+    ----
+        classifications: A dictionary containing classification patterns.
+        output_file: Path to the output JSON file.
+
+    """
+    # Convert to a more efficient format for the classifier
+    rules: dict[str, Any] = {
+        "patterns": {},
+        "categories": set(),
+        "stats": {"total_patterns": len(classifications), "patterns_with_examples": 0},
+    }
+
+    for pattern, data in classifications.items():
+        category = data["category"]
+        rules["patterns"][pattern] = {
+            "category": category,
+            "examples": data["examples"][:5],  # Store up to 5 examples
+        }
+        rules["categories"].add(category)
+        if data["examples"]:
+            rules["stats"]["patterns_with_examples"] += 1
+
+    # Convert sets to lists for JSON serialization
+    rules["categories"] = sorted(rules["categories"])
+
+    # Save to JSON file
+    with open(output_file, "w") as f:
+        json.dump(rules, f, indent=2)
+
+    self.logger.info(f"Generated rules file: {output_file}")
+    self.logger.info(f"Total patterns: {rules['stats']['total_patterns']}")
+    self.logger.info(f"Patterns with examples: {rules['stats']['patterns_with_examples']}")
+    self.logger.info(f"Unique categories: {len(rules['categories'])}")
 
 
 def main() -> None:
-    """Main entry point for rules conversion."""
-    logger = get_logger('rules_converter')
-    
-    parser = argparse.ArgumentParser(description="Convert legacy rules to JSON format")
-    parser.add_argument("rules_file", type=Path, help="Path to the legacy rules file")
-    parser.add_argument("journal_dir", type=Path, help="Path to the journal directory")
-    parser.add_argument("output_file", type=Path, help="Path for the output JSON file")
-    args = parser.parse_args()
-    
-    try:
-        # Parse legacy rules
-        classifications = parse_rules_file(args.rules_file)
-        
-        # Analyze transactions
-        analyze_transactions(args.journal_dir, classifications)
-        
-        # Generate JSON output
-        generate_rules_json(classifications, args.output_file)
-        
-        logger.info("Rules conversion completed successfully")
-        
-    except RuleConversionError as e:
-        logger.error(str(e))
-        sys.exit(1)
-    except Exception as e:
-        logger.exception(f"Unexpected error: {str(e)}")
-        sys.exit(1)
+    """Main function to orchestrate the rule parsing, analysis, and generation."""
+    base_dir = Path(__file__).resolve().parent.parent
+    rules_file = base_dir / "old_mercury.rules"
+    journal_dir = base_dir / "import" / "mercury" / "journal"
+    output_file = base_dir / "import" / "mercury" / "classification_rules.json"
+
+    self.logger.info(f"Parsing rules file: {rules_file}")
+    classifications = parse_rules_file(rules_file)
+
+    self.logger.info(f"Analyzing transactions in: {journal_dir}")
+    analyze_transactions(journal_dir, classifications)
+
+    self.logger.info(f"Generating rules file: {output_file}")
+    generate_rules_json(classifications, output_file)
 
 
 if __name__ == "__main__":
