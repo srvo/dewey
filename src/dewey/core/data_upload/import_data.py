@@ -15,8 +15,8 @@ class ImportData(BaseScript):
         Initializes the ImportData script.
 
         Args:
-            config_section (Optional[str]): The section in the config file to use for this script.
-                                            Defaults to "import_data".
+            config_section (Optional[str]): The section in the config file
+                to use for this script. Defaults to "import_data".
         """
         super().__init__(
             config_section=config_section, requires_db=True, enable_llm=False
@@ -42,9 +42,9 @@ class ImportData(BaseScript):
 
             # Example database operation (replace with your actual logic)
             # Assuming you have a table named 'imported_data'
-            table_name = "imported_data"
+            # table_name = "imported_data"
             # Example data to insert (replace with your actual data)
-            data = {"column1": "value1", "column2": 123}
+            # data = {"column1": "value1", "column2": 123}
 
             # Execute a query using the database connection
             # Example: insert_data(self.db_conn, table_name, data)
