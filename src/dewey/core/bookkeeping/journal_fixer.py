@@ -11,20 +11,18 @@ from dewey.core.base_script import BaseScript
 class JournalFixer(BaseScript):
     """Corrects formatting issues in Hledger journal files."""
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """Initializes the JournalFixer with bookkeeping config."""
         super().__init__(config_section='bookkeeping')
 
     def parse_transactions(self, content: str) -> List[Dict]:
         """Parse all transactions from journal content.
 
         Args:
-            content (str): The content of the journal file.
-
-    Args:
-        content (str): The content of the journal file.
+            content: The content of the journal file.
 
         Returns:
-            List[Dict]: A list of dictionaries, where each dictionary represents a transaction.
+            A list of dictionaries, where each dictionary represents a transaction.
         """
         transactions = []
         current_transaction = []
@@ -50,10 +48,10 @@ class JournalFixer(BaseScript):
         """Process transactions and return fixed journal content.
 
         Args:
-            transactions (List[Dict]): A list of transaction dictionaries.
+            transactions: A list of transaction dictionaries.
 
         Returns:
-            str: The fixed journal content as a string.
+            The fixed journal content as a string.
         """
         fixed_entries = []
 
@@ -70,10 +68,10 @@ class JournalFixer(BaseScript):
         """Parse a transaction from a list of lines.
 
         Args:
-            lines (List[str]): A list of strings representing the lines of a transaction.
+            lines: A list of strings representing the lines of a transaction.
 
         Returns:
-            Optional[Dict]: A dictionary representing the transaction, or None if parsing fails.
+            A dictionary representing the transaction, or None if parsing fails.
         """
         if not lines or not lines[0].strip():
             self.logger.debug("Empty transaction lines encountered")
@@ -112,7 +110,7 @@ class JournalFixer(BaseScript):
         """Process a journal file and fix all transactions.
 
         Args:
-            file_path (str): The path to the journal file.
+            file_path: The path to the journal file.
 
         Raises:
             Exception: If the file processing fails, the original exception is re-raised after attempting to restore from backup.
