@@ -22,8 +22,8 @@ class ArchitectureModule(BaseScript):
         """
         Executes the main logic of the architecture module.
 
-        This method demonstrates accessing configuration values, utilizing database
-        connections, and interacting with LLM functionalities.
+        This method demonstrates accessing configuration values, utilizing
+        database connections, and interacting with LLM functionalities.
 
         Raises:
             Exception: If an error occurs during module execution.
@@ -50,7 +50,8 @@ class ArchitectureModule(BaseScript):
             if self.llm_client:
                 self.logger.info("LLM client is available.")
                 # Example: Generate text (replace with actual prompt)
-                # response = self.llm_client.generate_text("Write a short poem about architecture.")
+                # response = self.llm_client.generate_text("Write a short poem
+                # about architecture.")
                 # self.logger.info(f"LLM response: {response}")
             else:
                 self.logger.warning("LLM client is not available.")
