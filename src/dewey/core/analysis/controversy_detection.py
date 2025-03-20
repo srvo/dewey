@@ -16,6 +16,10 @@ class ControversyDetection(BaseScript):
         Initializes the ControversyDetection class.
 
         Calls the superclass constructor to initialize the base script.
+
+        Args:
+            config_section (Optional[str], optional): Section in the config file
+                to use for configuration. Defaults to None.
         """
         super().__init__(config_section=config_section, name="ControversyDetection")
 
