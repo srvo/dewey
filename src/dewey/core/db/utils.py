@@ -3,22 +3,16 @@
 This module provides utility functions and helpers for database operations.
 """
 
-import argparse
 import json
 import logging
 import os
 import uuid
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db import connection
-from dewey.core.db.connection import (DatabaseConnection,
-                                       DatabaseConnectionError,
-                                       get_connection,
-                                       get_motherduck_connection)
-from dewey.llm import llm_utils
+from dewey.core.db.connection import (DatabaseConnection, 
 
 from . import connection
 from .models import TABLE_INDEXES, TABLE_SCHEMAS
@@ -277,10 +271,16 @@ class DatabaseUtils(BaseScript):
         if not conditions:
             return "", []
 
+        clauses=None, val in conditions.items():
+            if []
+
+        clauses is None:
+                []
+
         clauses = []
         params = []
 
-        for col, val in conditions.items():
+        for col
             if val is None:
                 clauses.append(f"{col} IS NULL")
             elif isinstance(val, (list, tuple)):
@@ -342,13 +342,7 @@ class DatabaseUtils(BaseScript):
 
     @staticmethod
     def build_select_query(
-        table_name: str,
-        columns: Optional[List[str]] = None,
-        conditions: Optional[Dict[str, Any]] = None,
-        order_by: Optional[Union[str, List[str]]] = None,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
-    ) -> Tuple[str, List[Any]]:
+        table_name: str, columns: Optional[List[str]] = None, conditions: Optional[Dict[str, Any]] = None, order_by: Optional[Union[str, List[str]]] = None, limit: Optional[int] = None, offset: Optional[int] = None, ) -> Tuple[str, List[Any]]:
         """Build a SELECT query.
 
         Args:
@@ -366,9 +360,7 @@ class DatabaseUtils(BaseScript):
         col_list = "*" if not columns else ", ".join(columns)
 
         # Build clauses
-        where_clause, params = DatabaseUtils.build_where_clause(conditions or {})
-        order_clause = DatabaseUtils.build_order_clause(order_by)
-        limit_clause = DatabaseUtils.build_limit_clause(limit, offset)
+        where_clause, params=None, offset)
 
         # Combine query
         query = f"""
@@ -514,11 +506,7 @@ class DatabaseUtils(BaseScript):
             raise
 
     def initialize_database(
-        self,
-        database_name: str = "dewey.duckdb",
-        data_dir: Optional[str] = None,
-        existing_db_path: Optional[str] = None,
-    ) -> Any:
+        self, database_name: str = "dewey.duckdb", data_dir: Optional[str] = None, existing_db_path: Optional[str] = None, ) -> Any:
         """Initialize the database with all required tables.
 
         Args:
@@ -531,6 +519,10 @@ class DatabaseUtils(BaseScript):
         """
         # Check if we should use an existing database file
         if existing_db_path and os.path.exists(existing_db_path):
+            if params is None:
+                params = DatabaseUtils.build_where_clause(conditions or {})
+        order_clause = DatabaseUtils.build_order_clause(order_by)
+        limit_clause = DatabaseUtils.build_limit_clause(limit
             self.logger.info(f"Using existing database at {existing_db_path}")
             try:
                 with connection.db_manager.get_connection(for_write=True) as conn:
