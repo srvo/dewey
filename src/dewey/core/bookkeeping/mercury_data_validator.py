@@ -13,25 +13,38 @@ class DataValidationError(Exception):
 
 
 class MercuryDataValidator(BaseScript):
-    """Validates raw transaction data from Mercury CSV files."""
+    """Validates raw transaction data from Mercury CSV files.
+
+    This class inherits from BaseScript and leverages its
+    configuration, logging, database, and LLM capabilities.
+    """
 
     def __init__(self) -> None:
-        """Initializes the MercuryDataValidator."""
+        """Initializes the MercuryDataValidator.
+
+        Calls the superclass constructor to initialize the BaseScript
+        with the 'bookkeeping' configuration section.
+        """
         super().__init__(config_section="bookkeeping")
 
     def run(self) -> None:
-        """Placeholder for the main execution logic."""
+        """Executes the data validation process.
+
+        This method retrieves configuration values, performs a database
+        query (if a database connection is available), and makes an LLM
+        call (if an LLM client is available).  It logs the progress and
+        results of each operation.
+        """
         self.logger.info("MercuryDataValidator is running.")
-        # Example usage of config, db, and llm
-        example_config_value = self.get_config_value("example_config")
+
+        # Example usage of config
+        example_config_value = self.get_config_value("utils.example_config")
         self.logger.info(f"Example config value: {example_config_value}")
 
+        # Example usage of database
         if self.db_conn:
             try:
-                # Example database operation
                 self.logger.info("Attempting database operation...")
-                # Assuming you have a table named 'transactions'
-                # and you want to fetch some data
                 query = "SELECT * FROM transactions LIMIT 10"
                 result = self.db_conn.execute(query)
                 self.logger.info(f"Database query result: {result}")
@@ -40,9 +53,9 @@ class MercuryDataValidator(BaseScript):
         else:
             self.logger.warning("Database connection not initialized.")
 
+        # Example usage of LLM
         if self.llm_client:
             try:
-                # Example LLM call
                 self.logger.info("Attempting LLM call...")
                 prompt = "Summarize the following text: Example text."
                 response = call_llm(self.llm_client, prompt)
@@ -54,6 +67,9 @@ class MercuryDataValidator(BaseScript):
 
     def normalize_description(self, description: str) -> str:
         """Normalize transaction description.
+
+        Removes extra whitespace and normalizes the case of the
+        transaction description.
 
         Args:
             description: The transaction description string.
@@ -68,6 +84,9 @@ class MercuryDataValidator(BaseScript):
 
     def _parse_and_validate_date(self, date_str: str) -> datetime.date:
         """Parse and validate the date string.
+
+        Parses the date string and validates that it is within the
+        allowed range (year >= 2000 and not in the future).
 
         Args:
             date_str: The date string in 'YYYY-MM-DD' format.
@@ -87,6 +106,9 @@ class MercuryDataValidator(BaseScript):
     def normalize_amount(self, amount_str: str) -> float:
         """Normalize the amount string.
 
+        Removes commas and whitespace from the amount string and converts
+        it to a float.
+
         Args:
             amount_str: The amount string.
 
@@ -98,11 +120,15 @@ class MercuryDataValidator(BaseScript):
     def validate_row(self, row: Dict[str, str]) -> Dict[str, Any]:
         """Validate and normalize a transaction row.
 
+        Validates and normalizes the data in a transaction row,
+        including the date, description, amount, and account ID.
+
         Args:
             row: A dictionary representing a transaction row.
 
         Returns:
-            A dictionary containing the validated and normalized transaction data.
+            A dictionary containing the validated and normalized
+            transaction data.
 
         Raises:
             DataValidationError: If the transaction data is invalid.
