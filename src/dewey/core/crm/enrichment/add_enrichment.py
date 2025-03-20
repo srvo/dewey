@@ -12,15 +12,17 @@ database operations.
 """
 
 import sqlite3
+from typing import Any, Dict
+
 from dewey.core.base_script import BaseScript
 
 
 class AddEnrichmentCapabilities(BaseScript):
     """Adds enrichment capabilities to the existing database."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initializes the AddEnrichmentCapabilities script."""
-        super().__init__(config_section='crm', requires_db=False)
+        super().__init__(config_section="crm", requires_db=True)
 
     def run(self) -> None:
         """Adds enrichment capabilities while preserving existing functionality.
@@ -38,12 +40,11 @@ class AddEnrichmentCapabilities(BaseScript):
         ------
             sqlite3.Error: If any database operation fails
             Exception: For any other unexpected errors
-
         """
         conn = None
         try:
             self.logger.info("Connecting to production database")
-            db_path = self.config.get("db_path", "email_data.db")
+            db_path = self.get_config_value("db_path", "email_data.db")
             conn = sqlite3.connect(db_path)
             cursor = conn.cursor()
 
