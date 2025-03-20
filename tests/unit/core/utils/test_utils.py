@@ -1,22 +1,27 @@
-import unittest
+import pytest
 from unittest.mock import patch
-
 from dewey.core.utils import MyUtils
 
+@pytest.fixture
+def mock_base_script(mocker):
+    """Mock BaseScript methods to isolate MyUtils."""
+    mocker.patch("dewey.core.utils.BaseScript.__init__", return_value=None)
+    mocker.patch("dewey.core.utils.BaseScript.get_config_value", return_value="test_value")
+    mocker.patch("dewey.core.utils.BaseScript.db_conn", return_value=None)
+    mocker.patch("dewey.core.utils.BaseScript.llm_client", return_value=None)
+    mocker.patch("dewey.core.utils.BaseScript.logger")
 
-class TestMyUtils(unittest.TestCase):
-    @patch("dewey.core.utils.MyUtils.get_config_value")
-    def test_example_utility_function(self, mock_get_config_value):
-        mock_get_config_value.return_value = "test_value"
-        utils = MyUtils()
-        input_data = "test_input"
-        result = utils.example_utility_function(input_data)
-        self.assertEqual(result, f"Processed: {input_data}")
+@pytest.fixture
+def my_utils(mock_base_script):
+    """Fixture for MyUtils with mocked dependencies."""
+    return MyUtils()
 
-    def test_init(self):
-        utils = MyUtils()
-        self.assertIsInstance(utils, MyUtils)
+def test_my_utils_initialization(my_utils):
+    """Test that MyUtils can be initialized."""
+    assert my_utils is not None
 
-
-if __name__ == "__main__":
-    unittest.main()
+def test_example_utility_function(my_utils):
+    """Test the example utility function."""
+    input_data = "test_input"
+    result = my_utils.example_utility_function(input_data)
+    assert result == f"Processed: {input_data}"
