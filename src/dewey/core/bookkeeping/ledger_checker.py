@@ -34,7 +34,15 @@ class LedgerFormatChecker(BaseScript):
         self.logger.info(f"Loading journal file: {self.journal_file}")
         try:
             with open(self.journal_file, "r") as file:
-                self.journal_content, self.hledger_valid = None, False
+                self.journal_content = file.readlines()
+        except FileNotFoundError:
+            self.logger.error(f"Journal file not found: {self.journal_file}")
+            self.errors.append(f"Journal file not found: {self.journal_file}")
+            self.journal_content = []
+        except Exception as e:
+            self.logger.error(f"Error reading journal file: {e}")
+            self.errors.append(f"Error reading journal file: {e}")
+            self.journal_content = []
         """
         self.logger.info("Running hledger basic validation")
         try:
