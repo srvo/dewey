@@ -1,22 +1,37 @@
+"""Tests for dewey.core.config.logging."""
+
 import logging
-from typing import Any
-from unittest.mock import patch
+from pathlib import Path
+from typing import Any, Dict
+from unittest.mock import MagicMock, patch, mock_open
 
 import pytest
 import yaml
 
+from dewey.core.base_script import BaseScript
 from dewey.core.config.logging import LoggingExample
+
+
+@pytest.fixture
+def mock_base_script() -> MagicMock:
+    """Mock BaseScript instance."""
+    mock_script = MagicMock(spec=BaseScript)
+    mock_script.get_config_value.return_value = "test_value"
+    mock_script.logger = MagicMock()
+    return mock_script
+
+
+@pytest.fixture
+def logging_example() -> LoggingExample:
+    """Fixture for creating a LoggingExample instance."""
+    return LoggingExample()
 
 
 class TestLoggingExample:
     """Tests for the LoggingExample class."""
 
-    @pytest.fixture
-    def logging_example(self) -> LoggingExample:
-        """Fixture for creating a LoggingExample instance."""
-        return LoggingExample()
-
-    def test_init(self, logging_example: LoggingExample) -> None:
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    def test_init(self, mock_init: MagicMock, logging_example: LoggingExample) -> None:
         """Tests the __init__ method."""
         assert logging_example.name == "LoggingExample"
         assert logging_example.config_section == "logging"
@@ -25,9 +40,11 @@ class TestLoggingExample:
         assert isinstance(logging_example.logger, logging.Logger)
 
     @patch("dewey.core.config.logging.LoggingExample.get_config_value")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_run(
         self,
-        mock_get_config_value: Any,
+        mock_init: MagicMock,
+        mock_get_config_value: MagicMock,
         logging_example: LoggingExample,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
@@ -50,10 +67,12 @@ class TestLoggingExample:
 
     @patch("dewey.core.config.logging.LoggingExample.parse_args")
     @patch("dewey.core.config.logging.LoggingExample.run")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_execute(
         self,
-        mock_run: Any,
-        mock_parse_args: Any,
+        mock_init: MagicMock,
+        mock_run: MagicMock,
+        mock_parse_args: MagicMock,
         logging_example: LoggingExample,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
@@ -67,9 +86,11 @@ class TestLoggingExample:
         assert mock_run.call_count == 1
 
     @patch("dewey.core.config.logging.LoggingExample.parse_args")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_execute_keyboard_interrupt(
         self,
-        mock_parse_args: Any,
+        mock_init: MagicMock,
+        mock_parse_args: MagicMock,
         logging_example: LoggingExample,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
@@ -82,9 +103,11 @@ class TestLoggingExample:
         assert "Script interrupted by user" in caplog.text
 
     @patch("dewey.core.config.logging.LoggingExample.parse_args")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_execute_exception(
         self,
-        mock_parse_args: Any,
+        mock_init: MagicMock,
+        mock_parse_args: MagicMock,
         logging_example: LoggingExample,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
@@ -96,7 +119,8 @@ class TestLoggingExample:
 
         assert "Error executing script: Test Exception" in caplog.text
 
-    def test_get_path(self, logging_example: LoggingExample) -> None:
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    def test_get_path(self, mock_init: MagicMock, logging_example: LoggingExample) -> None:
         """Tests the get_path method."""
         # Test with relative path
         relative_path = "config/dewey.yaml"
@@ -107,7 +131,10 @@ class TestLoggingExample:
         absolute_path = "/tmp/test.txt"
         assert logging_example.get_path(absolute_path) == Path(absolute_path)
 
-    def test_get_config_value(self, logging_example: LoggingExample) -> None:
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    def test_get_config_value(
+        self, mock_init: MagicMock, logging_example: LoggingExample
+    ) -> None:
         """Tests the get_config_value method."""
         # Mock the config attribute
         logging_example.config = {"level1": {"level2": "value"}}
@@ -122,8 +149,13 @@ class TestLoggingExample:
         assert logging_example.get_config_value("level2", None) is None
 
     @patch("logging.basicConfig")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_setup_logging_from_config(
-        self, mock_basicConfig: Any, logging_example: LoggingExample, tmp_path: Path
+        self,
+        mock_init: MagicMock,
+        mock_basicConfig: MagicMock,
+        logging_example: LoggingExample,
+        tmp_path: Path,
     ) -> None:
         """Tests the _setup_logging method when config is available."""
         # Create a temporary config file
@@ -153,8 +185,12 @@ class TestLoggingExample:
         assert isinstance(logging_example.logger, logging.Logger)
 
     @patch("logging.basicConfig")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_setup_logging_default_config(
-        self, mock_basicConfig: Any, logging_example: LoggingExample
+        self,
+        mock_init: MagicMock,
+        mock_basicConfig: MagicMock,
+        logging_example: LoggingExample,
     ) -> None:
         """Tests the _setup_logging method when config is not available."""
         # Patch the CONFIG_PATH to a non-existent file
@@ -169,8 +205,9 @@ class TestLoggingExample:
         )
         assert isinstance(logging_example.logger, logging.Logger)
 
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_load_config_success(
-        self, logging_example: LoggingExample, tmp_path: Path
+        self, mock_init: MagicMock, logging_example: LoggingExample, tmp_path: Path
     ) -> None:
         """Tests the _load_config method when the config file is loaded successfully."""
         # Create a temporary config file
@@ -186,8 +223,9 @@ class TestLoggingExample:
         # Assert that the config is loaded correctly
         assert config == config_data
 
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_load_config_section_success(
-        self, logging_example: LoggingExample, tmp_path: Path
+        self, mock_init: MagicMock, logging_example: LoggingExample, tmp_path: Path
     ) -> None:
         """Tests the _load_config method when a specific config section is loaded successfully."""
         # Create a temporary config file
@@ -207,8 +245,10 @@ class TestLoggingExample:
         # Assert that the config is loaded correctly
         assert config == config_data["section1"]
 
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_load_config_section_not_found(
         self,
+        mock_init: MagicMock,
         logging_example: LoggingExample,
         tmp_path: Path,
         caplog: pytest.LogCaptureFixture,
@@ -233,7 +273,10 @@ class TestLoggingExample:
         )
         assert config == config_data
 
-    def test_load_config_file_not_found(self, logging_example: LoggingExample) -> None:
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    def test_load_config_file_not_found(
+        self, mock_init: MagicMock, logging_example: LoggingExample
+    ) -> None:
         """Tests the _load_config method when the config file is not found."""
         # Patch the CONFIG_PATH to a non-existent file
         with (
@@ -242,8 +285,9 @@ class TestLoggingExample:
         ):
             logging_example._load_config()
 
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_load_config_invalid_yaml(
-        self, logging_example: LoggingExample, tmp_path: Path
+        self, mock_init: MagicMock, logging_example: LoggingExample, tmp_path: Path
     ) -> None:
         """Tests the _load_config method when the config file contains invalid YAML."""
         # Create a temporary config file with invalid YAML
@@ -259,8 +303,12 @@ class TestLoggingExample:
             logging_example._load_config()
 
     @patch("dewey.core.config.logging.get_connection")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_initialize_db_connection_success(
-        self, mock_get_connection: Any, logging_example: LoggingExample
+        self,
+        mock_init: MagicMock,
+        mock_get_connection: MagicMock,
+        logging_example: LoggingExample,
     ) -> None:
         """Tests the _initialize_db_connection method when the database connection is initialized successfully."""
         # Mock the config attribute
@@ -279,8 +327,12 @@ class TestLoggingExample:
         assert logging_example.db_conn == mock_get_connection.return_value
 
     @patch("dewey.core.config.logging.get_connection")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_initialize_db_connection_import_error(
-        self, mock_get_connection: Any, logging_example: LoggingExample
+        self,
+        mock_init: MagicMock,
+        mock_get_connection: MagicMock,
+        logging_example: LoggingExample,
     ) -> None:
         """Tests the _initialize_db_connection method when the database module cannot be imported."""
         # Mock the import of the database module to raise an ImportError
@@ -292,8 +344,12 @@ class TestLoggingExample:
             logging_example._initialize_db_connection()
 
     @patch("dewey.core.config.logging.get_connection")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_initialize_db_connection_exception(
-        self, mock_get_connection: Any, logging_example: LoggingExample
+        self,
+        mock_init: MagicMock,
+        mock_get_connection: MagicMock,
+        logging_example: LoggingExample,
     ) -> None:
         """Tests the _initialize_db_connection method when an exception occurs during database connection initialization."""
         # Mock the get_connection function to raise an exception
@@ -310,8 +366,12 @@ class TestLoggingExample:
         assert logging_example.db_conn is None
 
     @patch("dewey.core.config.logging.get_llm_client")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_initialize_llm_client_success(
-        self, mock_get_llm_client: Any, logging_example: LoggingExample
+        self,
+        mock_init: MagicMock,
+        mock_get_llm_client: MagicMock,
+        logging_example: LoggingExample,
     ) -> None:
         """Tests the _initialize_llm_client method when the LLM client is initialized successfully."""
         # Mock the config attribute
@@ -326,8 +386,12 @@ class TestLoggingExample:
         assert logging_example.llm_client == mock_get_llm_client.return_value
 
     @patch("dewey.core.config.logging.get_llm_client")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_initialize_llm_client_import_error(
-        self, mock_get_llm_client: Any, logging_example: LoggingExample
+        self,
+        mock_init: MagicMock,
+        mock_get_llm_client: MagicMock,
+        logging_example: LoggingExample,
     ) -> None:
         """Tests the _initialize_llm_client method when the LLM module cannot be imported."""
         # Mock the import of the LLM module to raise an ImportError
@@ -339,8 +403,12 @@ class TestLoggingExample:
             logging_example._initialize_llm_client()
 
     @patch("dewey.core.config.logging.get_llm_client")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_initialize_llm_client_exception(
-        self, mock_get_llm_client: Any, logging_example: LoggingExample
+        self,
+        mock_init: MagicMock,
+        mock_get_llm_client: MagicMock,
+        logging_example: LoggingExample,
     ) -> None:
         """Tests the _initialize_llm_client method when an exception occurs during LLM client initialization."""
         # Mock the get_llm_client function to raise an exception
@@ -354,29 +422,40 @@ class TestLoggingExample:
 
         assert logging_example.llm_client is None
 
-    def test_setup_argparse(self, logging_example: LoggingExample) -> None:
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    def test_setup_argparse(
+        self, mock_init: MagicMock, logging_example: LoggingExample
+    ) -> None:
         """Tests the setup_argparse method."""
         parser = logging_example.setup_argparse()
         assert parser.description == logging_example.description
         assert parser._actions[1].dest == "config"
         assert parser._actions[2].dest == "log_level"
 
-    def test_setup_argparse_with_db(self, logging_example: LoggingExample) -> None:
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    def test_setup_argparse_with_db(
+        self, mock_init: MagicMock, logging_example: LoggingExample
+    ) -> None:
         """Tests the setup_argparse method when database is required."""
         logging_example.requires_db = True
         parser = logging_example.setup_argparse()
         assert parser._actions[3].dest == "db_connection_string"
 
-    def test_setup_argparse_with_llm(self, logging_example: LoggingExample) -> None:
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    def test_setup_argparse_with_llm(
+        self, mock_init: MagicMock, logging_example: LoggingExample
+    ) -> None:
         """Tests the setup_argparse method when LLM is enabled."""
         logging_example.enable_llm = True
         parser = logging_example.setup_argparse()
         assert parser._actions[3].dest == "llm_model"
 
     @patch("argparse.ArgumentParser.parse_args")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_parse_args(
         self,
-        mock_parse_args: Any,
+        mock_init: MagicMock,
+        mock_parse_args: MagicMock,
         logging_example: LoggingExample,
         tmp_path: Path,
         caplog: pytest.LogCaptureFixture,
@@ -404,9 +483,11 @@ class TestLoggingExample:
         assert f"Loaded configuration from {mock_args.config}" in caplog.text
 
     @patch("argparse.ArgumentParser.parse_args")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_parse_args_config_not_found(
         self,
-        mock_parse_args: Any,
+        mock_init: MagicMock,
+        mock_parse_args: MagicMock,
         logging_example: LoggingExample,
         tmp_path: Path,
         caplog: pytest.LogCaptureFixture,
@@ -427,10 +508,12 @@ class TestLoggingExample:
 
     @patch("argparse.ArgumentParser.parse_args")
     @patch("dewey.core.config.logging.get_connection")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_parse_args_db_connection_string(
         self,
-        mock_get_connection: Any,
-        mock_parse_args: Any,
+        mock_init: MagicMock,
+        mock_get_connection: MagicMock,
+        mock_parse_args: MagicMock,
         logging_example: LoggingExample,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
@@ -457,10 +540,12 @@ class TestLoggingExample:
 
     @patch("argparse.ArgumentParser.parse_args")
     @patch("dewey.core.config.logging.get_llm_client")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_parse_args_llm_model(
         self,
-        mock_get_llm_client: Any,
-        mock_parse_args: Any,
+        mock_init: MagicMock,
+        mock_get_llm_client: MagicMock,
+        mock_parse_args: MagicMock,
         logging_example: LoggingExample,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
@@ -484,12 +569,13 @@ class TestLoggingExample:
         assert f"Using custom LLM model: {mock_args.llm_model}" in caplog.text
 
     @patch("dewey.core.config.logging.LoggingExample._cleanup")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_cleanup_db_connection(
-        self, mock_cleanup: Any, logging_example: LoggingExample
+        self, mock_init: MagicMock, mock_cleanup: MagicMock, logging_example: LoggingExample
     ) -> None:
         """Tests the _cleanup method when a database connection exists."""
         # Mock the database connection and its close method
-        mock_db_conn = pytest.MagicMock()
+        mock_db_conn = MagicMock()
         logging_example.db_conn = mock_db_conn
 
         # Call the method
@@ -499,8 +585,9 @@ class TestLoggingExample:
         mock_db_conn.close.assert_called_once()
 
     @patch("dewey.core.config.logging.LoggingExample._cleanup")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_cleanup_no_db_connection(
-        self, mock_cleanup: Any, logging_example: LoggingExample
+        self, mock_init: MagicMock, mock_cleanup: MagicMock, logging_example: LoggingExample
     ) -> None:
         """Tests the _cleanup method when no database connection exists."""
         # Set the db_conn attribute to None
