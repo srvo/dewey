@@ -2,7 +2,7 @@ import json
 import os
 import time
 from collections import Counter
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Protocol, runtime_checkable
 
 import duckdb
 
@@ -10,10 +10,67 @@ from dewey.core.base_script import BaseScript
 from dewey.llm.llm_utils import generate_json
 
 
+@runtime_checkable
+class DatabaseInterface(Protocol):
+    """
+    A protocol defining the database operations required by FeedbackProcessor.
+    This allows for mocking the database in tests.
+    """
+
+    def connect(self, database_file: str) -> duckdb.DuckDBPyConnection:
+        ...
+
+    def execute(self, query: str, parameters: Optional[List] = None) -> duckdb.DuckDBPyConnection:
+        ...
+
+    def fetchall(self) -> List[Tuple]:
+        ...
+
+    def fetchone(self) -> Tuple:
+        ...
+
+    @property
+    def description(self) -> List[Tuple]:
+        ...
+
+    def close(self) -> None:
+        ...
+
+
+class DuckDBDatabase:
+    """
+    A concrete implementation of the DatabaseInterface using DuckDB.
+    """
+    def __init__(self) -> None:
+        pass
+
+    def connect(self, database_file: str) -> duckdb.DuckDBPyConnection:
+        return duckdb.connect(database_file)
+
+    def execute(self, query: str, parameters: Optional[List] = None) -> duckdb.DuckDBPyConnection:
+        if parameters:
+            return self.conn.execute(query, parameters)
+        else:
+            return self.conn.execute(query)
+
+    def fetchall(self) -> List[Tuple]:
+        return self.conn.fetchall()
+
+    def fetchone(self) -> Tuple:
+        return self.conn.fetchone()
+
+    @property
+    def description(self) -> List[Tuple]:
+        return self.conn.description
+
+    def close(self) -> None:
+        self.conn.close()
+
+
 class FeedbackProcessor(BaseScript):
     """Processes feedback and suggests changes to preferences."""
 
-    def __init__(self) -> None:
+    def __init__(self, database: Optional[DatabaseInterface] = None) -> None:
         """Initializes the FeedbackProcessor."""
         super().__init__(
             name="FeedbackProcessor",
@@ -25,6 +82,7 @@ class FeedbackProcessor(BaseScript):
         self.active_data_dir = self.get_config_value("paths.data_dir")
         self.db_file = f"{self.active_data_dir}/process_feedback.duckdb"
         self.classifier_db = f"{self.active_data_dir}/email_classifier.duckdb"
+        self.database = database if database else DuckDBDatabase()
 
     def init_db(self, classifier_db_path: str = "") -> duckdb.DuckDBPyConnection:
         """Initialize database connection and create tables if needed.
@@ -48,7 +106,7 @@ class FeedbackProcessor(BaseScript):
         # Handle concurrent access with retries
         for attempt in range(max_retries):
             try:
-                conn = duckdb.connect(self.db_file)
+                conn = self.database.connect(self.db_file)
                 break
             except duckdb.IOException as e:
                 if "Conflicting lock" in str(e):
@@ -201,7 +259,13 @@ class FeedbackProcessor(BaseScript):
         )
 
     def generate_feedback_json(
-        self, feedback_text: str, msg_id: str, subject: str, assigned_priority: int
+        self,
+        feedback_text: str,
+        msg_id: str,
+        subject: str,
+        assigned_priority: int,
+        llm_client = None,
+        deepinfra_api_key: str = None,
     ) -> Dict:
         """Uses Deepinfra API to structure natural language feedback into JSON.
         Returns dict with 'error' field if processing fails."""
@@ -247,7 +311,7 @@ Key requirements:
 
 Failure to follow these requirements will cause critical system errors. Always return pure JSON.
 """
-        deepinfra_api_key = self.get_config_value("llm.providers.deepinfra.api_key")
+        # deepinfra_api_key = self.get_config_value("llm.providers.deepinfra.api_key")
         if not deepinfra_api_key:
             self.logger.error("DEEPINFRA_API_KEY environment variable not set")
             self.logger.error("1. Get your API key from https://deepinfra.com")
@@ -255,7 +319,7 @@ Failure to follow these requirements will cause critical system errors. Always r
             return {}
 
         try:
-            response_content = generate_json(prompt, deepinfra_api_key, self.llm_client)
+            response_content = generate_json(prompt, deepinfra_api_key, llm_client)
             try:
                 feedback_json = json.loads(response_content.strip())
                 feedback_json["timestamp"] = time.time()
@@ -442,16 +506,18 @@ Failure to follow these requirements will cause critical system errors. Always r
                 )
         return updated_preferences
 
-    def run(self) -> None:
-        """Processes feedback and updates preferences."""
-        conn = self.init_db(self.classifier_db)
-        try:
-            feedback_data = self.load_feedback(conn)
-            preferences = self.load_preferences(conn)
+    def _get_opportunities(self, conn: duckdb.DuckDBPyConnection) -> List[Tuple]:
+        """
+        Retrieves a list of email opportunities from the classifier database.
 
-            # Get unprocessed emails from classifier DB
-            opportunities = conn.execute(
-                f"""
+        Args:
+            conn: DuckDB connection object.
+
+        Returns:
+            A list of tuples representing email opportunities.
+        """
+        return conn.execute(
+            f"""
             SELECT 
                 ea.msg_id, 
                 ea.subject, 
@@ -467,7 +533,141 @@ Failure to follow these requirements will cause critical system errors. Always r
                 ea.analysis_date DESC
             LIMIT 50
         """
-            ).fetchall()
+        ).fetchall()
+
+    def _process_interactive_feedback(self, conn: duckdb.DuckDBPyConnection, opportunities: List[Tuple]) -> List[Dict]:
+        """
+        Processes interactive feedback for a list of email opportunities.
+
+        Args:
+            conn: DuckDB connection object.
+            opportunities: A list of tuples representing email opportunities.
+
+        Returns:
+            A list of new feedback entries.
+        """
+        new_feedback_entries = []
+        if opportunities:
+            from collections import defaultdict
+
+            sender_groups = defaultdict(list)
+            for opp in opportunities:
+                sender_groups[opp[3]].append(opp)  # Group by from_address
+
+            self.logger.info(
+                f"\nFound {len(opportunities)} emails from {len(sender_groups)} senders:"
+            )
+
+            for sender_idx, (from_addr, emails) in enumerate(
+                sender_groups.items(), 1
+            ):
+                self.logger.info(
+                    f"\n=== Sender {sender_idx}/{len(sender_groups)}: {from_addr} ==="
+                )
+
+                # Show first 3 emails, then prompt if they want to see more
+                for idx, email in enumerate(emails[:3], 1):
+                    msg_id, subject, priority, _, snippet, total_from_sender = email
+                    self.logger.info(f"\n  Email {idx}: {subject}")
+                    self.logger.info(f"  Priority: {priority}")
+                    self.logger.info(f"  Snippet: {snippet[:100]}...")
+
+            if len(emails) > 3:
+                show_more = (
+                    input(
+                        f"\n  This sender has {len(emails)} emails. Show all? (y/n/q): "
+                    )
+                    .strip()
+                    .lower()
+                )
+                if show_more == "q":
+                    return new_feedback_entries
+                if show_more == "y":
+                    for idx, email in enumerate(emails[3:], 4):
+                        msg_id, subject, priority, _, snippet = email
+                        self.logger.info(f"\n  Email {idx}: {subject}")
+                        self.logger.info(f"  Priority: {priority}")
+                        self.logger.info(f"  Snippet: {snippet[:100]}...")
+
+        for email in emails:
+            msg_id, subject, priority, _, snippet, total_from_sender = email
+            user_input = (
+                input(
+                    "\nType feedback, 't' to tag, 'i' for ingest, or 'q' to quit: "
+                )
+                .strip()
+                .lower()
+            )
+
+            if user_input in ("q", "quit"):
+                self.logger.info("\nExiting feedback session...")
+                return new_feedback_entries
+
+            feedback_text = ""
+            action = ""
+
+            if user_input == "t":
+                feedback_text = "USER ACTION: Tag for follow-up"
+                action = "follow-up"
+            elif user_input == "i":
+                self.logger.info("\nSelect ingestion type:")
+                self.logger.info("  1) Form submission (questions, contact requests)")
+                self.logger.info("  2) Contact record update")
+                self.logger.info("  3) Task creation")
+                ingest_type = input("Enter number (1-3): ").strip()
+                if ingest_type == "1":
+                    feedback_text = "USER ACTION: Tag for form submission ingestion"
+                    action = "form_submission"
+                elif ingest_type == "2":
+                    feedback_text = "USER ACTION: Tag for contact record update"
+                    action = "contact_update"
+                elif ingest_type == "3":
+                    feedback_text = "USER ACTION: Tag for task creation"
+                    action = "task_creation"
+                else:
+                    feedback_text = (
+                        "USER ACTION: Tag for automated ingestion (unspecified type)"
+                    )
+                    action = "automated-ingestion"
+            else:
+                feedback_text = user_input
+
+            if not feedback_text:
+                continue
+
+            self.logger.info("\nAvailable actions:")
+            self.logger.info("  - Enter priority (0-4)")
+            self.logger.info("  - 't' = Tag for follow-up")
+            self.logger.info("  - 'i' = Tag for automated ingestion")
+            self.logger.info("  - 'q' = Quit and save progress")
+
+            suggested_priority = input(
+                "Suggested priority (0-4, blank to keep current): "
+            ).strip()
+            try:
+                deepinfra_api_key = self.get_config_value("llm.providers.deepinfra.api_key")
+                feedback_entry = self.generate_feedback_json(
+                    feedback_text, msg_id, subject, priority, self.llm_client, deepinfra_api_key
+                )
+                if feedback_entry:
+                    new_feedback_entries.append(feedback_entry)
+                    # Save after each entry in case of interruption
+                    self.save_feedback(conn, [feedback_entry])
+            except Exception as e:
+                self.logger.error(f"Error processing feedback: {str(e)}")
+                self.logger.info("Saving partial feedback...")
+                self.save_feedback(conn, new_feedback_entries)
+        return new_feedback_entries
+
+    def run(self) -> None:
+        """Processes feedback and updates preferences."""
+        conn = self.init_db(self.classifier_db)
+        try:
+            feedback_data = self.load_feedback(conn)
+            preferences = self.load_preferences(conn)
+
+            # Get unprocessed emails from classifier DB
+            opportunities = self._get_opportunities(conn)
 
             # One-time migration of existing JSON data
             if not feedback_data and os.path.exists("feedback.json"):
@@ -488,116 +688,7 @@ Failure to follow these requirements will cause critical system errors. Always r
             preferences = legacy_prefs
 
             # --- Interactive Feedback Input ---
-            new_feedback_entries = []
-            if opportunities:
-                from collections import defaultdict
-
-                sender_groups = defaultdict(list)
-                for opp in opportunities:
-                    sender_groups[opp[3]].append(opp)  # Group by from_address
-
-                self.logger.info(
-                    f"\nFound {len(opportunities)} emails from {len(sender_groups)} senders:"
-                )
-
-                for sender_idx, (from_addr, emails) in enumerate(
-                    sender_groups.items(), 1
-                ):
-                    self.logger.info(
-                        f"\n=== Sender {sender_idx}/{len(sender_groups)}: {from_addr} ==="
-                    )
-
-                    # Show first 3 emails, then prompt if they want to see more
-                    for idx, email in enumerate(emails[:3], 1):
-                        msg_id, subject, priority, _, snippet, total_from_sender = email
-                        self.logger.info(f"\n  Email {idx}: {subject}")
-                        self.logger.info(f"  Priority: {priority}")
-                        self.logger.info(f"  Snippet: {snippet[:100]}...")
-
-                if len(emails) > 3:
-                    show_more = (
-                        input(
-                            f"\n  This sender has {len(emails)} emails. Show all? (y/n/q): "
-                        )
-                        .strip()
-                        .lower()
-                    )
-                    if show_more == "q":
-                        break
-                    if show_more == "y":
-                        for idx, email in enumerate(emails[3:], 4):
-                            msg_id, subject, priority, _, snippet = email
-                            self.logger.info(f"\n  Email {idx}: {subject}")
-                            self.logger.info(f"  Priority: {priority}")
-                            self.logger.info(f"  Snippet: {snippet[:100]}...")
-
-            for email in emails:
-                msg_id, subject, priority, _, snippet, total_from_sender = email
-                user_input = (
-                    input(
-                        "\nType feedback, 't' to tag, 'i' for ingest, or 'q' to quit: "
-                    )
-                    .strip()
-                    .lower()
-                )
-
-                if user_input in ("q", "quit"):
-                    self.logger.info("\nExiting feedback session...")
-                    return
-
-                feedback_text = ""
-                action = ""
-
-                if user_input == "t":
-                    feedback_text = "USER ACTION: Tag for follow-up"
-                    action = "follow-up"
-                elif user_input == "i":
-                    self.logger.info("\nSelect ingestion type:")
-                    self.logger.info("  1) Form submission (questions, contact requests)")
-                    self.logger.info("  2) Contact record update")
-                    self.logger.info("  3) Task creation")
-                    ingest_type = input("Enter number (1-3): ").strip()
-                    if ingest_type == "1":
-                        feedback_text = "USER ACTION: Tag for form submission ingestion"
-                        action = "form_submission"
-                    elif ingest_type == "2":
-                        feedback_text = "USER ACTION: Tag for contact record update"
-                        action = "contact_update"
-                    elif ingest_type == "3":
-                        feedback_text = "USER ACTION: Tag for task creation"
-                        action = "task_creation"
-                    else:
-                        feedback_text = (
-                            "USER ACTION: Tag for automated ingestion (unspecified type)"
-                        )
-                        action = "automated-ingestion"
-                else:
-                    feedback_text = user_input
-
-                if not feedback_text:
-                    continue
-
-                self.logger.info("\nAvailable actions:")
-                self.logger.info("  - Enter priority (0-4)")
-                self.logger.info("  - 't' = Tag for follow-up")
-                self.logger.info("  - 'i' = Tag for automated ingestion")
-                self.logger.info("  - 'q' = Quit and save progress")
-
-                suggested_priority = input(
-                    "Suggested priority (0-4, blank to keep current): "
-                ).strip()
-                try:
-                    feedback_entry = self.generate_feedback_json(
-                        feedback_text, msg_id, subject, priority
-                    )
-                    if feedback_entry:
-                        new_feedback_entries.append(feedback_entry)
-                        # Save after each entry in case of interruption
-                        self.save_feedback(conn, [feedback_entry])
-                except Exception as e:
-                    self.logger.error(f"Error processing feedback: {str(e)}")
-                    self.logger.info("Saving partial feedback...")
-                    self.save_feedback(conn, new_feedback_entries)
+            new_feedback_entries = self._process_interactive_feedback(conn, opportunities)
 
             if not feedback_data and not new_feedback_entries:
                 self.logger.info(
@@ -619,9 +710,9 @@ Failure to follow these requirements will cause critical system errors. Always r
                     # Generate unique ID based on timestamp
                     msg_id = f"user_fb_{int(time.time())}"
                     assigned_priority = 3  # Default neutral priority
-
+                    deepinfra_api_key = self.get_config_value("llm.providers.deepinfra.api_key")
                     feedback_json = self.generate_feedback_json(
-                        feedback_text, msg_id, subject, assigned_priority
+                        feedback_text, msg_id, subject, assigned_priority, self.llm_client, deepinfra_api_key
                     )
                     if feedback_json and not feedback_json.get("error"):
                         new_feedback_entries.append(feedback_json)
@@ -652,9 +743,9 @@ Failure to follow these requirements will cause critical system errors. Always r
                             "Suggested priority (0-5, leave blank if unsure): "
                         ).strip()
                         assigned_priority = 3  # Default neutral priority
-
+                        deepinfra_api_key = self.get_config_value("llm.providers.deepinfra.api_key")
                         feedback_json = self.generate_feedback_json(
-                            feedback_text, msg_id, subject, assigned_priority
+                            feedback_text, msg_id, subject, assigned_priority, self.llm_client, deepinfra_api_key
                         )
                         if feedback_json:
                             new_feedback_entries.append(feedback_json)
