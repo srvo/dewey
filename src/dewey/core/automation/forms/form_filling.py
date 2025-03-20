@@ -1,6 +1,7 @@
 from typing import Any
 
 from dewey.core.automation import BaseScript
+from dewey.core.db.connection import DatabaseConnection
 from dewey.llm.llm_utils import generate_text
 
 
@@ -22,7 +23,7 @@ class FormFillingModule(BaseScript):
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
         """
-        super().__init__(*args, config_section="form_filling", **kwargs)
+        super().__init__(*args, config_section="form_filling", requires_db=True, enable_llm=True, **kwargs)
 
     def run(self) -> None:
         """
@@ -44,17 +45,14 @@ class FormFillingModule(BaseScript):
 
         try:
             # Example of accessing a configuration value
-            example_config_value = self.get_config_value(
-                "example_config_key", "default_value"
-            )
+            example_config_value = self.get_config_value("example_config_key", "default_value")
             self.logger.debug(f"Example config value: {example_config_value}")
 
             # Example of using the database connection
             if self.db_conn:
-                with self.db_conn.cursor() as cur:
-                    cur.execute("SELECT 1;")  # Example query
-                    result = cur.fetchone()
-                    self.logger.debug(f"Database query result: {result}")
+                db_conn: DatabaseConnection = self.db_conn  # Type hint for clarity
+                result = db_conn.execute("SELECT 1;")  # Example query
+                self.logger.debug(f"Database query result: {result}")
 
             # Example of using the LLM client
             if self.llm_client:
