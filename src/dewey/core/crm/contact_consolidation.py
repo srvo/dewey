@@ -16,37 +16,21 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 import logging
-from dewey.core.base_script import BaseScript
 
 import duckdb
-import logging
+
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
+
 
 class ContactConsolidation(BaseScript):
     """
     Consolidates contact information from various sources into a unified table.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initializes the ContactConsolidation script."""
-        super().__init__(config_section='contact_consolidation')
-
-    def connect_to_motherduck(self, database_name: str = "dewey") -> duckdb.DuckDBPyConnection:
-        """Connect to the MotherDuck database.
-
-        Args:
-            database_name: Name of the MotherDuck database
-
-        Returns:
-            DuckDB connection
-        """
-        try:
-            conn = duckdb.connect(f"md:{database_name}")
-            self.logger.info(f"Connected to MotherDuck database: {database_name}")
-            return conn
-        except Exception as e:
-            self.logger.error(f"Error connecting to MotherDuck database: {e}")
-            raise
+        super().__init__(config_section='contact_consolidation', requires_db=True)
 
     def create_unified_contacts_table(self, conn: duckdb.DuckDBPyConnection) -> None:
         """Create the unified_contacts table if it doesn't exist.
@@ -119,7 +103,7 @@ class ContactConsolidation(BaseScript):
                 NULL as metadata
             FROM crm_contacts
             """).fetchall()
-            
+
             contacts = []
             for row in result:
                 contact = {
@@ -141,7 +125,7 @@ class ContactConsolidation(BaseScript):
                     'metadata': row[15]
                 }
                 contacts.append(contact)
-            
+
             self.logger.info(f"Extracted {len(contacts)} contacts from CRM tables")
             return contacts
         except Exception as e:
@@ -188,7 +172,7 @@ class ContactConsolidation(BaseScript):
             FROM crm_emails
             WHERE from_email IS NOT NULL AND from_email != ''
             """).fetchall()
-            
+
             contacts = []
             for row in result:
                 contact = {
@@ -210,7 +194,7 @@ class ContactConsolidation(BaseScript):
                     'metadata': row[15]
                 }
                 contacts.append(contact)
-            
+
             # Extract from activedata_email_analyses
             result = conn.execute("""
             SELECT DISTINCT
@@ -233,7 +217,7 @@ class ContactConsolidation(BaseScript):
             FROM activedata_email_analyses
             WHERE from_address IS NOT NULL AND from_address != ''
             """).fetchall()
-            
+
             for row in result:
                 contact = {
                     'email': row[0],
@@ -254,7 +238,7 @@ class ContactConsolidation(BaseScript):
                     'metadata': row[15]
                 }
                 contacts.append(contact)
-            
+
             self.logger.info(f"Extracted {len(contacts)} contacts from email tables")
             return contacts
         except Exception as e:
@@ -301,7 +285,7 @@ class ContactConsolidation(BaseScript):
             FROM input_data_subscribers
             WHERE email IS NOT NULL AND email != ''
             """).fetchall()
-            
+
             contacts = []
             for row in result:
                 contact = {
@@ -323,7 +307,7 @@ class ContactConsolidation(BaseScript):
                     'metadata': row[15]
                 }
                 contacts.append(contact)
-            
+
             # Extract from input_data_EIvirgin_csvSubscribers
             # This table has a complex schema, so we'll extract what we can
             result = conn.execute("""
@@ -347,7 +331,7 @@ class ContactConsolidation(BaseScript):
             FROM input_data_EIvirgin_csvSubscribers
             WHERE "Email Address" IS NOT NULL AND "Email Address" != ''
             """).fetchall()
-            
+
             for row in result:
                 contact = {
                     'email': row[0],
@@ -368,7 +352,7 @@ class ContactConsolidation(BaseScript):
                     'metadata': row[15]
                 }
                 contacts.append(contact)
-            
+
             self.logger.info(f"Extracted {len(contacts)} contacts from subscriber tables")
             return contacts
         except Exception as e:
@@ -414,7 +398,7 @@ class ContactConsolidation(BaseScript):
             FROM input_data_blog_signup_form_responses
             WHERE email IS NOT NULL AND email != ''
             """).fetchall()
-            
+
             contacts = []
             for row in result:
                 contact = {
@@ -436,7 +420,7 @@ class ContactConsolidation(BaseScript):
                     'metadata': row[15]
                 }
                 contacts.append(contact)
-            
+
             self.logger.info(f"Extracted {len(contacts)} contacts from blog signup form responses")
             return contacts
         except Exception as e:
@@ -453,28 +437,28 @@ class ContactConsolidation(BaseScript):
             Dictionary of merged contacts keyed by email
         """
         merged_contacts = {}
-        
+
         for contact in contacts:
             email = contact['email']
             if not email:
                 continue
-                
+
             email = email.lower().strip()
-            
+
             if email not in merged_contacts:
                 merged_contacts[email] = contact
                 continue
-                
+
             # Merge with existing contact, prioritizing non-null values
             existing = merged_contacts[email]
             for key, value in contact.items():
                 if key == 'email':
                     continue
-                    
+
                 # For all other fields, prefer non-null values
                 if value is not None and existing[key] is None:
                     existing[key] = value
-                    
+
         self.logger.info(f"Merged contacts into {len(merged_contacts)} unique contacts")
         return merged_contacts
 
@@ -489,22 +473,22 @@ class ContactConsolidation(BaseScript):
             # Clear existing data
             conn.execute("DELETE FROM unified_contacts")
             self.logger.info("Cleared existing data from unified_contacts table")
-            
+
             # Insert new data in batches
             batch_size = int(self.get_config_value('batch_size', 100))
             contact_items = list(contacts.items())
             total_contacts = len(contact_items)
             total_batches = (total_contacts + batch_size - 1) // batch_size
-            
+
             self.logger.info(f"Inserting {total_contacts} contacts in {total_batches} batches of {batch_size}")
-            
+
             for batch_idx in range(0, total_batches):
                 start_idx = batch_idx * batch_size
                 end_idx = min(start_idx + batch_size, total_contacts)
                 batch = contact_items[start_idx:end_idx]
-                
+
                 self.logger.info(f"Processing batch {batch_idx + 1}/{total_batches} ({start_idx} to {end_idx - 1})")
-                
+
                 for email, contact in batch:
                     try:
                         conn.execute("""
@@ -533,9 +517,9 @@ class ContactConsolidation(BaseScript):
                         ])
                     except Exception as e:
                         self.logger.error(f"Error inserting contact {email}: {e}")
-                
+
                 self.logger.info(f"Completed batch {batch_idx + 1}/{total_batches}")
-            
+
             self.logger.info(f"Inserted {total_contacts} contacts into unified_contacts table")
         except Exception as e:
             self.logger.error(f"Error inserting contacts into unified_contacts table: {e}")
@@ -544,40 +528,42 @@ class ContactConsolidation(BaseScript):
     def run(self) -> None:
         """Main function to consolidate contacts."""
         database_name = self.get_config_value('database', 'dewey')
-        
+
         try:
             # Connect to MotherDuck
-            conn = self.connect_to_motherduck(database_name)
-            
+            conn = self.db_conn.connection  # Access the DuckDB connection from DatabaseConnection
+
             # Create unified_contacts table
             self.create_unified_contacts_table(conn)
-            
+
             # Extract contacts from various sources
             crm_contacts = self.extract_contacts_from_crm(conn)
             email_contacts = self.extract_contacts_from_emails(conn)
             subscriber_contacts = self.extract_contacts_from_subscribers(conn)
             blog_signup_contacts = self.extract_contacts_from_blog_signups(conn)
-            
+
             # Combine all contacts
             all_contacts = crm_contacts + email_contacts + subscriber_contacts + blog_signup_contacts
             self.logger.info(f"Total contacts extracted: {len(all_contacts)}")
-            
+
             # Merge contacts
             merged_contacts = self.merge_contacts(all_contacts)
-            
+
             # Insert into unified_contacts table
             self.insert_unified_contacts(conn, merged_contacts)
-            
+
             self.logger.info("Contact consolidation completed successfully")
-            
+
         except Exception as e:
             self.logger.error(f"Error in contact consolidation: {e}")
             sys.exit(1)
 
+
 def main():
     """Main entry point for the script."""
     script = ContactConsolidation()
-    script.run()
+    script.execute()
+
 
 if __name__ == "__main__":
     main()
