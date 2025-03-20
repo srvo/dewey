@@ -2,23 +2,22 @@ from dewey.core.base_script import BaseScript
 from typing import Dict, Any
 
 class CompanyResearchIntegration(BaseScript):
-    """
-    Integrates company research data using Dewey conventions.
+    """Integrates company research data using Dewey conventions.
+
+    Inherits from BaseScript and utilizes its features for configuration,
+    logging, and more.
     """
 
-    def __init__(self, script_name: str, config: Dict[str, Any]):
-        """
-        Initializes the CompanyResearchIntegration script.
+    def __init__(self, config_section: str = 'company_research'):
+        """Initializes the CompanyResearchIntegration script.
 
         Args:
-            script_name (str): The name of the script.
-            config (Dict[str, Any]): The configuration dictionary.
+            config_section (str): The configuration section to use.
         """
-        super().__init__(script_name, config)
+        super().__init__(config_section=config_section)
 
     def run(self) -> None:
-        """
-        Executes the company research integration process.
+        """Executes the company research integration process.
 
         This method orchestrates the retrieval, processing, and storage
         of company research data.
@@ -48,8 +47,7 @@ class CompanyResearchIntegration(BaseScript):
             raise
 
     def _retrieve_company_data(self) -> Dict:
-        """
-        Retrieves company data from an external source.
+        """Retrieves company data from an external source.
 
         Returns:
             Dict: A dictionary containing the retrieved company data.
@@ -63,8 +61,7 @@ class CompanyResearchIntegration(BaseScript):
         raise NotImplementedError("Retrieval of company data not implemented.")
 
     def _process_company_data(self, company_data: Dict) -> Dict:
-        """
-        Processes the retrieved company data.
+        """Processes the retrieved company data.
 
         Args:
             company_data (Dict): A dictionary containing the company data.
@@ -80,8 +77,7 @@ class CompanyResearchIntegration(BaseScript):
         raise NotImplementedError("Processing of company data not implemented.")
 
     def _store_company_data(self, processed_data: Dict) -> None:
-        """
-        Stores the processed company data.
+        """Stores the processed company data.
 
         Args:
             processed_data (Dict): A dictionary containing the processed company data.
