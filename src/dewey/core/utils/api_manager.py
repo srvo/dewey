@@ -1,4 +1,5 @@
 from dewey.core.base_script import BaseScript
+import logging
 
 
 class ApiManager(BaseScript):
@@ -9,9 +10,11 @@ class ApiManager(BaseScript):
     configuration and logging.
     """
 
-    def __init__(self):
+    def __init__(self, logger: logging.Logger = None):
         """Initializes the ApiManager."""
         super().__init__(config_section='api_manager')
+        if logger:
+            self.logger = logger
 
     def run(self) -> None:
         """
