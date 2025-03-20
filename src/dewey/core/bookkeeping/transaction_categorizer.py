@@ -6,7 +6,7 @@ import re
 import shutil
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict
 
 from dewey.core.base_script import BaseScript
 
@@ -18,73 +18,62 @@ class JournalCategorizer(BaseScript):
         """Initializes the JournalCategorizer with bookkeeping config."""
         super().__init__(config_section="bookkeeping")
 
-    def load_classification_rules(self, rules_file: str) -> dict[str, Any]:
+    def load_classification_rules(self, rules_file: str) -> Dict[str, Any]:
         """Load classification rules from JSON file.
 
         Args:
-        ----
             rules_file: Path to the JSON file containing classification rules.
 
         Returns:
-        -------
             A dictionary containing the classification rules.
 
         Raises:
-        ------
             FileNotFoundError: If the rules file does not exist.
             json.JSONDecodeError: If the rules file is not a valid JSON.
-
         """
-        self.logger.info("Loading classification rules from %s", rules_file)
+        self.logger.info(f"Loading classification rules from {rules_file}")
         try:
             with open(rules_file) as f:
                 return json.load(f)
         except FileNotFoundError:
             self.logger.exception(
-                "Classification rules file not found: %s", rules_file
+                f"Classification rules file not found: {rules_file}"
             )
             raise
         except json.JSONDecodeError as e:
-            self.logger.exception("Failed to load classification rules: %s", str(e))
+            self.logger.exception(f"Failed to load classification rules: {str(e)}")
             raise
 
     def create_backup(self, file_path: Path) -> str:
         """Create a backup of the journal file.
 
         Args:
-        ----
             file_path: Path to the journal file.
 
         Returns:
-        -------
             The path to the backup file.
 
         Raises:
-        ------
             Exception: If the backup creation fails.
-
         """
         backup_path = str(file_path) + ".bak"
         try:
             shutil.copy2(file_path, backup_path)
-            self.logger.debug("Created backup at %s", backup_path)
+            self.logger.debug(f"Created backup at {backup_path}")
             return backup_path
         except Exception as e:
-            self.logger.exception("Backup failed for %s: %s", file_path, str(e))
+            self.logger.exception(f"Backup failed for {file_path}: {str(e)}")
             raise
 
-    def classify_transaction(self, transaction: dict[str, Any], rules: dict[str, Any]) -> str:
+    def classify_transaction(self, transaction: Dict[str, Any], rules: Dict[str, Any]) -> str:
         """Classify a transaction based on the provided rules.
 
         Args:
-        ----
             transaction: A dictionary representing the transaction.
             rules: A dictionary containing the classification rules.
 
         Returns:
-        -------
             The category to which the transaction belongs.
-
         """
         description = transaction["description"].lower()
         for pattern in rules["patterns"]:
@@ -92,23 +81,20 @@ class JournalCategorizer(BaseScript):
                 return pattern["category"]
         return rules["default_category"]
 
-    def process_journal_file(self, file_path: Path, rules: dict[str, Any]) -> bool:
+    def process_journal_file(self, file_path: str, rules: Dict[str, Any]) -> bool:
         """Process a journal file and categorize its transactions.
 
         Args:
-        ----
             file_path: Path to the journal file.
             rules: A dictionary containing the classification rules.
 
         Returns:
-        -------
             True if the processing was successful, False otherwise.
-
         """
-        self.logger.info("Processing journal file: %s", file_path)
+        self.logger.info(f"Processing journal file: {file_path}")
 
         try:
-            backup_path = self.create_backup(file_path)
+            backup_path = self.create_backup(Path(file_path))
         except Exception:
             return False
 
@@ -116,7 +102,7 @@ class JournalCategorizer(BaseScript):
             with open(file_path) as f:
                 journal = json.load(f)
         except Exception as e:
-            self.logger.exception("Failed to load journal file: %s", str(e))
+            self.logger.exception(f"Failed to load journal file: {str(e)}")
             return False
 
         modified = False
@@ -127,40 +113,35 @@ class JournalCategorizer(BaseScript):
                 modified = True
 
                 self.logger.debug(
-                    "Classifying transaction: %s ($%.2f)",
-                    trans["description"],
-                    trans["amount"],
+                    f"Classifying transaction: {trans['description']} (${trans['amount']:.2f})"
                 )
-                self.logger.debug("Classified as: %s", new_category)
+                self.logger.debug(f"Classified as: {new_category}")
 
         if modified:
             try:
                 with open(file_path, "w") as f:
                     json.dump(journal, f, indent=4)
-                self.logger.info("Journal file updated: %s", file_path)
+                self.logger.info(f"Journal file updated: {file_path}")
             except Exception as e:
-                self.logger.exception("Failed to update journal file: %s", str(e))
+                self.logger.exception(f"Failed to update journal file: {str(e)}")
                 # Restore from backup
                 try:
                     shutil.copy2(backup_path, file_path)
                     self.logger.warning("Journal file restored from backup.")
                 except Exception as restore_e:
                     self.logger.exception(
-                        "Failed to restore journal from backup: %s",
-                        str(restore_e),
+                        f"Failed to restore journal from backup: {str(restore_e)}"
                     )
                 return False
 
         return True
 
-    def process_by_year_files(self, base_dir: Path, rules: dict[str, Any]) -> None:
+    def process_by_year_files(self, base_dir: str, rules: Dict[str, Any]) -> None:
         """Process all journal files within a base directory, organized by year.
 
         Args:
-        ----
             base_dir: The base directory containing the journal files.
             rules: A dictionary containing the classification rules.
-
         """
         for year_dir in os.listdir(base_dir):
             year_path = os.path.join(base_dir, year_dir)
@@ -173,28 +154,25 @@ class JournalCategorizer(BaseScript):
     def run(self) -> int:
         """Main function to process all journal files.
 
-        Returns
-        -------
+        Returns:
             0 if the process was successful, 1 otherwise.
-
         """
         self.logger.info("Starting transaction categorization")
 
-        base_dir = self.config.get("journal_base_dir", ".")
-        rules_file = self.config.get("classification_rules", "classification_rules.json")
+        base_dir = self.get_config_value("journal_base_dir", ".")
+        rules_file = self.get_config_value("classification_rules", "classification_rules.json")
 
-        self.logger.info("Using base directory: %s", base_dir)
-        self.logger.info("Using classification rules file: %s", rules_file)
+        self.logger.info(f"Using base directory: {base_dir}")
+        self.logger.info(f"Using classification rules file: {rules_file}")
 
         try:
             rules = self.load_classification_rules(rules_file)
             self.logger.info(
-                "Processing files with %d classification patterns",
-                len(rules["patterns"]),
+                f"Processing files with {len(rules['patterns'])} classification patterns"
             )
             self.process_by_year_files(base_dir, rules)
         except Exception as e:
-            self.logger.error("Categorization failed: %s", str(e), exc_info=True)
+            self.logger.error(f"Categorization failed: {str(e)}", exc_info=True)
             return 1
 
         self.logger.info("Transaction categorization completed successfully")
