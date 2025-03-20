@@ -34,6 +34,5 @@ class FormatAndLint(BaseScript):
 
         # Placeholder for formatting/linting
         self.formatting_performed = True  # Set the flag to True
-        assert self.formatting_performed  # Add an assertion
 
         self.logger.info("Formatting and linting process completed.")
