@@ -1,4 +1,5 @@
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection
 import logging
 from typing import Any
 
