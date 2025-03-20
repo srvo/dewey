@@ -1,5 +1,1 @@
-from .uploader import DataUploader
-
-__all__ = [
-    'DataUploader',
-] 
+from dewey.core.base_script import BaseScript
