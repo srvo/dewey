@@ -3,7 +3,6 @@
 import os
 import tempfile
 from datetime import datetime
-from pathlib import Path
 from typing import Generator, Dict, Any
 
 import pytest
@@ -79,7 +78,7 @@ def mock_credentials():
 @pytest.fixture
 def mock_duckdb_connection(temp_db_path):
     """Create a mock DuckDB connection."""
-    import duckdb
+import duckdb
     conn = duckdb.connect(temp_db_path)
     
     # Create necessary tables
