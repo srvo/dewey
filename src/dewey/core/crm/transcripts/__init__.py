@@ -12,6 +12,13 @@ class TranscriptsModule(BaseScript):
     """
 
     def __init__(self, *args, **kwargs):
+        """
+        Initializes the TranscriptsModule.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        """
         super().__init__(*args, **kwargs)
         self.name = "TranscriptsModule"
         self.description = "Manages transcript-related tasks."
@@ -19,6 +26,8 @@ class TranscriptsModule(BaseScript):
     def run(self) -> None:
         """
         Executes the primary logic of the Transcripts module.
+
+        This method retrieves an example configuration value and logs it.
         """
         self.logger.info("Running Transcripts module...")
         # Add your main script logic here
