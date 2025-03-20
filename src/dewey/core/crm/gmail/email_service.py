@@ -1,50 +1,55 @@
-from dewey.core.base_script import BaseScript
 import logging
 import signal
 import time
 from datetime import datetime, timedelta
 from typing import Optional
 
-# Directly using the root logger is now discouraged.  Use self.logger instead.
-# logger = logging.getLogger(__name__)
+from dewey.core.base_script import BaseScript
 
 
 class EmailService(BaseScript):
-    """Manages the email fetching and processing service."""
+    """Manages the email fetching and processing service.
 
-    def __init__(self, gmail_client, email_processor, fetch_interval: float = 900, check_interval: float = 1.0):
-        """
-        Initializes the EmailService with dependencies and configuration.
+    Inherits from BaseScript for standardized configuration, logging,
+    and lifecycle management.
+    """
+
+    def __init__(self, gmail_client, email_processor, config_section: str = 'crm'):
+        """Initializes the EmailService with dependencies and configuration.
 
         Args:
             gmail_client: An instance of the GmailClient class.
             email_processor: An instance of the EmailProcessor class.
-            fetch_interval: The interval in seconds between email fetches.
-            check_interval: The interval in seconds between checks for new emails.
+            config_section: The configuration section to use for this service.
         """
-        super().__init__(config_section='crm')
+        super().__init__(config_section=config_section)
         self.gmail_client = gmail_client
         self.email_processor = email_processor
-        self.fetch_interval = float(self.config.get('fetch_interval', fetch_interval))  # Use self.config
-        self.check_interval = float(self.config.get('check_interval', check_interval))  # Use self.config
-        self.running = False
+        self.fetch_interval: float = float(self.get_config_value('fetch_interval', 900))
+        self.check_interval: float = float(self.get_config_value('check_interval', 1.0))
+        self.running: bool = False
         self.last_run: Optional[datetime] = None
         self._setup_signal_handlers()
 
-    def _setup_signal_handlers(self):
+    def _setup_signal_handlers(self) -> None:
         """Sets up signal handlers for graceful shutdown."""
         signal.signal(signal.SIGINT, self.handle_signal)
         signal.signal(signal.SIGTERM, self.handle_signal)
 
-    def handle_signal(self, signum, frame):
-        """Handles shutdown signals gracefully."""
-        self.logger.warning(f"Received signal {signum}. Shutting down...")  # Use self.logger
+    def handle_signal(self, signum: int, frame) -> None:
+        """Handles shutdown signals gracefully.
+
+        Args:
+            signum: The signal number.
+            frame: The frame object.
+        """
+        self.logger.warning(f"Received signal {signum}. Shutting down...")
         self.running = False
 
-    def fetch_cycle(self):
+    def fetch_cycle(self) -> None:
         """Executes a single email fetch and process cycle."""
         try:
-            self.logger.info("Starting email fetch cycle")  # Use self.logger
+            self.logger.info("Starting email fetch cycle")
             # Fetch emails
             results = self.gmail_client.fetch_emails()
             if results and results['messages']:
@@ -53,22 +58,22 @@ class EmailService(BaseScript):
                     if email_data:
                         processed_email = self.email_processor.process_email(email_data)
                         if processed_email:
-                            self.logger.info(f"Successfully processed email {message['id']}")  # Use self.logger
+                            self.logger.info(f"Successfully processed email {message['id']}")
                         else:
-                            self.logger.warning(f"Failed to fully process email {message['id']}")  # Use self.logger
+                            self.logger.warning(f"Failed to fully process email {message['id']}")
                     else:
-                        self.logger.warning(f"Could not retrieve email {message['id']}")  # Use self.logger
+                        self.logger.warning(f"Could not retrieve email {message['id']}")
             else:
-                self.logger.info("No emails to fetch")  # Use self.logger
+                self.logger.info("No emails to fetch")
             self.last_run = datetime.now()
-            self.logger.info("Email fetch cycle completed")  # Use self.logger
+            self.logger.info("Email fetch cycle completed")
         except Exception as e:
-            self.logger.error(f"Error during fetch cycle: {e}", exc_info=True)  # Use self.logger
+            self.logger.error(f"Error during fetch cycle: {e}", exc_info=True)
 
-    def run(self):
+    def run(self) -> None:
         """Runs the email service in a continuous loop."""
         self.running = True
-        self.logger.info("Email service started")  # Use self.logger
+        self.logger.info("Email service started")
 
         try:
             while self.running:
@@ -77,6 +82,6 @@ class EmailService(BaseScript):
                     self.fetch_cycle()
                 time.sleep(self.check_interval)
         except Exception as e:
-            self.logger.error(f"Fatal error in email service: {e}", exc_info=True)  # Use self.logger
+            self.logger.error(f"Fatal error in email service: {e}", exc_info=True)
         finally:
-            self.logger.info("Email service shutting down")  # Use self.logger
+            self.logger.info("Email service shutting down")
