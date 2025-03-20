@@ -1,5 +1,7 @@
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection
 from typing import Any
+
 
 class DbInit(BaseScript):
     """
@@ -11,19 +13,40 @@ class DbInit(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the DbInit class."""
-        super().__init__(config_section='db_init')
+        super().__init__(config_section='db_init', requires_db=True)
 
     def run(self) -> None:
-        """Runs the database initialization process."""
+        """Runs the database initialization process.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            Exception: If there is an error during database initialization.
+        """
         self.logger.info("Starting database initialization...")
 
-        # Example of accessing a configuration value
-        db_host = self.get_config_value('db_host', 'localhost')
-        self.logger.info(f"Database host: {db_host}")
+        try:
+            # Access database host from configuration
+            db_host = self.get_config_value('core.database.host', 'localhost')
+            self.logger.info(f"Database host: {db_host}")
 
-        # Add database initialization logic here
-        self.logger.info("Database initialization complete.")
+            # Example database operation (replace with actual initialization logic)
+            with self.db_conn.cursor() as cursor:
+                cursor.execute("SELECT 1;")  # Example query
+                result = cursor.fetchone()
+                self.logger.info(f"Database check result: {result}")
+
+            self.logger.info("Database initialization complete.")
+
+        except Exception as e:
+            self.logger.error(f"Error during database initialization: {e}")
+            raise
+
 
 if __name__ == "__main__":
     db_init = DbInit()
-    db_init.run()
+    db_init.execute()
