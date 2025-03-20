@@ -1,8 +1,17 @@
-from typing import Any
+from abc import ABC, abstractmethod
+from typing import Any, Callable, Optional
 
 from dewey.core.automation import BaseScript
 from dewey.core.db.connection import DatabaseConnection
-from dewey.llm.llm_utils import generate_text
+
+
+class LLMClientInterface(ABC):
+    """
+    An interface for LLM clients, to enable mocking.
+    """
+    @abstractmethod
+    def generate_text(self, prompt: str) -> str:
+        pass
 
 
 class FormFillingModule(BaseScript):
@@ -25,7 +34,11 @@ class FormFillingModule(BaseScript):
         """
         super().__init__(*args, config_section="form_filling", requires_db=True, enable_llm=True, **kwargs)
 
-    def run(self) -> None:
+    def run(
+        self,
+        generate_text_func: Optional[Callable[[Any, str], str]] = None,
+        db_conn: Optional[DatabaseConnection] = None,
+    ) -> None:
         """
         Executes the primary logic of the form-filling module.
 
@@ -33,7 +46,10 @@ class FormFillingModule(BaseScript):
         specific form-filling automation logic.
 
         Args:
-            None
+            generate_text_func: A callable that takes an LLM client and a prompt,
+                and returns generated text.  Defaults to `generate_text` if None.
+            db_conn:  An optional database connection to use.  Defaults to
+                `self.db_conn` if None.
 
         Returns:
             None
@@ -48,16 +64,18 @@ class FormFillingModule(BaseScript):
             example_config_value = self.get_config_value("example_config_key", "default_value")
             self.logger.debug(f"Example config value: {example_config_value}")
 
+            # Use provided db_conn or fall back to self.db_conn
+            database_connection = db_conn or self.db_conn
+
             # Example of using the database connection
-            if self.db_conn:
-                db_conn: DatabaseConnection = self.db_conn  # Type hint for clarity
-                result = db_conn.execute("SELECT 1;")  # Example query
+            if database_connection:
+                result = database_connection.execute("SELECT 1;")  # Example query
                 self.logger.debug(f"Database query result: {result}")
 
-            # Example of using the LLM client
-            if self.llm_client:
+            # Use provided generate_text_func or fall back to generate_text with self.llm_client
+            if generate_text_func:
                 prompt = "Write a short poem about form filling."
-                response = generate_text(llm_client=self.llm_client, prompt=prompt)
+                response = generate_text_func(self.llm_client, prompt)
                 self.logger.info(f"LLM response: {response}")
 
             # Add your form-filling logic here
@@ -80,3 +98,4 @@ class FormFillingModule(BaseScript):
             value if the key is not found.
         """
         return super().get_config_value(key, default)
+
