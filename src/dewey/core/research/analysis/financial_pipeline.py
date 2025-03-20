@@ -1,3 +1,5 @@
+from typing import Any
+
 from dewey.core.base_script import BaseScript
 
 
@@ -9,13 +11,17 @@ class FinancialPipeline(BaseScript):
     logging, and other utilities.
     """
 
-    def __init__(self, name: str = "FinancialPipeline", description: str = "Manages financial analysis"):
+    def __init__(
+        self,
+        name: str = "FinancialPipeline",
+        description: str = "Manages financial analysis",
+    ) -> None:
         """
         Initializes the FinancialPipeline.
 
         Args:
-            name (str): The name of the script.
-            description (str): A description of what the script does.
+            name: The name of the script.
+            description: A description of what the script does.
         """
         super().__init__(name=name, description=description)
 
