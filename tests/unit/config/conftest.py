@@ -7,7 +7,7 @@ import yaml
 import toml
 
 @pytest.fixture
-def test_unit/config_data():
+def test_unit_config_data():
     """Fixture providing test unit/configuration data."""
     return {
         "core": {
@@ -31,31 +31,31 @@ def test_unit/config_data():
     }
 
 @pytest.fixture
-def temp_unit/config_dir():
+def temp_unit_config_dir():
     """Fixture providing a temporary directory for unit/config files."""
     with tempfile.TemporaryDirectory() as temp_dir:
         yield Path(temp_dir)
 
 @pytest.fixture
-def yaml_unit/config_file(temp_unit/config_dir, test_unit/config_data):
+def yaml_unit_config_file(temp_unit_config_dir, test_unit_config_data):
     """Fixture providing a temporary YAML unit/config file."""
-    unit/config_file = temp_unit/config_dir / "unit/config.yaml"
-    with open(unit/config_file, "w") as f:
-        yaml.dump(test_unit/config_data, f)
-    return unit/config_file
+    config_file_path = temp_unit_config_dir / "config.yaml"
+    with open(config_file_path, "w") as f:
+        yaml.dump(test_unit_config_data, f)
+    return config_file_path
 
 @pytest.fixture
-def toml_unit/config_file(temp_unit/config_dir, test_unit/config_data):
+def toml_unit_config_file(temp_unit_config_dir, test_unit_config_data):
     """Fixture providing a temporary TOML unit/config file."""
-    unit/config_file = temp_unit/config_dir / "unit/config.toml"
-    with open(unit/config_file, "w") as f:
-        toml.dump(test_unit/config_data, f)
-    return unit/config_file
+    config_file_path = temp_unit_config_dir / "config.toml"
+    with open(config_file_path, "w") as f:
+        toml.dump(test_unit_config_data, f)
+    return config_file_path
 
 @pytest.fixture
-def invalid_unit/config_file(temp_unit/config_dir):
+def invalid_unit_config_file(temp_unit_config_dir):
     """Fixture providing an invalid unit/config file."""
-    unit/config_file = temp_unit/config_dir / "invalid.yaml"
-    with open(unit/config_file, "w") as f:
+    config_file_path = temp_unit_config_dir / "invalid.yaml"
+    with open(config_file_path, "w") as f:
         f.write("This is not valid YAML or TOML")
-    return unit/config_file 
+    return config_file_path
