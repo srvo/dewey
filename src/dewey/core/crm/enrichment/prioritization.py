@@ -1,5 +1,7 @@
-from dewey.core.base_script import BaseScript
 from typing import Any
+
+from dewey.core.base_script import BaseScript
+
 
 class Prioritization(BaseScript):
     """
@@ -11,11 +13,15 @@ class Prioritization(BaseScript):
     primary logic.
     """
 
-    def __init__(self, *args: Any, **kwargs: Any):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Initializes the Prioritization module.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
         """
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs, config_section="prioritization")
         self.name = "Prioritization"
         self.description = "Handles prioritization of CRM enrichment tasks."
 
@@ -26,15 +32,29 @@ class Prioritization(BaseScript):
         This method should be implemented to perform the actual
         prioritization tasks, utilizing configuration values and
         logging as needed.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            Exception: If something goes wrong during prioritization.
         """
         self.logger.info("Starting prioritization process...")
 
-        # Example of accessing a configuration value
-        some_config_value = self.get_config_value("some_config_key", "default_value")
-        self.logger.debug(f"Some config value: {some_config_value}")
+        try:
+            # Example of accessing a configuration value
+            some_config_value = self.get_config_value("some_config_key", "default_value")
+            self.logger.debug(f"Some config value: {some_config_value}")
 
-        # Add your prioritization logic here
-        self.logger.info("Prioritization process completed.")
+            # Add your prioritization logic here
+            self.logger.info("Prioritization process completed.")
+
+        except Exception as e:
+            self.logger.error(f"Error during prioritization: {e}")
+            raise
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
         """
