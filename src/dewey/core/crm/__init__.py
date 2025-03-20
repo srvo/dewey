@@ -1,9 +1,8 @@
+from typing import Any, Optional
+
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection, get_connection
 from dewey.llm.llm_utils import get_llm_client
-import logging
-import sys
-from typing import Any, Optional
 
 
 class CrmModule(BaseScript):
@@ -33,7 +32,13 @@ class CrmModule(BaseScript):
             requires_db: Whether this module requires a database connection.
             enable_llm: Whether this module requires an LLM client.
         """
-        super().__init__(name, description, config_section, requires_db, enable_llm)
+        super().__init__(
+            name=name,
+            description=description,
+            config_section=config_section,
+            requires_db=requires_db,
+            enable_llm=enable_llm,
+        )
 
     def run(self) -> None:
         """
