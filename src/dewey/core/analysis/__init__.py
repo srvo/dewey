@@ -1,9 +1,15 @@
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection, get_connection
 from dewey.llm.llm_utils import generate
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Protocol
 import sys
 
+class LLMClientInterface(Protocol):
+    """
+    Interface for LLM clients, enabling mocking for testing.
+    """
+    def generate(self, prompt: str) -> str:
+        ...
 
 class AnalysisScript(BaseScript):
     """
@@ -29,6 +35,8 @@ class AnalysisScript(BaseScript):
         config_section: Optional[str] = None,
         requires_db: bool = False,
         enable_llm: bool = False,
+        db_connection_getter = get_connection,
+        llm_client: Optional[LLMClientInterface] = None,
     ) -> None:
         """
         Initialize the AnalysisScript.
@@ -44,6 +52,10 @@ class AnalysisScript(BaseScript):
                 Defaults to False.
             enable_llm (bool): Whether this script requires LLM access.
                 Defaults to False.
+            db_connection_getter: Function to get the database connection.
+                Defaults to get_connection.
+            llm_client (Optional[LLMClientInterface]): LLM client to use.
+                Defaults to None.
         """
         super().__init__(
             name=name,
@@ -52,6 +64,8 @@ class AnalysisScript(BaseScript):
             requires_db=requires_db,
             enable_llm=enable_llm,
         )
+        self._db_connection_getter = db_connection_getter
+        self._llm_client = llm_client
 
     def run(self) -> None:
         """
@@ -63,6 +77,20 @@ class AnalysisScript(BaseScript):
             NotImplementedError: If the method is not implemented in a subclass.
         """
         raise NotImplementedError("Subclasses must implement the run method.")
+
+    def _get_llm_response(self, prompt: str) -> str:
+        """
+        Helper method to get a response from the LLM.
+        """
+        if not self._llm_client:
+            raise ValueError("LLM client is not initialized.")
+        return self._llm_client.generate(prompt)
+
+    def _get_db_connection(self, db_config: Dict[str, Any]) -> DatabaseConnection:
+        """
+        Helper method to get a database connection.
+        """
+        return self._db_connection_getter(db_config)
 
 
 if __name__ == "__main__":
@@ -104,9 +132,9 @@ if __name__ == "__main__":
                     cursor.close()
 
             # Access LLM client
-            if self.llm_client:
+            if self._llm_client:
                 try:
-                    response = generate(llm_client=self.llm_client, prompt="Hello, LLM!")
+                    response = self._get_llm_response(prompt="Hello, LLM!")
                     self.logger.info(f"LLM response: {response}")
                 except Exception as e:
                     self.logger.error(f"Error accessing LLM: {e}")
