@@ -1,9 +1,11 @@
+from typing import Any, Dict, Optional
+
+import pandas as pd
+
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
 from dewey.core.db.utils import create_table, execute_query
 from dewey.llm.llm_utils import generate_text
-import logging
-from typing import Any, Dict, Optional
 
 
 class CsvContactIntegration(BaseScript):
@@ -19,7 +21,7 @@ class CsvContactIntegration(BaseScript):
         """
         Initializes the CsvContactIntegration class.
         """
-        super().__init__(config_section='csv_contact_integration', requires_db=True)
+        super().__init__(config_section="csv_contact_integration", requires_db=True)
 
     def run(self) -> None:
         """
@@ -75,21 +77,18 @@ class CsvContactIntegration(BaseScript):
         """
         self.logger.info(f"Processing CSV file: {file_path}")
         try:
-            # Example: Read the CSV file using pandas (you might need to install it)
-            import pandas as pd
-
             df = pd.read_csv(file_path)
-            
+
             # Check if the dataframe is empty
             if df.empty:
                 self.logger.info("CSV file is empty or contains only headers.")
             else:
-                # Example: Iterate over rows and insert data into the database
+                # Iterate over rows and insert data into the database
                 for index, row in df.iterrows():
                     # Extract contact data from the row
                     contact_data = row.to_dict()
 
-                    # Example: Insert contact data into the database
+                    # Insert contact data into the database
                     self.insert_contact(contact_data)
 
             self.logger.info("CSV processing completed.")
@@ -118,13 +117,13 @@ class CsvContactIntegration(BaseScript):
             # Validate data
             if not contact_data:
                 raise ValueError("Empty contact data")
-                
+
             # Validate data types - ensure all values can be safely converted to strings
             for key, value in contact_data.items():
                 if not isinstance(value, (str, int, float, bool, type(None))):
                     raise TypeError(f"Unsupported data type for {key}: {type(value)}")
-            
-            # Example: Insert contact data into the database
+
+            # Insert contact data into the database
             table_name = "contacts"  # Replace with your actual table name
             columns = ", ".join(contact_data.keys())
             values = ", ".join([f"'{value}'" for value in contact_data.values()])
