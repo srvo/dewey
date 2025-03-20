@@ -11,6 +11,13 @@ class SimpleTest(BaseScript):
     """
 
     def __init__(self, *args, **kwargs):
+        """
+        Initializes the SimpleTest module.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        """
         super().__init__(*args, **kwargs)
         self.name = "SimpleTest"
         self.description = "A simple test script for Dewey."
@@ -26,4 +33,3 @@ class SimpleTest(BaseScript):
         self.logger.info(f"Example config value: {example_config_value}")
 
         self.logger.info("SimpleTest module finished.")
-
