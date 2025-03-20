@@ -28,8 +28,6 @@ def main():
     # Setup argument parser
     parser = argparse.ArgumentParser(description="A simple script.")
     parser.add_argument("--input", help="Input data")
-    args = parser.parse_args()
-
     # Setup logging
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
