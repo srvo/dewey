@@ -1,8 +1,10 @@
+"""Tests for dewey.core.bookkeeping.transaction_verifier."""
+
 import logging
 import subprocess
 from pathlib import Path
-from typing import Any, Dict
-from unittest.mock import MagicMock, patch
+from typing import Any, Dict, List
+from unittest.mock import MagicMock, patch, mock_open
 
 import pytest
 import yaml
@@ -13,28 +15,11 @@ from dewey.core.bookkeeping.classification_engine import (
 )
 from dewey.core.bookkeeping.transaction_verifier import ClassificationVerifier
 from dewey.core.bookkeeping.writers.journal_writer_fab1858b import JournalWriter
+from dewey.core.base_script import BaseScript
 
 
 @pytest.fixture
 def mock_config(tmp_path: Path) -> Dict[str, Any]:
-    """Fixture to create a mock configuration file."""
-    rules_path=None, "journal_path": str(journal_path), }, "llm": {}, "core": {"logging": {}}
-    }
-
-    config_file=None, "w") as f:
-        yaml.dump(config, f)
-
-    return config
-
-
-@pytest.fixture
-def classification_verifier(mock_config: Dict[str, Any], tmp_path: Path) -> ClassificationVerifier:
-    """Fixture to create a ClassificationVerifier instance with mocked config."""
-    with patch("dewey.core.base_script.CONFIG_PATH", tmp_path / "config.yaml"):
-        if Any]:
-    """Fixture to create a mock configuration file."""
-    rules_path is None:
-            Any]:
     """Fixture to create a mock configuration file."""
     rules_path = tmp_path / "rules.json"
     rules_path.write_text('{"rules": []}')
@@ -43,18 +28,29 @@ def classification_verifier(mock_config: Dict[str, Any], tmp_path: Path) -> Clas
 
     config = {
         "bookkeeping": {
-            "rules_path": str(rules_path)
-        if "core": {"logging": {}}
-    }
-
-    config_file is None:
-            "core": {"logging": {}}
+            "rules_path": str(rules_path),
+            "journal_path": str(journal_path),
+        },
+        "llm": {},
+        "core": {"logging": {}},
     }
 
     config_file = tmp_path / "config.yaml"
-    with open(config_file
-        verifier = ClassificationVerifier()
-    return verifier
+    with open(config_file, "w") as f:
+        yaml.dump(config, f)
+
+    return config
+
+
+@pytest.fixture
+def classification_verifier(mock_config: Dict[str, Any], tmp_path: Path) -> ClassificationVerifier:
+    """Fixture to create a ClassificationVerifier instance with mocked config."""
+    with patch("dewey.core.base_script.CONFIG_PATH", str(tmp_path / "config.yaml")):
+        with patch("dewey.core.base_script.BaseScript.__init__", return_value=None):
+            verifier = ClassificationVerifier()
+            verifier.config = mock_config
+            verifier.logger = MagicMock()
+            return verifier
 
 
 @pytest.fixture
@@ -84,7 +80,7 @@ def test_valid_categories(classification_verifier: ClassificationVerifier) -> No
         assert classification_verifier.valid_categories == ["Category1", "Category2"]
 
 
-@patch("dewey.core.bookkeeping.transaction_verifier.classify_text")
+@patch("dewey.core.llm.llm_utils.classify_text")
 def test_get_ai_suggestion_success(
     mock_classify_text: MagicMock, classification_verifier: ClassificationVerifier
 ) -> None:
@@ -95,7 +91,7 @@ def test_get_ai_suggestion_success(
     mock_classify_text.assert_called_once()
 
 
-@patch("dewey.core.bookkeeping.transaction_verifier.classify_text")
+@patch("dewey.core.llm.llm_utils.classify_text")
 def test_get_ai_suggestion_empty_response(
     mock_classify_text: MagicMock, classification_verifier: ClassificationVerifier
 ) -> None:
@@ -106,7 +102,7 @@ def test_get_ai_suggestion_empty_response(
     mock_classify_text.assert_called_once()
 
 
-@patch("dewey.core.bookkeeping.transaction_verifier.classify_text")
+@patch("dewey.core.llm.llm_utils.classify_text")
 def test_get_ai_suggestion_failure(
     mock_classify_text: MagicMock, classification_verifier: ClassificationVerifier, caplog: pytest.LogCaptureFixture
 ) -> None:
@@ -288,14 +284,8 @@ def test_run_success(
 def test_run_no_samples(
     mock_generate_report: MagicMock, mock_prompt_for_feedback: MagicMock, mock_get_transaction_samples: MagicMock, classification_verifier: ClassificationVerifier, caplog: pytest.LogCaptureFixture, ) -> None:
     """Test that run handles the case where no transactions are found."""
-    mock_get_transaction_samples.return_value=None):
-        if ) -> None:
-    """Test that run handles the case where no transactions are found."""
-    mock_get_transaction_samples.return_value is None:
-            ) -> None:
-    """Test that run handles the case where no transactions are found."""
     mock_get_transaction_samples.return_value = []
-    with caplog.at_level(logging.ERROR
+    with caplog.at_level(logging.ERROR):
         classification_verifier.run()
     assert "No transactions found for verification" in caplog.text
     mock_prompt_for_feedback.assert_not_called()
@@ -309,8 +299,10 @@ def test_get_path_absolute_path(classification_verifier: ClassificationVerifier)
     assert str(result) == absolute_path
 
 
-def test_get_path_relative_path(classification_verifier: ClassificationVerifier) -> None:
+@patch("os.path.isabs")
+def test_get_path_relative_path(classification_verifier: ClassificationVerifier, mock_isabs: MagicMock) -> None:
     """Test that get_path returns the correct absolute path for relative paths."""
+    mock_isabs.return_value = False
     relative_path = "relative/path"
     expected_path = classification_verifier.PROJECT_ROOT / relative_path
     result = classification_verifier.get_path(relative_path)
@@ -343,4 +335,3 @@ def test_get_config_value_no_default(classification_verifier: ClassificationVeri
     classification_verifier.config = {}
     result = classification_verifier.get_config_value("missing_section.missing_key")
     assert result is None
-
