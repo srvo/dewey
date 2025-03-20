@@ -19,7 +19,7 @@ class LogAnalyzer(BaseScript):
         Calls the superclass constructor to set up configuration and
         logging.
         """
-        super().__init__()
+        super().__init__(config_section="log_analyzer")
         self.script_name = "LogAnalyzer"  # Set the script name for logging
 
     def run(self) -> None:
@@ -29,6 +29,16 @@ class LogAnalyzer(BaseScript):
         This method contains the main logic for analyzing log files.
         It retrieves configuration values, reads log files, and performs
         analysis based on defined patterns.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            FileNotFoundError: If the log file is not found.
+            Exception: If an error occurs during log analysis.
         """
         self.logger.info("Starting log analysis...")
 
@@ -47,6 +57,13 @@ class LogAnalyzer(BaseScript):
 
         Args:
             log_file_path: The path to the log file.
+
+        Returns:
+            None
+
+        Raises:
+            FileNotFoundError: If the log file is not found.
+            Exception: If an error occurs during log analysis.
         """
         try:
             with open(log_file_path, "r") as log_file:
@@ -56,10 +73,12 @@ class LogAnalyzer(BaseScript):
                         self.logger.error(f"Found error: {line.strip()}")
         except FileNotFoundError:
             self.logger.error(f"Log file not found: {log_file_path}")
+            raise
         except Exception as e:
             self.logger.exception(f"An error occurred during log analysis: {e}")
+            raise
 
 
 if __name__ == "__main__":
     analyzer = LogAnalyzer()
-    analyzer.run()
+    analyzer.execute()
