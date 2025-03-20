@@ -579,7 +579,7 @@ Failure to follow these requirements will cause critical system errors. Always r
         # --- Feedback Processing ---
         if not combined_feedback:
             self.logger.info("No feedback data available to process.")
-            return
+            
 
         self.logger.info(f"Processing {len(combined_feedback)} feedback entries...")
         suggested_changes = self.suggest_rule_changes(combined_feedback, preferences)
@@ -603,8 +603,12 @@ Failure to follow these requirements will cause critical system errors. Always r
         finally:
             # Clean up resources
             if conn:
-                conn.execute("DETACH classifier_db") if self.classifier_db else None
-                conn.close()
+                try:
+                    conn.execute("DETACH classifier_db") if self.classifier_db else None
+                except Exception as e:
+                    self.logger.warning(f"Failed to detach classifier_db: {e}")
+                finally:
+                    conn.close()
         self.logger.info(f"Data saved to {self.db_file}")
 
 
