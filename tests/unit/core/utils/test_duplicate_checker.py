@@ -13,9 +13,9 @@ class TestDuplicateChecker:
         threshold = 0.9
         result = duplicate_checker.check_duplicates(data, threshold)
 
-        assert "Placeholder: Running duplicate check with threshold." in caplog.text
+        assert "Running duplicate check with threshold." in caplog.text
         assert f"Data received for duplicate check: {data}" in caplog.text
-        assert result == []
+        assert result == ["test1"]
 
     def test_run_method(self, duplicate_checker, caplog):
         mock_get_config_value = MagicMock(return_value=0.7)

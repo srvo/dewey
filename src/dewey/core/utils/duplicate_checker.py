@@ -29,10 +29,19 @@ class DuplicateChecker(BaseScript):
         Returns:
             List[Any]: A list of duplicate items.
         """
-        self.logger.info("Placeholder: Running duplicate check with threshold.")
+        self.logger.info("Running duplicate check with threshold.")
         self.logger.debug(f"Data received for duplicate check: {data}")
-        # Add your duplicate checking logic here
-        return []
+        
+        # Find duplicates
+        duplicates = []
+        seen = set()
+        for item in data:
+            if item in seen:
+                duplicates.append(item)
+            else:
+                seen.add(item)
+        
+        return list(set(duplicates))
 
     def run(self, data: Optional[List[Any]] = None) -> None:
         """
@@ -64,8 +73,3 @@ class DuplicateChecker(BaseScript):
         except Exception as e:
             self.logger.error(f"An error occurred: {e}", exc_info=True)
             raise
-
-
-if __name__ == "__main__":
-    checker = DuplicateChecker()
-    checker.execute()
