@@ -59,7 +59,7 @@ paths:
 
 settings:
   deepinfra_api_url: https://api.deepinfra.com/v1/openai/chat/completions
-  deepinfra_api_key: ${DEEPINFRA_API_KEY}
+  deepinfra_api_key: ${DEEPINFRA_API_KEY:-default_deepinfra_api_key}
   default_db: motherduck
   default_llm: deepseek-ai/DeepSeek-V3
   gmail_scopes:
@@ -70,9 +70,9 @@ settings:
   prefect_api_base: https://flow.sloane-collective.com/api
   # API endpoints and keys
   github_api_url: https://api.github.com/graphql
-  github_token: ${GITHUB_TOKEN}
+  github_token: ${GITHUB_TOKEN:-default_github_token}
   sec_api_url: https://data.sec.gov/api/xbrl/frames
-  sec_api_key: ${SEC_API_KEY}
+  sec_api_key: ${SEC_API_KEY:-default_sec_api_key}
   # Database settings
   db_url: ${DB_URL}
   db_port: 5432
@@ -87,14 +87,14 @@ settings:
   max_retries: 3
   retry_delay: 5
   # CRM settings
-  crm_api_url: ${CRM_API_URL}
-  crm_api_key: ${CRM_API_KEY}
-  enrichment_api_url: ${ENRICHMENT_API_URL}
-  enrichment_api_key: ${ENRICHMENT_API_KEY}
+  crm_api_url: ${CRM_API_URL:-default_crm_api_url}
+  crm_api_key: ${CRM_API_KEY:-default_crm_api_key}
+  enrichment_api_url: ${ENRICHMENT_API_URL:-default_enrichment_api_url}
+  enrichment_api_key: ${ENRICHMENT_API_KEY:-default_enrichment_api_key}
 
 logging:
   level: INFO
-  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s"
   root_dir: logs
   subdirectories:
     app: app
