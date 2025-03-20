@@ -1,9 +1,23 @@
+from abc import ABC, abstractmethod
 from typing import Any, Optional
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
 from dewey.core.db import utils as db_utils
 from dewey.llm import llm_utils
+
+
+class LLMClientInterface(ABC):
+    """
+    An interface for LLM clients, defining the generate_response method.
+    """
+
+    @abstractmethod
+    def generate_response(self, prompt: str) -> str:
+        """
+        Abstract method to generate a response from a language model.
+        """
+        pass
 
 
 class ControversyDetection(BaseScript):
@@ -14,7 +28,11 @@ class ControversyDetection(BaseScript):
     and running controversy detection.
     """
 
-    def __init__(self, config_section: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        config_section: Optional[str] = None,
+        llm_client: Optional[LLMClientInterface] = None,
+    ) -> None:
         """
         Initializes the ControversyDetection class.
 
@@ -23,6 +41,8 @@ class ControversyDetection(BaseScript):
         Args:
             config_section (Optional[str], optional): Section in the config file
                 to use for configuration. Defaults to None.
+            llm_client (Optional[LLMClientInterface], optional): LLM client to use for
+                generating responses. Defaults to None.
         """
         super().__init__(
             config_section=config_section,
@@ -30,13 +50,14 @@ class ControversyDetection(BaseScript):
             requires_db=True,  # Assuming controversy detection might use a database
             enable_llm=True,  # Assuming controversy detection might use an LLM
         )
+        self._llm_client = llm_client or self.llm_client  # Use injected client or default
 
-    def run(self, data: Any = None) -> Any:
+    def run(self, data: Optional[Any] = None) -> Any:
         """
         Executes the controversy detection process.
 
         Args:
-            data (Any, optional): Input data for controversy detection.
+            data (Optional[Any], optional): Input data for controversy detection.
                 Defaults to None.
 
         Returns:
@@ -60,7 +81,7 @@ class ControversyDetection(BaseScript):
         # Example of using LLM
         try:
             prompt = "Is this text controversial? " + str(data)
-            llm_response = llm_utils.generate_response(self.llm_client, prompt)
+            llm_response = llm_utils.generate_response(self._llm_client, prompt)
             self.logger.debug(f"LLM response: {llm_response}")
             result = llm_response  # Use LLM response as result
         except Exception as e:
