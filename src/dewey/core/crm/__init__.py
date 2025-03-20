@@ -1,6 +1,10 @@
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection
+from dewey.llm.llm_utils import get_llm_client
 import logging
-from typing import Any
+import sys
+from typing import Any, Optional
+
 
 class CrmModule(BaseScript):
     """
@@ -11,34 +15,59 @@ class CrmModule(BaseScript):
     and a `run` method to execute the script's primary logic.
     """
 
-    def __init__(self, name: str = "CRM Module", description: str = "Manages CRM tasks.") -> None:
+    def __init__(
+        self,
+        name: str = "CRM Module",
+        description: str = "Manages CRM tasks.",
+        config_section: Optional[str] = "crm",
+        requires_db: bool = True,
+        enable_llm: bool = False,
+    ) -> None:
         """
         Initializes the CRM module.
+
+        Args:
+            name: The name of the CRM module.
+            description: A description of the CRM module.
+            config_section: The configuration section to use for this module.
+            requires_db: Whether this module requires a database connection.
+            enable_llm: Whether this module requires an LLM client.
         """
-        super().__init__(name, description)
+        super().__init__(name, description, config_section, requires_db, enable_llm)
 
     def run(self) -> None:
         """
         Executes the primary logic of the CRM module.
+
+        This method demonstrates accessing configuration values,
+        logging information, and interacting with a database (if enabled).
+
+        Raises:
+            Exception: If there is an error during the CRM module execution.
         """
         self.logger.info("Starting CRM module...")
 
-        # Example of accessing a configuration value
-        api_key = self.get_config_value("crm.api_key", default="default_api_key")
-        self.logger.debug(f"CRM API Key: {api_key}")
+        try:
+            # Example of accessing a configuration value
+            api_key = self.get_config_value("api_key", default="default_api_key")
+            self.logger.debug(f"CRM API Key: {api_key}")
 
-        # Add your CRM logic here
-        self.logger.info("CRM module completed.")
+            # Example of database interaction (if enabled)
+            if self.db_conn:
+                self.logger.info("Performing database operations...")
+                # Example: Execute a query (replace with your actual query)
+                try:
+                    with self.db_conn.cursor() as cur:
+                        cur.execute("SELECT 1;")
+                        result = cur.fetchone()
+                        self.logger.debug(f"Database query result: {result}")
+                except Exception as db_error:
+                    self.logger.error(f"Database error: {db_error}")
+                    raise
 
-    def get_config_value(self, key: str, default: Any = None) -> Any:
-        """
-        Retrieves a configuration value associated with the given key.
+            # Add your CRM logic here
+            self.logger.info("CRM module completed.")
 
-        Args:
-            key: The key of the configuration value to retrieve.
-            default: The default value to return if the key is not found.
-
-        Returns:
-            The configuration value, or the default value if the key is not found.
-        """
-        return super().get_config_value(key, default)
+        except Exception as e:
+            self.logger.error(f"Error in CRM module: {e}")
+            raise
