@@ -1,6 +1,4 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
-from dewey.core.db import utils
 
 
 class DatabaseManager(BaseScript):
@@ -19,7 +17,7 @@ class DatabaseManager(BaseScript):
         Calls the superclass constructor with the 'database' config section,
         enabling database and LLM functionalities.
         """
-        super().__init__(config_section='database', requires_db=True, enable_llm=True)
+        super().__init__(config_section="database", requires_db=True, enable_llm=True)
 
     def run(self) -> None:
         """
@@ -36,7 +34,7 @@ class DatabaseManager(BaseScript):
 
         try:
             # Accessing a config value
-            db_host = self.get_config_value('host', 'localhost')
+            db_host = self.get_config_value("host", "localhost")
             self.logger.info(f"Database host: {db_host}")
 
             # Example of using database connection
@@ -52,5 +50,7 @@ class DatabaseManager(BaseScript):
             self.logger.info("Database operations completed.")
 
         except Exception as e:
-            self.logger.error(f"An error occurred during database operations: {e}", exc_info=True)
+            self.logger.error(
+                f"An error occurred during database operations: {e}", exc_info=True
+            )
             raise
