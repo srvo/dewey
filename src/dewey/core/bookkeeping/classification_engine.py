@@ -4,7 +4,7 @@ import re
 from datetime import datetime
 from pathlib import Path
 from re import Pattern
-from typing import TYPE_CHECKING, List, Tuple
+from typing import TYPE_CHECKING, List, Tuple, Protocol, Dict, Any, Callable
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection
@@ -24,19 +24,61 @@ class ClassificationError(Exception):
     pass
 
 
+class FS(Protocol):
+    """Filesystem protocol."""
+
+    def open(self, path: Path, mode: str) -> Any:
+        """Open a file."""
+        ...
+
+    def dump(self, data: Any, fp: Any, indent: int) -> None:
+        """Dump data to a file."""
+        ...
+
+    def load(self, fp: Any) -> Dict[str, Any]:
+        """Load data from a file."""
+        ...
+
+
+class LLM(Protocol):
+    """LLM protocol."""
+
+    def call_llm(self, prompt: list[str]) -> list[dict]:
+        """Call the LLM."""
+        ...
+
+
+class JournalWriter(Protocol):
+    """JournalWriter protocol."""
+
+    def log_classification_decision(self, tx_hash: str, pattern: str, category: str) -> None:
+        """Log a classification decision."""
+        ...
+
+
 class ClassificationEngine(BaseScript):
     """Handles transaction categorization logic."""
 
-    def __init__(self, rules_path: Path, ledger_file: Path) -> None:
+    def __init__(
+        self,
+        rules_path: Path,
+        ledger_file: Path,
+        fs: FS = json,
+        llm: LLM = llm_utils,
+    ) -> None:
         """Initializes the ClassificationEngine.
 
         Args:
             rules_path: Path to the JSON file containing classification rules.
             ledger_file: Path to the ledger file.
+            fs: Filesystem interface.
+            llm: LLM interface.
         """
         super().__init__(config_section="bookkeeping")
         self.ledger_file = ledger_file
         self.rules_path = rules_path
+        self.fs: FS = fs
+        self.llm: LLM = llm
         self.rules: dict = self._load_rules()
         self.compiled_patterns: dict[str, Pattern] = self._compile_patterns()
         self._valid_categories: list[str] = self.rules["categories"]
@@ -134,7 +176,7 @@ class ClassificationEngine(BaseScript):
 
         for (pattern, data), priority in rules:
             category = data["category"]
-            formatted_category = self.format_category(category)
+            formatted_category = ClassificationEngine.format_category(category)
 
             # Handle different pattern types
             compiled = self.compile_pattern(pattern)
@@ -321,7 +363,7 @@ class ClassificationEngine(BaseScript):
 
         try:
             # response: list[dict] = classify_errors(prompt)
-            response: list[dict] = llm_utils.call_llm(prompt)
+            response: list[dict] = self.llm.call_llm(prompt)
             if not response:
                 msg = "No response from AI"
                 raise ClassificationError(msg)
@@ -341,8 +383,8 @@ class ClassificationEngine(BaseScript):
             "last_updated": datetime.now().isoformat(),
         }
 
-        with open(overrides_file, "w") as f:
-            json.dump(data, f, indent=2)
+        with self.fs.open(overrides_file, "w") as f:
+            self.fs.dump(data, f, indent=2)
 
     def _validate_category(self, category: str) -> None:
         """Validate if a category is in the allowed categories.
@@ -385,7 +427,8 @@ class ClassificationEngine(BaseScript):
         rules.sort(key=lambda x: x[1])
         return rules
 
-    def format_category(self, self, category: str) -> str:
+    @staticmethod
+    def format_category(category: str) -> str:
         """Format the category string.
 
         Args:
@@ -418,3 +461,4 @@ class ClassificationEngine(BaseScript):
             self.logger.exception(f"Invalid regex pattern '{pattern}': {e!s}")
             msg = f"Invalid regex pattern '{pattern}': {e!s}"
             raise ClassificationError(msg) from None
+
