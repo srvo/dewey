@@ -1,4 +1,3 @@
-
 from dewey.core.base_script import BaseScript
 
 
@@ -49,7 +48,7 @@ class Backup(BaseScript):
             backup_location: The location to back up the database to.
         """
         try:
-from dewey.core.db.utils import backup_database
+            from dewey.core.db.utils import backup_database
 
             backup_database(self.db_conn, backup_location, self.logger)
         except Exception as e:
@@ -64,7 +63,7 @@ from dewey.core.db.utils import backup_database
             restore_location: The location to restore the database from.
         """
         try:
-from dewey.core.db.utils import restore_database
+            from dewey.core.db.utils import restore_database
 
             restore_database(self.db_conn, restore_location, self.logger)
         except Exception as e:
