@@ -59,13 +59,15 @@ class AdminTasks(BaseScript):
             self.logger.error(
                 f"Database error performing database maintenance: {e}"
             )
-            self.db_conn.rollback()  # Rollback in case of error
+            if self.db_conn:
+                self.db_conn.rollback()  # Rollback in case of error
             raise
         except Exception as e:
             self.logger.error(
                 f"Unexpected error performing database maintenance: {e}"
             )
-            self.db_conn.rollback()  # Rollback in case of error
+            if self.db_conn:
+                self.db_conn.rollback()  # Rollback in case of error
             raise
 
     def add_user(self, username: str, password: str) -> None:
@@ -86,41 +88,45 @@ class AdminTasks(BaseScript):
                 raise ValueError("Database connection is not established.")
             with self.db_conn.cursor() as cursor:
                 # Check if the users table exists
+                table_exists = False
                 try:
                     cursor.execute(
                         "SELECT EXISTS (SELECT 1 FROM pg_tables WHERE tablename = 'users');"
                     )
-                    table_exists: Optional[bool] = cursor.fetchone()[0]
+                    table_exists = cursor.fetchone()[0]
                 except psycopg2.Error as e:
                     self.logger.warning(
                         f"Could not check if 'users' table exists: {e}"
                     )
-                    table_exists = False  # Assume table doesn't exist if error
 
                 if not table_exists:
                     self.logger.info("The 'users' table does not exist. Creating it...")
-                    cursor.execute(
-                        """
-                        CREATE TABLE IF NOT EXISTS users (
-                            username VARCHAR(255) PRIMARY KEY,
-                            password VARCHAR(255)
-                        );
-                        """
-                    )
-                    self.logger.info("The 'users' table created successfully.")
+                    try:
+                        cursor.execute(
+                            """
+                            CREATE TABLE IF NOT EXISTS users (
+                                username VARCHAR(255) PRIMARY KEY,
+                                password VARCHAR(255)
+                            );
+                            """
+                        )
+                        self.logger.info("The 'users' table created successfully.")
+                    except psycopg2.Error as e:
+                        self.logger.error(f"Error creating 'users' table: {e}")
+                        raise
 
                 # Check if the username already exists
+                username_exists = False
                 try:
                     cursor.execute(
                         "SELECT EXISTS (SELECT 1 FROM users WHERE username = %s);",
                         (username,),
                     )
-                    username_exists: Optional[bool] = cursor.fetchone()[0]
+                    username_exists = cursor.fetchone()[0]
                 except psycopg2.Error as e:
                     self.logger.warning(
                         f"Could not check if user {username} exists: {e}"
                     )
-                    username_exists = False  # Assume user doesn't exist if error
 
                 if username_exists:
                     self.logger.error(f"User {username} already exists.")
@@ -134,13 +140,16 @@ class AdminTasks(BaseScript):
             self.logger.info(f"User {username} added successfully.")
         except ValueError as ve:
             self.logger.error(f"Value error adding user {username}: {ve}")
-            self.db_conn.rollback()
+            if self.db_conn:
+                self.db_conn.rollback()
             raise
         except psycopg2.Error as e:
             self.logger.error(f"Database error adding user {username}: {e}")
-            self.db_conn.rollback()  # Rollback in case of error
+            if self.db_conn:
+                self.db_conn.rollback()  # Rollback in case of error
             raise
         except Exception as e:
             self.logger.error(f"Unexpected error adding user {username}: {e}")
-            self.db_conn.rollback()  # Rollback in case of error
+            if self.db_conn:
+                self.db_conn.rollback()  # Rollback in case of error
             raise
