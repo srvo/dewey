@@ -81,11 +81,12 @@ class AdminTasks(BaseScript):
         Raises:
             ValueError: If the username already exists.
         """
+        self.logger.info(f"Adding user {username}...")
+        if self.db_conn is None:
+            self.logger.error("Database connection is not established.")
+            raise ValueError("Database connection is not established.")
+
         try:
-            self.logger.info(f"Adding user {username}...")
-            if self.db_conn is None:
-                self.logger.error("Database connection is not established.")
-                raise ValueError("Database connection is not established.")
             with self.db_conn.cursor() as cursor:
                 # Check if the users table exists
                 table_exists = False
@@ -95,9 +96,8 @@ class AdminTasks(BaseScript):
                     )
                     table_exists = cursor.fetchone()[0]
                 except psycopg2.Error as e:
-                    self.logger.warning(
-                        f"Could not check if 'users' table exists: {e}"
-                    )
+                    self.logger.error(f"Error checking if 'users' table exists: {e}")
+                    raise  # Re-raise the exception
 
                 if not table_exists:
                     self.logger.info("The 'users' table does not exist. Creating it...")
@@ -124,9 +124,8 @@ class AdminTasks(BaseScript):
                     )
                     username_exists = cursor.fetchone()[0]
                 except psycopg2.Error as e:
-                    self.logger.warning(
-                        f"Could not check if user {username} exists: {e}"
-                    )
+                    self.logger.error(f"Error checking if user {username} exists: {e}")
+                    raise  # Re-raise the exception
 
                 if username_exists:
                     self.logger.error(f"User {username} already exists.")
@@ -136,20 +135,21 @@ class AdminTasks(BaseScript):
                     "INSERT INTO users (username, password) VALUES (%s, %s);",
                     (username, password),
                 )
+                self.logger.info(f"Executing: INSERT INTO users (username, password) VALUES (%s, %s);",
+                    (username, password))
+
             self.db_conn.commit()
             self.logger.info(f"User {username} added successfully.")
+
         except ValueError as ve:
             self.logger.error(f"Value error adding user {username}: {ve}")
-            if self.db_conn:
-                self.db_conn.rollback()
             raise
         except psycopg2.Error as e:
             self.logger.error(f"Database error adding user {username}: {e}")
-            if self.db_conn:
-                self.db_conn.rollback()  # Rollback in case of error
             raise
         except Exception as e:
             self.logger.error(f"Unexpected error adding user {username}: {e}")
+            raise
+        finally:
             if self.db_conn:
                 self.db_conn.rollback()  # Rollback in case of error
-            raise
