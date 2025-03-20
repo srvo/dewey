@@ -4,7 +4,10 @@ import json
 import re
 from pathlib import Path
 from typing import Any, Dict
+
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection
+from dewey.llm.llm_utils import LLMClient
 
 
 class RulesConverter(BaseScript):
@@ -13,6 +16,8 @@ class RulesConverter(BaseScript):
     def __init__(self) -> None:
         """Initializes the RulesConverter."""
         super().__init__(config_section="rules_converter")
+        self.db_conn: DatabaseConnection | None = None
+        self.llm_client: LLMClient | None = None
 
     def clean_category(self, category: str) -> str:
         """Cleans and standardizes the category string.
