@@ -1,14 +1,13 @@
 import pytest
-import logging
 from dewey.core.utils.format_and_lint import FormatAndLint
+from unittest.mock import MagicMock
 
-def test_format_and_lint_run(caplog):
+def test_format_and_lint_run():
     """
-    Test that the FormatAndLint class can be instantiated and the run method executes without error.
+    Test that the run method executes without errors and sets the formatting_performed flag.
     """
-    caplog.set_level(logging.INFO)
-    formatter = FormatAndLint()
-    formatter.run()
-    assert "Starting formatting and linting process." in caplog.text
-    assert "Example config value:" in caplog.text
-    assert "Formatting and linting process completed." in caplog.text
+    mock_logger = MagicMock()
+    format_and_lint = FormatAndLint(logger=mock_logger)
+    format_and_lint.run()
+    assert format_and_lint.formatting_performed is True
+    mock_logger.info.assert_called_with("Formatting and linting process completed.")
