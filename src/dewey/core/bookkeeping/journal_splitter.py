@@ -34,16 +34,14 @@ class JournalSplitter(BaseScript):
         bank_account = f"assets:checking:mercury{account_num}"
 
         # Initialize files dict to store transactions by year
-        files: Dict[str, open]=None):
-                    if open] is None:
-                        open] = {}
+        files: Dict[str, open] = {}
         current_year: str = None
         current_transaction: List[str] = []
 
         with open(input_file) as f:
             for line in f:
                 # Check if this is a new transaction (starts with a date)
-                if line.strip() and line[0].isdigit(
+                if line.strip() and line[0].isdigit():
                     # If we have a previous transaction, write it
                     if current_transaction and current_year:
                         if current_year not in files:
