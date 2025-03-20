@@ -14,14 +14,26 @@ class TestAutomationModule:
     """Unit tests for the AutomationModule class."""
 
     @pytest.fixture
-    def automation_module(self) -> AutomationModule:
+    def mock_db_connection(self) -> MagicMock:
+        """Create a mock database connection."""
+        mock_conn = MagicMock()
+        mock_conn.execute.return_value = "test_db_result"
+        return mock_conn
+
+    @pytest.fixture
+    def mock_llm_client(self) -> MagicMock:
+        """Create a mock LLM client."""
+        mock_llm = MagicMock()
+        mock_llm.generate_text.return_value = "test_llm_response"
+        return mock_llm
+
+    @pytest.fixture
+    def automation_module(self, mock_db_connection: MagicMock, mock_llm_client: MagicMock) -> AutomationModule:
         """Fixture to create an instance of AutomationModule."""
         with patch("dewey.core.automation.BaseScript.__init__", return_value=None):
-            module = AutomationModule()
+            module = AutomationModule(db_conn=mock_db_connection, llm_client=mock_llm_client)
             module.config = {"example_config_key": "test_config_value"}
             module.logger = MagicMock()
-            module.db_conn = MagicMock()
-            module.llm_client = MagicMock()
             return module
 
     def test_inheritance(self, automation_module: AutomationModule) -> None:
@@ -48,14 +60,19 @@ class TestAutomationModule:
             config_section="test_section", requires_db=True, enable_llm=True
         )
 
+    def test_init_db_conn_and_llm_client(self, mock_db_connection: MagicMock, mock_llm_client: MagicMock) -> None:
+        """Test that the db_conn and llm_client are initialized correctly."""
+        with patch("dewey.core.automation.BaseScript.__init__", return_value=None):
+            module = AutomationModule(db_conn=mock_db_connection, llm_client=mock_llm_client)
+            assert module._db_conn == mock_db_connection
+            assert module._llm_client == mock_llm_client
+
     def test_run_method_no_db_no_llm(self) -> None:
         """Test the run method execution without DB and LLM."""
         with patch("dewey.core.automation.BaseScript.__init__", return_value=None):
-            module = AutomationModule()
+            module = AutomationModule(db_conn=None, llm_client=None)
             module.config = {"example_config_key": "test_config_value"}
             module.logger = MagicMock()
-            module.db_conn = None
-            module.llm_client = None
 
             module.run()
 
@@ -67,13 +84,10 @@ class TestAutomationModule:
             module.logger.warning.assert_any_call("Database connection not available.")
             module.logger.warning.assert_any_call("LLM client not available.")
 
-    def test_run_method_with_db_and_llm(self, automation_module: AutomationModule) -> (
+    def test_run_method_with_db_and_llm(self, automation_module: AutomationModule, mock_db_connection: MagicMock) -> (
         None
     ):
         """Test the run method execution with DB and LLM."""
-        automation_module.db_conn.execute.return_value = "test_db_result"
-        automation_module.llm_client.generate_text.return_value = "test_llm_response"
-
         automation_module.run()
 
         automation_module.logger.info.assert_any_call("Automation module started.")
@@ -81,11 +95,11 @@ class TestAutomationModule:
         automation_module.logger.info.assert_any_call(
             "Example config value: test_config_value"
         )
-        automation_module.db_conn.execute.assert_called_once_with("SELECT 1")
+        mock_db_connection.execute.assert_called_once_with("SELECT 1")
         automation_module.logger.info.assert_any_call(
             "Database query result: test_db_result"
         )
-        automation_module.llm_client.generate_text.assert_called_once_with(
+        automation_module._llm_client.generate_text.assert_called_once_with(
             "Write a short poem about automation."
         )
         automation_module.logger.info.assert_any_call(
@@ -146,7 +160,7 @@ class TestAutomationModule:
 
     def test_run_exception_raised(self, automation_module: AutomationModule) -> None:
         """Test that the run method raises an exception."""
-        automation_module.get_config_value = MagicMock(
+        automation_module._get_example_config_value = MagicMock(
             side_effect=ValueError("Test Exception")
         )
         with pytest.raises(ValueError, match="Test Exception"):
@@ -208,21 +222,21 @@ class TestAutomationModule:
 
     def test_cleanup(self, automation_module: AutomationModule) -> None:
         """Test the _cleanup method."""
-        automation_module.db_conn = MagicMock()
+        automation_module._db_conn = MagicMock()
         automation_module._cleanup()
-        automation_module.db_conn.close.assert_called_once()
+        automation_module._db_conn.close.assert_called_once()
 
     def test_cleanup_no_db_conn(self, automation_module: AutomationModule) -> None:
         """Test the _cleanup method when db_conn is None."""
-        automation_module.db_conn = None
+        automation_module._db_conn = None
         automation_module._cleanup()
 
     def test_cleanup_db_conn_exception(self, automation_module: AutomationModule) -> (
         None
     ):
         """Test the _cleanup method when db_conn.close() raises an exception."""
-        automation_module.db_conn = MagicMock()
-        automation_module.db_conn.close.side_effect = ValueError("Test Exception")
+        automation_module._db_conn = MagicMock()
+        automation_module._db_conn.close.side_effect = ValueError("Test Exception")
         automation_module._cleanup()
         automation_module.logger.warning.assert_called_once()
 
@@ -331,3 +345,25 @@ class TestAutomationModule:
             with patch("dewey.core.automation.get_llm_client") as mock_get_llm_client:
                 module.parse_args()
                 mock_get_llm_client.assert_called_once()
+
+    def test_get_example_config_value(self, automation_module: AutomationModule) -> None:
+        """Test that _get_example_config_value returns the correct config value."""
+        automation_module.get_config_value = MagicMock(return_value="test_config_value")
+        config_value = automation_module._get_example_config_value()
+        assert config_value == "test_config_value"
+        automation_module.get_config_value.assert_called_once_with("example_config_key", "default_value")
+
+    def test_execute_database_query(self, automation_module: AutomationModule, mock_db_connection: MagicMock) -> None:
+        """Test that _execute_database_query executes the correct query."""
+        result = automation_module._execute_database_query(mock_db_connection)
+        assert result == "test_db_result"
+        mock_db_connection.execute.assert_called_once_with("SELECT 1")
+
+    def test_generate_llm_response(self, automation_module: AutomationModule) -> None:
+        """Test that _generate_llm_response generates the correct LLM response."""
+        llm_client = MagicMock()
+        llm_client.generate_text.return_value = "test_llm_response"
+        automation_module._llm_client = llm_client
+        response = automation_module._generate_llm_response(automation_module._llm_client)
+        assert response == "test_llm_response"
+        automation_module._llm_client.generate_text.assert_called_once_with("Write a short poem about automation.")
