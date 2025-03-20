@@ -75,40 +75,6 @@ class IMAPSync(BaseScript):
             except Exception:
                 return "Non-serializable data"
 
-# Email table schema
-EMAIL_ANALYSES_SCHEMA = """
-CREATE TABLE IF NOT EXISTS emails (
-    msg_id VARCHAR PRIMARY KEY,
-    thread_id VARCHAR,
-    subject VARCHAR,
-    from_address VARCHAR,
-    analysis_date TIMESTAMP,
-    raw_analysis JSON,
-    automation_score FLOAT,
-    content_value FLOAT,
-    human_interaction FLOAT,
-    time_value FLOAT,
-    business_impact FLOAT,
-    uncertainty_score FLOAT,
-    metadata JSON,
-    priority INTEGER,
-    label_ids JSON,
-    snippet TEXT,
-    internal_date BIGINT,
-    size_estimate INTEGER,
-    message_parts JSON,
-    draft_id VARCHAR,
-    draft_message JSON,
-    attachments JSON,
-    status VARCHAR DEFAULT 'new',
-    error_message VARCHAR,
-    batch_id VARCHAR,
-    import_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
-"""
-
     def _init_database(self) -> None:
         """Initialize database schema using BaseScript's connection"""
         try:
