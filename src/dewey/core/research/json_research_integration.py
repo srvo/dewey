@@ -19,6 +19,9 @@ import pandas as pd
 import logging
 
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_motherduck_connection, get_connection
+from dewey.core.db import utils as db_utils
+
 
 class JsonResearchIntegration(BaseScript):
     """
@@ -27,7 +30,7 @@ class JsonResearchIntegration(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the JsonResearchIntegration script."""
-        super().__init__(config_section='json_research_integration')
+        super().__init__(config_section='json_research_integration', requires_db=True)
 
     def connect_to_motherduck(self, database_name: str = "dewey") -> duckdb.DuckDBPyConnection:
         """Connect to the MotherDuck database.
@@ -37,6 +40,9 @@ class JsonResearchIntegration(BaseScript):
 
         Returns:
             DuckDB connection
+
+        Raises:
+            Exception: If there is an error connecting to the database.
         """
         try:
             conn = duckdb.connect(f"md:{database_name}")
@@ -51,11 +57,13 @@ class JsonResearchIntegration(BaseScript):
 
         Args:
             conn: DuckDB connection
+
+        Raises:
+            Exception: If there is an error ensuring the tables exist.
         """
         try:
             # Check if company_research table exists
-            result = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='company_research'").fetchone()
-            if not result:
+            if not db_utils.table_exists(conn, 'company_research'):
                 self.logger.info("Creating company_research table")
                 conn.execute("""
                 CREATE TABLE company_research (
@@ -70,8 +78,7 @@ class JsonResearchIntegration(BaseScript):
                 """)
 
             # Check if company_research_queries table exists
-            result = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='company_research_queries'").fetchone()
-            if not result:
+            if not db_utils.table_exists(conn, 'company_research_queries'):
                 self.logger.info("Creating company_research_queries table")
                 conn.execute("""
                 CREATE TABLE company_research_queries (
@@ -86,8 +93,7 @@ class JsonResearchIntegration(BaseScript):
                 """)
 
             # Check if company_research_results table exists
-            result = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='company_research_results'").fetchone()
-            if not result:
+            if not db_utils.table_exists(conn, 'company_research_results'):
                 self.logger.info("Creating company_research_results table")
                 conn.execute("""
                 CREATE TABLE company_research_results (
@@ -115,6 +121,9 @@ class JsonResearchIntegration(BaseScript):
 
         Returns:
             Dictionary containing the parsed JSON data
+
+        Raises:
+            Exception: If there is an error processing the JSON file.
         """
         try:
             with open(file_path, 'r') as f:
@@ -131,6 +140,9 @@ class JsonResearchIntegration(BaseScript):
         Args:
             conn: DuckDB connection
             data: Dictionary containing company research data
+
+        Raises:
+            Exception: If there is an error updating the company_research table.
         """
         try:
             if not data or 'company' not in data:
@@ -188,6 +200,9 @@ class JsonResearchIntegration(BaseScript):
         Args:
             conn: DuckDB connection
             data: Dictionary containing company research data
+
+        Raises:
+            Exception: If there is an error updating the company_research_queries table.
         """
         try:
             if not data or 'company' not in data or 'search_queries' not in data:
@@ -234,6 +249,9 @@ class JsonResearchIntegration(BaseScript):
         Args:
             conn: DuckDB connection
             data: Dictionary containing company research data
+
+        Raises:
+            Exception: If there is an error updating the company_research_results table.
         """
         try:
             if not data or 'company' not in data or 'research_results' not in data:
@@ -283,6 +301,9 @@ class JsonResearchIntegration(BaseScript):
         Args:
             conn: DuckDB connection
             directory_path: Path to the directory containing JSON files
+
+        Raises:
+            Exception: If there is an error processing the directory.
         """
         try:
             directory = Path(directory_path)
@@ -320,11 +341,11 @@ class JsonResearchIntegration(BaseScript):
             self.logger.error(f"Error processing directory {directory_path}: {e}")
             raise
 
-    def run(self, database: str, input_dir: str, verbose: bool) -> None:
+    def run(self) -> None:
         """Main function to integrate JSON research files."""
 
-        if verbose:
-            self.logger.setLevel(logging.DEBUG)
+        database = self.get_config_value('database', 'dewey')
+        input_dir = self.get_config_value('input_dir', '/Users/srvo/input_data/json_files')
 
         try:
             # Connect to MotherDuck
@@ -345,15 +366,8 @@ class JsonResearchIntegration(BaseScript):
 
 def main():
     """Main entry point for the script."""
-    parser = argparse.ArgumentParser(description="Integrate company research information from JSON files")
-    parser.add_argument("--database", default="dewey", help="MotherDuck database name")
-    parser.add_argument("--input-dir", default="/Users/srvo/input_data/json_files", help="Directory containing input JSON files")
-    parser.add_argument("--verbose", action="store_true", help="Enable verbose logging")
-
-    args = parser.parse_args()
-
     script = JsonResearchIntegration()
-    script.run(args.database, args.input_dir, args.verbose)
+    script.execute()
 
 
 if __name__ == "__main__":
