@@ -1,7 +1,0 @@
-2025-03-17 11:32:58,941 - gmail_import - INFO - Starting Gmail import: looking back 7 days, max 1000 emails
-2025-03-17 11:32:58,941 - gmail_import - INFO - Using database: dewey
-2025-03-17 11:32:59,231 - gmail_import - ERROR - Gmail import failed: Parser Error: syntax error at or near "AUTOINCREMENT"
-Traceback (most recent call last):
-  File "/Users/srvo/dewey/src/dewey/core/crm/gmail/simple_import.py", line 730, in main
-    conn.execute("""
-duckdb.duckdb.ParserException: Parser Error: syntax error at or near "AUTOINCREMENT"

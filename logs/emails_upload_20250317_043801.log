@@ -1,8 +1,0 @@
-2025-03-17 04:38:01 - Using deduplication strategy: skip
-2025-03-17 04:38:01 - Starting upload of emails data from /Users/srvo/input_data/nov_30_crm_data/crm/emails/emails.duckdb
-2025-03-17 04:38:01 - This may take some time as the file is large (88MB)
-2025-03-17 04:38:02,097 - motherduck_uploader - INFO - Connected to MotherDuck database: dewey
-2025-03-17 04:38:02,097 - motherduck_uploader - INFO - Uploading file /Users/srvo/input_data/nov_30_crm_data/crm/emails/emails.duckdb
-2025-03-17 04:38:12,163 - motherduck_uploader - INFO - Uploaded table emails to crm_emails
-2025-03-17 04:38:12,168 - motherduck_uploader - INFO - Successfully uploaded /Users/srvo/input_data/nov_30_crm_data/crm/emails/emails.duckdb
-2025-03-17 04:38:12 - Emails data upload completed successfully

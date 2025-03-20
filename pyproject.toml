@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = [
   { name="srvo", email="sloane@ethicic.com" },
 ]
-description = "A personal finance and research assistant"
+description = "A Python package for managing research, analysis, and client interactions"
 readme = "README.md"
 requires-python = ">=3.11"
 classifiers = [
@@ -13,54 +13,64 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
+    # Core Dependencies
     "ibis-framework[duckdb]",
     "duckdb-engine",
     "python-dotenv>=1.0.0",
-    "ruff",
-    "pytest",
-    "requests",
     "pyyaml>=6.0.0",
-    "openai>=1.0.0",
-    "google-generativeai",
     "pydantic",
     "structlog",
     "sqlalchemy",
-    "uvicorn",
     "setuptools",
-    "joblib",
     "pandas",
-    "click",
-    "pytest-mock",
-    "pytest-cov",
-    "boto3",
-    "duckduckgo-search",
-    "botocore",
-    "psycopg2-binary",
-    "coverage",
-    "ulid-py",
-    "asgiref",
-    "asyncpg",
-    "tomli-w", # For proper TOML handling # Required for OpenRouter client
-    "httpx",
-    "tqdm",
-    "flake8",
-    "google-generativeai",
-    "openai",
-    "humanize",
-    "spacy>=3.8.4",
-    "chardet>=5.2.0",  # For CSV encoding detection
-    "black>=25.1.0",
     "numpy==1.26.4",  # Updated for aider-chat compatibility while maintaining spaCy support
-    "chromadb>=0.4.15",
-    "sentence-transformers>=2.2.2",
+    
+    # CLI and UI
+    "click",
     "typer>=0.9.0",
     "rich>=13.0.0",
-    "pyyaml>=6.0.0",
-    "python-dotenv",
-    "pre-commit",
-    "ruff", 
     "textual>=2.1.2",
-    "aider-chat @ git+https://github.com/paul-gauthier/aider.git",  # Correct package name
+    
+    # AI and ML
+    "openai>=1.0.0",
+    "google-generativeai",
+    "spacy>=3.8.4",
+    "chromadb>=0.4.15",
+    "sentence-transformers>=2.2.2",
+    "smolagents==1.9.2",  # Pinned version for stability
+    "aider-chat @ git+https://github.com/paul-gauthier/aider.git",
+    
+    # Web and API
+    "uvicorn",
+    "httpx",
+    "requests",
+    "asgiref",
+    "asyncpg",
+    "psycopg2-binary",
+    
+    # AWS
+    "boto3",
+    "botocore",
+    
+    # Development and Testing
+    "ruff",
+    "pytest",
+    "pytest-mock",
+    "pytest-cov",
+    "pytest-asyncio>=0.23.5",  # Added for async test support
+    "coverage",
+    "flake8",
+    "black>=25.1.0",
+    "pre-commit",
+    
+    # Utilities
+    "joblib",
+    "duckduckgo-search",
+    "ulid-py",
+    "tomli-w",  # For proper TOML handling
+    "tqdm",
+    "humanize",
+    "chardet>=5.2.0",  # For CSV encoding detection
 ]
 
 [tool.setuptools]
@@ -78,3 +88,16 @@ allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/dewey"]
+
+[tool.pytest.ini_options]
+markers = [
+    "asyncio: mark test as async",
+    "integration: mark test as integration test",
+]
+pythonpath = [
+    "src"
+]
+asyncio_default_fixture_loop_scope = "function"
+testpaths = [
+    "tests"
+]

@@ -1,7 +1,0 @@
-2025-03-17 02:39:01,155 - gmail_import - INFO - Starting Gmail import: looking back 1 days, max 10 emails
-2025-03-17 02:39:01,155 - gmail_import - INFO - Using database: /Users/srvo/dewey_emails.duckdb
-2025-03-17 02:39:01,914 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
-2025-03-17 02:39:01,916 - gmail_import - INFO - Importing emails from 2025/03/16 to 2025/03/17
-2025-03-17 02:39:02,083 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "insufficientPermissions"
-2025-03-17 02:39:02,083 - gmail_import - ERROR - Error fetching emails: <HttpError 403 when requesting https://gmail.googleapis.com/gmail/v1/users/me/messages?q=after%3A2025%2F03%2F16+before%3A2025%2F03%2F17&maxResults=10&alt=json returned "Request had insufficient authentication scopes.". Details: "[{'message': 'Insufficient Permission', 'domain': 'global', 'reason': 'insufficientPermissions'}]">
-2025-03-17 02:39:02,083 - gmail_import - INFO - Gmail import completed successfully. Imported 0 emails.

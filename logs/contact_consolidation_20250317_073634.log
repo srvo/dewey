@@ -1,8 +1,0 @@
-2025-03-17 07:36:35,221 - contact_consolidation - INFO - Connected to MotherDuck database: dewey
-2025-03-17 07:36:35,586 - contact_consolidation - INFO - Created or verified unified_contacts table
-2025-03-17 07:36:35,781 - contact_consolidation - INFO - Extracted 1346 contacts from CRM tables
-2025-03-17 07:36:37,016 - contact_consolidation - INFO - Extracted 49077 contacts from email tables
-2025-03-17 07:36:37,336 - contact_consolidation - INFO - Extracted 1994 contacts from subscriber tables
-2025-03-17 07:36:37,506 - contact_consolidation - INFO - Extracted 3 contacts from blog signup form responses
-2025-03-17 07:36:37,507 - contact_consolidation - INFO - Total contacts extracted: 52420
-2025-03-17 07:36:37,551 - contact_consolidation - ERROR - Error in contact consolidation: can't compare datetime.datetime to datetime.date

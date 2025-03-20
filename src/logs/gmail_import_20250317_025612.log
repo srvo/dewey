@@ -1,6 +1,0 @@
-2025-03-17 02:56:12,579 - gmail_import - INFO - Starting Gmail import: looking back 1 days, max 10 emails
-2025-03-17 02:56:12,580 - gmail_import - INFO - Using database: /Users/srvo/dewey_emails.duckdb
-2025-03-17 02:56:12,645 - gmail_import - INFO - Using credentials from /Users/srvo/dewey/credentials.json
-2025-03-17 02:56:12,832 - gmail_import - INFO - Importing emails from 2025/03/16 to 2025/03/17
-2025-03-17 02:56:13,092 - gmail_import - ERROR - Error fetching emails: <HttpError 400 when requesting https://gmail.googleapis.com/gmail/v1/users/me/messages?q=after%3A2025%2F03%2F16+before%3A2025%2F03%2F17&maxResults=10&alt=json returned "Precondition check failed.". Details: "[{'message': 'Precondition check failed.', 'domain': 'global', 'reason': 'failedPrecondition'}]">
-2025-03-17 02:56:13,092 - gmail_import - INFO - Gmail import completed successfully. Imported 0 emails.

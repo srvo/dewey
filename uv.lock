@@ -833,6 +833,7 @@ dependencies = [
     { name = "psycopg2-binary" },
     { name = "pydantic" },
     { name = "pytest" },
+    { name = "pytest-asyncio" },
     { name = "pytest-cov" },
     { name = "pytest-mock" },
     { name = "python-dotenv" },
@@ -842,6 +843,7 @@ dependencies = [
     { name = "ruff" },
     { name = "sentence-transformers" },
     { name = "setuptools" },
+    { name = "smolagents" },
     { name = "spacy" },
     { name = "sqlalchemy" },
     { name = "structlog" },
@@ -874,16 +876,15 @@ requires-dist = [
     { name = "ibis-framework", extras = ["duckdb"] },
     { name = "joblib" },
     { name = "numpy", specifier = "==1.26.4" },
-    { name = "openai" },
     { name = "openai", specifier = ">=1.0.0" },
     { name = "pandas" },
     { name = "pre-commit" },
     { name = "psycopg2-binary" },
     { name = "pydantic" },
     { name = "pytest" },
+    { name = "pytest-asyncio", specifier = ">=0.23.5" },
     { name = "pytest-cov" },
     { name = "pytest-mock" },
-    { name = "python-dotenv" },
     { name = "python-dotenv", specifier = ">=1.0.0" },
     { name = "pyyaml", specifier = ">=6.0.0" },
     { name = "requests" },
@@ -891,6 +892,7 @@ requires-dist = [
     { name = "ruff" },
     { name = "sentence-transformers", specifier = ">=2.2.2" },
     { name = "setuptools" },
+    { name = "smolagents", specifier = "==1.9.2" },
     { name = "spacy", specifier = ">=3.8.4" },
     { name = "sqlalchemy" },
     { name = "structlog" },
@@ -1865,6 +1867,19 @@ linkify = [
 ]
 plugins = [
     { name = "mdit-py-plugins" },
+]
+
+[[package]]
+name = "markdownify"
+version = "1.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "beautifulsoup4" },
+    { name = "six" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/2f/78/c48fed23c7aebc2c16049062e72de1da3220c274de59d28c942acdc9ffb2/markdownify-1.1.0.tar.gz", hash = "sha256:449c0bbbf1401c5112379619524f33b63490a8fa479456d41de9dc9e37560ebd", size = 17127 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/64/11/b751af7ad41b254a802cf52f7bc1fca7cabe2388132f2ce60a1a6b9b9622/markdownify-1.1.0-py3-none-any.whl", hash = "sha256:32a5a08e9af02c8a6528942224c91b933b4bd2c7d078f9012943776fc313eeef", size = 13901 },
 ]
 
 [[package]]
@@ -3193,6 +3208,18 @@ wheels = [
 ]
 
 [[package]]
+name = "pytest-asyncio"
+version = "0.25.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pytest" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/f2/a8/ecbc8ede70921dd2f544ab1cadd3ff3bf842af27f87bbdea774c7baa1d38/pytest_asyncio-0.25.3.tar.gz", hash = "sha256:fc1da2cf9f125ada7e710b4ddad05518d4cee187ae9412e9ac9271003497f07a", size = 54239 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/67/17/3493c5624e48fd97156ebaec380dcaafee9506d7e2c46218ceebbb57d7de/pytest_asyncio-0.25.3-py3-none-any.whl", hash = "sha256:9e89518e0f9bd08928f97a3482fdc4e244df17529460bc038291ccaf8f85c7c3", size = 19467 },
+]
+
+[[package]]
 name = "pytest-cov"
 version = "6.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -3641,6 +3668,26 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/44/cd/a040c4b3119bbe532e5b0732286f805445375489fceaec1f48306068ee3b/smmap-5.0.2.tar.gz", hash = "sha256:26ea65a03958fa0c8a1c7e8c7a58fdc77221b8910f6be2131affade476898ad5", size = 22329 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/04/be/d09147ad1ec7934636ad912901c5fd7667e1c858e19d355237db0d0cd5e4/smmap-5.0.2-py3-none-any.whl", hash = "sha256:b30115f0def7d7531d22a0fb6502488d879e75b260a9db4d0819cfb25403af5e", size = 24303 },
+]
+
+[[package]]
+name = "smolagents"
+version = "1.9.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "duckduckgo-search" },
+    { name = "huggingface-hub" },
+    { name = "jinja2" },
+    { name = "markdownify" },
+    { name = "pandas" },
+    { name = "pillow" },
+    { name = "python-dotenv" },
+    { name = "requests" },
+    { name = "rich" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/34/c2/4d26bb550ce6a893df3897fcc675db0a7c2e48e00d65b97659a25526f4f3/smolagents-1.9.2.tar.gz", hash = "sha256:387c0208b4ce3d81abd5272b566a611b4f1f7eff49d82e4c7f15b71e51f4e71f", size = 125431 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4c/d6/797f5ba797f4f7549e353603b3c47edff8c964f0d44f18ff0a255821b9bb/smolagents-1.9.2-py3-none-any.whl", hash = "sha256:95531890779f638ea57d5bf5ca9efffb7991ad25f63d6e30158573802e095561", size = 101827 },
 ]
 
 [[package]]

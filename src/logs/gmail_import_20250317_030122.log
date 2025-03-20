@@ -1,9 +1,0 @@
-2025-03-17 03:01:22,457 - gmail_import - INFO - Starting Gmail import: looking back 1 days, max 10 emails
-2025-03-17 03:01:22,457 - gmail_import - INFO - Using database: /Users/srvo/dewey_emails.duckdb
-2025-03-17 03:01:22,530 - gmail_import - INFO - Using token from /Users/srvo/dewey/token.json
-2025-03-17 03:01:22,533 - gmail_import - INFO - Importing emails from 2025/03/16 to 2025/03/17
-2025-03-17 03:01:22,775 - gmail_import - INFO - Found 10 emails, fetching details...
-2025-03-17 03:01:22,917 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "forbidden"
-2025-03-17 03:01:22,917 - gmail_import - ERROR - Error fetching email 195a2ef7cc9b6f1f: <HttpError 403 when requesting https://gmail.googleapis.com/gmail/v1/users/me/messages/195a2ef7cc9b6f1f?format=full&alt=json returned "Metadata scope doesn't allow format FULL". Details: "[{'message': "Metadata scope doesn't allow format FULL", 'domain': 'global', 'reason': 'forbidden'}]">
-2025-03-17 03:01:22,917 - gmail_import - ERROR - Error fetching emails: 'NoneType' object is not subscriptable
-2025-03-17 03:01:22,917 - gmail_import - INFO - Gmail import completed successfully. Imported 0 emails.

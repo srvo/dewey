@@ -1,0 +1,26 @@
+{
+  "high_priority_sources": [
+    {
+      "keywords": [
+        "urgent",
+        "important",
+        "asap"
+      ],
+      "min_priority": 4,
+      "reason": "Contains urgency keywords"
+    }
+  ],
+  "low_priority_sources": [
+    {
+      "keywords": [
+        "newsletter",
+        "unsubscribe",
+        "marketing"
+      ],
+      "max_priority": 1,
+      "reason": "Marketing or newsletter content"
+    }
+  ],
+  "newsletter_defaults": {},
+  "override_rules": []
+}

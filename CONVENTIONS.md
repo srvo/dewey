@@ -2,6 +2,166 @@
 
 # Dewey Project Conventions
 
+This document outlines the conventions and standards for the Dewey project codebase.
+
+## Directory Structure
+
+The codebase follows a modular structure:
+
+```
+/src
+  /core               # Core functionality 
+    /accounting       # Accounting-related modules
+    /bookkeeping      # Bookkeeping features
+    /crm              # Customer relationship management
+    /research         # Research and analysis features
+    /personal         # Personal user features
+    /automation       # Automation workflows
+    /engines          # Integration engines
+    /migrations       # Migration scripts
+    base_script.py    # Base class for all scripts
+  
+  /llm                # Language model integration
+    /agents           # AI agents
+    /api_clients      # LLM API clients
+    /prompts          # Prompt templates
+  
+  /ui                 # User interface components
+    /screens          # Screen views
+    /components       # Reusable UI components
+  
+  /pipeline           # Data processing pipelines
+  
+  /utils              # Utility functions and helpers
+  
+  /tests              # Test modules
+```
+
+## Script Development
+
+### BaseScript Usage
+
+All script files should inherit from the `BaseScript` class, which provides consistent structure, logging, and error handling:
+
+```python
+from src.core.base_script import BaseScript
+
+class MyScript(BaseScript):
+    def run(self):
+        # Your implementation here
+        self.logger.info("Running my script")
+```
+
+### Script Placement
+
+1. Place scripts in the appropriate module directory based on functionality
+2. Use clear, descriptive file names
+3. If a script handles a specific entity, include that entity in the filename
+
+## Coding Standards
+
+### Python Version
+
+- Use Python 3.9+ features
+- Format code with Black (line length 88)
+- Use type hints for all function parameters and return values
+
+### Imports
+
+- Group imports in the following order:
+  1. Standard library imports
+  2. Third-party library imports
+  3. Local application imports
+- Sort imports alphabetically within each group
+- Use absolute imports for clarity
+
+```python
+# Standard library
+import os
+import sys
+from typing import Dict, List, Optional
+
+# Third-party libraries
+import numpy as np
+import pandas as pd
+
+# Local imports
+from src.core.base_script import BaseScript
+from src.utils.common import get_config
+```
+
+### Naming Conventions
+
+- `snake_case` for variables, functions, and methods
+- `PascalCase` for classes and types
+- `UPPER_CASE` for constants
+- Prefix private methods/variables with underscore (`_method_name`)
+
+### Documentation
+
+- All modules, classes, and functions should have docstrings
+- Use Google-style docstrings format
+- Include examples in docstrings for complex functions
+
+```python
+def calculate_metric(data: List[float], window_size: int = 5) -> float:
+    """Calculate a rolling metric on the data.
+    
+    Args:
+        data: List of numerical values to process
+        window_size: Size of the rolling window
+        
+    Returns:
+        Calculated metric value
+        
+    Examples:
+        >>> calculate_metric([1, 2, 3, 4, 5], window_size=3)
+        3.0
+    """
+    # Implementation...
+```
+
+### Error Handling
+
+- Use explicit exception types rather than catching all exceptions
+- Log exceptions with appropriate context
+- Use context managers for resource handling
+
+### Testing
+
+- Write unit tests for all public functions
+- Use pytest as the testing framework
+- Aim for high test coverage, especially for critical paths
+
+## Configuration Management
+
+- Store configuration in `dewey.yaml`
+- Use environment variables for sensitive data
+- Create example configuration files for documentation
+
+## Logging
+
+- Use the logging provided by `BaseScript`
+- Include appropriate context in log messages
+- Use the correct log level:
+  - DEBUG: Detailed debugging information
+  - INFO: Confirmation that things are working as expected
+  - WARNING: Indication that something unexpected happened
+  - ERROR: Due to a more serious problem, the software hasn't been able to perform a function
+  - CRITICAL: A serious error, indicating that the program itself may be unable to continue running
+
+## Version Control
+
+- Write clear, concise commit messages
+- Use feature branches for development
+- Squash commits before merging to main/master
+
+## Dependencies
+
+- Use `uv` for package management and pip functions
+- Document dependencies in `pyproject.toml`
+- Minimize external dependencies, especially for critical components
+
 All documentation, docstrings, and so forth must be written in english. 
 
 ## Centralized Configuration Architecture
@@ -133,6 +293,10 @@ class CustomScript(BaseScript):
    - Direct config/logging initialization
    - Custom exception handling outside base framework
    - Database connections not using base class pool
+
+**Exceptions:**
+- Test scripts in `tests/` directory are exempt from this requirement
+- CLI entrypoints may use `if __name__ == "__main__"` patterns as long as they wrap a BaseScript instance
 
 ### Agent & Tool Configuration
 1. **Engine Integration:**

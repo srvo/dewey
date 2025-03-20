@@ -1,0 +1,90 @@
+#!/usr/bin/env python3
+
+import logging
+import subprocess
+from typing import List, Optional
+
+# File header: Utility functions for interacting with Hledger.
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
+
+
+def run_hledger_command(command: List[str]) -> Optional[str]:
+    """Run an Hledger command and return the output.
+
+    Args:
+        command (List[str]): A list of strings representing the Hledger command.
+
+    Returns:
+        Optional[str]: The output of the command, or None if the command fails.
+    """
+    try:
+        result = subprocess.run(
+            ["hledger"] + command, capture_output=True, text=True, check=True
+        )
+        logger.debug("Hledger command executed successfully: %s", " ".join(command))
+        return result.stdout.strip()
+    except subprocess.CalledProcessError as e:
+        logger.error(
+            "Hledger command failed with error code %d: %s", e.returncode, e.stderr
+        )
+        return None
+    except FileNotFoundError:
+        logger.error("Hledger executable not found. Please ensure it is installed.")
+        return None
+
+
+def get_account_balance(account: str) -> Optional[str]:
+    """Get the balance of an Hledger account.
+
+    Args:
+        account (str): The name of the account.
+
+    Returns:
+        Optional[str]: The balance of the account, or None if the command fails.
+    """
+    command = ["balance", account]
+    return run_hledger_command(command)
+
+
+def get_all_accounts() -> Optional[List[str]]:
+    """Get a list of all accounts in the Hledger journal.
+
+    Returns:
+        Optional[List[str]]: A list of account names, or None if the command fails.
+    """
+    command = ["accounts"]
+    output = run_hledger_command(command)
+    if output:
+        return output.splitlines()
+    return None
+
+
+def main() -> None:
+    """Main function to demonstrate Hledger utility functions."""
+    logger.info("Starting Hledger utility demonstration")
+
+    # Example usage
+    balance = get_account_balance("Assets:Checking")
+    if balance:
+        logger.info("Balance of Assets:Checking: %s", balance)
+    else:
+        logger.warning("Could not retrieve balance for Assets:Checking")
+
+    accounts = get_all_accounts()
+    if accounts:
+        logger.info("All accounts: %s", accounts)
+    else:
+        logger.warning("Could not retrieve list of accounts")
+
+    logger.info("Completed Hledger utility demonstration")
+
+
+if __name__ == "__main__":
+    main()
