@@ -1,4 +1,3 @@
-```python
 """Core enrichment workflow coordinating Attio and Onyx integrations."""
 
 import logging
@@ -13,21 +12,37 @@ from sqlalchemy.orm import sessionmaker
 from api_clients.api_docs_manager import load_docs
 from api_clients.attio_client import AttioAPIError, AttioClient
 from api_clients.onyx_client import OnyxAPIError, OnyxClient
+"""Core enrichment workflow coordinating Attio and Onyx integrations."""
+
+import logging
+import os
+from datetime import datetime
+from typing import Dict, List
+
+from sqlalchemy import create_engine, inspect
+from sqlalchemy.exc import IntegrityError, OperationalError
+from sqlalchemy.orm import sessionmaker
+
+from dewey.core.base_script import BaseScript
+from api_clients.api_docs_manager import load_docs
+from api_clients.attio_client import AttioAPIError, AttioClient
+from api_clients.onyx_client import OnyxAPIError, OnyxClient
 from schema import Base, OnyxEnrichment
 
 
-class EnrichmentEngine:
+class EnrichmentEngine(BaseScript):
     """Orchestrates the enrichment process using Attio and Onyx."""
 
     def __init__(self) -> None:
         """Initializes the EnrichmentEngine with database and API clients."""
-        self.engine = create_engine(os.getenv("DB_URL"))
+        super().__init__(config_section='crm')
+
+        self.engine = create_engine(self.config.get("db_url"))
         Base.metadata.create_all(self.engine)
         self.Session = sessionmaker(bind=self.engine)
 
         self.attio = AttioClient()
         self.onyx = OnyxClient()
-        self.logger = logging.getLogger(__name__)
         self.api_references = load_docs().get("links", {})
 
     def run_enrichment(self, batch_size: int = 50) -> None:
@@ -39,15 +54,15 @@ class EnrichmentEngine:
         """
         try:
             contacts = self.attio.get_contacts(batch_size)
-            self.logger.info("Processing %d contacts", len(contacts))
+            self.logger.info(f"Processing {len(contacts)} contacts")
 
             for contact in contacts:
                 self._process_contact(contact)
 
         except AttioAPIError as e:
-            self.logger.error("Attio integration failed: %s", str(e))
+            self.logger.error(f"Attio integration failed: {e}")
         except OnyxAPIError as e:
-            self.logger.error("Onyx integration failed: %s", str(e))
+            self.logger.error(f"Onyx integration failed: {e}")
 
     def _process_contact(self, contact: Dict) -> None:
         """
@@ -58,12 +73,12 @@ class EnrichmentEngine:
         """
         contact_id = contact.get("id")
         try:
-            self.logger.debug("Processing contact %s", contact_id)
+            self.logger.debug(f"Processing contact {contact_id}")
             enriched_data = self.onyx.universal_search(contact)
             self._store_enrichment(contact_id, contact, enriched_data)
 
         except Exception as e:
-            self.logger.error("Failed to process %s: %s", contact_id, str(e))
+            self.logger.error(f"Failed to process {contact_id}: {e}")
 
     def _store_enrichment(
         self, contact_id: str, raw: Dict, enriched: Dict
@@ -131,23 +146,22 @@ class EnrichmentEngine:
         except IntegrityError as e:
             session.rollback()
             self.logger.error(
-                f"Database integrity error for contact {record['contact_id']}: {str(e)}"
+                f"Database integrity error for contact {record['contact_id']}: {e}"
             )
             raise
 
         except OperationalError as e:
             session.rollback()
-            self.logger.error(f"Database operational error: {str(e)}")
+            self.logger.error(f"Database operational error: {e}")
             self.logger.info("Check database connection and retry the operation")
             raise
 
         except Exception as e:
             session.rollback()
-            self.logger.error(f"Unexpected database error: {str(e)}")
+            self.logger.error(f"Unexpected database error: {e}")
             self.logger.debug(f"Failed record: {record}")
             raise
 
         finally:
             session.close()
             self.logger.debug("Database session closed")
-```
