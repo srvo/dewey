@@ -1,4 +1,5 @@
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection
 import logging
 from typing import Any, Dict
 
@@ -22,7 +23,7 @@ class DocsModule(BaseScript):
             description (str, optional): A brief description of the module.
                 Defaults to "Documentation Module".
         """
-        super().__init__(name=name, description=description)
+        super().__init__(name=name, description=description, config_section="docs")
 
     def run(self) -> None:
         """
@@ -30,14 +31,28 @@ class DocsModule(BaseScript):
 
         This method should be overridden in subclasses to implement
         specific documentation tasks.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            Exception: If something goes wrong during the documentation task.
         """
         self.logger.info("Running the Docs module...")
-        # Example of accessing a configuration value
-        example_config_value = self.get_config_value("docs_setting", "default_value")
-        self.logger.info(f"Example config value: {example_config_value}")
+        try:
+            # Example of accessing a configuration value
+            example_config_value = self.get_config_value("docs_setting", "default_value")
+            self.logger.info(f"Example config value: {example_config_value}")
 
-        # Add your documentation logic here
-        self.logger.info("Documentation tasks completed.")
+            # Add your documentation logic here
+            self.logger.info("Documentation tasks completed.")
+
+        except Exception as e:
+            self.logger.error(f"An error occurred during documentation: {e}", exc_info=True)
+            raise
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
         """
