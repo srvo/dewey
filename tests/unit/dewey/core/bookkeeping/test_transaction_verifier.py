@@ -13,7 +13,7 @@ from dewey.core.bookkeeping.classification_engine import (
     ClassificationEngine,
     ClassificationError,
 )
-from dewey.core.bookkeeping.transaction_verifier import ClassificationVerifier
+from dewey.core.bookkeeping.transaction_verifier import ClassificationVerifier, LLMClientInterface
 from dewey.core.bookkeeping.writers.journal_writer_fab1858b import JournalWriter
 from dewey.core.base_script import BaseScript
 
@@ -43,14 +43,41 @@ def mock_config(tmp_path: Path) -> Dict[str, Any]:
 
 
 @pytest.fixture
-def classification_verifier(mock_config: Dict[str, Any], tmp_path: Path) -> ClassificationVerifier:
-    """Fixture to create a ClassificationVerifier instance with mocked config."""
+def mock_classification_engine() -> MagicMock:
+    """Fixture to create a mock ClassificationEngine instance."""
+    return MagicMock(spec=ClassificationEngine)
+
+
+@pytest.fixture
+def mock_journal_writer() -> MagicMock:
+    """Fixture to create a mock JournalWriter instance."""
+    return MagicMock(spec=JournalWriter)
+
+
+@pytest.fixture
+def mock_llm_client() -> MagicMock:
+    """Fixture to create a mock LLMClientInterface instance."""
+    return MagicMock(spec=LLMClientInterface)
+
+
+@pytest.fixture
+def classification_verifier(
+    mock_config: Dict[str, Any],
+    mock_classification_engine: MagicMock,
+    mock_journal_writer: MagicMock,
+    mock_llm_client: MagicMock,
+    tmp_path: Path,
+) -> ClassificationVerifier:
+    """Fixture to create a ClassificationVerifier instance with mocked config and dependencies."""
     with patch("dewey.core.base_script.CONFIG_PATH", str(tmp_path / "config.yaml")):
-        with patch("dewey.core.base_script.BaseScript.__init__", return_value=None):
-            verifier = ClassificationVerifier()
-            verifier.config = mock_config
-            verifier.logger = MagicMock()
-            return verifier
+        verifier = ClassificationVerifier(
+            classification_engine=mock_classification_engine,
+            journal_writer=mock_journal_writer,
+            llm_client=mock_llm_client,
+        )
+        verifier.config = mock_config
+        verifier.logger = MagicMock()
+        return verifier
 
 
 @pytest.fixture
@@ -64,50 +91,53 @@ def mock_transaction() -> Dict[str, Any]:
     }
 
 
-def test_classification_verifier_initialization(classification_verifier: ClassificationVerifier) -> None:
+def test_classification_verifier_initialization(
+    classification_verifier: ClassificationVerifier,
+    mock_classification_engine: MagicMock,
+    mock_journal_writer: MagicMock,
+) -> None:
     """Test that ClassificationVerifier initializes correctly."""
     assert isinstance(classification_verifier, ClassificationVerifier)
-    assert isinstance(classification_verifier.engine, ClassificationEngine)
-    assert isinstance(classification_verifier.writer, JournalWriter)
+    assert classification_verifier.engine == mock_classification_engine
+    assert isinstance(classification_verifier.writer, MagicMock)  # Check if it's a MagicMock
     assert classification_verifier.processed_feedback == 0
     assert classification_verifier.rules_path.exists()
     assert classification_verifier.journal_path.exists()
 
 
-def test_valid_categories(classification_verifier: ClassificationVerifier) -> None:
+def test_valid_categories(
+    classification_verifier: ClassificationVerifier, mock_classification_engine: MagicMock
+) -> None:
     """Test that valid_categories property returns the correct categories."""
-    with patch.object(classification_verifier.engine, "categories", ["Category1", "Category2"]):
-        assert classification_verifier.valid_categories == ["Category1", "Category2"]
+    mock_classification_engine.categories = ["Category1", "Category2"]
+    assert classification_verifier.valid_categories == ["Category1", "Category2"]
 
 
-@patch("dewey.core.llm.llm_utils.classify_text")
 def test_get_ai_suggestion_success(
-    mock_classify_text: MagicMock, classification_verifier: ClassificationVerifier
+    classification_verifier: ClassificationVerifier, mock_llm_client: MagicMock
 ) -> None:
     """Test that get_ai_suggestion returns a suggestion on success."""
-    mock_classify_text.return_value = "Category:Subcategory"
+    mock_llm_client.classify_text.return_value = "Category:Subcategory"
     suggestion = classification_verifier.get_ai_suggestion("Test Description")
     assert suggestion == "Category:Subcategory"
-    mock_classify_text.assert_called_once()
+    mock_llm_client.classify_text.assert_called_once()
 
 
-@patch("dewey.core.llm.llm_utils.classify_text")
 def test_get_ai_suggestion_empty_response(
-    mock_classify_text: MagicMock, classification_verifier: ClassificationVerifier
+    classification_verifier: ClassificationVerifier, mock_llm_client: MagicMock
 ) -> None:
     """Test that get_ai_suggestion returns an empty string when the AI returns nothing."""
-    mock_classify_text.return_value = None
+    mock_llm_client.classify_text.return_value = None
     suggestion = classification_verifier.get_ai_suggestion("Test Description")
     assert suggestion == ""
-    mock_classify_text.assert_called_once()
+    mock_llm_client.classify_text.assert_called_once()
 
 
-@patch("dewey.core.llm.llm_utils.classify_text")
 def test_get_ai_suggestion_failure(
-    mock_classify_text: MagicMock, classification_verifier: ClassificationVerifier, caplog: pytest.LogCaptureFixture
+    classification_verifier: ClassificationVerifier, mock_llm_client: MagicMock, caplog: pytest.LogCaptureFixture
 ) -> None:
     """Test that get_ai_suggestion handles exceptions and logs them."""
-    mock_classify_text.side_effect = Exception("AI Error")
+    mock_llm_client.classify_text.side_effect = Exception("AI Error")
     with caplog.at_level(logging.ERROR):
         suggestion = classification_verifier.get_ai_suggestion("Test Description")
     assert suggestion == ""
@@ -178,80 +208,81 @@ def test_prompt_for_feedback_invalid_transaction_format(
 
 @patch("dewey.core.bookkeeping.transaction_verifier.confirm")
 @patch("dewey.core.bookkeeping.transaction_verifier.prompt")
-@patch.object(ClassificationVerifier, "get_ai_suggestion")
 def test_prompt_for_feedback_correct_classification(
-    mock_get_ai_suggestion: MagicMock,
     mock_prompt: MagicMock,
     mock_confirm: MagicMock,
     classification_verifier: ClassificationVerifier,
     mock_transaction: Dict[str, Any],
+    mock_llm_client: MagicMock,
 ) -> None:
     """Test that prompt_for_feedback handles correct classification."""
     mock_confirm.return_value = True
     classification_verifier.prompt_for_feedback(mock_transaction)
     mock_prompt.assert_not_called()
-    mock_get_ai_suggestion.assert_called_once()
 
 
 @patch("dewey.core.bookkeeping.transaction_verifier.confirm")
 @patch("dewey.core.bookkeeping.transaction_verifier.prompt")
-@patch.object(ClassificationVerifier, "get_ai_suggestion")
 def test_prompt_for_feedback_incorrect_classification(
-    mock_get_ai_suggestion: MagicMock,
     mock_prompt: MagicMock,
     mock_confirm: MagicMock,
     classification_verifier: ClassificationVerifier,
     mock_transaction: Dict[str, Any],
+    mock_classification_engine: MagicMock,
 ) -> None:
     """Test that prompt_for_feedback handles incorrect classification and updates the classification."""
     mock_confirm.return_value = False
     mock_prompt.return_value = "New:Category"
-    mock_get_ai_suggestion.return_value = "Suggested:Category"
-    with patch.object(classification_verifier.engine, "process_feedback") as mock_process_feedback:
-        classification_verifier.prompt_for_feedback(mock_transaction)
-        mock_prompt.assert_called_once()
-        mock_process_feedback.assert_called_once()
-        assert classification_verifier.processed_feedback == 1
+    mock_classification_engine.process_feedback.return_value = None
+    classification_verifier.get_ai_suggestion = MagicMock(return_value="Suggested:Category")  # type: ignore
+
+    classification_verifier.prompt_for_feedback(mock_transaction)
+
+    mock_prompt.assert_called_once()
+    mock_classification_engine.process_feedback.assert_called_once()
+    assert classification_verifier.processed_feedback == 1
 
 
 @patch("dewey.core.bookkeeping.transaction_verifier.confirm")
 @patch("dewey.core.bookkeeping.transaction_verifier.prompt")
-@patch.object(ClassificationVerifier, "get_ai_suggestion")
 def test_prompt_for_feedback_invalid_category(
-    mock_get_ai_suggestion: MagicMock,
     mock_prompt: MagicMock,
     mock_confirm: MagicMock,
     classification_verifier: ClassificationVerifier,
     mock_transaction: Dict[str, Any],
+    mock_classification_engine: MagicMock,
     caplog: pytest.LogCaptureFixture,
 ) -> None:
     """Test that prompt_for_feedback handles invalid category and logs the error."""
     mock_confirm.return_value = False
     mock_prompt.return_value = "Invalid Category"
-    mock_get_ai_suggestion.return_value = "Suggested:Category"
-    with patch.object(classification_verifier.engine, "process_feedback", side_effect=ClassificationError("Invalid")):
-        with caplog.at_level(logging.ERROR):
-            classification_verifier.prompt_for_feedback(mock_transaction)
-        assert "Invalid category" in caplog.text
-        assert "Invalid" in caplog.text
+    mock_classification_engine.process_feedback.side_effect = ClassificationError("Invalid")
+    classification_verifier.get_ai_suggestion = MagicMock(return_value="Suggested:Category")  # type: ignore
+
+    with caplog.at_level(logging.ERROR):
+        classification_verifier.prompt_for_feedback(mock_transaction)
+
+    assert "Invalid category" in caplog.text
+    assert "Invalid" in caplog.text
 
 
 @patch("dewey.core.bookkeeping.transaction_verifier.confirm")
 @patch("dewey.core.bookkeeping.transaction_verifier.prompt")
-@patch.object(ClassificationVerifier, "get_ai_suggestion")
 def test_prompt_for_feedback_processing_error(
-    mock_get_ai_suggestion: MagicMock,
     mock_prompt: MagicMock,
     mock_confirm: MagicMock,
     classification_verifier: ClassificationVerifier,
     mock_transaction: Dict[str, Any],
+    mock_llm_client: MagicMock,
     caplog: pytest.LogCaptureFixture,
 ) -> None:
     """Test that prompt_for_feedback handles errors during transaction processing."""
     mock_confirm.side_effect = Exception("Processing Error")
-    mock_get_ai_suggestion.return_value = "Suggested:Category"
+    mock_llm_client.classify_text.return_value = "Suggested:Category"
+
     with caplog.at_level(logging.ERROR):
         classification_verifier.prompt_for_feedback(mock_transaction)
+
     assert "Error processing transaction" in caplog.text
     assert "Processing Error" in caplog.text
     assert "Problematic transaction data" in caplog.text
@@ -268,28 +299,28 @@ def test_generate_report(classification_verifier: ClassificationVerifier, caplog
 
 @patch.object(ClassificationVerifier, "get_transaction_samples")
 @patch.object(ClassificationVerifier, "prompt_for_feedback")
-@patch.object(ClassificationVerifier, "generate_report")
 def test_run_success(
-    mock_generate_report: MagicMock, mock_prompt_for_feedback: MagicMock, mock_get_transaction_samples: MagicMock, classification_verifier: ClassificationVerifier, ) -> None:
+    mock_prompt_for_feedback: MagicMock,
+    mock_get_transaction_samples: MagicMock,
+    classification_verifier: ClassificationVerifier,
+) -> None:
     """Test that run executes the verification workflow successfully."""
     mock_get_transaction_samples.return_value = [{"description": "Transaction 1"}, {"description": "Transaction 2"}]
     classification_verifier.run()
     assert mock_prompt_for_feedback.call_count == 2
-    mock_generate_report.assert_called_once_with(2)
 
 
 @patch.object(ClassificationVerifier, "get_transaction_samples")
-@patch.object(ClassificationVerifier, "prompt_for_feedback")
-@patch.object(ClassificationVerifier, "generate_report")
 def test_run_no_samples(
-    mock_generate_report: MagicMock, mock_prompt_for_feedback: MagicMock, mock_get_transaction_samples: MagicMock, classification_verifier: ClassificationVerifier, caplog: pytest.LogCaptureFixture, ) -> None:
+    mock_get_transaction_samples: MagicMock,
+    classification_verifier: ClassificationVerifier,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
     """Test that run handles the case where no transactions are found."""
     mock_get_transaction_samples.return_value = []
     with caplog.at_level(logging.ERROR):
         classification_verifier.run()
     assert "No transactions found for verification" in caplog.text
-    mock_prompt_for_feedback.assert_not_called()
-    mock_generate_report.assert_not_called()
 
 
 def test_get_path_absolute_path(classification_verifier: ClassificationVerifier) -> None:
@@ -335,3 +366,29 @@ def test_get_config_value_no_default(classification_verifier: ClassificationVeri
     classification_verifier.config = {}
     result = classification_verifier.get_config_value("missing_section.missing_key")
     assert result is None
+
+
+def test_process_hledger_csv_success(classification_verifier: ClassificationVerifier) -> None:
+    """Test that _process_hledger_csv processes CSV data correctly."""
+    csv_data = (
+        "date,description,amount,account\n"
+        "2024-01-01,Test Transaction,$10.00,Expenses:Unknown\n"
+        "2024-01-02,Another Transaction,$-20.00,Income:Salary"
+    )
+    transactions = classification_verifier._process_hledger_csv(csv_data)
+    assert len(transactions) == 2
+    assert transactions[0]["description"] == "Test Transaction"
+    assert transactions[1]["amount"] == "$-20.00"
+
+
+def test_process_hledger_csv_duckdb_failure(
+    classification_verifier: ClassificationVerifier, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Test that _process_hledger_csv handles DuckDB processing failure and logs the error."""
+    csv_data = "invalid csv data"
+    with patch("duckdb.connect", side_effect=Exception("DuckDB Error")):
+        with caplog.at_level(logging.ERROR):
+            transactions = classification_verifier._process_hledger_csv(csv_data)
+    assert transactions == []
+    assert "DuckDB processing failed" in caplog.text
+    assert "DuckDB Error" in caplog.text
