@@ -60,7 +60,7 @@ class DatabaseConnection(BaseScript):
         Raises:
             RuntimeError: If the connection cannot be established.
         """
-        super().__init__(config_section='db')
+        super().__init__(config_section='database', requires_db=False)
         self.connection_string = connection_string
         self.is_motherduck = connection_string and self.connection_string.startswith(
             self.get_config_value('default_motherduck_prefix', 'md:')
