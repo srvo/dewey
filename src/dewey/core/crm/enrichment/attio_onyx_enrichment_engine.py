@@ -1,23 +1,7 @@
 """Core enrichment workflow coordinating Attio and Onyx integrations."""
 
-import logging
-import os
 from datetime import datetime
-from typing import Dict, List
-
-from sqlalchemy import create_engine, inspect
-from sqlalchemy.exc import IntegrityError, OperationalError
-from sqlalchemy.orm import sessionmaker
-
-from api_clients.api_docs_manager import load_docs
-from api_clients.attio_client import AttioAPIError, AttioClient
-from api_clients.onyx_client import OnyxAPIError, OnyxClient
-"""Core enrichment workflow coordinating Attio and Onyx integrations."""
-
-import logging
-import os
-from datetime import datetime
-from typing import Dict, List
+from typing import Dict, List, Any
 
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.exc import IntegrityError, OperationalError
@@ -31,13 +15,21 @@ from schema import Base, OnyxEnrichment
 
 
 class EnrichmentEngine(BaseScript):
-    """Orchestrates the enrichment process using Attio and Onyx."""
+    """Orchestrates the enrichment process using Attio and Onyx.
+
+    Inherits from BaseScript for standardized configuration, logging,
+    and database access.
+    """
 
     def __init__(self) -> None:
         """Initializes the EnrichmentEngine with database and API clients."""
-        super().__init__(config_section='crm')
+        super().__init__(config_section='crm', name="EnrichmentEngine")
 
-        self.engine = create_engine(self.config.get("db_url"))
+        db_url = self.get_config_value("db_url")
+        if not db_url:
+            raise ValueError("Database URL not found in configuration.")
+
+        self.engine = create_engine(db_url)
         Base.metadata.create_all(self.engine)
         self.Session = sessionmaker(bind=self.engine)
 
@@ -45,9 +37,8 @@ class EnrichmentEngine(BaseScript):
         self.onyx = OnyxClient()
         self.api_references = load_docs().get("links", {})
 
-    def run_enrichment(self, batch_size: int = 50) -> None:
-        """
-        Orchestrates the full enrichment workflow with error handling.
+    def run(self, batch_size: int = 50) -> None:
+        """Orchestrates the full enrichment workflow with error handling.
 
         Args:
             batch_size: The number of contacts to process in each batch.
@@ -64,27 +55,28 @@ class EnrichmentEngine(BaseScript):
         except OnyxAPIError as e:
             self.logger.error(f"Onyx integration failed: {e}")
 
-    def _process_contact(self, contact: Dict) -> None:
-        """
-        Handles the full lifecycle for a single contact.
+    def _process_contact(self, contact: Dict[str, Any]) -> None:
+        """Handles the full lifecycle for a single contact.
 
         Args:
             contact: A dictionary containing the contact's information.
         """
         contact_id = contact.get("id")
+        if not contact_id:
+            self.logger.warning("Contact ID not found in contact data.")
+            return
         try:
             self.logger.debug(f"Processing contact {contact_id}")
             enriched_data = self.onyx.universal_search(contact)
             self._store_enrichment(contact_id, contact, enriched_data)
 
         except Exception as e:
-            self.logger.error(f"Failed to process {contact_id}: {e}")
+            self.logger.exception(f"Failed to process {contact_id}: {e}")
 
     def _store_enrichment(
-        self, contact_id: str, raw: Dict, enriched: Dict
+        self, contact_id: str, raw: Dict[str, Any], enriched: Dict[str, Any]
     ) -> None:
-        """
-        Stores the enrichment results with API reference metadata.
+        """Stores the enrichment results with API reference metadata.
 
         Args:
             contact_id: The ID of the contact.
@@ -106,9 +98,8 @@ class EnrichmentEngine(BaseScript):
         }
         self._save_to_postgres(record)
 
-    def _save_to_postgres(self, record: Dict) -> None:
-        """
-        Stores a record in the PostgreSQL database with improved error handling.
+    def _save_to_postgres(self, record: Dict[str, Any]) -> None:
+        """Stores a record in the PostgreSQL database with improved error handling.
 
         Args:
             record: A dictionary containing the record to store.
@@ -158,7 +149,7 @@ class EnrichmentEngine(BaseScript):
 
         except Exception as e:
             session.rollback()
-            self.logger.error(f"Unexpected database error: {e}")
+            self.logger.exception(f"Unexpected database error: {e}")
             self.logger.debug(f"Failed record: {record}")
             raise
 
