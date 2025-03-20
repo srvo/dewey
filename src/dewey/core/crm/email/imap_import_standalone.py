@@ -1,5 +1,6 @@
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection
+import argparse
 import email
 import imaplib
 import json
@@ -103,7 +104,7 @@ class IMAPSync(BaseScript):
             self.logger.error(f"IMAP connection failed: {e}")
             raise
 
-def decode_email_header(header: str) -> str:
+    def _decode_email_header(self, header: str) -> str:
     """Decode email header properly handling various encodings.
     
     Args:
@@ -126,7 +127,7 @@ def decode_email_header(header: str) -> str:
             decoded_parts.append(str(part))
     return ' '.join(decoded_parts)
 
-def decode_payload(payload: bytes, charset: Optional[str] = None) -> str:
+    def _decode_payload(self, payload: bytes, charset: Optional[str] = None) -> str:
     """
     Decode email payload bytes to string.
     
@@ -155,7 +156,7 @@ def decode_payload(payload: bytes, charset: Optional[str] = None) -> str:
             except UnicodeDecodeError:
                 return payload.decode("ascii", errors="replace")
 
-def get_message_structure(msg: Message) -> Dict[str, Any]:
+    def _get_message_structure(self, msg: Message) -> Dict[str, Any]:
     """
     Extract the structure of an email message for analysis.
     
@@ -193,7 +194,7 @@ def get_message_structure(msg: Message) -> Dict[str, Any]:
             "size": len(msg.as_bytes()) if hasattr(msg, "as_bytes") else 0,
         }
 
-def parse_email_message(email_data: bytes) -> Dict[str, Any]:
+    def _parse_email_message(self, email_data: bytes) -> Dict[str, Any]:
     """
     Parse email message data into a structured dictionary.
     
@@ -294,14 +295,14 @@ def parse_email_message(email_data: bytes) -> Dict[str, Any]:
         'raw_analysis': json.dumps({
             "headers": all_headers,
             "structure": get_message_structure(msg),
-        }, cls=EmailHeaderEncoder),  # Use the custom encoder for non-serializable objects
+        }, cls=self.EmailHeaderEncoder),  # Use the custom encoder for non-serializable objects
     }
     
     return result
 
-def fetch_emails(imap: imaplib.IMAP4_SSL, conn: duckdb.DuckDBPyConnection,
-                days_back: int = 7, max_emails: int = 100, batch_size: int = 10,
-                historical: bool = False, start_date: str = None, end_date: str = None) -> None:
+    def _fetch_emails(self, imap: imaplib.IMAP4_SSL, days_back: int = 7, max_emails: int = 100, 
+                     batch_size: int = 10, historical: bool = False, 
+                     start_date: str = None, end_date: str = None) -> None:
     """Fetch emails from Gmail using IMAP.
     
     Args:
@@ -422,7 +423,7 @@ def fetch_emails(imap: imaplib.IMAP4_SSL, conn: duckdb.DuckDBPyConnection,
         logger.error(f"Error in fetch_emails: {str(e)}", exc_info=True)
         raise
 
-def store_email(conn: duckdb.DuckDBPyConnection, email_data: Dict[str, Any], batch_id: str) -> bool:
+    def _store_email(self, email_data: Dict[str, Any], batch_id: str) -> bool:
     """Store email in the database.
     
     Args:
