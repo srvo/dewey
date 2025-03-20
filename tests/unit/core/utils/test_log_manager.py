@@ -47,4 +47,3 @@ def test_run(log_manager, caplog):
     """Test that the run method executes without errors and logs the expected message."""
     log_manager.run()
     assert "LogManager is running." in caplog.text
-
