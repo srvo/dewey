@@ -1,6 +1,9 @@
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection
+from dewey.core.db.utils import create_table, execute_query
+from dewey.llm.llm_utils import generate_text
 import logging
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional
 
 
 class DocsModule(BaseScript):
@@ -15,21 +18,50 @@ class DocsModule(BaseScript):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initializes the DocsModule."""
-        super().__init__(*args, **kwargs)
-        self.module_name = "DocsModule"  # Example: set module name
+        super().__init__(*args, config_section="docs_module", **kwargs)
+        self.module_name = "DocsModule"
 
     def run(self) -> None:
         """
         Executes the primary logic of the database documentation module.
+
+        This includes connecting to the database, retrieving table schemas,
+        generating documentation using an LLM, and updating the database
+        with the generated documentation.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            Exception: If any error occurs during the documentation process.
         """
         self.logger.info(f"Running {self.module_name}...")
 
-        # Example of accessing a configuration value
-        example_config_value = self.get_config_value("example_config", "default_value")
-        self.logger.info(f"Example config value: {example_config_value}")
+        try:
+            # Example of accessing a configuration value
+            example_config_value = self.get_config_value("example_config", "default_value")
+            self.logger.info(f"Example config value: {example_config_value}")
 
-        # Add your main script logic here
-        self.logger.info(f"{self.module_name} completed.")
+            # Connect to the database
+            with get_connection() as connection:
+                # Example: Execute a query
+                result = connection.execute("SELECT 1")
+                self.logger.info(f"Database query result: {result}")
+
+            # Example: Use LLM to generate documentation
+            prompt = "Write a brief description of the database schema."
+            documentation = generate_text(prompt, llm_client=self.llm_client)
+            self.logger.info(f"Generated documentation: {documentation}")
+
+            # Add your main script logic here
+            self.logger.info(f"{self.module_name} completed.")
+
+        except Exception as e:
+            self.logger.error(f"Error in {self.module_name}: {e}", exc_info=True)
+            raise
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
         """
@@ -43,3 +75,8 @@ class DocsModule(BaseScript):
             The configuration value, or the default value if the key is not found.
         """
         return super().get_config_value(key, default)
+
+
+if __name__ == "__main__":
+    docs_module = DocsModule()
+    docs_module.execute()
