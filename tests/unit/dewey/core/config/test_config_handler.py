@@ -1,8 +1,9 @@
 """Tests for dewey.core.config.config_handler."""
 
 import logging
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, mock_open
 from typing import Dict, Any
+import os
 
 import pytest
 import yaml
@@ -130,10 +131,12 @@ class TestConfigHandler:
 
     @patch("dewey.core.base_script.CONFIG_PATH", "nonexistent_config.yaml")
     @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    @patch("os.path.exists")
     def test_config_handler_file_not_found_error(
-        self, mock_init, caplog
+        self, mock_exists, mock_init, caplog
     ):
         """Test ConfigHandler when the configuration file is not found."""
+        mock_exists.return_value = False
         with pytest.raises(FileNotFoundError) as excinfo:
             config_handler = ConfigHandler()
             with caplog.at_level(logging.ERROR):
@@ -145,10 +148,12 @@ class TestConfigHandler:
     @patch("dewey.core.base_script.CONFIG_PATH", "invalid_config.yaml")
     @patch("dewey.core.base_script.yaml.safe_load", side_effect=yaml.YAMLError("Invalid YAML"))
     @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    @patch("os.path.exists")
     def test_config_handler_yaml_error(
-        self, mock_init, mock_safe_load, caplog
+        self, mock_exists, mock_init, mock_safe_load, caplog
     ):
         """Test ConfigHandler when the configuration file contains invalid YAML."""
+        mock_exists.return_value = True
         with pytest.raises(yaml.YAMLError) as excinfo:
             config_handler = ConfigHandler()
             with caplog.at_level(logging.ERROR):
@@ -156,3 +161,99 @@ class TestConfigHandler:
 
         assert "Error parsing YAML configuration: Invalid YAML" in caplog.text
         assert "Invalid YAML" in str(excinfo.value)
+
+    @patch("dewey.core.base_script.CONFIG_PATH", "test_config.yaml")
+    @patch("builtins.open", new_callable=mock_open, read_data="test_config_data")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    @patch("os.path.exists")
+    def test_config_handler_load_config_success(
+        self, mock_exists, mock_init, mock_open_file, caplog
+    ):
+        """Test ConfigHandler when the configuration file is loaded successfully."""
+        mock_exists.return_value = True
+        mock_open_file.return_value.read.return_value = "test_config_data"
+
+        config_handler = ConfigHandler()
+        with caplog.at_level(logging.DEBUG):
+            config_handler._load_config()
+
+        assert f"Loading configuration from {config_handler.CONFIG_PATH}" in caplog.text
+
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    def test_config_handler_name_override(self, mock_init):
+        """Test that the ConfigHandler name can be overridden."""
+        custom_name = "CustomConfigHandler"
+        config_handler = ConfigHandler()
+        config_handler.name = custom_name
+        assert config_handler.name == custom_name
+
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    def test_config_handler_description(self, mock_init):
+        """Test that the ConfigHandler description can be set."""
+        custom_description = "Custom description for ConfigHandler"
+        config_handler = ConfigHandler()
+        config_handler.description = custom_description
+        assert config_handler.description == custom_description
+
+    @patch("dewey.core.base_script.BaseScript.get_config_value")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    def test_get_value_empty_key(
+        self, mock_init, mock_get_config_value, config_handler: ConfigHandler
+    ):
+        """Test that get_value returns the default value when an empty key is provided."""
+        mock_get_config_value.return_value = "test_value"
+        default_value = "default_value"
+        value = config_handler.get_value("", default=default_value)
+        assert value == default_value
+
+    @patch("dewey.core.base_script.BaseScript.get_config_value")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    def test_get_value_empty_key_no_default(
+        self, mock_init, mock_get_config_value, config_handler: ConfigHandler
+    ):
+        """Test that get_value returns None when an empty key is provided and no default is provided."""
+        mock_get_config_value.return_value = "test_value"
+        value = config_handler.get_value("")
+        assert value is None
+
+    @patch("dewey.core.base_script.BaseScript.get_config_value")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    def test_get_value_nested_key_missing_intermediate(
+        self, mock_init, mock_get_config_value, config_handler: ConfigHandler
+    ):
+        """Test that get_value returns the default value when a nested key is missing an intermediate level."""
+        mock_get_config_value.return_value = {}
+        default_value = "default_value"
+        value = config_handler.get_value("missing.nested.key", default=default_value)
+        assert value == default_value
+
+    @patch("dewey.core.base_script.BaseScript.get_config_value")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    def test_get_value_nested_key_missing_intermediate_no_default(
+        self, mock_init, mock_get_config_value, config_handler: ConfigHandler
+    ):
+        """Test that get_value returns None when a nested key is missing an intermediate level and no default is provided."""
+        mock_get_config_value.return_value = {}
+        value = config_handler.get_value("missing.nested.key")
+        assert value is None
+
+    @patch("dewey.core.base_script.BaseScript.get_config_value")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    def test_get_value_nested_key_empty_intermediate(
+        self, mock_init, mock_get_config_value, config_handler: ConfigHandler
+    ):
+        """Test that get_value returns the default value when a nested key has an empty intermediate level."""
+        mock_get_config_value.return_value = {"": "intermediate_value"}
+        default_value = "default_value"
+        value = config_handler.get_value(".nested.key", default=default_value)
+        assert value == default_value
+
+    @patch("dewey.core.base_script.BaseScript.get_config_value")
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    def test_get_value_nested_key_empty_intermediate_no_default(
+        self, mock_init, mock_get_config_value, config_handler: ConfigHandler
+    ):
+        """Test that get_value returns None when a nested key has an empty intermediate level and no default is provided."""
+        mock_get_config_value.return_value = {"": "intermediate_value"}
+        value = config_handler.get_value(".nested.key")
+        assert value is None
