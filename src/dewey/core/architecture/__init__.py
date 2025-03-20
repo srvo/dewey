@@ -1,8 +1,4 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
-import logging
-from pathlib import Path
-from typing import Any, Optional
 
 
 class ArchitectureModule(BaseScript):
@@ -17,7 +13,9 @@ class ArchitectureModule(BaseScript):
         """
         Initializes the ArchitectureModule.
         """
-        super().__init__(config_section='architecture', requires_db=True, enable_llm=True)
+        super().__init__(
+            config_section="architecture", requires_db=True, enable_llm=True
+        )
         self.logger.info("Architecture module initialized.")
 
     def run(self) -> None:
@@ -32,7 +30,9 @@ class ArchitectureModule(BaseScript):
         """
         try:
             # Accessing a configuration value
-            example_config_value: str = self.get_config_value('example_config', default='default_value')
+            example_config_value: str = self.get_config_value(
+                "example_config", default="default_value"
+            )
             self.logger.info(f"Example config value: {example_config_value}")
 
             # Example: Using the database connection
@@ -59,4 +59,6 @@ class ArchitectureModule(BaseScript):
             self.logger.info("Architecture module run method executed.")
 
         except Exception as e:
-            self.logger.exception(f"An error occurred during architecture module execution: {e}")
+            self.logger.exception(
+                f"An error occurred during architecture module execution: {e}"
+            )
