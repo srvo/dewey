@@ -87,13 +87,17 @@ class DeepSeekEngine(BaseScript):
         self.logger.info(f"Analyzing content with template: {template}")
         prompt = self.templates.get(template)
         if not prompt:
-            self.logger.warning(f"Template '{template}' not found. Using default analysis.")
+            self.logger.warning(
+                f"Template '{template}' not found. Using default analysis."
+            )
             prompt = "Analyze the following content: {content}"
 
         formatted_prompt = prompt.format(content=content, **kwargs)
 
         try:
-            response = generate_response(prompt=formatted_prompt, llm_client=self.llm_client)
+            response = generate_response(
+                prompt=formatted_prompt, llm_client=self.llm_client
+            )
             analysis_results = {
                 "content": response,
                 "summary": "Test summary",  # Consider extracting summary from response
