@@ -1,14 +1,6 @@
 from dewey.core.base_script import BaseScript
 import time
 
-from dewey.core.db.utils import (
-    build_insert_query,
-    create_table,
-    drop_table,
-    execute_query,
-    get_table_schema,
-)
-
 
 class Monitor(BaseScript):
     """Monitors the database for changes."""
