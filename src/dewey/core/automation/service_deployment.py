@@ -2,7 +2,6 @@
 # Date: 2025-03-16T16:19:08.580204
 # Refactor Version: 1.0
 import json
-import os
 import shutil
 import tempfile
 from datetime import datetime
@@ -10,6 +9,11 @@ from pathlib import Path
 from typing import Any, Dict
 
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection
+from dewey.core.db.connection import get_connection as get_local_connection
+from dewey.core.db.connection import (
+    get_motherduck_connection as get_motherduck_connection,
+)
 from .models import Service
 
 
@@ -33,10 +37,10 @@ class ServiceDeployment(BaseScript):
         )
         self.service_manager = None  # Initialize to None, set in run()
         self.workspace_dir = (
-            Path(os.getenv("DEWEY_DIR", os.path.expanduser("~/dewey"))) / "workspace"
+            Path(self.get_config_value("paths.project_root")) / "workspace"
         )
         self.config_dir = (
-            Path(os.getenv("DEWEY_DIR", os.path.expanduser("~/dewey"))) / "config"
+            Path(self.get_config_value("paths.project_root")) / "config"
         )
         self.backups_dir = self.workspace_dir / "backups"
         self.backups_dir.mkdir(parents=True, exist_ok=True)
@@ -67,6 +71,7 @@ class ServiceDeployment(BaseScript):
             service.path.mkdir(exist_ok=True)
             service.config_path.mkdir(exist_ok=True)
         except OSError as e:
+            self.logger.error(f"Failed to create service directories: {e}")
             raise RuntimeError(f"Failed to create service directories: {e}")
 
     def deploy_service(self, service: Service, config: Dict[str, Any]) -> None:
@@ -104,6 +109,7 @@ class ServiceDeployment(BaseScript):
 
         for name, service_config in config.get("services", {}).items():
             if "image" not in service_config:
+                self.logger.error(f"Missing required 'image' field for service {name}")
                 raise KeyError(f"Missing required 'image' field for service {name}")
 
             compose_config["services"][name] = {
@@ -170,6 +176,7 @@ class ServiceDeployment(BaseScript):
 
             return archive_path
         except Exception as e:
+            self.logger.exception(f"Failed to create archive: {str(e)}")
             raise RuntimeError(f"Failed to create archive: {str(e)}") from e
 
     def backup_service(self, service: Service) -> Path:
@@ -206,6 +213,7 @@ class ServiceDeployment(BaseScript):
             FileNotFoundError: If backup file doesn't exist.
         """
         if not backup_path.exists():
+            self.logger.error(f"Backup file not found: {backup_path}")
             raise FileNotFoundError(f"Backup file not found: {backup_path}")
 
         try:
@@ -258,6 +266,7 @@ class ServiceDeployment(BaseScript):
             if service.config_path.exists():
                 shutil.copytree(service.config_path, config_backup, dirs_exist_ok=True)
         except Exception as e:
+            self.logger.exception(f"Failed to backup config: {str(e)}")
             raise RuntimeError(f"Failed to backup config: {str(e)}") from e
 
     def _backup_data_volumes(self, service: Service, backup_dir: Path) -> None:
@@ -303,6 +312,7 @@ class ServiceDeployment(BaseScript):
                     if Path(source_path).exists():
                         shutil.copytree(source_path, volume_path, dirs_exist_ok=True)
         except Exception as e:
+            self.logger.exception(f"Failed to backup data volumes: {str(e)}")
             raise RuntimeError(f"Failed to backup data volumes: {str(e)}") from e
 
     def _restore_config(self, service: Service, backup_dir: Path) -> None:
@@ -330,6 +340,7 @@ class ServiceDeployment(BaseScript):
                             item, service.config_path / item.name, dirs_exist_ok=True
                         )
         except Exception as e:
+            self.logger.exception(f"Failed to restore config: {str(e)}")
             raise RuntimeError(f"Failed to restore config: {str(e)}") from e
 
     def _restore_data_volumes(self, service: Service, backup_dir: Path) -> None:
@@ -372,6 +383,7 @@ class ServiceDeployment(BaseScript):
                 if mount_path.exists():
                     shutil.copytree(volume_backup, mount_path, dirs_exist_ok=True)
         except Exception as e:
+            self.logger.exception(f"Failed to restore data volumes: {str(e)}")
             raise RuntimeError(f"Failed to restore data volumes: {str(e)}") from e
 
     def _sync_config_to_remote(self, service: Service) -> None:
