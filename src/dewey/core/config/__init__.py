@@ -1,4 +1,5 @@
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
 from typing import Any
 
 
@@ -15,7 +16,7 @@ class ConfigManager(BaseScript):
         Args:
             config_section: The section in the configuration file to use.
         """
-        super().__init__(config_section=config_section)
+        super().__init__(config_section=config_section, requires_db=True)
         self.logger.info("ConfigManager initialized.")
 
     def run(self) -> None:
@@ -25,8 +26,23 @@ class ConfigManager(BaseScript):
         accessing a configuration value.
         """
         self.logger.info("ConfigManager running.")
-        example_value = self.get_config_value("example_key", "default_value")
+        example_value = self.get_config_value("utils.example_config", "default_value")
         self.logger.info(f"Example configuration value: {example_value}")
+
+        # Example of using the database connection
+        try:
+            with DatabaseConnection(self.config) as db_conn:
+                # Execute a query
+                result = db_conn.execute("SELECT value FROM example_table WHERE id = 1")
+                self.logger.info(f"Database query result: {result}")
+
+                # Example of using MotherDuck connection
+                md_conn = get_motherduck_connection()
+                md_result = md_conn.execute("SELECT 42")
+                self.logger.info(f"MotherDuck query result: {md_result}")
+
+        except Exception as e:
+            self.logger.error(f"Error during database operation: {e}")
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
         """Retrieves a configuration value.
