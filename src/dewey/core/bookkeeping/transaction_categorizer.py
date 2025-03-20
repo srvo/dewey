@@ -36,9 +36,7 @@ class JournalCategorizer(BaseScript):
             with open(rules_file) as f:
                 return json.load(f)
         except FileNotFoundError:
-            self.logger.exception(
-                f"Classification rules file not found: {rules_file}"
-            )
+            self.logger.exception(f"Classification rules file not found: {rules_file}")
             raise
         except json.JSONDecodeError as e:
             self.logger.exception(f"Failed to load classification rules: {str(e)}")
@@ -65,7 +63,9 @@ class JournalCategorizer(BaseScript):
             self.logger.exception(f"Backup failed for {file_path}: {str(e)}")
             raise
 
-    def classify_transaction(self, transaction: Dict[str, Any], rules: Dict[str, Any]) -> str:
+    def classify_transaction(
+        self, transaction: Dict[str, Any], rules: Dict[str, Any]
+    ) -> str:
         """Classify a transaction based on the provided rules.
 
         Args:
@@ -160,7 +160,9 @@ class JournalCategorizer(BaseScript):
         self.logger.info("Starting transaction categorization")
 
         base_dir = self.get_config_value("journal_base_dir", ".")
-        rules_file = self.get_config_value("classification_rules", "classification_rules.json")
+        rules_file = self.get_config_value(
+            "classification_rules", "classification_rules.json"
+        )
 
         self.logger.info(f"Using base directory: {base_dir}")
         self.logger.info(f"Using classification rules file: {rules_file}")
