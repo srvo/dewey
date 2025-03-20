@@ -1,8 +1,10 @@
 import os
 import re
 import sys
+from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import List
+from pathlib import Path
+from typing import List, Protocol, Match
 
 from dateutil.relativedelta import relativedelta
 
@@ -11,10 +13,62 @@ from dewey.core.db.connection import DatabaseConnection, get_connection
 from dewey.llm import llm_utils
 
 
+class FileSystemInterface(Protocol):
+    """Interface for file system operations."""
+
+    def exists(self, path: str) -> bool:
+        """Check if a path exists."""
+        ...
+
+    def open(self, path: str, mode: str = "r") -> object:
+        """Open a file."""
+        ...
+
+
+class RealFileSystem:
+    """Real file system operations."""
+
+    def exists(self, path: str) -> bool:
+        """Check if a path exists."""
+        return os.path.exists(path)
+
+    def open(self, path: str, mode: str = "r") -> object:
+        """Open a file."""
+        return open(path, mode)
+
+
+class DateCalculationInterface(Protocol):
+    """Interface for date calculation operations."""
+
+    def parse_date(self, date_string: str, format: str) -> datetime:
+        """Parse a date string into a datetime object."""
+        ...
+
+    def add_months(self, date_object: datetime, months: int) -> datetime:
+        """Add months to a datetime object."""
+        ...
+
+
+class RealDateCalculation:
+    """Real date calculation operations."""
+
+    def parse_date(self, date_string: str, format: str) -> datetime:
+        """Parse a date string into a datetime object."""
+        return datetime.strptime(date_string, format)
+
+    def add_months(self, date_object: datetime, months: int) -> datetime:
+        """Add months to a datetime object."""
+        return date_object + relativedelta(months=months)
+
+
 class AltruistIncomeProcessor(BaseScript):
     """Processes Altruist income for deferred revenue recognition."""
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        file_system: FileSystemInterface = RealFileSystem(),
+        date_calculation: DateCalculationInterface = RealDateCalculation(),
+    ) -> None:
         """Initializes the AltruistIncomeProcessor."""
         super().__init__(
             name="Altruist Income Processor",
@@ -23,8 +77,11 @@ class AltruistIncomeProcessor(BaseScript):
             requires_db=False,
             enable_llm=False,
         )
+        self.file_system = file_system
+        self.date_calculation = date_calculation
 
-    def _parse_altruist_transactions(self, journal_content: str) -> List[re.Match]:
+    @staticmethod
+    def _parse_altruist_transactions(journal_content: str) -> List[Match[str]]:
         """Parses the journal content to find Altruist income transactions.
 
         Args:
@@ -53,7 +110,7 @@ class AltruistIncomeProcessor(BaseScript):
         date_str = match.group(1)
         description = match.group(2).strip()
         amount = float(match.group(3))
-        date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+        date_obj = self.date_calculation.parse_date(date_str, "%Y-%m-%d")
         one_month_revenue = round(amount / 3, 2)
 
         transactions = []
@@ -76,7 +133,7 @@ class AltruistIncomeProcessor(BaseScript):
 
         # Generate fee income entries for the next two months
         for month in range(1, 3):
-            next_month = date_obj + relativedelta(months=month)
+            next_month = self.date_calculation.add_months(date_obj, month)
             next_month_str = next_month.strftime("%Y-%m-%d")
             fee_income_transaction = f"""
 {next_month_str} * Fee income from Altruist
@@ -104,12 +161,12 @@ class AltruistIncomeProcessor(BaseScript):
         Raises:
             FileNotFoundError: If the journal file does not exist.
         """
-        if not os.path.exists(journal_file):
+        if not self.file_system.exists(journal_file):
             self.logger.error(f"Could not find journal file at: {journal_file}")
             msg = f"Could not find journal file at: {journal_file}"
             raise FileNotFoundError(msg)
 
-        with open(journal_file) as f:
+        with self.file_system.open(journal_file) as f:
             journal_content = f.read()
 
         matches = self._parse_altruist_transactions(journal_content)
@@ -143,6 +200,26 @@ class AltruistIncomeProcessor(BaseScript):
 
         return output_content
 
+    def _run(self, journal_file: str) -> str:
+        """
+        Core logic of the Altruist income processing.
+
+        Args:
+            journal_file: The path to the journal file.
+
+        Returns:
+            The updated content of the journal file with the new transactions.
+        """
+        try:
+            output_content = self.process_altruist_income(journal_file)
+            return output_content
+        except FileNotFoundError:
+            self.logger.error("Journal file not found: %s", journal_file)
+            raise
+        except Exception as e:
+            self.logger.exception("An unexpected error occurred: %s", str(e))
+            raise
+
     def run(self) -> None:
         """Runs the Altruist income processing."""
         if len(sys.argv) != 2:
@@ -152,7 +229,7 @@ class AltruistIncomeProcessor(BaseScript):
         journal_file = os.path.abspath(sys.argv[1])
 
         try:
-            output_content = self.process_altruist_income(journal_file)
+            output_content = self._run(journal_file)
 
             backup_file = journal_file + ".bak"
             with open(journal_file) as src, open(backup_file, "w") as dst:
@@ -163,10 +240,8 @@ class AltruistIncomeProcessor(BaseScript):
             self.logger.info("Journal file updated successfully: %s", journal_file)
 
         except FileNotFoundError:
-            self.logger.error("Journal file not found: %s", journal_file)
             sys.exit(1)
-        except Exception as e:
-            self.logger.exception("An unexpected error occurred: %s", str(e))
+        except Exception:
             sys.exit(1)
 
 
