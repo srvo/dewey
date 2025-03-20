@@ -21,7 +21,11 @@ class CompanyAnalysisDeployment(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the CompanyAnalysisDeployment."""
-        super().__init__()
+        super().__init__(
+            name="CompanyAnalysisDeployment",
+            description="Deploys company analysis flow to Prefect.",
+            config_section="paths",  # Assuming relevant paths are under 'paths'
+        )
 
     def run(self, args: Optional[Any] = None) -> None:
         """Main execution method to deploy the company analysis flow.
@@ -44,8 +48,10 @@ class CompanyAnalysisDeployment(BaseScript):
             api_url = f"https://{prefect_user}:{prefect_pass}@{api_base.replace('https://', '')}"
 
         # Get paths from config
-        flows_path = Path(self.get_config_value("paths.prefect_flows_dir"))
-        config_path = Path(self.get_config_value("paths.prefect_configs_dir")) / "latest_config.json"
+        flows_path = Path(self.get_config_value("prefect_flows_dir"))
+        config_path = (
+            Path(self.get_config_value("prefect_configs_dir")) / "latest_config.json"
+        )
 
         # Create a local storage block for our flow code
         storage = LocalFileSystem(
@@ -86,7 +92,7 @@ class CompanyAnalysisDeployment(BaseScript):
 def main() -> None:
     """Main entry point."""
     deployment = CompanyAnalysisDeployment()
-    deployment.run(None)
+    deployment.execute()
 
 
 if __name__ == "__main__":
