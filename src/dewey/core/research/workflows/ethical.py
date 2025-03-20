@@ -1,30 +1,22 @@
 #!/usr/bin/env python3
 """Ethical analysis workflow for research."""
 
+import csv
 import json
 import logging
+import os
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
-import csv
-import os
 
+from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import get_connection
+from dewey.llm.llm_utils import get_llm_client
 from ..base_workflow import BaseWorkflow
 from ..engines import BaseEngine
-from tests.dewey.core.research.analysis.test_workflow_integration import ResearchOutputHandler
 from ...engines.deepseek import DeepSeekEngine
-from ...db.connection import get_connection
-from dewey.llm.llm_utils import get_llm_client
-from dewey.core.base_script import BaseScript
+from tests.dewey.core.research.analysis.test_workflow_integration import ResearchOutputHandler
 
-logger = logging.getLogger(__name__)
-
-    def run(self) -> None:
-        """
-        Run the script.
-        """
-        # TODO: Implement script logic here
-        raise NotImplementedError("The run method must be implemented")
 
 class EthicalAnalysisWorkflow(BaseScript, BaseWorkflow):
     """Workflow for analyzing companies from an ethical perspective."""
@@ -44,7 +36,13 @@ class EthicalAnalysisWorkflow(BaseScript, BaseWorkflow):
             analysis_engine: Optional analysis engine (defaults to DeepSeekEngine).
             output_handler: Optional output handler.
         """
-        super().__init__(data_dir)
+        super().__init__(
+            name="EthicalAnalysisWorkflow",
+            description="Workflow for analyzing companies from an ethical perspective.",
+            config_section="ethical_analysis",
+            requires_db=True,
+            enable_llm=True,
+        )
         self.data_dir = Path(data_dir)
         self.search_engine = search_engine or DeepSeekEngine()
         self.analysis_engine = analysis_engine or DeepSeekEngine()
@@ -53,7 +51,7 @@ class EthicalAnalysisWorkflow(BaseScript, BaseWorkflow):
         self.llm = get_llm_client()
         self.logger = logging.getLogger(__name__)
         self.setup_database()
-        
+
         # Add templates to analysis engine
         if self.analysis_engine:
             self.analysis_engine.add_template(
@@ -69,7 +67,7 @@ Please provide:
 4. Areas for improvement
 """,
             )
-            
+
             self.analysis_engine.add_template(
                 "risk_analysis",
                 """Assess the risks associated with {company_name} based on:
@@ -84,7 +82,7 @@ Please identify:
 5. Governance risks
 """,
             )
-        
+
         # Initialize statistics
         self.stats = {
             "companies_processed": 0,
@@ -112,7 +110,7 @@ Please identify:
             "controversies",
             "violations",
             "sustainability",
-            "corporate responsibility"
+            "corporate responsibility",
         ]
         return " ".join(query_parts)
 
@@ -139,7 +137,8 @@ Please identify:
             conn.execute("CREATE SEQUENCE IF NOT EXISTS research_analyses_id_seq")
 
             # Create research_searches table
-            conn.execute("""
+            conn.execute(
+                """
             CREATE TABLE IF NOT EXISTS research_searches (
                 id INTEGER PRIMARY KEY DEFAULT nextval('research_searches_id_seq'),
                 company_name TEXT NOT NULL,
@@ -147,10 +146,12 @@ Please identify:
                 num_results INTEGER DEFAULT 0,
                 timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-            """)
+            """
+            )
 
             # Create research_search_results table
-            conn.execute("""
+            conn.execute(
+                """
             CREATE TABLE IF NOT EXISTS research_search_results (
                 id INTEGER PRIMARY KEY DEFAULT nextval('research_search_results_id_seq'),
                 search_id INTEGER NOT NULL,
@@ -161,10 +162,12 @@ Please identify:
                 timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (search_id) REFERENCES research_searches(id)
             )
-            """)
+            """
+            )
 
             # Create research_analyses table
-            conn.execute("""
+            conn.execute(
+                """
             CREATE TABLE IF NOT EXISTS research_analyses (
                 id INTEGER PRIMARY KEY DEFAULT nextval('research_analyses_id_seq'),
                 company TEXT NOT NULL,
@@ -177,10 +180,18 @@ Please identify:
                 timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (search_id) REFERENCES research_searches(id)
             )
-            """)
+            """
+            )
 
     def analyze_company_profile(self, company: str) -> Optional[Dict[str, Any]]:
-        """Analyze a company's ethical profile."""
+        """Analyze a company's ethical profile.
+
+        Args:
+            company: The name of the company to analyze.
+
+        Returns:
+            A dictionary containing the analysis results, or None if an error occurred.
+        """
         try:
             # Search for company information
             search_results = self.search_engine.search(f"{company} ethical issues controversies")
@@ -189,26 +200,32 @@ Please identify:
 
             with get_connection(for_write=True) as conn:
                 # Insert search into database
-                result = conn.execute("""
+                result = conn.execute(
+                    """
                     INSERT INTO research_searches (company_name, query, num_results)
                     VALUES (?, ?, ?)
                     RETURNING id
-                """, [company, f"{company} ethical issues controversies", len(search_results)])
+                """,
+                    [company, f"{company} ethical issues controversies", len(search_results)],
+                )
                 search_id = result.fetchone()[0]
 
                 # Insert search results
                 for result in search_results:
-                    conn.execute("""
+                    conn.execute(
+                        """
                         INSERT INTO research_search_results 
                         (search_id, title, link, snippet, source)
                         VALUES (?, ?, ?, ?, ?)
-                    """, [
-                        search_id,
-                        result.get("title", ""),
-                        result.get("link", ""),
-                        result.get("snippet", ""),
-                        result.get("source", "")
-                    ])
+                    """,
+                        [
+                            search_id,
+                            result.get("title", ""),
+                            result.get("link", ""),
+                            result.get("snippet", ""),
+                            result.get("source", ""),
+                        ],
+                    )
 
             # Generate analysis using LLM
             prompt = f"""Analyze the ethical profile of {company} based on the following information:
@@ -226,25 +243,28 @@ Please provide:
 
             with get_connection(for_write=True) as conn:
                 # Insert analysis into database
-                conn.execute("""
+                conn.execute(
+                    """
                     INSERT INTO research_analyses 
                     (company, search_id, content, summary, historical_analysis, ethical_score, risk_level)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
-                """, [
-                    company,
-                    search_id,
-                    analysis,
-                    "",  # summary
-                    "",  # historical_analysis
-                    0.0,  # ethical_score
-                    0  # risk_level
-                ])
+                """,
+                    [
+                        company,
+                        search_id,
+                        analysis,
+                        "",  # summary
+                        "",  # historical_analysis
+                        0.0,  # ethical_score
+                        0,  # risk_level
+                    ],
+                )
 
             return {
                 "company": company,
                 "search_results": search_results,
                 "analysis": analysis,
-                "historical": ""  # historical
+                "historical": "",  # historical
             }
 
         except Exception as e:
@@ -261,7 +281,7 @@ Please provide:
             "total_results": 0,
             "total_snippet_words": 0,
             "total_analyses": 0,
-            "total_analysis_words": 0
+            "total_analysis_words": 0,
         }
 
         try:
@@ -288,28 +308,34 @@ Please provide:
 
                         with get_connection(for_write=True) as conn:
                             # Insert search into database
-                            result = conn.execute("""
+                            result = conn.execute(
+                                """
                                 INSERT INTO research_searches (company_name, query, num_results)
                                 VALUES (?, ?, ?)
                                 RETURNING id
-                            """, [company_name, query, len(search_results)])
+                            """,
+                                [company_name, query, len(search_results)],
+                            )
                             search_id = result.fetchone()[0]
 
                             # Insert search results
                             for result in search_results:
                                 if not isinstance(result, dict):
                                     continue
-                                conn.execute("""
+                                conn.execute(
+                                    """
                                     INSERT INTO research_search_results 
                                     (search_id, title, link, snippet, source)
                                     VALUES (?, ?, ?, ?, ?)
-                                """, [
-                                    search_id,
-                                    result.get("title", ""),
-                                    result.get("link", ""),
-                                    result.get("snippet", ""),
-                                    result.get("source", "")
-                                ])
+                                """,
+                                    [
+                                        search_id,
+                                        result.get("title", ""),
+                                        result.get("link", ""),
+                                        result.get("snippet", ""),
+                                        result.get("source", ""),
+                                    ],
+                                )
 
                         # Analyze results
                         analysis = self.analyze_company_profile(company_name)
@@ -317,8 +343,8 @@ Please provide:
                             # Update analysis stats
                             stats["total_analyses"] += 1
                             stats["total_analysis_words"] += (
-                                self.word_count(analysis.get("analysis", "")) +
-                                self.word_count(analysis.get("historical", ""))
+                                self.word_count(analysis.get("analysis", ""))
+                                + self.word_count(analysis.get("historical", ""))
                             )
 
                             # Save company data
@@ -335,13 +361,13 @@ Please provide:
                                                 "title": r.get("title", ""),
                                                 "link": r.get("link", ""),
                                                 "snippet": r.get("snippet", ""),
-                                                "source": r.get("source", "")
+                                                "source": r.get("source", ""),
                                             }
                                             for r in search_results
                                             if isinstance(r, dict)
                                         ]
-                                    }
-                                }
+                                    },
+                                },
                             }
                             companies.append(company_data)
 
@@ -358,17 +384,156 @@ Please provide:
                 "meta": {
                     "version": "1.0",
                     "timestamp": datetime.now().isoformat(),
-                    "stats": stats
+                    "stats": stats,
                 },
-                "companies": companies
+                "companies": companies,
             }
             self.output_handler.save_results(output_data, "analysis_results.json")
 
             return {
                 "stats": stats,
-                "results": companies
+                "results": companies,
             }
 
         except Exception as e:
             self.logger.error(f"Error reading companies file: {str(e)}")
-            raise 
+            raise
+
+    def run(self) -> Dict[str, Any]:
+        """Execute the workflow.
+
+        Args:
+            None
+
+        Returns:
+            A dictionary containing the statistics and results of the analysis.
+
+        Raises:
+            FileNotFoundError: If the companies file is not found.
+        """
+        data_dir = self.get_config_value("paths.data_dir", "/Users/srvo/dewey/data")
+        companies_file = os.path.join(data_dir, "companies.csv")
+        companies = []
+        stats = {
+            "companies_processed": 0,
+            "total_searches": 0,
+            "total_results": 0,
+            "total_snippet_words": 0,
+            "total_analyses": 0,
+            "total_analysis_words": 0,
+        }
+
+        try:
+            with open(companies_file) as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    company_name = row.get("Company", "Unknown")
+                    self.logger.info(f"Processing company: {company_name}")
+                    try:
+                        # Build and execute search query
+                        query = self.build_query(row)
+                        search_results = self.search_engine.search(query)
+
+                        # Ensure search_results is a list of dictionaries
+                        if not isinstance(search_results, list):
+                            search_results = []
+
+                        # Update search stats
+                        stats["total_searches"] += 1
+                        stats["total_results"] += len(search_results)
+                        for result in search_results:
+                            if isinstance(result, dict):
+                                stats["total_snippet_words"] += self.word_count(result.get("snippet", ""))
+
+                        with get_connection(for_write=True) as conn:
+                            # Insert search into database
+                            result = conn.execute(
+                                """
+                                INSERT INTO research_searches (company_name, query, num_results)
+                                VALUES (?, ?, ?)
+                                RETURNING id
+                            """,
+                                [company_name, query, len(search_results)],
+                            )
+                            search_id = result.fetchone()[0]
+
+                            # Insert search results
+                            for result in search_results:
+                                if not isinstance(result, dict):
+                                    continue
+                                conn.execute(
+                                    """
+                                    INSERT INTO research_search_results 
+                                    (search_id, title, link, snippet, source)
+                                    VALUES (?, ?, ?, ?, ?)
+                                """,
+                                    [
+                                        search_id,
+                                        result.get("title", ""),
+                                        result.get("link", ""),
+                                        result.get("snippet", ""),
+                                        result.get("source", ""),
+                                    ],
+                                )
+
+                        # Analyze results
+                        analysis = self.analyze_company_profile(company_name)
+                        if analysis:  # Only process if analysis was successful
+                            # Update analysis stats
+                            stats["total_analyses"] += 1
+                            stats["total_analysis_words"] += (
+                                self.word_count(analysis.get("analysis", ""))
+                                + self.word_count(analysis.get("historical", ""))
+                            )
+
+                            # Save company data
+                            company_data = {
+                                "company_name": company_name,
+                                "metadata": row,
+                                "analysis": {
+                                    "summary": analysis.get("summary", ""),
+                                    "content": analysis.get("analysis", ""),
+                                    "historical": analysis.get("historical", ""),
+                                    "evidence": {
+                                        "sources": [
+                                            {
+                                                "title": r.get("title", ""),
+                                                "link": r.get("link", ""),
+                                                "snippet": r.get("snippet", ""),
+                                                "source": r.get("source", ""),
+                                            }
+                                            for r in search_results
+                                            if isinstance(r, dict)
+                                        ]
+                                    },
+                                },
+                            }
+                            companies.append(company_data)
+
+                        stats["companies_processed"] += 1
+
+                    except Exception as e:
+                        self.logger.error(f"Error processing company: {str(e)}")
+                        # Still increment companies_processed for error recovery test
+                        stats["companies_processed"] += 1
+                        continue
+
+            # Save results to output file
+            output_data = {
+                "meta": {
+                    "version": "1.0",
+                    "timestamp": datetime.now().isoformat(),
+                    "stats": stats,
+                },
+                "companies": companies,
+            }
+            self.output_handler.save_results(output_data, "analysis_results.json")
+
+            return {
+                "stats": stats,
+                "results": companies,
+            }
+
+        except FileNotFoundError as e:
+            self.logger.error(f"Error reading companies file: {str(e)}")
+            raise
