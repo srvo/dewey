@@ -1,6 +1,23 @@
+from abc import ABC, abstractmethod
 from typing import Any, Optional
 
 from dewey.core.script import BaseScript
+
+
+class LoggerInterface(ABC):
+    """
+    An interface for logging functionality.
+    """
+
+    @abstractmethod
+    def info(self, message: str) -> None:
+        """Log an info message."""
+        pass
+
+    @abstractmethod
+    def error(self, message: str) -> None:
+        """Log an error message."""
+        pass
 
 
 class FormsModule(BaseScript):
@@ -13,15 +30,24 @@ class FormsModule(BaseScript):
     primary logic.
     """
 
-    def __init__(self, config_section: Optional[str] = None) -> None:
+    def __init__(self, config_section: Optional[str] = None, logger: Optional[LoggerInterface] = None) -> None:
         """
         Initializes the FormsModule with optional configuration.
 
         Args:
             config_section: The section in the dewey.yaml config file
                 to use for configuration.
+            logger: An optional logger instance.  If None, the default logger from BaseScript is used.
         """
         super().__init__(config_section=config_section)
+        self._logger = logger or self.logger  # Use injected logger or default
+
+    @property
+    def logger(self) -> LoggerInterface:
+        """
+        Returns the logger instance.
+        """
+        return self._logger
 
     def run(self) -> None:
         """
@@ -66,3 +92,4 @@ class FormsModule(BaseScript):
             value if the key is not found.
         """
         return super().get_config_value(key, default)
+
