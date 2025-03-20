@@ -1,28 +1,45 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pydantic import BaseModel
+
 from dewey.core.base_script import BaseScript
 
 
 class CRMContact(BaseModel):
     """Represents a CRM contact record."""
 
-    id: int | None = None
+    id: Optional[int] = None
     name: str
     email: str
-    phone: str | None = None
-    company: str | None = None
-    last_contacted: str | None = None
-    notes: str | None = None
+    phone: Optional[str] = None
+    company: Optional[str] = None
+    last_contacted: Optional[str] = None
+    notes: Optional[str] = None
 
 
 class MyScript(BaseScript):
-    def __init__(self):
-        super().__init__(config_section='db')
+    """
+    A sample script demonstrating Dewey conventions.
 
-    def run(self):
+    Inherits from BaseScript and showcases logging, configuration access,
+    and the run method.
+    """
+
+    def __init__(self) -> None:
+        """Initializes the MyScript class."""
+        super().__init__(config_section="db")
+
+    def run(self) -> None:
+        """
+        Executes the main logic of the script.
+
+        Logs messages and accesses configuration values.
+        """
         self.logger.info("Running the script...")
-        # Access configuration values using self.config
-        # Example: db_url = self.config.get('db_url')
+        # Access configuration values using self.get_config_value()
+        db_url = self.get_config_value("db_url")
+        self.logger.info(f"DB URL from config: {db_url}")
         # Implement your script logic here
         self.logger.info("Script completed.")
