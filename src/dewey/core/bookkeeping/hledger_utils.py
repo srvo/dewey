@@ -4,20 +4,62 @@ import re
 import subprocess
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Callable, Protocol
 
 from dewey.core.base_script import BaseScript
 
 
-class HledgerUpdater(BaseScript):
+class SubprocessRunnerInterface(Protocol):
+    """Interface for running subprocess commands."""
+
+    def __call__(
+        self,
+        args: list[str],
+        capture_output: bool = True,
+        text: bool = True,
+        check: bool = False,
+    ) -> subprocess.CompletedProcess:
+        ...
+
+
+class FileSystemInterface(Protocol):
+    """Interface for file system operations."""
+
+    def exists(self, path: Path | str) -> bool:
+        ...
+
+    def open(self, path: Path | str, mode: str = "r") -> Any:
+        ...
+
+
+class HledgerUpdaterInterface(Protocol):
+    """Interface for HledgerUpdater."""
+
+    def get_balance(self, account: str, date: str) -> Optional[str]:
+        ...
+
+    def update_opening_balances(self, year: int) -> None:
+        ...
+
+    def run(self) -> None:
+        ...
+
+
+class HledgerUpdater(BaseScript, HledgerUpdaterInterface):
     """Updates opening balances in hledger journal files.
 
     Inherits from BaseScript for standardized configuration and logging.
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        subprocess_runner: Optional[SubprocessRunnerInterface] = None,
+        fs: Optional[FileSystemInterface] = None,
+    ) -> None:
         """Initializes the HledgerUpdater with the 'bookkeeping' config section."""
         super().__init__(config_section="bookkeeping")
+        self._subprocess_runner = subprocess_runner or subprocess.run
+        self._fs = fs or PathFileSystem()
 
     def get_balance(self, account: str, date: str) -> Optional[str]:
         """Get the balance for a specific account at a given date.
@@ -32,7 +74,7 @@ class HledgerUpdater(BaseScript):
         try:
             self.logger.debug("🔍 Checking balance | account=%s date=%s", account, date)
             cmd = f"hledger -f all.journal bal {account} -e {date} --depth 1"
-            result = subprocess.run(
+            result = self._subprocess_runner(
                 cmd.split(),
                 capture_output=True,
                 text=True,
@@ -70,6 +112,29 @@ class HledgerUpdater(BaseScript):
             )
             return None
 
+    def _read_journal_file(self, journal_file: str) -> str:
+        """Reads the content of the journal file.
+
+        Args:
+            journal_file: The path to the journal file.
+
+        Returns:
+            The content of the journal file.
+        """
+        with self._fs.open(journal_file) as f:
+            content = f.read()
+        return content
+
+    def _write_journal_file(self, journal_file: str, content: str) -> None:
+        """Writes the content to the journal file.
+
+        Args:
+            journal_file: The path to the journal file.
+            content: The content to write to the file.
+        """
+        with self._fs.open(journal_file, "w") as f:
+            f.write(content)
+
     def update_opening_balances(self, year: int) -> None:
         """Update opening balances in the journal file for the specified year.
 
@@ -93,14 +158,13 @@ class HledgerUpdater(BaseScript):
                 return
 
             journal_file = f"{year}.journal"
-            if not Path(journal_file).exists():
+            if not self._fs.exists(journal_file):
                 self.logger.warning(
                     "Journal file %s does not exist. Skipping.", journal_file
                 )
                 return
 
-            with open(journal_file) as f:
-                content = f.read()
+            content = self._read_journal_file(journal_file)
 
             # Update the balances in the opening balance transaction
             content = re.sub(
@@ -114,8 +178,7 @@ class HledgerUpdater(BaseScript):
                 content,
             )
 
-            with open(journal_file, "w") as f:
-                f.write(content)
+            self._write_journal_file(journal_file, content)
             self.logger.info("✅ Updated opening balances for year %s", year)
 
         except Exception as e:
@@ -132,6 +195,18 @@ class HledgerUpdater(BaseScript):
         # Process years from start_year up to and including current year + 1
         for year in range(start_year, end_year + 1):
             self.update_opening_balances(year)
+
+
+class PathFileSystem:
+    """A real file system implementation using pathlib.Path."""
+
+    def exists(self, path: Path | str) -> bool:
+        """Check if a path exists."""
+        return Path(path).exists()
+
+    def open(self, path: Path | str, mode: str = "r"):
+        """Open a file."""
+        return open(path, mode)
 
 
 def main() -> None:
