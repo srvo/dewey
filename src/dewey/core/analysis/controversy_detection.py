@@ -25,10 +25,10 @@ class ControversyDetection(BaseScript):
                 to use for configuration. Defaults to None.
         """
         super().__init__(
-            config_section=config_section, 
+            config_section=config_section,
             name="ControversyDetection",
             requires_db=True,  # Assuming controversy detection might use a database
-            enable_llm=True     # Assuming controversy detection might use an LLM
+            enable_llm=True,  # Assuming controversy detection might use an LLM
         )
 
     def run(self, data: Any = None) -> Any:
