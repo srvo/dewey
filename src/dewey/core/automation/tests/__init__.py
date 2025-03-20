@@ -1,10 +1,24 @@
 import argparse
 import logging
-from typing import Any, Dict
+from abc import ABC, abstractmethod
+from typing import Any, Dict, Optional
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection
 from dewey.llm.llm_utils import LLMClient
+
+
+class LLMClientInterface(ABC):
+    """
+    An interface for LLM clients.
+    """
+
+    @abstractmethod
+    def generate_text(self, prompt: str) -> str:
+        """
+        Generates text based on the given prompt.
+        """
+        pass
 
 
 class DataAnalysisScript(BaseScript):
@@ -13,7 +27,11 @@ class DataAnalysisScript(BaseScript):
     and log the results.
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        db_connection: Optional[DatabaseConnection] = None,
+        llm_client: Optional[LLMClientInterface] = None,
+    ) -> None:
         """
         Initializes the DataAnalysisScript with configurations for database
         and LLM.
@@ -25,8 +43,10 @@ class DataAnalysisScript(BaseScript):
             requires_db=True,
             enable_llm=True,
         )
+        self.db_connection = db_connection or DatabaseConnection(self.config)
+        self.llm_client = llm_client or LLMClient()
 
-    def fetch_data_from_db(self) -> Dict[str, Any]:
+    def _fetch_data(self) -> Dict[str, Any]:
         """
         Fetches data from the database.
 
@@ -36,20 +56,61 @@ class DataAnalysisScript(BaseScript):
         Raises:
             Exception: If there is an error fetching data from the database.
         """
-        self.logger.info("Fetching data from database...")
         try:
-            with DatabaseConnection(self.config) as db_conn:
+            with self.db_connection as db_conn:
                 # Assuming you have a table named 'data_table'
                 result = db_conn.execute("SELECT * FROM example_table")
                 data = {"data": result.fetchall()}  # Fetch all rows
                 return data
         except Exception as e:
+            raise
+
+    def fetch_data_from_db(self) -> Dict[str, Any]:
+        """
+        Fetches data from the database and logs the action.
+
+        Returns:
+            A dictionary containing the fetched data.
+
+        Raises:
+            Exception: If there is an error fetching data from the database.
+        """
+        self.logger.info("Fetching data from database...")
+        try:
+            data = self._fetch_data()
+            return data
+        except Exception as e:
             self.logger.error(f"Error fetching data from database: {e}")
+            raise
+
+    def _analyze_data(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Analyzes the given data using an LLM.
+
+        Args:
+            data: A dictionary containing the data to be analyzed.
+
+        Returns:
+            A dictionary containing the analysis results.
+
+        Raises:
+            ValueError: If the LLM client is not initialized.
+            Exception: If there is an error analyzing data with the LLM.
+        """
+        if not self.llm_client:
+            raise ValueError("LLM client is not initialized.")
+
+        try:
+            prompt = f"Analyze this data: {data}"
+            analysis_result = self.llm_client.generate_text(prompt)
+            analysis = {"analysis": analysis_result}
+            return analysis
+        except Exception as e:
             raise
 
     def analyze_data_with_llm(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Analyzes the given data using an LLM.
+        Analyzes the given data using an LLM and logs the action.
 
         Args:
             data: A dictionary containing the data to be analyzed.
@@ -62,12 +123,7 @@ class DataAnalysisScript(BaseScript):
         """
         self.logger.info("Analyzing data with LLM...")
         try:
-            if not self.llm_client:
-                raise ValueError("LLM client is not initialized.")
-
-            prompt = f"Analyze this data: {data}"
-            analysis_result = self.llm_client.generate_text(prompt)
-            analysis = {"analysis": analysis_result}
+            analysis = self._analyze_data(data)
             return analysis
         except Exception as e:
             self.logger.error(f"Error analyzing data with LLM: {e}")
