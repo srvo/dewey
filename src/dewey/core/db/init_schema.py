@@ -1,6 +1,4 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
-from dewey.core.db import utils as db_utils
 
 
 class InitSchema(BaseScript):
@@ -13,7 +11,7 @@ class InitSchema(BaseScript):
 
     def __init__(self):
         """Initializes the InitSchema class."""
-        super().__init__(config_section='init_schema', requires_db=True)
+        super().__init__(config_section="init_schema", requires_db=True)
 
     def run(self) -> None:
         """Runs the database schema initialization.
