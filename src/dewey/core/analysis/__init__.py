@@ -1,5 +1,8 @@
 from dewey.core.base_script import BaseScript
-from typing import Optional
+from dewey.core.db.connection import DatabaseConnection, get_connection
+from dewey.llm.llm_utils import generate
+from typing import Any, Dict, Optional
+import sys
 
 
 class AnalysisScript(BaseScript):
@@ -55,18 +58,21 @@ class AnalysisScript(BaseScript):
         Abstract method to be implemented by subclasses.
 
         This method contains the core logic of the analysis script.
+
+        Raises:
+            NotImplementedError: If the method is not implemented in a subclass.
         """
         raise NotImplementedError("Subclasses must implement the run method.")
 
 
 if __name__ == "__main__":
-    # Example usage (replace with your actual script logic)
+
     class MyAnalysisScript(AnalysisScript):
         """
         Example analysis script.
         """
 
-        def __init__(self):
+        def __init__(self) -> None:
             """Function __init__."""
             super().__init__(
                 name="MyAnalysisScript",
@@ -82,7 +88,7 @@ if __name__ == "__main__":
             """
             self.logger.info("Running MyAnalysisScript")
             # Access configuration values
-            example_value = self.get_config_value("example_key", "default_value")
+            example_value = self.get_config_value("utils.example_config", "default_value")
             self.logger.info(f"Example config value: {example_value}")
 
             # Access database connection
@@ -100,7 +106,7 @@ if __name__ == "__main__":
             # Access LLM client
             if self.llm_client:
                 try:
-                    response = self.llm_client.generate(prompt="Hello, LLM!")
+                    response = generate(llm_client=self.llm_client, prompt="Hello, LLM!")
                     self.logger.info(f"LLM response: {response}")
                 except Exception as e:
                     self.logger.error(f"Error accessing LLM: {e}")
