@@ -52,3 +52,4 @@ def test_run(log_manager, caplog):
 def test_execute(log_manager):
     """Test that execute method runs without errors."""
     log_manager.execute()
+
