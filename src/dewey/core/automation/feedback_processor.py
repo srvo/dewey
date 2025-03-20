@@ -124,12 +124,7 @@ class FeedbackProcessor(BaseScript):
         Returns:
             Dictionary of preferences.
         """
-        result = conn.execute(
-            "SELECT config FROM preferences WHERE key = 'latest'"
-        ).fetchone()
-        return result[0] if result else {"override_rules": []}
-
-    def save_feedback(self, conn: duckdb.DuckDBPyConnection, feedback_data: List[Dict]) -> None:
+        result=None, conn: duckdb.DuckDBPyConnection, feedback_data: List[Dict]) -> None:
         """Save feedback entries to database.
 
         Args:
@@ -143,15 +138,8 @@ class FeedbackProcessor(BaseScript):
                 INSERT OR REPLACE INTO feedback 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """, [
-                entry['msg_id'],
-                entry.get('subject'),
-                entry.get('assigned_priority'),
-                entry.get('feedback_comments'),
-                # Clamp priority values between 0-4 and handle invalid types
-                max(0, min(int(entry.get('suggested_priority', entry.get('assigned_priority'))), 4)),
-                entry.get('add_to_topics'),
-                entry.get('add_to_source'),
-                entry.get('timestamp')
+                entry['msg_id'], entry.get('subject'), entry.get('assigned_priority'), entry.get('feedback_comments'), # Clamp priority values between 0-4 and handle invalid types
+                max(0, min(int(entry.get('suggested_priority', entry.get('assigned_priority'))), 4)), entry.get('add_to_topics'), entry.get('add_to_source'), entry.get('timestamp')
             ])
         conn.execute("COMMIT")
 
@@ -166,9 +154,7 @@ class FeedbackProcessor(BaseScript):
             """
             INSERT OR REPLACE INTO preferences (key, config)
             VALUES ('latest', ?)
-        """,
-            [json.dumps(preferences)],
-        )
+        """, [json.dumps(preferences)], )
 
     def generate_feedback_json(
         self, feedback_text: str, msg_id: str, subject: str, assigned_priority: int
@@ -180,14 +166,7 @@ class FeedbackProcessor(BaseScript):
         feedback_lower = feedback_text.lower()
         if "unsubscribe" in feedback_lower:
             return {
-                "msg_id": msg_id,
-                "subject": subject,
-                "assigned_priority": assigned_priority,
-                "feedback_comments": "Automatic priority cap at 2 due to unsubscribe mention",
-                "suggested_priority": min(assigned_priority, 2),
-                "add_to_topics": None,
-                "add_to_source": None,
-                "timestamp": time.time()
+                "msg_id": msg_id, "subject": subject, "assigned_priority": assigned_priority, "feedback_comments": "Automatic priority cap at 2 due to unsubscribe mention", "suggested_priority": min(assigned_priority, 2), "add_to_topics": None, "add_to_source": None, "timestamp": time.time()
             }
 
         prompt = f"""
@@ -205,14 +184,7 @@ Output Requirements:
 Return a JSON object with the following fields:
 
 {{
-    "msg_id": "auto-generated-id",
-    "subject": "optional description",
-    "assigned_priority": 0,
-    "feedback_comments": "cleaned feedback summary",
-    "suggested_priority": null,
-    "add_to_topics": null,
-    "add_to_source": null,
-    "timestamp": 1710300000.123
+    "msg_id": "auto-generated-id", "subject": "optional description", "assigned_priority": 0, "feedback_comments": "cleaned feedback summary", "suggested_priority": null, "add_to_topics": null, "add_to_source": null, "timestamp": 1710300000.123
 }}
 
 Key requirements:
@@ -224,15 +196,7 @@ Key requirements:
 
 Failure to follow these requirements will cause critical system errors. Always return pure JSON.
 """
-        deepinfra_api_key = self.get_config_value("llm.providers.deepinfra.api_key")
-        if not deepinfra_api_key:
-            self.logger.error("DEEPINFRA_API_KEY environment variable not set")
-            self.logger.error("1. Get your API key from https://deepinfra.com")
-            self.logger.error("2. Run: export DEEPINFRA_API_KEY='your-key-here'")
-            return {}
-
-        try:
-            response_content = generate_json(prompt, self.llm_client)
+        deepinfra_api_key=None, self.llm_client)
             try:
                 feedback_json = json.loads(response_content.strip())
                 feedback_json["timestamp"] = time.time()
@@ -247,6 +211,109 @@ Failure to follow these requirements will cause critical system errors. Always r
             return {}
 
     def suggest_rule_changes(self, feedback_data: List[Dict], preferences: Dict) -> List[Dict]:
+        """Analyzes feedback and suggests changes to preferences.
+
+        Args:
+            feedback_data: List of feedback entries.
+            preferences: Dictionary of preferences.
+
+        Returns:
+            List of suggested changes.
+        """
+        suggested_changes=None, subject, and feedback
+            feedback_comment = entry.get("feedback_comments", "").lower()
+            subject = entry.get("subject", "").lower()
+            assigned_priority = int(entry.get("assigned_priority"))
+            suggested_priority = entry.get("suggested_priority")
+            add_to_topics = entry.get("add_to_topics")
+            add_to_source = entry.get("add_to_source")
+
+            # check if there is a discrepancy
+            if assigned_priority != suggested_priority and suggested_priority is not None:
+                discrepancy_key = (assigned_priority, suggested_priority)
+                discrepancy_counts[discrepancy_key] += 1
+
+                # check if keywords are in topics or source
+                if add_to_topics:
+                    for keyword in add_to_topics:
+                        # Suggest adding to topics
+                        if keyword not in topic_suggestions:
+                            topic_suggestions[keyword] = {
+                                "count": 0, "suggested_priority": suggested_priority, }
+                        topic_suggestions[keyword]["count"] += 1
+                        topic_suggestions[keyword][
+                            "suggested_priority"
+                        ] = suggested_priority  # Update if higher
+
+                # Suggest adding to source
+                if add_to_source:
+                    if add_to_source not in source_suggestions:
+                        source_suggestions[add_to_source] = {
+                            "count": 0, "suggested_priority": suggested_priority, }
+                    source_suggestions[add_to_source]["count"] += 1
+                    source_suggestions[add_to_source][
+                        "suggested_priority"
+                    ] = suggested_priority  # Update if higher
+        # Output the most common discrepancies
+        self.logger.info(f"\nMost Common Discrepancies: {discrepancy_counts.most_common()}")
+
+        # 3.  Suggest *new* override rules.  This is the most important part.
+        for topic, suggestion in topic_suggestions.items():
+            if conn: duckdb.DuckDBPyConnection) -> Dict:
+        """Load preferences from database.
+
+        Args:
+            conn: DuckDB connection object.
+
+        Returns:
+            Dictionary of preferences.
+        """
+        result is None:
+                conn: duckdb.DuckDBPyConnection) -> Dict:
+        """Load preferences from database.
+
+        Args:
+            conn: DuckDB connection object.
+
+        Returns:
+            Dictionary of preferences.
+        """
+        result = conn.execute(
+            "SELECT config FROM preferences WHERE key = 'latest'"
+        ).fetchone()
+        return result[0] if result else {"override_rules": []}
+
+    def save_feedback(self
+            if use `null`
+
+Failure to follow these requirements will cause critical system errors. Always return pure JSON.
+"""
+        deepinfra_api_key is None:
+                use `null`
+
+Failure to follow these requirements will cause critical system errors. Always return pure JSON.
+"""
+        deepinfra_api_key = self.get_config_value("llm.providers.deepinfra.api_key")
+        if not deepinfra_api_key:
+            self.logger.error("DEEPINFRA_API_KEY environment variable not set")
+            self.logger.error("1. Get your API key from https://deepinfra.com")
+            self.logger.error("2. Run: export DEEPINFRA_API_KEY='your-key-here'")
+            return {}
+
+        try:
+            response_content = generate_json(prompt
+            if preferences: Dict) -> List[Dict]:
+        """Analyzes feedback and suggests changes to preferences.
+
+        Args:
+            feedback_data: List of feedback entries.
+            preferences: Dictionary of preferences.
+
+        Returns:
+            List of suggested changes.
+        """
+        suggested_changes is None:
+                preferences: Dict) -> List[Dict]:
         """Analyzes feedback and suggests changes to preferences.
 
         Args:
@@ -276,49 +343,7 @@ Failure to follow these requirements will cause critical system errors. Always r
         for entry in feedback_data:
             if not entry:  # skip if empty
                 continue
-            # extract comment, subject, and feedback
-            feedback_comment = entry.get("feedback_comments", "").lower()
-            subject = entry.get("subject", "").lower()
-            assigned_priority = int(entry.get("assigned_priority"))
-            suggested_priority = entry.get("suggested_priority")
-            add_to_topics = entry.get("add_to_topics")
-            add_to_source = entry.get("add_to_source")
-
-            # check if there is a discrepancy
-            if assigned_priority != suggested_priority and suggested_priority is not None:
-                discrepancy_key = (assigned_priority, suggested_priority)
-                discrepancy_counts[discrepancy_key] += 1
-
-                # check if keywords are in topics or source
-                if add_to_topics:
-                    for keyword in add_to_topics:
-                        # Suggest adding to topics
-                        if keyword not in topic_suggestions:
-                            topic_suggestions[keyword] = {
-                                "count": 0,
-                                "suggested_priority": suggested_priority,
-                            }
-                        topic_suggestions[keyword]["count"] += 1
-                        topic_suggestions[keyword][
-                            "suggested_priority"
-                        ] = suggested_priority  # Update if higher
-
-                # Suggest adding to source
-                if add_to_source:
-                    if add_to_source not in source_suggestions:
-                        source_suggestions[add_to_source] = {
-                            "count": 0,
-                            "suggested_priority": suggested_priority,
-                        }
-                    source_suggestions[add_to_source]["count"] += 1
-                    source_suggestions[add_to_source][
-                        "suggested_priority"
-                    ] = suggested_priority  # Update if higher
-        # Output the most common discrepancies
-        self.logger.info(f"\nMost Common Discrepancies: {discrepancy_counts.most_common()}")
-
-        # 3.  Suggest *new* override rules.  This is the most important part.
-        for topic, suggestion in topic_suggestions.items():
+            # extract comment
             if suggestion["count"] >= 3:  # Require at least 3 occurrences
                 suggested_changes.append(
                     {
