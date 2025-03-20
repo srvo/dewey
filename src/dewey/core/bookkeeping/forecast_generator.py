@@ -1,6 +1,7 @@
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any, Dict, Tuple
+import sys
 
 from dateutil.relativedelta import relativedelta
 
@@ -169,18 +170,21 @@ account Expenses:Hosting:Mormair_E650
 
         lease_income_entry = (
             f"{current_date.strftime('%Y-%m-%d')} Lease income - Mormair_E650\n"
-            f"    Assets:Cash                          £{gross_revenue - revenue_share_amount - hosting_fee:.2f}\n"
+            f"    Assets:Cash                          £{gross_revenue - "
+            f"revenue_share_amount - hosting_fee:.2f}\n"
             f"    Income:Lease:Mormair_E650          £-{gross_revenue:.2f}\n\n"
         )
 
         revenue_share_payment_entry = (
-            f"{current_date.strftime('%Y-%m-%d')} Revenue share payment - Mormair_E650\n"
+            f"{current_date.strftime('%Y-%m-%d')} Revenue share payment - "
+            f"Mormair_E650\n"
             f"    Expenses:RevenueShare:Mormair_E650  £{revenue_share_amount:.2f}\n"
             f"    Assets:Cash                           £-{revenue_share_amount:.2f}\n\n"
         )
 
         hosting_fee_payment_entry = (
-            f"{current_date.strftime('%Y-%m-%d')} Hosting fee payment - Mormair_E650\n"
+            f"{current_date.strftime('%Y-%m-%d')} Hosting fee payment - "
+            f"Mormair_E650\n"
             f"    Expenses:Hosting:Mormair_E650        £{hosting_fee:.2f}\n"
             f"    Assets:Cash                           £-{hosting_fee:.2f}\n\n"
         )
