@@ -1,8 +1,6 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
-from dewey.core.db import utils as db_utils
-from dewey.llm import llm_utils
-from typing import Any, Dict, Optional
+from dewey.core.db.connection import get_connection
+from typing import Optional
 
 
 class ConsolidateDatabases(BaseScript):
@@ -13,7 +11,7 @@ class ConsolidateDatabases(BaseScript):
     consolidating data from multiple source databases into a target database.
     """
 
-    def __init__(self, config_section: Optional[str] = 'consolidate_databases') -> None:
+    def __init__(self, config_section: Optional[str] = "consolidate_databases") -> None:
         """
         Initializes the ConsolidateDatabases class.
 
@@ -34,8 +32,8 @@ class ConsolidateDatabases(BaseScript):
         """
         self.logger.info("Starting database consolidation process.")
 
-        source_db_url = self.get_config_value('source_db_url')
-        target_db_url = self.get_config_value('target_db_url')
+        source_db_url = self.get_config_value("source_db_url")
+        target_db_url = self.get_config_value("target_db_url")
 
         if not source_db_url or not target_db_url:
             self.logger.error("Source or target database URL not configured.")
@@ -46,10 +44,14 @@ class ConsolidateDatabases(BaseScript):
 
         try:
             # Establish connections to source and target databases
-            with get_connection({'connection_string': source_db_url}) as source_conn, \
-                    get_connection({'connection_string': target_db_url}) as target_conn:
+            with (
+                get_connection({"connection_string": source_db_url}) as source_conn,
+                get_connection({"connection_string": target_db_url}) as target_conn,
+            ):
 
-                self.logger.info("Successfully connected to source and target databases.")
+                self.logger.info(
+                    "Successfully connected to source and target databases."
+                )
 
                 # Example of using db_utils for schema operations
                 # Assuming you have a function to get the schema from the source database
