@@ -1,35 +1,33 @@
-import logging
 import os
 import re
 import sys
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 from typing import List
-import re
+
+from dateutil.relativedelta import relativedelta
 
 from dewey.core.base_script import BaseScript
-
-# File header: Processes Altruist income for deferred revenue recognition.
 
 
 class AltruistIncomeProcessor(BaseScript):
     """Processes Altruist income for deferred revenue recognition."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initializes the AltruistIncomeProcessor."""
-        super().__init__(config_section='bookkeeping')
+        super().__init__(
+            name="Altruist Income Processor",
+            description="Processes Altruist income for deferred revenue recognition.",
+            config_section="bookkeeping",
+        )
 
     def _parse_altruist_transactions(self, journal_content: str) -> List[re.Match]:
         """Parses the journal content to find Altruist income transactions.
 
         Args:
-        ----
             journal_content: The content of the journal file as a string.
 
         Returns:
-        -------
             A list of match objects, each representing an Altruist income transaction.
-
         """
         transaction_regex = re.compile(
             r"(\d{4}-\d{2}-\d{2})\s+"  # Date (YYYY-MM-DD)
@@ -43,13 +41,10 @@ class AltruistIncomeProcessor(BaseScript):
         """Generates deferred revenue and fee income transactions for a given Altruist transaction.
 
         Args:
-        ----
             match: A match object representing an Altruist income transaction.
 
         Returns:
-        -------
             A list of transaction strings to be added to the journal.
-
         """
         date_str = match.group(1)
         description = match.group(2).strip()
@@ -97,17 +92,13 @@ class AltruistIncomeProcessor(BaseScript):
         in the quarter.
 
         Args:
-        ----
             journal_file: The path to the journal file.
 
         Returns:
-        -------
             The updated content of the journal file with the new transactions.
 
         Raises:
-        ------
             FileNotFoundError: If the journal file does not exist.
-
         """
         if not os.path.exists(journal_file):
             self.logger.error(f"Could not find journal file at: {journal_file}")
@@ -148,9 +139,10 @@ class AltruistIncomeProcessor(BaseScript):
 
         return output_content
 
-    def run(self):
+    def run(self) -> None:
         """Runs the Altruist income processing."""
         if len(sys.argv) != 2:
+            self.logger.error("Usage: python script.py <journal_file>")
             sys.exit(1)
 
         journal_file = os.path.abspath(sys.argv[1])
@@ -176,4 +168,4 @@ class AltruistIncomeProcessor(BaseScript):
 
 if __name__ == "__main__":
     processor = AltruistIncomeProcessor()
-    processor.run()
+    processor.execute()
