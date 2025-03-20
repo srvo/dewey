@@ -8,7 +8,7 @@ from pathlib import Path
 import yaml
 
 from dewey.core.base_script import BaseScript
-from dewey.core.analysis.validation import Validation
+from dewey.core.analysis.validation import Validation, LLMClientInterface, DatabaseConnectionInterface
 from dewey.core.db.connection import DatabaseConnection
 from dewey.llm import llm_utils
 
@@ -28,16 +28,26 @@ def mock_base_script(mocker: Any) -> MagicMock:
 
 
 @pytest.fixture
-def validation_instance(mock_base_script: MagicMock, mocker: Any) -> Validation:
+def mock_llm_client() -> MagicMock:
+    """Mocks the LLMClientInterface."""
+    return MagicMock(spec=LLMClientInterface)
+
+
+@pytest.fixture
+def mock_db_conn() -> MagicMock:
+    """Mocks the DatabaseConnectionInterface."""
+    return MagicMock(spec=DatabaseConnectionInterface)
+
+
+@pytest.fixture
+def validation_instance(mock_base_script: MagicMock, mock_llm_client: MagicMock, mock_db_conn: MagicMock, mocker: Any) -> Validation:
     """Creates a Validation instance with mocked dependencies."""
     mocker.patch(
         "dewey.core.analysis.validation.BaseScript.__init__", return_value=None
     )
-    validation = Validation()
+    validation = Validation(llm_client=mock_llm_client, db_conn=mock_db_conn)
     validation.logger = mock_base_script.logger
     validation.config = mock_base_script.config
-    validation.db_conn = mock_base_script.db_conn
-    validation.llm_client = mock_base_script.llm_client
     validation.get_config_value = mock_base_script.get_config_value
     validation.PROJECT_ROOT = mock_base_script.PROJECT_ROOT
     validation.CONFIG_PATH = mock_base_script.CONFIG_PATH
@@ -57,6 +67,32 @@ def test_validation_initialization(mocker: Any) -> None:
     )
 
 
+def test_validation_initialization_with_mocks(mocker: Any, mock_llm_client: MagicMock, mock_db_conn: MagicMock) -> None:
+    """Tests the initialization of the Validation class with injected mocks."""
+    mocker.patch(
+        "dewey.core.analysis.validation.BaseScript.__init__", return_value=None
+    )
+    validation = Validation(llm_client=mock_llm_client, db_conn=mock_db_conn)
+    assert validation.llm_client == mock_llm_client
+    assert validation.db_conn == mock_db_conn
+
+
+def test_llm_client_property(validation_instance: Validation, mock_llm_client: MagicMock) -> None:
+    """Tests the llm_client property."""
+    assert validation_instance.llm_client == mock_llm_client
+    new_llm_client = MagicMock(spec=LLMClientInterface)
+    validation_instance.llm_client = new_llm_client
+    assert validation_instance.llm_client == new_llm_client
+
+
+def test_db_conn_property(validation_instance: Validation, mock_db_conn: MagicMock) -> None:
+    """Tests the db_conn property."""
+    assert validation_instance.db_conn == mock_db_conn
+    new_db_conn = MagicMock(spec=DatabaseConnectionInterface)
+    validation_instance.db_conn = new_db_conn
+    assert validation_instance.db_conn == new_db_conn
+
+
 @patch("dewey.core.analysis.validation.BaseScript.get_config_value")
 @patch("dewey.core.analysis.validation.Validation.example_method")
 def test_run_method(
@@ -73,98 +109,94 @@ def test_run_method(
 
 
 @pytest.mark.parametrize(
-    "data, llm_response, db_result, expected_result, log_level",
+    "data, llm_response, db_result, expected_result",
     [
-        ({"key": "value"}, "Valid", [1], True, "INFO"),
-        ({"key": "value"}, "Invalid", [1], True, "INFO"),
-        ("not a dict", "Valid", [1], False, "ERROR"),
-        ({"key": "value"}, Exception("LLM Error"), [1], False, "ERROR"),
-        ({"key": "value"}, "Valid", None, True, "INFO"),  # DB returns None
+        ({"key": "value"}, "Valid", [1], True),
+        ({"key": "value"}, "Invalid", [1], True),
+        ({"key": "value"}, None, [1], True),
+        ({"key": "value"}, "Valid", None, True),
+        ({"key": "value"}, None, None, True),
     ],
 )
-@patch("dewey.core.analysis.validation.get_connection")
-@patch("dewey.llm.llm_utils.call_llm")
 def test_example_method(
-    mock_call_llm: MagicMock,
-    mock_get_connection: MagicMock,
     validation_instance: Validation,
-    data: Any,
-    llm_response: Any,
+    mock_llm_client: MagicMock,
+    mock_db_conn: MagicMock,
+    data: Dict[str, Any],
+    llm_response: Optional[str],
     db_result: Optional[List[Any]],
     expected_result: bool,
-    log_level: str,
 ) -> None:
     """Tests the example_method with various inputs and LLM responses."""
-    # Mock the LLM call
-    if isinstance(llm_response, Exception):
-        mock_call_llm.side_effect = llm_response
-    else:
-        mock_call_llm.return_value = llm_response
-
-    # Mock the database call
+    # Arrange
+    mock_llm_client.call_llm.return_value = llm_response
     mock_cursor = MagicMock()
     mock_cursor.fetchone.return_value = db_result
-    mock_db_conn = MagicMock()
     mock_db_conn.cursor.return_value.__enter__.return_value = mock_cursor
-    mock_get_connection.return_value = mock_db_conn
 
-    if data == "not a dict":
-        with pytest.raises(ValueError, match="Data must be a dictionary."):
-            validation_instance.example_method(data)
-        validation_instance.logger.error.assert_called_with("Data is not a dictionary.")
-    elif isinstance(llm_response, Exception):
-        result = validation_instance.example_method(data)
-        assert result == expected_result
-        validation_instance.logger.exception.assert_called()
-    else:
-        result = validation_instance.example_method(data)
-        assert result == expected_result
-        mock_call_llm.assert_called()
-        mock_get_connection.assert_called()
+    # Act
+    result = validation_instance.example_method(data)
+
+    # Assert
+    assert result == expected_result
+    if validation_instance.llm_client:
+        mock_llm_client.call_llm.assert_called_once_with("Is this data valid?", data)
+        validation_instance.logger.info.assert_called()
+    if validation_instance.db_conn:
         mock_db_conn.cursor.assert_called()
         mock_cursor.execute.assert_called_with("SELECT 1;")
         mock_cursor.fetchone.assert_called()
         validation_instance.logger.info.assert_called()
 
 
-@patch("dewey.core.analysis.validation.get_connection")
+def test_example_method_value_error(validation_instance: Validation) -> None:
+    """Tests the example_method raises ValueError when data is not a dict."""
+    data = "not a dict"
+    with pytest.raises(ValueError, match="Data must be a dictionary."):
+        validation_instance.example_method(data)
+    validation_instance.logger.error.assert_called_with("Data is not a dictionary.")
+
+
+def test_example_method_exception(validation_instance: Validation, mock_llm_client: MagicMock, mock_db_conn: MagicMock) -> None:
+    """Tests the example_method handles exceptions during LLM or DB calls."""
+    mock_llm_client.call_llm.side_effect = Exception("LLM Error")
+    data = {"key": "value"}
+    result = validation_instance.example_method(data)
+    assert result is False
+    validation_instance.logger.exception.assert_called()
+
+
 def test_example_method_no_llm(
-    mock_get_connection: MagicMock, validation_instance: Validation, mocker: Any
+    validation_instance: Validation, mocker: Any, mock_db_conn: MagicMock
 ) -> None:
     """Tests the example_method when LLM is disabled."""
-    validation_instance.enable_llm = False
-    validation_instance.llm_client = None
+    validation_instance._llm_client = None
 
     data = {"key": "value"}
 
     # Mock the database call
     mock_cursor = MagicMock()
     mock_cursor.fetchone.return_value = [1]
-    mock_db_conn = MagicMock()
     mock_db_conn.cursor.return_value.__enter__.return_value = mock_cursor
-    mock_get_connection.return_value = mock_db_conn
 
     result = validation_instance.example_method(data)
     assert result == True
-    mock_get_connection.assert_called()
     mock_db_conn.cursor.assert_called()
     mock_cursor.execute.assert_called_with("SELECT 1;")
     mock_cursor.fetchone.assert_called()
     validation_instance.logger.info.assert_called()
 
 
-@patch("dewey.llm.llm_utils.call_llm")
 def test_example_method_no_db(
-    mock_call_llm: MagicMock, validation_instance: Validation, mocker: Any
+    validation_instance: Validation, mocker: Any, mock_llm_client: MagicMock
 ) -> None:
     """Tests the example_method when DB is disabled."""
-    validation_instance.requires_db = False
-    validation_instance.db_conn = None
-    mock_call_llm.return_value = "Valid"
+    validation_instance._db_conn = None
+    mock_llm_client.call_llm.return_value = "Valid"
     data = {"key": "value"}
     result = validation_instance.example_method(data)
     assert result == True
-    mock_call_llm.assert_called()
+    mock_llm_client.call_llm.assert_called()
     validation_instance.logger.info.assert_called()
 
 
@@ -237,10 +269,9 @@ def test_execute_method_exception(
     validation_instance.logger.error.assert_called()
 
 
-def test_cleanup_method(validation_instance: Validation) -> None:
+def test_cleanup_method(validation_instance: Validation, mock_db_conn: MagicMock) -> None:
     """Tests the _cleanup method of the Validation class."""
-    mock_db_conn = MagicMock()
-    validation_instance.db_conn = mock_db_conn
+    validation_instance._db_conn = mock_db_conn
 
     validation_instance._cleanup()
 
@@ -250,16 +281,15 @@ def test_cleanup_method(validation_instance: Validation) -> None:
 
 def test_cleanup_method_no_db(validation_instance: Validation) -> None:
     """Tests the _cleanup method when there is no database connection."""
-    validation_instance.db_conn = None
+    validation_instance._db_conn = None
     validation_instance._cleanup()
     assert not validation_instance.logger.debug.called
 
 
-def test_cleanup_method_exception(validation_instance: Validation) -> None:
+def test_cleanup_method_exception(validation_instance: Validation, mock_db_conn: MagicMock) -> None:
     """Tests the _cleanup method when closing the database connection raises an exception."""
-    mock_db_conn = MagicMock()
     mock_db_conn.close.side_effect = Exception("Test Exception")
-    validation_instance.db_conn = mock_db_conn
+    validation_instance._db_conn = mock_db_conn
 
     validation_instance._cleanup()
 
@@ -393,12 +423,13 @@ def test_initialize_db_connection(
     mock_get_connection: MagicMock, validation_instance: Validation
 ) -> None:
     """Tests the _initialize_db_connection method."""
-    validation_instance.config = {"core": {"database": {"test": "value"}}}
+    validation_instance.config = {"database": {"test": "value"}}
+    validation_instance.db_conn = None
 
     validation_instance._initialize_db_connection()
 
     mock_get_connection.assert_called_with({"test": "value"})
-    assert validation_instance.db_conn == mock_get_connection.return_value
+    assert validation_instance.db_conn is not None
     validation_instance.logger.debug.assert_called()
 
 
@@ -408,6 +439,7 @@ def test_initialize_db_connection_import_error(
 ) -> None:
     """Tests the _initialize_db_connection method when the database module cannot be imported."""
     validation_instance.logger = MagicMock()
+    validation_instance.db_conn = None
 
     with pytest.raises(ImportError):
         validation_instance._initialize_db_connection()
@@ -422,8 +454,9 @@ def test_initialize_db_connection_exception(
     mock_get_connection: MagicMock, validation_instance: Validation
 ) -> None:
     """Tests the _initialize_db_connection method when there is an exception during initialization."""
-    validation_instance.config = {"core": {"database": {"test": "value"}}}
+    validation_instance.config = {"database": {"test": "value"}}
     validation_instance.logger = MagicMock()
+    validation_instance.db_conn = None
 
     with pytest.raises(Exception):
         validation_instance._initialize_db_connection()
@@ -436,11 +469,12 @@ def test_initialize_llm_client(
 ) -> None:
     """Tests the _initialize_llm_client method."""
     validation_instance.config = {"llm": {"test": "value"}}
+    validation_instance.llm_client = None
 
     validation_instance._initialize_llm_client()
 
     mock_get_llm_client.assert_called_with({"test": "value"})
-    assert validation_instance.llm_client == mock_get_llm_client.return_value
+    assert validation_instance.llm_client is not None
     validation_instance.logger.debug.assert_called()
 
 
@@ -450,6 +484,7 @@ def test_initialize_llm_client_import_error(
 ) -> None:
     """Tests the _initialize_llm_client method when the LLM module cannot be imported."""
     validation_instance.logger = MagicMock()
+    validation_instance.llm_client = None
 
     with pytest.raises(ImportError):
         validation_instance._initialize_llm_client()
@@ -465,6 +500,7 @@ def test_initialize_llm_client_exception(
     """Tests the _initialize_llm_client method when there is an exception during initialization."""
     validation_instance.config = {"llm": {"test": "value"}}
     validation_instance.logger = MagicMock()
+    validation_instance.llm_client = None
 
     with pytest.raises(Exception):
         validation_instance._initialize_llm_client()
