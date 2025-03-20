@@ -9,6 +9,7 @@ import os
 import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple, Union
+from abc import ABC, abstractmethod
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db import connection
@@ -17,6 +18,15 @@ from dewey.core.exceptions import DatabaseConnectionError, DatabaseQueryError
 
 from . import connection
 from .models import TABLE_INDEXES, TABLE_SCHEMAS
+
+class DatabaseConnectionInterface(ABC):
+    """
+    An interface for database connections, to enable mocking.
+    """
+    @abstractmethod
+    def execute(self, query: str, parameters: Optional[Dict[str, Any]] = None) -> Any:
+        """Execute a SQL query."""
+        pass
 
 
 class DatabaseUtils(BaseScript):
@@ -27,7 +37,7 @@ class DatabaseUtils(BaseScript):
     and building SQL queries.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, db_manager: Optional[Any] = None) -> None:
         """Initializes the DatabaseUtils class."""
         super().__init__(
             name="DatabaseUtils",
@@ -36,6 +46,7 @@ class DatabaseUtils(BaseScript):
             requires_db=True,
             enable_llm=False,
         )
+        self.db_manager = db_manager if db_manager is not None else connection.db_manager
 
     def run(self) -> None:
         """Runs the database utilities.
@@ -467,25 +478,25 @@ class DatabaseUtils(BaseScript):
 
         try:
             # Start transaction
-            connection.db_manager.execute_query(
+            self.db_manager.execute_query(
                 "BEGIN TRANSACTION", for_write=True, local_only=local_only
             )
 
             try:
                 # Execute queries
                 for query, params in queries:
-                    connection.db_manager.execute_query(
+                    self.db_manager.execute_query(
                         query, params, for_write=True, local_only=local_only
                     )
 
                 # Commit transaction
-                connection.db_manager.execute_query(
+                self.db_manager.execute_query(
                     "COMMIT", for_write=True, local_only=local_only
                 )
 
             except Exception as e:
                 # Rollback transaction
-                connection.db_manager.execute_query(
+                self.db_manager.execute_query(
                     "ROLLBACK", for_write=True, local_only=local_only
                 )
                 raise e
@@ -495,16 +506,18 @@ class DatabaseUtils(BaseScript):
             self.logger.error(error_msg)
             raise DatabaseConnectionError(error_msg)
 
-    def ensure_table_exists(self, conn: Any, table_name: str, schema: Dict[str, str]) -> None:
+    def ensure_table_exists(self, conn: DatabaseConnectionInterface, table_name: str, schema: Dict[str, str], create_table_func: Optional[Any] = None) -> None:
         """Ensure a table exists with the given schema.
 
         Args:
             conn: Database connection
             table_name: Name of the table
             schema: Table schema definition
+            create_table_func: Function to create the table (for testing)
         """
+        create_table_func = create_table if create_table_func is None else create_table_func
         try:
-            create_table(conn, table_name, schema)
+            create_table_func(conn, table_name, schema)
             self.logger.debug(f"Ensured table {table_name} exists")
         except Exception as e:
             self.logger.error(f"Error creating table {table_name}: {e}")
@@ -526,14 +539,14 @@ class DatabaseUtils(BaseScript):
         if existing_db_path and os.path.exists(existing_db_path):
             self.logger.info(f"Using existing database at {existing_db_path}")
             try:
-                with connection.db_manager.get_connection(for_write=True) as conn:
+                with self.db_manager.get_connection(for_write=True) as conn:
                     return conn
             except Exception as e:
                 self.logger.warning(f"Failed to connect to existing database: {e}")
                 self.logger.info("Falling back to creating a new database")
 
         # Get a connection to the database
-        with connection.db_manager.get_connection(for_write=True) as conn:
+        with self.db_manager.get_connection(for_write=True) as conn:
             # Create tables if they don't exist
             for table_name, schema in TABLE_SCHEMAS.items():
                 self.ensure_table_exists(conn, table_name, schema)
@@ -560,17 +573,17 @@ class DatabaseUtils(BaseScript):
         """
         try:
             # Get column information
-            columns = connection.db_manager.execute_query(
+            columns = self.db_manager.execute_query(
                 f"DESCRIBE {table_name}", local_only=local_only
             )
 
             # Get row count
-            count = connection.db_manager.execute_query(
+            count = self.db_manager.execute_query(
                 f"SELECT COUNT(*) FROM {table_name}", local_only=local_only
             )[0][0]
 
             # Get indexes
-            indexes = connection.db_manager.execute_query(
+            indexes = self.db_manager.execute_query(
                 f"PRAGMA show_tables LIKE '{table_name}_idx%'", local_only=local_only
             )
 
@@ -591,28 +604,32 @@ class DatabaseUtils(BaseScript):
             self.logger.error(f"Error getting table info for {table_name}: {e}")
             raise
 
-    def backup_table(self, table_name: str, backup_dir: str) -> str:
+    def backup_table(self, table_name: str, backup_dir: str, os_module: Optional[Any] = None, datetime_module: Optional[Any] = None) -> str:
         """Create a backup of a database table.
 
         Args:
             table_name: Name of the table to backup
             backup_dir: Directory to store the backup
+            os_module: Optional os module (for testing)
+            datetime_module: Optional datetime module (for testing)
 
         Returns:
             Path to the backup file
         """
+        os_module = os if os_module is None else os_module
+        datetime_module = datetime if datetime_module is None else datetime_module
         try:
             # Ensure backup directory exists
-            os.makedirs(backup_dir, exist_ok=True)
+            os_module.makedirs(backup_dir, exist_ok=True)
 
             # Generate backup filename
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            backup_file = os.path.join(
+            timestamp = datetime_module.now().strftime("%Y%m%d_%H%M%S")
+            backup_file = os_module.path.join(
                 backup_dir, f"{table_name}_backup_{timestamp}.parquet"
             )
 
             # Export table to Parquet
-            connection.db_manager.execute_query(
+            self.db_manager.execute_query(
                 f"COPY {table_name} TO '{backup_file}' (FORMAT 'parquet')",
                 for_write=True,
                 local_only=True,
@@ -625,27 +642,29 @@ class DatabaseUtils(BaseScript):
             self.logger.error(f"Error backing up table {table_name}: {e}")
             raise
 
-    def restore_table(self, table_name: str, backup_file: str) -> None:
+    def restore_table(self, table_name: str, backup_file: str, os_module: Optional[Any] = None) -> None:
         """Restore a table from a backup file.
 
         Args:
             table_name: Name of the table to restore
             backup_file: Path to the backup file
+            os_module: Optional os module (for testing)
         """
+        os_module = os if os_module is None else os_module
         try:
             # Verify backup file exists
-            if not os.path.exists(backup_file):
+            if not os_module.path.exists(backup_file):
                 raise FileNotFoundError(f"Backup file not found: {backup_file}")
 
             # Drop existing table if it exists
-            connection.db_manager.execute_query(
+            self.db_manager.execute_query(
                 f"DROP TABLE IF EXISTS {table_name}",
                 for_write=True,
                 local_only=True,
             )
 
             # Create table from backup
-            connection.db_manager.execute_query(
+            self.db_manager.execute_query(
                 f"CREATE TABLE {table_name} AS SELECT * FROM read_parquet('{backup_file}')",
                 for_write=True,
                 local_only=True,
@@ -664,7 +683,7 @@ class DatabaseUtils(BaseScript):
             local_only: Whether to only vacuum local database
         """
         try:
-            connection.db_manager.execute_query(
+            self.db_manager.execute_query(
                 "VACUUM",
                 for_write=True,
                 local_only=local_only,
@@ -694,7 +713,7 @@ class DatabaseUtils(BaseScript):
                 col_name = col["name"]
 
                 # Get basic statistics
-                result = connection.db_manager.execute_query(
+                result = self.db_manager.execute_query(
                     f"""
                     SELECT
                         COUNT(*) as count,
@@ -740,7 +759,7 @@ class DatabaseUtils(BaseScript):
         """
         try:
             # Start transaction
-            connection.db_manager.execute_query(
+            self.db_manager.execute_query(
                 "BEGIN TRANSACTION",
                 for_write=True,
                 local_only=local_only,
@@ -748,7 +767,7 @@ class DatabaseUtils(BaseScript):
 
             try:
                 # Update existing records
-                updated = connection.db_manager.execute_query(
+                updated = self.db_manager.execute_query(
                     f"""
                     UPDATE {target_table} t
                     SET (
@@ -767,7 +786,7 @@ class DatabaseUtils(BaseScript):
                 )
 
                 # Insert new records
-                inserted = connection.db_manager.execute_query(
+                inserted = self.db_manager.execute_query(
                     f"""
                     INSERT INTO {target_table}
                     SELECT s.*
@@ -780,7 +799,7 @@ class DatabaseUtils(BaseScript):
                 )
 
                 # Commit transaction
-                connection.db_manager.execute_query(
+                self.db_manager.execute_query(
                     "COMMIT",
                     for_write=True,
                     local_only=local_only,
@@ -790,7 +809,7 @@ class DatabaseUtils(BaseScript):
 
             except Exception as e:
                 # Rollback transaction
-                connection.db_manager.execute_query(
+                self.db_manager.execute_query(
                     "ROLLBACK",
                     for_write=True,
                     local_only=local_only,
@@ -803,7 +822,7 @@ class DatabaseUtils(BaseScript):
 
 
 def create_table(
-    conn: DatabaseConnection, 
+    conn: DatabaseConnectionInterface, 
     table_name: str, 
     schema: Dict[str, str],
     if_not_exists: bool = True
@@ -843,7 +862,7 @@ def create_table(
 
 
 def execute_query(
-    conn: DatabaseConnection, 
+    conn: DatabaseConnectionInterface, 
     query: str, 
     parameters: Optional[Dict[str, Any]] = None
 ) -> Any:
