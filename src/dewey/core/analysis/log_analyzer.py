@@ -1,7 +1,7 @@
 from typing import Optional
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection
+from dewey.core.db.connection import DatabaseConnection, get_connection
 from dewey.llm.llm_utils import LLMClient
 
 
