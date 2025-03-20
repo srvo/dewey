@@ -1,6 +1,7 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from dewey.core.base_script import BaseScript
+from dewey.core.db import connection, utils
 from dewey.llm import llm_utils
 
 
@@ -20,7 +21,11 @@ class Validation(BaseScript):
             config_section: The configuration section to use.
         """
         super().__init__(
-            config_section=config_section, requires_db=True, enable_llm=True
+            name="ValidationScript",
+            description="Performs data validation tasks.",
+            config_section=config_section,
+            requires_db=True,
+            enable_llm=True,
         )
 
     def run(self) -> None:
@@ -29,13 +34,12 @@ class Validation(BaseScript):
         """
         self.logger.info("Starting validation process.")
 
-        # Example of accessing configuration values
-        example_config_value = self.get_config_value(
-            "example_config_key", "default_value"
-        )
+        # Accessing configuration values
+        example_config_value = self.get_config_value("utils.example_config", "default_value")
         self.logger.info(f"Example config value: {example_config_value}")
 
         # Add your validation logic here
+        self.example_method({"example": "data"})
         self.logger.info("Validation process completed.")
 
     def example_method(self, data: Dict[str, Any]) -> bool:
@@ -47,15 +51,19 @@ class Validation(BaseScript):
 
         Returns:
             True if the data is valid, False otherwise.
+
+        Raises:
+            Exception: If an error occurs during validation.
         """
         try:
             # Add your validation logic here
             if not isinstance(data, dict):
                 self.logger.error("Data is not a dictionary.")
                 return False
+
             # Example LLM call
             prompt = "Is this data valid?"
-            response = llm_utils.call_llm(self.llm_client, prompt, data)
+            response: Optional[str] = llm_utils.call_llm(self.llm_client, prompt, data)
             self.logger.info(f"LLM Response: {response}")
 
             # Example database operation
