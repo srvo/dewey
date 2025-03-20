@@ -1,5 +1,9 @@
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection
+from dewey.llm.llm_utils import generate_llm_response
 import logging
+from typing import Any, Dict
+
 
 class EntityAnalyzer(BaseScript):
     """
@@ -9,24 +13,30 @@ class EntityAnalyzer(BaseScript):
     within a text using various NLP techniques.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, config_section: str = "entity_analyzer", **kwargs: Any) -> None:
         """
         Initializes the EntityAnalyzer.
+
+        Args:
+            config_section: The section in the config file to use for this script.
+            **kwargs: Additional keyword arguments to pass to the BaseScript constructor.
         """
-        super().__init__(*args, **kwargs)
+        super().__init__(config_section=config_section, **kwargs)
 
     def run(self) -> None:
         """
         Executes the entity analysis process.
         """
         self.logger.info("Starting entity analysis...")
+
         # Example of accessing configuration
-        api_key = self.get_config_value("entity_analyzer.api_key", default="default_key")
+        api_key = self.get_config_value("api_key", default="default_key")
         self.logger.debug(f"API Key: {api_key}")
+
         # Add your entity analysis logic here
         self.logger.info("Entity analysis completed.")
 
-    def analyze_text(self, text: str) -> dict:
+    def analyze_text(self, text: str) -> Dict[str, list[str]]:
         """
         Analyzes the given text and returns a dictionary of entities.
 
