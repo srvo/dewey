@@ -9,7 +9,7 @@ class YahooFinanceEngine(BaseScript):
     logging, and other utilities.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initializes the YahooFinanceEngine.
         """
@@ -18,6 +18,15 @@ class YahooFinanceEngine(BaseScript):
     def run(self) -> None:
         """
         Executes the main logic of the Yahoo Finance engine.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            None
         """
         self.logger.info("Starting Yahoo Finance engine...")
         api_key = self.get_config_value("api_key")
