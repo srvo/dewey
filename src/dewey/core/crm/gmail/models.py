@@ -1,6 +1,6 @@
-from dewey.core.base_script import BaseScript
-import logging
 from typing import Any, Optional
+
+from dewey.core.base_script import BaseScript
 
 
 class GmailModel(BaseScript):
@@ -16,6 +16,10 @@ class GmailModel(BaseScript):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Initializes the GmailModel.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
         """
         super().__init__(*args, **kwargs)
         self.name = "GmailModel"
