@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import os
-import sys
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any, Dict, Tuple
@@ -102,9 +100,10 @@ class JournalEntryGenerator(BaseScript):
         Args:
             forecast_ledger_file: Path to the forecast ledger file.
         """
-        if not os.path.exists(forecast_ledger_file):
-            with open(forecast_ledger_file, "w") as f:  # type: ignore
-                account_declarations = """
+        try:
+            if not Path(forecast_ledger_file).exists():
+                with open(forecast_ledger_file, "w") as f:  # type: ignore
+                    account_declarations = """
 ; Account declarations
 account Assets:PPE:Mormair_E650
 account Assets:Cash
@@ -115,7 +114,10 @@ account Income:Lease:Mormair_E650
 account Expenses:RevenueShare:Mormair_E650
 account Expenses:Hosting:Mormair_E650
 """
-                f.write(account_declarations)
+                    f.write(account_declarations)
+        except Exception as e:
+            self.logger.error(f"Error initializing forecast ledger: {e}")
+            raise
 
     def create_depreciation_entry(self, current_date: datetime) -> str:
         """Create a depreciation journal entry for a given date.
