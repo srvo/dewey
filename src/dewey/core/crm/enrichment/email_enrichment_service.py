@@ -1,449 +1,160 @@
-#!/usr/bin/env python3
-"""
-Email Enrichment Service
+"""Service for enriching email metadata."""
+from __future__ import annotations
 
-This module provides functionality to enrich email content by fetching full message bodies
-from Gmail and extracting relevant metadata.
-"""
+import base64
 
-import os
-import json
-import logging
-import time
+from dewey.core.base_script import BaseScript
 import structlog
-import duckdb
-import uuid
-from typing import Dict, List, Optional, Any
-from googleapiclient.discovery import build
-from google.oauth2.credentials import Credentials
-import sys
-import argparse
-from pathlib import Path
-from dewey.utils import get_logger
-from dewey.core.engines import MotherDuckEngine
+from database.models import AutomatedOperation, Email, EventLog
+from django.db import transaction
+from django.utils import timezone
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = structlog.get_logger()
+from .gmail_history_sync import get_gmail_service
+from .prioritization import EmailPrioritizer
 
-class Email:
-    """Class representing an email with enrichment capabilities."""
-    
-    def __init__(self, id=None, gmail_id=None, subject=None, from_email=None, 
-                 plain_body=None, html_body=None, importance=None, email_metadata=None):
-        self.id = id
-        self.gmail_id = gmail_id
-        self.subject = subject
-        self.from_email = from_email
-        self.plain_body = plain_body
-        self.html_body = html_body
-        self.importance = importance or 0
-        self.email_metadata = email_metadata or {}
+# Initialize logger (structlog)
+logger = structlog.get_logger(__name__)
 
-def get_gmail_service():
-    """Get an authenticated Gmail API service."""
-    try:
-        # Load credentials from the token file
-        token_path = os.path.expanduser("~/dewey/config/gmail_token.json")
-        if not os.path.exists(token_path):
-            logger.error(f"Token file not found at {token_path}")
-            return None
-            
-        credentials = Credentials.from_authorized_user_info(
-            json.load(open(token_path))
-        )
-        
-        # Build the Gmail service
-        service = build('gmail', 'v1', credentials=credentials)
-        return service
-    except Exception as e:
-        logger.error(f"Error creating Gmail service: {str(e)}")
-        return None
 
-def get_duckdb_connection(db_path: Optional[str] = None) -> duckdb.DuckDBPyConnection:
-    """Get a connection to the DuckDB database."""
-    if db_path is None:
-        db_path = os.path.expanduser("~/dewey_emails.duckdb")
-    
-    try:
-        # Try to connect to MotherDuck first
-        try:
-            conn = duckdb.connect("md:dewey_emails")
-            logger.info("Connected to MotherDuck")
-            return conn
-        except Exception as e:
-            logger.warning(f"Failed to connect to MotherDuck: {str(e)}")
-            
-        # Fall back to local database
-        conn = duckdb.connect(db_path)
-        logger.info(f"Connected to local database at {db_path}")
-        return conn
-    except Exception as e:
-        logger.error(f"Error connecting to database: {str(e)}")
-        # Create a new in-memory database as a last resort
-        logger.warning("Creating in-memory database")
-        return duckdb.connect(":memory:")
+class EmailEnrichmentService(BaseScript):
+    """Service for enriching email metadata like message bodies."""
 
-class EmailEnrichmentService:
-    """Service for enriching email content."""
-    
-    def __init__(self):
-        """Initialize the email enrichment service."""
-        self.gmail_service = get_gmail_service()
-        
-    def fetch_full_message(self, gmail_id: str) -> Dict[str, Any]:
-        """
-        Fetch the full message content from Gmail.
-        
-        Args:
-            gmail_id: The Gmail message ID
-            
-        Returns:
-            Dictionary containing the full message content
-        """
-        if not self.gmail_service:
-            logger.error("Gmail service not available")
-            return {}
-            
-        try:
-            # Fetch the full message
-            message = self.gmail_service.users().messages().get(
-                userId='me',
-                id=gmail_id,
-                format='full'
-            ).execute()
-            
-            return message
-        except Exception as e:
-            logger.error(f"Error fetching message {gmail_id}: {str(e)}")
-            return {}
-    
-    def extract_message_content(self, message: Dict[str, Any]) -> Dict[str, str]:
-        """
-        Extract plain text and HTML content from a Gmail message.
-        
-        Args:
-            message: The Gmail message object
-            
-        Returns:
-            Dictionary containing plain_body and html_body
-        """
-        content = {
-            'plain_body': '',
-            'html_body': ''
-        }
-        
-        if not message or 'payload' not in message:
-            return content
-            
-        # Extract content from parts
-        def extract_parts(parts):
-            for part in parts:
-                if part.get('mimeType') == 'text/plain' and 'data' in part.get('body', {}):
-                    content['plain_body'] += part['body']['data']
-                elif part.get('mimeType') == 'text/html' and 'data' in part.get('body', {}):
-                    content['html_body'] += part['body']['data']
-                
-                # Recursively process nested parts
-                if 'parts' in part:
-                    extract_parts(part['parts'])
-        
-        # Start with the payload
-        payload = message['payload']
-        if 'body' in payload and 'data' in payload['body']:
-            if payload.get('mimeType') == 'text/plain':
-                content['plain_body'] = payload['body']['data']
-            elif payload.get('mimeType') == 'text/html':
-                content['html_body'] = payload['body']['data']
-        
-        # Process parts if available
-        if 'parts' in payload:
-            extract_parts(payload['parts'])
-            
-        return content
+    def __init__(self) -> None:
+        """Initialize EmailEnrichmentService."""
+        super().__init__(config_section='crm')
+        self.service = get_gmail_service()
+        self.prioritizer = EmailPrioritizer()
+
+    def extract_message_bodies(self, message_data: dict) -> tuple[str, str]:
+        """Extract plain and HTML message bodies from Gmail message data."""
+        plain_body = ""
+        html_body = ""
+
+        if "payload" in message_data:
+            payload = message_data["payload"]
+
+            # Handle simple messages (body directly in payload)
+            if "body" in payload and "data" in payload["body"]:
+                if payload.get("mimeType") == "text/plain":
+                    plain_body = base64.urlsafe_b64decode(
+                        payload["body"]["data"],
+                    ).decode()
+                elif payload.get("mimeType") == "text/html":
+                    html_body = base64.urlsafe_b64decode(
+                        payload["body"]["data"],
+                    ).decode()
+
+            # Handle multipart messages (body in parts)
+            if "parts" in payload:
+                for part in payload["parts"]:
+                    if (
+                        part.get("mimeType") == "text/plain"
+                        and "body" in part
+                        and "data" in part["body"]
+                    ):
+                        plain_body = base64.urlsafe_b64decode(
+                            part["body"]["data"],
+                        ).decode()
+                    elif (
+                        part.get("mimeType") == "text/html"
+                        and "body" in part
+                        and "data" in part["body"]
+                    ):
+                        html_body = base64.urlsafe_b64decode(
+                            part["body"]["data"],
+                        ).decode()
+
+        return plain_body, html_body
 
     def enrich_email(self, email: Email) -> bool:
-        """
-        Enrich a single email with full content from Gmail.
+        """Enrich an email with message body content and priority score.
 
         Args:
-            email: The Email object to enrich
+        ----
+            email: The email to enrich
 
         Returns:
-            True if enrichment was successful, False otherwise
+        -------
+            bool: True if enrichment was successful
+
         """
-        if not email.gmail_id:
-            logger.warning(f"Email {email.id} has no Gmail ID")
-            return False
-            
         try:
-            # Fetch the full message
-            message = self.fetch_full_message(email.gmail_id)
-            if not message:
-                logger.warning(f"Failed to fetch message {email.gmail_id}")
-                return False
-                
-            # Extract content
-            content = self.extract_message_content(message)
-            
-            # Update email object
-            email.plain_body = content['plain_body']
-            email.html_body = content['html_body']
-            
-            # Update email metadata
-            email.email_metadata.update({
-                'enriched_at': time.time(),
-                'has_attachments': bool(message.get('payload', {}).get('parts', [])),
-                'label_ids': message.get('labelIds', [])
-            })
-            
-            # Update database
-            conn = get_duckdb_connection()
-            conn.execute("""
-                UPDATE emails
-                SET plain_body = ?,
-                    html_body = ?,
-                    email_metadata = ?,
-                    updated_at = CURRENT_TIMESTAMP
-                WHERE id = ?
-            """, [
-                email.plain_body,
-                email.html_body,
-                json.dumps(email.email_metadata),
-                email.id
-            ])
-            
-            logger.info(f"Enriched email {email.id}")
-            return True
-            
-        except Exception as e:
-            logger.error(f"Error enriching email {email.id}: {str(e)}")
-            return False
-    
-    def enrich_emails(self, batch_size: int = 50, max_emails: int = 100) -> int:
-        """
-        Enrich a batch of emails.
-        
-        Args:
-            batch_size: Number of emails to process in each batch
-            max_emails: Maximum number of emails to process
-            
-        Returns:
-            Number of emails successfully enriched
-        """
-        logger.info(f"Starting email enrichment (batch_size={batch_size}, max_emails={max_emails})")
-        
-        try:
-            # Connect to database
-            conn = get_duckdb_connection()
-            
-            # Create enrichment_tasks table if it doesn't exist
-            conn.execute("""
-                CREATE TABLE IF NOT EXISTS enrichment_tasks (
-                    id VARCHAR PRIMARY KEY,
-                    entity_type VARCHAR,
-                    entity_id VARCHAR,
-                    task_type VARCHAR,
-                    status VARCHAR,
-                    attempts INTEGER DEFAULT 0,
-                    last_attempt TIMESTAMP,
-                    result TEXT,
-                    error_message TEXT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            enrichment_task = self.create_enrichment_task(email.id)
+
+            # Get full message data
+            message_data = (
+                self.service.users()
+                .messages()
+                .get(userId="me", id=email.gmail_id, format="full")
+                .execute()
+            )
+
+            # Extract message content
+            plain_body, html_body = self.extract_message_bodies(message_data)
+
+            # Score the email with enhanced prioritization
+            priority, confidence, reason = self.prioritizer.score_email(email)
+
+            with transaction.atomic():
+                # Update email with new content and priority
+                if plain_body or html_body:
+                    email.plain_body = plain_body
+                    email.html_body = html_body
+
+                email.importance = priority
+                email.email_metadata.update(
+                    {
+                        "priority_confidence": confidence,
+                        "priority_reason": reason,
+                        "priority_updated_at": timezone.now().isoformat(),
+                    },
                 )
-            """)
-            
-            # Get emails that need enrichment
-            conn.execute("""
-                CREATE OR REPLACE TEMPORARY VIEW emails_to_enrich AS
-                SELECT e.* 
-                FROM emails e
-                LEFT JOIN enrichment_tasks et ON 
-                    e.id = et.entity_id AND 
-                    et.entity_type = 'email' AND 
-                    et.task_type = 'email_metadata'
-                WHERE et.task_id IS NULL
-                OR (et.status = 'failed' AND et.updated_at < CURRENT_TIMESTAMP - INTERVAL 1 DAY)
-                LIMIT ?
-            """, [max_emails])
-            
-            # Get count
-            count = conn.execute("SELECT COUNT(*) FROM emails_to_enrich").fetchone()[0]
-            logger.info(f"Found {count} emails to enrich")
-            
-            if count == 0:
-                logger.info("No emails to process")
-                return 0
-            
-            # Process in batches
-            enriched_count = 0
-            for offset in range(0, count, batch_size):
-                batch = conn.execute(f"""
-                    SELECT id, gmail_id, subject, from_email, 
-                           plain_body, html_body, importance, email_metadata
-                    FROM emails_to_enrich
-                    LIMIT {batch_size} OFFSET {offset}
-                """).fetchall()
-                
-                logger.info(f"Processing batch of {len(batch)} emails (offset {offset})")
-                
-                for row in batch:
-                    # Create Email object
-                    email = Email(
-                        id=row[0],
-                        gmail_id=row[1],
-                        subject=row[2],
-                        from_email=row[3],
-                        plain_body=row[4],
-                        html_body=row[5],
-                        importance=row[6],
-                        email_metadata=json.loads(row[7]) if row[7] else {}
-                    )
-                    
-                    # Create task
-                    task_id = str(uuid.uuid4())
-                    conn.execute("""
-                        INSERT INTO enrichment_tasks (
-                            id, entity_type, entity_id, task_type, status
-                        ) VALUES (?, ?, ?, ?, 'pending')
-                    """, [
-                        task_id,
-                        'email',
-                        email.id,
-                        'email_metadata'
-                    ])
-                    
-                    # Enrich email
-                    success = self.enrich_email(email)
-                    
-                    # Update task status
-                    if success:
-                        conn.execute("""
-                            UPDATE enrichment_tasks
-                            SET status = 'completed',
-                                attempts = attempts + 1,
-                                last_attempt = CURRENT_TIMESTAMP,
-                                updated_at = CURRENT_TIMESTAMP
-                            WHERE id = ?
-                        """, [task_id])
-                        enriched_count += 1
-                    else:
-                        conn.execute("""
-                            UPDATE enrichment_tasks
-                            SET status = 'failed',
-                                attempts = attempts + 1,
-                                last_attempt = CURRENT_TIMESTAMP,
-                                error_message = 'Failed to enrich email',
-                                updated_at = CURRENT_TIMESTAMP
-                            WHERE id = ?
-                        """, [task_id])
-                
-                # Commit after each batch
-                conn.commit()
-                
-                # Sleep between batches to avoid rate limiting
-                if offset + batch_size < count:
-                    time.sleep(1)
-            
-            logger.info(f"Enriched {enriched_count} emails")
-            return enriched_count
+                email.save()
+
+                # Create event log for priority scoring
+                EventLog.objects.create(
+                    event_type="EMAIL_PRIORITY_SCORED",
+                    email=email,
+                    details={
+                        "priority": priority,
+                        "confidence": confidence,
+                        "reason": reason,
+                        "timestamp": timezone.now().isoformat(),
+                    },
+                    performed_by="email_enrichment",
+                )
+
+                self.complete_task(
+                    enrichment_task,
+                    result={
+                        "plain_body_length": len(plain_body) if plain_body else 0,
+                        "html_body_length": len(html_body) if html_body else 0,
+                        "priority": priority,
+                        "confidence": confidence,
+                        "reason": reason,
+                    },
+                )
+
+                self.logger.info(
+                    "email_enriched",
+                    email_id=email.id,
+                    gmail_id=email.gmail_id,
+                    plain_body_length=len(plain_body) if plain_body else 0,
+                    html_body_length=len(html_body) if html_body else 0,
+                    priority=priority,
+                    confidence=confidence,
+                    reason=reason,
+                )
+                return True
 
         except Exception as e:
-            logger.error(f"Error in email enrichment: {str(e)}")
-            raise
-
-def enrich_emails(engine, dedup_strategy='update'):
-    """Enrich email data with additional information."""
-    # Add contact information
-    engine.execute_query("""
-        UPDATE emails e
-        SET contact_id = c.id
-        FROM contacts c
-        WHERE e.from_email = c.email
-        AND e.contact_id IS NULL
-    """)
-    
-    # Add company information
-    engine.execute_query("""
-        UPDATE emails e
-        SET company_id = c.company_id
-        FROM contacts c
-        WHERE e.contact_id = c.id
-        AND e.company_id IS NULL
-    """)
-    
-    # Extract topics and sentiment
-    engine.execute_query("""
-        UPDATE emails e
-        SET 
-            topics = llm_extract_topics(e.body),
-            sentiment = llm_analyze_sentiment(e.body)
-        WHERE topics IS NULL OR sentiment IS NULL
-    """)
-    
-    # Detect opportunities
-    engine.execute_query("""
-        UPDATE emails e
-        SET opportunities = llm_detect_opportunities(e.body)
-        WHERE opportunities IS NULL
-    """)
-
-def main():
-    parser = argparse.ArgumentParser(description='Enrich email data with additional information')
-    parser.add_argument('--target_db', help='Target database name', default='dewey')
-    parser.add_argument('--dedup_strategy', choices=['none', 'update', 'ignore'], default='update',
-                       help='Deduplication strategy: none, update, or ignore')
-    args = parser.parse_args()
-
-    # Set up logging
-    log_dir = os.path.join(os.getenv('DEWEY_DIR', os.path.expanduser('~/dewey')), 'logs')
-    logger = get_logger('email_enrichment', log_dir)
-
-    try:
-        engine = MotherDuckEngine(args.target_db)
-        
-        logger.info("Starting email enrichment process")
-        
-        # Get initial counts
-        email_count = engine.execute_query("SELECT COUNT(*) FROM emails").fetchone()[0]
-        enriched_count = engine.execute_query("""
-            SELECT COUNT(*) FROM emails 
-            WHERE contact_id IS NOT NULL 
-            AND company_id IS NOT NULL 
-            AND topics IS NOT NULL 
-            AND sentiment IS NOT NULL 
-            AND opportunities IS NOT NULL
-        """).fetchone()[0]
-        
-        logger.info(f"Total emails: {email_count}")
-        logger.info(f"Already enriched: {enriched_count}")
-        logger.info(f"Emails to process: {email_count - enriched_count}")
-        
-        # Perform enrichment
-        enrich_emails(engine, args.dedup_strategy)
-        
-        # Get final counts
-        final_enriched = engine.execute_query("""
-            SELECT COUNT(*) FROM emails 
-            WHERE contact_id IS NOT NULL 
-            AND company_id IS NOT NULL 
-            AND topics IS NOT NULL 
-            AND sentiment IS NOT NULL 
-            AND opportunities IS NOT NULL
-        """).fetchone()[0]
-        
-        logger.info("\nEnrichment completed:")
-        logger.info(f"Total emails processed: {email_count}")
-        logger.info(f"Newly enriched: {final_enriched - enriched_count}")
-        logger.info(f"Total enriched: {final_enriched}")
-        
-    except Exception as e:
-        logger.error(f"Error during email enrichment: {str(e)}", exc_info=True)
-        sys.exit(1)
-    finally:
-        if 'engine' in locals():
-            engine.close()
-
-if __name__ == '__main__':
-    main()
+            self.logger.exception(
+                "email_enrichment_failed",
+                email_id=email.id,
+                gmail_id=email.gmail_id,
+                error=str(e),
+                error_type=type(e).__name__,
+            )
+            if "enrichment_task" in locals():
+                self.fail_task(enrichment_task, str(e))
+            return False
