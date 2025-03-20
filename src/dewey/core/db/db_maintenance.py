@@ -48,7 +48,11 @@ class DbMaintenance(BaseScript):
 
         try:
             # Example query to get table sizes (specific to your DB)
-            query = "SELECT table_name, pg_size_pretty(pg_total_relation_size(table_name)) AS size FROM information_schema.tables WHERE table_schema = 'public';"
+            query = """
+            SELECT table_name,
+            pg_size_pretty(pg_total_relation_size(table_name)) AS size
+            FROM information_schema.tables WHERE table_schema = 'public';
+            """
             results = execute_query(self.db_conn, query)
 
             for table_name, size in results:
@@ -70,7 +74,10 @@ class DbMaintenance(BaseScript):
 
         try:
             # Example query to find unused indexes (specific to your DB)
-            query = "SELECT indexrelname FROM pg_stat_all_indexes WHERE idx_scan = 0 AND schemaname = 'public';"
+            query = """
+            SELECT indexrelname FROM pg_stat_all_indexes
+            WHERE idx_scan = 0 AND schemaname = 'public';
+            """
             unused_indexes = execute_query(self.db_conn, query)
 
             for index_name in unused_indexes:
