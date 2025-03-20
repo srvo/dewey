@@ -1,5 +1,7 @@
-from dewey.core.base_script import BaseScript
 from typing import Any, Dict
+
+from dewey.core.base_script import BaseScript
+from dewey.llm import llm_utils
 
 
 class SearchAnalysisIntegration(BaseScript):
@@ -9,12 +11,12 @@ class SearchAnalysisIntegration(BaseScript):
     based on the configured tools and settings.
     """
 
-    def __init__(self, config_section: str = 'search_analysis', **kwargs: Any) -> None:
+    def __init__(self, config_section: str = "search_analysis", **kwargs: Any) -> None:
         """Initializes the SearchAnalysisIntegration script.
 
         Args:
-            config_section (str): The configuration section for the script.
-            **kwargs (Any): Additional keyword arguments.
+            config_section: The configuration section for the script.
+            **kwargs: Additional keyword arguments.
         """
         super().__init__(config_section=config_section, **kwargs)
 
