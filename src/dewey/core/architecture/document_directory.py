@@ -1,72 +1,42 @@
 from __future__ import annotations
-import logging
-from dewey.core.base_script import BaseScript
 
 import argparse
 import hashlib
 import json
-import logging
 import os
 import subprocess
 import sys
 from pathlib import Path
-import logging
-from dewey.core.base_script import BaseScript
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from dotenv import load_dotenv
-import logging
+
 from dewey.core.base_script import BaseScript
+from dewey.llm.llm_utils import generate_content
 
 # Load environment variables from .env file
 load_dotenv()
 
 CONVENTIONS_PATH = Path("../.aider/CONVENTIONS.md")
 
-# Assuming these are in the same relative location as the script
-try:
-    from dewey.llm.api_clients.deepinfra import DeepInfraClient
-    from dewey.llm.api_clients.gemini import GeminiClient
-    from dewey.llm.exceptions import LLMError
-except ImportError:
-    sys.exit(1)
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-)
-logger = logging.getLogger(__name__)
-
 
 class DirectoryDocumenter(BaseScript):
     """Document directories with code analysis, quality checks, and structural validation."""
 
-    def __init__(self):
-        super().__init__(config_section='architecture')
-
     def __init__(self, root_dir: str = ".") -> None:
+        """Initializes the DirectoryDocumenter.
+
+        Args:
+            root_dir: The root directory to document. Defaults to the current directory.
+        """
+        super().__init__(config_section="architecture", name="DirectoryDocumenter")
         self.root_dir = Path(root_dir).resolve()
         self._validate_directory()
 
-        # Setup LLM clients
-        gemini_api_key = os.getenv("GEMINI_API_KEY")
-        deepinfra_api_key = os.getenv("DEEPINFRA_API_KEY")
-        if not gemini_api_key:
-            self.logger.warning("GEMINI_API_KEY not found - Gemini client disabled")
-        if not deepinfra_api_key:
-            self.logger.warning("DEEPINFRA_API_KEY not found - DeepInfra client disabled")
-
-        self.gemini_client = (
-            GeminiClient(api_key=gemini_api_key) if gemini_api_key else None
-        )
-        self.deepinfra_client = (
-            DeepInfraClient(api_key=deepinfra_api_key) if deepinfra_api_key else None
-        )
         self.conventions_path = CONVENTIONS_PATH  # Relative path to CONVENTIONS.md
-        self.root_dir = Path(root_dir).resolve()
         self.checkpoint_file = self.root_dir / ".dewey_documenter_checkpoint.json"
-        self.checkpoints = self._load_checkpoints()
-        self.conventions = self._load_conventions()
+        self.checkpoints: Dict[str, str] = self._load_checkpoints()
+        self.conventions: str = self._load_conventions()
 
         if not self.conventions_path.exists():
             self.logger.error(
@@ -75,7 +45,12 @@ class DirectoryDocumenter(BaseScript):
             sys.exit(1)
 
     def _validate_directory(self) -> None:
-        """Ensure directory exists and is accessible."""
+        """Ensure directory exists and is accessible.
+
+        Raises:
+            FileNotFoundError: If the directory does not exist.
+            PermissionError: If the directory is not accessible.
+        """
         if not self.root_dir.exists():
             msg = f"Directory not found: {self.root_dir}"
             raise FileNotFoundError(msg)
@@ -84,7 +59,15 @@ class DirectoryDocumenter(BaseScript):
             raise PermissionError(msg)
 
     def _load_conventions(self) -> str:
-        """Load project coding conventions from CONVENTIONS.md."""
+        """Load project coding conventions from CONVENTIONS.md.
+
+        Returns:
+            The content of the CONVENTIONS.md file.
+
+        Raises:
+            FileNotFoundError: If the CONVENTIONS.md file is not found.
+            Exception: If there is an error loading the conventions.
+        """
         try:
             with open(self.conventions_path) as f:
                 return f.read()
@@ -97,8 +80,12 @@ class DirectoryDocumenter(BaseScript):
             self.logger.exception(f"Failed to load conventions: {e}")
             sys.exit(1)
 
-    def _load_checkpoints(self) -> dict[str, str]:
-        """Load checkpoint data from file."""
+    def _load_checkpoints(self) -> Dict[str, str]:
+        """Load checkpoint data from file.
+
+        Returns:
+            A dictionary containing the checkpoint data.
+        """
         if self.checkpoint_file.exists():
             try:
                 with open(self.checkpoint_file) as f:
@@ -119,7 +106,17 @@ class DirectoryDocumenter(BaseScript):
             self.logger.exception(f"Could not save checkpoint file: {e}")
 
     def _calculate_file_hash(self, file_path: Path) -> str:
-        """Calculate SHA256 hash of file contents with size check."""
+        """Calculate SHA256 hash of file contents with size check.
+
+        Args:
+            file_path: The path to the file.
+
+        Returns:
+            The SHA256 hash of the file contents.
+
+        Raises:
+            Exception: If the hash calculation fails.
+        """
         try:
             file_size = file_path.stat().st_size
             if file_size == 0:
@@ -131,7 +128,14 @@ class DirectoryDocumenter(BaseScript):
             raise
 
     def _is_checkpointed(self, file_path: Path) -> bool:
-        """Check if a file has been processed based on content hash."""
+        """Check if a file has been processed based on content hash.
+
+        Args:
+            file_path: The path to the file.
+
+        Returns:
+            True if the file has been processed, False otherwise.
+        """
         try:
             current_hash = self._calculate_file_hash(file_path)
             return self.checkpoints.get(str(file_path)) == current_hash
@@ -140,7 +144,11 @@ class DirectoryDocumenter(BaseScript):
             return False
 
     def _checkpoint(self, file_path: Path) -> None:
-        """Checkpoint a file by saving its content hash."""
+        """Checkpoint a file by saving its content hash.
+
+        Args:
+            file_path: The path to the file.
+        """
         try:
             with open(file_path) as f:
                 content = f.read()
@@ -150,17 +158,15 @@ class DirectoryDocumenter(BaseScript):
         except Exception as e:
             self.logger.exception(f"Could not checkpoint file: {e}")
 
-    def _get_llm_client(self):
-        """Returns the Gemini client if available, otherwise falls back to the DeepInfra client."""
-        return self.gemini_client, self.deepinfra_client
+    def analyze_code(self, code: str) -> Tuple[str, Optional[str]]:
+        """Analyzes the given code using an LLM and returns a summary.
 
-    def analyze_code(self, code: str) -> tuple[str, str | None]:
-        """Analyzes the given code using an LLM and returns a summary,
-        including whether the code contains placeholder code or
-        unimplemented methods, and whether it appears to be related to
-        the Dewey project. Also asks the LLM to suggest a target module.
+        Args:
+            code: The code to analyze.
+
+        Returns:
+            A tuple containing the analysis and the suggested module.
         """
-        gemini_client, deepinfra_client = self._get_llm_client()
         prompt = f"""
         Analyze the following code and provide:
         1.  A summary of its functionality, its dependencies, any potential issues or improvements based on the following conventions.
@@ -177,7 +183,7 @@ class DirectoryDocumenter(BaseScript):
         ```
         """
         try:
-            response = gemini_client.generate_content(prompt)
+            response = generate_content(self.llm_client, prompt)
             # Split the response into analysis and suggested module
             parts = response.split("4.")
             analysis = parts[0].strip()
@@ -194,38 +200,20 @@ class DirectoryDocumenter(BaseScript):
                 else None
             )
             return analysis, suggested_module
-        except LLMError as e:
-            self.logger.warning(
-                f"Gemini rate limit exceeded, attempting DeepInfra fallback. GeminiError: {e}",
-            )
-            try:
-                response = deepinfra_client.chat_completion(prompt=prompt)
-                # Split the response into analysis and suggested module
-                parts = response.split("4.")
-                analysis = parts[0].strip()
-                suggested_module = (
-                    parts[1]
-                    .strip()
-                    .replace(
-                        "Suggest a target module within the Dewey project structure",
-                        "",
-                    )
-                    .replace(":", "")
-                    .strip()
-                    if len(parts) > 1
-                    else None
-                )
-                return analysis, suggested_module
-            except Exception as e:
-                self.logger.exception(f"DeepInfra also failed: {e}")
-                raise
         except Exception as e:
             self.logger.exception(f"Unexpected error during code analysis: {e}")
             raise
 
-    def _analyze_code_quality(self, file_path: Path) -> dict:
-        """Run code quality checks using flake8 and ruff."""
-        results = {"flake8": [], "ruff": []}
+    def _analyze_code_quality(self, file_path: Path) -> Dict[str, List[str]]:
+        """Run code quality checks using flake8 and ruff.
+
+        Args:
+            file_path: The path to the file.
+
+        Returns:
+            A dictionary containing the results of the code quality checks.
+        """
+        results: Dict[str, List[str]] = {"flake8": [], "ruff": []}
         try:
             # Run flake8
             flake8_result = subprocess.run(
@@ -248,8 +236,12 @@ class DirectoryDocumenter(BaseScript):
             self.logger.exception(f"Code quality analysis failed: {e}")
         return results
 
-    def _analyze_directory_structure(self) -> dict:
-        """Check directory structure against project conventions."""
+    def _analyze_directory_structure(self) -> Dict[str, Any]:
+        """Check directory structure against project conventions.
+
+        Returns:
+            A dictionary containing the directory structure analysis.
+        """
         expected_modules = [
             "src/dewey/core",
             "src/dewey/llm",
@@ -262,8 +254,8 @@ class DirectoryDocumenter(BaseScript):
             "docs",
         ]
 
-        dir_structure = {}
-        deviations = []
+        dir_structure: Dict[str, Any] = {}
+        deviations: List[str] = []
 
         for root, dirs, files in os.walk(self.root_dir):
             rel_path = Path(root).relative_to(self.root_dir)
@@ -281,8 +273,16 @@ class DirectoryDocumenter(BaseScript):
 
         return {"structure": dir_structure, "deviations": deviations}
 
-    def generate_readme(self, directory: Path, analysis_results: dict[str, str]) -> str:
-        """Generate comprehensive README with quality and structure analysis."""
+    def generate_readme(self, directory: Path, analysis_results: Dict[str, str]) -> str:
+        """Generate comprehensive README with quality and structure analysis.
+
+        Args:
+            directory: The directory to generate the README for.
+            analysis_results: A dictionary containing the analysis results.
+
+        Returns:
+            The content of the README file.
+        """
         dir_analysis = self._analyze_directory_structure()
 
         readme_content = [
@@ -305,8 +305,14 @@ class DirectoryDocumenter(BaseScript):
         return "\n".join(readme_content)
 
     def correct_code_style(self, code: str) -> str:
-        """Corrects the code style of the given code using an LLM based on project conventions."""
-        gemini_client, deepinfra_client = self._get_llm_client()
+        """Corrects the code style of the given code using an LLM based on project conventions.
+
+        Args:
+            code: The code to correct.
+
+        Returns:
+            The corrected code.
+        """
         prompt = f"""
         Correct the style of the following code to adhere to these conventions:
 
@@ -318,20 +324,20 @@ class DirectoryDocumenter(BaseScript):
         Return only the corrected code.
         """
         try:
-            return gemini_client.generate_content(prompt)
-        except LLMError as e:
-            self.logger.warning(
-                f"Gemini rate limit exceeded, attempting DeepInfra fallback. GeminiError: {e}",
-            )
-            try:
-                return deepinfra_client.chat_completion(prompt=prompt)
-            except Exception as e:
-                self.logger.exception(f"DeepInfra also failed: {e}")
-                raise
+            return generate_content(self.llm_client, prompt)
+        except Exception as e:
+            self.logger.exception(f"LLM failed to correct code style: {e}")
+            raise
 
-    def suggest_filename(self, code: str) -> str:
-        """Suggests a more human-readable filename for the given code using an LLM."""
-        gemini_client, deepinfra_client = self._get_llm_client()
+    def suggest_filename(self, code: str) -> Optional[str]:
+        """Suggests a more human-readable filename for the given code using an LLM.
+
+        Args:
+            code: The code to suggest a filename for.
+
+        Returns:
+            The suggested filename.
+        """
         prompt = f"""
         Suggest a concise, human-readable filename (without the .py extension) for a Python script
         that contains the following code.  The filename should be lowercase and use underscores
@@ -342,26 +348,24 @@ class DirectoryDocumenter(BaseScript):
         ```
         """
         try:
-            return gemini_client.generate_content(prompt).strip()
-        except LLMError as e:
-            self.logger.warning(
-                f"Gemini rate limit exceeded, attempting DeepInfra fallback. GeminiError: {e}",
-            )
-            try:
-                return deepinfra_client.chat_completion(prompt=prompt).strip()
-            except Exception as e:
-                self.logger.exception(f"DeepInfra also failed: {e}")
-                return None
+            return generate_content(self.llm_client, prompt).strip()
+        except Exception as e:
+            self.logger.exception(f"LLM failed to suggest filename: {e}")
+            return None
 
     def process_directory(self, directory: str) -> None:
-        """Processes the given directory, analyzes its contents, and generates a README.md file."""
+        """Processes the given directory, analyzes its contents, and generates a README.md file.
+
+        Args:
+            directory: The directory to process.
+        """
         directory_path = Path(directory).resolve()
 
         if not directory_path.exists() or not directory_path.is_dir():
             self.logger.error(f"Directory '{directory}' not found.")
             return
 
-        analysis_results = {}
+        analysis_results: Dict[str, str] = {}
         for filename in os.listdir(directory_path):
             file_path = directory_path / filename
             if file_path.suffix == ".py":
@@ -402,8 +406,6 @@ class DirectoryDocumenter(BaseScript):
                         if move_file == "y":
                             try:
                                 import shutil
-import logging
-from dewey.core.base_script import BaseScript
 
                                 shutil.move(file_path, target_path)
                                 self.logger.info(f"Moved {filename} to {target_path}")
@@ -485,7 +487,7 @@ from dewey.core.base_script import BaseScript
         except Exception as e:
             self.logger.exception(f"Failed to write README.md: {e}")
 
-    def process_project(self) -> None:
+    def run(self) -> None:
         """Processes the entire project directory."""
         for root, _, _files in os.walk(self.root_dir):
             self.process_directory(root)
@@ -503,4 +505,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     documenter = DirectoryDocumenter(root_dir=args.directory)
-    documenter.process_project()
+    documenter.execute()
