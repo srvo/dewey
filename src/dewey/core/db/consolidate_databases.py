@@ -16,7 +16,8 @@ class ConsolidateDatabases(BaseScript):
         Initializes the ConsolidateDatabases class.
 
         Args:
-            config_section (Optional[str]): The configuration section to use. Defaults to 'consolidate_databases'.
+            config_section (Optional[str]): The configuration section to use.
+            Defaults to 'consolidate_databases'.
         """
         super().__init__(config_section=config_section, requires_db=True)
 
@@ -24,8 +25,9 @@ class ConsolidateDatabases(BaseScript):
         """
         Runs the database consolidation process.
 
-        This method retrieves the source and target database URLs from the configuration,
-        establishes connections to both databases, and then executes the consolidation logic.
+        This method retrieves the source and target database URLs from the
+        configuration, establishes connections to both databases, and then
+        executes the consolidation logic.
 
         Raises:
             ValueError: If the source or target database URL is not configured.
@@ -45,23 +47,26 @@ class ConsolidateDatabases(BaseScript):
         try:
             # Establish connections to source and target databases
             with (
-                get_connection({"connection_string": source_db_url}) as source_conn,
-                get_connection({"connection_string": target_db_url}) as target_conn,
+                get_connection({"connection_string": source_db_url}),
+                get_connection({"connection_string": target_db_url}),
             ):
-
                 self.logger.info(
                     "Successfully connected to source and target databases."
                 )
 
                 # Example of using db_utils for schema operations
-                # Assuming you have a function to get the schema from the source database
-                # source_schema = db_utils.get_schema(source_conn, 'your_table_name')
+                # Assuming you have a function to get the schema from the
+                # source database
+                # source_schema = db_utils.get_schema(source_conn,
+                # 'your_table_name')
 
                 # Example of using db_utils to build a query
-                # query = db_utils.build_select_query('your_table_name', ['column1', 'column2'])
+                # query = db_utils.build_select_query('your_table_name',
+                # ['column1', 'column2'])
 
-                # Add your database consolidation logic here, using source_conn and target_conn
-                # and the utilities from dewey.core.db and dewey.llm
+                # Add your database consolidation logic here, using
+                # source_conn and target_conn and the utilities from
+                # dewey.core.db and dewey.llm
 
                 self.logger.info("Database consolidation logic would be executed here.")
 
