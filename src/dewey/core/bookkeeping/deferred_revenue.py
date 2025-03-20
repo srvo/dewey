@@ -48,12 +48,6 @@ class AltruistIncomeProcessor(BaseScript):
         date_obj = datetime.strptime(date_str, "%Y-%m-%d")
         one_month_revenue = round(amount / 3, 2)
 
-        transactions=None, 3):
-            if 2)
-
-        transactions is None:
-                2)
-
         transactions = []
 
         # Create initial fee income transaction
@@ -73,7 +67,7 @@ class AltruistIncomeProcessor(BaseScript):
         transactions.append(deferred_revenue_transaction)
 
         # Generate fee income entries for the next two months
-        for month in range(1
+        for month in range(1, 3):
             next_month = date_obj + relativedelta(months=month)
             next_month_str = next_month.strftime("%Y-%m-%d")
             fee_income_transaction = f"""
