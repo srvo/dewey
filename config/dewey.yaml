@@ -232,7 +232,7 @@ regex_patterns:
     name_email: ([^<\n]*?)\s*<([^>]+)>
     phone: Phone:\s*(\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})
   opportunity:
-    cancellation: \bcancel\b|\bneed to cancel\b
+    cancellation: \bcancel\b|\bneed to cancel\b|\bneed to reschedule\b
     demo: \bdemo\b|\bschedule a demo\b
     publicity: \bpublicity opportunity\b|\bmedia\b
     speaking: \bspeaking opportunity\b|\bpresentation\b
@@ -257,3 +257,6 @@ vector_stores:
       search_ef: 300
       space: cosine
     persist_dir: .chroma_docs
+
+utils:
+  example_config: "example_value_in_config"

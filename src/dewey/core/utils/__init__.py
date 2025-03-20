@@ -33,8 +33,11 @@ class MyUtils(BaseScript):
         try:
             self.logger.info("Starting utility functions...")
             # Example usage of config, database, and LLM
-            example_config_value = self.get_config_value("example_config", "default_value")
-            self.logger.info(f"Example config value: {example_config_value}")
+            try:
+                example_config_value = self.get_config_value("example_config", "default_value")
+                self.logger.info(f"Example config value: {example_config_value}")
+            except Exception as e:
+                self.logger.error(f"Error getting config value: {e}")
 
             # Example database operation
             if self.db_conn:
