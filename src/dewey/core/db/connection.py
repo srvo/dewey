@@ -130,24 +130,6 @@ def get_connection(config: Dict[str, Any]) -> DatabaseConnection:
             if not motherduck_token:
                 raise ValueError("MotherDuck token is required for MotherDuck connections")
             # Set token in environment
-            os.environ['MOTHERDUCK_TOKEN']=None, v in config.items():
-        if 'dewey')
-
-    # Build connection string if not provided
-    if not connection_string:
-        if use_motherduck:
-            if not motherduck_token:
-                raise ValueError("MotherDuck token is required for MotherDuck connections")
-            # Set token in environment
-            os.environ['MOTHERDUCK_TOKEN'] is None:
-            'dewey')
-
-    # Build connection string if not provided
-    if not connection_string:
-        if use_motherduck:
-            if not motherduck_token:
-                raise ValueError("MotherDuck token is required for MotherDuck connections")
-            # Set token in environment
             os.environ['MOTHERDUCK_TOKEN'] = motherduck_token
             connection_string = f"{DEFAULT_MOTHERDUCK_PREFIX}{database}"
         else:
@@ -157,7 +139,7 @@ def get_connection(config: Dict[str, Any]) -> DatabaseConnection:
 
     # Get additional connection parameters
     kwargs = {}
-    for k
+    for k, v in config.items():
         if k not in ('connection_string', 'motherduck', 'token', 'database'):
             kwargs[k] = v
 
