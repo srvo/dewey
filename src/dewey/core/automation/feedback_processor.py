@@ -3,12 +3,11 @@ import os
 import time
 from collections import Counter
 from typing import Dict, List, Optional, Tuple
+
 import duckdb
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import get_connection
 from dewey.llm.llm_utils import generate_json
-from dotenv import load_dotenv
 
 
 class FeedbackProcessor(BaseScript):
@@ -23,7 +22,7 @@ class FeedbackProcessor(BaseScript):
             requires_db=True,
             enable_llm=True,
         )
-        self.active_data_dir = "/Users/srvo/input_data/ActiveData"
+        self.active_data_dir = self.get_config_value("paths.data_dir")
         self.db_file = f"{self.active_data_dir}/process_feedback.duckdb"
         self.classifier_db = f"{self.active_data_dir}/email_classifier.duckdb"
 
@@ -40,11 +39,12 @@ class FeedbackProcessor(BaseScript):
             duckdb.IOException: If there is a conflicting lock on the database.
         """
         import time
+
         max_retries = 5  # Increased from 3
         max_delay = 60  # Max 1 minute between retries
         retry_delay = 2  # seconds (increased initial delay)
         conn = None
-        
+
         # Handle concurrent access with retries
         for attempt in range(max_retries):
             try:
@@ -53,24 +53,33 @@ class FeedbackProcessor(BaseScript):
             except duckdb.IOException as e:
                 if "Conflicting lock" in str(e):
                     if attempt < max_retries - 1:
-                        self.logger.info(f"\nDatabase locked by another process (likely your other script)")
-                        self.logger.info(f"Waiting {retry_delay} sec (attempt {attempt + 1}/{max_retries})...")
+                        self.logger.info(
+                            f"\nDatabase locked by another process (likely your other script)"
+                        )
+                        self.logger.info(
+                            f"Waiting {retry_delay} sec (attempt {attempt + 1}/{max_retries})..."
+                        )
                         time.sleep(retry_delay)
                         retry_delay = min(retry_delay * 2, max_delay)  # Cap max delay
                     else:
-                        self.logger.error("\nError: Database still locked after multiple attempts")
-                        self.logger.error("Please close any other processes using the database and try again")
+                        self.logger.error(
+                            "\nError: Database still locked after multiple attempts"
+                        )
+                        self.logger.error(
+                            "Please close any other processes using the database and try again"
+                        )
                         sys.exit(1)
                 else:
                     raise
-        
+
         # Use execute with parameter binding for safety
         with conn:  # Use context manager for transaction
             if classifier_db_path:
                 conn.execute(f"ATTACH '{classifier_db_path}' AS classifier_db")
-            
+
             # Create tables using IF NOT EXISTS and proper formatting
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS feedback (
                     msg_id VARCHAR PRIMARY KEY,
                     subject VARCHAR,
@@ -81,21 +90,26 @@ class FeedbackProcessor(BaseScript):
                     add_to_source VARCHAR,
                     timestamp DOUBLE
                 )
-            """)
-            
-            conn.execute("""
+            """
+            )
+
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS preferences (
                     key VARCHAR PRIMARY KEY,
                     config JSON
                 )
-            """)
-            
+            """
+            )
+
             # Add indexes for common queries
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE INDEX IF NOT EXISTS feedback_timestamp_idx 
                 ON feedback(timestamp)
-            """)
-        
+            """
+            )
+
         # Configure database settings within open connection context
         with conn:
             # Set memory limit and handle transaction
@@ -129,7 +143,9 @@ class FeedbackProcessor(BaseScript):
         ).fetchone()
         return result[0] if result else {"override_rules": []}
 
-    def save_feedback(self, conn: duckdb.DuckDBPyConnection, feedback_data: List[Dict]) -> None:
+    def save_feedback(
+        self, conn: duckdb.DuckDBPyConnection, feedback_data: List[Dict]
+    ) -> None:
         """Save feedback entries to database.
 
         Args:
@@ -139,16 +155,37 @@ class FeedbackProcessor(BaseScript):
         # Upsert feedback entries
         conn.execute("BEGIN TRANSACTION")
         for entry in feedback_data:
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT OR REPLACE INTO feedback 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, [
-                entry['msg_id'], entry.get('subject'), entry.get('assigned_priority'), entry.get('feedback_comments'), # Clamp priority values between 0-4 and handle invalid types
-                max(0, min(int(entry.get('suggested_priority', entry.get('assigned_priority'))), 4)), entry.get('add_to_topics'), entry.get('add_to_source'), entry.get('timestamp')
-            ])
+            """,
+                [
+                    entry["msg_id"],
+                    entry.get("subject"),
+                    entry.get("assigned_priority"),
+                    entry.get("feedback_comments"),  # Clamp priority values between 0-4 and handle invalid types
+                    max(
+                        0,
+                        min(
+                            int(
+                                entry.get(
+                                    "suggested_priority", entry.get("assigned_priority")
+                                )
+                            ),
+                            4,
+                        ),
+                    ),
+                    entry.get("add_to_topics"),
+                    entry.get("add_to_source"),
+                    entry.get("timestamp"),
+                ],
+            )
         conn.execute("COMMIT")
 
-    def save_preferences(self, conn: duckdb.DuckDBPyConnection, preferences: Dict) -> None:
+    def save_preferences(
+        self, conn: duckdb.DuckDBPyConnection, preferences: Dict
+    ) -> None:
         """Save preferences to database.
 
         Args:
@@ -159,7 +196,9 @@ class FeedbackProcessor(BaseScript):
             """
             INSERT OR REPLACE INTO preferences (key, config)
             VALUES ('latest', ?)
-        """, [json.dumps(preferences)], )
+        """,
+            [json.dumps(preferences)],
+        )
 
     def generate_feedback_json(
         self, feedback_text: str, msg_id: str, subject: str, assigned_priority: int
@@ -171,7 +210,14 @@ class FeedbackProcessor(BaseScript):
         feedback_lower = feedback_text.lower()
         if "unsubscribe" in feedback_lower:
             return {
-                "msg_id": msg_id, "subject": subject, "assigned_priority": assigned_priority, "feedback_comments": "Automatic priority cap at 2 due to unsubscribe mention", "suggested_priority": min(assigned_priority, 2), "add_to_topics": None, "add_to_source": None, "timestamp": time.time()
+                "msg_id": msg_id,
+                "subject": subject,
+                "assigned_priority": assigned_priority,
+                "feedback_comments": "Automatic priority cap at 2 due to unsubscribe mention",
+                "suggested_priority": min(assigned_priority, 2),
+                "add_to_topics": None,
+                "add_to_source": None,
+                "timestamp": time.time(),
             }
 
         prompt = f"""
@@ -215,7 +261,9 @@ Failure to follow these requirements will cause critical system errors. Always r
                 feedback_json["timestamp"] = time.time()
                 return feedback_json
             except json.JSONDecodeError as e:
-                error_msg = f"API response was not valid JSON: {str(e)}\nResponse Text: {response_content[:200]}"
+                error_msg = (
+                    f"API response was not valid JSON: {str(e)}\nResponse Text: {response_content[:200]}"
+                )
                 self.logger.error(f"Error: {error_msg}")
                 return {"error": error_msg, "feedback_text": feedback_text}
         except Exception as e:
@@ -223,7 +271,9 @@ Failure to follow these requirements will cause critical system errors. Always r
             self.logger.error("Check your DEEPINFRA_API_KEY and internet connection")
             return {}
 
-    def suggest_rule_changes(self, feedback_data: List[Dict], preferences: Dict) -> List[Dict]:
+    def suggest_rule_changes(
+        self, feedback_data: List[Dict], preferences: Dict
+    ) -> List[Dict]:
         """Analyzes feedback and suggests changes to preferences.
 
         Args:
@@ -262,7 +312,10 @@ Failure to follow these requirements will cause critical system errors. Always r
             add_to_source = entry.get("add_to_source")
 
             # check if there is a discrepancy
-            if assigned_priority != suggested_priority and suggested_priority is not None:
+            if (
+                assigned_priority != suggested_priority
+                and suggested_priority is not None
+            ):
                 discrepancy_key = (assigned_priority, suggested_priority)
                 discrepancy_counts[discrepancy_key] += 1
 
@@ -272,7 +325,9 @@ Failure to follow these requirements will cause critical system errors. Always r
                         # Suggest adding to topics
                         if keyword not in topic_suggestions:
                             topic_suggestions[keyword] = {
-                                "count": 0, "suggested_priority": suggested_priority, }
+                                "count": 0,
+                                "suggested_priority": suggested_priority,
+                            }
                         topic_suggestions[keyword]["count"] += 1
                         topic_suggestions[keyword][
                             "suggested_priority"
@@ -282,13 +337,17 @@ Failure to follow these requirements will cause critical system errors. Always r
                 if add_to_source:
                     if add_to_source not in source_suggestions:
                         source_suggestions[add_to_source] = {
-                            "count": 0, "suggested_priority": suggested_priority, }
+                            "count": 0,
+                            "suggested_priority": suggested_priority,
+                        }
                     source_suggestions[add_to_source]["count"] += 1
                     source_suggestions[add_to_source][
                         "suggested_priority"
                     ] = suggested_priority  # Update if higher
         # Output the most common discrepancies
-        self.logger.info(f"\nMost Common Discrepancies: {discrepancy_counts.most_common()}")
+        self.logger.info(
+            f"\nMost Common Discrepancies: {discrepancy_counts.most_common()}"
+        )
 
         # 3.  Suggest *new* override rules.  This is the most important part.
         for topic, suggestion in topic_suggestions.items():
@@ -371,7 +430,9 @@ Failure to follow these requirements will cause critical system errors. Always r
                         exists = True
                         break
                 if not exists:
-                    updated_preferences.setdefault("override_rules", []).append(new_rule)
+                    updated_preferences.setdefault("override_rules", []).append(
+                        new_rule
+                    )
                     self.logger.info(f"  Added override rule: {new_rule}")
                 else:
                     self.logger.info("Override rule already exists")
@@ -387,9 +448,10 @@ Failure to follow these requirements will cause critical system errors. Always r
         try:
             feedback_data = self.load_feedback(conn)
             preferences = self.load_preferences(conn)
-        
+
             # Get unprocessed emails from classifier DB
-            opportunities = conn.execute(f"""
+            opportunities = conn.execute(
+                f"""
             SELECT 
                 ea.msg_id, 
                 ea.subject, 
@@ -404,8 +466,9 @@ Failure to follow these requirements will cause critical system errors. Always r
                 total_from_sender DESC,
                 ea.analysis_date DESC
             LIMIT 50
-        """).fetchall()
-        
+        """
+            ).fetchall()
+
             # One-time migration of existing JSON data
             if not feedback_data and os.path.exists("feedback.json"):
                 self.logger.info("Migrating existing feedback.json to database...")
@@ -413,9 +476,10 @@ Failure to follow these requirements will cause critical system errors. Always r
                     legacy_feedback = json.load(f)
                     self.save_feedback(conn, legacy_feedback)
                 os.rename("feedback.json", "feedback.json.bak")
-            
-        
-            if not preferences.get("priority_map") and os.path.exists("email_preferences.json"):
+
+            if not preferences.get("priority_map") and os.path.exists(
+                "email_preferences.json"
+            ):
                 self.logger.info("Migrating email_preferences.json to database...")
                 with open("email_preferences.json") as f:
                     legacy_prefs = json.load(f)
@@ -427,15 +491,22 @@ Failure to follow these requirements will cause critical system errors. Always r
             new_feedback_entries = []
             if opportunities:
                 from collections import defaultdict
+
                 sender_groups = defaultdict(list)
                 for opp in opportunities:
                     sender_groups[opp[3]].append(opp)  # Group by from_address
 
-                self.logger.info(f"\nFound {len(opportunities)} emails from {len(sender_groups)} senders:")
-                
-                for sender_idx, (from_addr, emails) in enumerate(sender_groups.items(), 1):
-                    self.logger.info(f"\n=== Sender {sender_idx}/{len(sender_groups)}: {from_addr} ===")
-                    
+                self.logger.info(
+                    f"\nFound {len(opportunities)} emails from {len(sender_groups)} senders:"
+                )
+
+                for sender_idx, (from_addr, emails) in enumerate(
+                    sender_groups.items(), 1
+                ):
+                    self.logger.info(
+                        f"\n=== Sender {sender_idx}/{len(sender_groups)}: {from_addr} ==="
+                    )
+
                     # Show first 3 emails, then prompt if they want to see more
                     for idx, email in enumerate(emails[:3], 1):
                         msg_id, subject, priority, _, snippet, total_from_sender = email
@@ -444,10 +515,16 @@ Failure to follow these requirements will cause critical system errors. Always r
                         self.logger.info(f"  Snippet: {snippet[:100]}...")
 
                 if len(emails) > 3:
-                    show_more = input(f"\n  This sender has {len(emails)} emails. Show all? (y/n/q): ").strip().lower()
-                    if show_more == 'q':
+                    show_more = (
+                        input(
+                            f"\n  This sender has {len(emails)} emails. Show all? (y/n/q): "
+                        )
+                        .strip()
+                        .lower()
+                    )
+                    if show_more == "q":
                         break
-                    if show_more == 'y':
+                    if show_more == "y":
                         for idx, email in enumerate(emails[3:], 4):
                             msg_id, subject, priority, _, snippet = email
                             self.logger.info(f"\n  Email {idx}: {subject}")
@@ -456,150 +533,172 @@ Failure to follow these requirements will cause critical system errors. Always r
 
             for email in emails:
                 msg_id, subject, priority, _, snippet, total_from_sender = email
-                user_input = input("\nType feedback, 't' to tag, 'i' for ingest, or 'q' to quit: ").strip().lower()
-                
-                if user_input in ('q', 'quit'):
+                user_input = (
+                    input(
+                        "\nType feedback, 't' to tag, 'i' for ingest, or 'q' to quit: "
+                    )
+                    .strip()
+                    .lower()
+                )
+
+                if user_input in ("q", "quit"):
                     self.logger.info("\nExiting feedback session...")
                     return
-                
+
                 feedback_text = ""
                 action = ""
-                
-                if user_input == 't':
+
+                if user_input == "t":
                     feedback_text = "USER ACTION: Tag for follow-up"
                     action = "follow-up"
-                elif user_input == 'i':
+                elif user_input == "i":
                     self.logger.info("\nSelect ingestion type:")
                     self.logger.info("  1) Form submission (questions, contact requests)")
                     self.logger.info("  2) Contact record update")
                     self.logger.info("  3) Task creation")
                     ingest_type = input("Enter number (1-3): ").strip()
-                    if ingest_type == '1':
+                    if ingest_type == "1":
                         feedback_text = "USER ACTION: Tag for form submission ingestion"
                         action = "form_submission"
-                    elif ingest_type == '2':
+                    elif ingest_type == "2":
                         feedback_text = "USER ACTION: Tag for contact record update"
-                        action = "contact_update" 
-                    elif ingest_type == '3':
+                        action = "contact_update"
+                    elif ingest_type == "3":
                         feedback_text = "USER ACTION: Tag for task creation"
                         action = "task_creation"
                     else:
-                        feedback_text = "USER ACTION: Tag for automated ingestion (unspecified type)"
+                        feedback_text = (
+                            "USER ACTION: Tag for automated ingestion (unspecified type)"
+                        )
                         action = "automated-ingestion"
                 else:
                     feedback_text = user_input
-                
+
                 if not feedback_text:
                     continue
-                    
+
                 self.logger.info("\nAvailable actions:")
                 self.logger.info("  - Enter priority (0-4)")
                 self.logger.info("  - 't' = Tag for follow-up")
                 self.logger.info("  - 'i' = Tag for automated ingestion")
                 self.logger.info("  - 'q' = Quit and save progress")
-                
-                suggested_priority = input("Suggested priority (0-4, blank to keep current): ").strip()
-            try:
-                feedback_entry = self.generate_feedback_json(
-                    feedback_text, msg_id, subject, priority
-                )
-                if feedback_entry:
-                    new_feedback_entries.append(feedback_entry)
-                    # Save after each entry in case of interruption
-                    self.save_feedback(conn, [feedback_entry])
-            except Exception as e:
-                self.logger.error(f"Error processing feedback: {str(e)}")
-                self.logger.info("Saving partial feedback...")
-                self.save_feedback(conn, new_feedback_entries)
 
-        if not feedback_data and not new_feedback_entries:
-            self.logger.info("No existing feedback found. You can add new feedback entries.")
-            while True:
-                add_more = input("\nWould you like to add new feedback? (y/n): ").lower()
-                if add_more != 'y':
-                    break
-                    
-                feedback_text = input("\nEnter your feedback comments: ").strip()
-                suggested_priority = input("Suggested priority (0-5, leave blank if unsure): ").strip()
-                subject = input("Email subject (optional): ").strip() or "No Subject"
-                
-                # Generate unique ID based on timestamp
-                msg_id = f"user_fb_{int(time.time())}"
-                assigned_priority = 3  # Default neutral priority
-                
-                feedback_json = self.generate_feedback_json(
-                    feedback_text,
-                    msg_id,
-                    subject,
-                    assigned_priority
-                )
-                if feedback_json and not feedback_json.get("error"):
-                    new_feedback_entries.append(feedback_json)
-                    self.logger.info("Feedback added successfully!")
-                else:
-                    error_reason = feedback_json.get("error", "Unknown error") if feedback_json else "Empty response"
-                    self.logger.error(f"Failed to process feedback entry. Reason: {error_reason}")
-                    self.logger.error(f"Original feedback text: {feedback_text[:100]}...")
-        else:
-            # Process existing feedback entries that lack comments
-            for entry in feedback_data:
-                if "feedback_comments" not in entry or entry["feedback_comments"] == "":
-                    msg_id = entry["msg_id"]
-                    subject = entry["subject"]
-                    assigned_priority = entry["assigned_priority"]
-
-                    self.logger.info(
-                        f"\nEmail: {subject} (ID: {msg_id}, Assigned Priority: {assigned_priority})"
+                suggested_priority = input(
+                    "Suggested priority (0-4, blank to keep current): "
+                ).strip()
+                try:
+                    feedback_entry = self.generate_feedback_json(
+                        feedback_text, msg_id, subject, priority
                     )
-                    feedback_text = input("Enter your feedback: ")
-                    suggested_priority = input("Suggested priority (0-5, leave blank if unsure): ").strip()
+                    if feedback_entry:
+                        new_feedback_entries.append(feedback_entry)
+                        # Save after each entry in case of interruption
+                        self.save_feedback(conn, [feedback_entry])
+                except Exception as e:
+                    self.logger.error(f"Error processing feedback: {str(e)}")
+                    self.logger.info("Saving partial feedback...")
+                    self.save_feedback(conn, new_feedback_entries)
+
+            if not feedback_data and not new_feedback_entries:
+                self.logger.info(
+                    "No existing feedback found. You can add new feedback entries."
+                )
+                while True:
+                    add_more = input(
+                        "\nWould you like to add new feedback? (y/n): "
+                    ).lower()
+                    if add_more != "y":
+                        break
+
+                    feedback_text = input("\nEnter your feedback comments: ").strip()
+                    suggested_priority = input(
+                        "Suggested priority (0-5, leave blank if unsure): "
+                    ).strip()
+                    subject = input("Email subject (optional): ").strip() or "No Subject"
+
+                    # Generate unique ID based on timestamp
+                    msg_id = f"user_fb_{int(time.time())}"
                     assigned_priority = 3  # Default neutral priority
 
                     feedback_json = self.generate_feedback_json(
                         feedback_text, msg_id, subject, assigned_priority
                     )
-                    if feedback_json:
+                    if feedback_json and not feedback_json.get("error"):
                         new_feedback_entries.append(feedback_json)
+                        self.logger.info("Feedback added successfully!")
                     else:
-                        self.logger.info("Skipping feedback entry due to processing error.")
+                        error_reason = (
+                            feedback_json.get("error", "Unknown error")
+                            if feedback_json
+                            else "Empty response"
+                        )
+                        self.logger.error(
+                            f"Failed to process feedback entry. Reason: {error_reason}"
+                        )
+                        self.logger.error(f"Original feedback text: {feedback_text[:100]}...")
+            else:
+                # Process existing feedback entries that lack comments
+                for entry in feedback_data:
+                    if "feedback_comments" not in entry or entry["feedback_comments"] == "":
+                        msg_id = entry["msg_id"]
+                        subject = entry["subject"]
+                        assigned_priority = entry["assigned_priority"]
 
-        # combine old and new feedback
-        combined_feedback = feedback_data
-        for entry in new_feedback_entries:
-            # Find the matching entry in feedback_data and update it, or add as new.
-            found = False
-            for i, existing_entry in enumerate(feedback_data):
-                if existing_entry["msg_id"] == entry["msg_id"]:
-                    combined_feedback[i] = entry  # update to combined
-                    found = True
-                    break
-            if not found:
-                combined_feedback.append(entry)
+                        self.logger.info(
+                            f"\nEmail: {subject} (ID: {msg_id}, Assigned Priority: {assigned_priority})"
+                        )
+                        feedback_text = input("Enter your feedback: ")
+                        suggested_priority = input(
+                            "Suggested priority (0-5, leave blank if unsure): "
+                        ).strip()
+                        assigned_priority = 3  # Default neutral priority
 
-        # --- Feedback Processing ---
-        if not combined_feedback:
-            self.logger.info("No feedback data available to process.")
-            
+                        feedback_json = self.generate_feedback_json(
+                            feedback_text, msg_id, subject, assigned_priority
+                        )
+                        if feedback_json:
+                            new_feedback_entries.append(feedback_json)
+                        else:
+                            self.logger.info(
+                                "Skipping feedback entry due to processing error."
+                            )
 
-        self.logger.info(f"Processing {len(combined_feedback)} feedback entries...")
-        suggested_changes = self.suggest_rule_changes(combined_feedback, preferences)
+            # combine old and new feedback
+            combined_feedback = feedback_data
+            for entry in new_feedback_entries:
+                # Find the matching entry in feedback_data and update it, or add as new.
+                found = False
+                for i, existing_entry in enumerate(feedback_data):
+                    if existing_entry["msg_id"] == entry["msg_id"]:
+                        combined_feedback[i] = entry  # update to combined
+                        found = True
+                        break
+                if not found:
+                    combined_feedback.append(entry)
 
-        if suggested_changes:
-            self.logger.info("\nSuggested Changes to email_preferences.json:")
-            for change in suggested_changes:
-                self.logger.info(
-                    f"- {change['type']}: {change.get('keyword', change.get('score_name'))}, Reason: {change['reason']}"
-                )
+            # --- Feedback Processing ---
+            if not combined_feedback:
+                self.logger.info("No feedback data available to process.")
 
-            #  Uncomment the following lines to *automatically* apply the changes.
-            # updated_preferences = self.update_preferences(preferences, suggested_changes)
-            # self.save_preferences(conn, updated_preferences)
-            # self.logger.info("\nPreferences updated in database")
+            self.logger.info(f"Processing {len(combined_feedback)} feedback entries...")
+            suggested_changes = self.suggest_rule_changes(combined_feedback, preferences)
 
-        else:
-            self.logger.info("\nNo changes suggested.")
-        # Save combined feedback to database
-        self.save_feedback(conn, combined_feedback)
+            if suggested_changes:
+                self.logger.info("\nSuggested Changes to email_preferences.json:")
+                for change in suggested_changes:
+                    self.logger.info(
+                        f"- {change['type']}: {change.get('keyword', change.get('score_name'))}, Reason: {change['reason']}"
+                    )
+
+                #  Uncomment the following lines to *automatically* apply the changes.
+                # updated_preferences = self.update_preferences(preferences, suggested_changes)
+                # self.save_preferences(conn, updated_preferences)
+                # self.logger.info("\nPreferences updated in database")
+
+            else:
+                self.logger.info("\nNo changes suggested.")
+            # Save combined feedback to database
+            self.save_feedback(conn, combined_feedback)
         finally:
             # Clean up resources
             if conn:
