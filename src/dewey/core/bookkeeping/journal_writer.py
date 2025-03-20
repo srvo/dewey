@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Tuple, Union
 
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection
+from dewey.llm.llm_utils import LLMClient
 
 
 class JournalWriteError(Exception):
@@ -14,18 +16,16 @@ class JournalWriteError(Exception):
 class JournalWriter(BaseScript):
     """Handles journal file writing and management."""
 
-    def __init__(self, output_dir: Union[str, Path]) -> None:
-        """Initializes the JournalWriter.
-
-        Args:
-            output_dir: The directory to write journal files to.
-        """
+    def __init__(self) -> None:
+        """Initializes the JournalWriter."""
         super().__init__(config_section="bookkeeping")
-        self.output_dir = Path(output_dir)
+        self.output_dir: Path = Path(self.get_config_value("journal_dir", "data/bookkeeping/journals"))
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        self.processed_hashes_file = self.output_dir / ".processed_hashes"
+        self.processed_hashes_file: Path = self.output_dir / ".processed_hashes"
         self.seen_hashes: set[str] = self._load_processed_hashes()
         self.audit_log: List[Dict[str, str]] = []
+        self.db_conn: DatabaseConnection | None = None
+        self.llm_client: LLMClient | None = None
 
     def run(self) -> None:
         """Runs the journal writer script.
@@ -34,6 +34,16 @@ class JournalWriter(BaseScript):
         """
         self.logger.info("JournalWriter run method called.")
         # TODO: Implement actual script logic here
+        # Example usage of config and database:
+        example_config_value = self.get_config_value("utils.example_config", "default_value")
+        self.logger.info(f"Example config value: {example_config_value}")
+
+        if self.db_conn:
+            try:
+                result = self.db_conn.execute("SELECT 1")
+                self.logger.info(f"Database connection test: {result}")
+            except Exception as e:
+                self.logger.error(f"Error connecting to the database: {e}")
 
     def _load_processed_hashes(self) -> set[str]:
         """Load previously processed transaction hashes.
@@ -155,3 +165,8 @@ class JournalWriter(BaseScript):
                 cat: categories.count(cat) for cat in set(categories)
             },
         }
+
+
+if __name__ == "__main__":
+    writer = JournalWriter()
+    writer.execute()
