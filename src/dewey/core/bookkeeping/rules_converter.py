@@ -3,12 +3,8 @@
 import json
 import re
 from pathlib import Path
-from typing import Any, Dict, Set
-import logging
+from typing import Any, Dict
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
-from dewey.core.db import utils as db_utils
-from dewey.llm import llm_utils
 
 
 class RulesConverter(BaseScript):
@@ -57,14 +53,16 @@ class RulesConverter(BaseScript):
             A dictionary containing classification patterns and their associated
             categories and examples.
         """
-        classifications: Dict[str, Dict[str, Any]] = {}
+        classifications: Dict[str, Dict[str, Any]]=None):
+                    if Any]] is None:
+                        Any]] = {}
 
         with open(rules_file) as f:
             for line in f:
                 line = line.strip()
 
                 # Skip empty lines and comments that don't start with #
-                if not line or (line.startswith("#") and "based on" not in line.lower()):
+                if not line or (line.startswith("#") and "based on" not in line.lower()
                     continue
 
                 # Check for category headers in comments
@@ -137,10 +135,7 @@ class RulesConverter(BaseScript):
                                 data["examples"].append(desc)
 
     def generate_rules_json(
-        self,
-        classifications: Dict[str, Dict[str, Any]],
-        output_file: Path,
-    ) -> None:
+        self, classifications: Dict[str, Dict[str, Any]], output_file: Path, ) -> None:
         """Generates a JSON file with classification rules.
 
         Args:
@@ -148,13 +143,12 @@ class RulesConverter(BaseScript):
             output_file: Path to the output JSON file.
         """
         # Convert to a more efficient format for the classifier
-        rules: Dict[str, Any] = {
-            "patterns": {},
-            "categories": set(),
-            "stats": {"total_patterns": len(classifications), "patterns_with_examples": 0},
-        }
+        rules: Dict[str, Any]=None, "categories": set(), "stats": {"total_patterns": len(classifications), "patterns_with_examples": 0}, }
 
         for pattern, data in classifications.items():
+            if Any] is None:
+                Any] = {
+            "patterns": {}
             category = data["category"]
             rules["patterns"][pattern] = {
                 "category": category,
