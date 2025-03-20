@@ -39,4 +39,5 @@ class FormatAndLint(BaseScript):
             self.logger.info("Formatting and linting process completed.")
         except Exception as e:
             self.logger.error(f"An error occurred during formatting and linting: {e}")
+            self.formatting_performed = False
             # Do not re-raise the exception to indicate test failure
