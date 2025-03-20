@@ -2,7 +2,7 @@ import json
 import logging
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -15,23 +15,20 @@ from dewey.core.base_script import BaseScript
 
 # Mock BaseScript for testing purposes
 class MockBaseScript(BaseScript):
+    """Class MockBaseScript."""
     def __init__(self, config_section: str = 'bookkeeping'):
+        """Function __init__."""
         super().__init__(config_section=config_section)
 
     def run(self) -> None:
+        """Function run."""
         pass
 
 @pytest.fixture
 def rules_data() -> Dict[str, Any]:
     """Fixture providing sample rules data."""
     return {
-        "patterns": {"pattern1": "category1", "pattern2": "category2"},
-        "categories": ["category1", "category2", "expenses:unknown", "income:unknown"],
-        "defaults": {"positive": "income:unknown", "negative": "expenses:unknown"},
-        "overrides": {"override_pattern": {"category": "override_category"}},
-        "sources": [],
-        "hledger": {"currency": "USD", "date_format": "%Y-%m-%d"},
-    }
+        "patterns": {"pattern1": "category1", "pattern2": "category2"}, "categories": ["category1", "category2", "expenses:unknown", "income:unknown"], "defaults": {"positive": "income:unknown", "negative": "expenses:unknown"}, "overrides": {"override_pattern": {"category": "override_category"}}, "sources": [], "hledger": {"currency": "USD", "date_format": "%Y-%m-%d"}, }
 
 
 @pytest.fixture
@@ -65,11 +62,7 @@ def test_classification_engine_initialization(
 def test_categories_property(classification_engine: ClassificationEngine) -> None:
     """Test the categories property."""
     assert classification_engine.categories == [
-        "category1",
-        "category2",
-        "expenses:unknown",
-        "income:unknown",
-    ]
+        "category1", "category2", "expenses:unknown", "income:unknown", ]
 
 
 def test_load_rules(
@@ -86,26 +79,13 @@ def test_load_rules(
 def test_load_rules_file_not_found(classification_engine: ClassificationEngine, tmp_path: Path, caplog) -> None:
     """Test loading rules when the file is not found."""
     caplog.set_level(logging.ERROR)
-    classification_engine.rules_path = tmp_path / "nonexistent_rules.json"
-    rules = classification_engine._load_rules()
-    assert rules["patterns"] == {}
-    assert "Failed to load classification rules" in caplog.text
-
-
-def test_load_rules_invalid_json(classification_engine: ClassificationEngine, tmp_path: Path, caplog) -> None:
+    classification_engine.rules_path=None, tmp_path: Path, caplog) -> None:
     """Test loading rules from an invalid JSON file."""
     caplog.set_level(logging.ERROR)
     rules_path = tmp_path / "invalid_rules.json"
     with open(rules_path, "w") as f:
         f.write("invalid json")
-    classification_engine.rules_path = rules_path
-    rules = classification_engine._load_rules()
-    assert rules["patterns"] == {}
-    assert "Failed to load classification rules" in caplog.text
-
-
-def test_compile_patterns(
-    classification_engine: ClassificationEngine, rules_data: Dict[str, Any]
+    classification_engine.rules_path=None, rules_data: Dict[str, Any]
 ) -> None:
     """Test compiling regex patterns."""
     compiled_patterns = classification_engine._compile_patterns()
@@ -222,17 +202,7 @@ def test_parse_with_ai_no_response(
     mock_call_llm: MagicMock, classification_engine: ClassificationEngine
 ) -> None:
     """Test parsing feedback with AI when there is no response."""
-    mock_call_llm.return_value = []
-    feedback = "complex feedback"
-    with pytest.raises(ClassificationError) as exc_info:
-        classification_engine._parse_with_ai(feedback)
-    assert "No response from AI" in str(exc_info.value)
-    mock_call_llm.assert_called_once()
-
-
-@patch("dewey.core.bookkeeping.classification_engine.llm_utils.call_llm")
-def test_parse_with_ai_parsing_fails(
-    mock_call_llm: MagicMock, classification_engine: ClassificationEngine
+    mock_call_llm.return_value=None, classification_engine: ClassificationEngine
 ) -> None:
     """Test parsing feedback with AI when parsing fails."""
     mock_call_llm.return_value = [{"example": "invalid json"}]
@@ -289,14 +259,56 @@ def test_load_prioritized_rules(
         json.dump(overrides_rules_data, f)
 
     classification_engine.RULE_SOURCES = [
-        ("overrides.json", 0),
-        ("manual_rules.json", 1),
-        ("base_rules.json", 2),
-    ]
+        ("overrides.json", 0), ("manual_rules.json", 1), ("base_rules.json", 2), ]
 
     with patch(
         "dewey.core.bookkeeping.classification_engine.Path", return_value=rules_dir
     ):
+        if caplog) -> None:
+    """Test loading rules when the file is not found."""
+    caplog.set_level(logging.ERROR)
+    classification_engine.rules_path is None:
+            caplog) -> None:
+    """Test loading rules when the file is not found."""
+    caplog.set_level(logging.ERROR)
+    classification_engine.rules_path = tmp_path / "nonexistent_rules.json"
+    rules = classification_engine._load_rules()
+    assert rules["patterns"] == {}
+    assert "Failed to load classification rules" in caplog.text
+
+
+def test_load_rules_invalid_json(classification_engine: ClassificationEngine
+        if "w") as f:
+        f.write("invalid json")
+    classification_engine.rules_path is None:
+            "w") as f:
+        f.write("invalid json")
+    classification_engine.rules_path = rules_path
+    rules = classification_engine._load_rules()
+    assert rules["patterns"] == {}
+    assert "Failed to load classification rules" in caplog.text
+
+
+def test_compile_patterns(
+    classification_engine: ClassificationEngine
+        if classification_engine: ClassificationEngine
+) -> None:
+    """Test parsing feedback with AI when there is no response."""
+    mock_call_llm.return_value is None:
+            classification_engine: ClassificationEngine
+) -> None:
+    """Test parsing feedback with AI when there is no response."""
+    mock_call_llm.return_value = []
+    feedback = "complex feedback"
+    with pytest.raises(ClassificationError) as exc_info:
+        classification_engine._parse_with_ai(feedback)
+    assert "No response from AI" in str(exc_info.value)
+    mock_call_llm.assert_called_once()
+
+
+@patch("dewey.core.bookkeeping.classification_engine.llm_utils.call_llm")
+def test_parse_with_ai_parsing_fails(
+    mock_call_llm: MagicMock
         prioritized_rules = classification_engine.load_prioritized_rules()
 
     # Assert that rules are loaded and sorted by priority

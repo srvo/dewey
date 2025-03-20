@@ -3,7 +3,6 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from dewey.core.base_script import BaseScript
 from dewey.core.research.analysis.investments import Investments
 
 
@@ -30,7 +29,9 @@ class TestInvestments:
         """
         assert investments.config_section == "investments"
 
-    def test_run_no_db_no_llm(self, investments: Investments, caplog: pytest.LogCaptureFixture) -> None:
+    def test_run_no_db_no_llm(
+        self, investments: Investments, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """
         Test the run method with no database connection and no LLM client.
 
@@ -46,7 +47,9 @@ class TestInvestments:
         assert "Query Result:" not in caplog.text
         assert "LLM Response:" not in caplog.text
 
-    def test_run_with_db_and_llm(self, investments: Investments, caplog: pytest.LogCaptureFixture) -> None:
+    def test_run_with_db_and_llm(
+        self, investments: Investments, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """
         Test the run method with a database connection and an LLM client.
 
@@ -76,7 +79,9 @@ class TestInvestments:
         mock_db_conn.execute.assert_called_once()
         mock_llm_client.generate.assert_called_once()
 
-    def test_run_db_error(self, investments: Investments, caplog: pytest.LogCaptureFixture) -> None:
+    def test_run_db_error(
+        self, investments: Investments, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """
         Test the run method with a database error.
 
@@ -101,7 +106,9 @@ class TestInvestments:
         mock_db_conn.execute.assert_called_once()
         mock_llm_client.generate.assert_not_called()
 
-    def test_run_llm_error(self, investments: Investments, caplog: pytest.LogCaptureFixture) -> None:
+    def test_run_llm_error(
+        self, investments: Investments, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """
         Test the run method with an LLM error.
 

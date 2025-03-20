@@ -1,7 +1,6 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
 from dewey.llm import llm_utils
-from typing import Any, Dict
+
 
 class FredEngine(BaseScript):
     """
@@ -12,7 +11,9 @@ class FredEngine(BaseScript):
         """
         Initializes the FredEngine class.
         """
-        super().__init__(config_section='fred_engine', requires_db=True, enable_llm=True)
+        super().__init__(
+            config_section="fred_engine", requires_db=True, enable_llm=True
+        )
 
     def run(self) -> None:
         """
@@ -31,7 +32,9 @@ class FredEngine(BaseScript):
 
         try:
             # Example of accessing configuration values
-            example_config_value = self.get_config_value('example_config', 'default_value')
+            example_config_value = self.get_config_value(
+                "example_config", "default_value"
+            )
             self.logger.info(f"Example config value: {example_config_value}")
 
             # Example of using database connection

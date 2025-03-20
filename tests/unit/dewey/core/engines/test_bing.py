@@ -22,12 +22,14 @@ class TestBing:
         """
         Test the initialization of the Bing class.
         """
-        assert bing_engine.config_section == 'bing'
-        assert bing_engine.name == 'Bing'
+        assert bing_engine.config_section == "bing"
+        assert bing_engine.name == "Bing"
         assert bing_engine.logger is not None
 
     @patch("dewey.core.engines.bing.Bing.get_config_value")
-    def test_run_api_key_present(self, mock_get_config_value, bing_engine: Bing, caplog):
+    def test_run_api_key_present(
+        self, mock_get_config_value, bing_engine: Bing, caplog
+    ):
         """
         Test the run method when the Bing API key is present in the config.
         """
@@ -39,7 +41,9 @@ class TestBing:
         mock_get_config_value.assert_called_once_with("api_key")
 
     @patch("dewey.core.engines.bing.Bing.get_config_value")
-    def test_run_api_key_missing(self, mock_get_config_value, bing_engine: Bing, caplog):
+    def test_run_api_key_missing(
+        self, mock_get_config_value, bing_engine: Bing, caplog
+    ):
         """
         Test the run method when the Bing API key is missing from the config.
         """

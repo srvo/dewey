@@ -30,7 +30,10 @@ class OutputHandler(BaseScript):
                 raise ValueError("Output path must be specified in the config.")
 
             # Simulate processing data and writing output
-            output_data = {"status": "success", "message": "Data processed successfully."}
+            output_data = {
+                "status": "success",
+                "message": "Data processed successfully.",
+            }
             self.write_output(output_path, output_data)
 
         except ValueError as e:

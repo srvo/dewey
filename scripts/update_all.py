@@ -8,7 +8,6 @@ This script:
 4. Verifies the changes by running compliance tests again
 """
 
-import os
 import subprocess
 import sys
 import time
@@ -80,6 +79,7 @@ def run_final_tests() -> bool:
         return False
 
 def main():
+    """Function main."""
     try:
         start_time = time.time()
         print(f"Starting compliance update process at {time.asctime()}")

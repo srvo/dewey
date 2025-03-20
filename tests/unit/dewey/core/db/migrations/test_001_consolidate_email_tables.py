@@ -68,7 +68,7 @@ class TestConsolidateEmailTables:
         with patch("dewey.core.db.migrations.consolidate_email_tables.ConsolidateEmailTables") as MockConsolidateEmailTables:
             instance = MockConsolidateEmailTables.return_value
             instance.execute = MagicMock()
-            import dewey.core.db.migrations.consolidate_email_tables
+import dewey.core.db.migrations.consolidate_email_tables
             dewey.core.db.migrations.consolidate_email_tables.main()
             MockConsolidateEmailTables.assert_called_once()
             instance.execute.assert_called_once()

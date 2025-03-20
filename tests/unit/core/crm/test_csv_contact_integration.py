@@ -1,14 +1,15 @@
 """Tests for CSV contact integration."""
+
 import pytest
-from pathlib import Path
 import json
 from datetime import datetime
 from dewey.core.crm.csv_contact_integration import (
     process_client_contact_master,
     process_blog_signup_form,
     process_onboarding_form,
-    update_unified_contacts
+    update_unified_contacts,
 )
+
 
 class TestCSVContactIntegration:
     """Test suite for CSV contact integration."""
@@ -17,14 +18,14 @@ class TestCSVContactIntegration:
         """Test processing client contact master CSV."""
         contacts = process_client_contact_master(sample_csv_data["client_master"])
         assert len(contacts) == 1
-        
+
         contact = contacts[0]
         assert contact["email"] == "john@example.com"
         assert contact["first_name"] == "John"
         assert contact["last_name"] == "Doe"
         assert contact["country"] == "US"
         assert contact["source"] == "client_contact_master"
-        
+
         # Verify metadata
         metadata = json.loads(contact["metadata"])
         assert metadata["sent"] == "10"
@@ -35,7 +36,7 @@ class TestCSVContactIntegration:
         """Test processing blog signup form CSV."""
         contacts = process_blog_signup_form(sample_csv_data["blog_signup"])
         assert len(contacts) == 1
-        
+
         contact = contacts[0]
         assert contact["email"] == "jane@example.com"
         assert contact["full_name"] == "Jane Smith"
@@ -48,7 +49,7 @@ class TestCSVContactIntegration:
         """Test processing onboarding form CSV."""
         contacts = process_onboarding_form(sample_csv_data["onboarding"])
         assert len(contacts) == 1
-        
+
         contact = contacts[0]
         assert contact["email"] == "bob@example.com"
         assert contact["full_name"] == "Bob Wilson"
@@ -76,19 +77,21 @@ class TestCSVContactIntegration:
                 "last_updated": datetime.now().isoformat(),
                 "tags": "test",
                 "notes": "Test note",
-                "metadata": json.dumps({"key": "value"})
+                "metadata": json.dumps({"key": "value"}),
             }
         }
-        
+
         update_unified_contacts(test_db, contacts)
-        
+
         # Verify contact was updated
-        result = test_db.execute("""
+        result = test_db.execute(
+            """
             SELECT email, full_name, company, job_title 
             FROM crm_contacts 
             WHERE email = 'john@example.com'
-        """).fetchone()
-        
+        """
+        ).fetchone()
+
         assert result is not None
         assert result[0] == "john@example.com"
         assert result[1] == "John Doe"
@@ -99,12 +102,12 @@ class TestCSVContactIntegration:
         """Test error handling for invalid files."""
         # Test with non-existent file
         assert process_client_contact_master("nonexistent.csv") == []
-        
+
         # Test with invalid CSV format
         invalid_file = tmp_path / "invalid.csv"
         invalid_file.write_text("invalid,csv,format")
         assert process_blog_signup_form(str(invalid_file)) == []
-        
+
         # Test with empty file
         empty_file = tmp_path / "empty.csv"
         empty_file.write_text("")
@@ -115,11 +118,11 @@ class TestCSVContactIntegration:
         # Test client contact master with missing email
         contacts = process_client_contact_master(sample_csv_data["client_master"])
         assert all(c["email"] for c in contacts)
-        
+
         # Test blog signup with missing required fields
         contacts = process_blog_signup_form(sample_csv_data["blog_signup"])
         assert all(c["email"] and c["full_name"] for c in contacts)
-        
+
         # Test onboarding form with missing fields
         contacts = process_onboarding_form(sample_csv_data["onboarding"])
         assert all(c["email"] and c["full_name"] for c in contacts)
@@ -131,33 +134,34 @@ class TestCSVContactIntegration:
         client_contacts = process_client_contact_master(
             sample_csv_data["client_master"]
         )
-        blog_contacts = process_blog_signup_form(
-            sample_csv_data["blog_signup"]
-        )
-        onboarding_contacts = process_onboarding_form(
-            sample_csv_data["onboarding"]
-        )
-        
+        blog_contacts = process_blog_signup_form(sample_csv_data["blog_signup"])
+        onboarding_contacts = process_onboarding_form(sample_csv_data["onboarding"])
+
         # Combine all contacts
         all_contacts = {}
         for contacts in [client_contacts, blog_contacts, onboarding_contacts]:
             for contact in contacts:
                 all_contacts[contact["email"]] = contact
-        
+
         # Update unified contacts
         update_unified_contacts(test_db, all_contacts)
-        
+
         # Verify all contacts were stored
-        result = test_db.execute("""
+        result = test_db.execute(
+            """
             SELECT COUNT(*) FROM crm_contacts
-        """).fetchone()
-        
+        """
+        ).fetchone()
+
         assert result[0] == len(all_contacts)
-        
+
         # Verify specific contact details
         for email in ["john@example.com", "jane@example.com", "bob@example.com"]:
-            result = test_db.execute("""
+            result = test_db.execute(
+                """
                 SELECT email, source FROM crm_contacts WHERE email = ?
-            """, [email]).fetchone()
+            """,
+                [email],
+            ).fetchone()
             assert result is not None
-            assert result[0] == email 
+            assert result[0] == email

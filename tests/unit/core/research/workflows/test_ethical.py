@@ -1,6 +1,5 @@
 import json
-from pathlib import Path
-from unittest.mock import MagicMock, patch, ANY
+from unittest.mock import MagicMock, ANY
 
 import pytest
 
@@ -11,6 +10,7 @@ from dewey.core.research.output import ResearchOutputHandler
 
 @pytest.fixture
 def mock_search_engine():
+    """Function mock_search_engine."""
     engine = MagicMock(spec=BaseEngine)
     engine.search.side_effect = [
         # Results for Company A
@@ -40,6 +40,7 @@ def mock_search_engine():
 
 @pytest.fixture
 def mock_analysis_engine():
+    """Function mock_analysis_engine."""
     engine = MagicMock(spec=BaseEngine)
     engine.analyze.side_effect = [
         # Results for Company A
@@ -54,11 +55,13 @@ def mock_analysis_engine():
 
 @pytest.fixture
 def mock_output_handler():
+    """Function mock_output_handler."""
     return MagicMock(spec=ResearchOutputHandler)
 
 
 @pytest.fixture
 def workflow(tmp_path, mock_search_engine, mock_analysis_engine, mock_output_handler):
+    """Function workflow."""
     return EthicalAnalysisWorkflow(
         data_dir=str(tmp_path),
         search_engine=mock_search_engine,
@@ -105,14 +108,14 @@ def test_analyze_company_profile(workflow):
             "snippet": "Company info",
         }
     ]
-    
+
     result = workflow.analyze_company_profile("Company A", search_results)
-    
+
     assert "ethical_analysis" in result
     assert "risk_assessment" in result
     assert workflow.stats["total_analyses"] == 1
     assert workflow.stats["total_analysis_words"] > 0
-    
+
     workflow.analysis_engine.analyze.assert_any_call(
         "ethical_analysis",
         company_name="Company A",
@@ -128,7 +131,7 @@ def test_analyze_company_profile(workflow):
 def test_analyze_company_profile_no_results(workflow):
     """Test company profile analysis with no search results."""
     result = workflow.analyze_company_profile("Company A", [])
-    
+
     assert result["ethical_analysis"] == "No search results available for analysis"
     assert result["risk_assessment"] == "Unable to assess risks due to lack of data"
     assert workflow.stats["total_analyses"] == 0
@@ -140,14 +143,14 @@ def test_execute(workflow, tmp_path):
     companies_file = tmp_path / "companies.csv"
     companies_data = "name,category\nCompany A,Technology\nCompany B,Finance"
     companies_file.write_text(companies_data)
-    
+
     result = workflow.execute()
-    
+
     assert len(result["results"]) == 2
     assert result["stats"]["companies_processed"] == 2
     assert result["stats"]["total_searches"] == 2
     assert result["stats"]["total_results"] > 0
-    
+
     workflow.output_handler.save_results.assert_called()
 
 
@@ -163,12 +166,12 @@ def test_execute_error_handling(workflow, tmp_path):
     companies_file = tmp_path / "companies.csv"
     companies_data = "name,category\nCompany A,Technology"
     companies_file.write_text(companies_data)
-    
+
     # Make search engine raise an exception
     workflow.search_engine.search.side_effect = Exception("Search failed")
-    
+
     result = workflow.execute()
-    
+
     assert len(result["results"]) == 0
     assert result["stats"]["companies_processed"] == 0
-    assert result["stats"]["total_searches"] == 0 
+    assert result["stats"]["total_searches"] == 0

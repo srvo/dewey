@@ -1,13 +1,11 @@
 """Unit tests for the DeepSeek engine."""
 
 import logging
-from typing import Any, Dict, List
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 
 from dewey.core.engines.deepseek import DeepSeekEngine
-from dewey.core.base_script import BaseScript
 
 
 class TestDeepSeekEngine:
@@ -30,7 +28,9 @@ class TestDeepSeekEngine:
 
     def test_run_not_implemented(self, deepseek_engine: DeepSeekEngine) -> None:
         """Test that the run method raises NotImplementedError."""
-        with pytest.raises(NotImplementedError, match="The run method must be implemented"):
+        with pytest.raises(
+            NotImplementedError, match="The run method must be implemented"
+        ):
             deepseek_engine.run()
         deepseek_engine.logger.info.assert_called_with("DeepSeek engine started.")
 
@@ -53,7 +53,9 @@ class TestDeepSeekEngine:
         assert isinstance(results, dict)
         assert "content" in results
         assert results["content"] == "Test response"
-        deepseek_engine.logger.info.assert_called_with(f"Analyzing content with template: {template}")
+        deepseek_engine.logger.info.assert_called_with(
+            f"Analyzing content with template: {template}"
+        )
         deepseek_engine.llm_client.generate_response.assert_called()
 
     def test_analyze_without_template(self, deepseek_engine: DeepSeekEngine) -> None:
@@ -63,7 +65,9 @@ class TestDeepSeekEngine:
         results = deepseek_engine.analyze(content)
         assert isinstance(results, dict)
         assert "content" in results
-        deepseek_engine.logger.info.assert_called_with("Analyzing content with template: None")
+        deepseek_engine.logger.info.assert_called_with(
+            "Analyzing content with template: None"
+        )
         deepseek_engine.llm_client.generate_response.assert_called()
 
     def test_analyze_template_not_found(self, deepseek_engine: DeepSeekEngine) -> None:
@@ -79,11 +83,15 @@ class TestDeepSeekEngine:
         )
         deepseek_engine.llm_client.generate_response.assert_called()
 
-    def test_analyze_error_during_analysis(self, deepseek_engine: DeepSeekEngine) -> None:
+    def test_analyze_error_during_analysis(
+        self, deepseek_engine: DeepSeekEngine
+    ) -> None:
         """Test the analyze method when an error occurs during analysis."""
         content = "test content"
         template = "ethical_analysis"
-        deepseek_engine.llm_client.generate_response.side_effect = Exception("Test error")
+        deepseek_engine.llm_client.generate_response.side_effect = Exception(
+            "Test error"
+        )
         results = deepseek_engine.analyze(content, template, company="Test Company")
         assert isinstance(results, dict)
         assert not results
@@ -115,7 +123,9 @@ class TestDeepSeekEngine:
         content = "test content"
         template = "risk_assessment"
         deepseek_engine.llm_client.generate_response.return_value = "Test response"
-        results = deepseek_engine.analyze(content, template, company="Test Company", industry="Tech")
+        results = deepseek_engine.analyze(
+            content, template, company="Test Company", industry="Tech"
+        )
         assert isinstance(results, dict)
         assert "content" in results
         deepseek_engine.llm_client.generate_response.assert_called()

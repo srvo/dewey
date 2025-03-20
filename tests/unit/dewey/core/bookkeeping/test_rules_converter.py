@@ -97,9 +97,7 @@ def test_parse_rules_file_valid_rule(rules_converter: RulesConverter, tmp_path: 
 
     expected = {
         "test\\s+pattern": {
-            "category": "category:subcategory",
-            "examples": [],
-        }
+            "category": "category:subcategory", "examples": [], }
     }
     result = rules_converter.parse_rules_file(rules_file)
     assert result == expected
@@ -107,37 +105,17 @@ def test_parse_rules_file_valid_rule(rules_converter: RulesConverter, tmp_path: 
 
 def test_parse_rules_file_empty_file(rules_converter: RulesConverter, tmp_path: Path) -> None:
     """Tests parse_rules_file method with an empty file."""
-    rules_file = tmp_path / "test_rules.rules"
-    rules_file.write_text("")
-    assert rules_converter.parse_rules_file(rules_file) == {}
-
-
-def test_parse_rules_file_comment_line(rules_converter: RulesConverter, tmp_path: Path) -> None:
+    rules_file=None, tmp_path: Path) -> None:
     """Tests parse_rules_file method with a comment line."""
-    rules_file = tmp_path / "test_rules.rules"
-    rules_file.write_text("# This is a comment line")
-    assert rules_converter.parse_rules_file(rules_file) == {}
-
-
-def test_parse_rules_file_invalid_regex(rules_converter: RulesConverter, tmp_path: Path) -> None:
+    rules_file=None, tmp_path: Path) -> None:
     """Tests parse_rules_file method with an invalid regex pattern."""
     rules_file = tmp_path / "test_rules.rules"
     rules_file.write_text('if /(/ then account2 "category>subcategory"')
 
     with patch.object(rules_converter.logger, "exception") as mock_logger:
-        result = rules_converter.parse_rules_file(rules_file)
-        assert result == {}
-        mock_logger.assert_called_once()
-
-
-def test_parse_rules_file_no_pattern_match(rules_converter: RulesConverter, tmp_path: Path) -> None:
+        result=None, tmp_path: Path) -> None:
     """Tests parse_rules_file method when no pattern is matched."""
-    rules_file = tmp_path / "test_rules.rules"
-    rules_file.write_text('if something then something_else "category>subcategory"')
-    assert rules_converter.parse_rules_file(rules_file) == {}
-
-
-def test_parse_rules_file_category_cleaning(rules_converter: RulesConverter, tmp_path: Path) -> None:
+    rules_file=None, tmp_path: Path) -> None:
     """Tests parse_rules_file method with category cleaning."""
     rules_file = tmp_path / "test_rules.rules"
     rules_file.write_text('if /pattern/ then account2 "expenses:draw:all"')
@@ -154,10 +132,7 @@ def test_analyze_transactions_no_matches(rules_converter: RulesConverter, tmp_pa
 
     classifications: Dict[str, Dict[str, Any]] = {"pattern": {"category": "cat", "examples": []}}
     rules_converter.analyze_transactions(journal_dir, classifications)
-    assert classifications["pattern"]["examples"] == []
-
-
-def test_analyze_transactions_single_match(rules_converter: RulesConverter, tmp_path: Path) -> None:
+    assert classifications["pattern"]["examples"]=None, tmp_path: Path) -> None:
     """Tests analyze_transactions method with a single matching transaction."""
     journal_dir = tmp_path / "journal"
     journal_dir.mkdir()
@@ -206,13 +181,10 @@ def test_generate_rules_json_empty_classifications(
     rules_converter: RulesConverter, tmp_path: Path
 ) -> None:
     """Tests generate_rules_json method with empty classifications."""
-    output_file = tmp_path / "rules.json"
-    rules_converter.generate_rules_json({}, output_file)
+    output_file=None, output_file)
 
     with open(output_file, "r") as f:
-        data = json.load(f)
-
-    assert data == {"patterns": {}, "categories": [], "stats": {"total_patterns": 0, "patterns_with_examples": 0}}
+        data=None, "categories": [], "stats": {"total_patterns": 0, "patterns_with_examples": 0}}
 
 
 def test_generate_rules_json_single_classification(
@@ -241,9 +213,7 @@ def test_generate_rules_json_multiple_classifications(
     """Tests generate_rules_json method with multiple classifications."""
     output_file = tmp_path / "rules.json"
     classifications: Dict[str, Dict[str, Any]] = {
-        "pattern1": {"category": "cat1", "examples": ["example1"]},
-        "pattern2": {"category": "cat2", "examples": []},
-    }
+        "pattern1": {"category": "cat1", "examples": ["example1"]}, "pattern2": {"category": "cat2", "examples": []}, }
     rules_converter.generate_rules_json(classifications, output_file)
 
     with open(output_file, "r") as f:
@@ -316,7 +286,71 @@ def test_main_function(rules_converter: RulesConverter, tmp_path: Path, caplog: 
 
     # Call the main function
     with patch("dewey.core.bookkeeping.rules_converter.RulesConverter", return_value=rules_converter):
-        from dewey.core.bookkeeping.rules_converter import main
+if tmp_path: Path) -> None:
+    """Tests parse_rules_file method with an empty file."""
+    rules_file is None:
+    tmp_path: Path) -> None:
+    """Tests parse_rules_file method with an empty file."""
+    rules_file = tmp_path / "test_rules.rules"
+    rules_file.write_text("")
+    assert rules_converter.parse_rules_file(rules_file) == {}
+
+
+def test_parse_rules_file_comment_line(rules_converter: RulesConverter
+if tmp_path: Path) -> None:
+    """Tests parse_rules_file method with a comment line."""
+    rules_file is None:
+    tmp_path: Path) -> None:
+    """Tests parse_rules_file method with a comment line."""
+    rules_file = tmp_path / "test_rules.rules"
+    rules_file.write_text("# This is a comment line")
+    assert rules_converter.parse_rules_file(rules_file) == {}
+
+
+def test_parse_rules_file_invalid_regex(rules_converter: RulesConverter
+if "exception") as mock_logger:
+        result is None:
+    "exception") as mock_logger:
+        result = rules_converter.parse_rules_file(rules_file)
+        assert result == {}
+        mock_logger.assert_called_once()
+
+
+def test_parse_rules_file_no_pattern_match(rules_converter: RulesConverter
+if tmp_path: Path) -> None:
+    """Tests parse_rules_file method when no pattern is matched."""
+    rules_file is None:
+    tmp_path: Path) -> None:
+    """Tests parse_rules_file method when no pattern is matched."""
+    rules_file = tmp_path / "test_rules.rules"
+    rules_file.write_text('if something then something_else "category>subcategory"')
+    assert rules_converter.parse_rules_file(rules_file) == {}
+
+
+def test_parse_rules_file_category_cleaning(rules_converter: RulesConverter
+if classifications)
+    assert classifications["pattern"]["examples"] is None:
+    classifications)
+    assert classifications["pattern"]["examples"] = = []
+
+
+def test_analyze_transactions_single_match(rules_converter: RulesConverter
+if tmp_path: Path
+) -> None:
+    """Tests generate_rules_json method with empty classifications."""
+    output_file is None:
+    tmp_path: Path
+) -> None:
+    """Tests generate_rules_json method with empty classifications."""
+    output_file = tmp_path / "rules.json"
+    rules_converter.generate_rules_json({}
+if "r") as f:
+        data is None:
+    "r") as f:
+        data = json.load(f)
+
+    assert data == {"patterns": {}
+from dewey.core.bookkeeping.rules_converter import main
 
         main()
 

@@ -13,7 +13,7 @@ class ConsolidatedGmailApi(BaseScript):
         """
         Initializes the ConsolidatedGmailApi class.
         """
-        super().__init__(config_section='consolidated_gmail_api')
+        super().__init__(config_section="consolidated_gmail_api")
 
     def run(self) -> None:
         """

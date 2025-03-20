@@ -106,7 +106,7 @@ class TestEmailProcessor:
     def test_main(self, mock_execute: MagicMock) -> None:
         """Tests the main execution block."""
         with patch("dewey.core.crm.email.__name__", "__main__"):
-            from dewey.core.crm.email import EmailProcessor
+from dewey.core.crm.email import EmailProcessor
 
             EmailProcessor().execute()
             mock_execute.assert_called_once()

@@ -20,14 +20,18 @@ class TestDbConverters:
         assert isinstance(db_converters.logger, logging.Logger)
 
     @patch("dewey.core.db.db_converters.DbConverters.logger")
-    def test_run(self, mock_logger: logging.Logger, db_converters: DbConverters) -> None:
+    def test_run(
+        self, mock_logger: logging.Logger, db_converters: DbConverters
+    ) -> None:
         """Test the run method of DbConverters."""
         db_converters.run()
         mock_logger.info.assert_called()
         assert mock_logger.info.call_count == 2
-        assert mock_logger.info.call_args_list[0][0][
-            :35
-        ] == "Starting database conversion process"
-        assert mock_logger.info.call_args_list[1][0][
-            :33
-        ] == "Database conversion process comple"
+        assert (
+            mock_logger.info.call_args_list[0][0][:35]
+            == "Starting database conversion process"
+        )
+        assert (
+            mock_logger.info.call_args_list[1][0][:33]
+            == "Database conversion process comple"
+        )

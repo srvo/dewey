@@ -10,7 +10,7 @@ class SecEngine(BaseScript):
         """
         Initializes the SecEngine class.
         """
-        super().__init__(config_section='sec_engine')
+        super().__init__(config_section="sec_engine")
 
     def run(self) -> None:
         """

@@ -4,6 +4,7 @@ from datetime import datetime
 import pytest
 from dewey.core.crm.gmail.models import RawEmail
 
+
 def test_raw_email_creation():
     """Test creating a RawEmail instance."""
     now = datetime.now()
@@ -21,9 +22,9 @@ def test_raw_email_creation():
         bcc_addresses=["bcc@example.com"],
         received_date=now,
         labels=["INBOX", "UNREAD"],
-        size_estimate=1024
+        size_estimate=1024,
     )
-    
+
     assert email.gmail_id == "msg123"
     assert email.thread_id == "thread123"
     assert email.subject == "Test Subject"
@@ -38,6 +39,7 @@ def test_raw_email_creation():
     assert email.received_date == now
     assert email.labels == ["INBOX", "UNREAD"]
     assert email.size_estimate == 1024
+
 
 def test_raw_email_empty_lists():
     """Test RawEmail with empty address lists."""
@@ -56,10 +58,10 @@ def test_raw_email_empty_lists():
         bcc_addresses=[],
         received_date=now,
         labels=[],
-        size_estimate=1024
+        size_estimate=1024,
     )
-    
+
     assert email.to_addresses == []
     assert email.cc_addresses == []
     assert email.bcc_addresses == []
-    assert email.labels == [] 
+    assert email.labels == []

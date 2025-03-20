@@ -9,12 +9,9 @@ This script provides a comprehensive workflow to:
 
 import argparse
 import logging
-import subprocess
 from pathlib import Path
 import os
 import sys
-from datetime import datetime
-from typing import List, Dict, Any, Optional, Tuple
 
 from aider.coders import Coder
 from aider.models import Model
@@ -337,6 +334,7 @@ def generate_tests_for_files(
             logger.error(f"Failed to generate tests for {source_file}: {e}")
 
 def main():
+    """Function main."""
     parser = argparse.ArgumentParser(description="Refactor Python files and generate tests")
     parser.add_argument('--dry-run', action='store_true', help="Don't actually modify files")
     parser.add_argument('--src-dir', type=str, required=True, help="Directory or file containing source files to refactor")

@@ -1,9 +1,10 @@
 """Tests for the RAG agent."""
+
 import pytest
 from unittest.mock import patch, MagicMock
 from dewey.llm.agents.rag_agent import RAGAgent
-from dewey.llm.llm_utils import LLMHandler
 import warnings
+
 
 @pytest.fixture
 def config():
@@ -13,19 +14,12 @@ def config():
             "client": "test",
             "default_provider": "test",
             "providers": {
-                "test": {
-                    "api_key": "test_key",
-                    "default_model": "test_model"
-                }
-            }
+                "test": {"api_key": "test_key", "default_model": "test_model"}
+            },
         },
-        "agents": {
-            "rag_search": {
-                "enabled": True,
-                "version": "1.0"
-            }
-        }
+        "agents": {"rag_search": {"enabled": True, "version": "1.0"}},
     }
+
 
 @pytest.fixture
 def mock_llm_handler():
@@ -35,11 +29,13 @@ def mock_llm_handler():
     with patch("dewey.llm.agents.rag_agent.LLMHandler", return_value=mock):
         yield mock
 
+
 @pytest.fixture
 def rag_agent(config, mock_llm_handler):
     """Provide an initialized RAGAgent instance with mocked dependencies."""
     agent = RAGAgent(config=config)
     return agent
+
 
 class TestRAGAgent:
     """Test suite for RAGAgent."""
@@ -64,7 +60,9 @@ class TestRAGAgent:
         results = rag_agent.search(query=query, content_type=content_type, limit=limit)
         assert len(results) == 1
         assert results[0]["result"] == "test"
-        mock_tool.forward.assert_called_once_with(query=query, content_type=content_type, limit=limit)
+        mock_tool.forward.assert_called_once_with(
+            query=query, content_type=content_type, limit=limit
+        )
 
     def test_search_without_content_type(self, rag_agent):
         """Test search without content type."""
@@ -80,7 +78,9 @@ class TestRAGAgent:
         results = rag_agent.search(query=query, limit=limit)
         assert len(results) == 1
         assert results[0]["result"] == "test"
-        mock_tool.forward.assert_called_once_with(query=query, content_type=None, limit=limit)
+        mock_tool.forward.assert_called_once_with(
+            query=query, content_type=None, limit=limit
+        )
 
     def test_search_uses_default_limit(self, rag_agent):
         """Test search uses default limit."""
@@ -94,7 +94,9 @@ class TestRAGAgent:
 
         results = rag_agent.search(query=query)
         assert len(results) == 1
-        mock_tool.forward.assert_called_once_with(query=query, content_type=None, limit=10)
+        mock_tool.forward.assert_called_once_with(
+            query=query, content_type=None, limit=10
+        )
 
     def test_search_negative_limit(self, rag_agent):
         """Test search with negative limit."""
@@ -111,6 +113,7 @@ class TestRAGAgent:
         with pytest.raises(ValueError, match="Query cannot be empty"):
             rag_agent.search("")
 
+
 def test_deprecation_warning_emitted():
     """Test that a deprecation warning is emitted."""
     config = {
@@ -118,18 +121,10 @@ def test_deprecation_warning_emitted():
             "client": "test",
             "default_provider": "test",
             "providers": {
-                "test": {
-                    "api_key": "test_key",
-                    "default_model": "test_model"
-                }
-            }
+                "test": {"api_key": "test_key", "default_model": "test_model"}
+            },
         },
-        "agents": {
-            "rag_search": {
-                "enabled": True,
-                "version": "1.0"
-            }
-        }
+        "agents": {"rag_search": {"enabled": True, "version": "1.0"}},
     }
     with pytest.warns(DeprecationWarning, match="RAGAgent is deprecated"):
         RAGAgent(config=config)

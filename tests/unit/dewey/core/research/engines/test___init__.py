@@ -77,7 +77,9 @@ class TestResearchEngines:
         with pytest.raises(Exception, match="Something went wrong"):
             research_engines.run()
 
-    def test_logging_setup(self, research_engines: ResearchEngines, caplog: pytest.LogCaptureFixture) -> None:
+    def test_logging_setup(
+        self, research_engines: ResearchEngines, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """Test that logging is set up correctly."""
         with caplog.at_level(logging.INFO):
             research_engines.logger.info("Test log message")

@@ -189,7 +189,7 @@ def test_main(hledger_updater: HledgerUpdater, mock_subprocess_run: MagicMock, t
     # Mock the HledgerUpdater.run method
     with patch.object(HledgerUpdater, 'run') as mock_run:
         # Call the main function
-        from dewey.core.bookkeeping.hledger_utils import main
+from dewey.core.bookkeeping.hledger_utils import main
         main()
 
         # Assert that HledgerUpdater.run was called

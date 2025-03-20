@@ -10,7 +10,7 @@ class MotherDuck(BaseScript):
         """
         Initializes the MotherDuck class.
         """
-        super().__init__(config_section='motherduck')
+        super().__init__(config_section="motherduck")
 
     def run(self) -> None:
         """

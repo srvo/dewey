@@ -1,14 +1,15 @@
 """Common test fixtures for CRM tests."""
+
 import os
 import pytest
-from pathlib import Path
-from unittest.mock import MagicMock, patch
-from datetime import datetime, timedelta
+from unittest.mock import MagicMock
+from datetime import datetime
 import pandas as pd
 import duckdb
 import json
 from dewey.core.crm.gmail.models import RawEmail
 from dewey.core.crm.enrichment.contact_enrichment import ContactEnrichmentService
+
 
 @pytest.fixture
 def sample_email_data():
@@ -27,8 +28,9 @@ def sample_email_data():
         bcc_addresses=[],
         received_date=datetime.now(),
         labels=["INBOX"],
-        size_estimate=1024
+        size_estimate=1024,
     )
+
 
 @pytest.fixture
 def sample_contact_data():
@@ -49,8 +51,9 @@ def sample_contact_data():
         "last_updated": datetime.now().isoformat(),
         "tags": "client",
         "notes": "Met at conference",
-        "metadata": json.dumps({"key": "value"})
+        "metadata": json.dumps({"key": "value"}),
     }
+
 
 @pytest.fixture
 def mock_gmail_service():
@@ -58,7 +61,7 @@ def mock_gmail_service():
     mock = MagicMock()
     mock.users().messages().list().execute.return_value = {
         "messages": [{"id": "msg123", "threadId": "thread123"}],
-        "nextPageToken": None
+        "nextPageToken": None,
     }
     mock.users().messages().get().execute.return_value = {
         "id": "msg123",
@@ -67,12 +70,13 @@ def mock_gmail_service():
         "payload": {
             "headers": [
                 {"name": "From", "value": "John Doe <john@example.com>"},
-                {"name": "Subject", "value": "Test Email"}
+                {"name": "Subject", "value": "Test Email"},
             ],
-            "parts": [{"body": {"data": "SGVsbG8="}}]
-        }
+            "parts": [{"body": {"data": "SGVsbG8="}}],
+        },
     }
     return mock
+
 
 @pytest.fixture
 def mock_db_connection():
@@ -81,14 +85,16 @@ def mock_db_connection():
     conn.execute.return_value.fetchall.return_value = []
     return conn
 
+
 @pytest.fixture
 def test_db(tmp_path):
     """Create a test database."""
     db_path = tmp_path / "test.duckdb"
     conn = duckdb.connect(str(db_path))
-    
+
     # Create test tables
-    conn.execute("""
+    conn.execute(
+        """
         CREATE TABLE crm_contacts (
             email VARCHAR,
             name VARCHAR,
@@ -98,9 +104,11 @@ def test_db(tmp_path):
             last_seen_date TIMESTAMP,
             metadata JSON
         )
-    """)
-    
-    conn.execute("""
+    """
+    )
+
+    conn.execute(
+        """
         CREATE TABLE crm_emails (
             thread_id VARCHAR PRIMARY KEY,
             from_email VARCHAR,
@@ -110,19 +118,23 @@ def test_db(tmp_path):
             body TEXT,
             metadata JSON
         )
-    """)
-    
-    conn.execute("""
+    """
+    )
+
+    conn.execute(
+        """
         CREATE TABLE contact_processing (
             id VARCHAR PRIMARY KEY,
             email_id VARCHAR,
             contact_id VARCHAR,
             created_at TIMESTAMP
         )
-    """)
-    
+    """
+    )
+
     # Insert sample data
-    conn.execute("""
+    conn.execute(
+        """
         INSERT INTO crm_contacts VALUES (
             'test@example.com',
             'John Doe',
@@ -132,33 +144,42 @@ def test_db(tmp_path):
             CURRENT_TIMESTAMP,
             '{"source": "test"}'
         )
-    """)
-    
+    """
+    )
+
     return conn
+
 
 @pytest.fixture
 def sample_csv_data(tmp_path):
     """Create sample CSV files for testing."""
     # Client Contact Master
     client_master = tmp_path / "client_contact_master.csv"
-    client_master.write_text("""Subscriber,first_name,last_name,Location,Subscribed,Sent,Opens,Clicks
-john@example.com,John,Doe,US,2024-01-01,10,5,2""")
-    
+    client_master.write_text(
+        """Subscriber,first_name,last_name,Location,Subscribed,Sent,Opens,Clicks
+john@example.com,John,Doe,US,2024-01-01,10,5,2"""
+    )
+
     # Blog Signup Form
     blog_signup = tmp_path / "blog_signup.csv"
-    blog_signup.write_text("""Email,Name,Company,Phone,Message,Date,Newsletter
-jane@example.com,Jane Smith,Tech Corp,123456789,Interested in your blog,2024-01-02,Yes""")
-    
+    blog_signup.write_text(
+        """Email,Name,Company,Phone,Message,Date,Newsletter
+jane@example.com,Jane Smith,Tech Corp,123456789,Interested in your blog,2024-01-02,Yes"""
+    )
+
     # Onboarding Form
     onboarding = tmp_path / "onboarding.csv"
-    onboarding.write_text("""Email,Name,Company,Phone,Message,Date,Newsletter
-bob@example.com,Bob Wilson,Dev Inc,987654321,Starting onboarding,2024-01-03,Yes""")
-    
+    onboarding.write_text(
+        """Email,Name,Company,Phone,Message,Date,Newsletter
+bob@example.com,Bob Wilson,Dev Inc,987654321,Starting onboarding,2024-01-03,Yes"""
+    )
+
     return {
         "client_master": str(client_master),
         "blog_signup": str(blog_signup),
-        "onboarding": str(onboarding)
+        "onboarding": str(onboarding),
     }
+
 
 @pytest.fixture
 def mock_enrichment_service():
@@ -169,10 +190,11 @@ def mock_enrichment_service():
         "data": {
             "company": "Example Corp",
             "title": "Software Engineer",
-            "linkedin_url": "https://linkedin.com/in/johndoe"
-        }
+            "linkedin_url": "https://linkedin.com/in/johndoe",
+        },
     }
     return service
+
 
 @pytest.fixture
 def sample_gmail_checkpoint(tmp_path):
@@ -180,8 +202,8 @@ def sample_gmail_checkpoint(tmp_path):
     checkpoint = {
         "last_sync": datetime.now().isoformat(),
         "last_message_id": "msg123",
-        "processed_threads": ["thread123"]
+        "processed_threads": ["thread123"],
     }
     checkpoint_file = tmp_path / "gmail_checkpoint.json"
     checkpoint_file.write_text(json.dumps(checkpoint))
-    return str(checkpoint_file) 
+    return str(checkpoint_file)

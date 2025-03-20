@@ -17,7 +17,9 @@ def mercury_validator() -> MercuryDataValidator:
     return MercuryDataValidator()
 
 
-def test_mercury_data_validator_initialization(mercury_validator: MercuryDataValidator) -> None:
+def test_mercury_data_validator_initialization(
+    mercury_validator: MercuryDataValidator,
+) -> None:
     """Test that MercuryDataValidator initializes correctly."""
     assert mercury_validator.name == "MercuryDataValidator"
     assert mercury_validator.config_section == "bookkeeping"
@@ -26,8 +28,14 @@ def test_mercury_data_validator_initialization(mercury_validator: MercuryDataVal
 
 def test_normalize_description(mercury_validator: MercuryDataValidator) -> None:
     """Test normalize_description method."""
-    assert mercury_validator.normalize_description("  Test   Description  ") == "Test Description"
-    assert mercury_validator.normalize_description("Test\n\nDescription") == "Test Description"
+    assert (
+        mercury_validator.normalize_description("  Test   Description  ")
+        == "Test Description"
+    )
+    assert (
+        mercury_validator.normalize_description("Test\n\nDescription")
+        == "Test Description"
+    )
     assert mercury_validator.normalize_description("") == ""
     assert mercury_validator.normalize_description(None) == ""  # type: ignore
 
@@ -45,7 +53,9 @@ def test_parse_and_validate_date(mercury_validator: MercuryDataValidator) -> Non
     with pytest.raises(ValueError, match=f"Invalid date {future_date_str}"):
         mercury_validator._parse_and_validate_date(future_date_str)
 
-    with pytest.raises(ValueError, match="time data 'invalid-date' does not match format '%Y-%m-%d'"):
+    with pytest.raises(
+        ValueError, match="time data 'invalid-date' does not match format '%Y-%m-%d'"
+    ):
         mercury_validator._parse_and_validate_date("invalid-date")
 
 
@@ -91,17 +101,29 @@ def test_validate_row_invalid_data(mercury_validator: MercuryDataValidator) -> N
             {"description": "Test", "amount": "100", "account_id": "123"}  # type: ignore
         )
 
-    with pytest.raises(DataValidationError, match="Invalid transaction data: Invalid date 202"):
+    with pytest.raises(
+        DataValidationError, match="Invalid transaction data: Invalid date 202"
+    ):
         mercury_validator.validate_row(
             {"date": "202", "description": "Test", "amount": "100", "account_id": "123"}
         )
 
-    with pytest.raises(DataValidationError, match="Invalid transaction data: could not convert string to float"):
+    with pytest.raises(
+        DataValidationError,
+        match="Invalid transaction data: could not convert string to float",
+    ):
         mercury_validator.validate_row(
-            {"date": "2023-01-01", "description": "Test", "amount": "abc", "account_id": "123"}
+            {
+                "date": "2023-01-01",
+                "description": "Test",
+                "amount": "abc",
+                "account_id": "123",
+            }
         )
 
-    with pytest.raises(DataValidationError, match="Invalid transaction data: 'account_id'"):
+    with pytest.raises(
+        DataValidationError, match="Invalid transaction data: 'account_id'"
+    ):
         mercury_validator.validate_row(
             {"date": "2023-01-01", "description": "Test", "amount": "100"}  # type: ignore
         )
@@ -110,7 +132,9 @@ def test_validate_row_invalid_data(mercury_validator: MercuryDataValidator) -> N
 @patch("dewey.core.bookkeeping.mercury_data_validator.call_llm")
 @patch("dewey.core.bookkeeping.mercury_data_validator.DatabaseConnection")
 def test_run_method(
-    mock_db_connection: MagicMock, mock_call_llm: MagicMock, mercury_validator: MercuryDataValidator
+    mock_db_connection: MagicMock,
+    mock_call_llm: MagicMock,
+    mercury_validator: MercuryDataValidator,
 ) -> None:
     """Test the run method with mocked dependencies."""
     # Mock config values
@@ -138,7 +162,9 @@ def test_run_method(
 
     # Assert database interaction
     mercury_validator.logger.info.assert_any_call("Attempting database operation...")
-    mock_db_conn_instance.execute.assert_called_with("SELECT * FROM transactions LIMIT 10")
+    mock_db_conn_instance.execute.assert_called_with(
+        "SELECT * FROM transactions LIMIT 10"
+    )
     mercury_validator.logger.info.assert_any_call("Database query result: db_result")
 
     # Assert LLM interaction
@@ -150,7 +176,9 @@ def test_run_method(
 @patch("dewey.core.bookkeeping.mercury_data_validator.call_llm")
 @patch("dewey.core.bookkeeping.mercury_data_validator.DatabaseConnection")
 def test_run_method_no_db_or_llm(
-    mock_db_connection: MagicMock, mock_call_llm: MagicMock, mercury_validator: MercuryDataValidator
+    mock_db_connection: MagicMock,
+    mock_call_llm: MagicMock,
+    mercury_validator: MercuryDataValidator,
 ) -> None:
     """Test the run method when DB and LLM are not initialized."""
     mercury_validator.db_conn = None
@@ -159,5 +187,7 @@ def test_run_method_no_db_or_llm(
 
     mercury_validator.run()
 
-    mercury_validator.logger.warning.assert_any_call("Database connection not initialized.")
+    mercury_validator.logger.warning.assert_any_call(
+        "Database connection not initialized."
+    )
     mercury_validator.logger.warning.assert_any_call("LLM client not initialized.")

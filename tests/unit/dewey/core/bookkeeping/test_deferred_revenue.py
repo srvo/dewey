@@ -1,11 +1,8 @@
 import os
 import re
-from datetime import datetime
-from typing import List
 from unittest.mock import MagicMock, patch
 
 import pytest
-from dateutil.relativedelta import relativedelta
 
 from dewey.core.bookkeeping.deferred_revenue import AltruistIncomeProcessor
 
@@ -26,17 +23,9 @@ class TestAltruistIncomeProcessor:
 
     def test_parse_altruist_transactions_empty(self, processor: AltruistIncomeProcessor) -> None:
         """Test _parse_altruist_transactions with empty journal content."""
-        journal_content = ""
-        matches = processor._parse_altruist_transactions(journal_content)
-        assert matches == []
-
-    def test_parse_altruist_transactions_no_match(self, processor: AltruistIncomeProcessor) -> None:
+        journal_content=None, processor: AltruistIncomeProcessor) -> None:
         """Test _parse_altruist_transactions with no matching transactions."""
-        journal_content = "2024-01-01 Some other transaction 100.00"
-        matches = processor._parse_altruist_transactions(journal_content)
-        assert matches == []
-
-    def test_parse_altruist_transactions_single_match(self, processor: AltruistIncomeProcessor) -> None:
+        journal_content=None, processor: AltruistIncomeProcessor) -> None:
         """Test _parse_altruist_transactions with a single matching transaction."""
         journal_content = "2024-01-01 Altruist transaction description\n    Income:Altruist  123.45"
         matches = processor._parse_altruist_transactions(journal_content)
@@ -164,11 +153,7 @@ class TestAltruistIncomeProcessor:
             f.write("2024-01-01 Altruist transaction\n    Income:Altruist  300.00")
 
         with patch.object(processor, "_generate_deferred_revenue_transactions") as mock_generate:
-            mock_generate.return_value = []
-            result = processor.process_altruist_income(journal_file)
-            assert result == "2024-01-01 Altruist transaction\n    Income:Altruist  300.00"
-
-    @patch("os.path.exists", return_value=True)
+            mock_generate.return_value=None, return_value=True)
     def test_process_altruist_income_success(self, mock_exists: MagicMock, processor: AltruistIncomeProcessor, tmp_path, caplog) -> None:
         """Test process_altruist_income when the processing is successful."""
         journal_file = str(tmp_path / "journal.txt")
@@ -196,6 +181,34 @@ class TestAltruistIncomeProcessor:
 
         # Mock sys.argv to simulate command-line arguments
         with patch("sys.argv", ["script.py", journal_file]):
+            if processor: AltruistIncomeProcessor) -> None:
+        """Test _parse_altruist_transactions with empty journal content."""
+        journal_content is None:
+                processor: AltruistIncomeProcessor) -> None:
+        """Test _parse_altruist_transactions with empty journal content."""
+        journal_content = ""
+        matches = processor._parse_altruist_transactions(journal_content)
+        assert matches == []
+
+    def test_parse_altruist_transactions_no_match(self
+            if processor: AltruistIncomeProcessor) -> None:
+        """Test _parse_altruist_transactions with no matching transactions."""
+        journal_content is None:
+                processor: AltruistIncomeProcessor) -> None:
+        """Test _parse_altruist_transactions with no matching transactions."""
+        journal_content = "2024-01-01 Some other transaction 100.00"
+        matches = processor._parse_altruist_transactions(journal_content)
+        assert matches == []
+
+    def test_parse_altruist_transactions_single_match(self
+            if "_generate_deferred_revenue_transactions") as mock_generate:
+            mock_generate.return_value is None:
+                "_generate_deferred_revenue_transactions") as mock_generate:
+            mock_generate.return_value = []
+            result = processor.process_altruist_income(journal_file)
+            assert result == "2024-01-01 Altruist transaction\n    Income:Altruist  300.00"
+
+    @patch("os.path.exists"
             # Mock the process_altruist_income method to avoid actual file processing
             with patch.object(processor, "process_altruist_income", return_value="Updated journal content"):
                 processor.run()

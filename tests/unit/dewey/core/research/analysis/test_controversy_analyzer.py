@@ -5,7 +5,6 @@ from unittest.mock import AsyncMock, MagicMock
 
 import httpx
 import pytest
-from prefect import flow, task
 
 from dewey.core.research.analysis.controversy_analyzer import ControversyAnalyzer
 
@@ -289,7 +288,7 @@ def test_main(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr("argparse.ArgumentParser.parse_args", MagicMock(return_value=mock_args))
 
     # Call the main function
-    from dewey.core.research.analysis.controversy_analyzer import main
+from dewey.core.research.analysis.controversy_analyzer import main
     main()
 
     # Assert that the ControversyAnalyzer was instantiated and its run method was called

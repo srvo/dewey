@@ -16,7 +16,9 @@ class BaseEngine(BaseScript):
             config_section: The section in the dewey.yaml configuration file
                             containing the engine's specific settings. Defaults to "engines".
         """
-        super().__init__(config_section=config_section, requires_db=False, enable_llm=False)
+        super().__init__(
+            config_section=config_section, requires_db=False, enable_llm=False
+        )
 
     def run(self) -> None:
         """Executes the main logic of the engine.

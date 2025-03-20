@@ -73,7 +73,7 @@ class ScriptIntegrationTests(unittest.TestCase):
     @patch('dewey.core.base_script.load_dotenv')
     def test_import_script_updater(self, _):
         """Test that the script_updater module can be imported and is compatible with BaseScript."""
-        from scripts.update_scripts import ScriptUpdater
+from scripts.update_scripts import ScriptUpdater
         
         # Verify it inherits from BaseScript
         self.assertTrue(issubclass(ScriptUpdater, BaseScript))
@@ -121,7 +121,7 @@ class ScriptIntegrationTests(unittest.TestCase):
         script_modules = self._find_script_modules()
         
         # Test up to 5 random scripts
-        import random
+import random
         random.shuffle(script_modules)
         
         for module_path in script_modules[:5]:

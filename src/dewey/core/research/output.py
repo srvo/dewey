@@ -14,16 +14,21 @@ class ResearchOutputHandler(BaseScript):
         Args:
             output_dir: Directory for output files
         """
-        super().__init__(config_section='research_output')
-        self.output_dir = Path(output_dir) if output_dir else Path(
-            self.get_config_value('output_dir', 'output'))
+        super().__init__(config_section="research_output")
+        self.output_dir = (
+            Path(output_dir)
+            if output_dir
+            else Path(self.get_config_value("output_dir", "output"))
+        )
 
     def run(self) -> None:
         """Run the research output handler."""
         self.logger.info("Running ResearchOutputHandler...")
         # No core logic here, methods are called externally
 
-    def save_results(self, results: Dict[str, Any], output_file: Optional[Path] = None) -> None:
+    def save_results(
+        self, results: Dict[str, Any], output_file: Optional[Path] = None
+    ) -> None:
         """Save research results to a file.
 
         Args:
@@ -31,7 +36,9 @@ class ResearchOutputHandler(BaseScript):
             output_file: Optional output file path.
         """
         if output_file is None:
-            default_output_file = self.get_config_value('default_output_file', 'results.json')
+            default_output_file = self.get_config_value(
+                "default_output_file", "results.json"
+            )
             output_file = self.output_dir / default_output_file
 
         # Ensure parent directory exists
@@ -55,7 +62,9 @@ class ResearchOutputHandler(BaseScript):
             Loaded results.
         """
         if input_file is None:
-            default_output_file = self.get_config_value('default_output_file', 'results.json')
+            default_output_file = self.get_config_value(
+                "default_output_file", "results.json"
+            )
             input_file = self.output_dir / default_output_file
 
         if not input_file.exists():

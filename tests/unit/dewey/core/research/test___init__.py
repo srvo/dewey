@@ -1,14 +1,14 @@
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock
 import pytest
 import logging
-from typing import Any, Dict
 
 from dewey.core.research import ResearchScript
 from dewey.core.base_script import BaseScript  # Import BaseScript for isinstance check
 
 
 class TestResearchScript(unittest.TestCase):
+    """Class TestResearchScript."""
 
     def setUp(self):
         """Setup method to create a ResearchScript instance before each test."""
@@ -29,7 +29,12 @@ class TestResearchScript(unittest.TestCase):
 
     def test_research_script_initialization_with_params(self):
         """Test that ResearchScript initializes correctly with custom parameters."""
-        research_script = ResearchScript(config_section="test_section", name="TestScript", requires_db=True, enable_llm=True)
+        research_script = ResearchScript(
+            config_section="test_section",
+            name="TestScript",
+            requires_db=True,
+            enable_llm=True,
+        )
         self.assertEqual(research_script.name, "TestScript")
         self.assertEqual(research_script.config_section, "test_section")
         self.assertTrue(research_script.requires_db)
@@ -42,7 +47,9 @@ class TestResearchScript(unittest.TestCase):
 
     def test_example_method_processes_data_correctly(self):
         """Test that the example_method processes data correctly."""
-        self.research_script.get_config_value = MagicMock(return_value="test_config_value")
+        self.research_script.get_config_value = MagicMock(
+            return_value="test_config_value"
+        )
         input_data = "test_input_data"
         expected_output = "Processed: test_input_data - test_config_value"
         actual_output = self.research_script.example_method(input_data)
@@ -60,10 +67,14 @@ class TestResearchScript(unittest.TestCase):
 
     def test_example_method_logs_correct_message(self):
         """Test that the example_method logs the correct message."""
-        self.research_script.get_config_value = MagicMock(return_value="test_config_value")
+        self.research_script.get_config_value = MagicMock(
+            return_value="test_config_value"
+        )
         input_data = "test_input_data"
         self.research_script.example_method(input_data)
-        self.research_script.logger.info.assert_called_with(f"Processing data: {input_data} with config: test_config_value")
+        self.research_script.logger.info.assert_called_with(
+            f"Processing data: {input_data} with config: test_config_value"
+        )
 
     def test_config_section_warning(self):
         """Test that a warning is logged when the config section is not found."""
@@ -75,5 +86,6 @@ class TestResearchScript(unittest.TestCase):
         research_script.example_method(input_data)
         research_script.logger.warning.assert_called_once()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

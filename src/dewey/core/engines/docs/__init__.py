@@ -31,7 +31,9 @@ class DocsEngine(BaseScript):
         """
         self.logger.info("Running DocsEngine module.")
         # Example of accessing a configuration value
-        example_config_value = self.get_config_value("example_config_key", "default_value")
+        example_config_value = self.get_config_value(
+            "example_config_key", "default_value"
+        )
         self.logger.debug(f"Example config value: {example_config_value}")
 
     def get_config_value(self, key: str, default: Any = None) -> Any:

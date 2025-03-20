@@ -2,8 +2,7 @@ import base64
 import json
 import logging
 import os
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -17,10 +16,13 @@ from dewey.core.base_script import BaseScript
 
 # Mock BaseScript for testing purposes
 class MockBaseScript(BaseScript):
+    """Class MockBaseScript."""
     def __init__(self, config_section: Optional[str] = None, requires_db: bool = False, enable_llm: bool = False):
+        """Function __init__."""
         super().__init__(config_section=config_section, requires_db=requires_db, enable_llm=enable_llm)
 
     def run(self) -> None:
+        """Function run."""
         pass
 
 
@@ -51,15 +53,8 @@ def mock_gmail_service(mock_gmail_client: GmailClient) -> MagicMock:
 def mock_message() -> Dict[str, Any]:
     """Fixture to return a sample email message."""
     return {
-        "id": "12345",
-        "threadId": "67890",
-        "labelIds": ["INBOX", "UNREAD"],
-        "snippet": "This is a test email.",
-        "payload": {
-            "mimeType": "text/plain",
-            "body": {"data": base64.urlsafe_b64encode(b"Hello, world!").decode("utf-8")},
-        },
-    }
+        "id": "12345", "threadId": "67890", "labelIds": ["INBOX", "UNREAD"], "snippet": "This is a test email.", "payload": {
+            "mimeType": "text/plain", "body": {"data": base64.urlsafe_b64encode(b"Hello, world!").decode("utf-8")}, }, }
 
 
 class TestGmailClient:
@@ -164,11 +159,7 @@ class TestGmailClient:
 
     def test_decode_message_body_missing_data(self, mock_gmail_client: GmailClient) -> None:
         """Test message body decoding with missing data."""
-        message = {"payload": {"body": {}}}
-        decoded_body = mock_gmail_client.decode_message_body(message["payload"]["body"])
-        assert decoded_body == ""
-
-    def test_decode_message_body_decoding_error(self, mock_gmail_client: GmailClient) -> None:
+        message=None, mock_gmail_client: GmailClient) -> None:
         """Test message body decoding with decoding error."""
         message = {"data": "Invalid base64 string"}
         with patch.object(mock_gmail_client.logger, 'error') as mock_logger:
@@ -179,5 +170,15 @@ class TestGmailClient:
     def test_run(self, mock_gmail_client: GmailClient, caplog: pytest.LogCaptureFixture) -> None:
         """Test the run method (placeholder)."""
         with caplog.at_level(logging.INFO):
+            if mock_gmail_client: GmailClient) -> None:
+        """Test message body decoding with missing data."""
+        message is None:
+                mock_gmail_client: GmailClient) -> None:
+        """Test message body decoding with missing data."""
+        message = {"payload": {"body": {}}}
+        decoded_body = mock_gmail_client.decode_message_body(message["payload"]["body"])
+        assert decoded_body == ""
+
+    def test_decode_message_body_decoding_error(self
             mock_gmail_client.run()
         assert "GmailClient run method called (placeholder)." in caplog.text

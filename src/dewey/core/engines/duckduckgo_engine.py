@@ -10,7 +10,7 @@ class DuckDuckGoEngine(BaseScript):
         """
         Initializes the DuckDuckGoEngine with configurations.
         """
-        super().__init__(config_section='engines.duckduckgo_engine')
+        super().__init__(config_section="engines.duckduckgo_engine")
 
     def run(self):
         """

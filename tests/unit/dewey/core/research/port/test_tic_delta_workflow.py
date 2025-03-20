@@ -4,7 +4,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 import yaml
 
-from dewey.core.base_script import BaseScript
 from dewey.core.research.port.tic_delta_workflow import TicDeltaWorkflow
 
 
@@ -14,7 +13,9 @@ class TestTicDeltaWorkflow:
     @pytest.fixture
     def mock_base_script(self):
         """Mocks the BaseScript class."""
-        with patch("dewey.core.research.port.tic_delta_workflow.BaseScript", autospec=True) as MockBaseScript:
+        with patch(
+            "dewey.core.research.port.tic_delta_workflow.BaseScript", autospec=True
+        ) as MockBaseScript:
             yield MockBaseScript
 
     @pytest.fixture
@@ -42,15 +43,19 @@ class TestTicDeltaWorkflow:
         mock_create_table = MagicMock()
         mock_execute_query = MagicMock()
 
-        with patch(
-            "dewey.core.research.port.tic_delta_workflow.get_connection",
-            return_value=mock_connection,
-        ), patch(
-            "dewey.core.research.port.tic_delta_workflow.create_table",
-            mock_create_table,
-        ), patch(
-            "dewey.core.research.port.tic_delta_workflow.execute_query",
-            mock_execute_query,
+        with (
+            patch(
+                "dewey.core.research.port.tic_delta_workflow.get_connection",
+                return_value=mock_connection,
+            ),
+            patch(
+                "dewey.core.research.port.tic_delta_workflow.create_table",
+                mock_create_table,
+            ),
+            patch(
+                "dewey.core.research.port.tic_delta_workflow.execute_query",
+                mock_execute_query,
+            ),
         ):
             tic_delta_workflow.run()
 
@@ -62,10 +67,13 @@ class TestTicDeltaWorkflow:
         """Test the run method when an exception occurs during database operations."""
         mock_connection = MagicMock()
 
-        with patch(
-            "dewey.core.research.port.tic_delta_workflow.get_connection",
-            return_value=mock_connection,
-        ), pytest.raises(Exception) as exc_info:
+        with (
+            patch(
+                "dewey.core.research.port.tic_delta_workflow.get_connection",
+                return_value=mock_connection,
+            ),
+            pytest.raises(Exception) as exc_info,
+        ):
             mock_connection.__enter__.side_effect = Exception("Test exception")
             with pytest.raises(Exception):
                 tic_delta_workflow.run()
@@ -78,10 +86,14 @@ class TestTicDeltaWorkflow:
         input_table = tic_delta_workflow.get_config_value("input_table")
         assert input_table == "test_input_table"
 
-        output_table = tic_delta_workflow.get_config_value("output_table", "default_output_table")
+        output_table = tic_delta_workflow.get_config_value(
+            "output_table", "default_output_table"
+        )
         assert output_table == "test_output_table"
 
-        non_existent_value = tic_delta_workflow.get_config_value("non_existent", "default_value")
+        non_existent_value = tic_delta_workflow.get_config_value(
+            "non_existent", "default_value"
+        )
         assert non_existent_value == "default_value"
 
     def test_run_with_empty_config(self):
@@ -95,7 +107,10 @@ class TestTicDeltaWorkflow:
 
     def test_run_with_missing_db_utils(self, tic_delta_workflow):
         """Test the run method when database utilities are missing."""
-        with patch.dict("sys.modules", {"dewey.core.db.connection": None, "dewey.core.db.utils": None}):
+        with patch.dict(
+            "sys.modules",
+            {"dewey.core.db.connection": None, "dewey.core.db.utils": None},
+        ):
             with pytest.raises(NameError) as exc_info:
                 tic_delta_workflow.run()
             assert "name 'get_connection' is not defined" in str(exc_info.value)
@@ -122,7 +137,9 @@ class TestTicDeltaWorkflow:
             tic_delta_workflow.execute()
 
         assert exc_info.value.code == 1
-        tic_delta_workflow.logger.warning.assert_called_with("Script interrupted by user")
+        tic_delta_workflow.logger.warning.assert_called_with(
+            "Script interrupted by user"
+        )
         tic_delta_workflow._cleanup.assert_called_once()
 
     def test_execute_exception(self, tic_delta_workflow):
@@ -174,17 +191,22 @@ class TestTicDeltaWorkflow:
         mock_config_path = MagicMock()
         with patch("dewey.core.base_script.CONFIG_PATH", mock_config_path):
             with patch("builtins.open", create=True) as mock_open:
-                mock_open.return_value.__enter__.return_value = yaml.dump({
-                    'core': {
-                        'logging': {
-                            'level': 'DEBUG',
-                            'format': '%(levelname)s - %(message)s',
-                            'date_format': '%Y-%m-%d',
+                mock_open.return_value.__enter__.return_value = yaml.dump(
+                    {
+                        "core": {
+                            "logging": {
+                                "level": "DEBUG",
+                                "format": "%(levelname)s - %(message)s",
+                                "date_format": "%Y-%m-%d",
+                            }
                         }
                     }
-                })
+                )
                 tic_delta_workflow._setup_logging()
-                assert logging.getLoggerClass().root.handlers[0].formatter._fmt == '%(levelname)s - %(message)s'
+                assert (
+                    logging.getLoggerClass().root.handlers[0].formatter._fmt
+                    == "%(levelname)s - %(message)s"
+                )
                 assert logging.getLoggerClass().root.level == logging.DEBUG
 
     def test_setup_logging_default(self, tic_delta_workflow, mock_base_script):
@@ -194,28 +216,42 @@ class TestTicDeltaWorkflow:
             with patch("builtins.open", create=True) as mock_open:
                 mock_open.side_effect = FileNotFoundError
                 tic_delta_workflow._setup_logging()
-                assert logging.getLoggerClass().root.handlers[0].formatter._fmt == '%(asctime)s - %(levelname)s - %(name)s - %(message)s'
+                assert (
+                    logging.getLoggerClass().root.handlers[0].formatter._fmt
+                    == "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+                )
                 assert logging.getLoggerClass().root.level == logging.INFO
 
     def test_parse_args_log_level(self, tic_delta_workflow):
         """Test that the log level can be set via command line arguments."""
-        with patch("argparse.ArgumentParser.parse_args", return_value=MagicMock(log_level="DEBUG")):
+        with patch(
+            "argparse.ArgumentParser.parse_args",
+            return_value=MagicMock(log_level="DEBUG"),
+        ):
             tic_delta_workflow.parse_args()
             assert tic_delta_workflow.logger.level == logging.DEBUG
 
     def test_parse_args_config_file(self, tic_delta_workflow):
         """Test that a config file can be loaded via command line arguments."""
         mock_config_path = MagicMock()
-        with patch("argparse.ArgumentParser.parse_args", return_value=MagicMock(config=mock_config_path)):
+        with patch(
+            "argparse.ArgumentParser.parse_args",
+            return_value=MagicMock(config=mock_config_path),
+        ):
             with patch("builtins.open", create=True) as mock_open:
-                mock_open.return_value.__enter__.return_value = yaml.dump({'test': 'value'})
+                mock_open.return_value.__enter__.return_value = yaml.dump(
+                    {"test": "value"}
+                )
                 tic_delta_workflow.parse_args()
-                assert tic_delta_workflow.config == {'test': 'value'}
+                assert tic_delta_workflow.config == {"test": "value"}
 
     def test_parse_args_config_file_not_found(self, tic_delta_workflow):
         """Test that an error is raised if the config file specified via command line arguments is not found."""
         mock_config_path = MagicMock()
-        with patch("argparse.ArgumentParser.parse_args", return_value=MagicMock(config=mock_config_path)):
+        with patch(
+            "argparse.ArgumentParser.parse_args",
+            return_value=MagicMock(config=mock_config_path),
+        ):
             with patch("pathlib.Path.exists", return_value=False):
                 with pytest.raises(SystemExit) as exc_info:
                     tic_delta_workflow.parse_args()
@@ -224,15 +260,27 @@ class TestTicDeltaWorkflow:
     def test_parse_args_db_connection_string(self, tic_delta_workflow):
         """Test that a database connection string can be set via command line arguments."""
         tic_delta_workflow.requires_db = True
-        with patch("argparse.ArgumentParser.parse_args", return_value=MagicMock(db_connection_string="test_connection_string")):
-            with patch("dewey.core.db.connection.get_connection", return_value=MagicMock()) as mock_get_connection:
+        with patch(
+            "argparse.ArgumentParser.parse_args",
+            return_value=MagicMock(db_connection_string="test_connection_string"),
+        ):
+            with patch(
+                "dewey.core.db.connection.get_connection", return_value=MagicMock()
+            ) as mock_get_connection:
                 tic_delta_workflow.parse_args()
-                mock_get_connection.assert_called_with({"connection_string": "test_connection_string"})
+                mock_get_connection.assert_called_with(
+                    {"connection_string": "test_connection_string"}
+                )
 
     def test_parse_args_llm_model(self, tic_delta_workflow):
         """Test that an LLM model can be set via command line arguments."""
         tic_delta_workflow.enable_llm = True
-        with patch("argparse.ArgumentParser.parse_args", return_value=MagicMock(llm_model="test_llm_model")):
-            with patch("dewey.llm.llm_utils.get_llm_client", return_value=MagicMock()) as mock_get_llm_client:
+        with patch(
+            "argparse.ArgumentParser.parse_args",
+            return_value=MagicMock(llm_model="test_llm_model"),
+        ):
+            with patch(
+                "dewey.llm.llm_utils.get_llm_client", return_value=MagicMock()
+            ) as mock_get_llm_client:
                 tic_delta_workflow.parse_args()
                 mock_get_llm_client.assert_called_with({"model": "test_llm_model"})

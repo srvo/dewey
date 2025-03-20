@@ -2,10 +2,7 @@ import pytest
 from unittest.mock import MagicMock, patch
 from dewey.core.engines.fred_engine import FredEngine
 import logging
-from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection
-from dewey.llm import llm_utils
-from typing import Any, Dict
 
 
 class TestFredEngine:
@@ -23,15 +20,7 @@ class TestFredEngine:
             FredEngine: An instance of FredEngine.
         """
         with patch('dewey.core.engines.fred_engine.BaseScript.__init__') as mock_base_init:
-            mock_base_init.return_value = None  # Mock the base class initialization
-            engine = FredEngine()
-            engine.logger = MagicMock(spec=logging.Logger)  # Mock the logger
-            engine.config = {}  # Mock the config
-            engine.db_conn = None  # Mock the db_conn
-            engine.llm_client = None  # Mock the llm_client
-            return engine
-
-    def test_fred_engine_initialization(self, fred_engine: FredEngine) -> None:
+            mock_base_init.return_value=None, fred_engine: FredEngine) -> None:
         """
         Test the initialization of the FredEngine class.
         """
@@ -75,6 +64,32 @@ class TestFredEngine:
 
         # Patch llm_utils.generate_response to use the mock
         with patch('dewey.core.engines.fred_engine.llm_utils', mock_llm_utils):
+            if self) -> FredEngine:
+        """
+        Pytest fixture to create an instance of FredEngine with mocked dependencies.
+
+        Returns:
+            FredEngine: An instance of FredEngine.
+        """
+        with patch('dewey.core.engines.fred_engine.BaseScript.__init__') as mock_base_init:
+            mock_base_init.return_value is None:
+                self) -> FredEngine:
+        """
+        Pytest fixture to create an instance of FredEngine with mocked dependencies.
+
+        Returns:
+            FredEngine: An instance of FredEngine.
+        """
+        with patch('dewey.core.engines.fred_engine.BaseScript.__init__') as mock_base_init:
+            mock_base_init.return_value = None  # Mock the base class initialization
+            engine = FredEngine()
+            engine.logger = MagicMock(spec=logging.Logger)  # Mock the logger
+            engine.config = {}  # Mock the config
+            engine.db_conn = None  # Mock the db_conn
+            engine.llm_client = None  # Mock the llm_client
+            return engine
+
+    def test_fred_engine_initialization(self
             fred_engine.run()
 
         # Assertions

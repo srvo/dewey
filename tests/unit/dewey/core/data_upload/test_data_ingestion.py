@@ -113,7 +113,7 @@ class TestDataIngestion:
         """Test the main execution block."""
         with patch("dewey.core.data_upload.data_ingestion.DataIngestion") as MockDataIngestion:
             # Simulate running the script from the command line
-            import dewey.core.data_upload.data_ingestion
+import dewey.core.data_upload.data_ingestion
             dewey.core.data_upload.data_ingestion.main()
 
             # Assert that DataIngestion was instantiated and execute was called

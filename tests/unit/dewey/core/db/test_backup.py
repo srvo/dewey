@@ -82,7 +82,9 @@ class TestBackup:
             backup.logger = logging.getLogger(__name__)  # Mock logger
             backup.config = {"backup": {}, "core": {"database": {}}}  # Mock config
             backup.db_conn = "mock_db_conn"  # Mock db_conn
-            with patch("dewey.core.db.backup.restore_database") as mock_restore_database:
+            with patch(
+                "dewey.core.db.backup.restore_database"
+            ) as mock_restore_database:
                 backup.restore()
                 mock_restore_database.assert_called_once_with(
                     "mock_db_conn", "/default/restore/path", backup.logger

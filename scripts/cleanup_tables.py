@@ -8,6 +8,7 @@ class CleanupTables(BaseScript):
     """Script to clean up unnecessary tables while preserving consolidated data."""
 
     def __init__(self):
+        """Function __init__."""
         super().__init__(
             name="cleanup_tables",
             description="Clean up unnecessary tables while preserving consolidated data"

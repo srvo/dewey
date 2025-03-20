@@ -1,5 +1,3 @@
-from typing import Any
-
 from dewey.core.base_script import BaseScript
 
 
@@ -34,7 +32,9 @@ class AnalyzeArchitecture(BaseScript):
         self.logger.info("Starting architecture analysis...")
 
         # Example of accessing a configuration value
-        example_config_value = self.get_config_value("example_config", default="default_value")
+        example_config_value = self.get_config_value(
+            "example_config", default="default_value"
+        )
         self.logger.info(f"Example config value: {example_config_value}")
 
         # Add your architecture analysis logic here

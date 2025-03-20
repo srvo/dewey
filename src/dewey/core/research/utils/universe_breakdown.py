@@ -12,28 +12,34 @@ universe = pd.read_csv(UNIVERSE_FILE)
 con = duckdb.connect(DATABASE_FILE)
 
 # Get sector breakdown
-sector_breakdown = con.execute(f"""
+sector_breakdown = con.execute(
+    f"""
 SELECT sector, COUNT(*) AS count
 FROM read_csv_auto('{UNIVERSE_FILE}')
 GROUP BY sector
 ORDER BY count DESC
-""").df()
+"""
+).df()
 
 # Get industry breakdown
-industry_breakdown = con.execute(f"""
+industry_breakdown = con.execute(
+    f"""
 SELECT industry, COUNT(*) AS count
 FROM read_csv_auto('{UNIVERSE_FILE}')
 GROUP BY industry
 ORDER BY count DESC
-""").df()
+"""
+).df()
 
 # Get country breakdown
-country_breakdown = con.execute(f"""
+country_breakdown = con.execute(
+    f"""
 SELECT country, COUNT(*) AS count
 FROM read_csv_auto('{UNIVERSE_FILE}')
 GROUP BY country
 ORDER BY count DESC
-""").df()
+"""
+).df()
 
 # Print sector breakdown
 print("Sector Breakdown:")

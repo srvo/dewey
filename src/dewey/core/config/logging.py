@@ -1,4 +1,3 @@
-import logging
 from typing import Any
 
 from dewey.core.base_script import BaseScript
@@ -13,7 +12,7 @@ class LoggingExample(BaseScript):
     accessing configuration values.
     """
 
-    def __init__(self, config_section: str = 'logging') -> None:
+    def __init__(self, config_section: str = "logging") -> None:
         """
         Initializes the LoggingExample script.
 
@@ -32,7 +31,9 @@ class LoggingExample(BaseScript):
         self.logger.info("Starting the LoggingExample script.")
 
         # Example of accessing a configuration value
-        example_config_value: Any = self.get_config_value("example_config", "default_value")
+        example_config_value: Any = self.get_config_value(
+            "example_config", "default_value"
+        )
         self.logger.info(f"Example config value: {example_config_value}")
 
         self.logger.warning("This is a warning message.")

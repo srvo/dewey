@@ -7,7 +7,7 @@ import logging
 import os
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import get_connection
@@ -22,12 +22,7 @@ class EthicalAnalysisWorkflow(BaseScript, BaseWorkflow):
     """Workflow for analyzing companies from an ethical perspective."""
 
     def __init__(
-        self,
-        data_dir: Union[str, Path],
-        search_engine: Optional[BaseEngine] = None,
-        analysis_engine: Optional[BaseEngine] = None,
-        output_handler: Optional[ResearchOutputHandler] = None,
-    ) -> None:
+        self, data_dir: Union[str, Path], search_engine: Optional[BaseEngine] = None, analysis_engine: Optional[BaseEngine] = None, output_handler: Optional[ResearchOutputHandler] = None, ) -> None:
         """Initialize the workflow.
 
         Args:
@@ -37,12 +32,7 @@ class EthicalAnalysisWorkflow(BaseScript, BaseWorkflow):
             output_handler: Optional output handler.
         """
         super().__init__(
-            name="EthicalAnalysisWorkflow",
-            description="Workflow for analyzing companies from an ethical perspective.",
-            config_section="ethical_analysis",
-            requires_db=True,
-            enable_llm=True,
-        )
+            name="EthicalAnalysisWorkflow", description="Workflow for analyzing companies from an ethical perspective.", config_section="ethical_analysis", requires_db=True, enable_llm=True, )
         self.data_dir = Path(data_dir)
         self.search_engine = search_engine or DeepSeekEngine()
         self.analysis_engine = analysis_engine or DeepSeekEngine()
@@ -55,8 +45,7 @@ class EthicalAnalysisWorkflow(BaseScript, BaseWorkflow):
         # Add templates to analysis engine
         if self.analysis_engine:
             self.analysis_engine.add_template(
-                "ethical_analysis",
-                """Analyze the ethical implications of {company_name}'s business practices based on the following information:
+                "ethical_analysis", """Analyze the ethical implications of {company_name}'s business practices based on the following information:
 
 {search_results}
 
@@ -65,12 +54,10 @@ Please provide:
 2. Potential risks and concerns
 3. Notable positive initiatives
 4. Areas for improvement
-""",
-            )
+""", )
 
             self.analysis_engine.add_template(
-                "risk_analysis",
-                """Assess the risks associated with {company_name} based on:
+                "risk_analysis", """Assess the risks associated with {company_name} based on:
 
 {search_results}
 
@@ -80,18 +67,11 @@ Please identify:
 3. Environmental risks
 4. Social impact risks
 5. Governance risks
-""",
-            )
+""", )
 
         # Initialize statistics
         self.stats = {
-            "companies_processed": 0,
-            "total_searches": 0,
-            "total_results": 0,
-            "total_snippet_words": 0,
-            "total_analyses": 0,
-            "total_analysis_words": 0,
-        }
+            "companies_processed": 0, "total_searches": 0, "total_results": 0, "total_snippet_words": 0, "total_analyses": 0, "total_analysis_words": 0, }
 
     def build_query(self, company_data: Dict[str, str]) -> str:
         """Build a search query for a company.
@@ -103,15 +83,7 @@ Please identify:
             Search query string.
         """
         query_parts = [
-            str(company_data),
-            "ethical",
-            "ethics",
-            "controversy",
-            "controversies",
-            "violations",
-            "sustainability",
-            "corporate responsibility",
-        ]
+            str(company_data), "ethical", "ethics", "controversy", "controversies", "violations", "sustainability", "corporate responsibility", ]
         return " ".join(query_parts)
 
     @staticmethod
@@ -140,11 +112,7 @@ Please identify:
             conn.execute(
                 """
             CREATE TABLE IF NOT EXISTS research_searches (
-                id INTEGER PRIMARY KEY DEFAULT nextval('research_searches_id_seq'),
-                company_name TEXT NOT NULL,
-                query TEXT NOT NULL,
-                num_results INTEGER DEFAULT 0,
-                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                id INTEGER PRIMARY KEY DEFAULT nextval('research_searches_id_seq'), company_name TEXT NOT NULL, query TEXT NOT NULL, num_results INTEGER DEFAULT 0, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
             """
             )
@@ -153,14 +121,7 @@ Please identify:
             conn.execute(
                 """
             CREATE TABLE IF NOT EXISTS research_search_results (
-                id INTEGER PRIMARY KEY DEFAULT nextval('research_search_results_id_seq'),
-                search_id INTEGER NOT NULL,
-                title TEXT,
-                link TEXT,
-                snippet TEXT,
-                source TEXT,
-                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (search_id) REFERENCES research_searches(id)
+                id INTEGER PRIMARY KEY DEFAULT nextval('research_search_results_id_seq'), search_id INTEGER NOT NULL, title TEXT, link TEXT, snippet TEXT, source TEXT, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (search_id) REFERENCES research_searches(id)
             )
             """
             )
@@ -169,16 +130,7 @@ Please identify:
             conn.execute(
                 """
             CREATE TABLE IF NOT EXISTS research_analyses (
-                id INTEGER PRIMARY KEY DEFAULT nextval('research_analyses_id_seq'),
-                company TEXT NOT NULL,
-                search_id INTEGER NOT NULL,
-                content TEXT,
-                summary TEXT,
-                historical_analysis TEXT,
-                ethical_score FLOAT,
-                risk_level INTEGER,
-                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (search_id) REFERENCES research_searches(id)
+                id INTEGER PRIMARY KEY DEFAULT nextval('research_analyses_id_seq'), company TEXT NOT NULL, search_id INTEGER NOT NULL, content TEXT, summary TEXT, historical_analysis TEXT, ethical_score FLOAT, risk_level INTEGER, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (search_id) REFERENCES research_searches(id)
             )
             """
             )
@@ -205,9 +157,7 @@ Please identify:
                     INSERT INTO research_searches (company_name, query, num_results)
                     VALUES (?, ?, ?)
                     RETURNING id
-                """,
-                    [company, f"{company} ethical issues controversies", len(search_results)],
-                )
+                """, [company, f"{company} ethical issues controversies", len(search_results)], )
                 search_id = result.fetchone()[0]
 
                 # Insert search results
@@ -217,15 +167,8 @@ Please identify:
                         INSERT INTO research_search_results 
                         (search_id, title, link, snippet, source)
                         VALUES (?, ?, ?, ?, ?)
-                    """,
-                        [
-                            search_id,
-                            result.get("title", ""),
-                            result.get("link", ""),
-                            result.get("snippet", ""),
-                            result.get("source", ""),
-                        ],
-                    )
+                    """, [
+                            search_id, result.get("title", ""), result.get("link", ""), result.get("snippet", ""), result.get("source", ""), ], )
 
             # Generate analysis using LLM
             prompt = f"""Analyze the ethical profile of {company} based on the following information:
@@ -248,23 +191,15 @@ Please provide:
                     INSERT INTO research_analyses 
                     (company, search_id, content, summary, historical_analysis, ethical_score, risk_level)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
-                """,
-                    [
-                        company,
-                        search_id,
-                        analysis,
-                        "",  # summary
-                        "",  # historical_analysis
-                        0.0,  # ethical_score
-                        0,  # risk_level
-                    ],
-                )
+                """, [
+                        company, search_id, analysis, "", # summary
+                        "", # historical_analysis
+                        0.0, # ethical_score
+                        0, # risk_level
+                    ], )
 
             return {
-                "company": company,
-                "search_results": search_results,
-                "analysis": analysis,
-                "historical": "",  # historical
+                "company": company, "search_results": search_results, "analysis": analysis, "historical": "", # historical
             }
 
         except Exception as e:
@@ -274,15 +209,7 @@ Please provide:
     def execute(self, data_dir: str) -> Dict[str, Any]:
         """Execute the workflow."""
         companies_file = os.path.join(data_dir, "companies.csv")
-        companies = []
-        stats = {
-            "companies_processed": 0,
-            "total_searches": 0,
-            "total_results": 0,
-            "total_snippet_words": 0,
-            "total_analyses": 0,
-            "total_analysis_words": 0,
-        }
+        companies=None, "total_searches": 0, "total_results": 0, "total_snippet_words": 0, "total_analyses": 0, "total_analysis_words": 0, }
 
         try:
             with open(companies_file) as f:
@@ -297,6 +224,12 @@ Please provide:
 
                         # Ensure search_results is a list of dictionaries
                         if not isinstance(search_results, list):
+                            if "companies.csv")
+        companies is None:
+                                "companies.csv")
+        companies = []
+        stats = {
+            "companies_processed": 0
                             search_results = []
 
                         # Update search stats
@@ -413,15 +346,7 @@ Please provide:
         """
         data_dir = self.get_config_value("paths.data_dir", "/Users/srvo/dewey/data")
         companies_file = os.path.join(data_dir, "companies.csv")
-        companies = []
-        stats = {
-            "companies_processed": 0,
-            "total_searches": 0,
-            "total_results": 0,
-            "total_snippet_words": 0,
-            "total_analyses": 0,
-            "total_analysis_words": 0,
-        }
+        companies=None, "total_searches": 0, "total_results": 0, "total_snippet_words": 0, "total_analyses": 0, "total_analysis_words": 0, }
 
         try:
             with open(companies_file) as f:
@@ -436,6 +361,12 @@ Please provide:
 
                         # Ensure search_results is a list of dictionaries
                         if not isinstance(search_results, list):
+                            if "companies.csv")
+        companies is None:
+                                "companies.csv")
+        companies = []
+        stats = {
+            "companies_processed": 0
                             search_results = []
 
                         # Update search stats

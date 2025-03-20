@@ -52,17 +52,24 @@ class TestCompanyAnalysis:
 
     @patch("dewey.core.research.analysis.company_analysis.load_dotenv")
     @patch("dewey.core.research.analysis.company_analysis.yaml.safe_load")
-    def test_load_config_file_not_found(self, mock_safe_load, mock_load_dotenv, caplog) -> None:
+    def test_load_config_file_not_found(
+        self, mock_safe_load, mock_load_dotenv, caplog
+    ) -> None:
         """Test that FileNotFoundError is raised when the config file is not found."""
         caplog.set_level(logging.ERROR)
         mock_safe_load.side_effect = FileNotFoundError("config/dewey.yaml")
         with pytest.raises(FileNotFoundError):
             CompanyAnalysis()
-        assert "Configuration file not found: /Users/srvo/dewey/config/dewey.yaml" in caplog.text
+        assert (
+            "Configuration file not found: /Users/srvo/dewey/config/dewey.yaml"
+            in caplog.text
+        )
 
     @patch("dewey.core.research.analysis.company_analysis.load_dotenv")
     @patch("dewey.core.research.analysis.company_analysis.yaml.safe_load")
-    def test_load_config_yaml_error(self, mock_safe_load, mock_load_dotenv, caplog) -> None:
+    def test_load_config_yaml_error(
+        self, mock_safe_load, mock_load_dotenv, caplog
+    ) -> None:
         """Test that yaml.YAMLError is raised when the config file is invalid."""
         caplog.set_level(logging.ERROR)
         mock_safe_load.side_effect = Exception("Invalid YAML")

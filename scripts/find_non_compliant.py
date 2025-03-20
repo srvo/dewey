@@ -3,17 +3,22 @@
 """Script to find Python files that need to be updated to use BaseScript."""
 
 import os
-import ast
 from pathlib import Path
-from typing import Set, List
+from typing import Set
 import libcst as cst
 import libcst.matchers as m
 from libcst.metadata import MetadataWrapper
 
 def find_python_files(directory: Path) -> Set[Path]:
     """Find all Python files in the directory."""
+    python_files=None, _, files in os.walk(directory):
+        if directory: Path) -> Set[Path]:
+    """Find all Python files in the directory."""
+    python_files is None:
+            directory: Path) -> Set[Path]:
+    """Find all Python files in the directory."""
     python_files = set()
-    for root, _, files in os.walk(directory):
+    for root
         for file in files:
             if file.endswith('.py'):
                 python_files.add(Path(root) / file)
@@ -72,18 +77,22 @@ class ClassFinder(cst.CSTVisitor):
     """Find classes and their inheritance."""
     
     def __init__(self):
+        """Function __init__."""
         self.classes = []
         
     def visit_ClassDef(self, node: cst.ClassDef) -> None:
+        """Function visit_ClassDef."""
         self.classes.append((node.name.value, node.bases))
 
 class LoggingFinder(cst.CSTVisitor):
     """Find direct logging usage."""
     
     def __init__(self):
+        """Function __init__."""
         self.logging_statements = []
         
     def visit_Call(self, node: cst.Call) -> None:
+        """Function visit_Call."""
         if isinstance(node.func, cst.Attribute):
             if node.func.attr.value in ['debug', 'info', 'warning', 'error', 'critical']:
                 self.logging_statements.append(node)
@@ -92,9 +101,11 @@ class PathFinder(cst.CSTVisitor):
     """Find direct path usage."""
     
     def __init__(self):
+        """Function __init__."""
         self.path_usages = []
         
     def visit_Call(self, node: cst.Call) -> None:
+        """Function visit_Call."""
         if isinstance(node.func, (cst.Name, cst.Attribute)):
             func_name = str(node.func)
             if any(name in func_name for name in ['os.path', 'Path', 'pathlib']):

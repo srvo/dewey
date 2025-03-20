@@ -1,5 +1,4 @@
-import logging
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 

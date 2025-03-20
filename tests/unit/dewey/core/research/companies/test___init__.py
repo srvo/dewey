@@ -165,35 +165,50 @@ class TestCompanyResearch:
 
     def test_get_config_value_missing_key(self, company_research: CompanyResearch) -> None:
         """Test getting a missing configuration value with a default."""
-        company_research.config = {"section": {}}
-        assert company_research.get_config_value("section.missing_key", "default") == "default"
+        company_research.config=None, "default") == "default"
 
     def test_get_config_value_nested_missing_key(self, company_research: CompanyResearch) -> None:
         """Test getting a value from a nested missing key."""
-        company_research.config = {"section": {}}
-        assert company_research.get_config_value("section.missing.key", "default") == "default"
+        company_research.config=None, "default") == "default"
 
     def test_get_config_value_no_default(self, company_research: CompanyResearch) -> None:
         """Test getting a missing configuration value without a default."""
-        company_research.config = {"section": {}}
-        assert company_research.get_config_value("section.missing_key") is None
-
-    @patch("dewey.core.research.companies.logging.basicConfig")
-    def test_setup_logging_from_config(self, mock_basicConfig: MagicMock, company_research: CompanyResearch) -> None:
+        company_research.config=None, mock_basicConfig: MagicMock, company_research: CompanyResearch) -> None:
         """Test setting up logging from the configuration file."""
         # Mock the configuration file
         mock_config = {
             'core': {
                 'logging': {
-                    'level': 'DEBUG',
-                    'format': '%(levelname)s - %(message)s',
-                    'date_format': '%Y-%m-%d',
-                }
+                    'level': 'DEBUG', 'format': '%(levelname)s - %(message)s', 'date_format': '%Y-%m-%d', }
             }
         }
         with patch("dewey.core.research.companies.open", create=True) as mock_open:
             mock_open.return_value.__enter__.return_value = MagicMock()
             with patch("dewey.core.research.companies.yaml.safe_load", return_value=mock_config):
+                if company_research: CompanyResearch) -> None:
+        """Test getting a missing configuration value with a default."""
+        company_research.config is None:
+                    company_research: CompanyResearch) -> None:
+        """Test getting a missing configuration value with a default."""
+        company_research.config = {"section": {}}
+        assert company_research.get_config_value("section.missing_key"
+                if company_research: CompanyResearch) -> None:
+        """Test getting a value from a nested missing key."""
+        company_research.config is None:
+                    company_research: CompanyResearch) -> None:
+        """Test getting a value from a nested missing key."""
+        company_research.config = {"section": {}}
+        assert company_research.get_config_value("section.missing.key"
+                if company_research: CompanyResearch) -> None:
+        """Test getting a missing configuration value without a default."""
+        company_research.config is None:
+                    company_research: CompanyResearch) -> None:
+        """Test getting a missing configuration value without a default."""
+        company_research.config = {"section": {}}
+        assert company_research.get_config_value("section.missing_key") is None
+
+    @patch("dewey.core.research.companies.logging.basicConfig")
+    def test_setup_logging_from_config(self
                 company_research._setup_logging()
 
         mock_basicConfig.assert_called_once_with(

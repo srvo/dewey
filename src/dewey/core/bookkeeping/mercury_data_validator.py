@@ -1,11 +1,8 @@
-import logging
 import re
 from datetime import datetime
 from typing import Any, Dict
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
-from dewey.core.db.utils import create_table, insert_data
 from dewey.llm.llm_utils import call_llm
 
 

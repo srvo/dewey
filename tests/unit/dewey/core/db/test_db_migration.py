@@ -6,10 +6,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 import yaml
 
-from dewey.core.base_script import BaseScript
 from dewey.core.db.db_migration import DBMigration
-from dewey.core.db import utils
-from dewey.llm import llm_utils
 
 
 class TestDBMigration:
@@ -23,7 +20,9 @@ class TestDBMigration:
     @pytest.fixture
     def mock_base_script(self) -> MagicMock:
         """Fixture to mock BaseScript."""
-        with patch("dewey.core.db.db_migration.BaseScript", autospec=True) as MockBaseScript:
+        with patch(
+            "dewey.core.db.db_migration.BaseScript", autospec=True
+        ) as MockBaseScript:
             yield MockBaseScript
 
     @pytest.fixture
@@ -55,21 +54,17 @@ class TestDBMigration:
     def mock_config(self) -> dict:
         """Fixture to mock the configuration."""
         return {
-            "db_migration": {
-                "db_url": "test_db_url"
-            },
-            "core": {
-                "database": {
-                    "db_url": "test_db_url"
-                }
-            },
-            "llm": {}
+            "db_migration": {"db_url": "test_db_url"},
+            "core": {"database": {"db_url": "test_db_url"}},
+            "llm": {},
         }
 
     def test_init(self, mock_base_script: MagicMock) -> None:
         """Test the __init__ method."""
         db_migration = DBMigration()
-        mock_base_script.assert_called_once_with(config_section='db_migration', requires_db=True)
+        mock_base_script.assert_called_once_with(
+            config_section="db_migration", requires_db=True
+        )
         assert db_migration.name == "DBMigration"
 
     def test_run_success(
@@ -79,7 +74,7 @@ class TestDBMigration:
         mock_utils: MagicMock,
         mock_llm_utils: MagicMock,
         mock_logger: MagicMock,
-        mock_config: dict
+        mock_config: dict,
     ) -> None:
         """Test the run method with successful database migration."""
         db_migration.logger = mock_logger
@@ -108,7 +103,7 @@ class TestDBMigration:
         mock_utils: MagicMock,
         mock_llm_utils: MagicMock,
         mock_logger: MagicMock,
-        mock_config: dict
+        mock_config: dict,
     ) -> None:
         """Test the run method when the table does not exist."""
         db_migration.logger = mock_logger
@@ -138,7 +133,7 @@ class TestDBMigration:
         mock_utils: MagicMock,
         mock_llm_utils: MagicMock,
         mock_logger: MagicMock,
-        mock_config: dict
+        mock_config: dict,
     ) -> None:
         """Test the run method with an error during the LLM call."""
         db_migration.logger = mock_logger
@@ -168,7 +163,7 @@ class TestDBMigration:
         mock_utils: MagicMock,
         mock_llm_utils: MagicMock,
         mock_logger: MagicMock,
-        mock_config: dict
+        mock_config: dict,
     ) -> None:
         """Test the run method with a general exception during migration."""
         db_migration.logger = mock_logger

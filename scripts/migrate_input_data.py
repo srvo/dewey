@@ -5,7 +5,6 @@ Script to migrate data from input_data directory to MotherDuck.
 Uses the BaseScript's MotherDuckEngine for safe data migration.
 """
 
-import os
 from pathlib import Path
 from dewey.core.base_script import BaseScript
 

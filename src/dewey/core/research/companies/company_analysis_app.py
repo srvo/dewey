@@ -56,7 +56,9 @@ class CompanyAnalysisApp(BaseScript):
                 company_data = cursor.fetchone()
 
             if not company_data:
-                self.logger.warning(f"No data found for company ticker: {company_ticker}")
+                self.logger.warning(
+                    f"No data found for company ticker: {company_ticker}"
+                )
                 company_data = {}  # Provide an empty dictionary to avoid errors
 
             # 2. Fetch financial data from external sources.
@@ -100,7 +102,9 @@ class CompanyAnalysisApp(BaseScript):
             self.logger.info(f"Successfully fetched financial data for {ticker}")
             return financial_data
         except Exception as e:
-            self.logger.error(f"Error fetching financial data for {ticker}: {e}", exc_info=True)
+            self.logger.error(
+                f"Error fetching financial data for {ticker}: {e}", exc_info=True
+            )
             raise
 
     def _analyze_company(self, company_data: dict, financial_data: dict) -> dict:
@@ -127,7 +131,9 @@ class CompanyAnalysisApp(BaseScript):
             self.logger.info("Company analysis using LLM completed successfully.")
             return analysis_results
         except Exception as e:
-            self.logger.error(f"Error during company analysis using LLM: {e}", exc_info=True)
+            self.logger.error(
+                f"Error during company analysis using LLM: {e}", exc_info=True
+            )
             raise
 
     def _store_analysis_results(self, ticker: str, analysis_results: dict) -> None:
@@ -147,9 +153,13 @@ class CompanyAnalysisApp(BaseScript):
             # Example: Insert the analysis results into a table
             # query = f"INSERT INTO analysis_results (ticker, results) VALUES ('{ticker}', '{analysis_results}')"
             # self.db_conn.execute(query)
-            self.logger.info(f"Successfully stored analysis results for {ticker} in the database.")
+            self.logger.info(
+                f"Successfully stored analysis results for {ticker} in the database."
+            )
         except Exception as e:
-            self.logger.error(f"Error storing analysis results for {ticker}: {e}", exc_info=True)
+            self.logger.error(
+                f"Error storing analysis results for {ticker}: {e}", exc_info=True
+            )
             raise
 
 

@@ -28,15 +28,10 @@ class TestLabelerModule:
     @patch("dewey.core.crm.labeler.BaseScript._load_config")
     @patch("dewey.core.crm.labeler.BaseScript._setup_logging")
     def test_init_with_dependencies(
-        self,
-        mock_setup_logging: MagicMock,
-        mock_load_config: MagicMock,
-        mock_database_connection: MagicMock,
-        mock_llm_client: MagicMock,
-    ) -> None:
+        self, mock_setup_logging: MagicMock, mock_load_config: MagicMock, mock_database_connection: MagicMock, mock_llm_client: MagicMock, ) -> None:
         """Test the __init__ method with database and LLM dependencies."""
-        mock_load_config.return_value = {"core": {"database": {}}, "llm": {}}
-        labeler_module = LabelerModule(requires_db=True, enable_llm=True)
+        mock_load_config.return_value=None, "llm": {}}
+        labeler_module=None, enable_llm=True)
 
         assert labeler_module.db_conn is not None
         assert labeler_module.llm_client is not None
@@ -80,6 +75,16 @@ class TestLabelerModule:
         caplog.set_level(logging.ERROR)
 
         with pytest.raises(Exception, match="Test exception"):
+            if ) -> None:
+        """Test the __init__ method with database and LLM dependencies."""
+        mock_load_config.return_value is None:
+                ) -> None:
+        """Test the __init__ method with database and LLM dependencies."""
+        mock_load_config.return_value = {"core": {"database": {}}
+            if "llm": {}}
+        labeler_module is None:
+                "llm": {}}
+        labeler_module = LabelerModule(requires_db=True
             labeler_module.run()
 
         assert "Error in labeler module: Test exception" in caplog.text
@@ -177,10 +182,18 @@ class TestLabelerModule:
     def test_setup_logging_default(self, mock_basicConfig: MagicMock, labeler_module: LabelerModule, tmp_path: pytest.TempPathFactory) -> None:
         """Test setting up logging with default values."""
         # Create a dummy config file that doesn't contain logging config
+        config_path=None, str(config_path)):
+            if tmp_path: pytest.TempPathFactory) -> None:
+        """Test setting up logging with default values."""
+        # Create a dummy config file that doesn't contain logging config
+        config_path is None:
+                tmp_path: pytest.TempPathFactory) -> None:
+        """Test setting up logging with default values."""
+        # Create a dummy config file that doesn't contain logging config
         config_path = tmp_path.join("dewey.yaml")
         config_path.write_text(yaml.dump({"core": {}}))
 
-        with patch("dewey.core.crm.labeler.CONFIG_PATH", str(config_path)):
+        with patch("dewey.core.crm.labeler.CONFIG_PATH"
             labeler_module._setup_logging()
 
         mock_basicConfig.assert_called_once_with(

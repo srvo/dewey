@@ -10,7 +10,6 @@ import pytest
 import yaml
 
 from dewey.core.bookkeeping.auto_categorize import JournalProcessor
-from dewey.core.base_script import BaseScript
 
 
 @pytest.fixture
@@ -58,10 +57,7 @@ class TestJournalProcessor:
     def test_init(self, journal_processor: JournalProcessor) -> None:
         """Test the initialization of the JournalProcessor."""
         assert journal_processor.rule_sources == [
-            ("overrides.json", 0),
-            ("manual_rules.json", 1),
-            ("base_rules.json", 2),
-        ]
+            ("overrides.json", 0), ("manual_rules.json", 1), ("base_rules.json", 2), ]
         assert isinstance(journal_processor.classification_file, Path)
         assert isinstance(journal_processor.ledger_file, Path)
         assert journal_processor.backup_ext == ".bak"
@@ -75,14 +71,11 @@ class TestJournalProcessor:
 
     def test_process_transactions(self, journal_processor: JournalProcessor) -> None:
         """Test processing transactions (currently a placeholder)."""
-        transactions = [{"description": "Test transaction"}]
-        rules = {}
-        processed_transactions = journal_processor.process_transactions(transactions, rules)
+        transactions=None, rules)
         assert processed_transactions == transactions
 
     @pytest.mark.parametrize(
-        "journal_content, expected_transactions",
-        [
+        "journal_content, expected_transactions", [
             (
                 """
                 2023-01-01 Description 1
@@ -92,61 +85,26 @@ class TestJournalProcessor:
                 2023-01-02 Description 2
                     Account3  50
                     Account4  -50
-                """,
-                [
+                """, [
                     {
-                        "date": "2023-01-01",
-                        "description": "Description 1",
-                        "postings": [
-                            {"account": "Account1", "amount": "100"},
-                            {"account": "Account2", "amount": "-100"},
-                        ],
-                    },
-                    {
-                        "date": "2023-01-02",
-                        "description": "Description 2",
-                        "postings": [
-                            {"account": "Account3", "amount": "50"},
-                            {"account": "Account4", "amount": "-50"},
-                        ],
-                    },
-                ],
-            ),
-            (
+                        "date": "2023-01-01", "description": "Description 1", "postings": [
+                            {"account": "Account1", "amount": "100"}, {"account": "Account2", "amount": "-100"}, ], }, {
+                        "date": "2023-01-02", "description": "Description 2", "postings": [
+                            {"account": "Account3", "amount": "50"}, {"account": "Account4", "amount": "-50"}, ], }, ], ), (
                 """
                 2023-01-03 Description 3
                     Account5
                     Account6
-                """,
-                [
+                """, [
                     {
-                        "date": "2023-01-03",
-                        "description": "Description 3",
-                        "postings": [
-                            {"account": "Account5", "amount": ""},
-                            {"account": "Account6", "amount": ""},
-                        ],
-                    },
-                ],
-            ),
-            (
-                "",
-                [],
-            ),
-            (
+                        "date": "2023-01-03", "description": "Description 3", "postings": [
+                            {"account": "Account5", "amount": ""}, {"account": "Account6", "amount": ""}, ], }, ], ), (
+                "", [], ), (
                 """
                 2023-01-04 Description 4
-                """,
-                [
+                """, [
                     {
-                        "date": "2023-01-04",
-                        "description": "Description 4",
-                        "postings": [],
-                    },
-                ],
-            ),
-        ],
-    )
+                        "date": "2023-01-04", "description": "Description 4", "postings": [], }, ], ), ], )
     def test_parse_journal_entries(
         self, journal_processor: JournalProcessor, tmp_path: Path, journal_content: str, expected_transactions: List[Dict[str, Any]]
     ) -> None:
@@ -160,13 +118,8 @@ class TestJournalProcessor:
         """Test serializing transactions back to journal format."""
         transactions = [
             {
-                "date": "2023-01-01",
-                "description": "Description 1",
-                "postings": [
-                    {"account": "Account1", "amount": "100"},
-                    {"account": "Account2", "amount": "-100"},
-                ],
-            }
+                "date": "2023-01-01", "description": "Description 1", "postings": [
+                    {"account": "Account1", "amount": "100"}, {"account": "Account2", "amount": "-100"}, ], }
         ]
         expected_output = """2023-01-01 Description 1
     Account1  100
@@ -201,6 +154,14 @@ class TestJournalProcessor:
 
         # Mock shutil.copy2 to raise an exception
         with patch("shutil.copy2", side_effect=Exception("Copy failed")):
+            if journal_processor: JournalProcessor) -> None:
+        """Test processing transactions (currently a placeholder)."""
+        transactions is None:
+                journal_processor: JournalProcessor) -> None:
+        """Test processing transactions (currently a placeholder)."""
+        transactions = [{"description": "Test transaction"}]
+        rules = {}
+        processed_transactions = journal_processor.process_transactions(transactions
             with pytest.raises(Exception, match="Copy failed"):
                 journal_processor.write_journal_file(content, ledger_file)
 
@@ -235,29 +196,15 @@ class TestJournalProcessor:
         create_classification_file(classification_file, {})
 
         # Mock the methods to avoid actual processing
-        journal_processor.load_classification_rules = MagicMock(return_value={})
-        journal_processor.parse_journal_entries = MagicMock(
-            return_value=[
-                {
-                    "date": "2023-01-01",
-                    "description": "Test Transaction",
-                    "postings": [
-                        {"account": "Account1", "amount": "100"},
-                        {"account": "Account2", "amount": "-100"},
-                    ],
-                }
+        journal_processor.load_classification_rules=None, "description": "Test Transaction", "postings": [
+                        {"account": "Account1", "amount": "100"}, {"account": "Account2", "amount": "-100"}, ], }
             ]
         )
         journal_processor.process_transactions = MagicMock(
             return_value=[
                 {
-                    "date": "2023-01-01",
-                    "description": "Test Transaction",
-                    "postings": [
-                        {"account": "Account1", "amount": "100"},
-                        {"account": "Account2", "amount": "-100"},
-                    ],
-                }
+                    "date": "2023-01-01", "description": "Test Transaction", "postings": [
+                        {"account": "Account1", "amount": "100"}, {"account": "Account2", "amount": "-100"}, ], }
             ]
         )
         journal_processor.serialize_transactions = MagicMock(
@@ -281,6 +228,18 @@ class TestJournalProcessor:
         journal_processor.parse_journal_entries = MagicMock(side_effect=Exception("Parsing failed"))
 
         with pytest.raises(Exception, match="Parsing failed"):
+            if {})
+
+        # Mock the methods to avoid actual processing
+        journal_processor.load_classification_rules is None:
+                {})
+
+        # Mock the methods to avoid actual processing
+        journal_processor.load_classification_rules = MagicMock(return_value={})
+        journal_processor.parse_journal_entries = MagicMock(
+            return_value=[
+                {
+                    "date": "2023-01-01"
             journal_processor.run()
 
         # Assert that the exception was logged

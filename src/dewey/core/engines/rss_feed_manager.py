@@ -13,7 +13,7 @@ class RssFeedManager(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the RssFeedManager."""
-        super().__init__(config_section='rss_feed_manager')
+        super().__init__(config_section="rss_feed_manager")
 
     def run(self) -> None:
         """

@@ -10,7 +10,10 @@ class TestTickReport:
     @pytest.fixture
     def tick_report(self) -> TickReport:
         """Fixture to create a TickReport instance with mocked dependencies."""
-        with patch("dewey.core.research.port.tick_report.BaseScript.__init__", return_value=None):
+        with patch(
+            "dewey.core.research.port.tick_report.BaseScript.__init__",
+            return_value=None,
+        ):
             tick_report = TickReport()
             tick_report.logger = MagicMock(spec=logging.Logger)
             tick_report.db_conn = MagicMock()
@@ -21,7 +24,9 @@ class TestTickReport:
 
     def test_init(self) -> None:
         """Test the initialization of the TickReport class."""
-        with patch("dewey.core.research.port.tick_report.BaseScript.__init__") as mock_init:
+        with patch(
+            "dewey.core.research.port.tick_report.BaseScript.__init__"
+        ) as mock_init:
             TickReport()
             mock_init.assert_called_once_with(
                 config_section="tick_report", requires_db=True, enable_llm=True
@@ -52,7 +57,9 @@ class TestTickReport:
 
         tick_report.run()
 
-        tick_report.logger.warning.assert_called_with("No database connection available.")
+        tick_report.logger.warning.assert_called_with(
+            "No database connection available."
+        )
         tick_report.llm_client.generate_text.assert_called()
 
     def test_run_no_llm_client(self, tick_report: TickReport) -> None:
@@ -85,4 +92,3 @@ class TestTickReport:
         assert tick_report.get_config_value("level1.level3", "default") == "default"
         assert tick_report.get_config_value("level4", "default") == "default"
         assert tick_report.get_config_value("level4") is None
-

@@ -17,7 +17,7 @@ class AccountValidator(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the AccountValidator with bookkeeping configuration."""
-        super().__init__(config_section='bookkeeping')
+        super().__init__(config_section="bookkeeping")
 
     def load_rules(self, rules_file: Path) -> Dict:
         """Load classification rules from a JSON file.
@@ -67,7 +67,9 @@ class AccountValidator(BaseScript):
                 self.logger.error("Missing accounts required for classification:")
                 for acc in missing:
                     self.logger.error(f"  {acc}")
-                self.logger.error("\nAdd these account declarations to your journal file:")
+                self.logger.error(
+                    "\nAdd these account declarations to your journal file:"
+                )
                 for acc in missing:
                     self.logger.error(f"account {acc}")
                 return False

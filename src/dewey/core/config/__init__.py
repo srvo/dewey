@@ -9,7 +9,7 @@ class ConfigManager(BaseScript):
     and accessing configuration values.
     """
 
-    def __init__(self, config_section: str = 'config_manager') -> None:
+    def __init__(self, config_section: str = "config_manager") -> None:
         """Initializes the ConfigManager.
 
         Args:
@@ -25,7 +25,7 @@ class ConfigManager(BaseScript):
         accessing a configuration value.
         """
         self.logger.info("ConfigManager running.")
-        example_value = self.get_config_value('example_key', 'default_value')
+        example_value = self.get_config_value("example_key", "default_value")
         self.logger.info(f"Example configuration value: {example_value}")
 
     def get_config_value(self, key: str, default: Any = None) -> Any:

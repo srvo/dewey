@@ -12,7 +12,7 @@ class GithubAnalyzer(BaseScript):
 
     def __init__(self):
         """Initializes the GithubAnalyzer."""
-        super().__init__(config_section='github_analyzer')
+        super().__init__(config_section="github_analyzer")
 
     def run(self):
         """Executes the GitHub analysis."""

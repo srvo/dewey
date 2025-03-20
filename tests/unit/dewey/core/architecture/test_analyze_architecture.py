@@ -43,7 +43,7 @@ class TestAnalyzeArchitecture:
             "dewey.core.architecture.analyze_architecture.AnalyzeArchitecture", autospec=True
         ) as MockAnalyzer:
             # Simulate running the script directly
-            import dewey.core.architecture.analyze_architecture
+import dewey.core.architecture.analyze_architecture
 
             dewey.core.architecture.analyze_architecture.main()  # type: ignore
 

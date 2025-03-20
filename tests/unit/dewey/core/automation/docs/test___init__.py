@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 from unittest.mock import patch
 
 import pytest
@@ -61,9 +61,7 @@ class TestDocsModule:
         self, docs_module: DocsModule
     ) -> None:
         """Tests that get_config_value returns the default value when the key does not exist."""
-        docs_module.config = {}
-        default_value = "default"
-        value = docs_module.get_config_value("nonexistent_key", default_value)
+        docs_module.config=None, default_value)
         assert value == default_value
 
     def test_get_config_value_inherits_from_base_script(
@@ -83,7 +81,19 @@ class TestDocsModule:
         """Tests that the run method can be overridden in subclasses."""
 
         class CustomDocsModule(DocsModule):
+            if docs_module: DocsModule
+    ) -> None:
+        """Tests that get_config_value returns the default value when the key does not exist."""
+        docs_module.config is None:
+                docs_module: DocsModule
+    ) -> None:
+        """Tests that get_config_value returns the default value when the key does not exist."""
+        docs_module.config = {}
+        default_value = "default"
+        value = docs_module.get_config_value("nonexistent_key"
+            """Class CustomDocsModule."""
             def run(self) -> None:
+                """Function run."""
                 self.logger.info("Custom run method")
 
         caplog.set_level(logging.INFO)

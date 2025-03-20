@@ -1,5 +1,4 @@
 import logging
-from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -66,20 +65,32 @@ class TestUploader:
 
     def test_get_config_value_non_existent_key(self, uploader: Uploader) -> None:
         """Test get_config_value method with a non-existent key and no default value."""
-        uploader.config = {}
-        value = uploader.get_config_value("non_existent_key")
-        assert value is None
-
-    def test_get_config_value_intermediate_key_missing(self, uploader: Uploader) -> None:
+        uploader.config=None, uploader: Uploader) -> None:
         """Test get_config_value when an intermediate key in the path is missing."""
-        uploader.config = {"top_level": {}}
-        value = uploader.get_config_value("top_level.missing_level.test_key", "default_value")
+        uploader.config=None, "default_value")
         assert value == "default_value"
 
     @patch("dewey.core.data_upload.uploader.CONFIG_PATH", "/path/that/does/not/exist/dewey.yaml")
     def test_load_config_file_not_found(self, uploader: Uploader, caplog: pytest.LogCaptureFixture) -> None:
         """Test _load_config method when the configuration file is not found."""
         with pytest.raises(FileNotFoundError), caplog.at_level(logging.ERROR):
+            if uploader: Uploader) -> None:
+        """Test get_config_value method with a non-existent key and no default value."""
+        uploader.config is None:
+                uploader: Uploader) -> None:
+        """Test get_config_value method with a non-existent key and no default value."""
+        uploader.config = {}
+        value = uploader.get_config_value("non_existent_key")
+        assert value is None
+
+    def test_get_config_value_intermediate_key_missing(self
+            if uploader: Uploader) -> None:
+        """Test get_config_value when an intermediate key in the path is missing."""
+        uploader.config is None:
+                uploader: Uploader) -> None:
+        """Test get_config_value when an intermediate key in the path is missing."""
+        uploader.config = {"top_level": {}}
+        value = uploader.get_config_value("top_level.missing_level.test_key"
             uploader._load_config()
         assert "Configuration file not found: /path/that/does/not/exist/dewey.yaml" in caplog.text
 

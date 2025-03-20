@@ -1,7 +1,6 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.automation import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
 from dewey.llm.llm_utils import generate_text
 
 
@@ -45,7 +44,9 @@ class FormFillingModule(BaseScript):
 
         try:
             # Example of accessing a configuration value
-            example_config_value = self.get_config_value("example_config_key", "default_value")
+            example_config_value = self.get_config_value(
+                "example_config_key", "default_value"
+            )
             self.logger.debug(f"Example config value: {example_config_value}")
 
             # Example of using the database connection

@@ -1,5 +1,3 @@
-from typing import Any, Dict
-
 from dewey.core.base_script import BaseScript
 
 

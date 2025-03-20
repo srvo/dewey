@@ -1,8 +1,5 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
-from dewey.core.db.utils import create_table, execute_query
-from dewey.llm.llm_utils import generate_text
-from typing import Any, Dict, Optional
+from typing import Optional
 
 
 class PopulateStocks(BaseScript):
@@ -13,7 +10,14 @@ class PopulateStocks(BaseScript):
     fetching and storing stock information.
     """
 
-    def __init__(self, name: Optional[str] = None, description: Optional[str] = None, config_section: Optional[str] = None, requires_db: bool = True, enable_llm: bool = False) -> None:
+    def __init__(
+        self,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        config_section: Optional[str] = None,
+        requires_db: bool = True,
+        enable_llm: bool = False,
+    ) -> None:
         """
         Initializes the PopulateStocks module.
 
@@ -24,7 +28,13 @@ class PopulateStocks(BaseScript):
             requires_db (bool): Whether this script requires database access. Defaults to True.
             enable_llm (bool): Whether this script requires LLM access. Defaults to False.
         """
-        super().__init__(name=name, description=description, config_section=config_section, requires_db=requires_db, enable_llm=enable_llm)
+        super().__init__(
+            name=name,
+            description=description,
+            config_section=config_section,
+            requires_db=requires_db,
+            enable_llm=enable_llm,
+        )
 
     def run(self) -> None:
         """

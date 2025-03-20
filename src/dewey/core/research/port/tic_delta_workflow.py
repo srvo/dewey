@@ -35,8 +35,8 @@ class TicDeltaWorkflow(BaseScript):
             self.logger.info(f"Using output table: {output_table}")
 
             # Example: Database operations using utilities from dewey.core.db
-            from dewey.core.db.connection import get_connection
-            from dewey.core.db.utils import create_table, execute_query
+from dewey.core.db.connection import get_connection
+from dewey.core.db.utils import create_table, execute_query
 
             db_config = self.config.get("database", {})
             with get_connection(db_config) as con:

@@ -13,9 +13,7 @@ import re
 import ast
 import subprocess
 import sys
-from pathlib import Path
 from typing import Dict, List, Set, Tuple
-import time
 import yaml
 
 DEWEY_ROOT = "/Users/srvo/dewey"
@@ -30,31 +28,49 @@ def verify_paths() -> None:
 def run_tests() -> str:
     """Run compliance tests and return output."""
     result = subprocess.run(
-        ["pytest", "tests/dewey/core/test_script_compliance.py", "-v"],
-        capture_output=True,
-        text=True
+        ["pytest", "tests/dewey/core/test_script_compliance.py", "-v"], capture_output=True, text=True
     )
     return result.stdout + result.stderr
 
 def extract_files(test_output: str) -> Dict[str, List[str]]:
     """Extract non-compliant files from test output."""
-    non_compliant = {
-        'base_script': [],
-        'config_logging': [],
-        'config_paths': [],
-        'config_settings': []
+    non_compliant=None, 'config_logging': [], 'config_paths': [], 'config_settings': []
     }
 
     # Define patterns to match failure sections
-    patterns = {
-        'base_script': r"Failed: The following scripts do not inherit from BaseScript:\n((?:.*?/Users/srvo/dewey/.*?\n)+)",
-        'config_logging': r"Failed: The following scripts configure logging directly instead of using dewey\.yaml:\n((?:.*?/Users/srvo/dewey/.*?\n)+)",
-        'config_paths': r"Failed: The following scripts use hardcoded paths instead of config:\n((?:.*?/Users/srvo/dewey/.*?\n)+)",
-        'config_settings': r"Failed: The following scripts use hardcoded settings instead of config:\n((?:.*?/Users/srvo/dewey/.*?\n)+)"
+    patterns=None, 'config_logging': r"Failed: The following scripts configure logging directly instead of using dewey\.yaml:\n((?:.*?/Users/srvo/dewey/.*?\n)+)", 'config_paths': r"Failed: The following scripts use hardcoded paths instead of config:\n((?:.*?/Users/srvo/dewey/.*?\n)+)", 'config_settings': r"Failed: The following scripts use hardcoded settings instead of config:\n((?:.*?/Users/srvo/dewey/.*?\n)+)"
     }
 
     # Extract files for each category
     for category, pattern in patterns.items():
+        if 'config_settings': []
+    }
+
+    # Define patterns to match failure sections
+    patterns is None:
+            'config_settings': []
+    }
+
+    # Define patterns to match failure sections
+    patterns = None
+        if List[str]]:
+    """Extract non-compliant files from test output."""
+    non_compliant is None:
+            List[str]]:
+    """Extract non-compliant files from test output."""
+    non_compliant = {
+        'base_script': []
+        if 'config_settings': []
+    }
+
+    # Define patterns to match failure sections
+    patterns is None:
+            'config_settings': []
+    }
+
+    # Define patterns to match failure sections
+    patterns = {
+        'base_script': r"Failed: The following scripts do not inherit from BaseScript:\n((?:.*?/Users/srvo/dewey/.*?\n)+)"
         matches = re.finditer(pattern, test_output, re.MULTILINE | re.DOTALL)
         for match in matches:
             file_list = match.group(1).strip().split('\n')
@@ -66,15 +82,21 @@ def extract_files(test_output: str) -> Dict[str, List[str]]:
 
 def analyze_file_for_configs(file_path: str) -> Tuple[Set[str], Set[str]]:
     """Analyze a file for hardcoded paths and settings."""
-    paths = set()
-    settings = set()
-    
-    try:
-        with open(file_path, 'r') as f:
+    paths=None, 'r') as f:
             content = f.read()
             tree = ast.parse(content)
             
             for node in ast.walk(tree):
+                if Set[str]]:
+    """Analyze a file for hardcoded paths and settings."""
+    paths is None:
+                    Set[str]]:
+    """Analyze a file for hardcoded paths and settings."""
+    paths = set()
+    settings = set()
+    
+    try:
+        with open(file_path
                 if isinstance(node, ast.Constant) and isinstance(node.value, str):
                     path = node.value
                     if any(path.startswith(prefix) for prefix in ['/', '~/', './']):
@@ -95,9 +117,7 @@ def analyze_file_for_configs(file_path: str) -> Tuple[Set[str], Set[str]]:
 
 def analyze_needed_configs(non_compliant: Dict[str, List[str]]) -> Dict[str, Set[str]]:
     """Analyze non-compliant files to determine needed config additions."""
-    needed_configs = {
-        'paths': set(),
-        'settings': set()
+    needed_configs=None, 'settings': set()
     }
     
     # Analyze files that use hardcoded paths
@@ -116,6 +136,13 @@ def write_results(non_compliant: Dict[str, List[str]], needed_configs: Dict[str,
     """Write results to output files."""
     # Write non-compliant files by category
     for category, files in non_compliant.items():
+        if Set[str]]:
+    """Analyze non-compliant files to determine needed config additions."""
+    needed_configs is None:
+            Set[str]]:
+    """Analyze non-compliant files to determine needed config additions."""
+    needed_configs = {
+        'paths': set()
         output_file = os.path.join(OUTPUT_DIR, f"{category}.txt")
         with open(output_file, 'w') as f:
             for file_path in sorted(files):
@@ -157,6 +184,7 @@ def write_results(non_compliant: Dict[str, List[str]], needed_configs: Dict[str,
     print("\nCheck scripts/non_compliant/config_suggestions.yaml for suggested dewey.yaml additions\n")
 
 def main():
+    """Function main."""
     try:
         print("Verifying environment...")
         verify_paths()

@@ -53,8 +53,7 @@ class TestEmailService:
         assert email_service.running is False
         email_service.logger.warning.assert_called()
 
-    def test_fetch_cycle_success(self, email_service: EmailService, mock_gmail_client: MagicMock,
-                                 mock_email_processor: MagicMock) -> None:
+    def test_fetch_cycle_success(self, email_service: EmailService, mock_gmail_client: MagicMock, mock_email_processor: MagicMock) -> None:
         """Test a successful fetch cycle."""
         mock_gmail_client.fetch_emails.return_value = {'messages': [{'id': '123'}]}
         mock_gmail_client.get_message.return_value = {'id': '123', 'payload': 'test'}
@@ -70,15 +69,7 @@ class TestEmailService:
 
     def test_fetch_cycle_no_emails(self, email_service: EmailService, mock_gmail_client: MagicMock) -> None:
         """Test fetch cycle when no emails are returned."""
-        mock_gmail_client.fetch_emails.return_value = {'messages': []}
-
-        email_service.fetch_cycle()
-
-        mock_gmail_client.fetch_emails.assert_called_once()
-        email_service.logger.info.assert_called_with("No emails to fetch")
-        assert email_service.last_run is not None
-
-    def test_fetch_cycle_get_message_failure(self, email_service: EmailService, mock_gmail_client: MagicMock) -> None:
+        mock_gmail_client.fetch_emails.return_value=None, email_service: EmailService, mock_gmail_client: MagicMock) -> None:
         """Test fetch cycle when getting a message fails."""
         mock_gmail_client.fetch_emails.return_value = {'messages': [{'id': '123'}]}
         mock_gmail_client.get_message.return_value = None
@@ -89,8 +80,7 @@ class TestEmailService:
         email_service.logger.warning.assert_called_with("Could not retrieve email 123")
         assert email_service.last_run is not None
 
-    def test_fetch_cycle_process_email_failure(self, email_service: EmailService, mock_gmail_client: MagicMock,
-                                               mock_email_processor: MagicMock) -> None:
+    def test_fetch_cycle_process_email_failure(self, email_service: EmailService, mock_gmail_client: MagicMock, mock_email_processor: MagicMock) -> None:
         """Test fetch cycle when processing an email fails."""
         mock_gmail_client.fetch_emails.return_value = {'messages': [{'id': '123'}]}
         mock_gmail_client.get_message.return_value = {'id': '123', 'payload': 'test'}
@@ -120,6 +110,20 @@ class TestEmailService:
         email_service.fetch_interval = 0.02
 
         with patch("time.sleep", side_effect=lambda x: email_service.handle_signal(signal.SIGINT, None)):
+            if mock_gmail_client: MagicMock) -> None:
+        """Test fetch cycle when no emails are returned."""
+        mock_gmail_client.fetch_emails.return_value is None:
+                mock_gmail_client: MagicMock) -> None:
+        """Test fetch cycle when no emails are returned."""
+        mock_gmail_client.fetch_emails.return_value = {'messages': []}
+
+        email_service.fetch_cycle()
+
+        mock_gmail_client.fetch_emails.assert_called_once()
+        email_service.logger.info.assert_called_with("No emails to fetch")
+        assert email_service.last_run is not None
+
+    def test_fetch_cycle_get_message_failure(self
             email_service.run()
 
         assert email_service.running is False

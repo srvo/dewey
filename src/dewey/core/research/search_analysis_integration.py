@@ -1,7 +1,6 @@
 from typing import Any, Dict
 
 from dewey.core.base_script import BaseScript
-from dewey.llm import llm_utils
 
 
 class SearchAnalysisIntegration(BaseScript):
@@ -34,7 +33,9 @@ class SearchAnalysisIntegration(BaseScript):
             self.logger.info("Starting search analysis integration...")
 
             # Example of accessing configuration values
-            search_query = self.get_config_value("search_query", default="default_query")
+            search_query = self.get_config_value(
+                "search_query", default="default_query"
+            )
             self.logger.info(f"Using search query: {search_query}")
 
             # Placeholder for search and analysis logic

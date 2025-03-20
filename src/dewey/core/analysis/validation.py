@@ -1,7 +1,6 @@
 from typing import Any, Dict
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
 from dewey.llm import llm_utils
 
 
@@ -13,14 +12,16 @@ class Validation(BaseScript):
     configuration, logging, and other utilities.
     """
 
-    def __init__(self, config_section: str = 'validation') -> None:
+    def __init__(self, config_section: str = "validation") -> None:
         """
         Initializes the Validation class.
 
         Args:
             config_section: The configuration section to use.
         """
-        super().__init__(config_section=config_section, requires_db=True, enable_llm=True)
+        super().__init__(
+            config_section=config_section, requires_db=True, enable_llm=True
+        )
 
     def run(self) -> None:
         """
@@ -29,7 +30,9 @@ class Validation(BaseScript):
         self.logger.info("Starting validation process.")
 
         # Example of accessing configuration values
-        example_config_value = self.get_config_value('example_config_key', 'default_value')
+        example_config_value = self.get_config_value(
+            "example_config_key", "default_value"
+        )
         self.logger.info(f"Example config value: {example_config_value}")
 
         # Add your validation logic here

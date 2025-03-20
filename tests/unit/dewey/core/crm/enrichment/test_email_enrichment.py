@@ -1,1 +1,1 @@
-tests/unit/dewey/core/crm/enrichment/test_email_enrichment.py
+tests / unit / dewey / core / crm / enrichment / test_email_enrichment.py

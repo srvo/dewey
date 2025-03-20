@@ -163,10 +163,49 @@ def test_base_script_config_section_not_found():
             },
         },
         "agents": {
-            "defaults": {"enabled": True, "version": 1.0, "logging": {"level": "INFO", "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"}},
-            "client_advocacy": {"enabled": True, "version": 1.0, "client_rules": {"priority_levels": [1, 2, 3, 4, 5], "response_time": {"critical": "1h", "high": "4h", "normal": "24h"}}},
-            "data_analysis": {"enabled": True, "version": 1.0, "schema_rules": {"default_types": {"string": "VARCHAR(255)", "number": "DECIMAL(18,4)"}, "naming_conventions": {"table": "snake_case", "column": "camelCase"}}},
-            "agent_creation": {"enabled": True, "version": 1.0, "templates": {"base_agent": "src/dewey/llm/templates/base_agent.j2", "function_template": "src/dewey/llm/templates/function.j2"}, "gemini": {"api_key": "${GEMINI_API_KEY}", "default_model": "gemini-2.0-flash", "model_limits": {"gemini-2.0-flash": {"rpm": 15, "tpm": 1000000}}}},
+            "defaults": {
+                "enabled": True,
+                "version": 1.0,
+                "logging": {
+                    "level": "INFO",
+                    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+                },
+            },
+            "client_advocacy": {
+                "enabled": True,
+                "version": 1.0,
+                "client_rules": {
+                    "priority_levels": [1, 2, 3, 4, 5],
+                    "response_time": {"critical": "1h", "high": "4h", "normal": "24h"},
+                },
+            },
+            "data_analysis": {
+                "enabled": True,
+                "version": 1.0,
+                "schema_rules": {
+                    "default_types": {
+                        "string": "VARCHAR(255)",
+                        "number": "DECIMAL(18,4)",
+                    },
+                    "naming_conventions": {
+                        "table": "snake_case",
+                        "column": "camelCase",
+                    },
+                },
+            },
+            "agent_creation": {
+                "enabled": True,
+                "version": 1.0,
+                "templates": {
+                    "base_agent": "src/dewey/llm/templates/base_agent.j2",
+                    "function_template": "src/dewey/llm/templates/function.j2",
+                },
+                "gemini": {
+                    "api_key": "${GEMINI_API_KEY}",
+                    "default_model": "gemini-2.0-flash",
+                    "model_limits": {"gemini-2.0-flash": {"rpm": 15, "tpm": 1000000}},
+                },
+            },
         },
         "pipeline": None,
         "test_database_config": {
@@ -196,12 +235,28 @@ def test_base_script_config_section_not_found():
                     "client_facing": "High-net-worth individuals and institutional investors",
                     "default": "Internal knowledge management and client-facing financial analysis systems",
                 },
-                "metadata": {"author": "Sloane Ortel", "revision_policy": "Bi-weekly review"},
-                "stakeholders": {
-                    "client_modules": [{"name": "Client Services Team", "role": "Client Interface"}],
-                    "default": [{"contact": "srvo@domain.com", "name": "Sloane Ortel", "role": "Primary Stakeholder"}],
+                "metadata": {
+                    "author": "Sloane Ortel",
+                    "revision_policy": "Bi-weekly review",
                 },
-                "timelines": {"deployment": 0.5, "development": 3, "discovery": 2, "testing": 1},
+                "stakeholders": {
+                    "client_modules": [
+                        {"name": "Client Services Team", "role": "Client Interface"}
+                    ],
+                    "default": [
+                        {
+                            "contact": "srvo@domain.com",
+                            "name": "Sloane Ortel",
+                            "role": "Primary Stakeholder",
+                        }
+                    ],
+                },
+                "timelines": {
+                    "deployment": 0.5,
+                    "development": 3,
+                    "discovery": 2,
+                    "testing": 1,
+                },
             },
             "tracked_prds": [
                 "/Users/srvo/dewey/src/dewey/llm/docs/llm_Product_Requirements_Document.yaml",
@@ -242,14 +297,24 @@ def test_base_script_config_section_not_found():
             "code_consolidation": {
                 "collection_name": "code_functions",
                 "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
-                "hnsw_config": {"M": 24, "construction_ef": 300, "search_ef": 200, "space": "cosine"},
+                "hnsw_config": {
+                    "M": 24,
+                    "construction_ef": 300,
+                    "search_ef": 200,
+                    "space": "cosine",
+                },
                 "persist_dir": ".chroma_cache",
                 "similarity_threshold": 0.85,
             },
             "document_store": {
                 "collection_name": "document_chunks",
                 "embedding_model": "all-mpnet-base-v2",
-                "hnsw_config": {"M": 32, "construction_ef": 500, "search_ef": 300, "space": "cosine"},
+                "hnsw_config": {
+                    "M": 32,
+                    "construction_ef": 500,
+                    "search_ef": 300,
+                    "space": "cosine",
+                },
                 "persist_dir": ".chroma_docs",
             },
         },
@@ -301,7 +366,8 @@ def test_base_script_parse_args_db_connection_string(mocker):
     script = BaseScript(requires_db=True)
     parser = script.setup_argparse()
     mocker.patch(
-        "sys.argv", ["test_script.py", "--db-connection-string", "test_connection_string"]
+        "sys.argv",
+        ["test_script.py", "--db-connection-string", "test_connection_string"],
     )
     args = script.parse_args()
     assert args.db_connection_string == "test_connection_string"
@@ -321,12 +387,17 @@ def test_base_script_get_path():
     script = BaseScript()
     relative_path = "src/dewey/core/base_script.py"
     absolute_path = "/Users/srvo/dewey/src/dewey/core/base_script.py"
-    assert script.get_path(relative_path).resolve() == script.get_path(absolute_path).resolve()
+    assert (
+        script.get_path(relative_path).resolve()
+        == script.get_path(absolute_path).resolve()
+    )
 
 
 def test_base_script_get_config_value():
     """Test that BaseScript's get_config_value method works correctly."""
     script = BaseScript()
     assert script.get_config_value("test_config.local_db_path") == ":memory:"
-    assert script.get_config_value("nonexistent_key", "default_value") == "default_value"
+    assert (
+        script.get_config_value("nonexistent_key", "default_value") == "default_value"
+    )
     assert script.get_config_value("nonexistent_key") is None

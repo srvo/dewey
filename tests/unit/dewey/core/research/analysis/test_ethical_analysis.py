@@ -1,7 +1,7 @@
 """Unit tests for the ethical_analysis module."""
 
 import asyncio
-from typing import Any, Dict, List
+from typing import List
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -19,7 +19,9 @@ def mock_deepseek_engine() -> MagicMock:
 
 
 @pytest.fixture
-def ethical_analysis_workflow(mock_deepseek_engine: MagicMock) -> EthicalAnalysisWorkflow:
+def ethical_analysis_workflow(
+    mock_deepseek_engine: MagicMock,
+) -> EthicalAnalysisWorkflow:
     """Fixture to create an EthicalAnalysisWorkflow instance with a mocked engine."""
     with patch(
         "dewey.core.research.analysis.ethical_analysis.DeepSeekEngine",
@@ -68,7 +70,9 @@ class TestEthicalAnalysisWorkflow:
             assert workflow.engine == mock_deepseek_engine
             mock_deepseek_engine.add_template.assert_called()
 
-    def test_init_templates(self, ethical_analysis_workflow: EthicalAnalysisWorkflow) -> None:
+    def test_init_templates(
+        self, ethical_analysis_workflow: EthicalAnalysisWorkflow
+    ) -> None:
         """Test the _init_templates method."""
         # The _init_templates method is called during __init__, so we can just check
         # that the templates were added to the engine.
@@ -128,9 +132,13 @@ class TestEthicalAnalysisWorkflow:
     ) -> None:
         """Test the analyze_company_profile method."""
         mock_analysis_result = {"key": "value"}
-        ethical_analysis_workflow.engine.analyze = AsyncMock(return_value=mock_analysis_result)
+        ethical_analysis_workflow.engine.analyze = AsyncMock(
+            return_value=mock_analysis_result
+        )
 
-        result = await ethical_analysis_workflow.analyze_company_profile(search_results_fixture)
+        result = await ethical_analysis_workflow.analyze_company_profile(
+            search_results_fixture
+        )
 
         assert result == mock_analysis_result
         ethical_analysis_workflow.engine.analyze.assert_called_once_with(
@@ -164,7 +172,10 @@ class TestEthicalAnalysisWorkflow:
     ) -> None:
         """Test the conduct_deep_research method."""
         initial_query = "What is the company's environmental impact?"
-        follow_up_questions = ["What are their carbon emissions?", "What is their waste management policy?"]
+        follow_up_questions = [
+            "What are their carbon emissions?",
+            "What is their waste management policy?",
+        ]
         context = {"company_name": "Test Company"}
         ethical_analysis_workflow.engine.conduct_research = AsyncMock(
             return_value=research_results_fixture

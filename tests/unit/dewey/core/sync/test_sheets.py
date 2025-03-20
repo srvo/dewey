@@ -40,7 +40,10 @@ class TestSheets:
     @patch("dewey.core.sync.sheets.Sheets.get_config_value")
     @patch("dewey.core.sync.sheets.Sheets.logger")
     def test_run_method_no_sheet_id(
-        self, mock_logger: logging.Logger, mock_get_config_value: Sheets, sheets_instance: Sheets
+        self,
+        mock_logger: logging.Logger,
+        mock_get_config_value: Sheets,
+        sheets_instance: Sheets,
     ) -> None:
         """Test the run method when sheet_id is not configured."""
         mock_get_config_value.return_value = None
@@ -68,7 +71,9 @@ class TestSheets:
         assert value == "nested_value"
 
         # Test with a non-existent nested key and a default value
-        value = sheets_instance.get_config_value("nested.non_existent_key", "default_value")
+        value = sheets_instance.get_config_value(
+            "nested.non_existent_key", "default_value"
+        )
         assert value == "default_value"
 
         # Test with a non-existent nested key and no default value

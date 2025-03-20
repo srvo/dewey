@@ -9,7 +9,6 @@ import importlib.util
 from pathlib import Path
 import pytest
 from unittest.mock import MagicMock
-from typing import Generator, AsyncGenerator
 
 # Add project root to Python path
 project_root = Path("/Users/srvo/dewey")
@@ -18,9 +17,9 @@ if src_path.exists():
     sys.path.insert(0, str(src_path))
 
 # Mock dependencies
-sys.modules['dewey.utils'] = MagicMock()
-sys.modules['dewey.llm.llm_utils'] = MagicMock()
-sys.modules['dewey.core.engines'] = MagicMock()
+sys.modules["dewey.utils"] = MagicMock()
+sys.modules["dewey.llm.llm_utils"] = MagicMock()
+sys.modules["dewey.core.engines"] = MagicMock()
 
 # Import base script directly
 base_script_path = project_root / "src/dewey/core/base_script.py"
@@ -48,6 +47,7 @@ log_config = config_data.get("logging", {})
 log_dir = log_config.get("log_dir", "logs")
 os.makedirs(log_dir, exist_ok=True)
 
+
 @pytest.fixture(autouse=True)
 def clear_logs():
     """Clear log files between tests."""
@@ -55,18 +55,26 @@ def clear_logs():
         log_file.unlink(missing_ok=True)
     yield
 
+
 @pytest.fixture(autouse=True)
 def clean_logging(caplog):
     """Ensure logs are cleared between tests."""
     caplog.clear()
 
+
 @pytest.fixture
 def base_script():
     """Fixture providing BaseScript instance for test setup"""
+
     class TestScript(BaseScript):
+        """Class TestScript."""
+
         def __init__(self):
+            """Function __init__."""
             super().__init__(config_section="test")
+
     return TestScript()
+
 
 @pytest.fixture
 def test_data_dir(tmp_path) -> Path:
@@ -75,12 +83,14 @@ def test_data_dir(tmp_path) -> Path:
     data_dir.mkdir()
     return data_dir
 
+
 @pytest.fixture
 def test_config_dir(tmp_path) -> Path:
     """Create and return a temporary directory for test configuration."""
     config_dir = tmp_path / "config"
     config_dir.mkdir()
     return config_dir
+
 
 @pytest.fixture
 def mock_env(test_data_dir, test_config_dir, monkeypatch):
@@ -89,27 +99,24 @@ def mock_env(test_data_dir, test_config_dir, monkeypatch):
     monkeypatch.setenv("DEWEY_CONFIG_DIR", str(test_config_dir))
     monkeypatch.setenv("MOTHERDUCK_TOKEN", "test_token")
 
+
 @pytest.fixture
 def sample_csv_file(test_data_dir) -> Path:
     """Create a sample CSV file for testing."""
     csv_file = test_data_dir / "test.csv"
-    csv_file.write_text(
-        "id,name,value\n"
-        "1,test1,100\n"
-        "2,test2,200\n"
-    )
+    csv_file.write_text("id,name,value\n" "1,test1,100\n" "2,test2,200\n")
     return csv_file
+
 
 @pytest.fixture
 def sample_config_file(test_config_dir) -> Path:
     """Create a sample configuration file for testing."""
     config_file = test_config_dir / "dewey.yaml"
     config_file.write_text(
-        "database:\n"
-        "  motherduck_token: test_token\n"
-        "  default_db: test_db\n"
+        "database:\n" "  motherduck_token: test_token\n" "  default_db: test_db\n"
     )
     return config_file
+
 
 @pytest.fixture(autouse=True)
 def setup_test_environment(tmp_path):
@@ -118,14 +125,16 @@ def setup_test_environment(tmp_path):
     os.environ["DEWEY_DIR"] = str(tmp_path)
     os.environ["DEWEY_CONFIG_PATH"] = str(tmp_path / "dewey.yaml")
     os.environ["MOTHERDUCK_API_KEY"] = "test_motherduck_key"
-    
+
     # Create minimal config file
-    (tmp_path / "dewey.yaml").write_text("""
+    (tmp_path / "dewey.yaml").write_text(
+        """
 logging:
   level: DEBUG
   format: "[%(levelname)s] %(message)s"
-""")
-    
+"""
+    )
+
     yield
     del os.environ["DEEPINFRA_API_KEY"]
     del os.environ["DEWEY_DIR"]

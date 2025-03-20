@@ -10,7 +10,7 @@ class DatabaseErrorHandler(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the DatabaseErrorHandler."""
-        super().__init__(config_section='database_error_handler')
+        super().__init__(config_section="database_error_handler")
 
     def run(self) -> None:
         """Executes the main logic of the database error handler."""
@@ -38,4 +38,6 @@ class DatabaseErrorHandler(BaseScript):
             # Implement retry logic here
             self.logger.info(f"Error handled by retrying: {message}")
         else:
-            self.logger.warning(f"Unknown error handling method: {error_handling_method}")
+            self.logger.warning(
+                f"Unknown error handling method: {error_handling_method}"
+            )

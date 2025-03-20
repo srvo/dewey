@@ -11,7 +11,7 @@ class PrecommitAnalyzer(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the PrecommitAnalyzer."""
-        super().__init__(config_section='precommit_analyzer')
+        super().__init__(config_section="precommit_analyzer")
 
     def run(self) -> None:
         """Executes the pre-commit analysis."""

@@ -1,5 +1,4 @@
 import logging
-from typing import Any
 from unittest.mock import patch
 
 import pytest
@@ -25,19 +24,26 @@ class TestFormsModule:
         module = FormsModule(config_section="test_section")
         assert module.config_section == "test_section"
 
-    def test_run_method_no_exception(self, forms_module: FormsModule, caplog: pytest.LogCaptureFixture) -> None:
+    def test_run_method_no_exception(
+        self, forms_module: FormsModule, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """Test that the run method executes without raising an exception when no logic is present."""
         with caplog.at_level(logging.INFO):
             forms_module.run()
         assert "Forms module started." in caplog.text
         assert "Forms module finished." in caplog.text
 
-    def test_run_method_exception_handling(self, forms_module: FormsModule, caplog: pytest.LogCaptureFixture) -> None:
+    def test_run_method_exception_handling(
+        self, forms_module: FormsModule, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """Test that the run method handles exceptions and logs them."""
         with patch.object(FormsModule, "run", side_effect=ValueError("Test exception")):
             with pytest.raises(ValueError, match="Test exception"):
                 forms_module.run()
-            assert "An error occurred during form processing: Test exception" in caplog.text
+            assert (
+                "An error occurred during form processing: Test exception"
+                in caplog.text
+            )
 
     def test_get_config_value_existing_key(self, forms_module: FormsModule) -> None:
         """Test that get_config_value retrieves an existing configuration value."""
@@ -55,7 +61,9 @@ class TestFormsModule:
         value = forms_module.get_config_value("non_existent_key")
         assert value is None
 
-    def test_run_method_accesses_config(self, forms_module: FormsModule, caplog: pytest.LogCaptureFixture) -> None:
+    def test_run_method_accesses_config(
+        self, forms_module: FormsModule, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """Test that the run method can access configuration values."""
         forms_module.config = {"api_key": "test_api_key"}
 

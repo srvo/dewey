@@ -20,8 +20,12 @@ class TestUploadPortDirect:
         assert upload_port_direct.logger is not None
         assert isinstance(upload_port_direct.logger, logging.Logger)
 
-    @patch("dewey.core.data_upload.upload_port_direct.UploadPortDirect.get_config_value")
-    def test_run_success(self, mock_get_config_value, upload_port_direct: UploadPortDirect, caplog):
+    @patch(
+        "dewey.core.data_upload.upload_port_direct.UploadPortDirect.get_config_value"
+    )
+    def test_run_success(
+        self, mock_get_config_value, upload_port_direct: UploadPortDirect, caplog
+    ):
         """Test the run method with a successful data upload."""
         mock_get_config_value.return_value = "test_port"
         with caplog.at_level(logging.INFO):
@@ -30,8 +34,12 @@ class TestUploadPortDirect:
         assert "Data upload process completed." in caplog.text
         mock_get_config_value.assert_called_once_with("port_name", "default_port")
 
-    @patch("dewey.core.data_upload.upload_port_direct.UploadPortDirect.get_config_value")
-    def test_run_exception(self, mock_get_config_value, upload_port_direct: UploadPortDirect, caplog):
+    @patch(
+        "dewey.core.data_upload.upload_port_direct.UploadPortDirect.get_config_value"
+    )
+    def test_run_exception(
+        self, mock_get_config_value, upload_port_direct: UploadPortDirect, caplog
+    ):
         """Test the run method when an exception occurs during data upload."""
         mock_get_config_value.side_effect = Exception("Test exception")
         with caplog.at_level(logging.ERROR):

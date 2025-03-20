@@ -29,7 +29,10 @@ class TestUpload:
 
         mock_get_config_value.assert_called_once_with("upload_url", "default_url")
         mock_logger.info.assert_called()
-        assert "Data upload completed successfully" in mock_logger.info.call_args_list[-1][0][0]
+        assert (
+            "Data upload completed successfully"
+            in mock_logger.info.call_args_list[-1][0][0]
+        )
 
     @patch("dewey.core.data_upload.upload.Upload.get_config_value")
     @patch("dewey.core.data_upload.upload.Upload.logger")
@@ -40,26 +43,39 @@ class TestUpload:
 
         mock_get_config_value.assert_called_once_with("upload_url", "default_url")
         mock_logger.exception.assert_called_once()
-        assert "An error occurred during data upload" in mock_logger.exception.call_args[0][0]
+        assert (
+            "An error occurred during data upload"
+            in mock_logger.exception.call_args[0][0]
+        )
 
     @patch("dewey.core.data_upload.upload.Upload.parse_args")
     @patch("dewey.core.data_upload.upload.Upload.run")
     @patch("dewey.core.data_upload.upload.Upload.logger")
-    def test_execute_success(self, mock_logger, mock_run, mock_parse_args, upload_instance):
+    def test_execute_success(
+        self, mock_logger, mock_run, mock_parse_args, upload_instance
+    ):
         """Test the execute method with successful script execution."""
         mock_parse_args.return_value = None
         upload_instance.execute()
 
         mock_parse_args.assert_called_once()
         mock_logger.info.assert_called()
-        assert f"Starting execution of {upload_instance.name}" in mock_logger.info.call_args_list[0][0][0]
+        assert (
+            f"Starting execution of {upload_instance.name}"
+            in mock_logger.info.call_args_list[0][0][0]
+        )
         mock_run.assert_called_once()
-        assert f"Completed execution of {upload_instance.name}" in mock_logger.info.call_args_list[-1][0][0]
+        assert (
+            f"Completed execution of {upload_instance.name}"
+            in mock_logger.info.call_args_list[-1][0][0]
+        )
 
     @patch("dewey.core.data_upload.upload.Upload.parse_args")
     @patch("dewey.core.data_upload.upload.Upload.run")
     @patch("dewey.core.data_upload.upload.Upload.logger")
-    def test_execute_keyboard_interrupt(self, mock_logger, mock_run, mock_parse_args, upload_instance):
+    def test_execute_keyboard_interrupt(
+        self, mock_logger, mock_run, mock_parse_args, upload_instance
+    ):
         """Test the execute method when a KeyboardInterrupt occurs."""
         mock_parse_args.return_value = None
         mock_run.side_effect = KeyboardInterrupt
@@ -72,7 +88,9 @@ class TestUpload:
     @patch("dewey.core.data_upload.upload.Upload.parse_args")
     @patch("dewey.core.data_upload.upload.Upload.run")
     @patch("dewey.core.data_upload.upload.Upload.logger")
-    def test_execute_exception(self, mock_logger, mock_run, mock_parse_args, upload_instance):
+    def test_execute_exception(
+        self, mock_logger, mock_run, mock_parse_args, upload_instance
+    ):
         """Test the execute method when a generic exception occurs."""
         mock_parse_args.return_value = None
         mock_run.side_effect = Exception("Generic error")
@@ -106,7 +124,9 @@ class TestUpload:
 
     @patch("dewey.core.data_upload.upload.Upload.db_conn")
     @patch("dewey.core.data_upload.upload.Upload.logger")
-    def test_cleanup_db_connection_exception(self, mock_logger, mock_db_conn, upload_instance):
+    def test_cleanup_db_connection_exception(
+        self, mock_logger, mock_db_conn, upload_instance
+    ):
         """Test the _cleanup method when closing the database connection raises an exception."""
         upload_instance.db_conn = mock_db_conn
         mock_db_conn.close.side_effect = Exception("Close failed")
@@ -115,5 +135,7 @@ class TestUpload:
         mock_logger.debug.assert_called_once_with("Closing database connection")
         mock_db_conn.close.assert_called_once()
         mock_logger.warning.assert_called_once()
-        assert "Error closing database connection" in mock_logger.warning.call_args[0][0]
+        assert (
+            "Error closing database connection" in mock_logger.warning.call_args[0][0]
+        )
         assert "Close failed" in str(mock_logger.warning.call_args[0][1])

@@ -9,8 +9,6 @@ This script:
 """
 
 import os
-import sys
-from pathlib import Path
 import logging
 
 # Set up logging
@@ -52,6 +50,10 @@ def fix_file(file_path: str) -> None:
     try:
         # Read the file
         with open(file_path, 'r') as f:
+            lines=None):
+                if 'r') as f:
+            lines is None:
+                    'r') as f:
             lines = f.readlines()
 
         # Remove markdown and code block syntax
@@ -61,7 +63,7 @@ def fix_file(file_path: str) -> None:
         
         for line in lines:
             # Skip empty lines at the start
-            if not fixed_lines and not line.strip():
+            if not fixed_lines and not line.strip(
                 continue
                 
             # Skip markdown code block syntax

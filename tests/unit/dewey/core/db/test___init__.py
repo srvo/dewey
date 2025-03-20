@@ -1,12 +1,10 @@
 import logging
 import sys
 from pathlib import Path
-from typing import Any, Dict
 from unittest.mock import MagicMock, patch
 
 import pytest
 import yaml
-from dotenv import load_dotenv
 
 # Mock PROJECT_ROOT and CONFIG_PATH for testing purposes
 PROJECT_ROOT = Path("/tmp/test_dewey")
@@ -28,7 +26,7 @@ def setup_config():
         yaml.dump(default_config, f)
     yield
     # Teardown: Remove the dummy config directory and file
-    import shutil
+import shutil
 
     shutil.rmtree(PROJECT_ROOT)
 
@@ -59,7 +57,7 @@ def mock_get_llm_client():
 # Fixture for DatabaseManager instance
 @pytest.fixture()
 def database_manager():
-    from dewey.core.db import DatabaseManager
+from dewey.core.db import DatabaseManager
 
     with patch("dewey.core.db.BaseScript.__init__", return_value=None):
         db_manager = DatabaseManager()
@@ -69,7 +67,7 @@ def database_manager():
 # Fixture for BaseScript instance
 @pytest.fixture()
 def base_script():
-    from dewey.core.base_script import BaseScript
+from dewey.core.base_script import BaseScript
 
     with patch("dewey.core.base_script.load_dotenv"):
         bs = BaseScript()
@@ -129,7 +127,7 @@ class TestBaseScript:
 
     def test_base_script_initialization_with_params(self):
         """Test that BaseScript initializes correctly with parameters."""
-        from dewey.core.base_script import BaseScript
+from dewey.core.base_script import BaseScript
 
         with patch("dewey.core.base_script.load_dotenv"):
             bs = BaseScript(
@@ -160,7 +158,7 @@ class TestBaseScript:
 
     def test_load_config_section_success(self):
         """Test that load_config loads a specific configuration section successfully."""
-        from dewey.core.base_script import BaseScript
+from dewey.core.base_script import BaseScript
 
         with patch("dewey.core.base_script.load_dotenv"):
             bs = BaseScript(config_section="database")
@@ -170,7 +168,7 @@ class TestBaseScript:
 
     def test_load_config_section_not_found(self, caplog):
         """Test that load_config handles a missing configuration section."""
-        from dewey.core.base_script import BaseScript
+from dewey.core.base_script import BaseScript
 
         caplog.set_level(logging.WARNING)
         with patch("dewey.core.base_script.load_dotenv"):
@@ -242,7 +240,7 @@ class TestBaseScript:
 
     def test_setup_argparse_with_db(self):
         """Test that setup_argparse adds database-specific arguments when requires_db is True."""
-        from dewey.core.base_script import BaseScript
+from dewey.core.base_script import BaseScript
 
         with patch("dewey.core.base_script.load_dotenv"):
             bs = BaseScript(requires_db=True)
@@ -251,7 +249,7 @@ class TestBaseScript:
 
     def test_setup_argparse_with_llm(self):
         """Test that setup_argparse adds LLM-specific arguments when enable_llm is True."""
-        from dewey.core.base_script import BaseScript
+from dewey.core.base_script import BaseScript
 
         with patch("dewey.core.base_script.load_dotenv"):
             bs = BaseScript(enable_llm=True)
@@ -283,7 +281,7 @@ class TestBaseScript:
 
     def test_parse_args_db_connection_string(self):
         """Test that parse_args updates db connection string."""
-        from dewey.core.base_script import BaseScript
+from dewey.core.base_script import BaseScript
 
         with patch("dewey.core.base_script.load_dotenv"):
             bs = BaseScript(requires_db=True)
@@ -294,7 +292,7 @@ class TestBaseScript:
 
     def test_parse_args_llm_model(self):
         """Test that parse_args updates llm model."""
-        from dewey.core.base_script import BaseScript
+from dewey.core.base_script import BaseScript
 
         with patch("dewey.core.base_script.load_dotenv"):
             bs = BaseScript(enable_llm=True)

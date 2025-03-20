@@ -75,7 +75,9 @@ class TestMonitor:
 
     @patch("time.sleep")
     @patch.object(Monitor, "monitor_database")
-    def test_run_keyboard_interrupt(self, mock_monitor_database, mock_sleep, monitor, caplog):
+    def test_run_keyboard_interrupt(
+        self, mock_monitor_database, mock_sleep, monitor, caplog
+    ):
         """Tests the run method handles KeyboardInterrupt."""
         caplog.set_level(logging.WARNING)
         mock_monitor_database.return_value = None
@@ -89,7 +91,9 @@ class TestMonitor:
                 except KeyboardInterrupt:
                     pass
 
-        assert "Script interrupted by user" not in caplog.text  # Because it's handled in execute()
+        assert (
+            "Script interrupted by user" not in caplog.text
+        )  # Because it's handled in execute()
 
     @patch("time.sleep")
     @patch.object(Monitor, "monitor_database")

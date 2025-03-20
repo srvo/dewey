@@ -1,8 +1,6 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
-from dewey.core.db.utils import create_table, execute_query
+from dewey.core.db.connection import get_motherduck_connection
 from dewey.llm.llm_utils import call_llm
-import ibis
 import ibis.expr.types as ir
 
 
@@ -15,7 +13,7 @@ class CheckData(BaseScript):
         """
         Initializes the CheckData class, inheriting from BaseScript.
         """
-        super().__init__(config_section='check_data', requires_db=True, enable_llm=True)
+        super().__init__(config_section="check_data", requires_db=True, enable_llm=True)
 
     def run(self) -> None:
         """
@@ -110,7 +108,7 @@ class CheckData(BaseScript):
             prompt = f"Analyze the following data: {data.head()}"
 
             # Call the LLM using llm_utils
-            response = call_llm(prompt, self.config.get('llm', {}))
+            response = call_llm(prompt, self.config.get("llm", {}))
             return response
 
         except Exception as e:

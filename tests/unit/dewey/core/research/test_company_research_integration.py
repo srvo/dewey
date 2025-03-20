@@ -79,27 +79,17 @@ class TestCompanyResearchIntegration(unittest.TestCase):
         mock_company_data = {"key": "value"}
         mock_processed_data = {"processed_key": "processed_value"}
 
-        self.cri._retrieve_company_data = MagicMock(
-            return_value=mock_company_data
-        )
-        self.cri._process_company_data = MagicMock(
-            return_value=mock_processed_data
-        )
+        self.cri._retrieve_company_data = MagicMock(return_value=mock_company_data)
+        self.cri._process_company_data = MagicMock(return_value=mock_processed_data)
         self.cri._store_company_data = MagicMock()
 
         self.cri.run()
 
-        self.cri.logger.info.assert_any_call(
-            "Starting company research integration..."
-        )
+        self.cri.logger.info.assert_any_call("Starting company research integration...")
         self.cri.logger.debug.assert_called_with("API Key: test_api_key")
         self.cri._retrieve_company_data.assert_called_once()
-        self.cri._process_company_data.assert_called_once_with(
-            mock_company_data
-        )
-        self.cri._store_company_data.assert_called_once_with(
-            mock_processed_data
-        )
+        self.cri._process_company_data.assert_called_once_with(mock_company_data)
+        self.cri._store_company_data.assert_called_once_with(mock_processed_data)
         self.cri.logger.info.assert_any_call(
             "Company research integration completed successfully."
         )
@@ -201,9 +191,11 @@ class TestCompanyResearchIntegration(unittest.TestCase):
         mock_args.llm_model = None
         mock_parse_args.return_value = mock_args
 
-        with patch("pathlib.Path.exists", return_value=True), patch(
-            "builtins.open", unittest.mock.mock_open(read_data="test: value")
-        ), patch("yaml.safe_load", return_value={"test": "value"}):
+        with (
+            patch("pathlib.Path.exists", return_value=True),
+            patch("builtins.open", unittest.mock.mock_open(read_data="test: value")),
+            patch("yaml.safe_load", return_value={"test": "value"}),
+        ):
             self.cri.parse_args()
 
         self.assertEqual(self.cri.config, {"test": "value"})
@@ -212,9 +204,7 @@ class TestCompanyResearchIntegration(unittest.TestCase):
         )
 
     @patch("argparse.ArgumentParser.parse_args")
-    def test_parse_args_config_not_found(
-        self, mock_parse_args: MagicMock
-    ) -> None:
+    def test_parse_args_config_not_found(self, mock_parse_args: MagicMock) -> None:
         """Test parse_args exits if config file not found."""
         mock_args = MagicMock()
         mock_args.log_level = None
@@ -223,9 +213,10 @@ class TestCompanyResearchIntegration(unittest.TestCase):
         mock_args.llm_model = None
         mock_parse_args.return_value = mock_args
 
-        with patch("pathlib.Path.exists", return_value=False), self.assertRaises(
-            SystemExit
-        ) as context:
+        with (
+            patch("pathlib.Path.exists", return_value=False),
+            self.assertRaises(SystemExit) as context,
+        ):
             self.cri.parse_args()
 
         self.assertEqual(context.exception.code, 1)
@@ -234,9 +225,7 @@ class TestCompanyResearchIntegration(unittest.TestCase):
         )
 
     @patch("argparse.ArgumentParser.parse_args")
-    def test_parse_args_db_connection_string(
-        self, mock_parse_args: MagicMock
-    ) -> None:
+    def test_parse_args_db_connection_string(self, mock_parse_args: MagicMock) -> None:
         """Test parse_args updates db connection string."""
         mock_args = MagicMock()
         mock_args.log_level = None
@@ -245,9 +234,7 @@ class TestCompanyResearchIntegration(unittest.TestCase):
         mock_args.llm_model = None
         mock_parse_args.return_value = mock_args
 
-        with patch(
-            "dewey.core.db.connection.get_connection", return_value="test_conn"
-        ):
+        with patch("dewey.core.db.connection.get_connection", return_value="test_conn"):
             self.cri.parse_args()
 
         self.assertEqual(self.cri.db_conn, "test_conn")
@@ -329,7 +316,9 @@ class TestCompanyResearchIntegration(unittest.TestCase):
 
     @patch.object(CompanyResearchIntegration, "parse_args")
     @patch.object(CompanyResearchIntegration, "run")
-    def test_execute_success(self, mock_run: MagicMock, mock_parse_args: MagicMock) -> None:
+    def test_execute_success(
+        self, mock_run: MagicMock, mock_parse_args: MagicMock
+    ) -> None:
         """Test execute method for successful execution."""
         mock_args = MagicMock()
         mock_parse_args.return_value = mock_args
@@ -337,17 +326,15 @@ class TestCompanyResearchIntegration(unittest.TestCase):
         self.cri.execute()
 
         mock_parse_args.assert_called_once()
-        self.cri.logger.info.assert_any_call(
-            f"Starting execution of {self.cri.name}"
-        )
+        self.cri.logger.info.assert_any_call(f"Starting execution of {self.cri.name}")
         mock_run.assert_called_once()
-        self.cri.logger.info.assert_any_call(
-            f"Completed execution of {self.cri.name}"
-        )
+        self.cri.logger.info.assert_any_call(f"Completed execution of {self.cri.name}")
 
     @patch.object(CompanyResearchIntegration, "parse_args")
     @patch.object(CompanyResearchIntegration, "run")
-    def test_execute_keyboard_interrupt(self, mock_run: MagicMock, mock_parse_args: MagicMock) -> None:
+    def test_execute_keyboard_interrupt(
+        self, mock_run: MagicMock, mock_parse_args: MagicMock
+    ) -> None:
         """Test execute method handles KeyboardInterrupt."""
         mock_parse_args.return_value = MagicMock()
         mock_run.side_effect = KeyboardInterrupt
@@ -360,7 +347,9 @@ class TestCompanyResearchIntegration(unittest.TestCase):
 
     @patch.object(CompanyResearchIntegration, "parse_args")
     @patch.object(CompanyResearchIntegration, "run")
-    def test_execute_exception(self, mock_run: MagicMock, mock_parse_args: MagicMock) -> None:
+    def test_execute_exception(
+        self, mock_run: MagicMock, mock_parse_args: MagicMock
+    ) -> None:
         """Test execute method handles exceptions during execution."""
         mock_parse_args.return_value = MagicMock()
         mock_run.side_effect = ValueError("Test error")
@@ -370,4 +359,3 @@ class TestCompanyResearchIntegration(unittest.TestCase):
 
         self.assertEqual(context.exception.code, 1)
         self.cri.logger.error.assert_called_once()
-

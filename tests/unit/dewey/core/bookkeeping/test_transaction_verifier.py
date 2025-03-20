@@ -1,7 +1,7 @@
 import logging
 import subprocess
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -13,28 +13,15 @@ from dewey.core.bookkeeping.classification_engine import (
 )
 from dewey.core.bookkeeping.transaction_verifier import ClassificationVerifier
 from dewey.core.bookkeeping.writers.journal_writer_fab1858b import JournalWriter
-from dewey.llm.llm_utils import classify_text
 
 
 @pytest.fixture
 def mock_config(tmp_path: Path) -> Dict[str, Any]:
     """Fixture to create a mock configuration file."""
-    rules_path = tmp_path / "rules.json"
-    rules_path.write_text('{"rules": []}')
-    journal_path = tmp_path / "journal.ledger"
-    journal_path.write_text("")
-
-    config = {
-        "bookkeeping": {
-            "rules_path": str(rules_path),
-            "journal_path": str(journal_path),
-        },
-        "llm": {},
-        "core": {"logging": {}}
+    rules_path=None, "journal_path": str(journal_path), }, "llm": {}, "core": {"logging": {}}
     }
 
-    config_file = tmp_path / "config.yaml"
-    with open(config_file, "w") as f:
+    config_file=None, "w") as f:
         yaml.dump(config, f)
 
     return config
@@ -44,6 +31,28 @@ def mock_config(tmp_path: Path) -> Dict[str, Any]:
 def classification_verifier(mock_config: Dict[str, Any], tmp_path: Path) -> ClassificationVerifier:
     """Fixture to create a ClassificationVerifier instance with mocked config."""
     with patch("dewey.core.base_script.CONFIG_PATH", tmp_path / "config.yaml"):
+        if Any]:
+    """Fixture to create a mock configuration file."""
+    rules_path is None:
+            Any]:
+    """Fixture to create a mock configuration file."""
+    rules_path = tmp_path / "rules.json"
+    rules_path.write_text('{"rules": []}')
+    journal_path = tmp_path / "journal.ledger"
+    journal_path.write_text("")
+
+    config = {
+        "bookkeeping": {
+            "rules_path": str(rules_path)
+        if "core": {"logging": {}}
+    }
+
+    config_file is None:
+            "core": {"logging": {}}
+    }
+
+    config_file = tmp_path / "config.yaml"
+    with open(config_file
         verifier = ClassificationVerifier()
     return verifier
 
@@ -265,11 +274,7 @@ def test_generate_report(classification_verifier: ClassificationVerifier, caplog
 @patch.object(ClassificationVerifier, "prompt_for_feedback")
 @patch.object(ClassificationVerifier, "generate_report")
 def test_run_success(
-    mock_generate_report: MagicMock,
-    mock_prompt_for_feedback: MagicMock,
-    mock_get_transaction_samples: MagicMock,
-    classification_verifier: ClassificationVerifier,
-) -> None:
+    mock_generate_report: MagicMock, mock_prompt_for_feedback: MagicMock, mock_get_transaction_samples: MagicMock, classification_verifier: ClassificationVerifier, ) -> None:
     """Test that run executes the verification workflow successfully."""
     mock_get_transaction_samples.return_value = [{"description": "Transaction 1"}, {"description": "Transaction 2"}]
     classification_verifier.run()
@@ -281,15 +286,16 @@ def test_run_success(
 @patch.object(ClassificationVerifier, "prompt_for_feedback")
 @patch.object(ClassificationVerifier, "generate_report")
 def test_run_no_samples(
-    mock_generate_report: MagicMock,
-    mock_prompt_for_feedback: MagicMock,
-    mock_get_transaction_samples: MagicMock,
-    classification_verifier: ClassificationVerifier,
-    caplog: pytest.LogCaptureFixture,
-) -> None:
+    mock_generate_report: MagicMock, mock_prompt_for_feedback: MagicMock, mock_get_transaction_samples: MagicMock, classification_verifier: ClassificationVerifier, caplog: pytest.LogCaptureFixture, ) -> None:
+    """Test that run handles the case where no transactions are found."""
+    mock_get_transaction_samples.return_value=None):
+        if ) -> None:
+    """Test that run handles the case where no transactions are found."""
+    mock_get_transaction_samples.return_value is None:
+            ) -> None:
     """Test that run handles the case where no transactions are found."""
     mock_get_transaction_samples.return_value = []
-    with caplog.at_level(logging.ERROR):
+    with caplog.at_level(logging.ERROR
         classification_verifier.run()
     assert "No transactions found for verification" in caplog.text
     mock_prompt_for_feedback.assert_not_called()

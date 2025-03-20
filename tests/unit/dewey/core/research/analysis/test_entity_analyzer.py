@@ -29,7 +29,9 @@ class TestEntityAnalyzer:
 
         entity_analyzer.logger.info.assert_called_with("Entity analysis completed.")
         entity_analyzer.logger.debug.assert_called_with("API Key: test_key")
-        entity_analyzer.get_config_value.assert_called_with("api_key", default="default_key")
+        entity_analyzer.get_config_value.assert_called_with(
+            "api_key", default="default_key"
+        )
 
     def test_analyze_text(self, entity_analyzer: EntityAnalyzer) -> None:
         """Test the analyze_text method of EntityAnalyzer."""
@@ -43,16 +45,24 @@ class TestEntityAnalyzer:
     def test_analyze_text_empty(self, entity_analyzer: EntityAnalyzer) -> None:
         """Test the analyze_text method with empty text."""
         text = ""
-        expected_entities = {"PERSON": ["John", "Jane"], "ORG": ["Example Corp"]}  # Default return
+        expected_entities = {
+            "PERSON": ["John", "Jane"],
+            "ORG": ["Example Corp"],
+        }  # Default return
         result = entity_analyzer.analyze_text(text)
 
         assert result == expected_entities
         entity_analyzer.logger.info.assert_called_with("Text analysis completed.")
 
-    def test_analyze_text_special_characters(self, entity_analyzer: EntityAnalyzer) -> None:
+    def test_analyze_text_special_characters(
+        self, entity_analyzer: EntityAnalyzer
+    ) -> None:
         """Test the analyze_text method with special characters in the text."""
         text = "This is a test with !@#$%^&*()_+=-`~[]\{}|;':\",./<>?"
-        expected_entities = {"PERSON": ["John", "Jane"], "ORG": ["Example Corp"]}  # Default return
+        expected_entities = {
+            "PERSON": ["John", "Jane"],
+            "ORG": ["Example Corp"],
+        }  # Default return
         result = entity_analyzer.analyze_text(text)
 
         assert result == expected_entities
@@ -61,7 +71,10 @@ class TestEntityAnalyzer:
     def test_analyze_text_long_text(self, entity_analyzer: EntityAnalyzer) -> None:
         """Test the analyze_text method with a very long text."""
         text = "A" * 2000
-        expected_entities = {"PERSON": ["John", "Jane"], "ORG": ["Example Corp"]}  # Default return
+        expected_entities = {
+            "PERSON": ["John", "Jane"],
+            "ORG": ["Example Corp"],
+        }  # Default return
         result = entity_analyzer.analyze_text(text)
 
         assert result == expected_entities

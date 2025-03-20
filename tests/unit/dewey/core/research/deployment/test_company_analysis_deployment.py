@@ -2,11 +2,9 @@
 
 import os
 from pathlib import Path
-from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
-from prefect.deployments import Deployment
 from prefect.filesystems import LocalFileSystem
 from prefect.infrastructure import Process
 from prefect.server.schemas.schedules import CronSchedule
@@ -132,7 +130,7 @@ class TestCompanyAnalysisDeployment:
             "dewey.core.research.deployment.company_analysis_deployment.CompanyAnalysisDeployment"
         ) as MockCompanyAnalysisDeployment:
             # Call the main function
-            from dewey.core.research.deployment.company_analysis_deployment import main
+from dewey.core.research.deployment.company_analysis_deployment import main
 
             main()
 

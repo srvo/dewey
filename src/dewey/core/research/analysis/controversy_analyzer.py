@@ -5,11 +5,10 @@ Controversy Analyzer
 This script analyzes controversies related to entities using SearXNG and Farfalle API.
 """
 
-from __future__ import annotations
 
 import asyncio
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 import httpx
 from prefect import flow, task
@@ -23,10 +22,7 @@ class ControversyAnalyzer(BaseScript):
     def __init__(self) -> None:
         """Initializes the ControversyAnalyzer."""
         super().__init__(
-            name="ControversyAnalyzer",
-            description="Analyzes controversies related to entities using SearXNG.",
-            config_section="controversy_analyzer",
-        )
+            name="ControversyAnalyzer", description="Analyzes controversies related to entities using SearXNG.", config_section="controversy_analyzer", )
         self.searxng_url = self.get_config_value("searxng_url")
         self.logger.info("ControversyAnalyzer initialized")
 
@@ -43,20 +39,8 @@ class ControversyAnalyzer(BaseScript):
         async with httpx.AsyncClient() as client:
             # Search with specific controversy-related terms
             queries = [
-                f"{entity} controversy",
-                f"{entity} scandal",
-                f"{entity} criticism",
-                f"{entity} investigation",
-            ]
-            results = []
-
-            for query in queries:
-                try:
-                    response = await client.get(
-                        f"{self.searxng_url}/search",
-                        params={"q": query, "format": "json"},
-                        headers={"Accept": "application/json"},
-                    )
+                f"{entity} controversy", f"{entity} scandal", f"{entity} criticism", f"{entity} investigation", ]
+            results=None, params={"q": query, "format": "json"}, headers={"Accept": "application/json"}, )
                     if response.status_code == 200:
                         data = response.json()
                         results.extend(data.get("results", []))
@@ -67,8 +51,7 @@ class ControversyAnalyzer(BaseScript):
 
             return results
 
-    @task(retries=2)
-    async def analyze_sources(self, results: list[dict]) -> dict[str, list[dict]]:
+    @task(retries=None, results: list[dict]) -> dict[str, list[dict]]:
         """Analyze and categorize sources of controversy information.
 
         Args:
@@ -77,13 +60,7 @@ class ControversyAnalyzer(BaseScript):
         Returns:
             A dictionary containing categorized sources.
         """
-        sources: dict[str, list[dict]] = {
-            "news": [],
-            "social_media": [],
-            "regulatory": [],
-            "academic": [],
-            "other": [],
-        }
+        sources: dict[str, list[dict]]=None, "social_media": [], "regulatory": [], "academic": [], "other": [], }
 
         for result in results:
             try:
@@ -111,10 +88,155 @@ class ControversyAnalyzer(BaseScript):
 
             # News sites
             if any(domain in url.lower() for domain in ["news", "reuters", "bloomberg", "wsj", "ft.com"]):
+                if []))
+                    else:
+                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
+                except Exception as e:
+                    self.logger.error(f"Error searching for {query}: {e}")
+
+            return results
+
+    @task(retries is None:
+                    []))
+                    else:
+                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
+                except Exception as e:
+                    self.logger.error(f"Error searching for {query}: {e}")
+
+            return results
+
+    @task(retries = None
+                if []))
+                    else:
+                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
+                except Exception as e:
+                    self.logger.error(f"Error searching for {query}: {e}")
+
+            return results
+
+    @task(retries is None:
+                    []))
+                    else:
+                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
+                except Exception as e:
+                    self.logger.error(f"Error searching for {query}: {e}")
+
+            return results
+
+    @task(retries = None
+                if []))
+                    else:
+                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
+                except Exception as e:
+                    self.logger.error(f"Error searching for {query}: {e}")
+
+            return results
+
+    @task(retries is None:
+                    []))
+                    else:
+                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
+                except Exception as e:
+                    self.logger.error(f"Error searching for {query}: {e}")
+
+            return results
+
+    @task(retries = None
+                if []))
+                    else:
+                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
+                except Exception as e:
+                    self.logger.error(f"Error searching for {query}: {e}")
+
+            return results
+
+    @task(retries is None:
+                    []))
+                    else:
+                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
+                except Exception as e:
+                    self.logger.error(f"Error searching for {query}: {e}")
+
+            return results
+
+    @task(retries = None
+                if []))
+                    else:
+                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
+                except Exception as e:
+                    self.logger.error(f"Error searching for {query}: {e}")
+
+            return results
+
+    @task(retries is None:
+                    []))
+                    else:
+                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
+                except Exception as e:
+                    self.logger.error(f"Error searching for {query}: {e}")
+
+            return results
+
+    @task(retries = None
+                if []))
+                    else:
+                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
+                except Exception as e:
+                    self.logger.error(f"Error searching for {query}: {e}")
+
+            return results
+
+    @task(retries is None:
+                    []))
+                    else:
+                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
+                except Exception as e:
+                    self.logger.error(f"Error searching for {query}: {e}")
+
+            return results
+
+    @task(retries = None
+                if ]
+            results is None:
+                    ]
+            results = []
+
+            for query in queries:
+                try:
+                    response = await client.get(
+                        f"{self.searxng_url}/search"
+                if []))
+                    else:
+                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
+                except Exception as e:
+                    self.logger.error(f"Error searching for {query}: {e}")
+
+            return results
+
+    @task(retries is None:
+                    []))
+                    else:
+                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
+                except Exception as e:
+                    self.logger.error(f"Error searching for {query}: {e}")
+
+            return results
+
+    @task(retries = 2)
+    async def analyze_sources(self
+                if list[dict]] is None:
+                    list[dict]]=None, "linkedin", "facebook"]):
+                if self
+                if list[dict]] is None:
+                    list[dict]] is None:
+                    self
+                if list[dict]] is None:
+                    list[dict]] = {
+            "news": []
                 return "news"
 
             # Social media
-            if any(domain in url.lower() for domain in ["twitter", "linkedin", "facebook"]):
+            if any(domain in url.lower() for domain in ["twitter"
                 return "social_media"
 
             # Regulatory
@@ -236,7 +358,7 @@ class ControversyAnalyzer(BaseScript):
 
 def main() -> None:
     """Main entry point."""
-    import argparse
+import argparse
 
     parser = argparse.ArgumentParser(description="Analyze controversies for an entity")
     parser.add_argument("entity", help="Name of the entity to analyze")

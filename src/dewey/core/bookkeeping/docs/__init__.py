@@ -1,7 +1,5 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
-import logging
-from typing import Any, Dict
+from typing import Any
 
 
 class DocsModule(BaseScript):
@@ -44,14 +42,18 @@ class DocsModule(BaseScript):
         self.logger.info("Running the Docs module...")
         try:
             # Example of accessing a configuration value
-            example_config_value = self.get_config_value("docs_setting", "default_value")
+            example_config_value = self.get_config_value(
+                "docs_setting", "default_value"
+            )
             self.logger.info(f"Example config value: {example_config_value}")
 
             # Add your documentation logic here
             self.logger.info("Documentation tasks completed.")
 
         except Exception as e:
-            self.logger.error(f"An error occurred during documentation: {e}", exc_info=True)
+            self.logger.error(
+                f"An error occurred during documentation: {e}", exc_info=True
+            )
             raise
 
     def get_config_value(self, key: str, default: Any = None) -> Any:

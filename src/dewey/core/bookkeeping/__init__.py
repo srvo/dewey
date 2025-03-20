@@ -10,7 +10,7 @@ class BookkeepingScript(BaseScript):
     loading and database connection management.
     """
 
-    def __init__(self, config_section: str = 'bookkeeping') -> None:
+    def __init__(self, config_section: str = "bookkeeping") -> None:
         """
         Initializes the BookkeepingScript.
 

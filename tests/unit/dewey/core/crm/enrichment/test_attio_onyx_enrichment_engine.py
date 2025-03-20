@@ -1,4 +1,4 @@
-tests/unit/dewey/core/crm/enrichment/test_attio_onyx_enrichment_engine.py
+tests / unit / dewey / core / crm / enrichment / test_attio_onyx_enrichment_engine.py
 """Unit tests for the attio_onyx_enrichment_engine module."""
 
 import logging
@@ -12,7 +12,6 @@ from dewey.core.db.connection import DatabaseConnection
 from dewey.llm.llm_utils import LLMClient
 from api_clients.attio_client import AttioAPIError, AttioClient
 from api_clients.onyx_client import OnyxAPIError, OnyxClient
-from schema import OnyxEnrichment
 
 
 @pytest.fixture
@@ -24,7 +23,10 @@ def enrichment_engine() -> EnrichmentEngine:
     engine.db_conn = MagicMock(spec=DatabaseConnection)
     engine.llm_client = MagicMock(spec=LLMClient)
     engine.logger = MagicMock(spec=logging.Logger)
-    engine.api_references = {"Attio API": "attio_api_url", "Onyx_ingestion": "onyx_api_url"}
+    engine.api_references = {
+        "Attio API": "attio_api_url",
+        "Onyx_ingestion": "onyx_api_url",
+    }
     return engine
 
 
@@ -37,7 +39,10 @@ def test_enrichment_engine_initialization(enrichment_engine: EnrichmentEngine) -
     assert isinstance(enrichment_engine.onyx, MagicMock)
     assert isinstance(enrichment_engine.db_conn, MagicMock)
     assert isinstance(enrichment_engine.logger, MagicMock)
-    assert enrichment_engine.api_references == {"Attio API": "attio_api_url", "Onyx_ingestion": "onyx_api_url"}
+    assert enrichment_engine.api_references == {
+        "Attio API": "attio_api_url",
+        "Onyx_ingestion": "onyx_api_url",
+    }
 
 
 def test_run_success(enrichment_engine: EnrichmentEngine) -> None:
@@ -61,7 +66,9 @@ def test_run_attio_api_error(enrichment_engine: EnrichmentEngine) -> None:
     with pytest.raises(AttioAPIError):
         enrichment_engine.run(batch_size=50)
 
-    enrichment_engine.logger.error.assert_called_once_with("Attio integration failed: Attio failed")
+    enrichment_engine.logger.error.assert_called_once_with(
+        "Attio integration failed: Attio failed"
+    )
 
 
 def test_run_onyx_api_error(enrichment_engine: EnrichmentEngine) -> None:
@@ -72,7 +79,9 @@ def test_run_onyx_api_error(enrichment_engine: EnrichmentEngine) -> None:
     with pytest.raises(OnyxAPIError):
         enrichment_engine.run(batch_size=50)
 
-    enrichment_engine.logger.error.assert_called_once_with("Onyx integration failed: Onyx failed")
+    enrichment_engine.logger.error.assert_called_once_with(
+        "Onyx integration failed: Onyx failed"
+    )
 
 
 def test_process_contact_success(enrichment_engine: EnrichmentEngine) -> None:
@@ -85,7 +94,9 @@ def test_process_contact_success(enrichment_engine: EnrichmentEngine) -> None:
     enrichment_engine._process_contact(contact)
 
     enrichment_engine.onyx.universal_search.assert_called_once_with(contact)
-    enrichment_engine._store_enrichment.assert_called_once_with("123", contact, enriched_data)
+    enrichment_engine._store_enrichment.assert_called_once_with(
+        "123", contact, enriched_data
+    )
     enrichment_engine.logger.debug.assert_called_with("Processing contact 123")
 
 
@@ -97,7 +108,9 @@ def test_process_contact_missing_id(enrichment_engine: EnrichmentEngine) -> None
 
     enrichment_engine.onyx.universal_search.assert_not_called()
     enrichment_engine._store_enrichment.assert_not_called()
-    enrichment_engine.logger.warning.assert_called_with("Contact ID not found in contact data.")
+    enrichment_engine.logger.warning.assert_called_with(
+        "Contact ID not found in contact data."
+    )
 
 
 def test_process_contact_exception(enrichment_engine: EnrichmentEngine) -> None:
@@ -107,7 +120,9 @@ def test_process_contact_exception(enrichment_engine: EnrichmentEngine) -> None:
 
     enrichment_engine._process_contact(contact)
 
-    enrichment_engine.logger.exception.assert_called_with("Failed to process 123: Search failed")
+    enrichment_engine.logger.exception.assert_called_with(
+        "Failed to process 123: Search failed"
+    )
 
 
 def test_store_enrichment_success(enrichment_engine: EnrichmentEngine) -> None:
@@ -125,11 +140,16 @@ def test_store_enrichment_success(enrichment_engine: EnrichmentEngine) -> None:
     assert record["contact_id"] == contact_id
     assert record["raw_contact"] == raw_data
     assert record["enrichment"] == enriched_data
-    assert record["system_metadata"]["attio_schema_version"] == enrichment_engine.attio.schema_version
+    assert (
+        record["system_metadata"]["attio_schema_version"]
+        == enrichment_engine.attio.schema_version
+    )
     assert record["system_metadata"]["onyx_request_id"] == "req123"
     assert record["attio_reference"] == "attio_api_url"
     assert record["onyx_reference"] == "onyx_api_url"
-    datetime.fromisoformat(record["timestamp"])  # asserts that timestamp is a valid isoformat
+    datetime.fromisoformat(
+        record["timestamp"]
+    )  # asserts that timestamp is a valid isoformat
 
 
 def test_save_to_postgres_success(enrichment_engine: EnrichmentEngine) -> None:
@@ -148,7 +168,9 @@ def test_save_to_postgres_success(enrichment_engine: EnrichmentEngine) -> None:
     enrichment_engine.db_conn.add.assert_called_once()
     enrichment_engine.db_conn.commit.assert_called_once()
     enrichment_engine.db_conn.close.assert_called_once()
-    enrichment_engine.logger.info.assert_called_with("Successfully saved enrichment for contact 123")
+    enrichment_engine.logger.info.assert_called_with(
+        "Successfully saved enrichment for contact 123"
+    )
 
 
 def test_save_to_postgres_failure(enrichment_engine: EnrichmentEngine) -> None:
@@ -167,11 +189,15 @@ def test_save_to_postgres_failure(enrichment_engine: EnrichmentEngine) -> None:
 
     enrichment_engine.db_conn.rollback.assert_called_once()
     enrichment_engine.db_conn.close.assert_called_once()
-    enrichment_engine.logger.exception.assert_called_with("Failed to save enrichment for contact 123: Database error")
+    enrichment_engine.logger.exception.assert_called_with(
+        "Failed to save enrichment for contact 123: Database error"
+    )
 
 
 @patch("dewey.core.crm.enrichment.attio_onyx_enrichment_engine.datetime")
-def test_store_enrichment_timestamp(mock_datetime, enrichment_engine: EnrichmentEngine) -> None:
+def test_store_enrichment_timestamp(
+    mock_datetime, enrichment_engine: EnrichmentEngine
+) -> None:
     """Test that _store_enrichment uses the current UTC timestamp."""
     mock_datetime.utcnow.return_value = datetime(2024, 1, 1, 0, 0, 0)
     contact_id = "123"

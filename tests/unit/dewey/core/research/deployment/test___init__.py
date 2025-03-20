@@ -35,7 +35,9 @@ class TestDeploymentModule:
         assert module.requires_db is True
         assert module.enable_llm is True
 
-    def test_run_no_db_no_llm(self, deployment_module: DeploymentModule, caplog: pytest.LogCaptureFixture) -> None:
+    def test_run_no_db_no_llm(
+        self, deployment_module: DeploymentModule, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """Test the run method without database or LLM."""
         caplog.set_level(logging.INFO)
         deployment_module.run()
@@ -47,7 +49,10 @@ class TestDeploymentModule:
 
     @patch("dewey.core.research.deployment.DeploymentModule.get_config_value")
     def test_run_config_value(
-        self, mock_get_config_value: MagicMock, deployment_module: DeploymentModule, caplog: pytest.LogCaptureFixture
+        self,
+        mock_get_config_value: MagicMock,
+        deployment_module: DeploymentModule,
+        caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test that the run method retrieves and logs a config value."""
         mock_get_config_value.return_value = "test_config_value"
@@ -56,7 +61,9 @@ class TestDeploymentModule:
         mock_get_config_value.assert_called_with("example_config_key", "default_value")
         assert "Example config value: test_config_value" in caplog.text
 
-    def test_run_with_db(self, deployment_module: DeploymentModule, caplog: pytest.LogCaptureFixture) -> None:
+    def test_run_with_db(
+        self, deployment_module: DeploymentModule, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """Test the run method with database."""
         deployment_module.requires_db = True
         deployment_module.db_conn = MagicMock()
@@ -67,7 +74,9 @@ class TestDeploymentModule:
         deployment_module.run()
         assert "Database connection test: [1]" in caplog.text
 
-    def test_run_with_llm(self, deployment_module: DeploymentModule, caplog: pytest.LogCaptureFixture) -> None:
+    def test_run_with_llm(
+        self, deployment_module: DeploymentModule, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """Test the run method with LLM."""
         deployment_module.enable_llm = True
         deployment_module.llm_client = MagicMock()
@@ -76,7 +85,9 @@ class TestDeploymentModule:
         deployment_module.run()
         assert "LLM response: Test LLM response" in caplog.text
 
-    def test_run_db_error(self, deployment_module: DeploymentModule, caplog: pytest.LogCaptureFixture) -> None:
+    def test_run_db_error(
+        self, deployment_module: DeploymentModule, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """Test the run method with a database error."""
         deployment_module.requires_db = True
         deployment_module.db_conn = MagicMock()
@@ -85,7 +96,9 @@ class TestDeploymentModule:
         deployment_module.run()
         assert "Database error: DB Error" in caplog.text
 
-    def test_run_llm_error(self, deployment_module: DeploymentModule, caplog: pytest.LogCaptureFixture) -> None:
+    def test_run_llm_error(
+        self, deployment_module: DeploymentModule, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """Test the run method with an LLM error."""
         deployment_module.enable_llm = True
         deployment_module.llm_client = MagicMock()
@@ -94,9 +107,15 @@ class TestDeploymentModule:
         deployment_module.run()
         assert "LLM error: LLM Error" in caplog.text
 
-    def test_run_deployment_error(self, deployment_module: DeploymentModule, caplog: pytest.LogCaptureFixture) -> None:
+    def test_run_deployment_error(
+        self, deployment_module: DeploymentModule, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """Test the run method with a deployment error."""
-        with patch.object(DeploymentModule, "get_config_value", side_effect=Exception("Deployment Error")):
+        with patch.object(
+            DeploymentModule,
+            "get_config_value",
+            side_effect=Exception("Deployment Error"),
+        ):
             caplog.set_level(logging.ERROR)
             with pytest.raises(Exception, match="Deployment failed: Deployment Error"):
                 deployment_module.run()

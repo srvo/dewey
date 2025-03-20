@@ -24,7 +24,10 @@ class TestSimpleTest:
 
     @patch("dewey.core.crm.enrichment.simple_test.SimpleTest.get_config_value")
     def test_run_method(
-        self, mock_get_config_value: pytest.fixture, simple_test: SimpleTest, caplog: pytest.fixture
+        self,
+        mock_get_config_value: pytest.fixture,
+        simple_test: SimpleTest,
+        caplog: pytest.fixture,
     ) -> None:
         """Test the run method of the SimpleTest module."""
         mock_get_config_value.return_value = "test_value"
@@ -39,7 +42,10 @@ class TestSimpleTest:
 
     @patch("dewey.core.crm.enrichment.simple_test.SimpleTest.get_config_value")
     def test_run_method_with_default_config_value(
-        self, mock_get_config_value: pytest.fixture, simple_test: SimpleTest, caplog: pytest.fixture
+        self,
+        mock_get_config_value: pytest.fixture,
+        simple_test: SimpleTest,
+        caplog: pytest.fixture,
     ) -> None:
         """Test the run method when the config value is not found."""
         mock_get_config_value.return_value = None

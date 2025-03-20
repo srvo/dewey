@@ -1,7 +1,6 @@
 import logging
 import unittest.mock
 from pathlib import Path
-from typing import Any, Dict
 import pytest
 
 from dewey.core.analysis.log_analyzer import LogAnalyzer
@@ -25,7 +24,7 @@ class TestLogAnalyzer:
             }
         }
         with open(tmp_path / "config.yaml", "w") as f:
-            import yaml
+import yaml
             yaml.dump(config_data, f)
 
         with unittest.mock.patch("dewey.core.base_script.CONFIG_PATH", tmp_path / "config.yaml"):

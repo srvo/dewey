@@ -2,20 +2,29 @@ import pytest
 import logging
 from unittest.mock import MagicMock, AsyncMock
 
+
 @pytest.fixture
 def caplog_buffer(caplog):
     """Capture log messages in a buffer for easy assertion."""
+
     class BufferHandler(logging.Handler):
+        """Class BufferHandler."""
+
         def __init__(self):
+            """Function __init__."""
             super().__init__()
             self.buffer = []
+
         def emit(self, record):
+            """Function emit."""
             self.buffer.append(self.format(record))
+
     handler = BufferHandler()
     caplog.handler = handler
     logging.getLogger().addHandler(handler)
     yield handler.buffer
     logging.getLogger().removeHandler(handler)
+
 
 @pytest.fixture
 def mock_subprocess(mocker):

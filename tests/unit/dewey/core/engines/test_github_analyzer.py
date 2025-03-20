@@ -21,27 +21,55 @@ class TestGithubAnalyzer:
         assert github_analyzer.logger is not None
 
     @patch("dewey.core.engines.github_analyzer.GithubAnalyzer.get_config_value")
-    def test_run_success(self, mock_get_config_value, github_analyzer: GithubAnalyzer, caplog):
+    def test_run_success(
+        self, mock_get_config_value, github_analyzer: GithubAnalyzer, caplog
+    ):
         """Test the run method with a successful API key retrieval."""
         mock_get_config_value.return_value = "test_api_key"
         with caplog.record_tuples():
             caplog.set_level(logging.INFO)
             github_analyzer.run()
-        assert ("GithubAnalyzer", logging.INFO, "Starting GitHub analysis...") in caplog.record_tuples()
-        assert ("GithubAnalyzer", logging.INFO, "Retrieved API key: test_api_key") in caplog.record_tuples()
-        assert ("GithubAnalyzer", logging.INFO, "GitHub analysis completed.") in caplog.record_tuples()
+        assert (
+            "GithubAnalyzer",
+            logging.INFO,
+            "Starting GitHub analysis...",
+        ) in caplog.record_tuples()
+        assert (
+            "GithubAnalyzer",
+            logging.INFO,
+            "Retrieved API key: test_api_key",
+        ) in caplog.record_tuples()
+        assert (
+            "GithubAnalyzer",
+            logging.INFO,
+            "GitHub analysis completed.",
+        ) in caplog.record_tuples()
         mock_get_config_value.assert_called_once_with("github_api_key")
 
     @patch("dewey.core.engines.github_analyzer.GithubAnalyzer.get_config_value")
-    def test_run_no_api_key(self, mock_get_config_value, github_analyzer: GithubAnalyzer, caplog):
+    def test_run_no_api_key(
+        self, mock_get_config_value, github_analyzer: GithubAnalyzer, caplog
+    ):
         """Test the run method when no API key is found in the config."""
         mock_get_config_value.return_value = None
         with caplog.record_tuples():
             caplog.set_level(logging.INFO)
             github_analyzer.run()
-        assert ("GithubAnalyzer", logging.INFO, "Starting GitHub analysis...") in caplog.record_tuples()
-        assert ("GithubAnalyzer", logging.INFO, "Retrieved API key: None") in caplog.record_tuples()
-        assert ("GithubAnalyzer", logging.INFO, "GitHub analysis completed.") in caplog.record_tuples()
+        assert (
+            "GithubAnalyzer",
+            logging.INFO,
+            "Starting GitHub analysis...",
+        ) in caplog.record_tuples()
+        assert (
+            "GithubAnalyzer",
+            logging.INFO,
+            "Retrieved API key: None",
+        ) in caplog.record_tuples()
+        assert (
+            "GithubAnalyzer",
+            logging.INFO,
+            "GitHub analysis completed.",
+        ) in caplog.record_tuples()
         mock_get_config_value.assert_called_once_with("github_api_key")
 
     # Add more tests here to cover other aspects of the GithubAnalyzer class

@@ -44,7 +44,7 @@ def test_ibis_query_execution(mock_motherduck_env_vars):
     Raises:
         AssertionError: If query execution fails or results differ
     """
-    import ibis
+import ibis
     con = ibis.connect('duckdb:///:memory:')
     table = con.create_table('test_table', {'col': 'int'})
     result = con.sql('SELECT * FROM test_table').execute()
@@ -113,7 +113,7 @@ def test_ibis_motherduck_integration(mock_motherduck_env_vars):
     Raises:
         AssertionError: If Ibis cannot connect using mocked credentials
     """
-    import ibis
+import ibis
     con = ibis.connect('motherduck://')
     assert con.list_tables() == []
     table = con.create_table('test_table', {'col': 'int'})

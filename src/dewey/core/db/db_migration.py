@@ -1,5 +1,4 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
 from dewey.core.db import utils
 from dewey.llm import llm_utils
 
@@ -14,7 +13,7 @@ class DBMigration(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the DBMigration class."""
-        super().__init__(config_section='db_migration', requires_db=True)
+        super().__init__(config_section="db_migration", requires_db=True)
 
     def run(self) -> None:
         """
@@ -56,7 +55,9 @@ class DBMigration(BaseScript):
             # Example usage of LLM utilities (replace with actual LLM logic)
             prompt = "Summarize the database schema."
             try:
-                response = llm_utils.generate_response(prompt, llm_client=self.llm_client)
+                response = llm_utils.generate_response(
+                    prompt, llm_client=self.llm_client
+                )
                 self.logger.info(f"LLM response: {response}")
             except Exception as e:
                 self.logger.error(f"Error during LLM call: {e}")

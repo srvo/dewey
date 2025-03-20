@@ -1,12 +1,16 @@
 import logging
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 import yaml
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.config import Config
-from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
+from dewey.core.db.connection import (
+    DatabaseConnection,
+    get_connection,
+    get_motherduck_connection,
+)
 
 
 class TestConfig:
@@ -38,25 +42,40 @@ class TestConfig:
 
     def test_run_method(self, config_instance: Config, mocker: MagicMock) -> None:
         """Tests the run method of the Config class."""
-        mock_get_config_value = mocker.patch.object(config_instance, "get_config_value", return_value="localhost")
+        mock_get_config_value = mocker.patch.object(
+            config_instance, "get_config_value", return_value="localhost"
+        )
         mock_get_motherduck_connection = mocker.patch(
-            "dewey.core.db.config.get_motherduck_connection", return_value=mocker.MagicMock(spec=DatabaseConnection)
+            "dewey.core.db.config.get_motherduck_connection",
+            return_value=mocker.MagicMock(spec=DatabaseConnection),
         )
         mock_get_connection = mocker.patch(
-            "dewey.core.db.config.get_connection", return_value=mocker.MagicMock(spec=DatabaseConnection)
+            "dewey.core.db.config.get_connection",
+            return_value=mocker.MagicMock(spec=DatabaseConnection),
         )
 
         config_instance.run()
 
         config_instance.logger.info.assert_called()
         mock_get_config_value.assert_called_with("host", "localhost")
-        mock_get_motherduck_connection.assert_called_with(config_instance.config.get("test_config", {}))
-        mock_get_connection.assert_called_with(config_instance.config.get("test_config", {}))
+        mock_get_motherduck_connection.assert_called_with(
+            config_instance.config.get("test_config", {})
+        )
+        mock_get_connection.assert_called_with(
+            config_instance.config.get("test_config", {})
+        )
 
-    def test_run_method_exception(self, config_instance: Config, mocker: MagicMock) -> None:
+    def test_run_method_exception(
+        self, config_instance: Config, mocker: MagicMock
+    ) -> None:
         """Tests the run method of the Config class when an exception occurs."""
-        mocker.patch.object(config_instance, "get_config_value", return_value="localhost")
-        mocker.patch("dewey.core.db.config.get_motherduck_connection", side_effect=Exception("Test Exception"))
+        mocker.patch.object(
+            config_instance, "get_config_value", return_value="localhost"
+        )
+        mocker.patch(
+            "dewey.core.db.config.get_motherduck_connection",
+            side_effect=Exception("Test Exception"),
+        )
 
         with pytest.raises(Exception, match="Test Exception"):
             config_instance.run()
@@ -66,7 +85,9 @@ class TestConfig:
     def test_get_motherduck_connection_success(self, mocker: MagicMock) -> None:
         """Tests successful retrieval of a MotherDuck connection."""
         mock_connection = mocker.MagicMock(spec=DatabaseConnection)
-        mocker.patch("dewey.core.db.connection.DatabaseConnection", return_value=mock_connection)
+        mocker.patch(
+            "dewey.core.db.connection.DatabaseConnection", return_value=mock_connection
+        )
 
         config = {"motherduck_token": "test_token"}
         connection = get_motherduck_connection(config)
@@ -83,9 +104,17 @@ class TestConfig:
     def test_get_connection_success(self, mocker: MagicMock) -> None:
         """Tests successful retrieval of a generic database connection."""
         mock_connection = mocker.MagicMock(spec=DatabaseConnection)
-        mocker.patch("dewey.core.db.connection.DatabaseConnection", return_value=mock_connection)
+        mocker.patch(
+            "dewey.core.db.connection.DatabaseConnection", return_value=mock_connection
+        )
 
-        config = {"host": "test_host", "port": 1234, "user": "test_user", "password": "test_password", "database": "test_db"}
+        config = {
+            "host": "test_host",
+            "port": 1234,
+            "user": "test_user",
+            "password": "test_password",
+            "database": "test_db",
+        }
         connection = get_connection(config)
 
         assert connection is mock_connection
@@ -99,7 +128,9 @@ class TestConfig:
     def test_get_connection_connection_string(self, mocker: MagicMock) -> None:
         """Tests retrieval of a generic database connection using a connection string."""
         mock_connection = mocker.MagicMock(spec=DatabaseConnection)
-        mocker.patch("dewey.core.db.connection.DatabaseConnection", return_value=mock_connection)
+        mocker.patch(
+            "dewey.core.db.connection.DatabaseConnection", return_value=mock_connection
+        )
 
         config = {"connection_string": "test_connection_string"}
         connection = get_connection(config)
@@ -107,10 +138,14 @@ class TestConfig:
         assert connection is mock_connection
         # dewey.core.db.connection.DatabaseConnection.assert_called_with(connection_string="test_connection_string")
 
-    def test_get_connection_connection_string_and_params(self, mocker: MagicMock) -> None:
+    def test_get_connection_connection_string_and_params(
+        self, mocker: MagicMock
+    ) -> None:
         """Tests retrieval of a generic database connection using both a connection string and parameters."""
         mock_connection = mocker.MagicMock(spec=DatabaseConnection)
-        mocker.patch("dewey.core.db.connection.DatabaseConnection", return_value=mock_connection)
+        mocker.patch(
+            "dewey.core.db.connection.DatabaseConnection", return_value=mock_connection
+        )
 
         config = {
             "connection_string": "test_connection_string",

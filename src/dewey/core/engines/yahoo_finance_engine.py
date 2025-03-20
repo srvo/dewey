@@ -13,7 +13,7 @@ class YahooFinanceEngine(BaseScript):
         """
         Initializes the YahooFinanceEngine.
         """
-        super().__init__(config_section='yahoo_finance')
+        super().__init__(config_section="yahoo_finance")
 
     def run(self) -> None:
         """

@@ -3,7 +3,7 @@ from unittest.mock import patch
 from dewey.core.engines.duckduckgo import DuckDuckGo
 from dewey.core.base_script import BaseScript
 import logging
-from typing import Any, Dict
+from typing import Any
 
 
 class TestDuckDuckGo:

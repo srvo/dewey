@@ -4,15 +4,12 @@
 import json
 import os
 import shutil
-import subprocess
 import tempfile
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection
-from dewey.llm.llm_utils import LLMClient
 from .models import Service
 
 
@@ -35,8 +32,12 @@ class ServiceDeployment(BaseScript):
             enable_llm=False,
         )
         self.service_manager = None  # Initialize to None, set in run()
-        self.workspace_dir = Path(os.getenv("DEWEY_DIR", os.path.expanduser("~/dewey"))) / "workspace"
-        self.config_dir = Path(os.getenv("DEWEY_DIR", os.path.expanduser("~/dewey"))) / "config"
+        self.workspace_dir = (
+            Path(os.getenv("DEWEY_DIR", os.path.expanduser("~/dewey"))) / "workspace"
+        )
+        self.config_dir = (
+            Path(os.getenv("DEWEY_DIR", os.path.expanduser("~/dewey"))) / "config"
+        )
         self.backups_dir = self.workspace_dir / "backups"
         self.backups_dir.mkdir(parents=True, exist_ok=True)
 
@@ -116,7 +117,9 @@ class ServiceDeployment(BaseScript):
                     compose_config["services"][name][field] = service_config[field]
 
             if "healthcheck" in service_config:
-                compose_config["services"][name]["healthcheck"] = service_config["healthcheck"]
+                compose_config["services"][name]["healthcheck"] = service_config[
+                    "healthcheck"
+                ]
 
         if "networks" in config:
             compose_config["networks"] = config["networks"]
@@ -323,7 +326,9 @@ class ServiceDeployment(BaseScript):
                     if item.is_file():
                         shutil.copy2(item, service.config_path)
                     else:
-                        shutil.copytree(item, service.config_path / item.name, dirs_exist_ok=True)
+                        shutil.copytree(
+                            item, service.config_path / item.name, dirs_exist_ok=True
+                        )
         except Exception as e:
             raise RuntimeError(f"Failed to restore config: {str(e)}") from e
 

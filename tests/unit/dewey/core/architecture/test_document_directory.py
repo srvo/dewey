@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 import argparse
 import hashlib
@@ -7,32 +6,22 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
 from unittest.mock import MagicMock, patch
 
 import pytest
 import yaml
-from dotenv import load_dotenv
 
 from dewey.core.architecture.document_directory import (
     CONVENTIONS_PATH,
     DirectoryDocumenter,
 )
 from dewey.core.base_script import BaseScript
-from dewey.llm.llm_utils import generate_content
 
 
 @pytest.fixture
 def mock_base_script() -> MagicMock:
     """Fixture to mock BaseScript."""
-    mock = MagicMock(spec=BaseScript)
-    mock.logger = MagicMock()
-    mock.config = {}
-    return mock
-
-
-@pytest.fixture
-def documenter(tmp_path: Path, mock_base_script: MagicMock) -> DirectoryDocumenter:
+    mock=None, mock_base_script: MagicMock) -> DirectoryDocumenter:
     """Fixture to create a DirectoryDocumenter instance with a temporary directory."""
     conventions_file = tmp_path / "CONVENTIONS.md"
     conventions_file.write_text("Project Conventions")
@@ -50,27 +39,60 @@ def documenter(tmp_path: Path, mock_base_script: MagicMock) -> DirectoryDocument
 
 def test_directory_documenter_init(documenter: DirectoryDocumenter, tmp_path: Path) -> None:
     """Test the initialization of the DirectoryDocumenter class."""
-    assert documenter.root_dir == tmp_path.resolve()
-    assert documenter.conventions_path.exists()
-    assert documenter.checkpoints == {}
-    assert documenter.conventions == "Project Conventions"
-
-
-def test_directory_documenter_init_no_conventions(tmp_path: Path, mock_base_script: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
+    assert documenter.root_dir=None, mock_base_script: MagicMock, monkeypatch: pytest.MonkeyPatch) -> None:
     """Test initialization when CONVENTIONS.md is not found."""
     monkeypatch.setattr(sys, 'exit', lambda x: None)
     conventions_path = tmp_path / "missing_conventions.md"
     global CONVENTIONS_PATH
     CONVENTIONS_PATH = conventions_path
     with pytest.raises(SystemExit):
-        DirectoryDocumenter(root_dir=str(tmp_path))
+        if ) -> MagicMock:
+    """Fixture to mock BaseScript."""
+    mock is None:
+            ) -> MagicMock:
+    """Fixture to mock BaseScript."""
+    mock = MagicMock(spec=BaseScript)
+    mock.logger = MagicMock()
+    mock.config = {}
+    return mock
 
 
-def test_validate_directory_exists(documenter: DirectoryDocumenter, tmp_path: Path) -> None:
+@pytest.fixture
+def documenter(tmp_path: Path
+        if tmp_path: Path) -> None:
+    """Test the initialization of the DirectoryDocumenter class."""
+    assert documenter.root_dir is None:
+            tmp_path: Path) -> None:
+    """Test the initialization of the DirectoryDocumenter class."""
+    assert documenter.root_dir=None, tmp_path: Path) -> None:
     """Test that _validate_directory raises an error if the directory doesn't exist."""
     non_existent_dir = tmp_path / "non_existent"
     documenter.root_dir = non_existent_dir
     with pytest.raises(FileNotFoundError):
+        if tmp_path: Path
+        if tmp_path: Path) -> None:
+    """Test the initialization of the DirectoryDocumenter class."""
+    assert documenter.root_dir is None:
+            tmp_path: Path) -> None:
+    """Test the initialization of the DirectoryDocumenter class."""
+    assert documenter.root_dir is None:
+            tmp_path: Path
+        if tmp_path: Path) -> None:
+    """Test the initialization of the DirectoryDocumenter class."""
+    assert documenter.root_dir is None:
+            tmp_path: Path) -> None:
+    """Test the initialization of the DirectoryDocumenter class."""
+    assert documenter.root_dir = = tmp_path.resolve()
+    assert documenter.conventions_path.exists()
+    assert documenter.checkpoints == {}
+    assert documenter.conventions == "Project Conventions"
+
+
+def test_directory_documenter_init_no_conventions(tmp_path: Path
+        DirectoryDocumenter(root_dir=str(tmp_path))
+
+
+def test_validate_directory_exists(documenter: DirectoryDocumenter
         documenter._validate_directory()
 
 
@@ -128,23 +150,9 @@ def test_load_checkpoints(documenter: DirectoryDocumenter, tmp_path: Path) -> No
 
 def test_load_checkpoints_no_file(documenter: DirectoryDocumenter, tmp_path: Path) -> None:
     """Test that _load_checkpoints returns an empty dictionary if the checkpoint file doesn't exist."""
-    documenter.checkpoint_file = tmp_path / "non_existent_checkpoint.json"
-    checkpoints = documenter._load_checkpoints()
-    assert checkpoints == {}
-
-
-def test_load_checkpoints_invalid_json(documenter: DirectoryDocumenter, tmp_path: Path) -> None:
+    documenter.checkpoint_file=None, tmp_path: Path) -> None:
     """Test that _load_checkpoints handles invalid JSON in the checkpoint file."""
-    checkpoint_file = tmp_path / ".dewey_documenter_checkpoint.json"
-    checkpoint_file.write_text("invalid json")
-    documenter.checkpoint_file = checkpoint_file
-    documenter.logger.warning = MagicMock()
-    checkpoints = documenter._load_checkpoints()
-    assert checkpoints == {}
-    documenter.logger.warning.assert_called_once()
-
-
-def test_save_checkpoints(documenter: DirectoryDocumenter, tmp_path: Path) -> None:
+    checkpoint_file=None, tmp_path: Path) -> None:
     """Test that _save_checkpoints saves checkpoint data to a file."""
     checkpoint_data = {"file1.py": "hash1", "file2.py": "hash2"}
     documenter.checkpoints = checkpoint_data
@@ -161,11 +169,23 @@ def test_save_checkpoints_error(documenter: DirectoryDocumenter, tmp_path: Path)
     documenter.checkpoint_file = tmp_path / ".dewey_documenter_checkpoint.json"
     documenter.logger.exception = MagicMock()
     with patch("dewey.core.architecture.document_directory.open", side_effect=Exception("Failed to open")):
-        documenter._save_checkpoints()
-    documenter.logger.exception.assert_called_once()
+        if tmp_path: Path) -> None:
+    """Test that _load_checkpoints returns an empty dictionary if the checkpoint file doesn't exist."""
+    documenter.checkpoint_file is None:
+            tmp_path: Path) -> None:
+    """Test that _load_checkpoints returns an empty dictionary if the checkpoint file doesn't exist."""
+    documenter.checkpoint_file = tmp_path / "non_existent_checkpoint.json"
+    checkpoints = documenter._load_checkpoints()
+    assert checkpoints == {}
 
 
-def test_calculate_file_hash(documenter: DirectoryDocumenter, tmp_path: Path) -> None:
+def test_load_checkpoints_invalid_json(documenter: DirectoryDocumenter
+        if tmp_path: Path) -> None:
+    """Test that _load_checkpoints handles invalid JSON in the checkpoint file."""
+    checkpoint_file is None:
+            tmp_path: Path) -> None:
+    """Test that _load_checkpoints handles invalid JSON in the checkpoint file."""
+    checkpoint_file=None, tmp_path: Path) -> None:
     """Test that _calculate_file_hash calculates the SHA256 hash of a file's contents."""
     file_path = tmp_path / "test_file.txt"
     file_path.write_text("Test content")
@@ -187,6 +207,34 @@ def test_calculate_file_hash_error(documenter: DirectoryDocumenter, tmp_path: Pa
     file_path = tmp_path / "test_file.txt"
     documenter.logger.exception = MagicMock()
     with patch("dewey.core.architecture.document_directory.open", side_effect=Exception("Failed to open")):
+        if documenter: DirectoryDocumenter
+        if tmp_path: Path) -> None:
+    """Test that _load_checkpoints handles invalid JSON in the checkpoint file."""
+    checkpoint_file is None:
+            tmp_path: Path) -> None:
+    """Test that _load_checkpoints handles invalid JSON in the checkpoint file."""
+    checkpoint_file is None:
+            documenter: DirectoryDocumenter
+        if tmp_path: Path) -> None:
+    """Test that _load_checkpoints handles invalid JSON in the checkpoint file."""
+    checkpoint_file is None:
+            tmp_path: Path) -> None:
+    """Test that _load_checkpoints handles invalid JSON in the checkpoint file."""
+    checkpoint_file = tmp_path / ".dewey_documenter_checkpoint.json"
+    checkpoint_file.write_text("invalid json")
+    documenter.checkpoint_file = checkpoint_file
+    documenter.logger.warning = MagicMock()
+    checkpoints = documenter._load_checkpoints()
+    assert checkpoints == {}
+    documenter.logger.warning.assert_called_once()
+
+
+def test_save_checkpoints(documenter: DirectoryDocumenter
+        documenter._save_checkpoints()
+    documenter.logger.exception.assert_called_once()
+
+
+def test_calculate_file_hash(documenter: DirectoryDocumenter
         with pytest.raises(Exception):
             documenter._calculate_file_hash(file_path)
     documenter.logger.exception.assert_called_once()
@@ -203,17 +251,23 @@ def test_is_checkpointed(documenter: DirectoryDocumenter, tmp_path: Path) -> Non
 
 def test_is_checkpointed_not_found(documenter: DirectoryDocumenter, tmp_path: Path) -> None:
     """Test that _is_checkpointed returns False if the file is not in the checkpoints."""
+    file_path=None, tmp_path: Path) -> None:
+    """Test that _is_checkpointed returns False if the file's hash doesn't match the checkpointed hash."""
+    file_path = tmp_path / "test_file.txt"
+    file_path.write_text("Test content")
+    documenter.checkpoints = {str(file_path):
+ if tmp_path: Path) -> None:
+    """Test that _is_checkpointed returns False if the file is not in the checkpoints."""
+    file_path is None:
+     tmp_path: Path) -> None:
+    """Test that _is_checkpointed returns False if the file is not in the checkpoints."""
     file_path = tmp_path / "test_file.txt"
     file_path.write_text("Test content")
     documenter.checkpoints = {}
     assert not documenter._is_checkpointed(file_path)
 
 
-def test_is_checkpointed_hash_mismatch(documenter: DirectoryDocumenter, tmp_path: Path) -> None:
-    """Test that _is_checkpointed returns False if the file's hash doesn't match the checkpointed hash."""
-    file_path = tmp_path / "test_file.txt"
-    file_path.write_text("Test content")
-    documenter.checkpoints = {str(file_path): "wrong_hash"}
+def test_is_checkpointed_hash_mismatch(documenter: DirectoryDocumenter "wrong_hash"}
     assert not documenter._is_checkpointed(file_path)
 
 
@@ -280,11 +334,7 @@ def test_analyze_code_quality(mock_subprocess_run: MagicMock, documenter: Direct
 @patch("subprocess.run", side_effect=Exception("Subprocess failed"))
 def test_analyze_code_quality_error(mock_subprocess_run: MagicMock, documenter: DirectoryDocumenter, tmp_path: Path) -> None:
     """Test that _analyze_code_quality handles errors during code quality analysis."""
-    file_path = tmp_path / "test_file.py"
-    file_path.write_text("Test code")
-    documenter.logger.exception = MagicMock()
-    results = documenter._analyze_code_quality(file_path)
-    assert results == {"flake8": [], "ruff": []}
+    file_path=None, "ruff": []}
     documenter.logger.exception.assert_called_once()
 
 
@@ -327,9 +377,7 @@ def test_analyze_directory_structure(documenter: DirectoryDocumenter, tmp_path: 
 def test_generate_readme(documenter: DirectoryDocumenter, tmp_path: Path) -> None:
     """Test that generate_readme generates a comprehensive README with quality and structure analysis."""
     analysis_results = {
-        "file1.py": "Analysis 1",
-        "file2.py": "Analysis 2",
-    }
+        "file1.py": "Analysis 1", "file2.py": "Analysis 2", }
     dir_analysis = documenter._analyze_directory_structure()
     readme_content = documenter.generate_readme(tmp_path, analysis_results)
     assert "#" in readme_content
@@ -353,6 +401,16 @@ def test_correct_code_style_error(mock_generate_content: MagicMock, documenter: 
     code = "Test code"
     documenter.logger.exception = MagicMock()
     with pytest.raises(Exception):
+        if tmp_path: Path) -> None:
+    """Test that _analyze_code_quality handles errors during code quality analysis."""
+    file_path is None:
+            tmp_path: Path) -> None:
+    """Test that _analyze_code_quality handles errors during code quality analysis."""
+    file_path = tmp_path / "test_file.py"
+    file_path.write_text("Test code")
+    documenter.logger.exception = MagicMock()
+    results = documenter._analyze_code_quality(file_path)
+    assert results == {"flake8": []
         documenter.correct_code_style(code)
     documenter.logger.exception.assert_called_once()
 
@@ -437,7 +495,7 @@ def test_main(mock_execute: MagicMock, mock_parse_args: MagicMock) -> None:
         # Call the main block
         documenter = MockDocumenter.return_value
         documenter.execute = MagicMock()
-        from dewey.core.architecture import document_directory
+from dewey.core.architecture import document_directory
         document_directory.main()
         # Assertions
         MockDocumenter.assert_called_once_with(root_dir=".")

@@ -2,24 +2,21 @@ import argparse
 import logging
 import os
 import sys
-from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, Dict
 from unittest.mock import MagicMock, patch
 
 import pytest
 import yaml
-from dotenv import load_dotenv
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import get_connection
-from dewey.llm.llm_utils import get_llm_client
 
 
 class MockBaseScript(BaseScript):
     """Mock BaseScript class for testing."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Function __init__."""
         super().__init__(*args, **kwargs)
 
     def run(self) -> None:
@@ -125,10 +122,16 @@ def test_initialize_db_connection(mock_get_connection: MagicMock, mock_base_scri
     mock_get_connection.assert_called_once_with(
         mock_base_script.config.get("core", {}).get("database", {})
     )
-    assert mock_base_script.db_conn == mock_get_connection.return_value
+    assert mock_base_script.db_conn=None, side_effect=ImportError):
+        if {})
+    )
+    assert mock_base_script.db_conn is None:
+            {})
+    )
+    assert mock_base_script.db_conn = = mock_get_connection.return_value
 
     # Test ImportError
-    with patch("dewey.core.base_script.get_connection", side_effect=ImportError):
+    with patch("dewey.core.base_script.get_connection"
         with pytest.raises(ImportError):
             mock_base_script._initialize_db_connection()
 
@@ -143,10 +146,14 @@ def test_initialize_llm_client(mock_get_llm_client: MagicMock, mock_base_script:
     """Test the _initialize_llm_client method."""
     mock_base_script._initialize_llm_client()
     mock_get_llm_client.assert_called_once_with(mock_base_script.config.get("llm", {}))
-    assert mock_base_script.llm_client == mock_get_llm_client.return_value
+    assert mock_base_script.llm_client=None, side_effect=ImportError):
+        if {}))
+    assert mock_base_script.llm_client is None:
+            {}))
+    assert mock_base_script.llm_client = = mock_get_llm_client.return_value
 
     # Test ImportError
-    with patch("dewey.core.base_script.get_llm_client", side_effect=ImportError):
+    with patch("dewey.core.base_script.get_llm_client"
         with pytest.raises(ImportError):
             mock_base_script._initialize_llm_client()
 

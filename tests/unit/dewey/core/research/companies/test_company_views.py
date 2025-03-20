@@ -36,7 +36,7 @@ class TestCompanyViews:
         config_file = tmp_path / "test_config.yaml"
         mock_config_path = config_file
         with open(config_file, "w") as f:
-            import yaml
+import yaml
             yaml.dump(config_data, f)
 
         company_views.CONFIG_PATH = config_file

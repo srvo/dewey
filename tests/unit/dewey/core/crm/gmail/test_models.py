@@ -1,5 +1,4 @@
 import logging
-from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
@@ -34,7 +33,9 @@ class TestGmailModel:
         """Test that the run method accesses configuration values."""
         gmail_model.get_config_value = MagicMock(return_value="test_api_key")  # type: ignore
         gmail_model.run()
-        gmail_model.get_config_value.assert_called_with("gmail_api_key", default="default_key")
+        gmail_model.get_config_value.assert_called_with(
+            "gmail_api_key", default="default_key"
+        )
 
     def test_some_method(self, gmail_model: GmailModel) -> None:
         """Test the some_method of the GmailModel."""

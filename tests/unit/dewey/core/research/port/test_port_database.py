@@ -51,9 +51,7 @@ class TestPortDatabase:
 
         port_database.run()
 
-        port_database.logger.info.assert_any_call(
-            "Starting Port Database operations."
-        )
+        port_database.logger.info.assert_any_call("Starting Port Database operations.")
         port_database.logger.info.assert_any_call("Database URL: mock_url")
         mock_get_connection.assert_called_once_with(
             port_database.config.get("database", {})
@@ -61,9 +59,7 @@ class TestPortDatabase:
         port_database.logger.info.assert_any_call(
             "Successfully connected to the database."
         )
-        port_database.logger.info.assert_any_call(
-            "Port Database operations completed."
-        )
+        port_database.logger.info.assert_any_call("Port Database operations completed.")
         mock_db_conn.close.assert_not_called()
 
     @patch("dewey.core.research.port.port_database.get_connection")

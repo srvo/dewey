@@ -2,7 +2,6 @@ import logging
 from unittest.mock import MagicMock, patch
 
 import pytest
-from dewey.core.base_script import BaseScript
 from dewey.core.db.db_init import DbInit
 
 
@@ -89,7 +88,7 @@ class TestDbInit:
         """Tests the main execution block."""
         with patch("dewey.core.db.db_init.DbInit") as mock_db_init:
             # Simulate the if __name__ == "__main__": block
-            import dewey.core.db.db_init
+import dewey.core.db.db_init
 
             dewey.core.db.db_init.main()
 

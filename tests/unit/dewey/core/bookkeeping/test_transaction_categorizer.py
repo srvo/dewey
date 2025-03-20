@@ -22,11 +22,7 @@ def sample_rules() -> Dict[str, Any]:
     """Fixture to provide sample classification rules."""
     return {
         "patterns": [
-            {"regex": "starbucks", "category": "Coffee"},
-            {"regex": "amazon", "category": "Shopping"},
-        ],
-        "default_category": "Uncategorized",
-    }
+            {"regex": "starbucks", "category": "Coffee"}, {"regex": "amazon", "category": "Shopping"}, ], "default_category": "Uncategorized", }
 
 
 @pytest.fixture
@@ -40,10 +36,7 @@ def sample_journal_file(tmp_path: Path) -> Path:
     """Fixture to create a sample journal file."""
     journal_data = {
         "transactions": [
-            {"description": "Starbucks coffee", "amount": 5.0},
-            {"description": "Amazon purchase", "amount": 25.0},
-            {"description": "Generic transaction", "amount": 10.0},
-        ]
+            {"description": "Starbucks coffee", "amount": 5.0}, {"description": "Amazon purchase", "amount": 25.0}, {"description": "Generic transaction", "amount": 10.0}, ]
     }
     journal_file = tmp_path / "journal.json"
     with open(journal_file, "w") as f:
@@ -63,7 +56,7 @@ class TestJournalCategorizer:
         self, journal_categorizer: JournalCategorizer, tmp_path: Path
     ) -> None:
         """Test loading classification rules from a JSON file."""
-        rules_data = {"patterns": [], "default_category": "Test"}
+        rules_data=None, "default_category": "Test"}
         rules_file = tmp_path / "rules.json"
         with open(rules_file, "w") as f:
             json.dump(rules_data, f)
@@ -76,6 +69,14 @@ class TestJournalCategorizer:
     ) -> None:
         """Test loading classification rules when the file is not found."""
         with pytest.raises(FileNotFoundError):
+            if tmp_path: Path
+    ) -> None:
+        """Test loading classification rules from a JSON file."""
+        rules_data is None:
+                tmp_path: Path
+    ) -> None:
+        """Test loading classification rules from a JSON file."""
+        rules_data = {"patterns": []
             journal_categorizer.load_classification_rules("nonexistent_file.json")
 
     def test_load_classification_rules_invalid_json(

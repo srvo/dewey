@@ -2,7 +2,6 @@ import logging
 from unittest.mock import MagicMock, patch
 import pytest
 from dewey.core.data_upload.import_data import ImportData
-from dewey.core.base_script import BaseScript
 
 
 class TestImportData:
@@ -11,7 +10,9 @@ class TestImportData:
     @pytest.fixture
     def mock_base_script(self):
         """Mocks the BaseScript class."""
-        with patch('dewey.core.data_upload.import_data.BaseScript', autospec=True) as MockBaseScript:
+        with patch(
+            "dewey.core.data_upload.import_data.BaseScript", autospec=True
+        ) as MockBaseScript:
             yield MockBaseScript
 
     @pytest.fixture
@@ -26,7 +27,9 @@ class TestImportData:
     def test_init(self, mock_base_script: MagicMock) -> None:
         """Test the __init__ method of ImportData."""
         import_data = ImportData()
-        mock_base_script.assert_called_once_with(config_section="import_data", requires_db=True, enable_llm=False)
+        mock_base_script.assert_called_once_with(
+            config_section="import_data", requires_db=True, enable_llm=False
+        )
         assert import_data.name == "ImportData"
 
     def test_run_success(self, import_data: ImportData) -> None:
@@ -58,7 +61,9 @@ class TestImportData:
     def test_main(self, mock_execute: MagicMock) -> None:
         """Test the main execution block."""
         # Patch the ImportData class to prevent actual instantiation
-        with patch("dewey.core.data_upload.import_data.ImportData", autospec=True) as MockImportData:
+        with patch(
+            "dewey.core.data_upload.import_data.ImportData", autospec=True
+        ) as MockImportData:
             # Call the main execution block
             import_data = ImportData()
             import_data.execute()

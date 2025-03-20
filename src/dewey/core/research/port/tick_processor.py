@@ -1,7 +1,5 @@
 import datetime
-import logging
 import os
-import time
 from typing import Any, Dict, List
 
 import duckdb
@@ -15,8 +13,6 @@ from dewey.core.db.connection import (
     get_connection,
     get_motherduck_connection,
 )
-from dewey.core.db.utils import create_table, execute_query
-from dewey.llm.llm_utils import call_llm
 
 # Load environment variables
 load_dotenv()
@@ -77,13 +73,17 @@ class TickProcessor(BaseScript):
             if data["status"] == "OK" and "results" in data:
                 return data["results"]
             else:
-                self.logger.warning(f"No results found for {ticker} on {date}: {data.get('error')}")
+                self.logger.warning(
+                    f"No results found for {ticker} on {date}: {data.get('error')}"
+                )
                 return []
         except requests.exceptions.RequestException as e:
             self.logger.error(f"API request failed for {ticker} on {date}: {e}")
             raise
 
-    def _transform_ticks(self, ticks: List[Dict[str, Any]], ticker: str) -> pd.DataFrame:
+    def _transform_ticks(
+        self, ticks: List[Dict[str, Any]], ticker: str
+    ) -> pd.DataFrame:
         """
         Transforms raw tick data into a Pandas DataFrame with appropriate data types.
 
@@ -113,10 +113,22 @@ class TickProcessor(BaseScript):
         # Apply transformations
         df["ticker"] = ticker
         df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms", utc=True)
-        df["conditions"] = df["conditions"].apply(lambda x: ",".join(x))  # Join conditions list
+        df["conditions"] = df["conditions"].apply(
+            lambda x: ",".join(x)
+        )  # Join conditions list
 
         # Select and reorder columns
-        df = df[["ticker", "trade_id", "timestamp", "price", "size", "conditions", "sequence_number"]]
+        df = df[
+            [
+                "ticker",
+                "trade_id",
+                "timestamp",
+                "price",
+                "size",
+                "conditions",
+                "sequence_number",
+            ]
+        ]
 
         return df
 

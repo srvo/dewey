@@ -1,13 +1,12 @@
 from dewey.core.base_script import BaseScript
-import logging
-from typing import Any, Dict, Optional
+
 
 class Bing(BaseScript):
     """
     A class for interacting with the Bing search engine.
     """
 
-    def __init__(self, config_section: str = 'bing') -> None:
+    def __init__(self, config_section: str = "bing") -> None:
         """
         Initializes the Bing search engine class.
 

@@ -1,10 +1,10 @@
 """Common test fixtures for analysis tests."""
+
 import os
 import pytest
-from pathlib import Path
 from unittest.mock import MagicMock
-from dewey.core.db.connection import get_connection
 from dewey.llm.llm_utils import LLMHandler
+
 
 @pytest.fixture
 def tmp_data_dir(tmp_path):
@@ -12,6 +12,7 @@ def tmp_data_dir(tmp_path):
     data_dir = tmp_path / "data"
     data_dir.mkdir()
     return data_dir
+
 
 @pytest.fixture
 def mock_db_connection():
@@ -23,6 +24,7 @@ def mock_db_connection():
     mock_conn.__exit__.return_value = None
     return mock_conn
 
+
 @pytest.fixture
 def mock_llm_handler():
     """Mock LLM handler."""
@@ -32,9 +34,10 @@ def mock_llm_handler():
         "analysis": "Test analysis",
         "summary": "Test summary",
         "ethical_score": 7.5,
-        "risk_level": "medium"
+        "risk_level": "medium",
     }
     return mock_handler
+
 
 @pytest.fixture
 def mock_search_results():
@@ -44,9 +47,10 @@ def mock_search_results():
             "title": "Test Result",
             "link": "http://test.com",
             "snippet": "Test snippet",
-            "source": "test.com"
+            "source": "test.com",
         }
     ]
+
 
 @pytest.fixture
 def sample_companies_csv(tmp_data_dir):
@@ -54,14 +58,15 @@ def sample_companies_csv(tmp_data_dir):
     companies_data = """Company,Symbol,Category,Criteria
 Test Corp,TEST,Test Category,Test Criteria
 Another Corp,ANTR,Another Category,Another Criteria"""
-    
+
     csv_path = tmp_data_dir / "companies.csv"
     csv_path.write_text(companies_data)
     return csv_path
+
 
 @pytest.fixture
 def mock_output_handler():
     """Mock output handler."""
     mock_handler = MagicMock()
     mock_handler.save_results.return_value = None
-    return mock_handler 
+    return mock_handler

@@ -1,12 +1,9 @@
 import logging
-from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from dewey.core.crm.email_classifier import EmailClassifier
-from dewey.core.db.connection import DatabaseConnection
-from dewey.llm.llm_utils import LLMClient
 
 
 class TestEmailClassifier:
@@ -54,7 +51,11 @@ class TestEmailClassifier:
             description="Test Description",
         )
         mock_base_script.assert_called_once_with(
-            config_section="test_section", requires_db=True, enable_llm=True, name="TestClassifier", description="Test Description"
+            config_section="test_section",
+            requires_db=True,
+            enable_llm=True,
+            name="TestClassifier",
+            description="Test Description",
         )
         assert classifier.name == "TestClassifier"
         assert classifier.description == "Test Description"
@@ -73,10 +74,10 @@ class TestEmailClassifier:
                 mock_logger.info.assert_called_with(
                     "Email classification process completed."
                 )
-                mock_get_config_value.assert_called_once_with("email_classifier.api_key")
-                mock_logger.debug.assert_called_with(
-                    "Retrieved API key: test_api_key"
+                mock_get_config_value.assert_called_once_with(
+                    "email_classifier.api_key"
                 )
+                mock_logger.debug.assert_called_with("Retrieved API key: test_api_key")
 
     def test_run_config_error(self) -> None:
         """Tests the run method when there's an error retrieving the API key."""
@@ -89,7 +90,9 @@ class TestEmailClassifier:
                 mock_logger.info.assert_called_once_with(
                     "Starting email classification process."
                 )
-                mock_get_config_value.assert_called_once_with("email_classifier.api_key")
+                mock_get_config_value.assert_called_once_with(
+                    "email_classifier.api_key"
+                )
                 mock_logger.error.assert_not_called()
 
     def test_run_no_api_key(self) -> None:
@@ -103,5 +106,7 @@ class TestEmailClassifier:
                 mock_logger.info.assert_called_with(
                     "Email classification process completed."
                 )
-                mock_get_config_value.assert_called_once_with("email_classifier.api_key")
+                mock_get_config_value.assert_called_once_with(
+                    "email_classifier.api_key"
+                )
                 mock_logger.debug.assert_called_with("Retrieved API key: None")

@@ -1,8 +1,6 @@
 from typing import Any, Dict
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection
-from dewey.llm.llm_utils import LLMClient
 
 
 class CompanyResearchIntegration(BaseScript):
@@ -18,7 +16,9 @@ class CompanyResearchIntegration(BaseScript):
         Args:
             config_section: The configuration section to use.
         """
-        super().__init__(config_section=config_section, requires_db=True, enable_llm=True)
+        super().__init__(
+            config_section=config_section, requires_db=True, enable_llm=True
+        )
 
     def run(self) -> None:
         """Executes the company research integration process.
@@ -47,7 +47,9 @@ class CompanyResearchIntegration(BaseScript):
             self.logger.info("Company research integration completed successfully.")
 
         except Exception as e:
-            self.logger.exception(f"An error occurred during company research integration: {e}")
+            self.logger.exception(
+                f"An error occurred during company research integration: {e}"
+            )
             raise
 
     def _retrieve_company_data(self) -> Dict[str, Any]:

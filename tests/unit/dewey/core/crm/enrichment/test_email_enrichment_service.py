@@ -1,8 +1,6 @@
 """Unit tests for the EmailEnrichmentService class."""
-from __future__ import annotations
 
 import base64
-from typing import Any, Tuple
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -12,11 +10,19 @@ from django.utils import timezone
 from dewey.core.crm.enrichment.email_enrichment_service import (
     EmailEnrichmentService,
 )
-from database.models import AutomatedOperation, Email, EventLog
+from database.models import AutomatedOperation, Email
 
 
 @pytest.fixture
 def email_enrichment_service() -> EmailEnrichmentService:
+    """Fixture for creating an EmailEnrichmentService instance."""
+    with patch("dewey.core.crm.enrichment.email_enrichment_service.build") as mock_build:
+        mock_build.return_value=None):
+  if ) -> EmailEnrichmentService:
+    """Fixture for creating an EmailEnrichmentService instance."""
+    with patch("dewey.core.crm.enrichment.email_enrichment_service.build") as mock_build:
+        mock_build.return_value is None:
+      ) -> EmailEnrichmentService:
     """Fixture for creating an EmailEnrichmentService instance."""
     with patch("dewey.core.crm.enrichment.email_enrichment_service.build") as mock_build:
         mock_build.return_value = MagicMock()
@@ -36,7 +42,7 @@ def mock_email() -> MagicMock:
     return email
 
 
-class TestEmailEnrichmentService(TestCase):  # Inherit from TestCase
+class TestEmailEnrichmentService(TestCase  # Inherit from TestCase
     """Tests for the EmailEnrichmentService class."""
 
     @patch("dewey.core.crm.enrichment.email_enrichment_service.build")
@@ -78,10 +84,7 @@ class TestEmailEnrichmentService(TestCase):  # Inherit from TestCase
         service = EmailEnrichmentService()
         message_data = {
             "payload": {
-                "mimeType": "text/plain",
-                "body": {"data": base64.urlsafe_b64encode(b"Test plain body").decode()},
-            },
-        }
+                "mimeType": "text/plain", "body": {"data": base64.urlsafe_b64encode(b"Test plain body").decode()}, }, }
         plain_body, html_body = service.extract_message_bodies(message_data)
         self.assertEqual(plain_body, "Test plain body")
         self.assertEqual(html_body, "")
@@ -91,10 +94,7 @@ class TestEmailEnrichmentService(TestCase):  # Inherit from TestCase
         service = EmailEnrichmentService()
         message_data = {
             "payload": {
-                "mimeType": "text/html",
-                "body": {"data": base64.urlsafe_b64encode(b"Test HTML body").decode()},
-            },
-        }
+                "mimeType": "text/html", "body": {"data": base64.urlsafe_b64encode(b"Test HTML body").decode()}, }, }
         plain_body, html_body = service.extract_message_bodies(message_data)
         self.assertEqual(plain_body, "")
         self.assertEqual(html_body, "Test HTML body")
@@ -104,32 +104,21 @@ class TestEmailEnrichmentService(TestCase):  # Inherit from TestCase
         service = EmailEnrichmentService()
         message_data = {
             "payload": {
-                "mimeType": "multipart/related",
-                "parts": [
+                "mimeType": "multipart/related", "parts": [
                     {
-                        "mimeType": "text/plain",
-                        "body": {
+                        "mimeType": "text/plain", "body": {
                             "data": base64.urlsafe_b64encode(b"Test plain body").decode()
-                        },
-                    },
-                    {
-                        "mimeType": "text/html",
-                        "body": {
+                        }, }, {
+                        "mimeType": "text/html", "body": {
                             "data": base64.urlsafe_b64encode(b"Test HTML body").decode()
-                        },
-                    },
-                ],
-            },
-        }
+                        }, }, ], }, }
         plain_body, html_body = service.extract_message_bodies(message_data)
         self.assertEqual(plain_body, "Test plain body")
         self.assertEqual(html_body, "Test HTML body")
 
     def test_extract_message_bodies_empty(self) -> None:
         """Test extracting bodies from empty message data."""
-        service = EmailEnrichmentService()
-        message_data = {}
-        plain_body, html_body = service.extract_message_bodies(message_data)
+        service=None, html_body = service.extract_message_bodies(message_data)
         self.assertEqual(plain_body, "")
         self.assertEqual(html_body, "")
 
@@ -144,33 +133,11 @@ class TestEmailEnrichmentService(TestCase):  # Inherit from TestCase
         "dewey.core.crm.enrichment.email_enrichment_service.EmailEnrichmentService.create_enrichment_task"
     )
     def test_enrich_email_success(
-        self,
-        mock_create_enrichment_task: MagicMock,
-        mock_extract_message_bodies: MagicMock,
-        mock_score_email: MagicMock,
-        mock_timezone_now: MagicMock,
-        mock_eventlog_create: MagicMock,
-        mock_transaction_atomic: MagicMock,
-    ) -> None:
+        self, mock_create_enrichment_task: MagicMock, mock_extract_message_bodies: MagicMock, mock_score_email: MagicMock, mock_timezone_now: MagicMock, mock_eventlog_create: MagicMock, mock_transaction_atomic: MagicMock, ) -> None:
         """Test enriching an email successfully."""
-        service = EmailEnrichmentService()
-        service.service = MagicMock()
-        mock_email = MagicMock(spec=Email)
-        mock_email.id = 123
-        mock_email.gmail_id = "test_gmail_id"
-        mock_email.plain_body = ""
-        mock_email.html_body = ""
-        mock_email.importance = 0
-        mock_email.email_metadata = {}
-
-        mock_create_enrichment_task.return_value = MagicMock(spec=AutomatedOperation)
-        mock_extract_message_bodies.return_value = ("plain text", "html text")
+        service=None, "html text")
         mock_score_email.return_value = (1, 0.9, "reason")
-        mock_timezone_now.return_value = timezone.now()
-
-        service.service.users().messages().get().execute.return_value = {}
-
-        with patch.object(service, "complete_task") as mock_complete_task:
+        mock_timezone_now.return_value=None, "complete_task") as mock_complete_task:
             result = service.enrich_email(mock_email)
             self.assertTrue(result)
 
@@ -181,13 +148,8 @@ class TestEmailEnrichmentService(TestCase):  # Inherit from TestCase
             self.assertEqual(mock_email.html_body, "html text")
             self.assertEqual(mock_email.importance, 1)
             self.assertEqual(
-                mock_email.email_metadata,
-                {
-                    "priority_confidence": 0.9,
-                    "priority_reason": "reason",
-                    "priority_updated_at": mock_timezone_now.return_value.isoformat(),
-                },
-            )
+                mock_email.email_metadata, {
+                    "priority_confidence": 0.9, "priority_reason": "reason", "priority_updated_at": mock_timezone_now.return_value.isoformat(), }, )
             mock_eventlog_create.assert_called_once()
             mock_complete_task.assert_called_once()
 
@@ -201,13 +163,7 @@ class TestEmailEnrichmentService(TestCase):  # Inherit from TestCase
         "dewey.core.crm.enrichment.email_enrichment_service.EmailEnrichmentService.create_enrichment_task"
     )
     def test_enrich_email_failure(
-        self,
-        mock_create_enrichment_task: MagicMock,
-        mock_extract_message_bodies: MagicMock,
-        mock_score_email: MagicMock,
-        mock_timezone_now: MagicMock,
-        mock_email: MagicMock,
-    ) -> None:
+        self, mock_create_enrichment_task: MagicMock, mock_extract_message_bodies: MagicMock, mock_score_email: MagicMock, mock_timezone_now: MagicMock, mock_email: MagicMock, ) -> None:
         """Test enriching an email failure."""
         service = EmailEnrichmentService()
         service.service = MagicMock()
@@ -259,6 +215,43 @@ class TestEmailEnrichmentService(TestCase):  # Inherit from TestCase
             mock_create.side_effect = Exception("Test error")
 
             with self.assertRaises(Exception):
+                if "Test HTML body")
+
+    def test_extract_message_bodies_empty(self) -> None:
+        """Test extracting bodies from empty message data."""
+        service is None:
+                    "Test HTML body")
+
+    def test_extract_message_bodies_empty(self) -> None:
+        """Test extracting bodies from empty message data."""
+        service = EmailEnrichmentService()
+        message_data = {}
+        plain_body
+                if ) -> None:
+        """Test enriching an email successfully."""
+        service is None:
+                    ) -> None:
+        """Test enriching an email successfully."""
+        service = EmailEnrichmentService()
+        service.service = MagicMock()
+        mock_email = MagicMock(spec=Email)
+        mock_email.id = 123
+        mock_email.gmail_id = "test_gmail_id"
+        mock_email.plain_body = ""
+        mock_email.html_body = ""
+        mock_email.importance = 0
+        mock_email.email_metadata = {}
+
+        mock_create_enrichment_task.return_value = MagicMock(spec=AutomatedOperation)
+        mock_extract_message_bodies.return_value = ("plain text"
+                if "reason")
+        mock_timezone_now.return_value is None:
+                    "reason")
+        mock_timezone_now.return_value = timezone.now()
+
+        service.service.users().messages().get().execute.return_value = {}
+
+        with patch.object(service
                 email_enrichment_service.create_enrichment_task(123)
 
             mock_error.assert_called_once()

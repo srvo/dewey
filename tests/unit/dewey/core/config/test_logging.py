@@ -5,7 +5,6 @@ from unittest.mock import patch
 import pytest
 import yaml
 
-from dewey.core.base_script import BaseScript
 from dewey.core.config.logging import LoggingExample
 
 
@@ -26,7 +25,12 @@ class TestLoggingExample:
         assert isinstance(logging_example.logger, logging.Logger)
 
     @patch("dewey.core.config.logging.LoggingExample.get_config_value")
-    def test_run(self, mock_get_config_value: Any, logging_example: LoggingExample, caplog: pytest.LogCaptureFixture) -> None:
+    def test_run(
+        self,
+        mock_get_config_value: Any,
+        logging_example: LoggingExample,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
         """Tests the run method."""
         mock_get_config_value.return_value = "test_value"
         caplog.set_level(logging.INFO)
@@ -46,7 +50,13 @@ class TestLoggingExample:
 
     @patch("dewey.core.config.logging.LoggingExample.parse_args")
     @patch("dewey.core.config.logging.LoggingExample.run")
-    def test_execute(self, mock_run: Any, mock_parse_args: Any, logging_example: LoggingExample, caplog: pytest.LogCaptureFixture) -> None:
+    def test_execute(
+        self,
+        mock_run: Any,
+        mock_parse_args: Any,
+        logging_example: LoggingExample,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
         """Tests the execute method."""
         mock_parse_args.return_value = None
         caplog.set_level(logging.INFO)
@@ -57,7 +67,12 @@ class TestLoggingExample:
         assert mock_run.call_count == 1
 
     @patch("dewey.core.config.logging.LoggingExample.parse_args")
-    def test_execute_keyboard_interrupt(self, mock_parse_args: Any, logging_example: LoggingExample, caplog: pytest.LogCaptureFixture) -> None:
+    def test_execute_keyboard_interrupt(
+        self,
+        mock_parse_args: Any,
+        logging_example: LoggingExample,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
         """Tests the execute method with KeyboardInterrupt."""
         mock_parse_args.return_value = None
         logging_example.run = lambda: (_ for _ in ()).throw(KeyboardInterrupt)  # type: ignore
@@ -67,7 +82,12 @@ class TestLoggingExample:
         assert "Script interrupted by user" in caplog.text
 
     @patch("dewey.core.config.logging.LoggingExample.parse_args")
-    def test_execute_exception(self, mock_parse_args: Any, logging_example: LoggingExample, caplog: pytest.LogCaptureFixture) -> None:
+    def test_execute_exception(
+        self,
+        mock_parse_args: Any,
+        logging_example: LoggingExample,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
         """Tests the execute method with a generic Exception."""
         mock_parse_args.return_value = None
         logging_example.run = lambda: (_ for _ in ()).throw(Exception("Test Exception"))  # type: ignore
@@ -102,20 +122,22 @@ class TestLoggingExample:
         assert logging_example.get_config_value("level2", None) is None
 
     @patch("logging.basicConfig")
-    def test_setup_logging_from_config(self, mock_basicConfig: Any, logging_example: LoggingExample, tmp_path: Path) -> None:
+    def test_setup_logging_from_config(
+        self, mock_basicConfig: Any, logging_example: LoggingExample, tmp_path: Path
+    ) -> None:
         """Tests the _setup_logging method when config is available."""
         # Create a temporary config file
         config_data = {
-            'core': {
-                'logging': {
-                    'level': 'DEBUG',
-                    'format': '%(levelname)s - %(message)s',
-                    'date_format': '%Y-%m-%d'
+            "core": {
+                "logging": {
+                    "level": "DEBUG",
+                    "format": "%(levelname)s - %(message)s",
+                    "date_format": "%Y-%m-%d",
                 }
             }
         }
         config_file = tmp_path / "dewey.yaml"
-        with open(config_file, 'w') as f:
+        with open(config_file, "w") as f:
             yaml.dump(config_data, f)
 
         # Patch the CONFIG_PATH to point to the temporary config file
@@ -125,13 +147,15 @@ class TestLoggingExample:
         # Assert that basicConfig was called with the correct arguments
         mock_basicConfig.assert_called_once_with(
             level=logging.DEBUG,
-            format='%(levelname)s - %(message)s',
-            datefmt='%Y-%m-%d',
+            format="%(levelname)s - %(message)s",
+            datefmt="%Y-%m-%d",
         )
         assert isinstance(logging_example.logger, logging.Logger)
 
     @patch("logging.basicConfig")
-    def test_setup_logging_default_config(self, mock_basicConfig: Any, logging_example: LoggingExample) -> None:
+    def test_setup_logging_default_config(
+        self, mock_basicConfig: Any, logging_example: LoggingExample
+    ) -> None:
         """Tests the _setup_logging method when config is not available."""
         # Patch the CONFIG_PATH to a non-existent file
         with patch("dewey.core.base_script.CONFIG_PATH", "non_existent_file.yaml"):
@@ -140,17 +164,19 @@ class TestLoggingExample:
         # Assert that basicConfig was called with the default arguments
         mock_basicConfig.assert_called_once_with(
             level=logging.INFO,
-            format='%(asctime)s - %(levelname)s - %(name)s - %(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S',
+            format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
         )
         assert isinstance(logging_example.logger, logging.Logger)
 
-    def test_load_config_success(self, logging_example: LoggingExample, tmp_path: Path) -> None:
+    def test_load_config_success(
+        self, logging_example: LoggingExample, tmp_path: Path
+    ) -> None:
         """Tests the _load_config method when the config file is loaded successfully."""
         # Create a temporary config file
-        config_data = {'test_key': 'test_value'}
+        config_data = {"test_key": "test_value"}
         config_file = tmp_path / "dewey.yaml"
-        with open(config_file, 'w') as f:
+        with open(config_file, "w") as f:
             yaml.dump(config_data, f)
 
         # Patch the CONFIG_PATH to point to the temporary config file
@@ -160,85 +186,121 @@ class TestLoggingExample:
         # Assert that the config is loaded correctly
         assert config == config_data
 
-    def test_load_config_section_success(self, logging_example: LoggingExample, tmp_path: Path) -> None:
+    def test_load_config_section_success(
+        self, logging_example: LoggingExample, tmp_path: Path
+    ) -> None:
         """Tests the _load_config method when a specific config section is loaded successfully."""
         # Create a temporary config file
-        config_data = {'section1': {'test_key': 'test_value'}, 'section2': {'other_key': 'other_value'}}
+        config_data = {
+            "section1": {"test_key": "test_value"},
+            "section2": {"other_key": "other_value"},
+        }
         config_file = tmp_path / "dewey.yaml"
-        with open(config_file, 'w') as f:
+        with open(config_file, "w") as f:
             yaml.dump(config_data, f)
 
         # Patch the CONFIG_PATH to point to the temporary config file
         with patch("dewey.core.base_script.CONFIG_PATH", config_file):
-            logging_example.config_section = 'section1'
+            logging_example.config_section = "section1"
             config = logging_example._load_config()
 
         # Assert that the config is loaded correctly
-        assert config == config_data['section1']
+        assert config == config_data["section1"]
 
-    def test_load_config_section_not_found(self, logging_example: LoggingExample, tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+    def test_load_config_section_not_found(
+        self,
+        logging_example: LoggingExample,
+        tmp_path: Path,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
         """Tests the _load_config method when the specified config section is not found."""
         # Create a temporary config file
-        config_data = {'section1': {'test_key': 'test_value'}}
+        config_data = {"section1": {"test_key": "test_value"}}
         config_file = tmp_path / "dewey.yaml"
-        with open(config_file, 'w') as f:
+        with open(config_file, "w") as f:
             yaml.dump(config_data, f)
 
         # Patch the CONFIG_PATH to point to the temporary config file
         with patch("dewey.core.base_script.CONFIG_PATH", config_file):
-            logging_example.config_section = 'section2'
+            logging_example.config_section = "section2"
             caplog.set_level(logging.WARNING)
             config = logging_example._load_config()
 
         # Assert that a warning is logged and the full config is returned
-        assert "Config section 'section2' not found in dewey.yaml. Using full config." in caplog.text
+        assert (
+            "Config section 'section2' not found in dewey.yaml. Using full config."
+            in caplog.text
+        )
         assert config == config_data
 
     def test_load_config_file_not_found(self, logging_example: LoggingExample) -> None:
         """Tests the _load_config method when the config file is not found."""
         # Patch the CONFIG_PATH to a non-existent file
-        with patch("dewey.core.base_script.CONFIG_PATH", "non_existent_file.yaml"), pytest.raises(FileNotFoundError):
+        with (
+            patch("dewey.core.base_script.CONFIG_PATH", "non_existent_file.yaml"),
+            pytest.raises(FileNotFoundError),
+        ):
             logging_example._load_config()
 
-    def test_load_config_invalid_yaml(self, logging_example: LoggingExample, tmp_path: Path) -> None:
+    def test_load_config_invalid_yaml(
+        self, logging_example: LoggingExample, tmp_path: Path
+    ) -> None:
         """Tests the _load_config method when the config file contains invalid YAML."""
         # Create a temporary config file with invalid YAML
         config_file = tmp_path / "dewey.yaml"
-        with open(config_file, 'w') as f:
+        with open(config_file, "w") as f:
             f.write("invalid: yaml: content")
 
         # Patch the CONFIG_PATH to point to the temporary config file
-        with patch("dewey.core.base_script.CONFIG_PATH", config_file), pytest.raises(yaml.YAMLError):
+        with (
+            patch("dewey.core.base_script.CONFIG_PATH", config_file),
+            pytest.raises(yaml.YAMLError),
+        ):
             logging_example._load_config()
 
     @patch("dewey.core.config.logging.get_connection")
-    def test_initialize_db_connection_success(self, mock_get_connection: Any, logging_example: LoggingExample) -> None:
+    def test_initialize_db_connection_success(
+        self, mock_get_connection: Any, logging_example: LoggingExample
+    ) -> None:
         """Tests the _initialize_db_connection method when the database connection is initialized successfully."""
         # Mock the config attribute
-        logging_example.config = {'core': {'database': {'connection_string': 'test_connection_string'}}}
+        logging_example.config = {
+            "core": {"database": {"connection_string": "test_connection_string"}}
+        }
         logging_example.requires_db = True
 
         # Call the method
         logging_example._initialize_db_connection()
 
         # Assert that get_connection was called with the correct arguments
-        mock_get_connection.assert_called_once_with({'connection_string': 'test_connection_string'})
+        mock_get_connection.assert_called_once_with(
+            {"connection_string": "test_connection_string"}
+        )
         assert logging_example.db_conn == mock_get_connection.return_value
 
     @patch("dewey.core.config.logging.get_connection")
-    def test_initialize_db_connection_import_error(self, mock_get_connection: Any, logging_example: LoggingExample) -> None:
+    def test_initialize_db_connection_import_error(
+        self, mock_get_connection: Any, logging_example: LoggingExample
+    ) -> None:
         """Tests the _initialize_db_connection method when the database module cannot be imported."""
         # Mock the import of the database module to raise an ImportError
-        with patch.dict('sys.modules', {'dewey.core.db.connection': None}), pytest.raises(ImportError):
+        with (
+            patch.dict("sys.modules", {"dewey.core.db.connection": None}),
+            pytest.raises(ImportError),
+        ):
             logging_example.requires_db = True
             logging_example._initialize_db_connection()
 
     @patch("dewey.core.config.logging.get_connection")
-    def test_initialize_db_connection_exception(self, mock_get_connection: Any, logging_example: LoggingExample) -> None:
+    def test_initialize_db_connection_exception(
+        self, mock_get_connection: Any, logging_example: LoggingExample
+    ) -> None:
         """Tests the _initialize_db_connection method when an exception occurs during database connection initialization."""
         # Mock the get_connection function to raise an exception
         mock_get_connection.side_effect = Exception("Test Exception")
-        logging_example.config = {'core': {'database': {'connection_string': 'test_connection_string'}}}
+        logging_example.config = {
+            "core": {"database": {"connection_string": "test_connection_string"}}
+        }
         logging_example.requires_db = True
 
         # Call the method and assert that an exception is raised
@@ -248,33 +310,42 @@ class TestLoggingExample:
         assert logging_example.db_conn is None
 
     @patch("dewey.core.config.logging.get_llm_client")
-    def test_initialize_llm_client_success(self, mock_get_llm_client: Any, logging_example: LoggingExample) -> None:
+    def test_initialize_llm_client_success(
+        self, mock_get_llm_client: Any, logging_example: LoggingExample
+    ) -> None:
         """Tests the _initialize_llm_client method when the LLM client is initialized successfully."""
         # Mock the config attribute
-        logging_example.config = {'llm': {'model': 'test_model'}}
+        logging_example.config = {"llm": {"model": "test_model"}}
         logging_example.enable_llm = True
 
         # Call the method
         logging_example._initialize_llm_client()
 
         # Assert that get_llm_client was called with the correct arguments
-        mock_get_llm_client.assert_called_once_with({'model': 'test_model'})
+        mock_get_llm_client.assert_called_once_with({"model": "test_model"})
         assert logging_example.llm_client == mock_get_llm_client.return_value
 
     @patch("dewey.core.config.logging.get_llm_client")
-    def test_initialize_llm_client_import_error(self, mock_get_llm_client: Any, logging_example: LoggingExample) -> None:
+    def test_initialize_llm_client_import_error(
+        self, mock_get_llm_client: Any, logging_example: LoggingExample
+    ) -> None:
         """Tests the _initialize_llm_client method when the LLM module cannot be imported."""
         # Mock the import of the LLM module to raise an ImportError
-        with patch.dict('sys.modules', {'dewey.llm.llm_utils': None}), pytest.raises(ImportError):
+        with (
+            patch.dict("sys.modules", {"dewey.llm.llm_utils": None}),
+            pytest.raises(ImportError),
+        ):
             logging_example.enable_llm = True
             logging_example._initialize_llm_client()
 
     @patch("dewey.core.config.logging.get_llm_client")
-    def test_initialize_llm_client_exception(self, mock_get_llm_client: Any, logging_example: LoggingExample) -> None:
+    def test_initialize_llm_client_exception(
+        self, mock_get_llm_client: Any, logging_example: LoggingExample
+    ) -> None:
         """Tests the _initialize_llm_client method when an exception occurs during LLM client initialization."""
         # Mock the get_llm_client function to raise an exception
         mock_get_llm_client.side_effect = Exception("Test Exception")
-        logging_example.config = {'llm': {'model': 'test_model'}}
+        logging_example.config = {"llm": {"model": "test_model"}}
         logging_example.enable_llm = True
 
         # Call the method and assert that an exception is raised
@@ -303,7 +374,13 @@ class TestLoggingExample:
         assert parser._actions[3].dest == "llm_model"
 
     @patch("argparse.ArgumentParser.parse_args")
-    def test_parse_args(self, mock_parse_args: Any, logging_example: LoggingExample, tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+    def test_parse_args(
+        self,
+        mock_parse_args: Any,
+        logging_example: LoggingExample,
+        tmp_path: Path,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
         """Tests the parse_args method."""
         # Mock the parse_args method to return a Namespace object
         mock_args = mock_parse_args.return_value
@@ -311,8 +388,8 @@ class TestLoggingExample:
         mock_args.config = str(tmp_path / "test_config.yaml")
 
         # Create a temporary config file
-        config_data = {'test_key': 'test_value'}
-        with open(mock_args.config, 'w') as f:
+        config_data = {"test_key": "test_value"}
+        with open(mock_args.config, "w") as f:
             yaml.dump(config_data, f)
 
         # Call the method
@@ -327,7 +404,13 @@ class TestLoggingExample:
         assert f"Loaded configuration from {mock_args.config}" in caplog.text
 
     @patch("argparse.ArgumentParser.parse_args")
-    def test_parse_args_config_not_found(self, mock_parse_args: Any, logging_example: LoggingExample, tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+    def test_parse_args_config_not_found(
+        self,
+        mock_parse_args: Any,
+        logging_example: LoggingExample,
+        tmp_path: Path,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
         """Tests the parse_args method when the config file is not found."""
         # Mock the parse_args method to return a Namespace object
         mock_args = mock_parse_args.return_value
@@ -344,7 +427,13 @@ class TestLoggingExample:
 
     @patch("argparse.ArgumentParser.parse_args")
     @patch("dewey.core.config.logging.get_connection")
-    def test_parse_args_db_connection_string(self, mock_get_connection: Any, mock_parse_args: Any, logging_example: LoggingExample, caplog: pytest.LogCaptureFixture) -> None:
+    def test_parse_args_db_connection_string(
+        self,
+        mock_get_connection: Any,
+        mock_parse_args: Any,
+        logging_example: LoggingExample,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
         """Tests the parse_args method when a database connection string is provided."""
         # Mock the parse_args method to return a Namespace object
         mock_args = mock_parse_args.return_value
@@ -360,13 +449,21 @@ class TestLoggingExample:
         logging_example.parse_args()
 
         # Assert that the database connection is updated correctly
-        mock_get_connection.assert_called_once_with({"connection_string": "custom_connection_string"})
+        mock_get_connection.assert_called_once_with(
+            {"connection_string": "custom_connection_string"}
+        )
         assert logging_example.db_conn == mock_get_connection.return_value
         assert "Using custom database connection" in caplog.text
 
     @patch("argparse.ArgumentParser.parse_args")
     @patch("dewey.core.config.logging.get_llm_client")
-    def test_parse_args_llm_model(self, mock_get_llm_client: Any, mock_parse_args: Any, logging_example: LoggingExample, caplog: pytest.LogCaptureFixture) -> None:
+    def test_parse_args_llm_model(
+        self,
+        mock_get_llm_client: Any,
+        mock_parse_args: Any,
+        logging_example: LoggingExample,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
         """Tests the parse_args method when an LLM model is provided."""
         # Mock the parse_args method to return a Namespace object
         mock_args = mock_parse_args.return_value
@@ -387,7 +484,9 @@ class TestLoggingExample:
         assert f"Using custom LLM model: {mock_args.llm_model}" in caplog.text
 
     @patch("dewey.core.config.logging.LoggingExample._cleanup")
-    def test_cleanup_db_connection(self, mock_cleanup: Any, logging_example: LoggingExample) -> None:
+    def test_cleanup_db_connection(
+        self, mock_cleanup: Any, logging_example: LoggingExample
+    ) -> None:
         """Tests the _cleanup method when a database connection exists."""
         # Mock the database connection and its close method
         mock_db_conn = pytest.MagicMock()
@@ -400,7 +499,9 @@ class TestLoggingExample:
         mock_db_conn.close.assert_called_once()
 
     @patch("dewey.core.config.logging.LoggingExample._cleanup")
-    def test_cleanup_no_db_connection(self, mock_cleanup: Any, logging_example: LoggingExample) -> None:
+    def test_cleanup_no_db_connection(
+        self, mock_cleanup: Any, logging_example: LoggingExample
+    ) -> None:
         """Tests the _cleanup method when no database connection exists."""
         # Set the db_conn attribute to None
         logging_example.db_conn = None

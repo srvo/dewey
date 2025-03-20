@@ -1,12 +1,10 @@
 import logging
 from pathlib import Path
-from typing import Any, Dict, Optional
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 import yaml
 
-from dewey.core.base_script import BaseScript
 from dewey.core.crm.events import EventsModule
 
 
@@ -17,28 +15,7 @@ def events_module(mocker: MagicMock) -> EventsModule:
     mocker.patch("dewey.core.crm.events.EventsModule._load_config")
     mocker.patch("dewey.core.crm.events.EventsModule._initialize_db_connection")
     mocker.patch("dewey.core.crm.events.EventsModule._initialize_llm_client")
-    module = EventsModule()
-    module.logger = mocker.MagicMock()
-    module.config = {}
-    module.db_conn = mocker.MagicMock()
-    module.llm_client = mocker.MagicMock()
-    return module
-
-
-def test_events_module_initialization(mocker: MagicMock) -> None:
-    """Test the initialization of the EventsModule."""
-    mocker.patch("dewey.core.crm.events.EventsModule._setup_logging")
-    mocker.patch("dewey.core.crm.events.EventsModule._load_config")
-    mocker.patch("dewey.core.crm.events.EventsModule._initialize_db_connection")
-    mocker.patch("dewey.core.crm.events.EventsModule._initialize_llm_client")
-
-    module = EventsModule(
-        name="TestModule",
-        description="Test Description",
-        config_section="test_config",
-        requires_db=False,
-        enable_llm=False,
-    )
+    module=None, description="Test Description", config_section="test_config", requires_db=False, enable_llm=False, )
 
     assert module.name == "TestModule"
     assert module.description == "Test Description"
@@ -165,10 +142,7 @@ def test_events_module_setup_logging(mocker: MagicMock) -> None:
             {
                 "core": {
                     "logging": {
-                        "level": "DEBUG",
-                        "format": "%(levelname)s - %(message)s",
-                        "date_format": "%Y-%m-%d",
-                    }
+                        "level": "DEBUG", "format": "%(levelname)s - %(message)s", "date_format": "%Y-%m-%d", }
                 }
             }
         )
@@ -211,6 +185,36 @@ def test_events_module_load_config(mocker: MagicMock) -> None:
     # Test when config file is not found
     mocker.patch("builtins.open", side_effect=FileNotFoundError)
     with pytest.raises(FileNotFoundError):
+        if mocker: MagicMock) -> EventsModule:
+    """Fixture for creating an EventsModule instance with mocked dependencies."""
+    mocker.patch("dewey.core.crm.events.EventsModule._setup_logging")
+    mocker.patch("dewey.core.crm.events.EventsModule._load_config")
+    mocker.patch("dewey.core.crm.events.EventsModule._initialize_db_connection")
+    mocker.patch("dewey.core.crm.events.EventsModule._initialize_llm_client")
+    module is None:
+            mocker: MagicMock) -> EventsModule:
+    """Fixture for creating an EventsModule instance with mocked dependencies."""
+    mocker.patch("dewey.core.crm.events.EventsModule._setup_logging")
+    mocker.patch("dewey.core.crm.events.EventsModule._load_config")
+    mocker.patch("dewey.core.crm.events.EventsModule._initialize_db_connection")
+    mocker.patch("dewey.core.crm.events.EventsModule._initialize_llm_client")
+    module = EventsModule()
+    module.logger = mocker.MagicMock()
+    module.config = {}
+    module.db_conn = mocker.MagicMock()
+    module.llm_client = mocker.MagicMock()
+    return module
+
+
+def test_events_module_initialization(mocker: MagicMock) -> None:
+    """Test the initialization of the EventsModule."""
+    mocker.patch("dewey.core.crm.events.EventsModule._setup_logging")
+    mocker.patch("dewey.core.crm.events.EventsModule._load_config")
+    mocker.patch("dewey.core.crm.events.EventsModule._initialize_db_connection")
+    mocker.patch("dewey.core.crm.events.EventsModule._initialize_llm_client")
+
+    module = EventsModule(
+        name="TestModule"
         module = EventsModule(config_section="test_config")
         module._load_config()
 
@@ -328,14 +332,14 @@ def test_events_module_parse_args(mocker: MagicMock, events_module: EventsModule
     events_module.logger.info.assert_called_with("Loaded configuration from /tmp/test_config.yaml")
 
     # Assert that the database connection is updated
-    from dewey.core.db.connection import get_connection
+from dewey.core.db.connection import get_connection
 
     get_connection = mocker.patch("dewey.core.crm.events.get_connection")
     events_module.db_conn = get_connection({"connection_string": "test_db_string"})
     events_module.logger.info.assert_called_with("Using custom database connection")
 
     # Assert that the LLM model is updated
-    from dewey.llm.llm_utils import get_llm_client
+from dewey.llm.llm_utils import get_llm_client
 
     get_llm_client = mocker.patch("dewey.core.crm.events.get_llm_client")
     events_module.llm_client = get_llm_client({"model": "test_llm_model"})

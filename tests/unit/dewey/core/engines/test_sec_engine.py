@@ -12,7 +12,9 @@ class TestSecEngine:
     @pytest.fixture
     def sec_engine(self):
         """Fixture to create a SecEngine instance."""
-        with patch("dewey.core.engines.sec_engine.SecEngine.get_config_value") as mock_get_config_value:
+        with patch(
+            "dewey.core.engines.sec_engine.SecEngine.get_config_value"
+        ) as mock_get_config_value:
             mock_get_config_value.return_value = "test_api_key"
             engine = SecEngine()
         return engine
@@ -50,7 +52,9 @@ class TestSecEngine:
     def test_run_method_exception_handling(self, sec_engine: SecEngine):
         """Test that exceptions in run are handled gracefully."""
         with patch.object(sec_engine.logger, "error") as mock_error:
-            with patch.object(sec_engine, "get_config_value", side_effect=Exception("Config Error")):
+            with patch.object(
+                sec_engine, "get_config_value", side_effect=Exception("Config Error")
+            ):
                 sec_engine.run()
                 mock_error.assert_called_once()
 

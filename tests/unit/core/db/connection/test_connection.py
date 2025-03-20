@@ -1,14 +1,17 @@
 """Tests for database connection management."""
+
 import pytest
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 import duckdb
-from datetime import datetime
 import time
 
 from dewey.core.db.connection import (
-    ConnectionPool, DatabaseManager, DatabaseConnectionError,
-    get_connection
+    ConnectionPool,
+    DatabaseManager,
+    DatabaseConnectionError,
+    get_connection,
 )
+
 
 class TestConnectionPool:
     """Test suite for ConnectionPool."""
@@ -66,7 +69,7 @@ class TestConnectionPool:
         """Test connection timeout."""
         # Fill the pool
         conns = [pool.get_connection() for _ in range(pool.pool_size)]
-        
+
         # Try to get another connection
         with pytest.raises(DatabaseConnectionError):
             pool.get_connection(timeout=0.1)
@@ -77,6 +80,7 @@ class TestConnectionPool:
         pool.close_all()
         assert len(pool.connections) == 0
         assert len(pool.in_use) == 0
+
 
 class TestDatabaseManager:
     """Test suite for DatabaseManager."""
@@ -102,7 +106,7 @@ class TestDatabaseManager:
         assert manager.offline_mode is False
 
         # Test offline status
-        with patch.object(manager, 'get_connection', side_effect=Exception):
+        with patch.object(manager, "get_connection", side_effect=Exception):
             assert manager.is_online() is False
             assert manager.offline_mode is True
 
@@ -137,6 +141,7 @@ class TestDatabaseManager:
         manager.close()
         assert manager.write_conn is None
 
+
 class TestConnectionContextManager:
     """Test suite for connection context manager."""
 
@@ -164,6 +169,7 @@ class TestConnectionContextManager:
             result = conn.execute("SELECT 1").fetchall()
             assert result == [(1,)]
 
+
 @pytest.mark.integration
 class TestDatabaseIntegration:
     """Integration tests for database components."""
@@ -171,35 +177,35 @@ class TestDatabaseIntegration:
     def test_full_connection_workflow(self):
         """Test complete connection workflow."""
         manager = DatabaseManager()
-        
+
         try:
             # Test online mode
             assert manager.is_online() is True
-            
+
             # Test write operations
             with manager.get_connection(for_write=True) as conn:
                 conn.execute("CREATE TABLE test (id INTEGER, value TEXT)")
                 conn.execute("INSERT INTO test VALUES (1, 'test')")
-            
+
             # Test read operations
             with manager.get_connection() as conn:
                 result = conn.execute("SELECT * FROM test").fetchall()
-                assert result == [(1, 'test')]
-            
+                assert result == [(1, "test")]
+
             # Test batch operations
             queries = [
-                ("INSERT INTO test VALUES (?, ?)", [2, 'test2']),
-                ("UPDATE test SET value = ? WHERE id = ?", ['updated', 1])
+                ("INSERT INTO test VALUES (?, ?)", [2, "test2"]),
+                ("UPDATE test SET value = ? WHERE id = ?", ["updated", 1]),
             ]
-            
+
             for query, params in queries:
                 manager.execute_query(query, params, for_write=True)
-            
+
             # Verify results
             result = manager.execute_query("SELECT * FROM test ORDER BY id")
             assert len(result) == 2
-            assert result[0][1] == 'updated'
-            assert result[1][1] == 'test2'
-            
+            assert result[0][1] == "updated"
+            assert result[1][1] == "test2"
+
         finally:
-            manager.close() 
+            manager.close()

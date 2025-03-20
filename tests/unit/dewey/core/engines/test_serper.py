@@ -38,7 +38,9 @@ class TestSerper:
         mock_get_config_value.assert_called_once_with("api_key")
 
     @patch("dewey.core.engines.serper.Serper.get_config_value")
-    def test_run_no_api_key(self, mock_get_config_value, serper_instance: Serper, caplog):
+    def test_run_no_api_key(
+        self, mock_get_config_value, serper_instance: Serper, caplog
+    ):
         """
         Test the run method when the API key is not found in the configuration.
         """

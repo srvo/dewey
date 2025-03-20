@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
-from typing import Dict, List
-from unittest.mock import mock_open, patch
+from typing import Dict
+from unittest.mock import patch
 
 import pytest
 
@@ -194,6 +194,6 @@ def test_main(journal_splitter: JournalSplitter, tmp_path: Path, monkeypatch: py
     with patch.object(journal_splitter, "get_config_value", return_value=str(journal_dir)):
         with patch.object(JournalSplitter, "execute") as mock_execute:
             monkeypatch.setattr("dewey.core.bookkeeping.journal_splitter.JournalSplitter", lambda: journal_splitter)
-            from dewey.core.bookkeeping.journal_splitter import main
+from dewey.core.bookkeeping.journal_splitter import main
             main()
             mock_execute.assert_called_once()

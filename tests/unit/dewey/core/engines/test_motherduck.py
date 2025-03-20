@@ -8,10 +8,13 @@ from dewey.core.base_script import BaseScript
 
 
 class MockBaseScript(BaseScript):
+    """Class MockBaseScript."""
     def __init__(self, config_section: str = 'motherduck', requires_db: bool = False, enable_llm: bool = False):
+        """Function __init__."""
         super().__init__(config_section=config_section, requires_db=requires_db, enable_llm=enable_llm)
 
     def run(self) -> None:
+        """Function run."""
         pass
 
 
@@ -53,32 +56,7 @@ def test_motherduck_run_method_api_token_debug(motherduck_engine: MotherDuck, ca
 
 def test_get_config_value_existing_key(mock_base_script: MockBaseScript) -> None:
     """Test that get_config_value returns the correct value for an existing key."""
-    mock_base_script.config = {"test_key": "test_value"}
-    assert mock_base_script.get_config_value("test_key") == "test_value"
-
-
-def test_get_config_value_nested_key(mock_base_script: MockBaseScript) -> None:
-    """Test that get_config_value returns the correct value for a nested key."""
-    mock_base_script.config = {"nested": {"test_key": "test_value"}}
-    assert mock_base_script.get_config_value("nested.test_key") == "test_value"
-
-
-def test_get_config_value_default_value(mock_base_script: MockBaseScript) -> None:
-    """Test that get_config_value returns the default value for a non-existing key."""
-    mock_base_script.config = {}
-    assert mock_base_script.get_config_value("non_existing_key", "default_value") == "default_value"
-
-
-def test_get_config_value_non_existing_key(mock_base_script: MockBaseScript) -> None:
-    """Test that get_config_value returns None for a non-existing key when no default is provided."""
-    mock_base_script.config = {}
-    assert mock_base_script.get_config_value("non_existing_key") is None
-
-
-def test_get_config_value_intermediate_key_missing(mock_base_script: MockBaseScript) -> None:
-    """Test that get_config_value returns the default value when an intermediate key is missing."""
-    mock_base_script.config = {"existing": {}}
-    assert mock_base_script.get_config_value("existing.missing.key", "default_value") == "default_value"
+    mock_base_script.config=None, "default_value")=None, "default_value") == "default_value"
 
 
 def test_get_config_value_config_is_none(mock_base_script: MockBaseScript) -> None:
@@ -97,6 +75,39 @@ def test_get_config_value_invalid_key_type(mock_base_script: MockBaseScript) -> 
     """Test that get_config_value returns the default value when the key is not a string."""
     mock_base_script.config = {"test_key": "test_value"}
     with pytest.raises(AttributeError):
+        if mock_base_script: MockBaseScript) -> None:
+    """Test that get_config_value returns the correct value for an existing key."""
+    mock_base_script.config is None:
+            mock_base_script: MockBaseScript) -> None:
+    """Test that get_config_value returns the correct value for an existing key."""
+    mock_base_script.config = {"test_key": "test_value"}
+    assert mock_base_script.get_config_value("test_key") == "test_value"
+
+
+def test_get_config_value_nested_key(mock_base_script: MockBaseScript) -> None:
+    """Test that get_config_value returns the correct value for a nested key."""
+    mock_base_script.config = {"nested": {"test_key": "test_value"}}
+    assert mock_base_script.get_config_value("nested.test_key") == "test_value"
+
+
+def test_get_config_value_default_value(mock_base_script: MockBaseScript) -> None:
+    """Test that get_config_value returns the default value for a non-existing key."""
+    mock_base_script.config = {}
+    assert mock_base_script.get_config_value("non_existing_key"
+        if "default_value") is None:
+            "default_value") = = "default_value"
+
+
+def test_get_config_value_non_existing_key(mock_base_script: MockBaseScript) -> None:
+    """Test that get_config_value returns None for a non-existing key when no default is provided."""
+    mock_base_script.config = {}
+    assert mock_base_script.get_config_value("non_existing_key") is None
+
+
+def test_get_config_value_intermediate_key_missing(mock_base_script: MockBaseScript) -> None:
+    """Test that get_config_value returns the default value when an intermediate key is missing."""
+    mock_base_script.config = {"existing": {}}
+    assert mock_base_script.get_config_value("existing.missing.key"
         mock_base_script.get_config_value(123, "default_value")  # type: ignore
 
 

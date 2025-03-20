@@ -1,12 +1,12 @@
 """Tests for account validator."""
+
 import pytest
-from pathlib import Path
-from unittest.mock import patch, MagicMock
 from dewey.core.bookkeeping.account_validator import (
     AccountValidator,
     ValidationError,
-    AccountValidationResult
+    AccountValidationResult,
 )
+
 
 class TestAccountValidator:
     """Test suite for account validator."""
@@ -21,7 +21,7 @@ class TestAccountValidator:
         valid_accounts = [
             "Assets:Checking",
             "Expenses:Office:Supplies",
-            "Income:Consulting:Training"
+            "Income:Consulting:Training",
         ]
         for account in valid_accounts:
             result = validator.validate_account_structure(account)
@@ -32,7 +32,7 @@ class TestAccountValidator:
             "assets:checking",  # lowercase
             "Expenses:",  # ends with colon
             "Income/Consulting",  # invalid character
-            "A"  # too short
+            "A",  # too short
         ]
         for account in invalid_accounts:
             result = validator.validate_account_structure(account)
@@ -64,9 +64,9 @@ Assets:Checking  $1000.00
         hierarchy = {
             "Assets": ["Checking", "Savings"],
             "Expenses": ["Office", "Travel"],
-            "Income": ["Salary", "Consulting"]
+            "Income": ["Salary", "Consulting"],
         }
-        
+
         # Valid accounts
         for parent, children in hierarchy.items():
             for child in children:
@@ -88,9 +88,9 @@ Assets:Checking  $1000.00
             ("Liabilities:CreditCard", "Liabilities"),
             ("Expenses:Office", "Expenses"),
             ("Income:Salary", "Income"),
-            ("Equity:Opening", "Equity")
+            ("Equity:Opening", "Equity"),
         ]
-        
+
         for account, expected_type in type_tests:
             result = validator.validate_account_type(account)
             assert result.is_valid
@@ -134,7 +134,7 @@ Income:Salary
         """Test full account validation process."""
         account = "Assets:Checking"
         result = validator.validate_account(account)
-        
+
         assert result.is_valid
         assert result.account == account
         assert result.account_type == "Assets"
@@ -155,15 +155,15 @@ Income:Salary
             "Assets:Checking",
             "Expenses:Office",
             "Income:Salary",
-            "Invalid:Account"  # Should fail
+            "Invalid:Account",  # Should fail
         ]
-        
+
         results = validator.validate_accounts(accounts)
-        
+
         assert len(results) == len(accounts)
         assert sum(1 for r in results if r.is_valid) == 3  # 3 valid accounts
         assert sum(1 for r in results if not r.is_valid) == 1  # 1 invalid account
-        
+
         # Check specific results
         for result in results:
             if result.account == "Invalid:Account":
@@ -171,4 +171,4 @@ Income:Salary
                 assert len(result.errors) > 0
             else:
                 assert result.is_valid
-                assert not result.errors 
+                assert not result.errors

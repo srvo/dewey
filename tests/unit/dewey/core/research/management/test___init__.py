@@ -14,43 +14,54 @@ def test_base_script_inheritance():
     """Test that a class within the module can inherit from BaseScript."""
 
     class MockResearchScript(BaseScript):
+        """Class MockResearchScript."""
+
         def __init__(self):
-            super().__init__(config_section='test_config')
+            """Function __init__."""
+            super().__init__(config_section="test_config")
 
         def run(self):
+            """Function run."""
             pass
 
     script = MockResearchScript()
     assert isinstance(script, BaseScript)
-    assert script.config_section == 'test_config'
+    assert script.config_section == "test_config"
 
 
 def test_base_script_config_loading():
     """Test that the BaseScript can load configuration."""
 
     class MockResearchScript(BaseScript):
+        """Class MockResearchScript."""
+
         def __init__(self):
-            super().__init__(config_section='test_config')
+            """Function __init__."""
+            super().__init__(config_section="test_config")
 
         def run(self):
+            """Function run."""
             pass
 
     script = MockResearchScript()
     assert script.config is not None
     assert isinstance(script.config, dict)
-    assert 'local_db_path' in script.config
+    assert "local_db_path" in script.config
 
 
 def test_base_script_logging():
     """Test that the BaseScript has a logger."""
 
     class MockResearchScript(BaseScript):
+        """Class MockResearchScript."""
+
         def __init__(self):
+            """Function __init__."""
             super().__init__()
 
         def run(self):
+            """Function run."""
             pass
 
     script = MockResearchScript()
     assert script.logger is not None
-

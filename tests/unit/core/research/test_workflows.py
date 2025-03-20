@@ -1,8 +1,10 @@
 """Tests for research workflows."""
+
 import pytest
 from unittest.mock import Mock, patch
 from datetime import datetime
 from dewey.core.research.workflows.ethical import EthicalWorkflow
+
 
 class TestEthicalWorkflow:
     """Test suite for ethical research workflow."""
@@ -15,10 +17,10 @@ class TestEthicalWorkflow:
     def test_initialization(self, workflow):
         """Test workflow initialization."""
         assert workflow is not None
-        assert hasattr(workflow, 'run')
-        assert hasattr(workflow, 'analyze')
+        assert hasattr(workflow, "run")
+        assert hasattr(workflow, "analyze")
 
-    @patch('dewey.core.research.workflows.ethical.EthicalAnalyzer')
+    @patch("dewey.core.research.workflows.ethical.EthicalAnalyzer")
     def test_run_workflow(self, mock_analyzer, workflow):
         """Test running the workflow."""
         # Mock analyzer
@@ -26,7 +28,7 @@ class TestEthicalWorkflow:
         mock_instance.analyze_ethics.return_value = {
             "esg_score": 85,
             "risk_assessment": "low",
-            "recommendations": ["Improve environmental reporting"]
+            "recommendations": ["Improve environmental reporting"],
         }
         mock_analyzer.return_value = mock_instance
 
@@ -37,8 +39,8 @@ class TestEthicalWorkflow:
             "esg_data": {
                 "environmental_impact": "medium",
                 "social_responsibility": "high",
-                "governance_rating": "high"
-            }
+                "governance_rating": "high",
+            },
         }
 
         result = workflow.run(company_data)
@@ -53,7 +55,7 @@ class TestEthicalWorkflow:
         test_results = {
             "esg_score": 75,
             "risk_assessment": "medium",
-            "recommendations": ["Improve sustainability practices"]
+            "recommendations": ["Improve sustainability practices"],
         }
 
         analysis = workflow.analyze(test_results)
@@ -72,7 +74,7 @@ class TestEthicalWorkflow:
         with pytest.raises(ValueError):
             workflow.run(invalid_data)
 
-    @patch('dewey.core.research.workflows.ethical.EthicalAnalyzer')
+    @patch("dewey.core.research.workflows.ethical.EthicalAnalyzer")
     def test_error_handling(self, mock_analyzer, workflow):
         """Test error handling."""
         mock_instance = Mock()
@@ -82,6 +84,7 @@ class TestEthicalWorkflow:
         with pytest.raises(Exception) as exc_info:
             workflow.run({"name": "Test Company"})
         assert "Analysis failed" in str(exc_info.value)
+
 
 @pytest.mark.integration
 class TestWorkflowIntegration:
@@ -98,21 +101,20 @@ class TestWorkflowIntegration:
             "esg_data": {
                 "environmental_impact": "medium",
                 "social_responsibility": "high",
-                "governance_rating": "high"
+                "governance_rating": "high",
             },
-            "financial_data": {
-                "revenue": 1000000,
-                "expenses": 700000
-            }
+            "financial_data": {"revenue": 1000000, "expenses": 700000},
         }
 
-        with patch('dewey.core.research.workflows.ethical.EthicalAnalyzer') as mock_analyzer:
+        with patch(
+            "dewey.core.research.workflows.ethical.EthicalAnalyzer"
+        ) as mock_analyzer:
             # Mock analyzer response
             mock_instance = Mock()
             mock_instance.analyze_ethics.return_value = {
                 "esg_score": 85,
                 "risk_assessment": "low",
-                "recommendations": ["Continue current practices"]
+                "recommendations": ["Continue current practices"],
             }
             mock_analyzer.return_value = mock_instance
 
@@ -131,4 +133,4 @@ class TestWorkflowIntegration:
             assert "timestamp" in result
             assert datetime.fromisoformat(result["timestamp"])
             assert "company_name" in result
-            assert result["company_name"] == "Integration Test Corp" 
+            assert result["company_name"] == "Integration Test Corp"

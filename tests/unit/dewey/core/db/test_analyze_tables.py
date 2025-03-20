@@ -4,7 +4,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from dewey.core.db.analyze_tables import AnalyzeTables
-from dewey.core.db.connection import DatabaseConnection
 
 
 class TestAnalyzeTables:
@@ -13,7 +12,9 @@ class TestAnalyzeTables:
     @pytest.fixture
     def mock_base_script(self):
         """Mocks the BaseScript class and its methods."""
-        with patch("dewey.core.db.analyze_tables.BaseScript", autospec=True) as MockBaseScript:
+        with patch(
+            "dewey.core.db.analyze_tables.BaseScript", autospec=True
+        ) as MockBaseScript:
             mock_instance = MockBaseScript.return_value
             mock_instance.logger = MagicMock()
             mock_instance.get_config_value.return_value = "test_db"
@@ -35,16 +36,25 @@ class TestAnalyzeTables:
     def test_run_success(self, analyze_tables, mock_base_script):
         """Tests the run method with a successful database analysis."""
         mock_cursor = MagicMock()
-        mock_base_script.db_conn.cursor.return_value.__enter__.return_value = mock_cursor
+        mock_base_script.db_conn.cursor.return_value.__enter__.return_value = (
+            mock_cursor
+        )
         mock_cursor.execute.return_value = None
         mock_cursor.fetchone.return_value = [10]
         mock_table_names = ["table1", "table2"]
-        with patch("dewey.core.db.analyze_tables.db_utils.get_table_names", return_value=mock_table_names):
+        with patch(
+            "dewey.core.db.analyze_tables.db_utils.get_table_names",
+            return_value=mock_table_names,
+        ):
             analyze_tables.run()
 
         mock_base_script.logger.info.assert_any_call("Starting table analysis...")
-        mock_base_script.logger.info.assert_any_call("Analyzing tables in database: test_db")
-        mock_base_script.logger.info.assert_any_call(f"Found tables: {mock_table_names}")
+        mock_base_script.logger.info.assert_any_call(
+            "Analyzing tables in database: test_db"
+        )
+        mock_base_script.logger.info.assert_any_call(
+            f"Found tables: {mock_table_names}"
+        )
         mock_base_script.logger.info.assert_any_call("Analyzing table: table1")
         mock_cursor.execute.assert_any_call("SELECT COUNT(*) FROM table1")
         mock_base_script.logger.info.assert_any_call("Analyzing table: table2")
@@ -54,7 +64,9 @@ class TestAnalyzeTables:
     def test_run_db_error(self, analyze_tables, mock_base_script):
         """Tests the run method when a database error occurs."""
         mock_cursor = MagicMock()
-        mock_base_script.db_conn.cursor.return_value.__enter__.return_value = mock_cursor
+        mock_base_script.db_conn.cursor.return_value.__enter__.return_value = (
+            mock_cursor
+        )
         mock_cursor.execute.side_effect = Exception("Database error")
 
         with pytest.raises(Exception, match="Database error"):
@@ -67,12 +79,18 @@ class TestAnalyzeTables:
     def test_run_no_tables(self, analyze_tables, mock_base_script):
         """Tests the run method when no tables are found."""
         mock_cursor = MagicMock()
-        mock_base_script.db_conn.cursor.return_value.__enter__.return_value = mock_cursor
-        with patch("dewey.core.db.analyze_tables.db_utils.get_table_names", return_value=[]):
+        mock_base_script.db_conn.cursor.return_value.__enter__.return_value = (
+            mock_cursor
+        )
+        with patch(
+            "dewey.core.db.analyze_tables.db_utils.get_table_names", return_value=[]
+        ):
             analyze_tables.run()
 
         mock_base_script.logger.info.assert_any_call("Starting table analysis...")
-        mock_base_script.logger.info.assert_any_call("Analyzing tables in database: test_db")
+        mock_base_script.logger.info.assert_any_call(
+            "Analyzing tables in database: test_db"
+        )
         mock_base_script.logger.info.assert_any_call("Found tables: []")
         mock_base_script.logger.info.assert_any_call("Table analysis completed.")
 
@@ -84,9 +102,13 @@ class TestAnalyzeTables:
         analyze_tables.execute()
 
         analyze_tables.parse_args.assert_called_once()
-        mock_base_script.logger.info.assert_any_call("Starting execution of AnalyzeTables")
+        mock_base_script.logger.info.assert_any_call(
+            "Starting execution of AnalyzeTables"
+        )
         analyze_tables.run.assert_called_once()
-        mock_base_script.logger.info.assert_any_call("Completed execution of AnalyzeTables")
+        mock_base_script.logger.info.assert_any_call(
+            "Completed execution of AnalyzeTables"
+        )
         analyze_tables._cleanup.assert_called_once()
 
     def test_execute_keyboard_interrupt(self, analyze_tables, mock_base_script):
@@ -134,4 +156,6 @@ class TestAnalyzeTables:
         analyze_tables.db_conn = MagicMock()
         analyze_tables.db_conn.close.side_effect = Exception("Close error")
         analyze_tables._cleanup()
-        mock_base_script.logger.warning.assert_called_with("Error closing database connection: Close error")
+        mock_base_script.logger.warning.assert_called_with(
+            "Error closing database connection: Close error"
+        )

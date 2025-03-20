@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 import json
 import re
@@ -9,8 +8,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from dewey.core.crm.enrichment.contact_enrichment import ContactEnrichment
-from dewey.core.db.connection import get_connection
-from dewey.utils.database import execute_query, fetch_one, fetch_all
+from dewey.utils.database import fetch_one, fetch_all
 
 
 @pytest.fixture
@@ -257,13 +255,7 @@ class TestContactEnrichment:
         contact_enrichment.create_enrichment_task = MagicMock(return_value="task_123")
         contact_enrichment.extract_contact_info = MagicMock(
             return_value={
-                "name": "John Doe",
-                "job_title": "CEO",
-                "company": "ACME Inc",
-                "phone": "555-1234",
-                "linkedin_url": None,
-                "confidence": 0.75,
-            }
+                "name": "John Doe", "job_title": "CEO", "company": "ACME Inc", "phone": "555-1234", "linkedin_url": None, "confidence": 0.75, }
         )
         contact_enrichment.store_enrichment_source = MagicMock(return_value="source_123")
         contact_enrichment.update_task_status = MagicMock()
@@ -317,7 +309,15 @@ class TestContactEnrichment:
         mock_cursor = MagicMock()
         mock_db_connection.cursor.return_value = mock_cursor
 
-        fetch_all.return_value = [(email_id,) for email_id in email_ids]
+        fetch_all.return_value = [(email_id, ) for email_id in email_ids]
+
+        # Mock process_email_for_enrichment
+        contact_enrichment.process_email_for_enrichment=None, match="Fetch error"):
+            if ) for email_id in email_ids]
+
+        # Mock process_email_for_enrichment
+        contact_enrichment.process_email_for_enrichment is None:
+                ) for email_id in email_ids]
 
         # Mock process_email_for_enrichment
         contact_enrichment.process_email_for_enrichment = MagicMock(return_value=True)
@@ -338,7 +338,7 @@ class TestContactEnrichment:
 
         # Test exception during processing
         fetch_all.side_effect = Exception("Fetch error")
-        with pytest.raises(Exception, match="Fetch error"):
+        with pytest.raises(Exception
             contact_enrichment.enrich_contacts(batch_size)
         contact_enrichment.logger.error.assert_called()
         mock_db_connection.rollback.assert_called()

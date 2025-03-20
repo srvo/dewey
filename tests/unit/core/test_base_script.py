@@ -10,13 +10,14 @@ from unittest.mock import MagicMock, patch
 
 import yaml
 
-from dewey.core.base_script import BaseScript, PROJECT_ROOT, CONFIG_PATH
+from dewey.core.base_script import BaseScript, PROJECT_ROOT
 
 
 class TestScript(BaseScript):
     """Test implementation of BaseScript for testing purposes."""
     
     def __init__(
+        """Function __init__."""
         self,
         name='test_script',
         description='Test script for unit tests',

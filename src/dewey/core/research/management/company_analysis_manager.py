@@ -1,11 +1,9 @@
-import logging
-from pathlib import Path
 from typing import Any, Dict, Optional
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
 from dewey.core.db.utils import create_table, execute_query
 from dewey.llm.llm_utils import call_llm
+
 
 class CompanyAnalysisManager(BaseScript):
     """
@@ -42,7 +40,9 @@ class CompanyAnalysisManager(BaseScript):
             self.logger.info("Company analysis process completed successfully.")
 
         except Exception as e:
-            self.logger.error(f"An error occurred during company analysis: {e}", exc_info=True)
+            self.logger.error(
+                f"An error occurred during company analysis: {e}", exc_info=True
+            )
             raise
 
     def _analyze_company(self, company_ticker: str) -> Dict[str, Any]:
@@ -71,10 +71,14 @@ class CompanyAnalysisManager(BaseScript):
             return analysis_results
 
         except Exception as e:
-            self.logger.error(f"Error analyzing company {company_ticker}: {e}", exc_info=True)
+            self.logger.error(
+                f"Error analyzing company {company_ticker}: {e}", exc_info=True
+            )
             raise
 
-    def _store_analysis_results(self, company_ticker: str, analysis_results: Dict[str, Any]) -> None:
+    def _store_analysis_results(
+        self, company_ticker: str, analysis_results: Dict[str, Any]
+    ) -> None:
         """
         Stores the analysis results in the database.
 
@@ -102,11 +106,17 @@ class CompanyAnalysisManager(BaseScript):
             values = (company_ticker, str(analysis_results))
             execute_query(self.db_conn, insert_query, values)
 
-            self.logger.info(f"Analysis results stored successfully for: {company_ticker}")
+            self.logger.info(
+                f"Analysis results stored successfully for: {company_ticker}"
+            )
 
         except Exception as e:
-            self.logger.error(f"Error storing analysis results for {company_ticker}: {e}", exc_info=True)
+            self.logger.error(
+                f"Error storing analysis results for {company_ticker}: {e}",
+                exc_info=True,
+            )
             raise
+
 
 if __name__ == "__main__":
     manager = CompanyAnalysisManager()

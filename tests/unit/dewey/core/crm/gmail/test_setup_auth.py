@@ -33,7 +33,9 @@ class TestSetupAuth:
         mock_get_config_value.assert_called_once_with("client_id")
 
     @patch("dewey.core.crm.gmail.setup_auth.SetupAuth.get_config_value")
-    def test_run_config_value_error(self, mock_get_config_value, setup_auth: SetupAuth, caplog):
+    def test_run_config_value_error(
+        self, mock_get_config_value, setup_auth: SetupAuth, caplog
+    ):
         """Test the run method when get_config_value raises an exception."""
         mock_get_config_value.side_effect = ValueError("Config value not found")
         with caplog.at_level(logging.ERROR):
@@ -43,7 +45,9 @@ class TestSetupAuth:
         mock_get_config_value.assert_called_once_with("client_id")
 
     @patch("dewey.core.crm.gmail.setup_auth.SetupAuth.get_config_value")
-    def test_run_no_client_id(self, mock_get_config_value, setup_auth: SetupAuth, caplog):
+    def test_run_no_client_id(
+        self, mock_get_config_value, setup_auth: SetupAuth, caplog
+    ):
         """Test the run method when client_id is not found in config."""
         mock_get_config_value.return_value = None
         with caplog.at_level(logging.DEBUG):
@@ -66,7 +70,9 @@ class TestSetupAuth:
 
     @patch("dewey.core.crm.gmail.setup_auth.SetupAuth.parse_args")
     @patch("dewey.core.crm.gmail.setup_auth.SetupAuth.run")
-    def test_execute_keyboard_interrupt(self, mock_run, mock_parse_args, setup_auth: SetupAuth, caplog):
+    def test_execute_keyboard_interrupt(
+        self, mock_run, mock_parse_args, setup_auth: SetupAuth, caplog
+    ):
         """Test the execute method when a KeyboardInterrupt is raised."""
         mock_parse_args.return_value = None
         mock_run.side_effect = KeyboardInterrupt
@@ -78,7 +84,9 @@ class TestSetupAuth:
 
     @patch("dewey.core.crm.gmail.setup_auth.SetupAuth.parse_args")
     @patch("dewey.core.crm.gmail.setup_auth.SetupAuth.run")
-    def test_execute_exception(self, mock_run, mock_parse_args, setup_auth: SetupAuth, caplog):
+    def test_execute_exception(
+        self, mock_run, mock_parse_args, setup_auth: SetupAuth, caplog
+    ):
         """Test the execute method when an exception is raised."""
         mock_parse_args.return_value = None
         mock_run.side_effect = ValueError("Test exception")
@@ -146,7 +154,9 @@ class TestSetupAuth:
         assert result == "nested_value"
 
     @patch("dewey.core.crm.gmail.setup_auth.SetupAuth.config", new_callable=dict)
-    def test_get_config_value_missing_intermediate(self, mock_config, setup_auth: SetupAuth):
+    def test_get_config_value_missing_intermediate(
+        self, mock_config, setup_auth: SetupAuth
+    ):
         """Test the get_config_value method when an intermediate key is missing."""
         mock_config["nested"] = {}
         result = setup_auth.get_config_value("nested.level1.level2", "default_value")
@@ -161,7 +171,9 @@ class TestSetupAuth:
     @patch("argparse.ArgumentParser.parse_args")
     def test_parse_args_log_level(self, mock_parse_args, setup_auth: SetupAuth, caplog):
         """Test the parse_args method with a log level argument."""
-        mock_parse_args.return_value = pytest.mock.MagicMock(log_level="DEBUG", config=None, db_connection_string=None, llm_model=None)
+        mock_parse_args.return_value = pytest.mock.MagicMock(
+            log_level="DEBUG", config=None, db_connection_string=None, llm_model=None
+        )
         args = setup_auth.parse_args()
         assert args.log_level == "DEBUG"
         assert setup_auth.logger.level == logging.DEBUG
@@ -170,29 +182,52 @@ class TestSetupAuth:
     @patch("argparse.ArgumentParser.parse_args")
     def test_parse_args_config(self, mock_parse_args, setup_auth: SetupAuth, caplog):
         """Test the parse_args method with a config argument."""
-        mock_parse_args.return_value = pytest.mock.MagicMock(log_level=None, config="config/dewey.yaml", db_connection_string=None, llm_model=None)
+        mock_parse_args.return_value = pytest.mock.MagicMock(
+            log_level=None,
+            config="config/dewey.yaml",
+            db_connection_string=None,
+            llm_model=None,
+        )
         with patch("dewey.core.crm.gmail.setup_auth.open", create=True) as mock_open:
-            mock_open.return_value.__enter__.return_value.read.return_value = "test: value"
+            mock_open.return_value.__enter__.return_value.read.return_value = (
+                "test: value"
+            )
             args = setup_auth.parse_args()
         assert args.config == "config/dewey.yaml"
         assert setup_auth.config == {"test": "value"}
         assert "Loaded configuration from config/dewey.yaml" in caplog.text
 
     @patch("argparse.ArgumentParser.parse_args")
-    def test_parse_args_config_not_found(self, mock_parse_args, setup_auth: SetupAuth, caplog):
+    def test_parse_args_config_not_found(
+        self, mock_parse_args, setup_auth: SetupAuth, caplog
+    ):
         """Test the parse_args method when the config file is not found."""
-        mock_parse_args.return_value = pytest.mock.MagicMock(log_level=None, config="nonexistent_config.yaml", db_connection_string=None, llm_model=None)
+        mock_parse_args.return_value = pytest.mock.MagicMock(
+            log_level=None,
+            config="nonexistent_config.yaml",
+            db_connection_string=None,
+            llm_model=None,
+        )
         with pytest.raises(SystemExit) as exc_info:
             setup_auth.parse_args()
         assert exc_info.value.code == 1
         assert "Configuration file not found: nonexistent_config.yaml" in caplog.text
 
     @patch("argparse.ArgumentParser.parse_args")
-    def test_parse_args_db_connection_string(self, mock_parse_args, setup_auth: SetupAuth, caplog):
+    def test_parse_args_db_connection_string(
+        self, mock_parse_args, setup_auth: SetupAuth, caplog
+    ):
         """Test the parse_args method with a db_connection_string argument."""
-        mock_parse_args.return_value = pytest.mock.MagicMock(log_level=None, config=None, db_connection_string="test_db_string", llm_model=None)
+        mock_parse_args.return_value = pytest.mock.MagicMock(
+            log_level=None,
+            config=None,
+            db_connection_string="test_db_string",
+            llm_model=None,
+        )
         setup_auth.requires_db = True
-        with patch("dewey.core.crm.gmail.setup_auth.get_connection") as mock_get_connection:
+        with patch(
+            "dewey.core.crm.gmail.setup_auth.get_connection"
+        ) as mock_get_connection:
             mock_get_connection.return_value = "test_db_connection"
             args = setup_auth.parse_args()
         assert args.db_connection_string == "test_db_string"
@@ -202,9 +237,16 @@ class TestSetupAuth:
     @patch("argparse.ArgumentParser.parse_args")
     def test_parse_args_llm_model(self, mock_parse_args, setup_auth: SetupAuth, caplog):
         """Test the parse_args method with an llm_model argument."""
-        mock_parse_args.return_value = pytest.mock.MagicMock(log_level=None, config=None, db_connection_string=None, llm_model="test_llm_model")
+        mock_parse_args.return_value = pytest.mock.MagicMock(
+            log_level=None,
+            config=None,
+            db_connection_string=None,
+            llm_model="test_llm_model",
+        )
         setup_auth.enable_llm = True
-        with patch("dewey.core.crm.gmail.setup_auth.get_llm_client") as mock_get_llm_client:
+        with patch(
+            "dewey.core.crm.gmail.setup_auth.get_llm_client"
+        ) as mock_get_llm_client:
             mock_get_llm_client.return_value = "test_llm_client"
             args = setup_auth.parse_args()
         assert args.llm_model == "test_llm_model"

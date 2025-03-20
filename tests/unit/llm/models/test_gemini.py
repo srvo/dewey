@@ -3,14 +3,16 @@
 import os
 import time
 import pytest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import patch, MagicMock
 from dewey.llm.api_clients.gemini import GeminiClient, RateLimiter, LLMError
+
 
 @pytest.fixture
 def mock_genai():
     """Fixture providing a mocked google.generativeai module."""
     with patch("dewey.llm.api_clients.gemini.genai") as mock:
         yield mock
+
 
 @pytest.fixture
 def gemini_config():
@@ -26,10 +28,11 @@ def gemini_config():
                 "rpd": 1500,
                 "min_request_interval": 5,
                 "circuit_breaker_threshold": 3,
-                "circuit_breaker_timeout": 120
+                "circuit_breaker_timeout": 120,
             }
-        }
+        },
     }
+
 
 @pytest.fixture
 def rate_limiter():
@@ -44,6 +47,7 @@ def rate_limiter():
     limiter.circuit_open_until = {}
     return limiter
 
+
 class TestRateLimiter:
     """Test cases for RateLimiter class."""
 
@@ -55,7 +59,7 @@ class TestRateLimiter:
                     "rpm": 10,
                     "tpm": 500000,
                     "rpd": 1000,
-                    "min_request_interval": 3
+                    "min_request_interval": 3,
                 }
             }
         }
@@ -75,10 +79,10 @@ class TestRateLimiter:
         """Test RPM limit enforcement."""
         model = "gemini-2.0-flash"
         now = time.time()
-        
+
         # Add requests just under a minute ago
         rate_limiter.request_windows[model] = [now - 50] * 15
-        
+
         with pytest.raises(LLMError, match="Rate limit .* exceeded"):
             rate_limiter.check_limit(model, "test prompt")
 
@@ -86,11 +90,11 @@ class TestRateLimiter:
         """Test circuit breaker functionality."""
         model = "gemini-2.0-flash"
         now = time.time()
-        
+
         # Record failures up to threshold
         for _ in range(3):
             rate_limiter._record_failure(model, now)
-        
+
         with pytest.raises(LLMError, match="Circuit breaker open"):
             rate_limiter.check_limit(model, "test prompt")
 
@@ -98,16 +102,17 @@ class TestRateLimiter:
         """Test request window cleaning."""
         model = "gemini-2.0-flash"
         now = time.time()
-        
+
         # Add mix of old and new requests
         rate_limiter.request_windows[model] = [
             now - 70,  # Should be removed (> 1 minute old)
             now - 30,  # Should stay
-            now - 10   # Should stay
+            now - 10,  # Should stay
         ]
-        
+
         rate_limiter._clean_request_window(model, now)
         assert len(rate_limiter.request_windows[model]) == 2
+
 
 class TestGeminiClient:
     """Test cases for GeminiClient class."""
@@ -134,12 +139,12 @@ class TestGeminiClient:
     def test_get_model(self, mock_genai, gemini_config):
         """Test model instance retrieval and caching."""
         client = GeminiClient(api_key="test_key", config=gemini_config)
-        
+
         # First call should create new model
         model1 = client._get_model("gemini-2.0-flash")
         assert model1 == mock_genai.GenerativeModel.return_value
         mock_genai.GenerativeModel.assert_called_once_with("gemini-2.0-flash")
-        
+
         # Second call should return cached model
         mock_genai.GenerativeModel.reset_mock()
         model2 = client._get_model("gemini-2.0-flash")
@@ -151,10 +156,10 @@ class TestGeminiClient:
         mock_model = MagicMock()
         mock_model.generate_content.return_value.text = "Test response"
         mock_genai.GenerativeModel.return_value = mock_model
-        
+
         client = GeminiClient(api_key="test_key", config=gemini_config)
         response = client.generate_content("Test prompt")
-        
+
         assert response == "Test response"
         mock_model.generate_content.assert_called_once()
 
@@ -163,16 +168,16 @@ class TestGeminiClient:
         # Make primary model fail
         mock_primary = MagicMock()
         mock_primary.generate_content.side_effect = Exception("Primary failed")
-        
+
         # Setup fallback model
         mock_fallback = MagicMock()
         mock_fallback.generate_content.return_value.text = "Fallback response"
-        
+
         mock_genai.GenerativeModel.side_effect = [mock_primary, mock_fallback]
-        
+
         client = GeminiClient(api_key="test_key", config=gemini_config)
         response = client.generate_content("Test prompt")
-        
+
         assert response == "Fallback response"
         mock_primary.generate_content.assert_called_once()
         mock_fallback.generate_content.assert_called_once()
@@ -180,11 +185,11 @@ class TestGeminiClient:
     def test_generate_content_rate_limit(self, mock_genai, gemini_config):
         """Test rate limit handling during content generation."""
         client = GeminiClient(api_key="test_key", config=gemini_config)
-        
+
         # Fill up the rate limit
         now = time.time()
         client.rate_limiter.request_windows["gemini-2.0-flash"] = [now - 1] * 15
-        
+
         with pytest.raises(LLMError, match="Rate limit .* exceeded"):
             client.generate_content("Test prompt")
 
@@ -194,7 +199,7 @@ class TestGeminiClient:
         mock_model.generate_content.return_value.text = ""
         mock_model.generate_content.return_value.prompt_feedback = "Filtered"
         mock_genai.GenerativeModel.return_value = mock_model
-        
+
         client = GeminiClient(api_key="test_key", config=gemini_config)
         with pytest.raises(LLMError, match="Empty response from Gemini API"):
             client.generate_content("Test prompt")
@@ -206,13 +211,13 @@ class TestGeminiClient:
         mock_model.generate_content.side_effect = [
             Exception("First failure"),
             Exception("Second failure"),
-            MagicMock(text="Success")
+            MagicMock(text="Success"),
         ]
         mock_genai.GenerativeModel.return_value = mock_model
-        
+
         client = GeminiClient(api_key="test_key", config=gemini_config)
         response = client.generate_content("Test prompt", retries=2)
-        
+
         assert response == "Success"
         assert mock_model.generate_content.call_count == 3
 
@@ -221,14 +226,14 @@ class TestGeminiClient:
         mock_model = MagicMock()
         mock_model.generate_content.side_effect = Exception("API Error")
         mock_genai.GenerativeModel.return_value = mock_model
-        
+
         client = GeminiClient(api_key="test_key", config=gemini_config)
-        
+
         # Trigger failures up to circuit breaker threshold
         for _ in range(3):
             with pytest.raises(LLMError):
                 client.generate_content("Test prompt", retries=0)
-        
+
         # Next attempt should trigger circuit breaker
         with pytest.raises(LLMError, match="Circuit breaker open"):
-            client.generate_content("Test prompt") 
+            client.generate_content("Test prompt")

@@ -30,13 +30,13 @@ class Companies(BaseScript):
             self.logger.debug(f"API URL: {api_url}")
 
             # Example: Database operations (replace with actual logic)
-            from dewey.core.db.utils import execute_query
+from dewey.core.db.utils import execute_query
             query = "SELECT * FROM companies LIMIT 10;"
             results = execute_query(self.db_conn, query)
             self.logger.info(f"Fetched {len(results)} companies from the database.")
 
             # Example: LLM usage (replace with actual logic)
-            from dewey.llm.llm_utils import generate_text
+from dewey.llm.llm_utils import generate_text
             prompt = "Summarize the key activities of a technology company."
             summary = generate_text(self.llm_client, prompt)
             self.logger.info(f"Generated summary: {summary[:50]}...")

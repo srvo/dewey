@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -43,7 +43,9 @@ class EntityAnalysis(BaseScript):
         self.logger.info("Starting entity analysis...")
 
         # Example of accessing a configuration value
-        api_key = self.get_config_value("entity_analysis.api_key", default="default_key")
+        api_key = self.get_config_value(
+            "entity_analysis.api_key", default="default_key"
+        )
         self.logger.debug(f"API Key: {api_key}")
 
         # Add your entity analysis logic here

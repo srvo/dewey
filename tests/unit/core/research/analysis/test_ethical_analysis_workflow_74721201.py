@@ -26,14 +26,17 @@ class MockDeepSeekEngine(DeepSeekEngine):
     """Mock implementation for testing ethical analysis workflows."""
     
     def __init__(self):
+        """Function __init__."""
         super().__init__()
         self.analyze_responses = {}
         self.research_responses = {}
     
     async def analyze(self, results: List[SearchResult], template_name: str) -> Dict[str, Any]:
+        """Function analyze."""
         return self.analyze_responses.get(template_name, {})
     
     async def conduct_research(
+        """Function conduct_research."""
         self,
         initial_query: str,
         follow_up_questions: List[str],
@@ -444,7 +447,9 @@ class TestEthicalAnalysisWorkflow(BaseWorkflowIntegrationTest):
 
         # Create a search engine that fails for specific companies
         class FailingSearchEngine:
+            """Class FailingSearchEngine."""
             def search(self, query):
+                """Function search."""
                 if "Test Company 1" in query:
                     raise Exception("Simulated search failure")
                 return [

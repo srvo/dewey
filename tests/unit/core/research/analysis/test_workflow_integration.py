@@ -24,11 +24,7 @@ class BaseEngine:
             *args: Positional arguments.
             **kwargs: Keyword arguments.
         """
-        self.calls.append({
-            'method': method,
-            'args': args,
-            'kwargs': kwargs
-        })
+        self.calls.append({"method": method, "args": args, "kwargs": kwargs})
 
 
 class MockSearchEngine(BaseEngine):
@@ -44,18 +40,18 @@ class MockSearchEngine(BaseEngine):
         Returns:
             A list of mock search results.
         """
-        self.record_call('search', query, **kwargs)
+        self.record_call("search", query, **kwargs)
         return [
             {
-                'title': 'Mock Result 1',
-                'url': 'https://example.com/1',
-                'snippet': 'This is a mock search result.'
+                "title": "Mock Result 1",
+                "url": "https://example.com/1",
+                "snippet": "This is a mock search result.",
             },
             {
-                'title': 'Mock Result 2',
-                'url': 'https://example.com/2',
-                'snippet': 'Another mock search result.'
-            }
+                "title": "Mock Result 2",
+                "url": "https://example.com/2",
+                "snippet": "Another mock search result.",
+            },
         ]
 
 
@@ -86,12 +82,12 @@ class MockAnalysisEngine(BaseEngine):
         Returns:
             A mock analysis result.
         """
-        self.record_call('analyze', text, **kwargs)
+        self.record_call("analyze", text, **kwargs)
         return {
-            'score': 85,
-            'analysis': 'Mock analysis result',
-            'risks': ['Mock risk 1', 'Mock risk 2'],
-            'recommendations': ['Mock recommendation 1']
+            "score": 85,
+            "analysis": "Mock analysis result",
+            "risks": ["Mock risk 1", "Mock risk 2"],
+            "recommendations": ["Mock recommendation 1"],
         }
 
 
@@ -118,7 +114,7 @@ class ResearchOutputHandler:
             The path to the saved file.
         """
         output_path = self.output_dir / filename
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             json.dump(results, f, indent=2)
         return output_path
 
@@ -158,7 +154,7 @@ class BaseWorkflowIntegrationTest:
         workflow = self.workflow_class(
             data_dir=temp_data_dir,
             search_engine=MockSearchEngine(),
-            analysis_engine=MockAnalysisEngine()
+            analysis_engine=MockAnalysisEngine(),
         )
         return workflow
 
@@ -192,6 +188,6 @@ class BaseWorkflowIntegrationTest:
             "Test Company 1,TC1,Test,Test Criteria 1\n"
             "Test Company 2,TC2,Test,Test Criteria 2\n"
         )
-        with open(csv_path, 'w') as f:
+        with open(csv_path, "w") as f:
             f.write(csv_content)
-        return csv_path 
+        return csv_path

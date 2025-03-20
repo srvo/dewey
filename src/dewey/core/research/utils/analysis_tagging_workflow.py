@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from dewey.core.base_script import BaseScript
 
@@ -11,7 +11,14 @@ class AnalysisTaggingWorkflow(BaseScript):
     tagging analysis results.
     """
 
-    def __init__(self, config_section: Optional[str] = None, requires_db: bool = False, enable_llm: bool = False, *args: Any, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        config_section: Optional[str] = None,
+        requires_db: bool = False,
+        enable_llm: bool = False,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         """Initializes the AnalysisTaggingWorkflow.
 
         Args:
@@ -21,7 +28,13 @@ class AnalysisTaggingWorkflow(BaseScript):
             *args: Additional positional arguments.
             **kwargs: Additional keyword arguments.
         """
-        super().__init__(config_section=config_section, requires_db=requires_db, enable_llm=enable_llm, *args, **kwargs)
+        super().__init__(
+            config_section=config_section,
+            requires_db=requires_db,
+            enable_llm=enable_llm,
+            *args,
+            **kwargs,
+        )
 
     def run(self) -> None:
         """Executes the analysis tagging workflow."""

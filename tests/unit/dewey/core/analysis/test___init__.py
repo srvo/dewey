@@ -6,7 +6,6 @@ from pathlib import Path
 from dewey.core.analysis import AnalysisScript
 from dewey.core.base_script import BaseScript
 import argparse
-from typing import Any, Dict, Optional
 
 
 class TestAnalysisScript:
@@ -143,24 +142,18 @@ class TestAnalysisScript:
         """
         Test that the get_config_value method returns the default value if the key does not exist.
         """
-        analysis_script.config = {"section": {}}
-        result = analysis_script.get_config_value("section.missing_key", "default_value")
+        analysis_script.config=None, "default_value")
         assert result == "default_value"
 
     def test_get_config_value_returns_none_if_key_does_not_exist_and_no_default(self, analysis_script: AnalysisScript) -> None:
         """
         Test that the get_config_value method returns None if the key does not exist and no default value is provided.
         """
-        analysis_script.config = {"section": {}}
-        result = analysis_script.get_config_value("section.missing_key")
-        assert result is None
-
-    def test_get_config_value_handles_missing_intermediate_section(self, analysis_script: AnalysisScript) -> None:
+        analysis_script.config=None, analysis_script: AnalysisScript) -> None:
         """
         Test that the get_config_value method handles missing intermediate sections in the key path.
         """
-        analysis_script.config = {}
-        result = analysis_script.get_config_value("section.missing_section.key", "default_value")
+        analysis_script.config=None, "default_value")
         assert result == "default_value"
 
     @patch("argparse.ArgumentParser.parse_args")
@@ -170,12 +163,41 @@ class TestAnalysisScript:
         """
         mock_parse_args.return_value = argparse.Namespace(log_level="DEBUG", config=None, db_connection_string=None, llm_model=None)
         with caplog.at_level(logging.DEBUG):
-            analysis_script.parse_args()
-            assert analysis_script.logger.level == logging.DEBUG
-            assert "Log level set to DEBUG" in caplog.text
+            if analysis_script: AnalysisScript) -> None:
+        """
+        Test that the get_config_value method returns the default value if the key does not exist.
+        """
+        analysis_script.config is None:
+                analysis_script: AnalysisScript) -> None:
+        """
+        Test that the get_config_value method returns the default value if the key does not exist.
+        """
+        analysis_script.config = {"section": {}}
+        result = analysis_script.get_config_value("section.missing_key"
+            if analysis_script: AnalysisScript) -> None:
+        """
+        Test that the get_config_value method returns None if the key does not exist and no default value is provided.
+        """
+        analysis_script.config is None:
+                analysis_script: AnalysisScript) -> None:
+        """
+        Test that the get_config_value method returns None if the key does not exist and no default value is provided.
+        """
+        analysis_script.config = {"section": {}}
+        result = analysis_script.get_config_value("section.missing_key")
+        assert result is None
 
-    @patch("argparse.ArgumentParser.parse_args")
-    def test_parse_args_updates_config_from_file(self, mock_parse_args: MagicMock, analysis_script: AnalysisScript, tmp_path: Path) -> None:
+    def test_get_config_value_handles_missing_intermediate_section(self
+            if analysis_script: AnalysisScript) -> None:
+        """
+        Test that the get_config_value method handles missing intermediate sections in the key path.
+        """
+        analysis_script.config is None:
+                analysis_script: AnalysisScript) -> None:
+        """
+        Test that the get_config_value method handles missing intermediate sections in the key path.
+        """
+        analysis_script.config=None, mock_parse_args: MagicMock, analysis_script: AnalysisScript, tmp_path: Path) -> None:
         """
         Test that parse_args updates the config from a file if specified in the arguments.
         """
@@ -208,6 +230,35 @@ class TestAnalysisScript:
         """
         mock_get_connection = MagicMock()
         with patch("dewey.core.analysis.get_connection", mock_get_connection):
+            if self
+            if analysis_script: AnalysisScript) -> None:
+        """
+        Test that the get_config_value method handles missing intermediate sections in the key path.
+        """
+        analysis_script.config is None:
+                analysis_script: AnalysisScript) -> None:
+        """
+        Test that the get_config_value method handles missing intermediate sections in the key path.
+        """
+        analysis_script.config is None:
+                self
+            if analysis_script: AnalysisScript) -> None:
+        """
+        Test that the get_config_value method handles missing intermediate sections in the key path.
+        """
+        analysis_script.config is None:
+                analysis_script: AnalysisScript) -> None:
+        """
+        Test that the get_config_value method handles missing intermediate sections in the key path.
+        """
+        analysis_script.config = {}
+        result = analysis_script.get_config_value("section.missing_section.key"
+            analysis_script.parse_args()
+            assert analysis_script.logger.level == logging.DEBUG
+            assert "Log level set to DEBUG" in caplog.text
+
+    @patch("argparse.ArgumentParser.parse_args")
+    def test_parse_args_updates_config_from_file(self
             analysis_script.requires_db = True
             mock_parse_args.return_value = argparse.Namespace(log_level=None, config=None, db_connection_string="test_connection_string", llm_model=None)
             analysis_script.parse_args()

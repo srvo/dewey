@@ -1,12 +1,10 @@
 import logging
-from abc import abstractmethod
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 from unittest.mock import MagicMock, patch
 
 import pytest
 import yaml
-from dotenv import load_dotenv
 
 from dewey.core.base_script import BaseScript
 from dewey.core.engines import EngineScript
@@ -78,7 +76,10 @@ class TestEngineScript:
         """Test that EngineScript has an abstract run method."""
 
         class ConcreteEngineScript(EngineScript):
+            """Class ConcreteEngineScript."""
+
             def run(self) -> None:
+                """Function run."""
                 pass
 
         engine_script = ConcreteEngineScript()
@@ -106,7 +107,10 @@ class TestEngineScript:
         """Test that a concrete implementation of run does not raise an error."""
 
         class ConcreteEngineScript(EngineScript):
+            """Class ConcreteEngineScript."""
+
             def run(self) -> None:
+                """Function run."""
                 pass
 
         try:
@@ -118,7 +122,10 @@ class TestEngineScript:
         """Test that EngineScript initializes logging correctly."""
 
         class ConcreteEngineScript(EngineScript):
+            """Class ConcreteEngineScript."""
+
             def run(self) -> None:
+                """Function run."""
                 self.logger.info("Test log message")
 
         with patch("logging.getLogger") as mock_get_logger:
@@ -132,7 +139,10 @@ class TestEngineScript:
         """Test that EngineScript loads configuration correctly."""
 
         class ConcreteEngineScript(EngineScript):
+            """Class ConcreteEngineScript."""
+
             def run(self) -> None:
+                """Function run."""
                 assert self.config == test_config
 
         engine_script = ConcreteEngineScript(config_section="test_section")
@@ -143,19 +153,27 @@ class TestEngineScript:
         with patch("dewey.core.db.connection.get_connection") as mock_get_connection:
 
             class ConcreteEngineScript(EngineScript):
+                """Class ConcreteEngineScript."""
+
                 def run(self) -> None:
+                    """Function run."""
                     pass
 
             engine_script = ConcreteEngineScript(requires_db=True)
             assert engine_script.db_conn is not None
             mock_get_connection.assert_called()
 
-    def test_engine_script_llm_initialization(self, test_config: Dict[str, Any]) -> None:
+    def test_engine_script_llm_initialization(
+        self, test_config: Dict[str, Any]
+    ) -> None:
         """Test that EngineScript initializes the LLM client when required."""
         with patch("dewey.llm.llm_utils.get_llm_client") as mock_get_llm_client:
 
             class ConcreteEngineScript(EngineScript):
+                """Class ConcreteEngineScript."""
+
                 def run(self) -> None:
+                    """Function run."""
                     pass
 
             engine_script = ConcreteEngineScript(enable_llm=True)
@@ -170,33 +188,52 @@ class TestEngineScript:
             with pytest.raises(Exception, match="Test"):
                 EngineScript()
 
-    def test_engine_script_config_section_not_found(self, test_config: Dict[str, Any]) -> None:
+    def test_engine_script_config_section_not_found(
+        self, test_config: Dict[str, Any]
+    ) -> None:
         """Test EngineScript when the config section is not found."""
 
         class ConcreteEngineScript(EngineScript):
+            """Class ConcreteEngineScript."""
+
             def run(self) -> None:
+                """Function run."""
                 assert self.config == test_config
 
         engine_script = ConcreteEngineScript(config_section="non_existent_section")
         engine_script.run()
 
-    def test_engine_script_db_initialization_failure(self, test_config: Dict[str, Any]) -> None:
+    def test_engine_script_db_initialization_failure(
+        self, test_config: Dict[str, Any]
+    ) -> None:
         """Test EngineScript database initialization failure."""
-        with patch("dewey.core.db.connection.get_connection", side_effect=Exception("DB Error")):
+        with patch(
+            "dewey.core.db.connection.get_connection", side_effect=Exception("DB Error")
+        ):
 
             class ConcreteEngineScript(EngineScript):
+                """Class ConcreteEngineScript."""
+
                 def run(self) -> None:
+                    """Function run."""
                     pass
 
             with pytest.raises(Exception, match="DB Error"):
                 ConcreteEngineScript(requires_db=True)
 
-    def test_engine_script_llm_initialization_failure(self, test_config: Dict[str, Any]) -> None:
+    def test_engine_script_llm_initialization_failure(
+        self, test_config: Dict[str, Any]
+    ) -> None:
         """Test EngineScript LLM initialization failure."""
-        with patch("dewey.llm.llm_utils.get_llm_client", side_effect=Exception("LLM Error")):
+        with patch(
+            "dewey.llm.llm_utils.get_llm_client", side_effect=Exception("LLM Error")
+        ):
 
             class ConcreteEngineScript(EngineScript):
+                """Class ConcreteEngineScript."""
+
                 def run(self) -> None:
+                    """Function run."""
                     pass
 
             with pytest.raises(Exception, match="LLM Error"):

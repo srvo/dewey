@@ -37,11 +37,15 @@ class TestEthicalAnalyzer:
         self, mock_logger: pytest.fixture, ethical_analyzer: EthicalAnalyzer
     ) -> None:
         """Test the run method handles exceptions correctly."""
-        with patch.object(ethical_analyzer, "run", side_effect=Exception("Test Exception")):
+        with patch.object(
+            ethical_analyzer, "run", side_effect=Exception("Test Exception")
+        ):
             with pytest.raises(Exception, match="Test Exception"):
                 ethical_analyzer.run()
 
-    def test_inheritance_from_basescript(self, ethical_analyzer: EthicalAnalyzer) -> None:
+    def test_inheritance_from_basescript(
+        self, ethical_analyzer: EthicalAnalyzer
+    ) -> None:
         """Test that EthicalAnalyzer inherits from BaseScript."""
         assert isinstance(ethical_analyzer, EthicalAnalyzer)
 
@@ -79,8 +83,11 @@ class TestEthicalAnalyzer:
         """Test the get_config_value method."""
         # Assuming there's a value in dewey.yaml under ethical_analyzer.test_value
         config_value = ethical_analyzer.get_config_value("test_value", "default_value")
-        assert config_value == "default_value"  # Because there is no test_value in ethical_analyzer config
+        assert (
+            config_value == "default_value"
+        )  # Because there is no test_value in ethical_analyzer config
 
-        config_value = ethical_analyzer.get_config_value("nonexistent_key", "default_value")
+        config_value = ethical_analyzer.get_config_value(
+            "nonexistent_key", "default_value"
+        )
         assert config_value == "default_value"
-

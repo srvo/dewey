@@ -1,9 +1,4 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
-from dewey.llm.llm_utils import get_llm_client
-import logging
-from pathlib import Path
-from typing import Any, Dict, Optional
 
 
 class CompanyResearch(BaseScript):
@@ -15,7 +10,12 @@ class CompanyResearch(BaseScript):
     execute the script's primary logic.
     """
 
-    def __init__(self, config_section: str = "company_research", requires_db: bool = True, enable_llm: bool = True) -> None:
+    def __init__(
+        self,
+        config_section: str = "company_research",
+        requires_db: bool = True,
+        enable_llm: bool = True,
+    ) -> None:
         """
         Initializes the CompanyResearch module.
 
@@ -25,7 +25,11 @@ class CompanyResearch(BaseScript):
             enable_llm (bool): Whether this script requires LLM access. Defaults to True.
 
         """
-        super().__init__(config_section=config_section, requires_db=requires_db, enable_llm=enable_llm)
+        super().__init__(
+            config_section=config_section,
+            requires_db=requires_db,
+            enable_llm=enable_llm,
+        )
         self.name = "CompanyResearch"
         self.description = "Base class for company research scripts."
 
@@ -42,7 +46,9 @@ class CompanyResearch(BaseScript):
         self.logger.info("Starting company research...")
         try:
             # Example of accessing a configuration value
-            example_config_value = self.get_config_value("example_config_key", "default_value")
+            example_config_value = self.get_config_value(
+                "example_config_key", "default_value"
+            )
             self.logger.debug(f"Example config value: {example_config_value}")
 
             # Example of using the database connection
@@ -66,7 +72,9 @@ class CompanyResearch(BaseScript):
                 self.logger.info("Successfully initialized LLM client.")
                 # Example LLM call (replace with your actual prompt)
                 try:
-                    response = self.llm_client.generate(prompt="Tell me about the company Apple.")
+                    response = self.llm_client.generate(
+                        prompt="Tell me about the company Apple."
+                    )
                     self.logger.info(f"LLM response: {response}")
                 except Exception as e:
                     self.logger.error(f"Error calling LLM: {e}")
@@ -76,7 +84,9 @@ class CompanyResearch(BaseScript):
             self.logger.info("Company research completed.")
 
         except Exception as e:
-            self.logger.error(f"An error occurred during company research: {e}", exc_info=True)
+            self.logger.error(
+                f"An error occurred during company research: {e}", exc_info=True
+            )
             raise
 
 

@@ -1,7 +1,7 @@
 """Unit tests for the dewey.core.db.models module."""
 
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 from unittest.mock import patch
 
 import pytest

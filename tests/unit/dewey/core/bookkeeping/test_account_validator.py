@@ -67,7 +67,10 @@ class TestAccountValidator:
         assert account_validator.config_section == "bookkeeping"
 
     def test_load_rules_success(
-        self, account_validator: AccountValidator, tmp_path: Path, mock_rules: Dict[str, List[str]]
+        self,
+        account_validator: AccountValidator,
+        tmp_path: Path,
+        mock_rules: Dict[str, List[str]],
     ) -> None:
         """Test loading rules from a valid JSON file."""
         rules_file = tmp_path / "rules.json"
@@ -77,14 +80,18 @@ class TestAccountValidator:
         loaded_rules = account_validator.load_rules(rules_file)
         assert loaded_rules == mock_rules
 
-    def test_load_rules_file_not_found(self, account_validator: AccountValidator, tmp_path: Path) -> None:
+    def test_load_rules_file_not_found(
+        self, account_validator: AccountValidator, tmp_path: Path
+    ) -> None:
         """Test loading rules when the file does not exist."""
         rules_file = tmp_path / "nonexistent_rules.json"
         with pytest.raises(SystemExit) as exc_info:
             account_validator.load_rules(rules_file)
         assert exc_info.value.code == 1
 
-    def test_load_rules_invalid_json(self, account_validator: AccountValidator, tmp_path: Path) -> None:
+    def test_load_rules_invalid_json(
+        self, account_validator: AccountValidator, tmp_path: Path
+    ) -> None:
         """Test loading rules from an invalid JSON file."""
         rules_file = tmp_path / "invalid_rules.json"
         with open(rules_file, "w") as f:
@@ -274,7 +281,9 @@ class TestAccountValidator:
 
     @patch("sys.argv", ["account_validator.py"])
     @patch("sys.exit")
-    def test_run_incorrect_arguments(self, mock_exit: MagicMock, account_validator: AccountValidator) -> None:
+    def test_run_incorrect_arguments(
+        self, mock_exit: MagicMock, account_validator: AccountValidator
+    ) -> None:
         """Test run method with incorrect number of arguments."""
         account_validator.run()
         mock_exit.assert_called_once_with(1)
@@ -349,14 +358,18 @@ class TestAccountValidator:
         account_validator._cleanup()  # db_conn is None by default
         # Assert that no exception is raised
 
-    def test_cleanup_db_conn_close_success(self, account_validator: AccountValidator) -> None:
+    def test_cleanup_db_conn_close_success(
+        self, account_validator: AccountValidator
+    ) -> None:
         """Test cleanup method when db_conn is successfully closed."""
         mock_db_conn = MagicMock()
         account_validator.db_conn = mock_db_conn
         account_validator._cleanup()
         mock_db_conn.close.assert_called_once()
 
-    def test_cleanup_db_conn_close_exception(self, account_validator: AccountValidator) -> None:
+    def test_cleanup_db_conn_close_exception(
+        self, account_validator: AccountValidator
+    ) -> None:
         """Test cleanup method when closing db_conn raises an exception."""
         mock_db_conn = MagicMock()
         mock_db_conn.close.side_effect = Exception("Failed to close connection")
@@ -377,7 +390,9 @@ class TestAccountValidator:
         result = account_validator.get_path(relative_path)
         assert result == expected_path
 
-    def test_get_config_value_exists(self, account_validator: AccountValidator, mock_config: Dict[str, Any]) -> None:
+    def test_get_config_value_exists(
+        self, account_validator: AccountValidator, mock_config: Dict[str, Any]
+    ) -> None:
         """Test get_config_value method when the key exists."""
         account_validator.config = mock_config
         value = account_validator.get_config_value("core.logging.level")
@@ -396,7 +411,9 @@ class TestAccountValidator:
     ) -> None:
         """Test get_config_value method when a nested key does not exist."""
         account_validator.config = mock_config
-        value = account_validator.get_config_value("core.nonexistent.key", "default_value")
+        value = account_validator.get_config_value(
+            "core.nonexistent.key", "default_value"
+        )
         assert value == "default_value"
 
     def test_setup_argparse(self, account_validator: AccountValidator) -> None:
@@ -407,7 +424,10 @@ class TestAccountValidator:
 
     @patch("argparse.ArgumentParser.parse_args")
     def test_parse_args_log_level(
-        self, mock_parse_args: MagicMock, account_validator: AccountValidator, caplog: pytest.LogCaptureFixture
+        self,
+        mock_parse_args: MagicMock,
+        account_validator: AccountValidator,
+        caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test parse_args method with log level argument."""
         mock_args = MagicMock()
@@ -422,7 +442,10 @@ class TestAccountValidator:
 
     @patch("argparse.ArgumentParser.parse_args")
     def test_parse_args_config_file(
-        self, mock_parse_args: MagicMock, account_validator: AccountValidator, tmp_path: Path
+        self,
+        mock_parse_args: MagicMock,
+        account_validator: AccountValidator,
+        tmp_path: Path,
     ) -> None:
         """Test parse_args method with config file argument."""
         config_data = {"test_key": "test_value"}
@@ -466,9 +489,13 @@ class TestAccountValidator:
         mock_args.db_connection_string = "test_connection_string"
         mock_parse_args.return_value = mock_args
 
-        with patch("dewey.core.bookkeeping.account_validator.get_connection") as mock_get_connection:
+        with patch(
+            "dewey.core.bookkeeping.account_validator.get_connection"
+        ) as mock_get_connection:
             account_validator.parse_args()
-            mock_get_connection.assert_called_once_with({"connection_string": "test_connection_string"})
+            mock_get_connection.assert_called_once_with(
+                {"connection_string": "test_connection_string"}
+            )
 
     @patch("argparse.ArgumentParser.parse_args")
     def test_parse_args_llm_model(
@@ -482,7 +509,9 @@ class TestAccountValidator:
         mock_args.llm_model = "test_llm_model"
         mock_parse_args.return_value = mock_args
 
-        with patch("dewey.core.bookkeeping.account_validator.get_llm_client") as mock_get_llm_client:
+        with patch(
+            "dewey.core.bookkeeping.account_validator.get_llm_client"
+        ) as mock_get_llm_client:
             account_validator.parse_args()
             mock_get_llm_client.assert_called_once_with({"model": "test_llm_model"})
 

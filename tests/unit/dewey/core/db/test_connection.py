@@ -1,8 +1,6 @@
 """Unit tests for the dewey.core.db.connection module."""
 
 import os
-from pathlib import Path
-from typing import Any, Dict, Optional
 from unittest.mock import patch
 
 import duckdb
@@ -25,7 +23,7 @@ class TestDatabaseConnection:
         """Mocks the BaseScript class."""
         mock = mocker.MagicMock(spec=BaseScript)
         mock.logger = mocker.MagicMock()
-        mock.get_config_value.return_value = 'md:'
+        mock.get_config_value.return_value = "md:"
         return mock
 
     def test_init_duckdb(self, tmp_path, mock_base_script):
@@ -50,8 +48,12 @@ class TestDatabaseConnection:
 
     def test_init_connection_error(self, mock_base_script):
         """Test initializing a DatabaseConnection with a connection error."""
-        with pytest.raises(RuntimeError), patch(
-            "dewey.core.db.connection.duckdb.connect", side_effect=Exception("Connection failed")
+        with (
+            pytest.raises(RuntimeError),
+            patch(
+                "dewey.core.db.connection.duckdb.connect",
+                side_effect=Exception("Connection failed"),
+            ),
         ):
             DatabaseConnection("test_db")
 
@@ -91,7 +93,10 @@ class TestDatabaseConnection:
         db_path = tmp_path / "test.duckdb"
         conn = DatabaseConnection(str(db_path))
         conn.execute("CREATE TABLE test (id INTEGER, name VARCHAR)")
-        conn.execute("INSERT INTO test (id, name) VALUES (?, ?)", parameters={"1": 1, "2": "test"})
+        conn.execute(
+            "INSERT INTO test (id, name) VALUES (?, ?)",
+            parameters={"1": 1, "2": "test"},
+        )
         result = conn.execute("SELECT * FROM test")
         assert not result.empty
         assert result["id"][0] == 1
@@ -170,7 +175,11 @@ class TestGetConnection:
     def test_get_connection_additional_kwargs(self, tmp_path):
         """Test getting a connection with additional kwargs."""
         db_path = tmp_path / "test.duckdb"
-        config = {"connection_string": str(db_path), "motherduck": False, "read_only": True}
+        config = {
+            "connection_string": str(db_path),
+            "motherduck": False,
+            "read_only": True,
+        }
         conn = get_connection(config)
         assert isinstance(conn, DatabaseConnection)
         assert conn.connection_string == str(db_path)

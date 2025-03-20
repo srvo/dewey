@@ -23,8 +23,14 @@ class TestEmailTriageWorkflow:
         assert email_triage_workflow.requires_db is True
         assert email_triage_workflow.enable_llm is True
 
-    @patch("dewey.core.crm.email.email_triage_workflow.EmailTriageWorkflow.get_config_value")
-    def test_run_success(self, mock_get_config_value: MagicMock, email_triage_workflow: EmailTriageWorkflow) -> None:
+    @patch(
+        "dewey.core.crm.email.email_triage_workflow.EmailTriageWorkflow.get_config_value"
+    )
+    def test_run_success(
+        self,
+        mock_get_config_value: MagicMock,
+        email_triage_workflow: EmailTriageWorkflow,
+    ) -> None:
         """Test the run method with successful execution."""
         mock_get_config_value.return_value = 50
         email_triage_workflow.db_conn = MagicMock()
@@ -32,11 +38,19 @@ class TestEmailTriageWorkflow:
 
         email_triage_workflow.run()
 
-        email_triage_workflow.logger.info.assert_called_with("Email triage workflow completed.")
-        mock_get_config_value.assert_called_with('max_emails_to_process', 100)
+        email_triage_workflow.logger.info.assert_called_with(
+            "Email triage workflow completed."
+        )
+        mock_get_config_value.assert_called_with("max_emails_to_process", 100)
 
-    @patch("dewey.core.crm.email.email_triage_workflow.EmailTriageWorkflow.get_config_value")
-    def test_run_exception(self, mock_get_config_value: MagicMock, email_triage_workflow: EmailTriageWorkflow) -> None:
+    @patch(
+        "dewey.core.crm.email.email_triage_workflow.EmailTriageWorkflow.get_config_value"
+    )
+    def test_run_exception(
+        self,
+        mock_get_config_value: MagicMock,
+        email_triage_workflow: EmailTriageWorkflow,
+    ) -> None:
         """Test the run method when an exception occurs."""
         mock_get_config_value.side_effect = Exception("Test exception")
 
@@ -57,7 +71,9 @@ class TestEmailTriageWorkflow:
         email_triage_workflow.run.assert_called_once()
         email_triage_workflow._cleanup.assert_called_once()
 
-    def test_execute_keyboard_interrupt(self, email_triage_workflow: EmailTriageWorkflow, capsys: pytest.CaptureFixture) -> None:
+    def test_execute_keyboard_interrupt(
+        self, email_triage_workflow: EmailTriageWorkflow, capsys: pytest.CaptureFixture
+    ) -> None:
         """Test the execute method when a KeyboardInterrupt occurs."""
         email_triage_workflow.parse_args = MagicMock()
         email_triage_workflow.run = MagicMock(side_effect=KeyboardInterrupt)
@@ -67,10 +83,14 @@ class TestEmailTriageWorkflow:
             email_triage_workflow.execute()
 
         assert exc_info.value.code == 1
-        email_triage_workflow.logger.warning.assert_called_with("Script interrupted by user")
+        email_triage_workflow.logger.warning.assert_called_with(
+            "Script interrupted by user"
+        )
         email_triage_workflow._cleanup.assert_called_once()
 
-    def test_execute_exception(self, email_triage_workflow: EmailTriageWorkflow, capsys: pytest.CaptureFixture) -> None:
+    def test_execute_exception(
+        self, email_triage_workflow: EmailTriageWorkflow, capsys: pytest.CaptureFixture
+    ) -> None:
         """Test the execute method when a general exception occurs."""
         email_triage_workflow.parse_args = MagicMock()
         email_triage_workflow.run = MagicMock(side_effect=ValueError("Test error"))
@@ -93,10 +113,14 @@ class TestEmailTriageWorkflow:
         email_triage_workflow.db_conn = None
         email_triage_workflow._cleanup()
 
-    def test_cleanup_exception(self, email_triage_workflow: EmailTriageWorkflow) -> None:
+    def test_cleanup_exception(
+        self, email_triage_workflow: EmailTriageWorkflow
+    ) -> None:
         """Test the _cleanup method when closing the database connection raises an exception."""
         email_triage_workflow.db_conn = MagicMock()
-        email_triage_workflow.db_conn.close.side_effect = Exception("Failed to close connection")
+        email_triage_workflow.db_conn.close.side_effect = Exception(
+            "Failed to close connection"
+        )
         email_triage_workflow._cleanup()
         email_triage_workflow.logger.warning.assert_called()
 
@@ -104,7 +128,10 @@ class TestEmailTriageWorkflow:
         """Test the get_config_value method."""
         email_triage_workflow.config = {"level1": {"level2": "value"}}
         assert email_triage_workflow.get_config_value("level1.level2") == "value"
-        assert email_triage_workflow.get_config_value("level1.level3", "default") == "default"
+        assert (
+            email_triage_workflow.get_config_value("level1.level3", "default")
+            == "default"
+        )
         assert email_triage_workflow.get_config_value("level3", "default") == "default"
 
         email_triage_workflow.config = {}

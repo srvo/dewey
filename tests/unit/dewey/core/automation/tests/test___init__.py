@@ -2,12 +2,11 @@ import argparse
 import logging
 import sys
 from pathlib import Path
-from typing import Any, Dict
+from typing import Dict
 from unittest.mock import patch
 
 import pytest
 import yaml
-from dotenv import load_dotenv
 
 # Assuming BaseScript is in the parent directory of 'automation'
 sys.path.append(str(Path(__file__).resolve().parents[4] / "src"))
@@ -72,7 +71,7 @@ def test_main_no_input(caplog: pytest.LogCaptureFixture, monkeypatch: pytest.Mon
     monkeypatch.setattr("sys.argv", ["__init__.py"])
 
     # Call main function
-    import src.dewey.core.automation.tests.__init__ as automation_module
+import src.dewey.core.automation.tests.__init__ as automation_module
     automation_module.main()
 
     # Assertions
@@ -95,7 +94,7 @@ def test_main_with_input(caplog: pytest.LogCaptureFixture, monkeypatch: pytest.M
     monkeypatch.setattr("sys.argv", ["__init__.py", "--input", "some_input"])
 
     # Call main function
-    import src.dewey.core.automation.tests.__init__ as automation_module
+import src.dewey.core.automation.tests.__init__ as automation_module
     automation_module.main()
 
     # Assertions
@@ -106,7 +105,7 @@ def test_main_with_input(caplog: pytest.LogCaptureFixture, monkeypatch: pytest.M
 
 def test_fetch_data_from_db(capfd: pytest.CaptureFixture[str]) -> None:
     """Test fetch_data_from_db function."""
-    import src.dewey.core.automation.tests.__init__ as automation_module
+import src.dewey.core.automation.tests.__init__ as automation_module
     result = automation_module.fetch_data_from_db()
     captured = capfd.readouterr()
 
@@ -116,7 +115,7 @@ def test_fetch_data_from_db(capfd: pytest.CaptureFixture[str]) -> None:
 
 def test_analyze_data_with_llm(capfd: pytest.CaptureFixture[str]) -> None:
     """Test analyze_data_with_llm function."""
-    import src.dewey.core.automation.tests.__init__ as automation_module
+import src.dewey.core.automation.tests.__init__ as automation_module
     data = {"data": "some data"}
     result = automation_module.analyze_data_with_llm(data)
     captured = capfd.readouterr()

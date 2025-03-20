@@ -31,7 +31,9 @@ class TestTavily:
         mock_get_config_value.assert_called_once_with("api_key")
 
     @patch("dewey.core.engines.tavily.Tavily.get_config_value")
-    def test_run_no_api_key(self, mock_get_config_value, tavily_instance: Tavily, caplog):
+    def test_run_no_api_key(
+        self, mock_get_config_value, tavily_instance: Tavily, caplog
+    ):
         """Test the run method when the API key is not configured."""
         mock_get_config_value.return_value = None
         with caplog.at_level(logging.INFO):
@@ -50,7 +52,9 @@ class TestTavily:
     def test_get_config_value_nonexistent_key(self, tavily_instance: Tavily):
         """Test get_config_value method with a nonexistent key."""
         tavily_instance.config = {"tavily": {"api_key": "test_api_key"}}
-        value = tavily_instance.get_config_value("tavily.nonexistent_key", "default_value")
+        value = tavily_instance.get_config_value(
+            "tavily.nonexistent_key", "default_value"
+        )
         assert value == "default_value"
 
     def test_get_config_value_default_value(self, tavily_instance: Tavily):

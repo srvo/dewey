@@ -3,7 +3,7 @@
 import logging
 import re
 import sqlite3
-from typing import Any, Dict
+from typing import Dict
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
@@ -39,7 +39,9 @@ class TestOpportunityDetector:
             detector = OpportunityDetector()
         return detector
 
-    def test_extract_opportunities(self, opportunity_detector: OpportunityDetector) -> None:
+    def test_extract_opportunities(
+        self, opportunity_detector: OpportunityDetector
+    ) -> None:
         """Tests the extract_opportunities method."""
         email_text = "This is an email about a demo and a cancellation."
         opportunities = opportunity_detector.extract_opportunities(email_text)
@@ -74,7 +76,9 @@ class TestOpportunityDetector:
         opportunities = opportunity_detector.extract_opportunities(email_text)
         assert opportunities["demo"] is True
 
-    def test_update_contacts_db(self, opportunity_detector: OpportunityDetector) -> None:
+    def test_update_contacts_db(
+        self, opportunity_detector: OpportunityDetector
+    ) -> None:
         """Tests the update_contacts_db method."""
         conn = MagicMock()
         opportunities_data = {
@@ -117,14 +121,23 @@ class TestOpportunityDetector:
         """Tests error handling in update_contacts_db."""
         conn = MagicMock()
         conn.execute.side_effect = Exception("Database error")
-        opportunities_data = {"from_email": ["test@example.com"], "demo": [True], "cancellation": [False], "speaking": [True], "publicity": [False], "submission": [True]}
+        opportunities_data = {
+            "from_email": ["test@example.com"],
+            "demo": [True],
+            "cancellation": [False],
+            "speaking": [True],
+            "publicity": [False],
+            "submission": [True],
+        }
         opportunities_df = pd.DataFrame(opportunities_data)
 
         opportunity_detector.update_contacts_db(opportunities_df, conn)
 
         opportunity_detector.logger.error.assert_called_once()
 
-    def test_detect_opportunities(self, opportunity_detector: OpportunityDetector) -> None:
+    def test_detect_opportunities(
+        self, opportunity_detector: OpportunityDetector
+    ) -> None:
         """Tests the detect_opportunities method."""
         conn = MagicMock()
         query_result = [
@@ -142,7 +155,8 @@ class TestOpportunityDetector:
             ),
         ]
         df = pd.DataFrame(
-            query_result, columns=["message_id", "from_email", "subject", "full_message"]
+            query_result,
+            columns=["message_id", "from_email", "subject", "full_message"],
         )
         with patch("pandas.read_sql_query", return_value=df):
             opportunity_detector.update_contacts_db = MagicMock()

@@ -1,6 +1,4 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
-from typing import Any
 
 
 class DbInit(BaseScript):
@@ -13,7 +11,7 @@ class DbInit(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the DbInit class."""
-        super().__init__(config_section='db_init', requires_db=True)
+        super().__init__(config_section="db_init", requires_db=True)
 
     def run(self) -> None:
         """Runs the database initialization process.
@@ -31,7 +29,7 @@ class DbInit(BaseScript):
 
         try:
             # Access database host from configuration
-            db_host = self.get_config_value('core.database.host', 'localhost')
+            db_host = self.get_config_value("core.database.host", "localhost")
             self.logger.info(f"Database host: {db_host}")
 
             # Example database operation (replace with actual initialization logic)

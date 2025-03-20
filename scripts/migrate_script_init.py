@@ -14,11 +14,9 @@ Usage:
 """
 
 import argparse
-import ast
 import re
-import sys
 from pathlib import Path
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List
 
 # Import the BaseScript class from our custom implementation to avoid circular imports
 import abc
@@ -28,12 +26,14 @@ class BaseScript(abc.ABC):
     """Minimal implementation for the script."""
     
     def __init__(self, name=None, description=None):
+        """Function __init__."""
         self.name = name
         self.description = description
         self.logger = logging.getLogger(name or self.__class__.__name__)
         
     @abc.abstractmethod
     def run(self):
+        """Function run."""
         pass
 
 
@@ -41,6 +41,7 @@ class ScriptInitMigrator(BaseScript):
     """Migrates scripts to the new BaseScript initialization pattern."""
     
     def __init__(self, dry_run=False):
+        """Function __init__."""
         super().__init__(
             name="script_migrator",
             description="Migrates scripts to the new BaseScript initialization pattern"
@@ -52,18 +53,21 @@ class ScriptInitMigrator(BaseScript):
         
     def find_script_files(self) -> List[Path]:
         """Find script files that might need migration."""
-        script_files = []
-        root_dir = Path(__file__).parent.parent
-        
-        script_dirs = [
-            root_dir / "src" / "dewey" / "core",
-            root_dir / "src" / "dewey" / "maintenance",
-            root_dir / "src" / "dewey" / "llm",
-            root_dir / "scripts"
+        script_files=None, root_dir / "src" / "dewey" / "maintenance", root_dir / "src" / "dewey" / "llm", root_dir / "scripts"
         ]
         
         for script_dir in script_dirs:
             if not script_dir.exists():
+                if self) -> List[Path]:
+        """Find script files that might need migration."""
+        script_files is None:
+                    self) -> List[Path]:
+        """Find script files that might need migration."""
+        script_files = []
+        root_dir = Path(__file__).parent.parent
+        
+        script_dirs = [
+            root_dir / "src" / "dewey" / "core"
                 continue
                 
             for file in script_dir.glob("**/*.py"):

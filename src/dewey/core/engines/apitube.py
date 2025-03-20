@@ -15,7 +15,7 @@ class Apitube(BaseScript):
 
         Calls the superclass constructor to initialize the base script.
         """
-        super().__init__(config_section='apitube')
+        super().__init__(config_section="apitube")
 
     def run(self) -> None:
         """

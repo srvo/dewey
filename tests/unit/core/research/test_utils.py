@@ -1,11 +1,12 @@
 """Tests for research utilities."""
+
 import pytest
-from unittest.mock import Mock, patch
 import json
 from pathlib import Path
 from dewey.core.research.utils.universe_breakdown import UniverseBreakdown
 from dewey.core.research.utils.sts_xml_parser import STSXMLParser
 from dewey.core.research.utils.research_output_handler import ResearchOutputHandler
+
 
 class TestUniverseBreakdown:
     """Test suite for universe breakdown utility."""
@@ -18,8 +19,8 @@ class TestUniverseBreakdown:
     def test_initialization(self, breakdown):
         """Test breakdown initialization."""
         assert breakdown is not None
-        assert hasattr(breakdown, 'analyze')
-        assert hasattr(breakdown, 'generate_report')
+        assert hasattr(breakdown, "analyze")
+        assert hasattr(breakdown, "generate_report")
 
     def test_analyze_universe(self, breakdown):
         """Test universe analysis."""
@@ -27,7 +28,7 @@ class TestUniverseBreakdown:
             "companies": [
                 {"name": "Company A", "sector": "Technology", "market_cap": 1000000},
                 {"name": "Company B", "sector": "Healthcare", "market_cap": 2000000},
-                {"name": "Company C", "sector": "Technology", "market_cap": 1500000}
+                {"name": "Company C", "sector": "Technology", "market_cap": 1500000},
             ]
         }
 
@@ -42,7 +43,7 @@ class TestUniverseBreakdown:
         """Test report generation."""
         analysis_data = {
             "sector_breakdown": {"Technology": 2, "Healthcare": 1},
-            "market_cap_distribution": {"large": 1, "medium": 2}
+            "market_cap_distribution": {"large": 1, "medium": 2},
         }
 
         report = breakdown.generate_report(analysis_data)
@@ -50,6 +51,7 @@ class TestUniverseBreakdown:
         assert "summary" in report
         assert "charts" in report
         assert isinstance(report["charts"], list)
+
 
 class TestSTSXMLParser:
     """Test suite for STS XML parser."""
@@ -62,7 +64,7 @@ class TestSTSXMLParser:
     def test_initialization(self, parser):
         """Test parser initialization."""
         assert parser is not None
-        assert hasattr(parser, 'parse')
+        assert hasattr(parser, "parse")
 
     def test_parse_xml(self, parser):
         """Test XML parsing."""
@@ -89,6 +91,7 @@ class TestSTSXMLParser:
         with pytest.raises(ValueError):
             parser.parse("<invalid>xml</invalid>")
 
+
 class TestResearchOutputHandler:
     """Test suite for research output handler."""
 
@@ -100,17 +103,14 @@ class TestResearchOutputHandler:
     def test_initialization(self, handler):
         """Test handler initialization."""
         assert handler is not None
-        assert hasattr(handler, 'save')
-        assert hasattr(handler, 'load')
+        assert hasattr(handler, "save")
+        assert hasattr(handler, "load")
 
     def test_save_output(self, handler, tmp_path):
         """Test saving research output."""
         test_data = {
-            "analysis": {
-                "score": 85,
-                "recommendations": ["Test recommendation"]
-            },
-            "timestamp": "2024-03-19T12:00:00"
+            "analysis": {"score": 85, "recommendations": ["Test recommendation"]},
+            "timestamp": "2024-03-19T12:00:00",
         }
 
         output_path = tmp_path / "test_output.json"
@@ -125,15 +125,12 @@ class TestResearchOutputHandler:
     def test_load_output(self, handler, tmp_path):
         """Test loading research output."""
         test_data = {
-            "analysis": {
-                "score": 85,
-                "recommendations": ["Test recommendation"]
-            }
+            "analysis": {"score": 85, "recommendations": ["Test recommendation"]}
         }
 
         # Save test data
         output_path = tmp_path / "test_output.json"
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             json.dump(test_data, f)
 
         # Load and verify
@@ -144,6 +141,7 @@ class TestResearchOutputHandler:
         """Test error handling in output operations."""
         with pytest.raises(FileNotFoundError):
             handler.load(Path("nonexistent.json"))
+
 
 @pytest.mark.integration
 class TestUtilsIntegration:
@@ -193,4 +191,4 @@ class TestUtilsIntegration:
 
         # Load and verify output
         loaded_report = handler.load(output_path)
-        assert loaded_report == report 
+        assert loaded_report == report

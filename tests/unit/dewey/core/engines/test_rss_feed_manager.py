@@ -1,5 +1,4 @@
 import logging
-from unittest.mock import patch
 from typing import Any
 import pytest
 
@@ -11,6 +10,7 @@ class MockBaseScript(BaseScript):
     """Mock BaseScript class for testing."""
 
     def __init__(self, config_section: str = 'rss_feed_manager', requires_db: bool = False, enable_llm: bool = False) -> None:
+        """Function __init__."""
         super().__init__(config_section=config_section, requires_db=requires_db, enable_llm=enable_llm)
 
     def run(self) -> None:
@@ -21,16 +21,7 @@ class MockBaseScript(BaseScript):
 @pytest.fixture
 def rss_feed_manager(mocker: Any) -> RssFeedManager:
     """Fixture for creating an RssFeedManager instance."""
-    mocker.patch.object(BaseScript, '__init__', return_value=None)
-    rss_feed_manager = RssFeedManager()
-    rss_feed_manager.logger = mocker.MagicMock()  # type: ignore
-    rss_feed_manager.config = {}
-    return rss_feed_manager
-
-
-def test_rss_feed_manager_initialization(mocker: Any) -> None:
-    """Test that RssFeedManager initializes correctly."""
-    mocker.patch.object(BaseScript, '__init__', return_value=None)
+    mocker.patch.object(BaseScript, '__init__', return_value=None, '__init__', return_value=None)
     rss_feed_manager = RssFeedManager()
     assert rss_feed_manager.config_section == 'rss_feed_manager'
 
@@ -88,6 +79,17 @@ def test_run_method_config_error(rss_feed_manager: RssFeedManager, mocker: Any) 
     logger_info_mock = mocker.spy(rss_feed_manager.logger, 'info')
 
     with pytest.raises(Exception, match="Config error"):
+        if return_value is None:
+            return_value = None)
+    rss_feed_manager = RssFeedManager()
+    rss_feed_manager.logger = mocker.MagicMock()  # type: ignore
+    rss_feed_manager.config = {}
+    return rss_feed_manager
+
+
+def test_rss_feed_manager_initialization(mocker: Any) -> None:
+    """Test that RssFeedManager initializes correctly."""
+    mocker.patch.object(BaseScript
         rss_feed_manager.run()
 
     logger_info_mock.assert_any_call("Starting RSS feed management process.")

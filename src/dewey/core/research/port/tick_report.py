@@ -1,8 +1,7 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
-from dewey.core.db.utils import create_table, execute_query
+from dewey.core.db.utils import execute_query
 from dewey.llm.llm_utils import generate_text
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class TickReport(BaseScript):
@@ -17,7 +16,13 @@ class TickReport(BaseScript):
         """
         Initializes the TickReport module.
         """
-        super().__init__(*args, config_section="tick_report", requires_db=True, enable_llm=True, **kwargs)
+        super().__init__(
+            *args,
+            config_section="tick_report",
+            requires_db=True,
+            enable_llm=True,
+            **kwargs,
+        )
 
     def run(self) -> None:
         """
@@ -60,5 +65,7 @@ class TickReport(BaseScript):
             self.logger.info("Tick report generation completed.")
 
         except Exception as e:
-            self.logger.error(f"Error during tick report generation: {e}", exc_info=True)
+            self.logger.error(
+                f"Error during tick report generation: {e}", exc_info=True
+            )
             raise

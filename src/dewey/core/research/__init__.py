@@ -1,5 +1,5 @@
 from dewey.core.base_script import BaseScript
-from typing import Any, Dict
+from typing import Any
 
 
 class ResearchScript(BaseScript):
@@ -9,7 +9,7 @@ class ResearchScript(BaseScript):
     for research-related tasks.
     """
 
-    def __init__(self, config_section: str = 'research_script', **kwargs: Any) -> None:
+    def __init__(self, config_section: str = "research_script", **kwargs: Any) -> None:
         """Initializes the ResearchScript.
 
         Args:

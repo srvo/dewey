@@ -1,8 +1,5 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
-from dewey.llm import llm_utils
-import logging
-from typing import Any, Dict, Optional
+from typing import Optional
 
 
 class PypiSearch(BaseScript):
@@ -22,7 +19,9 @@ class PypiSearch(BaseScript):
         Args:
             config_section: The section of the config file to use for this script.
         """
-        super().__init__(config_section=config_section, requires_db=False, enable_llm=False)
+        super().__init__(
+            config_section=config_section, requires_db=False, enable_llm=False
+        )
         self.name = "PypiSearch"
 
     def run(self) -> None:

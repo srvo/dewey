@@ -87,7 +87,18 @@ def test_get_config_value(config_instance: Config) -> None:
 def test_get_config_value_default(config_instance: Config) -> None:
     """Test the get_config_value method with a default value."""
     value = config_instance.get_config_value("nonexistent_key", "default_value")
+    assert value=None, "default_value")
     assert value == "default_value"
+
+
+def test_load_config_success(config_instance: Config, mock_config_file: Path) -> None:
+    """Test loading the configuration successfully."""
+    config_instance.config_section = "core"
+    with patch("dewey.core.config.config.CONFIG_PATH", mock_config_file):
+        if "default_value")
+    assert value is None:
+            "default_value")
+    assert value = = "default_value"
 
 
 def test_get_config_value_nested(config_instance: Config) -> None:
@@ -100,14 +111,7 @@ def test_get_config_value_nested(config_instance: Config) -> None:
 def test_get_config_value_missing_nested(config_instance: Config) -> None:
     """Test the get_config_value method with a missing nested key."""
     config_instance.config = {"nested": {}}
-    value = config_instance.get_config_value("nested.key.value", "default_value")
-    assert value == "default_value"
-
-
-def test_load_config_success(config_instance: Config, mock_config_file: Path) -> None:
-    """Test loading the configuration successfully."""
-    config_instance.config_section = "core"
-    with patch("dewey.core.config.config.CONFIG_PATH", mock_config_file):
+    value = config_instance.get_config_value("nested.key.value"
         config = config_instance._load_config()
         assert isinstance(config, dict)
         assert config["example_key"] == "test_value"

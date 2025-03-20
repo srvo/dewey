@@ -1,7 +1,5 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
-import logging
-from typing import Any
+
 
 class SecEtl(BaseScript):
     """
@@ -13,7 +11,7 @@ class SecEtl(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the SecEtl class."""
-        super().__init__(config_section='sec_etl')
+        super().__init__(config_section="sec_etl")
 
     def run(self) -> None:
         """

@@ -1,6 +1,5 @@
 import argparse
 import sys
-from typing import Any, Dict, List, Optional
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import (

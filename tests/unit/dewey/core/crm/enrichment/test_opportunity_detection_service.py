@@ -16,13 +16,17 @@ class TestOpportunityDetectionService:
         """Fixture to create an instance of OpportunityDetectionService."""
         return OpportunityDetectionService()
 
-    def test_init(self, opportunity_detection_service: OpportunityDetectionService) -> None:
+    def test_init(
+        self, opportunity_detection_service: OpportunityDetectionService
+    ) -> None:
         """Test the __init__ method."""
         assert opportunity_detection_service.config_section == "opportunity_detection"
         assert opportunity_detection_service.logger is not None
         assert isinstance(opportunity_detection_service.logger, logging.Logger)
 
-    @patch("dewey.core.crm.enrichment.opportunity_detection_service.OpportunityDetectionService.detect_opportunities")
+    @patch(
+        "dewey.core.crm.enrichment.opportunity_detection_service.OpportunityDetectionService.detect_opportunities"
+    )
     def test_run(
         self,
         mock_detect_opportunities: MagicMock,
@@ -32,7 +36,9 @@ class TestOpportunityDetectionService:
         mock_detect_opportunities.return_value = ["demo"]
         opportunity_detection_service.logger = MagicMock()  # type: ignore
         opportunity_detection_service.run()
-        mock_detect_opportunities.assert_called_once_with("This is a sample text with a demo opportunity.")
+        mock_detect_opportunities.assert_called_once_with(
+            "This is a sample text with a demo opportunity."
+        )
         opportunity_detection_service.logger.info.assert_called_once()  # type: ignore
 
     def test_detect_opportunities_no_patterns(
@@ -59,7 +65,9 @@ class TestOpportunityDetectionService:
             return_value={"demo": "demo"}
         )
         opportunity_detection_service._check_opportunity = MagicMock(return_value=True)  # type: ignore
-        opportunities = opportunity_detection_service.detect_opportunities("test text with demo")
+        opportunities = opportunity_detection_service.detect_opportunities(
+            "test text with demo"
+        )
         assert opportunities == ["demo"]
         opportunity_detection_service._check_opportunity.assert_called_once_with(  # type: ignore
             "test text with demo", "demo"

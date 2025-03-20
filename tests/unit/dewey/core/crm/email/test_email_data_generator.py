@@ -4,6 +4,7 @@ from dewey.core.crm.email.email_data_generator import EmailDataGenerator
 import logging
 from dewey.core.base_script import BaseScript  # Import BaseScript
 
+
 class TestEmailDataGenerator:
     """Tests for the EmailDataGenerator class."""
 
@@ -30,24 +31,38 @@ class TestEmailDataGenerator:
 
         # Mock database interaction
         cursor_mock = MagicMock()
-        email_data_generator.db_conn.cursor.return_value.__enter__.return_value = cursor_mock
+        email_data_generator.db_conn.cursor.return_value.__enter__.return_value = (
+            cursor_mock
+        )
         cursor_mock.fetchone.return_value = [1]
 
         # Mock LLM response
-        email_data_generator.llm_client.generate_text.return_value = "Test email subject"
+        email_data_generator.llm_client.generate_text.return_value = (
+            "Test email subject"
+        )
 
         # Run the method
         email_data_generator.run()
 
         # Assertions
         email_data_generator.get_config_value.assert_called_with("num_emails", 10)
-        email_data_generator.logger.info.assert_any_call("Starting email data generation...")
+        email_data_generator.logger.info.assert_any_call(
+            "Starting email data generation..."
+        )
         email_data_generator.logger.info.assert_any_call("Generating 5 emails.")
         cursor_mock.execute.assert_called_with("SELECT 1")
-        email_data_generator.logger.info.assert_any_call("Database connection test: [1]")
-        email_data_generator.llm_client.generate_text.assert_called_with("Write a short email subject.")
-        email_data_generator.logger.info.assert_any_call("LLM response: Test email subject")
-        email_data_generator.logger.info.assert_any_call("Email data generation completed.")
+        email_data_generator.logger.info.assert_any_call(
+            "Database connection test: [1]"
+        )
+        email_data_generator.llm_client.generate_text.assert_called_with(
+            "Write a short email subject."
+        )
+        email_data_generator.logger.info.assert_any_call(
+            "LLM response: Test email subject"
+        )
+        email_data_generator.logger.info.assert_any_call(
+            "Email data generation completed."
+        )
 
     def test_run_db_error(self, email_data_generator):
         """Test the run method with a database connection error."""
@@ -61,10 +76,16 @@ class TestEmailDataGenerator:
         email_data_generator.run()
 
         # Assertions
-        email_data_generator.logger.info.assert_any_call("Starting email data generation...")
+        email_data_generator.logger.info.assert_any_call(
+            "Starting email data generation..."
+        )
         email_data_generator.logger.info.assert_any_call("Generating 5 emails.")
-        email_data_generator.logger.error.assert_called_with("Error connecting to database: Database error")
-        email_data_generator.logger.info.assert_any_call("Email data generation completed.")
+        email_data_generator.logger.error.assert_called_with(
+            "Error connecting to database: Database error"
+        )
+        email_data_generator.logger.info.assert_any_call(
+            "Email data generation completed."
+        )
 
     def test_run_llm_error(self, email_data_generator):
         """Test the run method with an LLM error."""
@@ -73,22 +94,34 @@ class TestEmailDataGenerator:
 
         # Mock database interaction
         cursor_mock = MagicMock()
-        email_data_generator.db_conn.cursor.return_value.__enter__.return_value = cursor_mock
+        email_data_generator.db_conn.cursor.return_value.__enter__.return_value = (
+            cursor_mock
+        )
         cursor_mock.fetchone.return_value = [1]
 
         # Mock LLM error
-        email_data_generator.llm_client.generate_text.side_effect = Exception("LLM error")
+        email_data_generator.llm_client.generate_text.side_effect = Exception(
+            "LLM error"
+        )
 
         # Run the method
         email_data_generator.run()
 
         # Assertions
-        email_data_generator.logger.info.assert_any_call("Starting email data generation...")
+        email_data_generator.logger.info.assert_any_call(
+            "Starting email data generation..."
+        )
         email_data_generator.logger.info.assert_any_call("Generating 5 emails.")
         cursor_mock.execute.assert_called_with("SELECT 1")
-        email_data_generator.logger.info.assert_any_call("Database connection test: [1]")
-        email_data_generator.logger.error.assert_called_with("Error using LLM: LLM error")
-        email_data_generator.logger.info.assert_any_call("Email data generation completed.")
+        email_data_generator.logger.info.assert_any_call(
+            "Database connection test: [1]"
+        )
+        email_data_generator.logger.error.assert_called_with(
+            "Error using LLM: LLM error"
+        )
+        email_data_generator.logger.info.assert_any_call(
+            "Email data generation completed."
+        )
 
     def test_run_no_emails_configured(self, email_data_generator):
         """Test the run method when no 'num_emails' is configured."""
@@ -97,21 +130,37 @@ class TestEmailDataGenerator:
 
         # Mock database interaction
         cursor_mock = MagicMock()
-        email_data_generator.db_conn.cursor.return_value.__enter__.return_value = cursor_mock
+        email_data_generator.db_conn.cursor.return_value.__enter__.return_value = (
+            cursor_mock
+        )
         cursor_mock.fetchone.return_value = [1]
 
         # Mock LLM response
-        email_data_generator.llm_client.generate_text.return_value = "Test email subject"
+        email_data_generator.llm_client.generate_text.return_value = (
+            "Test email subject"
+        )
 
         # Run the method
         email_data_generator.run()
 
         # Assertions
         email_data_generator.get_config_value.assert_called_with("num_emails", 10)
-        email_data_generator.logger.info.assert_any_call("Starting email data generation...")
-        email_data_generator.logger.info.assert_any_call("Generating 10 emails.")  # Verify default value is used
+        email_data_generator.logger.info.assert_any_call(
+            "Starting email data generation..."
+        )
+        email_data_generator.logger.info.assert_any_call(
+            "Generating 10 emails."
+        )  # Verify default value is used
         cursor_mock.execute.assert_called_with("SELECT 1")
-        email_data_generator.logger.info.assert_any_call("Database connection test: [1]")
-        email_data_generator.llm_client.generate_text.assert_called_with("Write a short email subject.")
-        email_data_generator.logger.info.assert_any_call("LLM response: Test email subject")
-        email_data_generator.logger.info.assert_any_call("Email data generation completed.")
+        email_data_generator.logger.info.assert_any_call(
+            "Database connection test: [1]"
+        )
+        email_data_generator.llm_client.generate_text.assert_called_with(
+            "Write a short email subject."
+        )
+        email_data_generator.logger.info.assert_any_call(
+            "LLM response: Test email subject"
+        )
+        email_data_generator.logger.info.assert_any_call(
+            "Email data generation completed."
+        )

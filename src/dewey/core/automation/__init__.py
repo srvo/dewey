@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -12,7 +12,7 @@ class AutomationModule(BaseScript):
     execute the script's primary logic.
     """
 
-    def __init__(self, config_section: str = 'automation') -> None:
+    def __init__(self, config_section: str = "automation") -> None:
         """
         Initializes the AutomationModule.
 
@@ -57,7 +57,7 @@ class AutomationModule(BaseScript):
         return super().get_config_value(key, default)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Example usage:
     automation_module = AutomationModule()
     automation_module.run()

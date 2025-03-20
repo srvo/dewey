@@ -1,14 +1,14 @@
 """Tests for hledger utilities."""
+
 import pytest
-from pathlib import Path
-from unittest.mock import patch, MagicMock
 from dewey.core.bookkeeping.hledger_utils import (
     run_hledger_command,
     check_journal_file,
     parse_journal_entries,
     format_amount,
-    validate_account_name
+    validate_account_name,
 )
+
 
 class TestHledgerUtils:
     """Test suite for hledger utilities."""
@@ -60,7 +60,7 @@ class TestHledgerUtils:
             "Assets:Checking",
             "Expenses:Office:Supplies",
             "Income:Salary",
-            "Liabilities:CreditCard"
+            "Liabilities:CreditCard",
         ]
         for name in valid_names:
             assert validate_account_name(name) is True
@@ -71,7 +71,7 @@ class TestHledgerUtils:
             "assets:checking",  # lowercase
             "Expenses:",  # ends with colon
             "Income/Salary",  # invalid character
-            ""  # empty string
+            "",  # empty string
         ]
         for name in invalid_names:
             assert validate_account_name(name) is False
@@ -80,19 +80,19 @@ class TestHledgerUtils:
     def test_full_journal_processing(self, sample_journal_dir, mock_subprocess_run):
         """Integration test for journal processing."""
         journal_file = sample_journal_dir / "2024.journal"
-        
+
         # Check file
         assert check_journal_file(journal_file) is True
-        
+
         # Run hledger commands
         result = run_hledger_command(["check", str(journal_file)])
         assert result.returncode == 0
-        
+
         # Parse output
         entries = parse_journal_entries(mock_hledger_output())
         assert len(entries) > 0
-        
+
         # Validate all account names
         for entry in entries:
             for posting in entry["postings"]:
-                assert validate_account_name(posting["account"]) is True 
+                assert validate_account_name(posting["account"]) is True

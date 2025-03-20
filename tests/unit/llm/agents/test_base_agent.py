@@ -1,4 +1,5 @@
 """Tests for the base agent."""
+
 import pytest
 from unittest.mock import MagicMock, patch
 from typing import Dict, Any
@@ -8,15 +9,18 @@ from dewey.llm.llm_utils import LLMHandler
 from dewey.core.engines.base import BaseEngine
 import json
 
+
 class MockEngine(BaseEngine):
     """Mock engine for testing."""
+
     def search(self, query: str) -> Dict:
         """Mock search method."""
         return {"results": [query]}
-    
+
     def get_name(self) -> str:
         """Get engine name."""
         return "MockEngine"
+
 
 @pytest.fixture
 def sample_config() -> Dict[str, Any]:
@@ -28,41 +32,27 @@ def sample_config() -> Dict[str, Any]:
             "providers": {
                 "deepinfra": {
                     "api_key": "dummy_key",
-                    "default_model": "google/gemini-2.0-flash-001"
+                    "default_model": "google/gemini-2.0-flash-001",
                 }
-            }
+            },
         },
         "agents": {
-            "test_agent": {
-                "enabled": True,
-                "version": "1.0"
-            },
-            "rag_search": {
-                "enabled": True,
-                "version": "1.0"
-            },
-            "sloan_optimize": {
-                "enabled": True,
-                "version": "1.0"
-            },
-            "ethical_analysis": {
-                "enabled": True,
-                "version": "1.0"
-            },
-            "unknown": {
-                "enabled": True,
-                "version": "1.0"
-            }
+            "test_agent": {"enabled": True, "version": "1.0"},
+            "rag_search": {"enabled": True, "version": "1.0"},
+            "sloan_optimize": {"enabled": True, "version": "1.0"},
+            "ethical_analysis": {"enabled": True, "version": "1.0"},
+            "unknown": {"enabled": True, "version": "1.0"},
         },
         "engines": {
             "mock_engine": {
                 "enabled": True,
                 "class": "tests.llm.agents.test_base_agent.MockEngine",
                 "methods": ["search"],
-                "params": {}
+                "params": {},
             }
-        }
+        },
     }
+
 
 class TestDeweyBaseAgent:
     """Test suite for DeweyBaseAgent."""
@@ -127,11 +117,8 @@ class TestDeweyBaseAgent:
     def test_validate_config_malformed_section(self):
         """Test validation with malformed config section."""
         invalid_config = {
-            "llm": {
-                "client": "deepinfra",
-                "default_provider": "deepinfra"
-            },
-            "agents": "not_a_dict"  # This should be a dict
+            "llm": {"client": "deepinfra", "default_provider": "deepinfra"},
+            "agents": "not_a_dict",  # This should be a dict
         }
         with pytest.raises(ValueError, match="Invalid configuration"):
             DeweyBaseAgent(invalid_config, "test_agent")
@@ -155,6 +142,7 @@ class TestDeweyBaseAgent:
         value = agent.get_config_value("nonexistent.path", default="default")
         assert value == "default"
 
+
 class TestEngineTool:
     """Test suite for EngineTool."""
 
@@ -163,7 +151,9 @@ class TestEngineTool:
         engine = MockEngine()
         tool = EngineTool(engine, "search")
         assert tool.name == "MockEngine_search"
-        assert tool.inputs == {"query": {"type": "string", "description": "Parameter query for search"}}
+        assert tool.inputs == {
+            "query": {"type": "string", "description": "Parameter query for search"}
+        }
 
     def test_tool_forward_valid(self):
         """Test parameter validation and execution."""
@@ -187,6 +177,7 @@ class TestEngineTool:
             with pytest.raises(Exception, match="Test error"):
                 tool.forward(query="test")
 
+
 @pytest.mark.integration
 class TestDeweyBaseAgentIntegration:
     """Integration tests for DeweyBaseAgent."""
@@ -202,7 +193,7 @@ class TestDeweyBaseAgentIntegration:
         engine = MockEngine()
         tool = EngineTool(engine, "search")
         self.agent.tools.append(tool)
-        
+
         # Test tool invocation
         result = tool.forward(query="test query")
         assert isinstance(result, str)
@@ -218,14 +209,16 @@ class TestDeweyBaseAgentIntegration:
 
     def test_llm_handler_usage(self):
         """Test LLM response generation."""
-        with patch.object(self.agent.llm_handler, "get_model", return_value=MagicMock()) as mock_model:
+        with patch.object(
+            self.agent.llm_handler, "get_model", return_value=MagicMock()
+        ) as mock_model:
             # Set up the mock model's response
             mock_model.return_value.generate.return_value = "mock_response"
-            
+
             # Test that the agent uses the LLM handler correctly
             prompt_templates = {
                 "system_prompt": self.agent._get_system_prompt("test_agent"),
-                "user_prompt": "Test prompt"
+                "user_prompt": "Test prompt",
             }
             assert isinstance(self.agent.llm_handler, LLMHandler)
-            assert self.agent.prompt_templates is not None 
+            assert self.agent.prompt_templates is not None

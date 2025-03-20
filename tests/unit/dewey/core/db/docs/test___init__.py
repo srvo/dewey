@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -7,31 +7,13 @@ import yaml
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.docs import DocsModule
-from dewey.core.db.connection import DatabaseConnection, get_connection
-from dewey.core.db.utils import create_table, execute_query
-from dewey.llm.llm_utils import generate_text
+from dewey.core.db.connection import DatabaseConnection
 
 
 @pytest.fixture
 def mock_base_script(mocker: Any) -> MagicMock:
     """Mocks the BaseScript class."""
-    mock = mocker.MagicMock(spec=BaseScript)
-    mock.logger = mocker.MagicMock(spec=logging.Logger)
-    mock.config = {}
-    mock.get_config_value.return_value = "default_value"
-    return mock
-
-
-@pytest.fixture
-def mock_database_connection(mocker: Any) -> MagicMock:
-    """Mocks the DatabaseConnection class."""
-    mock = mocker.MagicMock(spec=DatabaseConnection)
-    mock.execute.return_value = "query_result"
-    return mock
-
-
-@pytest.fixture
-def mock_get_connection(mocker: Any, mock_database_connection: MagicMock) -> MagicMock:
+    mock=None, mock_database_connection: MagicMock) -> MagicMock:
     """Mocks the get_connection function."""
     mock = mocker.patch("dewey.core.db.docs.get_connection")
     mock.return_value.__enter__.return_value = mock_database_connection
@@ -56,11 +38,7 @@ class TestDocsModule:
     @patch("dewey.core.db.docs.get_connection")
     @patch("dewey.core.db.docs.generate_text")
     def test_run_success(
-        self,
-        mock_generate_text: MagicMock,
-        mock_get_connection: MagicMock,
-        mock_base_script: MagicMock,
-    ) -> None:
+        self, mock_generate_text: MagicMock, mock_get_connection: MagicMock, mock_base_script: MagicMock, ) -> None:
         """Tests the run method with successful execution."""
         mock_connection = MagicMock()
         mock_connection.execute.return_value = "SELECT 1"
@@ -81,11 +59,7 @@ class TestDocsModule:
     @patch("dewey.core.db.docs.get_connection")
     @patch("dewey.core.db.docs.generate_text")
     def test_run_exception(
-        self,
-        mock_generate_text: MagicMock,
-        mock_get_connection: MagicMock,
-        mock_base_script: MagicMock,
-    ) -> None:
+        self, mock_generate_text: MagicMock, mock_get_connection: MagicMock, mock_base_script: MagicMock, ) -> None:
         """Tests the run method with an exception raised."""
         mock_get_connection.side_effect = Exception("Database connection error")
 
@@ -95,6 +69,28 @@ class TestDocsModule:
         docs_module.llm_client = MagicMock()
 
         with pytest.raises(Exception, match="Database connection error"):
+            if mocker: Any) -> MagicMock:
+    """Mocks the BaseScript class."""
+    mock is None:
+                mocker: Any) -> MagicMock:
+    """Mocks the BaseScript class."""
+    mock = mocker.MagicMock(spec=BaseScript)
+    mock.logger = mocker.MagicMock(spec=logging.Logger)
+    mock.config = {}
+    mock.get_config_value.return_value = "default_value"
+    return mock
+
+
+@pytest.fixture
+def mock_database_connection(mocker: Any) -> MagicMock:
+    """Mocks the DatabaseConnection class."""
+    mock = mocker.MagicMock(spec=DatabaseConnection)
+    mock.execute.return_value = "query_result"
+    return mock
+
+
+@pytest.fixture
+def mock_get_connection(mocker: Any
             docs_module.run()
 
         docs_module.logger.error.assert_called()
@@ -117,6 +113,6 @@ class TestDocsModule:
     def test_main_execution(self, mock_execute: MagicMock) -> None:
         """Tests the main execution block."""
         with patch("dewey.core.db.docs.__name__", "__main__"):
-            import dewey.core.db.docs.__init__  # type: ignore
+import dewey.core.db.docs.__init__  # type: ignore
 
             mock_execute.assert_called_once()

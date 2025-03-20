@@ -1,6 +1,5 @@
 import logging
-from datetime import datetime, timedelta
-from typing import Any, Dict, List
+from datetime import datetime
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
@@ -32,6 +31,7 @@ def mock_get_connection(mock_db_connection: MagicMock) -> MagicMock:
     mock_context.__exit__.return_value = None
 
     def _get_connection():
+        """Function _get_connection."""
         return mock_context
 
     return _get_connection
@@ -111,8 +111,7 @@ def test_sync_current_universe_error(mock_get_connection: MagicMock, financial_a
 
 
 @patch("dewey.core.research.analysis.financial_analysis.get_connection")
-def test_get_current_universe_success(mock_get_connection: MagicMock, financial_analysis: FinancialAnalysis,
-                                      mock_db_connection: MagicMock) -> None:
+def test_get_current_universe_success(mock_get_connection: MagicMock, financial_analysis: FinancialAnalysis, mock_db_connection: MagicMock) -> None:
     """Test successful retrieval of the current universe of stocks."""
     mock_get_connection.return_value.__enter__.return_value = mock_db_connection
     mock_get_connection.return_value.__exit__.return_value = None
@@ -120,12 +119,7 @@ def test_get_current_universe_success(mock_get_connection: MagicMock, financial_
     # Mock database data
     mock_db_connection.execute.return_value.fetchdf.return_value = pd.DataFrame(
         {
-            "ticker": ["AAPL", "MSFT"],
-            "name": ["Apple Inc.", "Microsoft Corp"],
-            "sector": ["Technology", "Technology"],
-            "industry": ["Consumer Electronics", "Software"],
-        },
-    )
+            "ticker": ["AAPL", "MSFT"], "name": ["Apple Inc.", "Microsoft Corp"], "sector": ["Technology", "Technology"], "industry": ["Consumer Electronics", "Software"], }, )
 
     stocks = financial_analysis.get_current_universe()
 
@@ -134,14 +128,25 @@ def test_get_current_universe_success(mock_get_connection: MagicMock, financial_
 
     # Assert that the returned data is correct
     assert stocks == [
-        {"ticker": "AAPL", "name": "Apple Inc.", "sector": "Technology", "industry": "Consumer Electronics"},
-        {"ticker": "MSFT", "name": "Microsoft Corp", "sector": "Technology", "industry": "Software"},
-    ]
+        {"ticker": "AAPL", "name": "Apple Inc.", "sector": "Technology", "industry": "Consumer Electronics"}, {"ticker": "MSFT", "name": "Microsoft Corp", "sector": "Technology", "industry": "Software"}, ]
 
 
 @patch("dewey.core.research.analysis.financial_analysis.get_connection")
-def test_get_current_universe_empty(mock_get_connection: MagicMock, financial_analysis: FinancialAnalysis,
-                                    mock_db_connection: MagicMock) -> None:
+def test_get_current_universe_empty(mock_get_connection: MagicMock, financial_analysis: FinancialAnalysis, mock_db_connection: MagicMock) -> None:
+    """Test retrieval of the current universe when the database is empty."""
+    mock_get_connection.return_value.__enter__.return_value=None, financial_analysis: FinancialAnalysis, mock_db_connection: MagicMock) -> None:
+    """Test retrieval of the current universe when an error occurs."""
+    mock_get_connection.return_value.__enter__.return_value = mock_db_connection
+    mock_get_connection.return_value.__exit__.return_value = None
+
+    # Mock an error during database query
+    mock_db_connection.execute.side_effect = Exception("Failed to query database")
+
+    with pytest.raises(Exception, match="Failed to query database"):
+        if mock_db_connection: MagicMock) -> None:
+    """Test retrieval of the current universe when the database is empty."""
+    mock_get_connection.return_value.__enter__.return_value is None:
+            mock_db_connection: MagicMock) -> None:
     """Test retrieval of the current universe when the database is empty."""
     mock_get_connection.return_value.__enter__.return_value = mock_db_connection
     mock_get_connection.return_value.__exit__.return_value = None
@@ -159,24 +164,14 @@ def test_get_current_universe_empty(mock_get_connection: MagicMock, financial_an
 
 
 @patch("dewey.core.research.analysis.financial_analysis.get_connection")
-def test_get_current_universe_error(mock_get_connection: MagicMock, financial_analysis: FinancialAnalysis,
-                                    mock_db_connection: MagicMock) -> None:
-    """Test retrieval of the current universe when an error occurs."""
-    mock_get_connection.return_value.__enter__.return_value = mock_db_connection
-    mock_get_connection.return_value.__exit__.return_value = None
-
-    # Mock an error during database query
-    mock_db_connection.execute.side_effect = Exception("Failed to query database")
-
-    with pytest.raises(Exception, match="Failed to query database"):
+def test_get_current_universe_error(mock_get_connection: MagicMock
         financial_analysis.get_current_universe()
 
     financial_analysis.logger.exception.assert_called_once()
 
 
 @patch("dewey.core.research.analysis.financial_analysis.get_connection")
-def test_analyze_financial_changes_success(mock_get_connection: MagicMock, financial_analysis: FinancialAnalysis,
-                                           mock_db_connection: MagicMock) -> None:
+def test_analyze_financial_changes_success(mock_get_connection: MagicMock, financial_analysis: FinancialAnalysis, mock_db_connection: MagicMock) -> None:
     """Test successful analysis of financial changes for a given ticker."""
     mock_get_connection.return_value.__enter__.return_value = mock_db_connection
     mock_get_connection.return_value.__exit__.return_value = None
@@ -184,14 +179,7 @@ def test_analyze_financial_changes_success(mock_get_connection: MagicMock, finan
     # Mock database data
     mock_db_connection.execute.return_value.fetchdf.return_value = pd.DataFrame(
         {
-            "metric_name": ["Assets", "Revenues"],
-            "current_value": [1200000000.0, 600000000.0],
-            "prev_value": [1000000000.0, 500000000.0],
-            "end_date": [datetime.now(), datetime.now()],
-            "filed_date": [datetime.now(), datetime.now()],
-            "pct_change": [20.0, 20.0],
-        },
-    )
+            "metric_name": ["Assets", "Revenues"], "current_value": [1200000000.0, 600000000.0], "prev_value": [1000000000.0, 500000000.0], "end_date": [datetime.now(), datetime.now()], "filed_date": [datetime.now(), datetime.now()], "pct_change": [20.0, 20.0], }, )
 
     ticker = "AAPL"
     changes = financial_analysis.analyze_financial_changes(ticker)
@@ -208,9 +196,22 @@ def test_analyze_financial_changes_success(mock_get_connection: MagicMock, finan
 
 
 @patch("dewey.core.research.analysis.financial_analysis.get_connection")
-def test_analyze_financial_changes_no_significant_changes(mock_get_connection: MagicMock,
-                                                          financial_analysis: FinancialAnalysis,
-                                                          mock_db_connection: MagicMock) -> None:
+def test_analyze_financial_changes_no_significant_changes(mock_get_connection: MagicMock, financial_analysis: FinancialAnalysis, mock_db_connection: MagicMock) -> None:
+    """Test analysis of financial changes when no significant changes are found."""
+    mock_get_connection.return_value.__enter__.return_value=None, financial_analysis: FinancialAnalysis, mock_db_connection: MagicMock) -> None:
+    """Test analysis of financial changes when an error occurs."""
+    mock_get_connection.return_value.__enter__.return_value = mock_db_connection
+    mock_get_connection.return_value.__exit__.return_value = None
+
+    # Mock an error during database query
+    mock_db_connection.execute.side_effect = Exception("Failed to query database")
+
+    ticker = "AAPL"
+    with pytest.raises(Exception, match="Failed to query database"):
+        if mock_db_connection: MagicMock) -> None:
+    """Test analysis of financial changes when no significant changes are found."""
+    mock_get_connection.return_value.__enter__.return_value is None:
+            mock_db_connection: MagicMock) -> None:
     """Test analysis of financial changes when no significant changes are found."""
     mock_get_connection.return_value.__enter__.return_value = mock_db_connection
     mock_get_connection.return_value.__exit__.return_value = None
@@ -229,25 +230,14 @@ def test_analyze_financial_changes_no_significant_changes(mock_get_connection: M
 
 
 @patch("dewey.core.research.analysis.financial_analysis.get_connection")
-def test_analyze_financial_changes_error(mock_get_connection: MagicMock, financial_analysis: FinancialAnalysis,
-                                         mock_db_connection: MagicMock) -> None:
-    """Test analysis of financial changes when an error occurs."""
-    mock_get_connection.return_value.__enter__.return_value = mock_db_connection
-    mock_get_connection.return_value.__exit__.return_value = None
-
-    # Mock an error during database query
-    mock_db_connection.execute.side_effect = Exception("Failed to query database")
-
-    ticker = "AAPL"
-    with pytest.raises(Exception, match="Failed to query database"):
+def test_analyze_financial_changes_error(mock_get_connection: MagicMock
         financial_analysis.analyze_financial_changes(ticker)
 
     financial_analysis.logger.exception.assert_called_once()
 
 
 @patch("dewey.core.research.analysis.financial_analysis.get_connection")
-def test_analyze_material_events_success(mock_get_connection: MagicMock, financial_analysis: FinancialAnalysis,
-                                        mock_db_connection: MagicMock) -> None:
+def test_analyze_material_events_success(mock_get_connection: MagicMock, financial_analysis: FinancialAnalysis, mock_db_connection: MagicMock) -> None:
     """Test successful analysis of material events for a given ticker."""
     mock_get_connection.return_value.__enter__.return_value = mock_db_connection
     mock_get_connection.return_value.__exit__.return_value = None
@@ -255,14 +245,7 @@ def test_analyze_material_events_success(mock_get_connection: MagicMock, financi
     # Mock database data for financial changes
     financial_changes_df = pd.DataFrame(
         {
-            "metric_name": ["Assets", "Revenues"],
-            "current_value": [1500000000.0, 750000000.0],
-            "prev_value": [1000000000.0, 500000000.0],
-            "end_date": [datetime.now(), datetime.now()],
-            "filed_date": [datetime.now(), datetime.now()],
-            "pct_change": [50.0, 50.0],
-        },
-    )
+            "metric_name": ["Assets", "Revenues"], "current_value": [1500000000.0, 750000000.0], "prev_value": [1000000000.0, 500000000.0], "end_date": [datetime.now(), datetime.now()], "filed_date": [datetime.now(), datetime.now()], "pct_change": [50.0, 50.0], }, )
     mock_db_connection.execute.return_value.fetchdf.side_effect = [financial_changes_df, pd.DataFrame()]
 
     ticker = "AAPL"
@@ -278,14 +261,28 @@ def test_analyze_material_events_success(mock_get_connection: MagicMock, financi
 
 
 @patch("dewey.core.research.analysis.financial_analysis.get_connection")
-def test_analyze_material_events_no_events(mock_get_connection: MagicMock, financial_analysis: FinancialAnalysis,
-                                         mock_db_connection: MagicMock) -> None:
+def test_analyze_material_events_no_events(mock_get_connection: MagicMock, financial_analysis: FinancialAnalysis, mock_db_connection: MagicMock) -> None:
     """Test analysis of material events when no events are found."""
     mock_get_connection.return_value.__enter__.return_value = mock_db_connection
     mock_get_connection.return_value.__exit__.return_value = None
 
     # Mock empty DataFrames for both financial changes and material events
     mock_db_connection.execute.return_value.fetchdf.side_effect = [pd.DataFrame(), pd.DataFrame()]
+
+    ticker=None, financial_analysis: FinancialAnalysis, mock_db_connection: MagicMock) -> None:
+    """Test analysis of material events when an error occurs."""
+    mock_get_connection.return_value.__enter__.return_value = mock_db_connection
+    mock_get_connection.return_value.__exit__.return_value = None
+
+    # Mock an error during database query
+    mock_db_connection.execute.side_effect = Exception("Failed to query database")
+
+    ticker = "AAPL"
+    with pytest.raises(Exception, match="Failed to query database"):
+        if pd.DataFrame()]
+
+    ticker is None:
+            pd.DataFrame()]
 
     ticker = "AAPL"
     events = financial_analysis.analyze_material_events(ticker)
@@ -298,17 +295,7 @@ def test_analyze_material_events_no_events(mock_get_connection: MagicMock, finan
 
 
 @patch("dewey.core.research.analysis.financial_analysis.get_connection")
-def test_analyze_material_events_error(mock_get_connection: MagicMock, financial_analysis: FinancialAnalysis,
-                                      mock_db_connection: MagicMock) -> None:
-    """Test analysis of material events when an error occurs."""
-    mock_get_connection.return_value.__enter__.return_value = mock_db_connection
-    mock_get_connection.return_value.__exit__.return_value = None
-
-    # Mock an error during database query
-    mock_db_connection.execute.side_effect = Exception("Failed to query database")
-
-    ticker = "AAPL"
-    with pytest.raises(Exception, match="Failed to query database"):
+def test_analyze_material_events_error(mock_get_connection: MagicMock
         financial_analysis.analyze_material_events(ticker)
 
     financial_analysis.logger.exception.assert_called_once()
@@ -316,14 +303,11 @@ def test_analyze_material_events_error(mock_get_connection: MagicMock, financial
 
 @patch("dewey.core.research.analysis.financial_analysis.FinancialAnalysis.get_current_universe")
 @patch("dewey.core.research.analysis.financial_analysis.FinancialAnalysis.analyze_material_events")
-def test_run_success(mock_analyze_material_events: MagicMock, mock_get_current_universe: MagicMock,
-                   financial_analysis: FinancialAnalysis) -> None:
+def test_run_success(mock_analyze_material_events: MagicMock, mock_get_current_universe: MagicMock, financial_analysis: FinancialAnalysis) -> None:
     """Test successful execution of the run method."""
     # Mock the current universe
     mock_get_current_universe.return_value = [
-        {"ticker": "AAPL", "name": "Apple Inc.", "sector": "Technology", "industry": "Consumer Electronics"},
-        {"ticker": "MSFT", "name": "Microsoft Corp", "sector": "Technology", "industry": "Software"},
-    ]
+        {"ticker": "AAPL", "name": "Apple Inc.", "sector": "Technology", "industry": "Consumer Electronics"}, {"ticker": "MSFT", "name": "Microsoft Corp", "sector": "Technology", "industry": "Software"}, ]
 
     # Mock material events
     mock_analyze_material_events.return_value = ["Major event for AAPL"]
@@ -341,13 +325,24 @@ def test_run_success(mock_analyze_material_events: MagicMock, mock_get_current_u
 
 @patch("dewey.core.research.analysis.financial_analysis.FinancialAnalysis.get_current_universe")
 @patch("dewey.core.research.analysis.financial_analysis.FinancialAnalysis.analyze_material_events")
-def test_run_no_material_findings(mock_analyze_material_events: MagicMock, mock_get_current_universe: MagicMock,
-                                 financial_analysis: FinancialAnalysis) -> None:
+def test_run_no_material_findings(mock_analyze_material_events: MagicMock, mock_get_current_universe: MagicMock, financial_analysis: FinancialAnalysis) -> None:
     """Test execution of the run method when no material findings are found."""
     # Mock the current universe
     mock_get_current_universe.return_value = [
-        {"ticker": "AAPL", "name": "Apple Inc.", "sector": "Technology", "industry": "Consumer Electronics"},
-    ]
+        {"ticker": "AAPL", "name": "Apple Inc.", "sector": "Technology", "industry": "Consumer Electronics"}, ]
+
+    # Mock no material events
+    mock_analyze_material_events.return_value=None, financial_analysis: FinancialAnalysis) -> None:
+    """Test execution of the run method when an error occurs."""
+    # Mock an error during retrieval of the current universe
+    mock_get_current_universe.side_effect = Exception("Failed to get current universe")
+
+    with pytest.raises(Exception, match="Failed to get current universe"):
+        if ]
+
+    # Mock no material events
+    mock_analyze_material_events.return_value is None:
+            ]
 
     # Mock no material events
     mock_analyze_material_events.return_value = []
@@ -364,12 +359,7 @@ def test_run_no_material_findings(mock_analyze_material_events: MagicMock, mock_
 
 
 @patch("dewey.core.research.analysis.financial_analysis.FinancialAnalysis.get_current_universe")
-def test_run_error(mock_get_current_universe: MagicMock, financial_analysis: FinancialAnalysis) -> None:
-    """Test execution of the run method when an error occurs."""
-    # Mock an error during retrieval of the current universe
-    mock_get_current_universe.side_effect = Exception("Failed to get current universe")
-
-    with pytest.raises(Exception, match="Failed to get current universe"):
+def test_run_error(mock_get_current_universe: MagicMock
         financial_analysis.run()
 
     financial_analysis.logger.exception.assert_called_once()

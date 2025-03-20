@@ -1,4 +1,3 @@
-from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
@@ -21,7 +20,10 @@ class TestPrioritization:
     def test_init(self, prioritization: Prioritization) -> None:
         """Test the __init__ method of Prioritization."""
         assert prioritization.name == "Prioritization"
-        assert prioritization.description == "Handles prioritization of CRM enrichment tasks."
+        assert (
+            prioritization.description
+            == "Handles prioritization of CRM enrichment tasks."
+        )
         assert prioritization.config_section == "prioritization"
 
     def test_run_success(self, prioritization: Prioritization) -> None:
@@ -29,12 +31,16 @@ class TestPrioritization:
         prioritization.get_config_value = MagicMock(return_value="test_value")
         prioritization.run()
 
-        prioritization.logger.info.assert_called_with("Prioritization process completed.")
+        prioritization.logger.info.assert_called_with(
+            "Prioritization process completed."
+        )
         prioritization.logger.debug.assert_called_with("Some config value: test_value")
 
     def test_run_exception(self, prioritization: Prioritization) -> None:
         """Test the run method when an exception occurs."""
-        prioritization.get_config_value = MagicMock(side_effect=Exception("Test exception"))
+        prioritization.get_config_value = MagicMock(
+            side_effect=Exception("Test exception")
+        )
 
         with pytest.raises(Exception, match="Test exception"):
             prioritization.run()
@@ -51,7 +57,9 @@ class TestPrioritization:
         value = prioritization.get_config_value("non_existent_key", "default_value")
         assert value == "default_value"
 
-    def test_get_config_value_none_default(self, prioritization: Prioritization) -> None:
+    def test_get_config_value_none_default(
+        self, prioritization: Prioritization
+    ) -> None:
         """Test get_config_value when the key does not exist and no default is provided."""
         prioritization.config = {}
         value = prioritization.get_config_value("non_existent_key")

@@ -1,7 +1,7 @@
 import pytest
 from dewey.core.automation.models import Script, Service
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict
 from unittest.mock import patch
 
 
@@ -10,7 +10,9 @@ class TestScript:
 
     def test_script_initialization(self):
         """Test that a Script object can be initialized with valid data."""
-        script = Script(name="Test Script", description="A test script.", config={"key": "value"})
+        script = Script(
+            name="Test Script", description="A test script.", config={"key": "value"}
+        )
         assert script.name == "Test Script"
         assert script.description == "A test script."
         assert script.config == {"key": "value"}
@@ -118,7 +120,9 @@ class TestService:
         assert service.status == "inactive"
         assert service.version == "1.0.0"
 
-    def test_service_run_raises_not_implemented_error(self, service_data: Dict[str, Any]):
+    def test_service_run_raises_not_implemented_error(
+        self, service_data: Dict[str, Any]
+    ):
         """Test that the run method raises a NotImplementedError."""
         service = Service(
             name=service_data["name"],

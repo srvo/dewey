@@ -19,7 +19,9 @@ class TestEntityAnalysis:
         assert entity_analysis.name == "EntityAnalysis"
         assert entity_analysis.description == "Performs entity analysis."
 
-    @patch("dewey.core.research.companies.entity_analysis.EntityAnalysis.get_config_value")
+    @patch(
+        "dewey.core.research.companies.entity_analysis.EntityAnalysis.get_config_value"
+    )
     @patch("dewey.core.research.companies.entity_analysis.EntityAnalysis.logger")
     def test_run_method(
         self,
@@ -36,7 +38,9 @@ class TestEntityAnalysis:
         mock_logger.debug.assert_called_with("API Key: test_api_key")
         assert mock_logger.info.call_count == 2
 
-    @patch("dewey.core.research.companies.entity_analysis.EntityAnalysis.get_config_value")
+    @patch(
+        "dewey.core.research.companies.entity_analysis.EntityAnalysis.get_config_value"
+    )
     @patch("dewey.core.research.companies.entity_analysis.EntityAnalysis.logger")
     def test_run_method_default_api_key(
         self,
@@ -56,7 +60,9 @@ class TestEntityAnalysis:
             "entity_analysis.api_key", default="default_key"
         )
 
-    @patch("dewey.core.research.companies.entity_analysis.EntityAnalysis.get_config_value")
+    @patch(
+        "dewey.core.research.companies.entity_analysis.EntityAnalysis.get_config_value"
+    )
     @patch("dewey.core.research.companies.entity_analysis.EntityAnalysis.logger")
     def test_run_method_no_api_key_in_config(
         self,

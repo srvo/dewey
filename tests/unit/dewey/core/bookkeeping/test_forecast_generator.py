@@ -1,13 +1,10 @@
-from __future__ import annotations
-
 import logging
 from datetime import date, datetime
 from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Any, Dict
 from unittest.mock import mock_open, patch
 
 import pytest
-from dateutil.relativedelta import relativedelta
 from pytest import LogCaptureFixture
 
 from dewey.core.bookkeeping.forecast_generator import JournalEntryGenerator
@@ -38,20 +35,26 @@ class TestJournalEntryGenerator:
         """Fixture to mock the open function."""
         return mock_open()
 
-    def test_init(self, generator: JournalEntryGenerator, mock_config: Dict[str, Any]) -> None:
+    def test_init(
+        self, generator: JournalEntryGenerator, mock_config: Dict[str, Any]
+    ) -> None:
         """Test the __init__ method."""
         assert generator.complete_ledger_file == ""
         assert generator.forecast_ledger_file == ""
         assert generator.name == "JournalEntryGenerator"
 
-    @patch("dewey.core.bookkeeping.forecast_generator.JournalEntryGenerator.get_config_value")
+    @patch(
+        "dewey.core.bookkeeping.forecast_generator.JournalEntryGenerator.get_config_value"
+    )
     def test_init_with_config(
         self,
         mock_get_config_value: Any,
     ) -> None:
         """Test the __init__ method with configuration values."""
         mock_get_config_value.side_effect = lambda key, default: (
-            "test_complete_ledger.journal" if key == "complete_ledger_file" else "test_forecast_ledger.journal"
+            "test_complete_ledger.journal"
+            if key == "complete_ledger_file"
+            else "test_forecast_ledger.journal"
         )
         generator = JournalEntryGenerator()
         assert generator.complete_ledger_file == "test_complete_ledger.journal"
@@ -70,7 +73,9 @@ class TestJournalEntryGenerator:
             assert "Invalid input" not in caplog.text
 
     @patch("builtins.input", return_value="n")
-    def test_validate_assumptions_no(self, mock_input: Any, generator: JournalEntryGenerator) -> None:
+    def test_validate_assumptions_no(
+        self, mock_input: Any, generator: JournalEntryGenerator
+    ) -> None:
         """Test validate_assumptions when the user enters 'n'."""
         with pytest.raises(SystemExit):
             generator.validate_assumptions()
@@ -236,9 +241,18 @@ class TestJournalEntryGenerator:
         hosting_fee = gross_revenue * 0.25
         expected_cash = gross_revenue - revenue_share_amount - hosting_fee
 
-        assert f"Assets:Cash                          £{expected_cash:.2f}" in lease_income_entry
-        assert f"Expenses:RevenueShare:Mormair_E650  £{revenue_share_amount:.2f}" in revenue_share_payment_entry
-        assert f"Expenses:Hosting:Mormair_E650        £{hosting_fee:.2f}" in hosting_fee_payment_entry
+        assert (
+            f"Assets:Cash                          £{expected_cash:.2f}"
+            in lease_income_entry
+        )
+        assert (
+            f"Expenses:RevenueShare:Mormair_E650  £{revenue_share_amount:.2f}"
+            in revenue_share_payment_entry
+        )
+        assert (
+            f"Expenses:Hosting:Mormair_E650        £{hosting_fee:.2f}"
+            in hosting_fee_payment_entry
+        )
 
     @patch.object(JournalEntryGenerator, "create_acquisition_entry")
     @patch.object(JournalEntryGenerator, "append_acquisition_entry")
@@ -271,9 +285,13 @@ class TestJournalEntryGenerator:
         generator.generate_journal_entries(complete_ledger_file, forecast_ledger_file)
 
         mock_create_acquisition_entry.assert_called()
-        mock_append_acquisition_entry.assert_called_with(complete_ledger_file, "Acquisition Entry")
+        mock_append_acquisition_entry.assert_called_with(
+            complete_ledger_file, "Acquisition Entry"
+        )
         mock_initialize_forecast_ledger.assert_called_with(forecast_ledger_file)
-        assert mock_create_depreciation_entry.call_count == 30 * 12  # 30 years * 12 months
+        assert (
+            mock_create_depreciation_entry.call_count == 30 * 12
+        )  # 30 years * 12 months
         assert mock_create_revenue_entries.call_count == 30 * 12
 
     @patch.object(BaseScript, "parse_args")
@@ -299,7 +317,9 @@ class TestJournalEntryGenerator:
         assert parser.prog == "JournalEntryGenerator"
 
     @patch("argparse.ArgumentParser.parse_args")
-    def test_parse_args(self, mock_parse_args: Any, generator: JournalEntryGenerator) -> None:
+    def test_parse_args(
+        self, mock_parse_args: Any, generator: JournalEntryGenerator
+    ) -> None:
         """Test the parse_args method."""
         mock_args = mock_parse_args.return_value
         mock_args.log_level = "DEBUG"
@@ -411,25 +431,33 @@ class TestJournalEntryGenerator:
         result = generator.get_path(path)
         assert result == generator.PROJECT_ROOT / path
 
-    def test_get_config_value(self, generator: JournalEntryGenerator, mock_config: Dict[str, Any]) -> None:
+    def test_get_config_value(
+        self, generator: JournalEntryGenerator, mock_config: Dict[str, Any]
+    ) -> None:
         """Test get_config_value."""
         generator.config = mock_config
         value = generator.get_config_value("bookkeeping.complete_ledger_file")
         assert value == "complete_ledger.journal"
 
-    def test_get_config_value_default(self, generator: JournalEntryGenerator, mock_config: Dict[str, Any]) -> None:
+    def test_get_config_value_default(
+        self, generator: JournalEntryGenerator, mock_config: Dict[str, Any]
+    ) -> None:
         """Test get_config_value with a default value."""
         generator.config = mock_config
         value = generator.get_config_value("nonexistent.key", "default_value")
         assert value == "default_value"
 
-    def test_get_config_value_nested_default(self, generator: JournalEntryGenerator, mock_config: Dict[str, Any]) -> None:
+    def test_get_config_value_nested_default(
+        self, generator: JournalEntryGenerator, mock_config: Dict[str, Any]
+    ) -> None:
         """Test get_config_value with a nested default value."""
         generator.config = mock_config
         value = generator.get_config_value("bookkeeping.nonexistent", "default_value")
         assert value == "default_value"
 
-    def test_get_config_value_missing(self, generator: JournalEntryGenerator, mock_config: Dict[str, Any]) -> None:
+    def test_get_config_value_missing(
+        self, generator: JournalEntryGenerator, mock_config: Dict[str, Any]
+    ) -> None:
         """Test get_config_value when the key is missing."""
         generator.config = mock_config
         value = generator.get_config_value("missing.key")

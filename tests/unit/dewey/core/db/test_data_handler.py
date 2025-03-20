@@ -3,8 +3,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from dewey.core.db.data_handler import DataHandler
-from dewey.core.db.connection import DatabaseConnection, get_connection
-from dewey.core.db.utils import create_table, execute_query
 
 
 class TestDataHandler:
@@ -43,7 +41,9 @@ class TestDataHandler:
 
     def test_run_method(self, data_handler, caplog):
         """Test the run method of DataHandler, including logging and error handling."""
-        data_handler.get_config_value = MagicMock(return_value={"connection_string": "test_db"})
+        data_handler.get_config_value = MagicMock(
+            return_value={"connection_string": "test_db"}
+        )
         with patch("dewey.core.db.data_handler.get_connection") as mock_get_connection:
             mock_conn = MagicMock()
             mock_get_connection.return_value.__enter__.return_value = mock_conn
@@ -59,7 +59,9 @@ class TestDataHandler:
 
     def test_run_method_db_operation_error(self, data_handler, caplog):
         """Test run method when a database operation raises an exception."""
-        data_handler.get_config_value = MagicMock(return_value={"connection_string": "test_db"})
+        data_handler.get_config_value = MagicMock(
+            return_value={"connection_string": "test_db"}
+        )
         with patch("dewey.core.db.data_handler.get_connection") as mock_get_connection:
             mock_get_connection.side_effect = Exception("Database error")
             data_handler.run()

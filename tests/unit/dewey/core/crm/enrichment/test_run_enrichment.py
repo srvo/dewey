@@ -23,7 +23,10 @@ class TestRunEnrichment:
 
     @patch("dewey.core.crm.enrichment.run_enrichment.RunEnrichment.get_config_value")
     def test_run_api_key_found(
-        self, mock_get_config_value: pytest.fixture, run_enrichment: RunEnrichment, caplog: pytest.LogCaptureFixture
+        self,
+        mock_get_config_value: pytest.fixture,
+        run_enrichment: RunEnrichment,
+        caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test the run method when the API key is found in the configuration."""
         mock_get_config_value.return_value = "test_api_key"
@@ -38,7 +41,10 @@ class TestRunEnrichment:
 
     @patch("dewey.core.crm.enrichment.run_enrichment.RunEnrichment.get_config_value")
     def test_run_api_key_not_found(
-        self, mock_get_config_value: pytest.fixture, run_enrichment: RunEnrichment, caplog: pytest.LogCaptureFixture
+        self,
+        mock_get_config_value: pytest.fixture,
+        run_enrichment: RunEnrichment,
+        caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test the run method when the API key is not found in the configuration."""
         mock_get_config_value.return_value = None
@@ -47,13 +53,19 @@ class TestRunEnrichment:
         run_enrichment.run()
 
         assert "Starting enrichment process..." in caplog.text
-        assert "API key not found in configuration. Enrichment tasks will not be executed." in caplog.text
+        assert (
+            "API key not found in configuration. Enrichment tasks will not be executed."
+            in caplog.text
+        )
         assert "Enrichment process completed." in caplog.text
         mock_get_config_value.assert_called_once_with("api_key")
 
     @patch("dewey.core.crm.enrichment.run_enrichment.RunEnrichment.get_config_value")
     def test_run_exception_handling(
-        self, mock_get_config_value: pytest.fixture, run_enrichment: RunEnrichment, caplog: pytest.LogCaptureFixture
+        self,
+        mock_get_config_value: pytest.fixture,
+        run_enrichment: RunEnrichment,
+        caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test that exceptions during the enrichment process are handled correctly."""
         mock_get_config_value.side_effect = Exception("Simulated error")

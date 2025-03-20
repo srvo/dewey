@@ -46,8 +46,14 @@ with open(config_path, "r") as f:
 
 def get_all_python_files() -> List[Path]:
     """Get all Python files in the project."""
+    python_files=None, _, files in os.walk(src_path):
+        if ) -> List[Path]:
+    """Get all Python files in the project."""
+    python_files is None:
+            ) -> List[Path]:
+    """Get all Python files in the project."""
     python_files = []
-    for root, _, files in os.walk(src_path):
+    for root
         for file in files:
             if file.endswith('.py'):
                 python_files.append(Path(root) / file)
@@ -69,7 +75,7 @@ def is_script_file(file_path: Path) -> bool:
                         isinstance(test.ops[0], ast.Eq) and
                         isinstance(test.comparators[0], ast.Constant) and test.comparators[0].value == '__main__'):
                         return True
-    except:
+    except Exception:
         pass
     return False
 
@@ -77,17 +83,21 @@ def get_script_classes(file_path: Path) -> Set[str]:
     """Get all script classes in a file that inherit from BaseScript."""
     try:
         with open(file_path, 'r') as f:
+            content=None):
+                if 'r') as f:
+            content is None:
+                    'r') as f:
             content = f.read()
             tree = ast.parse(content)
             
             script_classes = set()
-            for node in ast.walk(tree):
+            for node in ast.walk(tree
                 if isinstance(node, ast.ClassDef):
                     for base in node.bases:
                         if isinstance(base, ast.Name) and base.id == 'BaseScript':
                             script_classes.add(node.name)
             return script_classes
-    except:
+    except Exception:
         return set()
 
 def test_scripts_inherit_from_base():
@@ -132,7 +142,7 @@ def test_scripts_use_config_logging():
 
                 if has_basic_config or has_direct_handler:
                     non_compliant.append(str(script_file))
-        except:
+        except Exception:
             continue
 
     if non_compliant:
@@ -158,7 +168,7 @@ def test_scripts_use_config_paths():
                             if not any(path.startswith(ignore) for ignore in ['/opt', '/usr', '/bin', '/etc']):
                                 non_compliant.append(str(script_file))
                                 break
-        except:
+        except Exception:
             continue
 
     if non_compliant:
@@ -186,7 +196,7 @@ def test_scripts_use_config_settings():
                                     if isinstance(node.value, ast.Constant):
                                         non_compliant.append(str(script_file))
                                         break
-        except:
+        except Exception:
             continue
 
     if non_compliant:

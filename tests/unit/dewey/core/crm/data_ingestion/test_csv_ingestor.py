@@ -25,7 +25,10 @@ class TestCsvIngestor:
         mock.db_conn.cursor.return_value.__enter__.return_value = MagicMock()
         return mock
 
-    @patch("dewey.core.crm.data_ingestion.csv_ingestor.CsvIngestor.__init__", return_value=None)
+    @patch(
+        "dewey.core.crm.data_ingestion.csv_ingestor.CsvIngestor.__init__",
+        return_value=None,
+    )
     def test_init(self, mock_init: MagicMock) -> None:
         """Test the __init__ method."""
         ingestor = CsvIngestor()
@@ -35,7 +38,9 @@ class TestCsvIngestor:
     def test_init_base_script_called(self, mock_base_init: MagicMock) -> None:
         """Test that BaseScript.__init__ is called with correct arguments."""
         CsvIngestor()
-        mock_base_init.assert_called_once_with(config_section='csv_ingestor', requires_db=True)
+        mock_base_init.assert_called_once_with(
+            config_section="csv_ingestor", requires_db=True
+        )
 
     @patch("dewey.core.crm.data_ingestion.csv_ingestor.BaseScript.get_config_value")
     @patch("dewey.core.crm.data_ingestion.csv_ingestor.BaseScript.db_conn")
@@ -62,7 +67,10 @@ class TestCsvIngestor:
     @patch("dewey.core.crm.data_ingestion.csv_ingestor.BaseScript.get_config_value")
     @patch("dewey.core.crm.data_ingestion.csv_ingestor.BaseScript.logger")
     def test_run_missing_config(
-        self, mock_logger: MagicMock, mock_get_config_value: MagicMock, csv_ingestor: CsvIngestor
+        self,
+        mock_logger: MagicMock,
+        mock_get_config_value: MagicMock,
+        csv_ingestor: CsvIngestor,
     ) -> None:
         """Test the run method when configuration values are missing."""
         mock_get_config_value.side_effect = [None, None]
@@ -70,8 +78,9 @@ class TestCsvIngestor:
         with pytest.raises(ValueError) as exc_info:
             csv_ingestor.run()
 
-        assert "CSV file path and table name must be specified in the configuration." in str(
-            exc_info.value
+        assert (
+            "CSV file path and table name must be specified in the configuration."
+            in str(exc_info.value)
         )
         mock_logger.error.assert_not_called()
 

@@ -1,7 +1,4 @@
-from typing import Any, Dict, Optional
-
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
 from dewey.llm import llm_utils
 
 
@@ -63,7 +60,9 @@ class MergeData(BaseScript):
                 prompt = "Summarize the following text."
                 text = "This is a sample text for summarization."
                 try:
-                    response = llm_utils.generate_response(self.llm_client, prompt + text)
+                    response = llm_utils.generate_response(
+                        self.llm_client, prompt + text
+                    )
                     self.logger.info(f"LLM response: {response}")
                 except Exception as e:
                     self.logger.error(f"Error during LLM call: {e}")

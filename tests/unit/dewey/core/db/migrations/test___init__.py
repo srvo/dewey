@@ -3,12 +3,11 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from dewey.core.base_script import BaseScript
-from dewey.core.db import utils
 from dewey.core.db.migrations import Migrations
 
 
 class TestMigrations(unittest.TestCase):
+    """Class TestMigrations."""
 
     def setUp(self):
         """Setup method to create a Migrations instance before each test."""
@@ -18,11 +17,11 @@ class TestMigrations(unittest.TestCase):
 
     def test_init(self):
         """Test the __init__ method of the Migrations class."""
-        self.assertEqual(self.migrations.config_section, 'migrations')
+        self.assertEqual(self.migrations.config_section, "migrations")
         self.assertTrue(self.migrations.requires_db)
 
-    @patch('dewey.core.db.migrations.utils.table_exists')
-    @patch('dewey.core.db.migrations.utils.create_table')
+    @patch("dewey.core.db.migrations.utils.table_exists")
+    @patch("dewey.core.db.migrations.utils.create_table")
     def test_run_success(self, mock_create_table, mock_table_exists):
         """Test the run method with successful migration execution."""
         mock_table_exists.return_value = False
@@ -30,10 +29,12 @@ class TestMigrations(unittest.TestCase):
 
         self.migrations.run()
 
-        self.migrations.logger.info.assert_called_with("Database migrations ran successfully.")
+        self.migrations.logger.info.assert_called_with(
+            "Database migrations ran successfully."
+        )
         mock_create_table.assert_called_once()
 
-    @patch('dewey.core.db.migrations.utils.table_exists')
+    @patch("dewey.core.db.migrations.utils.table_exists")
     def test_run_table_exists(self, mock_table_exists):
         """Test the run method when the table already exists."""
         mock_table_exists.return_value = True
@@ -41,10 +42,12 @@ class TestMigrations(unittest.TestCase):
 
         self.migrations.run()
 
-        self.migrations.logger.info.assert_called_with("Table example_table already exists")
+        self.migrations.logger.info.assert_called_with(
+            "Table example_table already exists"
+        )
 
-    @patch('dewey.core.db.migrations.utils.table_exists')
-    @patch('dewey.core.db.migrations.utils.create_table')
+    @patch("dewey.core.db.migrations.utils.table_exists")
+    @patch("dewey.core.db.migrations.utils.create_table")
     def test_run_exception(self, mock_create_table, mock_table_exists):
         """Test the run method when an exception occurs during migration."""
         mock_table_exists.return_value = False
@@ -60,8 +63,7 @@ class TestMigrations(unittest.TestCase):
     def test_run_db_host_config(self):
         """Test that the db_host config value is logged."""
         self.migrations.get_config_value = MagicMock(return_value="test_host")
-        with patch('dewey.core.db.migrations.utils.table_exists') as mock_table_exists:
+        with patch("dewey.core.db.migrations.utils.table_exists") as mock_table_exists:
             mock_table_exists.return_value = True
             self.migrations.run()
         self.migrations.logger.info.assert_any_call("Database host: test_host")
-

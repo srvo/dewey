@@ -22,14 +22,21 @@ class TestDocsEngine:
         assert docs_engine.logger is not None
 
     @patch("dewey.core.engines.docs.DocsEngine.get_config_value")
-    def test_run(self, mock_get_config_value: Any, docs_engine: DocsEngine, caplog: pytest.LogCaptureFixture) -> None:
+    def test_run(
+        self,
+        mock_get_config_value: Any,
+        docs_engine: DocsEngine,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
         """Tests the run method of DocsEngine."""
         mock_get_config_value.return_value = "test_value"
         with caplog.at_level(logging.DEBUG):
             docs_engine.run()
         assert "Running DocsEngine module." in caplog.text
         assert "Example config value: test_value" in caplog.text
-        mock_get_config_value.assert_called_once_with("example_config_key", "default_value")
+        mock_get_config_value.assert_called_once_with(
+            "example_config_key", "default_value"
+        )
 
     def test_get_config_value(self, docs_engine: DocsEngine) -> None:
         """Tests the get_config_value method of DocsEngine."""
@@ -69,4 +76,3 @@ class TestDocsEngine:
         docs_engine.config = {"test_key": "test_value"}
         value = docs_engine.get_config_value(123, "default_value")  # type: ignore[arg-type]
         assert value == "default_value"
-

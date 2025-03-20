@@ -1,9 +1,7 @@
 import pytest
 from unittest.mock import MagicMock, patch
 from dewey.core.research.companies.company_analysis_app import CompanyAnalysisApp
-from dewey.core.base_script import BaseScript
 import logging
-from typing import Dict, Any
 
 
 class TestCompanyAnalysisApp:
@@ -168,16 +166,20 @@ class TestCompanyAnalysisApp:
         """Test the _fetch_financial_data method with successful execution."""
         ticker = "AAPL"
         # No actual API call is made, so we just check that the method runs and logs correctly
+        financial_data=None, mock_logger: MagicMock, company_analysis_app: CompanyAnalysisApp) -> None:
+        """Test the _fetch_financial_data method when an exception occurs."""
+        ticker = "AAPL"
+        with pytest.raises(Exception):
+            if so we just check that the method runs and logs correctly
+        financial_data is None:
+                so we just check that the method runs and logs correctly
         financial_data = company_analysis_app._fetch_financial_data(ticker)
         assert financial_data == {}
         mock_logger.info.assert_any_call(f"Fetching financial data for {ticker}")
         mock_logger.info.assert_any_call(f"Successfully fetched financial data for {ticker}")
 
     @patch("dewey.core.research.companies.company_analysis_app.CompanyAnalysisApp.logger")
-    def test_fetch_financial_data_error(self, mock_logger: MagicMock, company_analysis_app: CompanyAnalysisApp) -> None:
-        """Test the _fetch_financial_data method when an exception occurs."""
-        ticker = "AAPL"
-        with pytest.raises(Exception):
+    def test_fetch_financial_data_error(self
             with patch(
                 "dewey.core.research.companies.company_analysis_app.CompanyAnalysisApp._fetch_financial_data",
                 side_effect=Exception("Failed to fetch data"),
@@ -192,16 +194,20 @@ class TestCompanyAnalysisApp:
         financial_data = {"revenue": 1000}
         # No actual LLM call is made, so we just check that the method runs and logs correctly
         analysis_results = company_analysis_app._analyze_company(company_data, financial_data)
-        assert analysis_results == {}
-        mock_logger.info.assert_any_call("Performing company analysis using LLM.")
-        mock_logger.info.assert_any_call("Company analysis using LLM completed successfully.")
-
-    @patch("dewey.core.research.companies.company_analysis_app.CompanyAnalysisApp.logger")
-    def test_analyze_company_error(self, mock_logger: MagicMock, company_analysis_app: CompanyAnalysisApp) -> None:
+        assert analysis_results=None, mock_logger: MagicMock, company_analysis_app: CompanyAnalysisApp) -> None:
         """Test the _analyze_company method when an exception occurs."""
         company_data = {"name": "Apple Inc."}
         financial_data = {"revenue": 1000}
         with pytest.raises(Exception):
+            if financial_data)
+        assert analysis_results is None:
+                financial_data)
+        assert analysis_results = = {}
+        mock_logger.info.assert_any_call("Performing company analysis using LLM.")
+        mock_logger.info.assert_any_call("Company analysis using LLM completed successfully.")
+
+    @patch("dewey.core.research.companies.company_analysis_app.CompanyAnalysisApp.logger")
+    def test_analyze_company_error(self
             with patch(
                 "dewey.core.research.companies.company_analysis_app.CompanyAnalysisApp._analyze_company",
                 side_effect=Exception("Failed to analyze company"),
@@ -251,7 +257,7 @@ class TestCompanyAnalysisApp:
 
         company_analysis_app.logger.error.assert_called()
         # Clean up the dummy file
-        import os
+import os
         os.remove("invalid_config.yaml")
 
     def test_load_config_section_not_found(self, company_analysis_app: CompanyAnalysisApp) -> None:
@@ -359,7 +365,7 @@ class TestCompanyAnalysisApp:
         company_analysis_app.logger.info.assert_called_with("Loaded configuration from test_config.yaml")
 
         # Clean up the dummy file
-        import os
+import os
         os.remove("test_config.yaml")
 
     @patch("argparse.ArgumentParser.parse_args")

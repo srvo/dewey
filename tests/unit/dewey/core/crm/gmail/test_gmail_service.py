@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 from dewey.core.crm.gmail.gmail_service import GmailService
 from dewey.core.base_script import BaseScript  # Import BaseScript for type hinting
@@ -23,7 +23,9 @@ class TestGmailService:
         assert gmail_service.enable_llm is False
         assert gmail_service.logger is not None
 
-    def test_run_method_logs_start_and_completion(self, gmail_service: GmailService) -> None:
+    def test_run_method_logs_start_and_completion(
+        self, gmail_service: GmailService
+    ) -> None:
         """Test that the run method logs the start and completion messages."""
         gmail_service.run()
         gmail_service.logger.info.assert_any_call("Gmail service started.")

@@ -1,7 +1,4 @@
-from typing import Any, Dict, Optional
-
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
 from dewey.llm import llm_utils
 
 
@@ -13,7 +10,12 @@ class BatchUpload(BaseScript):
     logging, and other utilities.
     """
 
-    def __init__(self, config_section: str = 'batch_upload', requires_db: bool = False, enable_llm: bool = False) -> None:
+    def __init__(
+        self,
+        config_section: str = "batch_upload",
+        requires_db: bool = False,
+        enable_llm: bool = False,
+    ) -> None:
         """
         Initializes the BatchUpload script.
 
@@ -24,7 +26,11 @@ class BatchUpload(BaseScript):
             requires_db: Whether this script requires a database connection.
             enable_llm: Whether this script requires LLM access.
         """
-        super().__init__(config_section=config_section, requires_db=requires_db, enable_llm=enable_llm)
+        super().__init__(
+            config_section=config_section,
+            requires_db=requires_db,
+            enable_llm=enable_llm,
+        )
 
     def run(self) -> None:
         """

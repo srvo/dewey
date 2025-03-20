@@ -1,7 +1,6 @@
 import argparse
-import logging
 from abc import abstractmethod
-from typing import Any, Optional
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -14,14 +13,16 @@ class BaseEngine(BaseScript):
     integration.
     """
 
-    def __init__(self, config_section: str = 'base_engine') -> None:
+    def __init__(self, config_section: str = "base_engine") -> None:
         """Initializes the BaseEngine.
 
         Args:
             config_section: The configuration section to use for this engine.
         """
         super().__init__(config_section=config_section)
-        self.logger.debug(f"BaseEngine initialized with config section: {config_section}")
+        self.logger.debug(
+            f"BaseEngine initialized with config section: {config_section}"
+        )
 
     @abstractmethod
     def run(self) -> None:
@@ -72,7 +73,7 @@ class BaseEngine(BaseScript):
         parser = super().setup_argparse()
         parser.add_argument(
             "--engine-config",
-            help="Path to engine configuration file (overrides default config)"
+            help="Path to engine configuration file (overrides default config)",
         )
         return parser
 
@@ -85,7 +86,7 @@ class BaseEngine(BaseScript):
         args = super().parse_args()
 
         # Update config if specified
-        if hasattr(args, 'engine_config') and args.engine_config:
+        if hasattr(args, "engine_config") and args.engine_config:
             config_path = self.get_path(args.engine_config)
             if not config_path.exists():
                 self.logger.error(f"Configuration file not found: {config_path}")

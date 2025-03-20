@@ -20,7 +20,9 @@ class TestEnrichmentModule:
         assert enrichment_module.description == "CRM Enrichment Module"
         assert isinstance(enrichment_module.logger, logging.Logger)
 
-    def test_run(self, enrichment_module: EnrichmentModule, caplog: pytest.LogCaptureFixture) -> None:
+    def test_run(
+        self, enrichment_module: EnrichmentModule, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """Test the run method of EnrichmentModule."""
         with caplog.at_level(logging.INFO):
             enrichment_module.run()
@@ -43,7 +45,9 @@ class TestEnrichmentModule:
         assert value == "test_value"
         enrichment_module.get_config_value.assert_called_with("test_key", "default_value")  # type: ignore
 
-    def test_run_with_config(self, enrichment_module: EnrichmentModule, caplog: pytest.LogCaptureFixture) -> None:
+    def test_run_with_config(
+        self, enrichment_module: EnrichmentModule, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """Test the run method with a mocked configuration value."""
         # Mock the get_config_value method to return a specific value
         enrichment_module.get_config_value = MagicMock(return_value="configured_value")  # type: ignore

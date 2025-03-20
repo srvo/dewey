@@ -5,18 +5,14 @@ import csv
 import json
 import logging
 import os
-from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import get_connection
 from dewey.core.research.engines import BaseEngine
 from dewey.core.research.workflows.ethical import EthicalAnalysisWorkflow
-from dewey.llm.llm_utils import get_llm_client
 from tests.dewey.core.research.analysis.test_workflow_integration import ResearchOutputHandler
 
 
@@ -25,9 +21,7 @@ def mock_base_script(tmp_path: Path) -> MagicMock:
     """Fixture to create a mock BaseScript instance."""
     mock = MagicMock(spec=BaseScript)
     mock.config = {
-        "paths": {"data_dir": str(tmp_path)},
-        "logging": {"level": "INFO", "format": "%(message)s"},
-    }
+        "paths": {"data_dir": str(tmp_path)}, "logging": {"level": "INFO", "format": "%(message)s"}, }
     mock.logger = logging.getLogger(__name__)
     mock.logger.setLevel(logging.INFO)
     return mock
@@ -38,9 +32,7 @@ def mock_search_engine() -> MagicMock:
     """Fixture to create a mock search engine."""
     mock = MagicMock(spec=BaseEngine)
     mock.search.return_value = [
-        {"title": "Test Result 1", "link": "http://example.com/1", "snippet": "Test snippet 1", "source": "Example Source"},
-        {"title": "Test Result 2", "link": "http://example.com/2", "snippet": "Test snippet 2", "source": "Example Source"},
-    ]
+        {"title": "Test Result 1", "link": "http://example.com/1", "snippet": "Test snippet 1", "source": "Example Source"}, {"title": "Test Result 2", "link": "http://example.com/2", "snippet": "Test snippet 2", "source": "Example Source"}, ]
     return mock
 
 
@@ -66,11 +58,7 @@ def ethical_analysis_workflow(
 ) -> EthicalAnalysisWorkflow:
     """Fixture to create an EthicalAnalysisWorkflow instance with mocks."""
     workflow = EthicalAnalysisWorkflow(
-        data_dir=str(tmp_path),
-        search_engine=mock_search_engine,
-        analysis_engine=mock_analysis_engine,
-        output_handler=mock_output_handler,
-    )
+        data_dir=str(tmp_path), search_engine=mock_search_engine, analysis_engine=mock_analysis_engine, output_handler=mock_output_handler, )
     workflow.llm = MagicMock()
     workflow.llm.generate_response.return_value = "Test analysis"
     return workflow
@@ -88,13 +76,7 @@ def test_ethical_analysis_workflow_initialization(ethical_analysis_workflow: Eth
     assert ethical_analysis_workflow.requires_db is True
     assert ethical_analysis_workflow.enable_llm is True
     assert ethical_analysis_workflow.stats == {
-        "companies_processed": 0,
-        "total_searches": 0,
-        "total_results": 0,
-        "total_snippet_words": 0,
-        "total_analyses": 0,
-        "total_analysis_words": 0,
-    }
+        "companies_processed": 0, "total_searches": 0, "total_results": 0, "total_snippet_words": 0, "total_analyses": 0, "total_analysis_words": 0, }
 
 
 def test_build_query(ethical_analysis_workflow: EthicalAnalysisWorkflow) -> None:
@@ -107,13 +89,8 @@ def test_build_query(ethical_analysis_workflow: EthicalAnalysisWorkflow) -> None
 
 
 @pytest.mark.parametrize(
-    "text, expected_count",
-    [
-        ("This is a test", 4),
-        ("", 0),
-        ("  leading and trailing spaces  ", 5),
-    ],
-)
+    "text, expected_count", [
+        ("This is a test", 4), ("", 0), ("  leading and trailing spaces  ", 5), ], )
 def test_word_count(ethical_analysis_workflow: EthicalAnalysisWorkflow, text: str, expected_count: int) -> None:
     """Test the word_count method."""
     count = ethical_analysis_workflow.word_count(text)
@@ -152,16 +129,7 @@ def test_analyze_company_profile(mock_get_connection: MagicMock, ethical_analysi
 @patch("dewey.core.research.workflows.ethical.get_connection")
 def test_analyze_company_profile_no_search_results(mock_get_connection: MagicMock, ethical_analysis_workflow: EthicalAnalysisWorkflow) -> None:
     """Test analyze_company_profile when no search results are returned."""
-    ethical_analysis_workflow.search_engine.search.return_value = []
-    company = "Test Company"
-    result = ethical_analysis_workflow.analyze_company_profile(company)
-    assert result is None
-    ethical_analysis_workflow.search_engine.search.assert_called_once_with(f"{company} ethical issues controversies")
-    mock_get_connection.assert_not_called()  # Ensure DB is not accessed
-
-
-@patch("dewey.core.research.workflows.ethical.get_connection")
-def test_analyze_company_profile_db_error(mock_get_connection: MagicMock, ethical_analysis_workflow: EthicalAnalysisWorkflow) -> None:
+    ethical_analysis_workflow.search_engine.search.return_value=None, ethical_analysis_workflow: EthicalAnalysisWorkflow) -> None:
     """Test analyze_company_profile when a database error occurs."""
     ethical_analysis_workflow.search_engine.search.return_value = [
         {"title": "Test Result", "link": "http://example.com", "snippet": "Test snippet", "source": "Example Source"}
@@ -236,6 +204,21 @@ def test_execute_company_processing_error(mock_get_connection: MagicMock, ethica
 def test_execute_file_not_found(mock_get_connection: MagicMock, ethical_analysis_workflow: EthicalAnalysisWorkflow, tmp_path: Path) -> None:
     """Test the execute method when the companies file is not found."""
     with pytest.raises(FileNotFoundError):
+        if ethical_analysis_workflow: EthicalAnalysisWorkflow) -> None:
+    """Test analyze_company_profile when no search results are returned."""
+    ethical_analysis_workflow.search_engine.search.return_value is None:
+            ethical_analysis_workflow: EthicalAnalysisWorkflow) -> None:
+    """Test analyze_company_profile when no search results are returned."""
+    ethical_analysis_workflow.search_engine.search.return_value = []
+    company = "Test Company"
+    result = ethical_analysis_workflow.analyze_company_profile(company)
+    assert result is None
+    ethical_analysis_workflow.search_engine.search.assert_called_once_with(f"{company} ethical issues controversies")
+    mock_get_connection.assert_not_called()  # Ensure DB is not accessed
+
+
+@patch("dewey.core.research.workflows.ethical.get_connection")
+def test_analyze_company_profile_db_error(mock_get_connection: MagicMock
         ethical_analysis_workflow.execute(str(tmp_path))
     ethical_analysis_workflow.logger.error.assert_called()
     mock_get_connection.assert_not_called()

@@ -1,12 +1,10 @@
 import unittest
 from unittest.mock import patch, mock_open
 import xml.etree.ElementTree as ET
-from typing import List, Optional
 
 import pytest
 
 from dewey.core.research.utils.sts_xml_parser import STSXmlParser
-from dewey.core.base_script import BaseScript
 
 
 class TestSTSXmlParser(unittest.TestCase):
@@ -42,7 +40,10 @@ class TestSTSXmlParser(unittest.TestCase):
         self.parser.logger.info.assert_called_with(f"Parsing XML file: {file_path}")
         self.parser.logger.debug.assert_called_with(f"XML file parsed successfully.")
 
-    @patch("dewey.core.research.utils.sts_xml_parser.ET.parse", side_effect=FileNotFoundError)
+    @patch(
+        "dewey.core.research.utils.sts_xml_parser.ET.parse",
+        side_effect=FileNotFoundError,
+    )
     def test_parse_xml_file_file_not_found(self, mock_parse):
         """Test parse_xml_file method when the XML file is not found."""
         file_path = "nonexistent.xml"
@@ -50,13 +51,18 @@ class TestSTSXmlParser(unittest.TestCase):
             self.parser.parse_xml_file(file_path)
         self.parser.logger.error.assert_called_with(f"XML file not found: {file_path}")
 
-    @patch("dewey.core.research.utils.sts_xml_parser.ET.parse", side_effect=ET.ParseError("Parse error"))
+    @patch(
+        "dewey.core.research.utils.sts_xml_parser.ET.parse",
+        side_effect=ET.ParseError("Parse error"),
+    )
     def test_parse_xml_file_parse_error(self, mock_parse):
         """Test parse_xml_file method when the XML file has a parsing error."""
         file_path = "invalid.xml"
         with self.assertRaises(ET.ParseError):
             self.parser.parse_xml_file(file_path)
-        self.parser.logger.error.assert_called_with(f"Error parsing XML file: {file_path}: Parse error")
+        self.parser.logger.error.assert_called_with(
+            f"Error parsing XML file: {file_path}: Parse error"
+        )
 
     def test_extract_text_from_element_success(self):
         """Test extract_text_from_element method with a valid XPath."""
@@ -64,7 +70,9 @@ class TestSTSXmlParser(unittest.TestCase):
         xpath = "element"
         text = self.parser.extract_text_from_element(root, xpath)
         self.assertEqual(text, "text")
-        self.parser.logger.debug.assert_called_with(f"Extracted text from {xpath}: text")
+        self.parser.logger.debug.assert_called_with(
+            f"Extracted text from {xpath}: text"
+        )
 
     def test_extract_text_from_element_element_not_found(self):
         """Test extract_text_from_element method when the element is not found."""
@@ -72,7 +80,9 @@ class TestSTSXmlParser(unittest.TestCase):
         xpath = "nonexistent"
         text = self.parser.extract_text_from_element(root, xpath)
         self.assertIsNone(text)
-        self.parser.logger.warning.assert_called_with(f"Element not found for XPath: {xpath}")
+        self.parser.logger.warning.assert_called_with(
+            f"Element not found for XPath: {xpath}"
+        )
 
     def test_extract_text_from_element_exception(self):
         """Test extract_text_from_element method when an exception occurs."""
@@ -81,11 +91,15 @@ class TestSTSXmlParser(unittest.TestCase):
         xpath = "element"
         text = self.parser.extract_text_from_element(root, xpath)
         self.assertIsNone(text)
-        self.parser.logger.error.assert_called_with(f"Error extracting text from XPath {xpath}: XPath error")
+        self.parser.logger.error.assert_called_with(
+            f"Error extracting text from XPath {xpath}: XPath error"
+        )
 
     def test_extract_all_texts_from_element_success(self):
         """Test extract_all_texts_from_element method with a valid XPath."""
-        root = ET.fromstring("<root><element>text1</element><element>text2</element></root>")
+        root = ET.fromstring(
+            "<root><element>text1</element><element>text2</element></root>"
+        )
         xpath = "element"
         texts = self.parser.extract_all_texts_from_element(root, xpath)
         self.assertEqual(texts, ["text1", "text2"])
@@ -94,11 +108,15 @@ class TestSTSXmlParser(unittest.TestCase):
 
     def test_extract_all_texts_from_element_element_not_found(self):
         """Test extract_all_texts_from_element method when the element is not found."""
-        root = ET.fromstring("<root><element>text1</element><element>text2</element></root>")
+        root = ET.fromstring(
+            "<root><element>text1</element><element>text2</element></root>"
+        )
         xpath = "nonexistent"
         texts = self.parser.extract_all_texts_from_element(root, xpath)
         self.assertEqual(texts, [])
-        self.parser.logger.warning.assert_called_with(f"Element not found for XPath: {xpath}")
+        self.parser.logger.warning.assert_called_with(
+            f"Element not found for XPath: {xpath}"
+        )
 
     def test_extract_all_texts_from_element_exception(self):
         """Test extract_all_texts_from_element method when an exception occurs."""
@@ -107,7 +125,9 @@ class TestSTSXmlParser(unittest.TestCase):
         xpath = "element"
         texts = self.parser.extract_all_texts_from_element(root, xpath)
         self.assertEqual(texts, [])
-        self.parser.logger.error.assert_called_with(f"Error extracting text from XPath {xpath}: XPath error")
+        self.parser.logger.error.assert_called_with(
+            f"Error extracting text from XPath {xpath}: XPath error"
+        )
 
     def test_get_element_attribute_success(self):
         """Test get_element_attribute method with a valid XPath and attribute."""
@@ -116,7 +136,9 @@ class TestSTSXmlParser(unittest.TestCase):
         attribute = "attribute"
         value = self.parser.get_element_attribute(root, xpath, attribute)
         self.assertEqual(value, "value")
-        self.parser.logger.debug.assert_called_with(f"Extracted attribute {attribute} from {xpath}: value")
+        self.parser.logger.debug.assert_called_with(
+            f"Extracted attribute {attribute} from {xpath}: value"
+        )
 
     def test_get_element_attribute_element_not_found(self):
         """Test get_element_attribute method when the element is not found."""
@@ -125,7 +147,9 @@ class TestSTSXmlParser(unittest.TestCase):
         attribute = "attribute"
         value = self.parser.get_element_attribute(root, xpath, attribute)
         self.assertIsNone(value)
-        self.parser.logger.warning.assert_called_with(f"Element not found for XPath: {xpath}")
+        self.parser.logger.warning.assert_called_with(
+            f"Element not found for XPath: {xpath}"
+        )
 
     def test_get_element_attribute_attribute_not_found(self):
         """Test get_element_attribute method when the attribute is not found."""
@@ -134,7 +158,9 @@ class TestSTSXmlParser(unittest.TestCase):
         attribute = "nonexistent"
         value = self.parser.get_element_attribute(root, xpath, attribute)
         self.assertIsNone(value)
-        self.parser.logger.debug.assert_called_with(f"Extracted attribute {attribute} from {xpath}: None")
+        self.parser.logger.debug.assert_called_with(
+            f"Extracted attribute {attribute} from {xpath}: None"
+        )
 
     def test_get_element_attribute_exception(self):
         """Test get_element_attribute method when an exception occurs."""
@@ -144,7 +170,9 @@ class TestSTSXmlParser(unittest.TestCase):
         attribute = "attribute"
         value = self.parser.get_element_attribute(root, xpath, attribute)
         self.assertIsNone(value)
-        self.parser.logger.error.assert_called_with(f"Error extracting attribute {attribute} from XPath {xpath}: XPath error")
+        self.parser.logger.error.assert_called_with(
+            f"Error extracting attribute {attribute} from XPath {xpath}: XPath error"
+        )
 
     @patch("dewey.core.research.utils.sts_xml_parser.STSXmlParser.parse_args")
     @patch("dewey.core.research.utils.sts_xml_parser.STSXmlParser.run")
@@ -157,11 +185,18 @@ class TestSTSXmlParser(unittest.TestCase):
 
         mock_parse_args.assert_called_once()
         mock_run.assert_called_once()
-        self.parser.logger.info.assert_any_call(f"Starting execution of {self.parser.name}")
-        self.parser.logger.info.assert_any_call(f"Completed execution of {self.parser.name}")
+        self.parser.logger.info.assert_any_call(
+            f"Starting execution of {self.parser.name}"
+        )
+        self.parser.logger.info.assert_any_call(
+            f"Completed execution of {self.parser.name}"
+        )
 
     @patch("dewey.core.research.utils.sts_xml_parser.STSXmlParser.parse_args")
-    @patch("dewey.core.research.utils.sts_xml_parser.STSXmlParser.run", side_effect=KeyboardInterrupt)
+    @patch(
+        "dewey.core.research.utils.sts_xml_parser.STSXmlParser.run",
+        side_effect=KeyboardInterrupt,
+    )
     def test_execute_keyboard_interrupt(self, mock_run, mock_parse_args):
         """Test the execute method when a KeyboardInterrupt occurs."""
         mock_args = unittest.mock.MagicMock()
@@ -174,7 +209,10 @@ class TestSTSXmlParser(unittest.TestCase):
         self.parser.logger.warning.assert_called_with("Script interrupted by user")
 
     @patch("dewey.core.research.utils.sts_xml_parser.STSXmlParser.parse_args")
-    @patch("dewey.core.research.utils.sts_xml_parser.STSXmlParser.run", side_effect=Exception("Some error"))
+    @patch(
+        "dewey.core.research.utils.sts_xml_parser.STSXmlParser.run",
+        side_effect=Exception("Some error"),
+    )
     def test_execute_exception(self, mock_run, mock_parse_args):
         """Test the execute method when an exception occurs."""
         mock_args = unittest.mock.MagicMock()
@@ -184,7 +222,9 @@ class TestSTSXmlParser(unittest.TestCase):
             self.parser.execute()
 
         self.assertEqual(cm.exception.code, 1)
-        self.parser.logger.error.assert_called_with("Error executing script: Some error", exc_info=True)
+        self.parser.logger.error.assert_called_with(
+            "Error executing script: Some error", exc_info=True
+        )
 
     def test_cleanup(self):
         """Test the _cleanup method."""
@@ -198,14 +238,16 @@ class TestSTSXmlParser(unittest.TestCase):
         self.parser.db_conn = None
         self.parser._cleanup()
         # Assert that no methods were called on db_conn
-        self.assertFalse(hasattr(self.parser, 'db_conn'))
+        self.assertFalse(hasattr(self.parser, "db_conn"))
 
     def test_cleanup_db_conn_exception(self):
         """Test the _cleanup method when closing the database connection raises an exception."""
         self.parser.db_conn = unittest.mock.MagicMock()
         self.parser.db_conn.close.side_effect = Exception("Close error")
         self.parser._cleanup()
-        self.parser.logger.warning.assert_called_with("Error closing database connection: Close error")
+        self.parser.logger.warning.assert_called_with(
+            "Error closing database connection: Close error"
+        )
 
     def test_get_path_absolute(self):
         """Test get_path method with an absolute path."""
@@ -249,11 +291,11 @@ class TestSTSXmlParser(unittest.TestCase):
     def test_setup_logging_from_config(self, mock_yaml, mock_logging):
         """Test _setup_logging method with configuration from dewey.yaml."""
         mock_yaml.safe_load.return_value = {
-            'core': {
-                'logging': {
-                    'level': 'DEBUG',
-                    'format': '%(levelname)s - %(message)s',
-                    'date_format': '%Y-%m-%d',
+            "core": {
+                "logging": {
+                    "level": "DEBUG",
+                    "format": "%(levelname)s - %(message)s",
+                    "date_format": "%Y-%m-%d",
                 }
             }
         }
@@ -297,7 +339,9 @@ class TestSTSXmlParser(unittest.TestCase):
             config = self.parser._load_config()
 
         self.assertEqual(config, {"key": "value"})
-        self.parser.logger.debug.assert_called_with(f"Loading configuration from {self.parser.CONFIG_PATH}")
+        self.parser.logger.debug.assert_called_with(
+            f"Loading configuration from {self.parser.CONFIG_PATH}"
+        )
 
     @patch("dewey.core.research.utils.sts_xml_parser.yaml")
     def test_load_config_section_success(self, mock_yaml):
@@ -309,7 +353,9 @@ class TestSTSXmlParser(unittest.TestCase):
             config = self.parser._load_config()
 
         self.assertEqual(config, {"key": "value"})
-        self.parser.logger.debug.assert_called_with(f"Loading configuration from {self.parser.CONFIG_PATH}")
+        self.parser.logger.debug.assert_called_with(
+            f"Loading configuration from {self.parser.CONFIG_PATH}"
+        )
 
     @patch("dewey.core.research.utils.sts_xml_parser.yaml")
     def test_load_config_section_not_found(self, mock_yaml):
@@ -324,7 +370,9 @@ class TestSTSXmlParser(unittest.TestCase):
         self.parser.logger.warning.assert_called_with(
             "Config section 'nonexistent' not found in dewey.yaml. Using full config."
         )
-        self.parser.logger.debug.assert_called_with(f"Loading configuration from {self.parser.CONFIG_PATH}")
+        self.parser.logger.debug.assert_called_with(
+            f"Loading configuration from {self.parser.CONFIG_PATH}"
+        )
 
     @patch("dewey.core.research.utils.sts_xml_parser.yaml")
     def test_load_config_file_not_found(self, mock_yaml):
@@ -335,7 +383,9 @@ class TestSTSXmlParser(unittest.TestCase):
             with self.assertRaises(FileNotFoundError):
                 self.parser._load_config()
 
-        self.parser.logger.error.assert_called_with(f"Configuration file not found: {self.parser.CONFIG_PATH}")
+        self.parser.logger.error.assert_called_with(
+            f"Configuration file not found: {self.parser.CONFIG_PATH}"
+        )
 
     @patch("dewey.core.research.utils.sts_xml_parser.yaml")
     def test_load_config_yaml_error(self, mock_yaml):
@@ -346,76 +396,100 @@ class TestSTSXmlParser(unittest.TestCase):
             with self.assertRaises(yaml.YAMLError):
                 self.parser._load_config()
 
-        self.parser.logger.error.assert_called_with(f"Error parsing YAML configuration: YAML error")
+        self.parser.logger.error.assert_called_with(
+            f"Error parsing YAML configuration: YAML error"
+        )
 
     @patch("dewey.core.research.utils.sts_xml_parser.get_connection")
     def test_initialize_db_connection_success(self, mock_get_connection):
         """Test _initialize_db_connection method with a successful database connection."""
-        self.parser.config = {'core': {'database': {'db_url': 'test_url'}}}
+        self.parser.config = {"core": {"database": {"db_url": "test_url"}}}
         mock_conn = unittest.mock.MagicMock()
         mock_get_connection.return_value = mock_conn
 
         self.parser._initialize_db_connection()
 
-        mock_get_connection.assert_called_with({'db_url': 'test_url'})
+        mock_get_connection.assert_called_with({"db_url": "test_url"})
         self.assertEqual(self.parser.db_conn, mock_conn)
         self.parser.logger.debug.assert_called_with("Initializing database connection")
         self.parser.logger.debug.assert_called_with("Database connection established")
 
-    @patch("dewey.core.research.utils.sts_xml_parser.get_connection", side_effect=ImportError)
+    @patch(
+        "dewey.core.research.utils.sts_xml_parser.get_connection",
+        side_effect=ImportError,
+    )
     def test_initialize_db_connection_import_error(self, mock_get_connection):
         """Test _initialize_db_connection method when the database module cannot be imported."""
         with self.assertRaises(ImportError):
             self.parser._initialize_db_connection()
 
-        self.parser.logger.error.assert_called_with("Could not import database module. Is it installed?")
+        self.parser.logger.error.assert_called_with(
+            "Could not import database module. Is it installed?"
+        )
 
-    @patch("dewey.core.research.utils.sts_xml_parser.get_connection", side_effect=Exception("Connection error"))
+    @patch(
+        "dewey.core.research.utils.sts_xml_parser.get_connection",
+        side_effect=Exception("Connection error"),
+    )
     def test_initialize_db_connection_exception(self, mock_get_connection):
         """Test _initialize_db_connection method when an exception occurs during database connection."""
-        self.parser.config = {'core': {'database': {'db_url': 'test_url'}}}
+        self.parser.config = {"core": {"database": {"db_url": "test_url"}}}
         with self.assertRaises(Exception) as context:
             self.parser._initialize_db_connection()
 
         self.assertEqual(str(context.exception), "Connection error")
-        self.parser.logger.error.assert_called_with("Failed to initialize database connection: Connection error")
+        self.parser.logger.error.assert_called_with(
+            "Failed to initialize database connection: Connection error"
+        )
 
     @patch("dewey.core.research.utils.sts_xml_parser.get_llm_client")
     def test_initialize_llm_client_success(self, mock_get_llm_client):
         """Test _initialize_llm_client method with a successful LLM client initialization."""
-        self.parser.config = {'llm': {'model': 'test_model'}}
+        self.parser.config = {"llm": {"model": "test_model"}}
         mock_llm_client = unittest.mock.MagicMock()
         mock_get_llm_client.return_value = mock_llm_client
 
         self.parser._initialize_llm_client()
 
-        mock_get_llm_client.assert_called_with({'model': 'test_model'})
+        mock_get_llm_client.assert_called_with({"model": "test_model"})
         self.assertEqual(self.parser.llm_client, mock_llm_client)
         self.parser.logger.debug.assert_called_with("Initializing LLM client")
         self.parser.logger.debug.assert_called_with("LLM client initialized")
 
-    @patch("dewey.core.research.utils.sts_xml_parser.get_llm_client", side_effect=ImportError)
+    @patch(
+        "dewey.core.research.utils.sts_xml_parser.get_llm_client",
+        side_effect=ImportError,
+    )
     def test_initialize_llm_client_import_error(self, mock_get_llm_client):
         """Test _initialize_llm_client method when the LLM module cannot be imported."""
         with self.assertRaises(ImportError):
             self.parser._initialize_llm_client()
 
-        self.parser.logger.error.assert_called_with("Could not import LLM module. Is it installed?")
+        self.parser.logger.error.assert_called_with(
+            "Could not import LLM module. Is it installed?"
+        )
 
-    @patch("dewey.core.research.utils.sts_xml_parser.get_llm_client", side_effect=Exception("LLM error"))
+    @patch(
+        "dewey.core.research.utils.sts_xml_parser.get_llm_client",
+        side_effect=Exception("LLM error"),
+    )
     def test_initialize_llm_client_exception(self, mock_get_llm_client):
         """Test _initialize_llm_client method when an exception occurs during LLM client initialization."""
-        self.parser.config = {'llm': {'model': 'test_model'}}
+        self.parser.config = {"llm": {"model": "test_model"}}
         with self.assertRaises(Exception) as context:
             self.parser._initialize_llm_client()
 
         self.assertEqual(str(context.exception), "LLM error")
-        self.parser.logger.error.assert_called_with("Failed to initialize LLM client: LLM error")
+        self.parser.logger.error.assert_called_with(
+            "Failed to initialize LLM client: LLM error"
+        )
 
     def test_setup_argparse(self):
         """Test the setup_argparse method."""
         parser = self.parser.setup_argparse()
-        self.assertIsInstance(parser, unittest.mock.ANY)  # Check if it's an instance of argparse.ArgumentParser
+        self.assertIsInstance(
+            parser, unittest.mock.ANY
+        )  # Check if it's an instance of argparse.ArgumentParser
         self.assertTrue(parser.description == self.parser.description)
 
     def test_parse_args_log_level(self):
@@ -433,7 +507,9 @@ class TestSTSXmlParser(unittest.TestCase):
             with patch("builtins.open", mock_open()):
                 args = self.parser.parse_args()
                 self.assertEqual(self.parser.config, {"key": "value"})
-                self.parser.logger.info.assert_called_with("Loaded configuration from config.yaml")
+                self.parser.logger.info.assert_called_with(
+                    "Loaded configuration from config.yaml"
+                )
 
     @patch("dewey.core.research.utils.sts_xml_parser.yaml")
     def test_parse_args_config_not_found(self, mock_yaml):
@@ -451,11 +527,18 @@ class TestSTSXmlParser(unittest.TestCase):
         self.parser.requires_db = True
         mock_conn = unittest.mock.MagicMock()
         mock_get_connection.return_value = mock_conn
-        with patch("sys.argv", ["script.py", "--db-connection-string", "test_connection_string"]):
+        with patch(
+            "sys.argv",
+            ["script.py", "--db-connection-string", "test_connection_string"],
+        ):
             args = self.parser.parse_args()
-            mock_get_connection.assert_called_with({"connection_string": "test_connection_string"})
+            mock_get_connection.assert_called_with(
+                {"connection_string": "test_connection_string"}
+            )
             self.assertEqual(self.parser.db_conn, mock_conn)
-            self.parser.logger.info.assert_called_with("Using custom database connection")
+            self.parser.logger.info.assert_called_with(
+                "Using custom database connection"
+            )
 
     @patch("dewey.core.research.utils.sts_xml_parser.get_llm_client")
     def test_parse_args_llm_model(self, mock_get_llm_client):
@@ -467,7 +550,10 @@ class TestSTSXmlParser(unittest.TestCase):
             args = self.parser.parse_args()
             mock_get_llm_client.assert_called_with({"model": "test_llm_model"})
             self.assertEqual(self.parser.llm_client, mock_llm_client)
-            self.parser.logger.info.assert_called_with("Using custom LLM model: test_llm_model")
+            self.parser.logger.info.assert_called_with(
+                "Using custom LLM model: test_llm_model"
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

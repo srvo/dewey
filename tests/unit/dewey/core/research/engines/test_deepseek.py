@@ -1,8 +1,8 @@
 """Unit tests for the DeepSeek engine."""
 
 import asyncio
-from typing import Any, Dict, List
-from unittest.mock import AsyncMock, MagicMock, patch
+from typing import List
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
@@ -17,13 +17,7 @@ from dewey.core.research.engines.deepseek import (
 def deepseek_engine() -> DeepSeekEngine:
     """Fixture for creating a DeepSeekEngine instance."""
     engine = DeepSeekEngine()
-    engine.config = {
-        "llm": {
-            "providers": {
-                "deepinfra": {"api_key": "test_api_key"}
-            }
-        }
-    }
+    engine.config = {"llm": {"providers": {"deepinfra": {"api_key": "test_api_key"}}}}
     engine.llm_client = AsyncMock()
     engine.logger = MagicMock()
     return engine
@@ -41,11 +35,16 @@ def search_results() -> List[SearchResult]:
 @pytest.fixture
 def research_results() -> List[ResearchResult]:
     """Fixture for creating a list of ResearchResult instances."""
-    return [ResearchResult(content="Sample research 1"), ResearchResult(content="Sample research 2")]
+    return [
+        ResearchResult(content="Sample research 1"),
+        ResearchResult(content="Sample research 2"),
+    ]
 
 
 @pytest.mark.asyncio
-async def test_analyze_with_results(deepseek_engine: DeepSeekEngine, search_results: List[SearchResult]) -> None:
+async def test_analyze_with_results(
+    deepseek_engine: DeepSeekEngine, search_results: List[SearchResult]
+) -> None:
     """Test analyze method with search results."""
     deepseek_engine.llm_client.generate.return_value = "LLM Response"
     result = await deepseek_engine.analyze(search_results, "test_template")
@@ -65,11 +64,16 @@ async def test_analyze_no_results(deepseek_engine: DeepSeekEngine) -> None:
 
 
 @pytest.mark.asyncio
-async def test_analyze_api_key_from_config(deepseek_engine: DeepSeekEngine, search_results: List[SearchResult]) -> None:
+async def test_analyze_api_key_from_config(
+    deepseek_engine: DeepSeekEngine, search_results: List[SearchResult]
+) -> None:
     """Test analyze method retrieves API key from config."""
     deepseek_engine.llm_client.generate.return_value = "LLM Response"
     await deepseek_engine.analyze(search_results, "test_template")
-    assert deepseek_engine.config["llm"]["providers"]["deepinfra"]["api_key"] == "test_api_key"
+    assert (
+        deepseek_engine.config["llm"]["providers"]["deepinfra"]["api_key"]
+        == "test_api_key"
+    )
 
 
 @pytest.mark.asyncio

@@ -1,7 +1,6 @@
 import logging
 import os
 from pathlib import Path
-from typing import Any, Dict
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -156,8 +155,7 @@ class TestConfigManager:
 
     def test_get_config_value_nested_default(self, config_manager: ConfigManager) -> None:
         """Test retrieving a nested configuration value with a default."""
-        config_manager.config = {}
-        value = config_manager.get_config_value("level1.level2.level3", "default_value")
+        config_manager.config=None, "default_value")
         assert value == "default_value"
 
     def test_get_config_value_type_error(self, config_manager: ConfigManager) -> None:
@@ -189,9 +187,7 @@ class TestConfigManager:
         test_logging_config = {
             'core': {
                 'logging': {
-                    'level': 'DEBUG',
-                    'format': '%(levelname)s - %(message)s',
-                    'date_format': '%Y-%m-%d'
+                    'level': 'DEBUG', 'format': '%(levelname)s - %(message)s', 'date_format': '%Y-%m-%d'
                 }
             }
         }
@@ -209,6 +205,13 @@ class TestConfigManager:
 
         # Clean up the test config file
         if os.path.exists("test_logging_config.yaml"):
+            if config_manager: ConfigManager) -> None:
+        """Test retrieving a nested configuration value with a default."""
+        config_manager.config is None:
+                config_manager: ConfigManager) -> None:
+        """Test retrieving a nested configuration value with a default."""
+        config_manager.config = {}
+        value = config_manager.get_config_value("level1.level2.level3"
             os.remove("test_logging_config.yaml")
 
     def test_setup_logging_default(self, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture) -> None:

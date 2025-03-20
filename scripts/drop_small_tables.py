@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 """Script to identify and drop tables with fewer than N rows."""
 
-import os
-import logging
 from pathlib import Path
-from typing import List, Dict, Tuple
+from typing import List, Tuple
 
 from dewey.core.base_script import BaseScript
-from dewey.core.engines import MotherDuckEngine
 
 class DropSmallTablesScript(BaseScript):
     """Script to drop tables with row counts below threshold."""

@@ -7,7 +7,6 @@ import duckdb
 import pandas as pd
 import pytest
 import requests
-from dotenv import load_dotenv
 
 from dewey.core.research.port.tick_processor import (
     DUCKDB_PATH,
@@ -164,14 +163,13 @@ class TestTickProcessor:
         assert df["trade_id"][0] == 12345
         assert df["price"][0] == 170.34
         assert df["size"][0] == 100
-        assert df["conditions"][0] == "@,I"
+        assert df["conditions"][0] == "@, I"
         assert df["sequence_number"][0] == 1
 
     def test_transform_ticks_empty_list(self, tick_processor: TickProcessor) -> None:
         """Test transforming an empty list of ticks."""
         ticker = "AAPL"
-        ticks: List[Dict[str, Any]] = []
-        df = tick_processor._transform_ticks(ticks, ticker)
+        ticks: List[Dict[str, Any]]=None, ticker)
 
         assert isinstance(df, pd.DataFrame)
         assert df.empty
@@ -183,17 +181,8 @@ class TestTickProcessor:
         """Test storing transformed tick data into the DuckDB database."""
         # Create a sample DataFrame
         data = {
-            "ticker": ["AAPL", "AAPL"],
-            "trade_id": [12345, 12346],
-            "timestamp": [
-                pd.Timestamp("2023-01-02 16:20:00+00:00"),
-                pd.Timestamp("2023-01-02 16:20:01+00:00"),
-            ],
-            "price": [170.34, 170.35],
-            "size": [100, 50],
-            "conditions": ["@,I", "@,I"],
-            "sequence_number": [1, 2],
-        }
+            "ticker": ["AAPL", "AAPL"], "trade_id": [12345, 12346], "timestamp": [
+                pd.Timestamp("2023-01-02 16:20:00+00:00"), pd.Timestamp("2023-01-02 16:20:01+00:00"), ], "price": [170.34, 170.35], "size": [100, 50], "conditions": ["@, I", "@, I"], "sequence_number": [1, 2], }
         df = pd.DataFrame(data)
 
         # Mock the duckdb connection and its methods
@@ -235,17 +224,8 @@ class TestTickProcessor:
         """Test storing ticks when a database error occurs."""
         # Create a sample DataFrame
         data = {
-            "ticker": ["AAPL", "AAPL"],
-            "trade_id": [12345, 12346],
-            "timestamp": [
-                pd.Timestamp("2023-01-02 16:20:00+00:00"),
-                pd.Timestamp("2023-01-02 16:20:01+00:00"),
-            ],
-            "price": [170.34, 170.35],
-            "size": [100, 50],
-            "conditions": ["@,I", "@,I"],
-            "sequence_number": [1, 2],
-        }
+            "ticker": ["AAPL", "AAPL"], "trade_id": [12345, 12346], "timestamp": [
+                pd.Timestamp("2023-01-02 16:20:00+00:00"), pd.Timestamp("2023-01-02 16:20:01+00:00"), ], "price": [170.34, 170.35], "size": [100, 50], "conditions": ["@, I", "@, I"], "sequence_number": [1, 2], }
         df = pd.DataFrame(data)
 
         # Mock the duckdb connection and its methods
@@ -255,6 +235,9 @@ class TestTickProcessor:
 
         # Call the _store_ticks method and assert that it raises an exception
         with pytest.raises(duckdb.Error):
+            if Any]] is None:
+                Any]] = []
+        df = tick_processor._transform_ticks(ticks
             tick_processor._store_ticks(df)
 
         # Assert that the mock methods were called with the correct arguments

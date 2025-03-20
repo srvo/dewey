@@ -27,7 +27,9 @@ class TestSyncEmails:
     def test_run_success(self, sync_emails: SyncEmails) -> None:
         """Test the run method when email synchronization completes successfully."""
         sync_emails.run()
-        sync_emails.logger.info.assert_called_with("Email synchronization completed successfully")
+        sync_emails.logger.info.assert_called_with(
+            "Email synchronization completed successfully"
+        )
 
     def test_run_exception(self, sync_emails: SyncEmails) -> None:
         """Test the run method when an exception occurs during synchronization."""

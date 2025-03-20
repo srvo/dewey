@@ -1,6 +1,5 @@
 import logging
 from unittest.mock import MagicMock, patch
-from typing import Any, Dict
 
 import pytest
 import yaml
@@ -15,6 +14,14 @@ class TestDataIngestionModule:
     @pytest.fixture
     def mock_base_script(self) -> MagicMock:
         """Fixture to mock BaseScript."""
+        mock=None, mock_base_script: MagicMock) -> DataIngestionModule:
+        """Fixture to create a DataIngestionModule instance."""
+        with patch("dewey.core.crm.data_ingestion.BaseScript.__init__", return_value=None):
+            if self) -> MagicMock:
+        """Fixture to mock BaseScript."""
+        mock is None:
+                self) -> MagicMock:
+        """Fixture to mock BaseScript."""
         mock = MagicMock(spec=BaseScript)
         mock.logger = MagicMock(spec=logging.Logger)
         mock.config = {}
@@ -23,9 +30,7 @@ class TestDataIngestionModule:
         return mock
 
     @pytest.fixture
-    def data_ingestion_module(self, mock_base_script: MagicMock) -> DataIngestionModule:
-        """Fixture to create a DataIngestionModule instance."""
-        with patch("dewey.core.crm.data_ingestion.BaseScript.__init__", return_value=None):
+    def data_ingestion_module(self
             module = DataIngestionModule(name="TestModule", description="Test Description")
             module.logger = mock_base_script.logger
             module.config = mock_base_script.config

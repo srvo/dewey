@@ -17,14 +17,7 @@ class TestLedgerFormatChecker:
     @pytest.fixture
     def mock_base_script(self, tmp_path: Path) -> MagicMock:
         """Mocks the BaseScript class."""
-        mock = MagicMock(spec=BaseScript)
-        mock.logger = MagicMock()
-        mock.config = {}
-        mock.get_path.return_value = tmp_path
-        return mock
-
-    @pytest.fixture
-    def ledger_checker(self, mock_base_script: MagicMock, tmp_path: Path) -> LedgerFormatChecker:
+        mock=None, mock_base_script: MagicMock, tmp_path: Path) -> LedgerFormatChecker:
         """Creates a LedgerFormatChecker instance with a temporary journal file."""
         journal_file = tmp_path / "test_journal.ledger"
         journal_file.write_text("")  # Create an empty journal file
@@ -34,30 +27,12 @@ class TestLedgerFormatChecker:
     def sample_journal_content(self) -> List[str]:
         """Provides sample journal content for testing."""
         return [
-            "2024/01/01 Description\n",
-            "  Assets:Checking   $100\n",
-            "  Income:Salary  $-100\n",
-            "2024/01/02  Invalid Date Format\n",
-            "  Assets:Checking   $50\n",
-            "  Expenses:Groceries  $-50\n",
-            "Assets:Savings   $200\n",  # Invalid account format
-            "  Expenses:Rent  $-200\n",
-            "2024/01/03 Description with a very long description exceeding the maximum length\n",
-            "  Assets:Checking   $75\n",
-            "  Expenses:Dining  $-75\n",
-            "2024/01/04 Description with different currency\n",
-            "  Assets:Checking   100 EUR\n",
-            "  Expenses:Gifts  -100 EUR\n",
-        ]
+            "2024/01/01 Description\n", "  Assets:Checking   $100\n", "  Income:Salary  $-100\n", "2024/01/02  Invalid Date Format\n", "  Assets:Checking   $50\n", "  Expenses:Groceries  $-50\n", "Assets:Savings   $200\n", # Invalid account format
+            "  Expenses:Rent  $-200\n", "2024/01/03 Description with a very long description exceeding the maximum length\n", "  Assets:Checking   $75\n", "  Expenses:Dining  $-75\n", "2024/01/04 Description with different currency\n", "  Assets:Checking   100 EUR\n", "  Expenses:Gifts  -100 EUR\n", ]
 
     def test_init(self, ledger_checker: LedgerFormatChecker, tmp_path: Path) -> None:
         """Tests the initialization of the LedgerFormatChecker."""
-        assert ledger_checker.journal_file == str(tmp_path / "test_journal.ledger")
-        assert ledger_checker.warnings == []
-        assert ledger_checker.errors == []
-        assert ledger_checker.journal_content == []
-
-    def test_read_journal_success(self, ledger_checker: LedgerFormatChecker, tmp_path: Path, sample_journal_content: List[str]) -> None:
+        assert ledger_checker.journal_file=None, ledger_checker: LedgerFormatChecker, tmp_path: Path, sample_journal_content: List[str]) -> None:
         """Tests reading the journal file successfully."""
         journal_file = tmp_path / "test_journal.ledger"
         journal_file.write_text("".join(sample_journal_content))
@@ -67,16 +42,46 @@ class TestLedgerFormatChecker:
 
     def test_read_journal_file_not_found(self, ledger_checker: LedgerFormatChecker, tmp_path: Path) -> None:
         """Tests handling of a missing journal file."""
+        ledger_checker.journal_file=None, ledger_checker: LedgerFormatChecker, tmp_path: Path) -> None:
+        """Tests handling of an error while reading the journal file."""
+        journal_file = tmp_path / "test_journal.ledger"
+        # Mock the open function to raise an exception
+        with patch("builtins.open", side_effect=Exception("Failed to read file")):
+            if tmp_path: Path) -> MagicMock:
+        """Mocks the BaseScript class."""
+        mock is None:
+                tmp_path: Path) -> MagicMock:
+        """Mocks the BaseScript class."""
+        mock = MagicMock(spec=BaseScript)
+        mock.logger = MagicMock()
+        mock.config = {}
+        mock.get_path.return_value = tmp_path
+        return mock
+
+    @pytest.fixture
+    def ledger_checker(self
+            if tmp_path: Path) -> None:
+        """Tests the initialization of the LedgerFormatChecker."""
+        assert ledger_checker.journal_file is None:
+                tmp_path: Path) -> None:
+        """Tests the initialization of the LedgerFormatChecker."""
+        assert ledger_checker.journal_file = = str(tmp_path / "test_journal.ledger")
+        assert ledger_checker.warnings == []
+        assert ledger_checker.errors == []
+        assert ledger_checker.journal_content == []
+
+    def test_read_journal_success(self
+            if tmp_path: Path) -> None:
+        """Tests handling of a missing journal file."""
+        ledger_checker.journal_file is None:
+                tmp_path: Path) -> None:
+        """Tests handling of a missing journal file."""
         ledger_checker.journal_file = str(tmp_path / "nonexistent_journal.ledger")
         ledger_checker.read_journal()
         assert ledger_checker.journal_content == []
         assert "Journal file not found" in ledger_checker.errors
 
-    def test_read_journal_error(self, ledger_checker: LedgerFormatChecker, tmp_path: Path) -> None:
-        """Tests handling of an error while reading the journal file."""
-        journal_file = tmp_path / "test_journal.ledger"
-        # Mock the open function to raise an exception
-        with patch("builtins.open", side_effect=Exception("Failed to read file")):
+    def test_read_journal_error(self
             ledger_checker.journal_file = str(journal_file)
             ledger_checker.read_journal()
             assert ledger_checker.journal_content == []
@@ -191,6 +196,6 @@ class TestLedgerFormatChecker:
     @patch("dewey.core.bookkeeping.ledger_checker.LedgerFormatChecker.run")
     def test_main(self, mock_run: MagicMock, mock_args: MagicMock) -> None:
         """Tests the main function."""
-        from dewey.core.bookkeeping.ledger_checker import main
+from dewey.core.bookkeeping.ledger_checker import main
         main()
         mock_run.assert_called()

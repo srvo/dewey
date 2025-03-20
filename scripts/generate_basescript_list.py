@@ -5,6 +5,7 @@ PROJECT_ROOT = Path("/Users/srvo/dewey")
 OUTPUT_FILE = PROJECT_ROOT / "incomplete_basescript_files.txt"
 
 def find_incomplete_files():
+    """Function find_incomplete_files."""
     files = []
     for py_file in PROJECT_ROOT.rglob("*.py"):
         if py_file.name == "generate_basescript_list.py":

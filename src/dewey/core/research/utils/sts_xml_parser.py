@@ -53,7 +53,9 @@ class STSXmlParser(BaseScript):
             self.logger.error(f"Error parsing XML file: {xml_file_path}: {e}")
             raise
 
-    def extract_text_from_element(self, element: ET.Element, xpath: str) -> Optional[str]:
+    def extract_text_from_element(
+        self, element: ET.Element, xpath: str
+    ) -> Optional[str]:
         """
         Extracts text from an XML element using XPath.
 
@@ -77,7 +79,9 @@ class STSXmlParser(BaseScript):
             self.logger.error(f"Error extracting text from XPath {xpath}: {e}")
             return None
 
-    def extract_all_texts_from_element(self, element: ET.Element, xpath: str) -> List[str]:
+    def extract_all_texts_from_element(
+        self, element: ET.Element, xpath: str
+    ) -> List[str]:
         """
         Extracts all text elements from an XML element using XPath.
 
@@ -103,7 +107,9 @@ class STSXmlParser(BaseScript):
             self.logger.error(f"Error extracting text from XPath {xpath}: {e}")
             return texts
 
-    def get_element_attribute(self, element: ET.Element, xpath: str, attribute: str) -> Optional[str]:
+    def get_element_attribute(
+        self, element: ET.Element, xpath: str, attribute: str
+    ) -> Optional[str]:
         """
         Gets the value of an attribute from an XML element using XPath.
 
@@ -119,13 +125,17 @@ class STSXmlParser(BaseScript):
             result = element.find(xpath)
             if result is not None:
                 value = result.get(attribute)
-                self.logger.debug(f"Extracted attribute {attribute} from {xpath}: {value}")
+                self.logger.debug(
+                    f"Extracted attribute {attribute} from {xpath}: {value}"
+                )
                 return value
             else:
                 self.logger.warning(f"Element not found for XPath: {xpath}")
                 return None
         except Exception as e:
-            self.logger.error(f"Error extracting attribute {attribute} from XPath {xpath}: {e}")
+            self.logger.error(
+                f"Error extracting attribute {attribute} from XPath {xpath}: {e}"
+            )
             return None
 
 

@@ -5,7 +5,7 @@ import logging
 import os
 import pytest
 from pathlib import Path
-from unittest.mock import patch, mock_open, MagicMock
+from unittest.mock import patch
 from dewey.core.bookkeeping.transaction_categorizer import (
     load_classification_rules,
     create_backup,
@@ -15,26 +15,19 @@ from dewey.core.bookkeeping.transaction_categorizer import (
     main,
 )
 
+
 @pytest.fixture
 def sample_rules():
     """Sample classification rules for testing."""
     return {
         "patterns": [
-            {
-                "regex": "walmart|target",
-                "category": "expenses:shopping:retail"
-            },
-            {
-                "regex": "starbucks|dunkin",
-                "category": "expenses:food:coffee"
-            },
-            {
-                "regex": "uber|lyft",
-                "category": "expenses:transport:rideshare"
-            }
+            {"regex": "walmart|target", "category": "expenses:shopping:retail"},
+            {"regex": "starbucks|dunkin", "category": "expenses:food:coffee"},
+            {"regex": "uber|lyft", "category": "expenses:transport:rideshare"},
         ],
-        "default_category": "expenses:uncategorized"
+        "default_category": "expenses:uncategorized",
     }
+
 
 @pytest.fixture
 def sample_transaction():
@@ -43,8 +36,9 @@ def sample_transaction():
         "date": "2024-01-01",
         "description": "WALMART STORE #1234",
         "amount": 50.00,
-        "account": "assets:checking:primary"
+        "account": "assets:checking:primary",
     }
+
 
 @pytest.fixture
 def sample_journal():
@@ -55,22 +49,23 @@ def sample_journal():
                 "date": "2024-01-01",
                 "description": "WALMART STORE #1234",
                 "amount": 50.00,
-                "account": "assets:checking:primary"
+                "account": "assets:checking:primary",
             },
             {
                 "date": "2024-01-02",
                 "description": "STARBUCKS #5678",
                 "amount": 5.75,
-                "account": "assets:checking:primary"
+                "account": "assets:checking:primary",
             },
             {
                 "date": "2024-01-03",
                 "description": "UNKNOWN VENDOR",
                 "amount": 25.00,
-                "account": "assets:checking:primary"
-            }
+                "account": "assets:checking:primary",
+            },
         ]
     }
+
 
 class TestTransactionCategorizer:
     """Test cases for transaction categorizer."""
@@ -117,10 +112,7 @@ class TestTransactionCategorizer:
 
     def test_classify_transaction_no_match(self, sample_rules):
         """Test transaction classification with no matching pattern."""
-        transaction = {
-            "description": "UNKNOWN VENDOR",
-            "amount": 25.00
-        }
+        transaction = {"description": "UNKNOWN VENDOR", "amount": 25.00}
         category = classify_transaction(transaction, sample_rules)
         assert category == "expenses:uncategorized"
 
@@ -134,17 +126,23 @@ class TestTransactionCategorizer:
 
         # Verify the transactions were categorized
         updated_journal = json.loads(journal_file.read_text())
-        assert updated_journal["transactions"][0]["category"] == "expenses:shopping:retail"
+        assert (
+            updated_journal["transactions"][0]["category"] == "expenses:shopping:retail"
+        )
         assert updated_journal["transactions"][1]["category"] == "expenses:food:coffee"
-        assert updated_journal["transactions"][2]["category"] == "expenses:uncategorized"
+        assert (
+            updated_journal["transactions"][2]["category"] == "expenses:uncategorized"
+        )
 
     def test_process_journal_file_backup_failure(self, sample_rules, tmp_path):
         """Test journal processing when backup fails."""
         journal_file = tmp_path / "journal.json"
-        
-        with patch("dewey.core.bookkeeping.transaction_categorizer.create_backup") as mock_backup:
+
+        with patch(
+            "dewey.core.bookkeeping.transaction_categorizer.create_backup"
+        ) as mock_backup:
             mock_backup.side_effect = Exception("Backup failed")
-            
+
             result = process_journal_file(journal_file, sample_rules)
             assert result is False
 
@@ -157,7 +155,9 @@ class TestTransactionCategorizer:
             journal_file = year_dir / "transactions.json"
             journal_file.write_text(json.dumps({"transactions": []}))
 
-        with patch("dewey.core.bookkeeping.transaction_categorizer.process_journal_file") as mock_process:
+        with patch(
+            "dewey.core.bookkeeping.transaction_categorizer.process_journal_file"
+        ) as mock_process:
             mock_process.return_value = True
             process_by_year_files(tmp_path, sample_rules)
             assert mock_process.call_count == 2
@@ -167,19 +167,22 @@ class TestTransactionCategorizer:
         rules_file = tmp_path / "rules.json"
         rules_file.write_text(json.dumps(sample_rules))
 
-        with patch.dict(os.environ, {
-            "JOURNAL_BASE_DIR": str(tmp_path),
-            "CLASSIFICATION_RULES": str(rules_file)
-        }):
-            with patch("dewey.core.bookkeeping.transaction_categorizer.process_by_year_files") as mock_process:
+        with patch.dict(
+            os.environ,
+            {
+                "JOURNAL_BASE_DIR": str(tmp_path),
+                "CLASSIFICATION_RULES": str(rules_file),
+            },
+        ):
+            with patch(
+                "dewey.core.bookkeeping.transaction_categorizer.process_by_year_files"
+            ) as mock_process:
                 result = main()
                 assert result == 0
                 mock_process.assert_called_once()
 
     def test_main_failure(self):
         """Test main function failure."""
-        with patch.dict(os.environ, {
-            "CLASSIFICATION_RULES": "nonexistent.json"
-        }):
+        with patch.dict(os.environ, {"CLASSIFICATION_RULES": "nonexistent.json"}):
             result = main()
-            assert result == 1 
+            assert result == 1

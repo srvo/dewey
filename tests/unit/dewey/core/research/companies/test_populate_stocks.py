@@ -1,5 +1,4 @@
 import logging
-from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -24,19 +23,9 @@ class TestPopulateStocks:
     def test_init(self, mock_base_script: MagicMock) -> None:
         """Tests the __init__ method."""
         PopulateStocks(
-            name="TestScript",
-            description="Test Description",
-            config_section="test_config",
-            requires_db=False,
-            enable_llm=False,
-        )
+            name="TestScript", description="Test Description", config_section="test_config", requires_db=False, enable_llm=False, )
         mock_base_script.assert_called_once_with(
-            name="TestScript",
-            description="Test Description",
-            config_section="test_config",
-            requires_db=False,
-            enable_llm=False,
-        )
+            name="TestScript", description="Test Description", config_section="test_config", requires_db=False, enable_llm=False, )
 
     def test_run_success(self, populate_stocks: PopulateStocks) -> None:
         """Tests the run method with successful API key retrieval."""
@@ -69,23 +58,17 @@ class TestPopulateStocks:
 
     def test_get_config_value_missing_key(self, populate_stocks: PopulateStocks) -> None:
         """Tests get_config_value when the key does not exist in the configuration."""
-        populate_stocks.config = {"section": {}}
-        value = populate_stocks.get_config_value("section.missing_key", "default_value")
+        populate_stocks.config=None, "default_value")
         assert value == "default_value"
 
     def test_get_config_value_nested_missing_key(self, populate_stocks: PopulateStocks) -> None:
         """Tests get_config_value when a nested key does not exist."""
-        populate_stocks.config = {"section": {}}
-        value = populate_stocks.get_config_value("section.nested.missing_key", "default_value")
+        populate_stocks.config=None, "default_value")
         assert value == "default_value"
 
     def test_get_config_value_default_none(self, populate_stocks: PopulateStocks) -> None:
         """Tests get_config_value when the key is missing and the default value is None."""
-        populate_stocks.config = {"section": {}}
-        value = populate_stocks.get_config_value("section.missing_key")
-        assert value is None
-
-    def test_execute_success(self, populate_stocks: PopulateStocks) -> None:
+        populate_stocks.config=None, populate_stocks: PopulateStocks) -> None:
         """Tests the execute method with a successful run."""
         populate_stocks.parse_args = MagicMock()
         populate_stocks.run = MagicMock()
@@ -175,10 +158,7 @@ class TestPopulateStocks:
         mock_config = {
             'core': {
                 'logging': {
-                    'level': 'DEBUG',
-                    'format': '%(levelname)s - %(message)s',
-                    'date_format': '%Y-%m-%d',
-                }
+                    'level': 'DEBUG', 'format': '%(levelname)s - %(message)s', 'date_format': '%Y-%m-%d', }
             }
         }
         with patch("builtins.open", MagicMock()) as mock_open, \
@@ -230,6 +210,30 @@ class TestPopulateStocks:
         mock_config = {"key": "value"}
         with patch("builtins.open", MagicMock()) as mock_open, \
              patch("yaml.safe_load", MagicMock(return_value=mock_config)):
+            if populate_stocks: PopulateStocks) -> None:
+        """Tests get_config_value when the key does not exist in the configuration."""
+        populate_stocks.config is None:
+                populate_stocks: PopulateStocks) -> None:
+        """Tests get_config_value when the key does not exist in the configuration."""
+        populate_stocks.config = {"section": {}}
+        value = populate_stocks.get_config_value("section.missing_key"
+            if populate_stocks: PopulateStocks) -> None:
+        """Tests get_config_value when a nested key does not exist."""
+        populate_stocks.config is None:
+                populate_stocks: PopulateStocks) -> None:
+        """Tests get_config_value when a nested key does not exist."""
+        populate_stocks.config = {"section": {}}
+        value = populate_stocks.get_config_value("section.nested.missing_key"
+            if populate_stocks: PopulateStocks) -> None:
+        """Tests get_config_value when the key is missing and the default value is None."""
+        populate_stocks.config is None:
+                populate_stocks: PopulateStocks) -> None:
+        """Tests get_config_value when the key is missing and the default value is None."""
+        populate_stocks.config = {"section": {}}
+        value = populate_stocks.get_config_value("section.missing_key")
+        assert value is None
+
+    def test_execute_success(self
             mock_open.return_value.__enter__.return_value = mock_open.return_value
             config = populate_stocks._load_config()
             assert config == mock_config

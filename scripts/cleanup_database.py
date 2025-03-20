@@ -5,11 +5,11 @@ Script to clean up and consolidate tables in the MotherDuck database.
 Removes empty tables and consolidates redundant table structures.
 """
 
-import os
 from dotenv import load_dotenv
 import duckdb
 
 def cleanup_database():
+    """Function cleanup_database."""
     print("Starting database cleanup")
     
     # Load environment variables for MotherDuck token

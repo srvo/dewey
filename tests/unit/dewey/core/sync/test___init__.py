@@ -64,23 +64,38 @@ def test_connect_to_databases_success(sync_script, mock_db_connection):
         assert mock_db_connection.close.call_count == 0
 
 
-def test_connect_to_databases_missing_config(sync_script, mock_config, tmp_path, caplog):
+def test_connect_to_databases_missing_config(
+    sync_script, mock_config, tmp_path, caplog
+):
     """Test connect_to_databases raises ValueError when config is missing."""
     caplog.set_level(logging.ERROR)
-    config_data = {"sync": {}, "core": {"logging": {"level": "INFO", "format": "%(message)s"}}}
+    config_data = {
+        "sync": {},
+        "core": {"logging": {"level": "INFO", "format": "%(message)s"}},
+    }
     config_file = tmp_path / "dewey.yaml"
     with open(config_file, "w") as f:
         yaml.dump(config_data, f)
     with patch("dewey.core.sync.CONFIG_PATH", str(config_file)):
-        with pytest.raises(ValueError, match="Source and destination database configurations must be specified"):
+        with pytest.raises(
+            ValueError,
+            match="Source and destination database configurations must be specified",
+        ):
             sync_script.connect_to_databases()
-        assert "Source and destination database configurations must be specified" in caplog.text
+        assert (
+            "Source and destination database configurations must be specified"
+            in caplog.text
+        )
 
 
-def test_connect_to_databases_connection_error(sync_script, mock_config, tmp_path, caplog):
+def test_connect_to_databases_connection_error(
+    sync_script, mock_config, tmp_path, caplog
+):
     """Test connect_to_databases handles connection errors gracefully."""
     caplog.set_level(logging.ERROR)
-    with patch("dewey.core.sync.get_connection", side_effect=Exception("Connection failed")):
+    with patch(
+        "dewey.core.sync.get_connection", side_effect=Exception("Connection failed")
+    ):
         with pytest.raises(Exception, match="Connection failed"):
             sync_script.connect_to_databases()
         assert "Failed to connect to databases: Connection failed" in caplog.text
@@ -100,8 +115,8 @@ def test_fetch_data_from_source_failure(sync_script, mock_db_connection, caplog)
     """Test fetch_data_from_source handles errors gracefully."""
     caplog.set_level(logging.ERROR)
     sync_script.source_db = mock_db_connection
-    mock_db_connection.connection.return_value.__enter__.return_value.cursor.return_value.execute.side_effect = (
-        Exception("Query failed")
+    mock_db_connection.connection.return_value.__enter__.return_value.cursor.return_value.execute.side_effect = Exception(
+        "Query failed"
     )
     with pytest.raises(Exception, match="Query failed"):
         sync_script.fetch_data_from_source()
@@ -112,7 +127,10 @@ def test_transform_data_success(sync_script):
     """Test transform_data successfully transforms data."""
     data = [(1, "test1"), (2, "test2")]
     transformed_data = sync_script.transform_data(data)
-    assert transformed_data == [{"id": 1, "value": "test1test1"}, {"id": 2, "value": "test2test2"}]
+    assert transformed_data == [
+        {"id": 1, "value": "test1test1"},
+        {"id": 2, "value": "test2test2"},
+    ]
 
 
 def test_transform_data_failure(sync_script, caplog):
@@ -141,8 +159,8 @@ def test_load_data_into_destination_failure(sync_script, mock_db_connection, cap
     caplog.set_level(logging.ERROR)
     sync_script.destination_db = mock_db_connection
     data = [{"id": 1, "value": "test1"}, {"id": 2, "value": "test2"}]
-    mock_db_connection.connection.return_value.__enter__.return_value.cursor.return_value.executemany.side_effect = (
-        Exception("Insert failed")
+    mock_db_connection.connection.return_value.__enter__.return_value.cursor.return_value.executemany.side_effect = Exception(
+        "Insert failed"
     )
     with pytest.raises(Exception, match="Insert failed"):
         sync_script.load_data_into_destination(data)
@@ -153,13 +171,22 @@ def test_synchronize_data_success(sync_script, mock_db_connection):
     """Test synchronize_data executes successfully."""
     sync_script.source_db = mock_db_connection
     sync_script.destination_db = mock_db_connection
-    with patch.object(sync_script, "fetch_data_from_source", return_value=[(1, "test1"), (2, "test2")]):
+    with patch.object(
+        sync_script, "fetch_data_from_source", return_value=[(1, "test1"), (2, "test2")]
+    ):
         with patch.object(
-            sync_script, "transform_data", return_value=[{"id": 1, "value": "test1test1"}, {"id": 2, "value": "test2test2"}]
+            sync_script,
+            "transform_data",
+            return_value=[
+                {"id": 1, "value": "test1test1"},
+                {"id": 2, "value": "test2test2"},
+            ],
         ):
             with patch.object(sync_script, "load_data_into_destination") as mock_load:
                 sync_script.synchronize_data()
-                mock_load.assert_called_once_with([{"id": 1, "value": "test1test1"}, {"id": 2, "value": "test2test2"}])
+                mock_load.assert_called_once_with(
+                    [{"id": 1, "value": "test1test1"}, {"id": 2, "value": "test2test2"}]
+                )
 
 
 def test_synchronize_data_failure(sync_script, mock_db_connection, caplog):
@@ -167,7 +194,9 @@ def test_synchronize_data_failure(sync_script, mock_db_connection, caplog):
     caplog.set_level(logging.ERROR)
     sync_script.source_db = mock_db_connection
     sync_script.destination_db = mock_db_connection
-    with patch.object(sync_script, "fetch_data_from_source", side_effect=Exception("Fetch failed")):
+    with patch.object(
+        sync_script, "fetch_data_from_source", side_effect=Exception("Fetch failed")
+    ):
         with pytest.raises(Exception, match="Fetch failed"):
             sync_script.synchronize_data()
         assert "Data synchronization failed: Fetch failed" in caplog.text
@@ -185,16 +214,22 @@ def test_run_success(sync_script, mock_db_connection):
 def test_run_failure(sync_script, mock_db_connection, caplog):
     """Test run handles errors during the synchronization process."""
     caplog.set_level(logging.ERROR)
-    with patch.object(sync_script, "connect_to_databases", side_effect=Exception("Connection error")):
+    with patch.object(
+        sync_script, "connect_to_databases", side_effect=Exception("Connection error")
+    ):
         with pytest.raises(Exception, match="Connection error"):
             sync_script.run()
-        assert "An error occurred during synchronization: Connection error" in caplog.text
+        assert (
+            "An error occurred during synchronization: Connection error" in caplog.text
+        )
 
 
 def test_cli_arguments(sync_script, mock_config, caplog):
     """Test command line arguments override configuration."""
     caplog.set_level(logging.DEBUG)
-    with patch("sys.argv", ["script_name", "--log-level", "DEBUG", "--config", mock_config]):
+    with patch(
+        "sys.argv", ["script_name", "--log-level", "DEBUG", "--config", mock_config]
+    ):
         args = sync_script.parse_args()
         assert args.log_level == "DEBUG"
         assert "Log level set to DEBUG" in caplog.text

@@ -1,4 +1,4 @@
-tests/unit/dewey/core/research/companies/test_sec_filings_manager.py
+tests / unit / dewey / core / research / companies / test_sec_filings_manager.py
 import logging
 from typing import Any
 from unittest.mock import patch
@@ -27,8 +27,12 @@ class TestSecFilingsManager:
         assert sec_filings_manager.db_conn is None
         assert sec_filings_manager.llm_client is None
 
-    @patch("dewey.core.research.companies.sec_filings_manager.SecFilingsManager.get_config_value")
-    def test_run(self, mock_get_config_value: Any, sec_filings_manager: SecFilingsManager) -> None:
+    @patch(
+        "dewey.core.research.companies.sec_filings_manager.SecFilingsManager.get_config_value"
+    )
+    def test_run(
+        self, mock_get_config_value: Any, sec_filings_manager: SecFilingsManager
+    ) -> None:
         """Test the run method."""
         mock_get_config_value.return_value = "test_value"
 

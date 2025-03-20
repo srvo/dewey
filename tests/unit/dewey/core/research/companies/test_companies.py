@@ -3,7 +3,6 @@ from unittest.mock import MagicMock, patch
 from dewey.core.research.companies.companies import Companies
 from dewey.core.base_script import BaseScript
 import logging
-from typing import Any, Dict
 
 
 class TestCompanies:
@@ -132,7 +131,8 @@ class TestCompanies:
         # Assertions
         mock_generate_text.assert_called_once()
         mock_generate_text.assert_called_with(
-            companies.llm_client, "Summarize the key activities of a technology company."
+            companies.llm_client,
+            "Summarize the key activities of a technology company.",
         )
 
     @patch("dewey.core.research.companies.companies.execute_query")
@@ -173,7 +173,9 @@ class TestCompanies:
         value = companies.get_config_value("level1.level3", "default")
         assert value == "default"
 
-    def test_get_config_value_missing_key_no_default(self, companies: Companies) -> None:
+    def test_get_config_value_missing_key_no_default(
+        self, companies: Companies
+    ) -> None:
         """Test getting a missing config value without a default."""
         companies.config = {"level1": {"level2": "value"}}
         value = companies.get_config_value("level1.level3")
@@ -188,7 +190,10 @@ class TestCompanies:
     @patch("dewey.core.research.companies.companies.Path.exists")
     @patch("dewey.core.research.companies.companies.yaml.safe_load")
     def test_parse_args_config_override(
-        self, mock_safe_load: MagicMock, mock_path_exists: MagicMock, companies: Companies
+        self,
+        mock_safe_load: MagicMock,
+        mock_path_exists: MagicMock,
+        companies: Companies,
     ) -> None:
         """Test that command line arguments override config values."""
         # Mock command line arguments

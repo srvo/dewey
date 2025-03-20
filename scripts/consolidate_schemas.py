@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
 from dewey.core.base_script import BaseScript
-import ibis
 from typing import Dict
 
 class ConsolidateSchemas(BaseScript):
     """Script to consolidate schemas in MotherDuck."""
 
     def __init__(self):
+        """Function __init__."""
         super().__init__(
             name="consolidate_schemas",
             description="Consolidate and clean up schemas in MotherDuck"

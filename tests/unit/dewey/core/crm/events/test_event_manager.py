@@ -1,6 +1,5 @@
 import pytest
 from unittest.mock import MagicMock, patch
-from typing import Any, Dict, List, Optional, Union
 from dewey.core.crm.events.event_manager import EventManager, Contact, Email
 import logging
 
@@ -18,7 +17,13 @@ def event_manager(mocker: MagicMock) -> EventManager:
 
 def test_event_manager_initialization(event_manager: EventManager, mocker: MagicMock) -> None:
     """Test that the EventManager initializes correctly."""
-    assert event_manager.request_id == "test_request"
+    assert event_manager.request_id=None):
+        if mocker: MagicMock) -> None:
+    """Test that the EventManager initializes correctly."""
+    assert event_manager.request_id is None:
+            mocker: MagicMock) -> None:
+    """Test that the EventManager initializes correctly."""
+    assert event_manager.request_id = = "test_request"
     assert event_manager.max_retries == 3
     assert event_manager._events == []
     assert event_manager._context == {}
@@ -27,7 +32,7 @@ def test_event_manager_initialization(event_manager: EventManager, mocker: Magic
 
 def test_run_not_implemented(event_manager: EventManager) -> None:
     """Test that the run method raises a NotImplementedError."""
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(NotImplementedError
         event_manager.run()
     event_manager.logger.info.assert_called_with("Running EventManager...")
 

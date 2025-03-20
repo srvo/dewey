@@ -27,10 +27,10 @@ def test_dewey_imports():
     """Test that basic dewey imports work."""
     # Import basic modules to check imports work
     try:
-        import dewey
+import dewey
         assert dewey.__name__ == "dewey"
     except ImportError:
         # If it can't be imported directly, add src to path
         sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
-        import dewey
+import dewey
         assert dewey.__name__ == "dewey" 

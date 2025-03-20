@@ -65,5 +65,5 @@ class TestInitSchema:
         """Test the main execution block."""
         with patch('dewey.core.db.init_schema.InitSchema') as mock_init_schema:
             # Simulate running the script from the command line
-            import dewey.core.db.init_schema
+import dewey.core.db.init_schema
             mock_init_schema.return_value.execute.assert_called_once()

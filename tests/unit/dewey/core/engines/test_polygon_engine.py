@@ -1,10 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from dewey.core.engines.polygon_engine import PolygonEngine
-from dewey.core.db.connection import DatabaseConnection
-from dewey.llm.llm_utils import call_llm
 import logging
-from typing import Any, Dict
 
 
 class TestPolygonEngine:
@@ -17,13 +14,15 @@ class TestPolygonEngine:
         """
         Pytest fixture to create an instance of PolygonEngine with a mock config section.
         """
-        with patch("dewey.core.engines.polygon_engine.BaseScript.__init__", return_value=None):
-            engine = PolygonEngine(config_section='test_polygon_engine')
+        with patch(
+            "dewey.core.engines.polygon_engine.BaseScript.__init__", return_value=None
+        ):
+            engine = PolygonEngine(config_section="test_polygon_engine")
             engine.logger = MagicMock(spec=logging.Logger)  # Mock the logger
             engine.config = {
-                'api_key': 'test_api_key',
-                'core': {'database': {}},
-                'llm': {}
+                "api_key": "test_api_key",
+                "core": {"database": {}},
+                "llm": {},
             }  # Mock the config
             return engine
 
@@ -55,21 +54,30 @@ class TestPolygonEngine:
         mock_call_llm.assert_called_once()
 
     @patch("dewey.core.engines.polygon_engine.get_motherduck_connection")
-    def test_run_db_error(self, mock_get_motherduck_connection: MagicMock, polygon_engine: PolygonEngine) -> None:
+    def test_run_db_error(
+        self, mock_get_motherduck_connection: MagicMock, polygon_engine: PolygonEngine
+    ) -> None:
         """
         Test the run method handles database connection errors.
         """
-        mock_get_motherduck_connection.side_effect = Exception("Database connection failed")
+        mock_get_motherduck_connection.side_effect = Exception(
+            "Database connection failed"
+        )
 
         polygon_engine.run()
 
         polygon_engine.logger.error.assert_called()
-        assert "Error interacting with the database" in str(polygon_engine.logger.error.call_args)
+        assert "Error interacting with the database" in str(
+            polygon_engine.logger.error.call_args
+        )
 
     @patch("dewey.core.engines.polygon_engine.call_llm")
     @patch("dewey.core.engines.polygon_engine.get_motherduck_connection")
     def test_run_llm_error(
-        self, mock_get_motherduck_connection: MagicMock, mock_call_llm: MagicMock, polygon_engine: PolygonEngine
+        self,
+        mock_get_motherduck_connection: MagicMock,
+        mock_call_llm: MagicMock,
+        polygon_engine: PolygonEngine,
     ) -> None:
         """
         Test the run method handles LLM interaction errors.
@@ -81,25 +89,31 @@ class TestPolygonEngine:
         polygon_engine.run()
 
         polygon_engine.logger.error.assert_called()
-        assert "Error interacting with the LLM" in str(polygon_engine.logger.error.call_args)
+        assert "Error interacting with the LLM" in str(
+            polygon_engine.logger.error.call_args
+        )
 
     def test_init(self) -> None:
         """
         Test the initialization of the PolygonEngine class.
         """
-        with patch("dewey.core.engines.polygon_engine.BaseScript.__init__") as mock_base_init:
-            engine = PolygonEngine(config_section='test_polygon_engine')
-            mock_base_init.assert_called_once_with(config_section='test_polygon_engine')
+        with patch(
+            "dewey.core.engines.polygon_engine.BaseScript.__init__"
+        ) as mock_base_init:
+            engine = PolygonEngine(config_section="test_polygon_engine")
+            mock_base_init.assert_called_once_with(config_section="test_polygon_engine")
 
     def test_run_no_api_key(self, polygon_engine: PolygonEngine) -> None:
         """
         Test the run method handles missing API key.
         """
-        polygon_engine.config['api_key'] = None
+        polygon_engine.config["api_key"] = None
 
         polygon_engine.run()
 
-        polygon_engine.logger.error.assert_called_with("Polygon API key not found in configuration.")
+        polygon_engine.logger.error.assert_called_with(
+            "Polygon API key not found in configuration."
+        )
 
     @patch("dewey.core.engines.polygon_engine.get_motherduck_connection")
     @patch("dewey.core.engines.polygon_engine.create_table")

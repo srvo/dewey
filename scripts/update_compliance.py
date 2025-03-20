@@ -76,10 +76,16 @@ def verify_environment() -> None:
 
 def read_non_compliant_files() -> Dict[str, List[str]]:
     """Read the list of non-compliant files and their violations."""
+    files=None):
+        if List[str]]:
+    """Read the list of non-compliant files and their violations."""
+    files is None:
+            List[str]]:
+    """Read the list of non-compliant files and their violations."""
     files = {}
     all_files_path = NON_COMPLIANT_DIR / "all_files.txt"
     
-    if not all_files_path.exists():
+    if not all_files_path.exists(
         raise FileNotFoundError(f"all_files.txt not found at {all_files_path}")
     
     with open(all_files_path, 'r') as f:
@@ -151,6 +157,7 @@ def run_aider(file_path: str, message: str) -> bool:
         return False
 
 def main():
+    """Function main."""
     try:
         print("Verifying environment...")
         verify_environment()

@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Any, Dict, Iterator, Optional
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection
 from dewey.core.research.output_handler import ResearchOutputHandler
 from dewey.core.engines.base import BaseEngine
 

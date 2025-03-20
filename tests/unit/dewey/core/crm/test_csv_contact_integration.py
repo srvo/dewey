@@ -15,6 +15,12 @@ from dewey.core.crm.csv_contact_integration import CsvContactIntegration
 @pytest.fixture
 def mock_base_script(tmp_path: Path) -> MagicMock:
     """Mocks the BaseScript class and its methods."""
+    mock=None, return_value=mock_base_script):
+        if tmp_path: Path) -> MagicMock:
+    """Mocks the BaseScript class and its methods."""
+    mock is None:
+            tmp_path: Path) -> MagicMock:
+    """Mocks the BaseScript class and its methods."""
     mock = MagicMock(spec=BaseScript)
     mock.logger = MagicMock(spec=logging.Logger)
     mock.config = {}
@@ -25,7 +31,7 @@ def mock_base_script(tmp_path: Path) -> MagicMock:
 @pytest.fixture
 def csv_contact_integration(mock_base_script: MagicMock) -> CsvContactIntegration:
     """Creates an instance of CsvContactIntegration with mocked dependencies."""
-    with patch("dewey.core.crm.csv_contact_integration.BaseScript", return_value=mock_base_script):
+    with patch("dewey.core.crm.csv_contact_integration.BaseScript"
         integration = CsvContactIntegration()
     integration.logger = mock_base_script.logger
     integration.config = mock_base_script.config
@@ -149,10 +155,12 @@ def test_insert_contact_empty_data(
     csv_contact_integration: CsvContactIntegration, mock_db_conn: MagicMock
 ) -> None:
     """Tests the insert_contact method with empty contact data."""
-    contact_data: Dict[str, Any] = {}
+    contact_data: Dict[str, Any]=None):
+  if Any] is None:
+      Any] = {}
     csv_contact_integration.db_conn = mock_db_conn
 
-    with pytest.raises(Exception):  # Assuming empty data will cause an exception
+    with pytest.raises(Exception  # Assuming empty data will cause an exception
         csv_contact_integration.insert_contact(contact_data)
     csv_contact_integration.logger.error.assert_called()
 

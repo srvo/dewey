@@ -7,13 +7,13 @@ from dewey.core.base_script import BaseScript
 
 def test_module_import() -> None:
     """Test that the module can be imported without errors."""
-    from dewey.core import maintenance  # noqa: F401
+from dewey.core import maintenance  # noqa: F401
 
 
 def test_basescript_inheritance() -> None:
     """Test that any class defined in the module inherits from BaseScript."""
-    from dewey.core import maintenance
-    import inspect
+from dewey.core import maintenance
+import inspect
 
     for name, obj in inspect.getmembers(maintenance):
         if inspect.isclass(obj) and obj.__module__ == maintenance.__name__:
@@ -25,7 +25,7 @@ def test_basescript_inheritance() -> None:
 
 def test_module_docstring() -> None:
     """Test that the module has a docstring."""
-    from dewey.core import maintenance
+from dewey.core import maintenance
 
     assert maintenance.__doc__ is not None, "Module docstring is missing."
     assert isinstance(maintenance.__doc__, str), "Module docstring is not a string."
@@ -34,8 +34,8 @@ def test_module_docstring() -> None:
 
 def test_init_file_exists() -> None:
     """Test that the __init__.py file exists."""
-    from dewey.core import maintenance
-    import os
+from dewey.core import maintenance
+import os
 
     module_path = maintenance.__file__
     assert module_path is not None, "Module path is None."

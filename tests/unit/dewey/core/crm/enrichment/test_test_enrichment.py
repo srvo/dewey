@@ -27,7 +27,10 @@ class TestTestEnrichment:
     @patch("dewey.core.crm.enrichment.test_enrichment.TestEnrichment.get_config_value")
     @patch("dewey.core.crm.enrichment.test_enrichment.TestEnrichment.logger")
     def test_run_success(
-        self, mock_logger: Any, mock_get_config_value: Any, test_enrichment: TestEnrichment
+        self,
+        mock_logger: Any,
+        mock_get_config_value: Any,
+        test_enrichment: TestEnrichment,
     ) -> None:
         """Test the run method executes successfully."""
         mock_get_config_value.return_value = "test_value"
@@ -40,7 +43,10 @@ class TestTestEnrichment:
     @patch("dewey.core.crm.enrichment.test_enrichment.TestEnrichment.get_config_value")
     @patch("dewey.core.crm.enrichment.test_enrichment.TestEnrichment.logger")
     def test_run_config_error(
-        self, mock_logger: Any, mock_get_config_value: Any, test_enrichment: TestEnrichment
+        self,
+        mock_logger: Any,
+        mock_get_config_value: Any,
+        test_enrichment: TestEnrichment,
     ) -> None:
         """Test the run method handles configuration errors."""
         mock_get_config_value.side_effect = Exception("Config error")
@@ -53,7 +59,10 @@ class TestTestEnrichment:
     @patch("dewey.core.crm.enrichment.test_enrichment.TestEnrichment.get_config_value")
     @patch("dewey.core.crm.enrichment.test_enrichment.TestEnrichment.logger")
     def test_run_no_error(
-        self, mock_logger: Any, mock_get_config_value: Any, test_enrichment: TestEnrichment
+        self,
+        mock_logger: Any,
+        mock_get_config_value: Any,
+        test_enrichment: TestEnrichment,
     ) -> None:
         """Test the run method executes successfully without error."""
         mock_get_config_value.return_value = "test_value"

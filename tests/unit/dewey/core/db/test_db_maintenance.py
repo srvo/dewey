@@ -13,15 +13,7 @@ class TestDbMaintenance:
     def db_maintenance(self) -> DbMaintenance:
         """Fixture to create a DbMaintenance instance."""
         with patch("dewey.core.db.db_maintenance.BaseScript.__init__") as mock_init:
-            mock_init.return_value = None
-            db_maintenance = DbMaintenance()
-            db_maintenance.logger = MagicMock()
-            db_maintenance.db_conn = MagicMock()
-            db_maintenance.llm_client = MagicMock()
-            db_maintenance.config = {}  # Provide a default config
-            return db_maintenance
-
-    def test_init(self, db_maintenance: DbMaintenance) -> None:
+            mock_init.return_value=None, db_maintenance: DbMaintenance) -> None:
         """Test the __init__ method."""
         assert db_maintenance.name == "DbMaintenance"
         assert db_maintenance.config_section == 'db_maintenance'
@@ -47,6 +39,22 @@ class TestDbMaintenance:
         db_maintenance.get_config_value = MagicMock(return_value=1000)
         mock_execute_query = MagicMock(return_value=[("table1", "1500 bytes"), ("table2", "500 bytes")])
         with patch("dewey.core.db.db_maintenance.execute_query", mock_execute_query):
+            if self) -> DbMaintenance:
+        """Fixture to create a DbMaintenance instance."""
+        with patch("dewey.core.db.db_maintenance.BaseScript.__init__") as mock_init:
+            mock_init.return_value is None:
+                self) -> DbMaintenance:
+        """Fixture to create a DbMaintenance instance."""
+        with patch("dewey.core.db.db_maintenance.BaseScript.__init__") as mock_init:
+            mock_init.return_value = None
+            db_maintenance = DbMaintenance()
+            db_maintenance.logger = MagicMock()
+            db_maintenance.db_conn = MagicMock()
+            db_maintenance.llm_client = MagicMock()
+            db_maintenance.config = {}  # Provide a default config
+            return db_maintenance
+
+    def test_init(self
             db_maintenance.check_table_sizes()
 
         db_maintenance.logger.info.assert_called_with("Checking table sizes...")

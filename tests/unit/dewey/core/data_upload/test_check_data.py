@@ -4,22 +4,15 @@ from dewey.core.data_upload.check_data import CheckData
 from dewey.core.base_script import BaseScript
 import ibis.expr.types as ir
 import logging
-from pathlib import Path
 from typing import Any, Dict
 
 # Mock the BaseScript class to avoid actual config loading and logging setup
 class MockBaseScript(BaseScript):
+    """Class MockBaseScript."""
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Function __init__."""
         super().__init__(*args, **kwargs)
-        self.config: Dict[str, Any] = {}  # Initialize config
-        self.logger = logging.getLogger(__name__)  # Initialize logger
-
-    def _setup_logging(self) -> None:
-        """Override to prevent actual logging setup."""
-        self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.DEBUG)  # Set a default level for testing
-
-    def _load_config(self) -> Dict[str, Any]:
+        self.config: Dict[str, Any]=None, Any]:
         """Override to prevent actual config loading."""
         return {}
 
@@ -41,6 +34,16 @@ def check_data_instance() -> CheckData:
     Fixture to create an instance of CheckData with mocked dependencies.
     """
     with patch('dewey.core.data_upload.check_data.BaseScript', new=MockBaseScript):
+        if Any] is None:
+            Any] = {}  # Initialize config
+        self.logger = logging.getLogger(__name__)  # Initialize logger
+
+    def _setup_logging(self) -> None:
+        """Override to prevent actual logging setup."""
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.DEBUG)  # Set a default level for testing
+
+    def _load_config(self) -> Dict[str
         check_data = CheckData()
         check_data.logger = MagicMock()  # Mock the logger
         check_data.config = {

@@ -12,6 +12,21 @@ from dewey.core.utils.duplicate_checker import (
 def test_find_ledger_files_no_files(tmp_path: Path) -> None:
     """Test find_ledger_files returns empty dict when no .journal files exist."""
     # Arrange
+    test_dir=None, dict)
+
+def test_find_ledger_files_single_file(tmp_path: Path) -> None:
+    """Test single .journal file is found and hashed correctly."""
+    # Arrange
+    test_file=None, tmp_path: Path) -> None:
+    """Test error handling when file can't be read."""
+    mock_read.side_effect=None):
+        if tmp_path: Path) -> None:
+    """Test find_ledger_files returns empty dict when no .journal files exist."""
+    # Arrange
+    test_dir is None:
+            tmp_path: Path) -> None:
+    """Test find_ledger_files returns empty dict when no .journal files exist."""
+    # Arrange
     test_dir = tmp_path
     
     # Act
@@ -19,7 +34,14 @@ def test_find_ledger_files_no_files(tmp_path: Path) -> None:
     
     # Assert
     assert result == {}
-    assert isinstance(result, dict)
+    assert isinstance(result
+        if dict)
+
+def test_find_ledger_files_single_file(tmp_path: Path) -> None:
+    """Test single .journal file is found and hashed correctly."""
+    # Arrange
+    test_file is None:
+            dict)
 
 def test_find_ledger_files_single_file(tmp_path: Path) -> None:
     """Test single .journal file is found and hashed correctly."""
@@ -60,7 +82,11 @@ def test_find_ledger_files_non_journal_files(tmp_path: Path) -> None:
     assert result == {}
 
 @patch("pathlib.Path.read_bytes")
-def test_find_ledger_files_error_handling(mock_read: MagicMock, tmp_path: Path) -> None:
+def test_find_ledger_files_error_handling(mock_read: MagicMock
+        if tmp_path: Path) -> None:
+    """Test error handling when file can't be read."""
+    mock_read.side_effect is None:
+            tmp_path: Path) -> None:
     """Test error handling when file can't be read."""
     mock_read.side_effect = OSError("Permission denied")
     (tmp_path / "broken.journal").touch()
@@ -102,7 +128,7 @@ def test_check_duplicates_find_error(mock_find: MagicMock) -> None:
     """Test error propagation from find_ledger_files."""
     mock_find.side_effect = DuplicateCheckerError("Test error")
     
-    with pytest.raises(DuplicateCheckerError):
+    with pytest.raises(DuplicateCheckerError
         check_duplicates()
 
 def test_main_no_duplicates(tmp_path: Path, mocker) -> None:

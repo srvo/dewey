@@ -10,7 +10,7 @@ class Serper(BaseScript):
         """
         Initializes the Serper class.
         """
-        super().__init__(config_section='serper')
+        super().__init__(config_section="serper")
 
     def run(self):
         """

@@ -1,13 +1,14 @@
 """Tests for transaction categorizer."""
+
 import pytest
 from pathlib import Path
-from unittest.mock import patch, MagicMock
 import pandas as pd
 from dewey.core.bookkeeping.transaction_categorizer import (
     TransactionCategorizer,
     CategorizationRule,
-    CategoryMatch
+    CategoryMatch,
 )
+
 
 class TestTransactionCategorizer:
     """Test suite for transaction categorizer."""
@@ -16,8 +17,7 @@ class TestTransactionCategorizer:
     def categorizer(self, sample_rules_file, mock_llm_handler):
         """Create a TransactionCategorizer instance."""
         return TransactionCategorizer(
-            rules_file=sample_rules_file,
-            llm_handler=mock_llm_handler
+            rules_file=sample_rules_file, llm_handler=mock_llm_handler
         )
 
     def test_load_rules(self, categorizer):
@@ -25,7 +25,7 @@ class TestTransactionCategorizer:
         rules = categorizer.load_rules()
         assert len(rules) > 0
         assert all(isinstance(rule, CategorizationRule) for rule in rules)
-        
+
         # Check specific rules
         amazon_rule = next(r for r in rules if r.pattern == "AMAZON")
         assert amazon_rule.category == "Expenses:Office:Supplies"
@@ -36,9 +36,9 @@ class TestTransactionCategorizer:
         transactions = [
             {"description": "AMAZON.COM", "amount": -50.00},
             {"description": "SALARY DEPOSIT", "amount": 1000.00},
-            {"description": "UNKNOWN VENDOR", "amount": -25.00}
+            {"description": "UNKNOWN VENDOR", "amount": -25.00},
         ]
-        
+
         for transaction in transactions:
             match = categorizer.match_rule(transaction)
             if "AMAZON" in transaction["description"]:
@@ -69,13 +69,14 @@ class TestTransactionCategorizer:
     def test_categorize_transactions(self, categorizer, sample_transactions_df):
         """Test batch transaction categorization."""
         results = categorizer.categorize_transactions(sample_transactions_df)
-        
+
         assert len(results) == len(sample_transactions_df)
         assert all(isinstance(r, CategoryMatch) for r in results)
-        
+
         # Check specific categorizations
-        amazon_result = next(r for r in results 
-                           if "AMAZON" in r.transaction["description"])
+        amazon_result = next(
+            r for r in results if "AMAZON" in r.transaction["description"]
+        )
         assert amazon_result.category == "Expenses:Office:Supplies"
         assert amazon_result.method == "rule"
 
@@ -84,15 +85,16 @@ class TestTransactionCategorizer:
         new_rule = CategorizationRule(
             pattern="NETFLIX",
             category="Expenses:Entertainment:Streaming",
-            description="Netflix subscription"
+            description="Netflix subscription",
         )
-        
+
         categorizer.update_rules([new_rule])
         updated_rules = categorizer.load_rules()
-        
+
         assert any(r.pattern == "NETFLIX" for r in updated_rules)
-        assert any(r.category == "Expenses:Entertainment:Streaming" 
-                  for r in updated_rules)
+        assert any(
+            r.category == "Expenses:Entertainment:Streaming" for r in updated_rules
+        )
 
     def test_validate_category(self, categorizer):
         """Test category validation."""
@@ -100,7 +102,7 @@ class TestTransactionCategorizer:
             "Assets:Checking",
             "Expenses:Office:Supplies",
             "Income:Salary",
-            "Liabilities:CreditCard"
+            "Liabilities:CreditCard",
         ]
         for category in valid_categories:
             assert categorizer.validate_category(category) is True
@@ -109,7 +111,7 @@ class TestTransactionCategorizer:
             "assets:checking",  # lowercase
             "Expenses:",  # ends with colon
             "Income/Salary",  # invalid character
-            ""  # empty string
+            "",  # empty string
         ]
         for category in invalid_categories:
             assert categorizer.validate_category(category) is False
@@ -162,4 +164,4 @@ class TestTransactionCategorizer:
         assert rule_matches + llm_matches == len(results)
 
         # Verify categories are valid
-        assert all(categorizer.validate_category(r.category) for r in results) 
+        assert all(categorizer.validate_category(r.category) for r in results)

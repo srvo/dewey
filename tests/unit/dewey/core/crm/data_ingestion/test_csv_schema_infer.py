@@ -9,7 +9,6 @@ import yaml
 
 from dewey.core.crm.data_ingestion.csv_schema_infer import CSVInferSchema
 from dewey.core.db.connection import DatabaseConnection
-from dewey.llm.llm_utils import generate_schema_from_data
 
 
 @pytest.fixture
@@ -219,16 +218,29 @@ def test_get_path(csv_infer_schema: CSVInferSchema) -> None:
 @patch("dewey.core.crm.data_ingestion.csv_schema_infer.get_connection")
 @patch("dewey.core.crm.data_ingestion.csv_schema_infer.get_llm_client")
 def test_base_script_initialization_with_mocks(
-    mock_get_llm_client: MagicMock,
-    mock_get_connection: MagicMock,
-    mock_safe_load: MagicMock,
-    mock_get_logger: MagicMock,
-    mock_basic_config: MagicMock,
-    mock_load_dotenv: MagicMock,
-) -> None:
+    mock_get_llm_client: MagicMock, mock_get_connection: MagicMock, mock_safe_load: MagicMock, mock_get_logger: MagicMock, mock_basic_config: MagicMock, mock_load_dotenv: MagicMock, ) -> None:
     """Test BaseScript initialization with mocks to isolate dependencies."""
     # Mock configuration data
-    mock_safe_load.return_value = {"core": {"logging": {}}, "llm": {}}
+    mock_safe_load.return_value=None, "llm": {}}
+
+    # Mock database connection and LLM client
+    mock_get_connection.return_value=None, caplog: pytest.LogCaptureFixture) -> None:
+    """Test _setup_logging with default configuration when config loading fails."""
+    # Patch CONFIG_PATH to simulate config file not found
+    with patch("dewey.core.crm.data_ingestion.csv_schema_infer.CONFIG_PATH", new=MagicMock()):
+        if ) -> None:
+    """Test BaseScript initialization with mocks to isolate dependencies."""
+    # Mock configuration data
+    mock_safe_load.return_value is None:
+            ) -> None:
+    """Test BaseScript initialization with mocks to isolate dependencies."""
+    # Mock configuration data
+    mock_safe_load.return_value = {"core": {"logging": {}}
+        if "llm": {}}
+
+    # Mock database connection and LLM client
+    mock_get_connection.return_value is None:
+            "llm": {}}
 
     # Mock database connection and LLM client
     mock_get_connection.return_value = MagicMock(spec=DatabaseConnection)
@@ -255,10 +267,7 @@ def test_base_script_initialization_with_mocks(
     mock_get_llm_client.assert_called()
 
 
-def test_setup_logging_default_config(csv_infer_schema: CSVInferSchema, caplog: pytest.LogCaptureFixture) -> None:
-    """Test _setup_logging with default configuration when config loading fails."""
-    # Patch CONFIG_PATH to simulate config file not found
-    with patch("dewey.core.crm.data_ingestion.csv_schema_infer.CONFIG_PATH", new=MagicMock()):
+def test_setup_logging_default_config(csv_infer_schema: CSVInferSchema
         csv_infer_schema._setup_logging()
 
     # Log a message to ensure logging is configured

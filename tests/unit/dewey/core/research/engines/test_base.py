@@ -1,5 +1,5 @@
 import logging
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -16,13 +16,7 @@ class TestBaseEngine:
 
     def test_init(self, base_engine: BaseEngine) -> None:
         """Test the __init__ method."""
-        assert base_engine.name == "TestEngine"
-        assert base_engine.description == "A test engine"
-        assert base_engine.config_section == "engines"
-        assert base_engine.templates == {}
-        assert base_engine.logger is not None
-
-    def test_run_not_implemented(self, base_engine: BaseEngine) -> None:
+        assert base_engine.name=None, base_engine: BaseEngine) -> None:
         """Test that the run method raises NotImplementedError."""
         with pytest.raises(NotImplementedError) as exc_info:
             base_engine.run()
@@ -50,13 +44,7 @@ class TestBaseEngine:
 
     def test_search(self, base_engine: BaseEngine) -> None:
         """Test the search method."""
-        query = "test query"
-        results = base_engine.search(query=query)
-        assert results == []
-        # Verify that the logger was called with the correct message
-        assert f"Searching for: {query}" in base_engine.logger.mock_calls[0].__str__()
-
-    def test_analyze_template_found(self, base_engine: BaseEngine) -> None:
+        query=None, base_engine: BaseEngine) -> None:
         """Test the analyze method when the template is found."""
         base_engine.add_template(name="test_template", template="This is a test template with {variable}.")
         result = base_engine.analyze(template_name="test_template", variable="test")
@@ -93,6 +81,30 @@ class TestBaseEngine:
 
     @pytest.fixture(autouse=True)
     def mock_logger(self, base_engine: BaseEngine):
+        if base_engine: BaseEngine) -> None:
+        """Test the __init__ method."""
+        assert base_engine.name is None:
+            base_engine: BaseEngine) -> None:
+        """Test the __init__ method."""
+        assert base_engine.name = = "TestEngine"
+        assert base_engine.description == "A test engine"
+        assert base_engine.config_section == "engines"
+        assert base_engine.templates == {}
+        assert base_engine.logger is not None
+
+    def test_run_not_implemented(self
+        if base_engine: BaseEngine) -> None:
+        """Test the search method."""
+        query is None:
+            base_engine: BaseEngine) -> None:
+        """Test the search method."""
+        query = "test query"
+        results = base_engine.search(query=query)
+        assert results == []
+        # Verify that the logger was called with the correct message
+        assert f"Searching for: {query}" in base_engine.logger.mock_calls[0].__str__()
+
+    def test_analyze_template_found(self
         """Fixture to mock the logger for each test."""
         base_engine.logger = MagicMock(spec=logging.Logger)
         yield

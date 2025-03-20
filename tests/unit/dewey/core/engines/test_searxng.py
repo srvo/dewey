@@ -28,7 +28,10 @@ class TestSearxNG:
 
     @patch("dewey.core.engines.searxng.SearxNG.get_config_value")
     def test_run_success(
-        self, mock_get_config_value: pytest.fixture, searxng_instance: SearxNG, caplog: pytest.fixture
+        self,
+        mock_get_config_value: pytest.fixture,
+        searxng_instance: SearxNG,
+        caplog: pytest.fixture,
     ) -> None:
         """
         Test the run method with successful execution.
@@ -45,7 +48,10 @@ class TestSearxNG:
 
     @patch("dewey.core.engines.searxng.SearxNG.get_config_value")
     def test_run_exception(
-        self, mock_get_config_value: pytest.fixture, searxng_instance: SearxNG, caplog: pytest.fixture
+        self,
+        mock_get_config_value: pytest.fixture,
+        searxng_instance: SearxNG,
+        caplog: pytest.fixture,
     ) -> None:
         """
         Test the run method with an exception raised.

@@ -1,9 +1,11 @@
 """Tests for ethical analysis workflow."""
+
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from datetime import datetime
 from dewey.core.research.analysis.ethical_analysis import EthicalAnalysisWorkflow
 from dewey.core.research.analysis.ethical_analyzer import EthicalAnalyzer
+
 
 class TestEthicalAnalysisWorkflow:
     """Test suite for EthicalAnalysisWorkflow."""
@@ -36,13 +38,17 @@ class TestEthicalAnalysisWorkflow:
 
     async def test_conduct_deep_research(self, workflow):
         """Test deep research functionality."""
-        follow_up_questions = ["What are the environmental impacts?", "Are there labor issues?"]
+        follow_up_questions = [
+            "What are the environmental impacts?",
+            "Are there labor issues?",
+        ]
         results = await workflow.conduct_deep_research(
             initial_query="Test Corp ethical analysis",
-            follow_up_questions=follow_up_questions
+            follow_up_questions=follow_up_questions,
         )
         assert isinstance(results, list)
         assert len(results) > 0
+
 
 class TestEthicalAnalyzer:
     """Test suite for EthicalAnalyzer."""
@@ -50,8 +56,10 @@ class TestEthicalAnalyzer:
     @pytest.fixture
     def analyzer(self, tmp_data_dir, mock_db_connection, mock_llm_handler):
         """Create an analyzer instance with mocked dependencies."""
-        with patch("dewey.core.research.analysis.ethical_analyzer.get_connection", 
-                  return_value=mock_db_connection):
+        with patch(
+            "dewey.core.research.analysis.ethical_analyzer.get_connection",
+            return_value=mock_db_connection,
+        ):
             return EthicalAnalyzer(data_dir=tmp_data_dir)
 
     def test_setup_analysis_tables(self, analyzer, mock_db_connection):
@@ -66,7 +74,7 @@ class TestEthicalAnalyzer:
             "Company": "Test Corp",
             "Symbol": "TEST",
             "Category": "Product-based",
-            "Criteria": "Animal Cruelty"
+            "Criteria": "Animal Cruelty",
         }
         prompt = analyzer.generate_analysis_prompt(company_row)
         assert "Test Corp (TEST)" in prompt
@@ -77,11 +85,11 @@ class TestEthicalAnalyzer:
         """Test JSON saving functionality."""
         company_data = {
             "meta": {"type": "ethical_analysis"},
-            "companies": [{"name": "Test Corp"}]
+            "companies": [{"name": "Test Corp"}],
         }
         timestamp = datetime.now()
         analyzer.save_analysis_json(company_data, timestamp)
-        
+
         json_dir = tmp_data_dir / "analysis_json"
         assert json_dir.exists()
         json_files = list(json_dir.glob("ethical_analysis_*.json"))
@@ -98,7 +106,7 @@ class TestEthicalAnalyzer:
         """Test analysis run with empty data."""
         empty_csv = tmp_data_dir / "exclude.csv"
         empty_csv.write_text("Company,Symbol,Category,Criteria\n")
-        
+
         results = analyzer.run_analysis()
         assert len(results["companies"]) == 0
 
@@ -108,18 +116,20 @@ class TestEthicalAnalyzer:
             analyzer.run_analysis()
 
     @pytest.mark.integration
-    def test_full_workflow_integration(self, analyzer, sample_companies_csv, mock_db_connection):
+    def test_full_workflow_integration(
+        self, analyzer, sample_companies_csv, mock_db_connection
+    ):
         """Integration test for full analysis workflow."""
         # Setup database
         analyzer.setup_analysis_tables()
-        
+
         # Run analysis
         results = analyzer.run_analysis()
-        
+
         # Verify results
         assert results["meta"]["type"] == "ethical_analysis"
         assert len(results["companies"]) > 0
-        
+
         # Check database interactions
         mock_db_connection.cursor().execute.assert_called()
-        assert mock_db_connection.commit.called 
+        assert mock_db_connection.commit.called

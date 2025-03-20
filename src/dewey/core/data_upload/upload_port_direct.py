@@ -1,8 +1,4 @@
-from typing import Any
-
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
-from dewey.llm.llm_utils import LLMClient, get_llm_client
 
 
 class UploadPortDirect(BaseScript):

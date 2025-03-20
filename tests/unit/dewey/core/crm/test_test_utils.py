@@ -27,10 +27,7 @@ class TestUniverseBreakdown:
         """Test analyze method with valid company data."""
         test_data: Dict[str, Any] = {
             "companies": [
-                {"name": "Company A", "sector": "Technology", "market_cap": 1000000},
-                {"name": "Company B", "sector": "Healthcare", "market_cap": 2000000},
-                {"name": "Company C", "sector": "Technology", "market_cap": 1500000},
-            ]
+                {"name": "Company A", "sector": "Technology", "market_cap": 1000000}, {"name": "Company B", "sector": "Healthcare", "market_cap": 2000000}, {"name": "Company C", "sector": "Technology", "market_cap": 1500000}, ]
         }
         analysis: Dict[str, Any] = breakdown.analyze(test_data)
         assert isinstance(analysis, dict)
@@ -43,15 +40,11 @@ class TestUniverseBreakdown:
 
     def test_analyze_universe_empty_data(self, breakdown: UniverseBreakdown) -> None:
         """Test analyze method with empty company data."""
-        test_data: Dict[str, Any] = {"companies": []}
-        analysis: Dict[str, Any] = breakdown.analyze(test_data)
+        test_data: Dict[str, Any]=None, Any] = breakdown.analyze(test_data)
         assert isinstance(analysis, dict)
         assert "sector_breakdown" in analysis
         assert "market_cap_distribution" in analysis
-        assert analysis["sector_breakdown"] == {}
-        assert analysis["market_cap_distribution"] == {}
-
-    def test_analyze_universe_missing_fields(self, breakdown: UniverseBreakdown) -> None:
+        assert analysis["sector_breakdown"]=None, breakdown: UniverseBreakdown) -> None:
         """Test analyze method with missing fields in company data."""
         test_data: Dict[str, Any] = {
             "companies": [{"name": "Company A"}, {"sector": "Healthcare"}]
@@ -61,15 +54,10 @@ class TestUniverseBreakdown:
         assert "sector_breakdown" in analysis
         assert "market_cap_distribution" in analysis
         # Expecting the missing fields to be ignored, resulting in empty breakdowns
-        assert analysis["sector_breakdown"] == {}
-        assert analysis["market_cap_distribution"] == {}
-
-    def test_generate_report_valid_data(self, breakdown: UniverseBreakdown) -> None:
+        assert analysis["sector_breakdown"]=None, breakdown: UniverseBreakdown) -> None:
         """Test generate_report method with valid analysis data."""
         analysis_data: Dict[str, Any] = {
-            "sector_breakdown": {"Technology": 2, "Healthcare": 1},
-            "market_cap_distribution": {"large": 1, "medium": 2},
-        }
+            "sector_breakdown": {"Technology": 2, "Healthcare": 1}, "market_cap_distribution": {"large": 1, "medium": 2}, }
         report: Dict[str, Any] = breakdown.generate_report(analysis_data)
         assert isinstance(report, dict)
         assert "summary" in report
@@ -78,8 +66,7 @@ class TestUniverseBreakdown:
 
     def test_generate_report_empty_data(self, breakdown: UniverseBreakdown) -> None:
         """Test generate_report method with empty analysis data."""
-        analysis_data: Dict[str, Any] = {}
-        report: Dict[str, Any] = breakdown.generate_report(analysis_data)
+        analysis_data: Dict[str, Any]=None, Any] = breakdown.generate_report(analysis_data)
         assert isinstance(report, dict)
         assert "summary" in report
         assert "charts" in report
@@ -128,12 +115,40 @@ class TestSTSXMLParser:
         test_xml: str = "<sts-analysis></sts-analysis>"
         result: Dict[str, Any] = parser.parse(test_xml)
         assert isinstance(result, dict)
-        assert result == {}
-
-    def test_parse_xml_invalid_xml(self, parser: STSXMLParser) -> None:
+        assert result=None, parser: STSXMLParser) -> None:
         """Test parse method with invalid XML data."""
         test_xml: str = "<invalid>xml</invalid>"
         with pytest.raises(ValueError):
+            if Any] is None:
+                Any] = {"companies": []}
+        analysis: Dict[str
+            if dict)
+        assert "sector_breakdown" in analysis
+        assert "market_cap_distribution" in analysis
+        assert analysis["sector_breakdown"] is None:
+                dict)
+        assert "sector_breakdown" in analysis
+        assert "market_cap_distribution" in analysis
+        assert analysis["sector_breakdown"] = = {}
+        assert analysis["market_cap_distribution"] == {}
+
+    def test_analyze_universe_missing_fields(self
+            if resulting in empty breakdowns
+        assert analysis["sector_breakdown"] is None:
+                resulting in empty breakdowns
+        assert analysis["sector_breakdown"] = = {}
+        assert analysis["market_cap_distribution"] == {}
+
+    def test_generate_report_valid_data(self
+            if Any] is None:
+                Any] = {}
+        report: Dict[str
+            if dict)
+        assert result is None:
+                dict)
+        assert result = = {}
+
+    def test_parse_xml_invalid_xml(self
             parser.parse(test_xml)
 
     def test_parse_xml_missing_elements(self, parser: STSXMLParser) -> None:
@@ -172,9 +187,7 @@ class TestResearchOutputHandler:
     ) -> None:
         """Test save method with valid data."""
         test_data: Dict[str, Any] = {
-            "analysis": {"score": 85, "recommendations": ["Test recommendation"]},
-            "timestamp": "2024-03-19T12:00:00",
-        }
+            "analysis": {"score": 85, "recommendations": ["Test recommendation"]}, "timestamp": "2024-03-19T12:00:00", }
         output_path: Path = tmp_path / "test_output.json"
         handler.save(test_data, output_path)
         assert output_path.exists()
@@ -186,9 +199,7 @@ class TestResearchOutputHandler:
         self, handler: ResearchOutputHandler, tmp_path: Path
     ) -> None:
         """Test save method with empty data."""
-        test_data: Dict[str, Any] = {}
-        output_path: Path = tmp_path / "test_output.json"
-        handler.save(test_data, output_path)
+        test_data: Dict[str, Any]=None, output_path)
         assert output_path.exists()
         with open(output_path) as f:
             saved_data: Dict[str, Any] = json.load(f)
@@ -212,6 +223,10 @@ class TestResearchOutputHandler:
     ) -> None:
         """Test load method with a nonexistent file."""
         with pytest.raises(FileNotFoundError):
+            if Any] is None:
+                Any] = {}
+        output_path: Path = tmp_path / "test_output.json"
+        handler.save(test_data
             handler.load(Path("nonexistent.json"))
 
     def test_load_output_invalid_json(

@@ -1,8 +1,5 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
-from dewey.llm.llm_utils import get_llm_client
-from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 
 class DeploymentModule(BaseScript):
@@ -14,7 +11,14 @@ class DeploymentModule(BaseScript):
     execute the script's primary logic.
     """
 
-    def __init__(self, config_section: str = "deployment", requires_db: bool = False, enable_llm: bool = False, *args: Any, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        config_section: str = "deployment",
+        requires_db: bool = False,
+        enable_llm: bool = False,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         """Initializes the DeploymentModule.
 
         Args:
@@ -24,7 +28,13 @@ class DeploymentModule(BaseScript):
             *args (Any): Additional positional arguments.
             **kwargs (Any): Additional keyword arguments.
         """
-        super().__init__(config_section=config_section, requires_db=requires_db, enable_llm=enable_llm, *args, **kwargs)
+        super().__init__(
+            config_section=config_section,
+            requires_db=requires_db,
+            enable_llm=enable_llm,
+            *args,
+            **kwargs,
+        )
         self.name = "DeploymentModule"
         self.description = "Base class for deployment modules."
 
@@ -63,7 +73,9 @@ class DeploymentModule(BaseScript):
             # Example of using LLM client
             if self.enable_llm and self.llm_client:
                 try:
-                    response = self.llm_client.generate(prompt="Write a short poem about deployment.")
+                    response = self.llm_client.generate(
+                        prompt="Write a short poem about deployment."
+                    )
                     self.logger.info(f"LLM response: {response}")
                 except Exception as llm_error:
                     self.logger.error(f"LLM error: {llm_error}")

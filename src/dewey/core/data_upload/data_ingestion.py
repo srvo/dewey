@@ -1,8 +1,4 @@
-from typing import Any, Dict
-
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
-from dewey.llm.llm_utils import LLMClient, get_llm_client
 
 
 class DataIngestion(BaseScript):
@@ -19,7 +15,9 @@ class DataIngestion(BaseScript):
 
         Calls the BaseScript constructor with the 'data_ingestion' config section.
         """
-        super().__init__(config_section='data_ingestion', requires_db=True, enable_llm=True)
+        super().__init__(
+            config_section="data_ingestion", requires_db=True, enable_llm=True
+        )
 
     def run(self) -> None:
         """
@@ -39,10 +37,14 @@ class DataIngestion(BaseScript):
         """
         try:
             # Accessing configuration values
-            input_path: str = self.get_config_value('input_path', '/default/input/path')
-            output_path: str = self.get_config_value('output_path', '/default/output/path')
+            input_path: str = self.get_config_value("input_path", "/default/input/path")
+            output_path: str = self.get_config_value(
+                "output_path", "/default/output/path"
+            )
 
-            self.logger.info(f"Starting data ingestion from {input_path} to {output_path}")
+            self.logger.info(
+                f"Starting data ingestion from {input_path} to {output_path}"
+            )
 
             # Example of using database connection
             if self.db_conn:

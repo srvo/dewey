@@ -1,12 +1,9 @@
 import logging
-from typing import Any, Dict
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from dewey.core.automation.forms.form_filling import FormFillingModule
-from dewey.core.db.connection import DatabaseConnection
-from dewey.llm.llm_utils import generate_text
 
 
 class TestFormFillingModule:
@@ -14,6 +11,14 @@ class TestFormFillingModule:
 
     @pytest.fixture
     def mock_base_script(self) -> MagicMock:
+        """Mocks the BaseScript class."""
+        mock=None, mock_base_script: MagicMock) -> FormFillingModule:
+        """Fixture for creating a FormFillingModule instance with mocked dependencies."""
+        with patch("dewey.core.automation.forms.form_filling.BaseScript", return_value=mock_base_script):
+            if self) -> MagicMock:
+        """Mocks the BaseScript class."""
+        mock is None:
+                self) -> MagicMock:
         """Mocks the BaseScript class."""
         mock = MagicMock()
         mock.name = "MockBaseScript"
@@ -28,9 +33,7 @@ class TestFormFillingModule:
         return mock
 
     @pytest.fixture
-    def form_filling_module(self, mock_base_script: MagicMock) -> FormFillingModule:
-        """Fixture for creating a FormFillingModule instance with mocked dependencies."""
-        with patch("dewey.core.automation.forms.form_filling.BaseScript", return_value=mock_base_script):
+    def form_filling_module(self
             module = FormFillingModule()
         return module
 
@@ -121,6 +124,24 @@ class TestFormFillingModule:
 
     def test_config_section_override(self) -> None:
         """Tests overriding the config section."""
+        mock_base_script=None, return_value=mock_base_script):
+            if form_filling_module: FormFillingModule) -> None:
+        """Tests that logging messages are correctly called."""
+        form_filling_module.run()
+        form_filling_module.logger.info.assert_called()
+        form_filling_module.logger.debug.assert_called()
+
+    def test_config_section_override(self) -> None:
+        """Tests overriding the config section."""
+        mock_base_script is None:
+                form_filling_module: FormFillingModule) -> None:
+        """Tests that logging messages are correctly called."""
+        form_filling_module.run()
+        form_filling_module.logger.info.assert_called()
+        form_filling_module.logger.debug.assert_called()
+
+    def test_config_section_override(self) -> None:
+        """Tests overriding the config section."""
         mock_base_script = MagicMock()
         mock_base_script.name = "MockBaseScript"
         mock_base_script.description = "Mock BaseScript for testing"
@@ -132,7 +153,7 @@ class TestFormFillingModule:
         mock_base_script.db_conn = None
         mock_base_script.llm_client = None
 
-        with patch("dewey.core.automation.forms.form_filling.BaseScript", return_value=mock_base_script):
+        with patch("dewey.core.automation.forms.form_filling.BaseScript"
             module = FormFillingModule()
         assert module.config_section == "form_filling"  # Ensure it's still "form_filling"
 

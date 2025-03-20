@@ -72,16 +72,22 @@ class TestMdSchema:
         """Test parse_args loads config from file."""
         config_file = tmp_path / "test_config.yaml"
         config_file.write_text("test_key: test_value")
-        mock_parse_args.return_value = pytest.Namespace(log_level=None, config=str(config_file))
+        mock_parse_args.return_value = pytest.Namespace(
+            log_level=None, config=str(config_file)
+        )
         md_schema.parse_args()
         assert md_schema.config == {"test_key": "test_value"}
         assert f"Loaded configuration from {config_file}" in caplog.text
 
     @patch("argparse.ArgumentParser.parse_args")
-    def test_parse_args_config_file_not_found(self, mock_parse_args, md_schema, tmp_path, capsys):
+    def test_parse_args_config_file_not_found(
+        self, mock_parse_args, md_schema, tmp_path, capsys
+    ):
         """Test parse_args handles config file not found."""
         config_file = tmp_path / "missing_config.yaml"
-        mock_parse_args.return_value = pytest.Namespace(log_level=None, config=str(config_file))
+        mock_parse_args.return_value = pytest.Namespace(
+            log_level=None, config=str(config_file)
+        )
         with pytest.raises(SystemExit) as excinfo:
             md_schema.parse_args()
         assert excinfo.value.code == 1
@@ -104,7 +110,9 @@ class TestMdSchema:
     @patch("dewey.core.crm.data_ingestion.md_schema.MdSchema._cleanup")
     @patch("dewey.core.crm.data_ingestion.md_schema.MdSchema.parse_args")
     @patch("dewey.core.crm.data_ingestion.md_schema.MdSchema.run")
-    def test_execute_success(self, mock_run, mock_parse_args, mock_cleanup, md_schema, caplog):
+    def test_execute_success(
+        self, mock_run, mock_parse_args, mock_cleanup, md_schema, caplog
+    ):
         """Test execute method for successful execution."""
         mock_parse_args.return_value = pytest.Namespace()
         md_schema.execute()
@@ -116,7 +124,9 @@ class TestMdSchema:
     @patch("dewey.core.crm.data_ingestion.md_schema.MdSchema._cleanup")
     @patch("dewey.core.crm.data_ingestion.md_schema.MdSchema.parse_args")
     @patch("dewey.core.crm.data_ingestion.md_schema.MdSchema.run")
-    def test_execute_keyboard_interrupt(self, mock_run, mock_parse_args, mock_cleanup, md_schema, caplog, capsys):
+    def test_execute_keyboard_interrupt(
+        self, mock_run, mock_parse_args, mock_cleanup, md_schema, caplog, capsys
+    ):
         """Test execute method handles KeyboardInterrupt."""
         mock_parse_args.return_value = pytest.Namespace()
         mock_run.side_effect = KeyboardInterrupt
@@ -129,7 +139,9 @@ class TestMdSchema:
     @patch("dewey.core.crm.data_ingestion.md_schema.MdSchema._cleanup")
     @patch("dewey.core.crm.data_ingestion.md_schema.MdSchema.parse_args")
     @patch("dewey.core.crm.data_ingestion.md_schema.MdSchema.run")
-    def test_execute_exception(self, mock_run, mock_parse_args, mock_cleanup, md_schema, caplog, capsys):
+    def test_execute_exception(
+        self, mock_run, mock_parse_args, mock_cleanup, md_schema, caplog, capsys
+    ):
         """Test execute method handles exceptions."""
         mock_parse_args.return_value = pytest.Namespace()
         mock_run.side_effect = ValueError("Test error")
@@ -139,7 +151,9 @@ class TestMdSchema:
         mock_cleanup.assert_called_once()
         assert "Error executing script: Test error" in caplog.text
 
-    @patch("dewey.core.crm.data_ingestion.md_schema.BaseScript._initialize_db_connection")
+    @patch(
+        "dewey.core.crm.data_ingestion.md_schema.BaseScript._initialize_db_connection"
+    )
     def test_init_requires_db(self, mock_init_db, caplog):
         """Test __init__ calls _initialize_db_connection when requires_db is True."""
         md_schema = MdSchema(requires_db=True)
@@ -165,4 +179,4 @@ class TestMdSchema:
         """Test _cleanup does not try to close db connection if it doesn't exist."""
         md_schema.db_conn = None
         md_schema._cleanup()
-        assert not hasattr(md_schema, 'close')
+        assert not hasattr(md_schema, "close")

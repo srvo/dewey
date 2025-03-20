@@ -1,5 +1,4 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
 from dewey.core.db import utils as db_utils
 
 
@@ -8,7 +7,7 @@ class AnalyzeTables(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the AnalyzeTables script."""
-        super().__init__(config_section='analyze_tables', requires_db=True)
+        super().__init__(config_section="analyze_tables", requires_db=True)
 
     def run(self) -> None:
         """Executes the table analysis.

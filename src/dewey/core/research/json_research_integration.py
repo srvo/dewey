@@ -7,19 +7,14 @@ This script integrates company research information from JSON files into the Mot
 It processes JSON files containing company research data and updates the research tables.
 """
 
-import argparse
 import json
 import sys
-from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Any
+from typing import Dict, Any
 
 import duckdb
-import pandas as pd
-import logging
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_motherduck_connection, get_connection
 from dewey.core.db import utils as db_utils
 
 
@@ -127,14 +122,7 @@ class JsonResearchIntegration(BaseScript):
         """
         try:
             with open(file_path, 'r') as f:
-                data = json.load(f)
-            self.logger.info(f"Successfully processed JSON file: {file_path}")
-            return data
-        except Exception as e:
-            self.logger.error(f"Error processing JSON file {file_path}: {e}")
-            return {}
-
-    def update_company_research(self, conn: duckdb.DuckDBPyConnection, data: Dict[str, Any]) -> None:
+                data=None, conn: duckdb.DuckDBPyConnection, data: Dict[str, Any]) -> None:
         """Update the company_research table with data from the JSON file.
 
         Args:
@@ -164,16 +152,10 @@ class JsonResearchIntegration(BaseScript):
                 self.logger.info(f"Updating existing company: {ticker}")
                 conn.execute("""
                 UPDATE company_research SET
-                    company_name = ?,
-                    description = ?,
-                    company_context = ?,
-                    updated_at = CURRENT_TIMESTAMP
+                    company_name = ?, description = ?, company_context = ?, updated_at = CURRENT_TIMESTAMP
                 WHERE ticker = ?
                 """, [
-                    company.get('name'),
-                    company.get('description'),
-                    data.get('company_context'),
-                    ticker
+                    company.get('name'), company.get('description'), data.get('company_context'), ticker
                 ])
             else:
                 # Insert new company
@@ -183,10 +165,7 @@ class JsonResearchIntegration(BaseScript):
                     ticker, company_name, description, company_context
                 ) VALUES (?, ?, ?, ?)
                 """, [
-                    ticker,
-                    company.get('name'),
-                    company.get('description'),
-                    data.get('company_context')
+                    ticker, company.get('name'), company.get('description'), data.get('company_context')
                 ])
 
             self.logger.info(f"Successfully updated company_research table for {ticker}")
@@ -222,20 +201,10 @@ class JsonResearchIntegration(BaseScript):
                 return
 
             # Delete existing queries for this company
-            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker = '{ticker}'")
-
-            # Insert new queries
-            for query in search_queries:
-                conn.execute("""
-                INSERT INTO company_research_queries (
-                    company_ticker, category, query, rationale, priority
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker=None, category, query, rationale, priority
                 ) VALUES (?, ?, ?, ?, ?)
                 """, [
-                    ticker,
-                    query.get('category'),
-                    query.get('query'),
-                    query.get('rationale'),
-                    query.get('priority')
+                    ticker, query.get('category'), query.get('query'), query.get('rationale'), query.get('priority')
                 ])
 
             self.logger.info(f"Successfully updated company_research_queries table for {ticker} with {len(search_queries)} queries")
@@ -271,23 +240,14 @@ class JsonResearchIntegration(BaseScript):
                 return
 
             # Delete existing results for this company
-            conn.execute(f"DELETE FROM company_research_results WHERE company_ticker = '{ticker}'")
-
-            # Insert new results
-            for result in research_results:
-                web_results = json.dumps(result.get('web_results', []))
+            conn.execute(f"DELETE FROM company_research_results WHERE company_ticker=None, []))
 
                 conn.execute("""
                 INSERT INTO company_research_results (
                     company_ticker, category, query, rationale, priority, web_results
                 ) VALUES (?, ?, ?, ?, ?, ?)
                 """, [
-                    ticker,
-                    result.get('category'),
-                    result.get('query'),
-                    result.get('rationale'),
-                    result.get('priority'),
-                    web_results
+                    ticker, result.get('category'), result.get('query'), result.get('rationale'), result.get('priority'), web_results
                 ])
 
             self.logger.info(f"Successfully updated company_research_results table for {ticker} with {len(research_results)} results")
@@ -308,28 +268,329 @@ class JsonResearchIntegration(BaseScript):
         try:
             directory = Path(directory_path)
             if not directory.exists() or not directory.is_dir():
-                self.logger.error(f"Directory does not exist or is not a directory: {directory_path}")
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
                 return
 
-            # Get all JSON files in the directory (excluding metadata files)
-            json_files = [f for f in directory.glob("*.json") if not f.name.endswith(".metadata")]
-
-            # Filter for research files
-            research_files = [f for f in json_files if "_research.json" in f.name]
-
-            if not research_files:
-                self.logger.warning(f"No research JSON files found in {directory_path}")
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
                 return
 
-            self.logger.info(f"Found {len(research_files)} research JSON files in {directory_path}")
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+                    [])
 
-            for file_path in research_files:
-                try:
-                    self.logger.info(f"Processing file: {file_path}")
-                    data = self.process_json_file(str(file_path))
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
 
-                    if data:
-                        self.update_company_research(conn, data)
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker = None
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not research_results:
+                self.logger.warning(f"No research results found for {ticker}")
+                return
+
+            # Delete existing results for this company
+            conn.execute(f"DELETE FROM company_research_results WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not research_results:
+                self.logger.warning(f"No research results found for {ticker}")
+                return
+
+            # Delete existing results for this company
+            conn.execute(f"DELETE FROM company_research_results WHERE company_ticker = None
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker = None
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not research_results:
+                self.logger.warning(f"No research results found for {ticker}")
+                return
+
+            # Delete existing results for this company
+            conn.execute(f"DELETE FROM company_research_results WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not research_results:
+                self.logger.warning(f"No research results found for {ticker}")
+                return
+
+            # Delete existing results for this company
+            conn.execute(f"DELETE FROM company_research_results WHERE company_ticker = None
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker = None
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not research_results:
+                self.logger.warning(f"No research results found for {ticker}")
+                return
+
+            # Delete existing results for this company
+            conn.execute(f"DELETE FROM company_research_results WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not research_results:
+                self.logger.warning(f"No research results found for {ticker}")
+                return
+
+            # Delete existing results for this company
+            conn.execute(f"DELETE FROM company_research_results WHERE company_ticker = None
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker = None
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not research_results:
+                self.logger.warning(f"No research results found for {ticker}")
+                return
+
+            # Delete existing results for this company
+            conn.execute(f"DELETE FROM company_research_results WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not research_results:
+                self.logger.warning(f"No research results found for {ticker}")
+                return
+
+            # Delete existing results for this company
+            conn.execute(f"DELETE FROM company_research_results WHERE company_ticker = None
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker = None
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not research_results:
+                self.logger.warning(f"No research results found for {ticker}")
+                return
+
+            # Delete existing results for this company
+            conn.execute(f"DELETE FROM company_research_results WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not research_results:
+                self.logger.warning(f"No research results found for {ticker}")
+                return
+
+            # Delete existing results for this company
+            conn.execute(f"DELETE FROM company_research_results WHERE company_ticker = None
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker = None
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not research_results:
+                self.logger.warning(f"No research results found for {ticker}")
+                return
+
+            # Delete existing results for this company
+            conn.execute(f"DELETE FROM company_research_results WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not research_results:
+                self.logger.warning(f"No research results found for {ticker}")
+                return
+
+            # Delete existing results for this company
+            conn.execute(f"DELETE FROM company_research_results WHERE company_ticker = None
+                if 'r') as f:
+                data is None:
+                    'r') as f:
+                data = json.load(f)
+            self.logger.info(f"Successfully processed JSON file: {file_path}")
+            return data
+        except Exception as e:
+            self.logger.error(f"Error processing JSON file {file_path}: {e}")
+            return {}
+
+    def update_company_research(self
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker=None, data)
                         self.update_company_research_queries(conn, data)
                         self.update_company_research_results(conn, data)
                 except Exception as e:
@@ -365,6 +626,362 @@ class JsonResearchIntegration(BaseScript):
 
 
 def main():
+    if self
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+        self
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker = None
+    if self
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+        self
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker = None
+    if self
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+        self
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker = None
+    if self
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+        self
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker = None
+    if self
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+        self
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker = None
+    if self
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+        self
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not search_queries:
+                self.logger.warning(f"No search queries found for {ticker}")
+                return
+
+            # Delete existing queries for this company
+            conn.execute(f"DELETE FROM company_research_queries WHERE company_ticker = '{ticker}'")
+
+            # Insert new queries
+            for query in search_queries:
+                conn.execute("""
+                INSERT INTO company_research_queries (
+                    company_ticker
+                if [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not research_results:
+                self.logger.warning(f"No research results found for {ticker}")
+                return
+
+            # Delete existing results for this company
+            conn.execute(f"DELETE FROM company_research_results WHERE company_ticker is None:
+                    [])
+
+            if not ticker:
+                self.logger.warning("No ticker found in the company data")
+                return
+
+            if not research_results:
+                self.logger.warning(f"No research results found for {ticker}")
+                return
+
+            # Delete existing results for this company
+            conn.execute(f"DELETE FROM company_research_results WHERE company_ticker = '{ticker}'")
+
+            # Insert new results
+            for result in research_results:
+                web_results = json.dumps(result.get('web_results'
+                self.logger.error(f"Directory does not exist or is not a directory: {directory_path}")
+                return
+
+            # Get all JSON files in the directory (excluding metadata files)
+            json_files = [f for f in directory.glob("*.json") if not f.name.endswith(".metadata")]
+
+            # Filter for research files
+            research_files = [f for f in json_files if "_research.json" in f.name]
+
+            if not research_files:
+                self.logger.warning(f"No research JSON files found in {directory_path}")
+                return
+
+            self.logger.info(f"Found {len(research_files)} research JSON files in {directory_path}")
+
+            for file_path in research_files:
+                try:
+                    self.logger.info(f"Processing file: {file_path}")
+                    data = self.process_json_file(str(file_path))
+
+                    if data:
+                        self.update_company_research(conn
     """Main entry point for the script."""
     script = JsonResearchIntegration()
     script.execute()

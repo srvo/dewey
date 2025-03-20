@@ -73,8 +73,9 @@ class TestPriorityModule:
         """Test the run method when an exception occurs."""
         mock_get_config_value.side_effect = Exception("Test exception")
 
-        with pytest.raises(Exception, match="Test exception"), caplog.at_level(
-            logging.ERROR
+        with (
+            pytest.raises(Exception, match="Test exception"),
+            caplog.at_level(logging.ERROR),
         ):
             priority_module.run()
 

@@ -1,9 +1,7 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
-from dewey.core.db.utils import create_table, execute_query
+from dewey.core.db.connection import get_connection
 from dewey.llm.llm_utils import generate_text
-import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class DocsModule(BaseScript):
@@ -42,7 +40,9 @@ class DocsModule(BaseScript):
 
         try:
             # Example of accessing a configuration value
-            example_config_value = self.get_config_value("example_config", "default_value")
+            example_config_value = self.get_config_value(
+                "example_config", "default_value"
+            )
             self.logger.info(f"Example config value: {example_config_value}")
 
             # Connect to the database

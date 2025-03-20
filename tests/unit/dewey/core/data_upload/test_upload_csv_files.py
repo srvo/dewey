@@ -1,6 +1,5 @@
 import logging
 import os
-from pathlib import Path
 from typing import Any, Dict
 from unittest.mock import MagicMock, patch
 
@@ -11,9 +10,6 @@ import yaml
 
 from dewey.core.base_script import BaseScript
 from dewey.core.data_upload.upload_csv_files import UploadCsvFiles
-from dewey.core.db import utils as db_utils
-from dewey.core.db.connection import DatabaseConnection, get_connection
-from dewey.llm import llm_utils
 
 
 class TestUploadCsvFiles:
@@ -61,11 +57,7 @@ class TestUploadCsvFiles:
     @pytest.fixture
     def mock_ibis_connection(self) -> MagicMock:
         """Creates a mock Ibis connection."""
-        con = MagicMock(spec=ibis.backends.base.BaseBackend)
-        con.list_tables.return_value = []
-        return con
-
-    def test_init(self, upload_csv_files: UploadCsvFiles) -> None:
+        con=None, upload_csv_files: UploadCsvFiles) -> None:
         """Tests the __init__ method."""
         assert upload_csv_files.config_section == "upload_csv_files"
         assert upload_csv_files.requires_db is True
@@ -75,34 +67,16 @@ class TestUploadCsvFiles:
     @patch("dewey.core.db.utils.create_table_from_dataframe")
     @patch("dewey.core.db.utils.insert_dataframe")
     def test_run_success(
-        self,
-        mock_insert_dataframe: MagicMock,
-        mock_create_table_from_dataframe: MagicMock,
-        mock_read_csv: MagicMock,
-        upload_csv_files: UploadCsvFiles,
-        mock_dataframe: pd.DataFrame,
-        mock_ibis_connection: MagicMock,
-    ) -> None:
+        self, mock_insert_dataframe: MagicMock, mock_create_table_from_dataframe: MagicMock, mock_read_csv: MagicMock, upload_csv_files: UploadCsvFiles, mock_dataframe: pd.DataFrame, mock_ibis_connection: MagicMock, ) -> None:
         """Tests the run method with a successful CSV upload."""
         # Arrange
         upload_csv_files.db_conn = mock_ibis_connection
         mock_read_csv.return_value = mock_dataframe
         upload_csv_files.get_config_value = MagicMock(
             side_effect=lambda key, default=None: {
-                "file_path": "test.csv",
-                "table_name": "test_table",
-                "motherduck_token": "test_token",
-            }.get(key, default)
+                "file_path": "test.csv", "table_name": "test_table", "motherduck_token": "test_token", }.get(key, default)
         )
-        mock_ibis_connection.list_tables.return_value = []
-
-        # Act
-        upload_csv_files.run()
-
-        # Assert
-        mock_read_csv.assert_called_once_with("test.csv")
-        mock_create_table_from_dataframe.assert_called_once_with(
-            mock_ibis_connection, "test_table", mock_dataframe
+        mock_ibis_connection.list_tables.return_value=None, "test_table", mock_dataframe
         )
         mock_insert_dataframe.assert_called_once_with(
             mock_ibis_connection, "test_table", mock_dataframe
@@ -113,11 +87,7 @@ class TestUploadCsvFiles:
 
     @patch("pandas.read_csv")
     def test_run_file_not_found(
-        self,
-        mock_read_csv: MagicMock,
-        upload_csv_files: UploadCsvFiles,
-        mock_ibis_connection: MagicMock,
-    ) -> None:
+        self, mock_read_csv: MagicMock, upload_csv_files: UploadCsvFiles, mock_ibis_connection: MagicMock, ) -> None:
         """Tests the run method when the specified CSV file does not exist."""
         # Arrange
         upload_csv_files.db_conn = mock_ibis_connection
@@ -128,6 +98,36 @@ class TestUploadCsvFiles:
 
         # Act & Assert
         with pytest.raises(FileNotFoundError):
+            if "b"]})
+
+    @pytest.fixture
+    def mock_ibis_connection(self) -> MagicMock:
+        """Creates a mock Ibis connection."""
+        con is None:
+                "b"]})
+
+    @pytest.fixture
+    def mock_ibis_connection(self) -> MagicMock:
+        """Creates a mock Ibis connection."""
+        con = MagicMock(spec=ibis.backends.base.BaseBackend)
+        con.list_tables.return_value = []
+        return con
+
+    def test_init(self
+            if default)
+        )
+        mock_ibis_connection.list_tables.return_value is None:
+                default)
+        )
+        mock_ibis_connection.list_tables.return_value = []
+
+        # Act
+        upload_csv_files.run()
+
+        # Assert
+        mock_read_csv.assert_called_once_with("test.csv")
+        mock_create_table_from_dataframe.assert_called_once_with(
+            mock_ibis_connection
             upload_csv_files.run()
         upload_csv_files.logger.error.assert_called_once()
 

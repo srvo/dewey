@@ -1,9 +1,7 @@
-from __future__ import annotations
-
 import base64
 import logging
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 from unittest.mock import MagicMock
 
 import pytest
@@ -45,12 +43,20 @@ def mock_email_data() -> Dict[str, Any]:
                 {
                     "partId": "0",
                     "mimeType": "text/plain",
-                    "body": {"data": base64.urlsafe_b64encode(b"This is plain text.").decode("ASCII")},
+                    "body": {
+                        "data": base64.urlsafe_b64encode(b"This is plain text.").decode(
+                            "ASCII"
+                        )
+                    },
                 },
                 {
                     "partId": "1",
                     "mimeType": "text/html",
-                    "body": {"data": base64.urlsafe_b64encode(b"<html><body>This is HTML.</body></html>").decode("ASCII")},
+                    "body": {
+                        "data": base64.urlsafe_b64encode(
+                            b"<html><body>This is HTML.</body></html>"
+                        ).decode("ASCII")
+                    },
                 },
             ],
         },
@@ -65,7 +71,9 @@ def test_email_processor_initialization(email_processor: EmailProcessor) -> None
     assert email_processor.logger is not None
 
 
-def test_process_email_success(email_processor: EmailProcessor, mock_email_data: Dict[str, Any]) -> None:
+def test_process_email_success(
+    email_processor: EmailProcessor, mock_email_data: Dict[str, Any]
+) -> None:
     """Test successful email processing."""
     email_info = email_processor.process_email(mock_email_data)
 
@@ -85,14 +93,18 @@ def test_process_email_success(email_processor: EmailProcessor, mock_email_data:
     assert len(email_info["bcc_addresses"]) == 1
     assert email_info["bcc_addresses"][0]["name"] == ""
     assert email_info["bcc_addresses"][0]["email"] == "bcc.doe@example.com"
-    assert email_info["received_date"] == datetime(2024, 1, 1, 7, 0, 0, tzinfo=MOUNTAIN_TZ)
+    assert email_info["received_date"] == datetime(
+        2024, 1, 1, 7, 0, 0, tzinfo=MOUNTAIN_TZ
+    )
     assert email_info["size_estimate"] == 1024
     assert email_info["labels"] == ["INBOX", "UNREAD"]
     assert email_info["body_text"] == "This is plain text."
     assert email_info["body_html"] == "<html><body>This is HTML.</body></html>"
 
 
-def test_process_email_missing_headers(email_processor: EmailProcessor, mock_email_data: Dict[str, Any]) -> None:
+def test_process_email_missing_headers(
+    email_processor: EmailProcessor, mock_email_data: Dict[str, Any]
+) -> None:
     """Test email processing with missing headers."""
     del mock_email_data["payload"]["headers"]
     email_info = email_processor.process_email(mock_email_data)
@@ -105,11 +117,15 @@ def test_process_email_missing_headers(email_processor: EmailProcessor, mock_ema
     assert email_info["bcc_addresses"] == []
 
 
-def test_process_email_no_parts(email_processor: EmailProcessor, mock_email_data: Dict[str, Any]) -> None:
+def test_process_email_no_parts(
+    email_processor: EmailProcessor, mock_email_data: Dict[str, Any]
+) -> None:
     """Test email processing with no parts in the payload."""
     mock_email_data["payload"].pop("parts")
     mock_email_data["payload"]["mimeType"] = "text/plain"
-    mock_email_data["payload"]["body"] = {"data": base64.urlsafe_b64encode(b"This is plain text.").decode("ASCII")}
+    mock_email_data["payload"]["body"] = {
+        "data": base64.urlsafe_b64encode(b"This is plain text.").decode("ASCII")
+    }
     email_info = email_processor.process_email(mock_email_data)
 
     assert email_info is not None
@@ -132,7 +148,9 @@ def test_process_email_empty_payload(email_processor: EmailProcessor) -> None:
     assert email_info["body_html"] == ""
 
 
-def test_process_email_exception(email_processor: EmailProcessor, mock_email_data: Dict[str, Any]) -> None:
+def test_process_email_exception(
+    email_processor: EmailProcessor, mock_email_data: Dict[str, Any]
+) -> None:
     """Test email processing when an exception occurs."""
     # Simulate an exception during header extraction
     mock_email_data["payload"]["headers"] = None  # type: ignore
@@ -147,43 +165,66 @@ def test_process_email_exception(email_processor: EmailProcessor, mock_email_dat
     [
         (
             "John Doe <john.doe@example.com>, Jane Doe <jane.doe@example.com>",
-            [{"name": "John Doe", "email": "john.doe@example.com"}, {"name": "Jane Doe", "email": "jane.doe@example.com"}],
+            [
+                {"name": "John Doe", "email": "john.doe@example.com"},
+                {"name": "Jane Doe", "email": "jane.doe@example.com"},
+            ],
         ),
         ("john.doe@example.com", [{"name": "", "email": "john.doe@example.com"}]),
         ("", []),
         ("  ", []),
-        ("John Doe <john.doe@example.com>", [{"name": "John Doe", "email": "john.doe@example.com"}]),
-        ("  John Doe  <  john.doe@example.com  >  ", [{"name": "John Doe", "email": "john.doe@example.com"}]),
+        (
+            "John Doe <john.doe@example.com>",
+            [{"name": "John Doe", "email": "john.doe@example.com"}],
+        ),
+        (
+            "  John Doe  <  john.doe@example.com  >  ",
+            [{"name": "John Doe", "email": "john.doe@example.com"}],
+        ),
         ("  John Doe  ", [{"name": "", "email": "John Doe"}]),
     ],
 )
 def test_parse_email_addresses(
-    email_processor: EmailProcessor, header_value: str, expected_addresses: List[Dict[str, str]]
+    email_processor: EmailProcessor,
+    header_value: str,
+    expected_addresses: List[Dict[str, str]],
 ) -> None:
     """Test parsing of email addresses from header values."""
     addresses = email_processor._parse_email_addresses(header_value)
     assert addresses == expected_addresses
 
 
-def test_get_message_body_text_html(email_processor: EmailProcessor, mock_email_data: Dict[str, Any]) -> None:
+def test_get_message_body_text_html(
+    email_processor: EmailProcessor, mock_email_data: Dict[str, Any]
+) -> None:
     """Test extracting message body with both text and HTML parts."""
     body = email_processor._get_message_body(mock_email_data["payload"])
     assert body["text"] == "This is plain text."
     assert body["html"] == "<html><body>This is HTML.</body></html>"
 
 
-def test_get_message_body_nested_parts(email_processor: EmailProcessor, mock_email_data: Dict[str, Any]) -> None:
+def test_get_message_body_nested_parts(
+    email_processor: EmailProcessor, mock_email_data: Dict[str, Any]
+) -> None:
     """Test extracting message body with nested parts."""
     nested_payload = {
         "mimeType": "multipart/mixed",
         "parts": [
             {
                 "mimeType": "text/plain",
-                "body": {"data": base64.urlsafe_b64encode(b"Nested plain text.").decode("ASCII")},
+                "body": {
+                    "data": base64.urlsafe_b64encode(b"Nested plain text.").decode(
+                        "ASCII"
+                    )
+                },
             },
             {
                 "mimeType": "text/html",
-                "body": {"data": base64.urlsafe_b64encode(b"<html><body>Nested HTML.</body></html>").decode("ASCII")},
+                "body": {
+                    "data": base64.urlsafe_b64encode(
+                        b"<html><body>Nested HTML.</body></html>"
+                    ).decode("ASCII")
+                },
             },
         ],
     }
@@ -208,7 +249,11 @@ def test_get_message_body_only_html(email_processor: EmailProcessor) -> None:
     """Test extracting message body with only an HTML part."""
     payload: Dict[str, Any] = {
         "mimeType": "text/html",
-        "body": {"data": base64.urlsafe_b64encode(b"<html><body>Only HTML.</body></html>").decode("ASCII")},
+        "body": {
+            "data": base64.urlsafe_b64encode(
+                b"<html><body>Only HTML.</body></html>"
+            ).decode("ASCII")
+        },
     }
     body = email_processor._get_message_body(payload)
     assert body["text"] == ""

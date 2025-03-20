@@ -3,7 +3,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection
 from dewey.core.db.schema import Schema
 
 
@@ -31,14 +30,14 @@ class TestSchema:
 
     def test_init(self, schema_instance: Schema) -> None:
         """Test the __init__ method of the Schema class."""
-        assert schema_instance.config_section == 'schema'
+        assert schema_instance.config_section == "schema"
 
     def test_run_success(self, schema_instance: Schema) -> None:
         """Test the run method with successful execution."""
         schema_instance.get_config_value.return_value = "test_db_url"
         schema_instance.run()
         schema_instance.logger.info.assert_called()
-        schema_instance.get_config_value.assert_called_with('db_url', 'default_db_url')
+        schema_instance.get_config_value.assert_called_with("db_url", "default_db_url")
 
     def test_run_exception(self, schema_instance: Schema) -> None:
         """Test the run method when an exception is raised."""
