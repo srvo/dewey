@@ -1,6 +1,9 @@
 from typing import Any, Optional
 
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
+from dewey.core.db import utils as db_utils
+from dewey.llm import llm_utils
 
 
 class ControversyDetection(BaseScript):
@@ -21,7 +24,12 @@ class ControversyDetection(BaseScript):
             config_section (Optional[str], optional): Section in the config file
                 to use for configuration. Defaults to None.
         """
-        super().__init__(config_section=config_section, name="ControversyDetection")
+        super().__init__(
+            config_section=config_section, 
+            name="ControversyDetection",
+            requires_db=True,  # Assuming controversy detection might use a database
+            enable_llm=True     # Assuming controversy detection might use an LLM
+        )
 
     def run(self, data: Any = None) -> Any:
         """
@@ -37,11 +45,27 @@ class ControversyDetection(BaseScript):
         self.logger.info("Starting controversy detection...")
 
         # Example of accessing configuration values
-        some_config_value = self.get_config_value("some_config_key", "default_value")
+        some_config_value = self.get_config_value("utils.example_config", "default_value")
         self.logger.debug(f"Some config value: {some_config_value}")
 
-        # Add your controversy detection logic here
-        result = None  # Replace with actual result
+        # Example of using database connection
+        try:
+            # Example query (replace with your actual query)
+            query = "SELECT * FROM example_table;"
+            result = self.db_conn.execute(query)
+            self.logger.debug(f"Database query result: {result}")
+        except Exception as e:
+            self.logger.error(f"Error executing database query: {e}")
+
+        # Example of using LLM
+        try:
+            prompt = "Is this text controversial? " + str(data)
+            llm_response = llm_utils.generate_response(self.llm_client, prompt)
+            self.logger.debug(f"LLM response: {llm_response}")
+            result = llm_response  # Use LLM response as result
+        except Exception as e:
+            self.logger.error(f"Error using LLM: {e}")
+            result = None
 
         self.logger.info("Controversy detection complete.")
         return result
