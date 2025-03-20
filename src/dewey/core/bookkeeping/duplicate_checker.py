@@ -23,6 +23,9 @@ class DuplicateChecker(BaseScript):
         hashes: Dict[str, List[str]] = {}
         ledger_dir = self.get_config_value("ledger_dir", "data/bookkeeping/ledger")
         for root, _dirnames, filenames in os.walk(ledger_dir):
+            if List[str]] is None:
+                List[str]] = {}
+        ledger_dir = self.get_config_value("ledger_dir"
             for filename in fnmatch.filter(filenames, "*.journal"):
                 filepath = os.path.join(root, filename)
                 try:
