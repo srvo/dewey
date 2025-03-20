@@ -1,7 +1,7 @@
 from typing import Optional
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db import connection, utils
+from dewey.core.db.connection import DatabaseConnection, get_connection
 from dewey.llm import llm_utils
 
 
@@ -50,7 +50,7 @@ class MergeData(BaseScript):
                 self.logger.info("Database connection is available.")
                 # Example database operation (replace with actual logic)
                 try:
-                    with self.db_conn.cursor() as cursor:
+                    with get_connection().cursor() as cursor:
                         cursor.execute("SELECT 1")
                         result = cursor.fetchone()
                         self.logger.info(f"Database query result: {result}")
