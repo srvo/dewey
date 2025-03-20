@@ -4,7 +4,7 @@ from dewey.core.utils.log_manager import LogManager
 
 
 @pytest.fixture
-def log_manager():
+def log_manager(mocker):
     """Fixture to create a LogManager instance for testing."""
     return LogManager()
 
@@ -52,4 +52,3 @@ def test_run(log_manager, caplog):
 def test_execute(log_manager):
     """Test that execute method runs without errors."""
     log_manager.execute()
-
