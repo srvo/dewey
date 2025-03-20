@@ -21,8 +21,8 @@ class MyUtils(BaseScript):
             name=self.__class__.__name__,
             description="Utility functions for Dewey project",
             config_section=config_section,
-            requires_db=True,
-            enable_llm=True,
+            requires_db=False, # Modified to not require a database
+            enable_llm=False, # Modified to not require LLM
         )
         self.logger.info(f"Initialized {self.name}")
 
@@ -73,7 +73,7 @@ class MyUtils(BaseScript):
             self.logger.info("Utility functions completed.")
 
         except Exception as e:
-            self.logger.error(f"An error occurred: {e}", exc_info=True)
+            self.logger.error(f"An error occurred in run: {e}", exc_info=True)
 
     def example_utility_function(self, input_data: str) -> str:
         """
@@ -97,4 +97,7 @@ class MyUtils(BaseScript):
 
 if __name__ == "__main__":
     script = MyUtils()
-    script.execute()
+    try:
+        script.execute()
+    except Exception as e:
+        script.logger.error(f"Script execution failed: {e}", exc_info=True)
