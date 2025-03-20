@@ -1,6 +1,8 @@
 from typing import Any
 
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection
+from dewey.llm.llm_utils import LLMClient
 
 
 class AutomationModule(BaseScript):
@@ -19,7 +21,7 @@ class AutomationModule(BaseScript):
         Args:
             config_section: The configuration section to use for this module.
         """
-        super().__init__(config_section=config_section)
+        super().__init__(config_section=config_section, requires_db=True, enable_llm=True)
 
     def run(self) -> None:
         """
@@ -38,26 +40,37 @@ class AutomationModule(BaseScript):
             Exception: If something goes wrong.
         """
         self.logger.info("Automation module started.")
-        # Add your automation logic here
-        config_value = self.get_config_value("example_config_key", "default_value")
-        self.logger.info(f"Example config value: {config_value}")
+
+        try:
+            # Example usage of config value
+            config_value = self.get_config_value("example_config_key", "default_value")
+            self.logger.info(f"Example config value: {config_value}")
+
+            # Example usage of database connection
+            if self.db_conn:
+                with self.db_conn as conn:  # Use context manager for connection
+                    # Example query (replace with your actual query)
+                    result = conn.execute("SELECT 1")
+                    self.logger.info(f"Database query result: {result}")
+            else:
+                self.logger.warning("Database connection not available.")
+
+            # Example usage of LLM client
+            if self.llm_client:
+                prompt = "Write a short poem about automation."
+                response = self.llm_client.generate_text(prompt)
+                self.logger.info(f"LLM response: {response}")
+            else:
+                self.logger.warning("LLM client not available.")
+
+        except Exception as e:
+            self.logger.error(f"An error occurred during automation: {e}", exc_info=True)
+            raise
+
         self.logger.info("Automation module finished.")
-
-    def get_config_value(self, key: str, default: Any = None) -> Any:
-        """
-        Retrieves a configuration value for the module.
-
-        Args:
-            key: The key of the configuration value to retrieve.
-            default: The default value to return if the key is not found.
-
-        Returns:
-            The configuration value, or the default value if not found.
-        """
-        return super().get_config_value(key, default)
 
 
 if __name__ == "__main__":
     # Example usage:
     automation_module = AutomationModule()
-    automation_module.run()
+    automation_module.execute()
