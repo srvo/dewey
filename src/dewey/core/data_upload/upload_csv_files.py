@@ -1,7 +1,5 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
 from dewey.core.db import utils as db_utils
-from dewey.llm import llm_utils
 import ibis
 import pandas as pd
 from typing import Optional
@@ -16,7 +14,7 @@ class UploadCsvFiles(BaseScript):
         """
         Initializes the UploadCsvFiles class, inheriting from BaseScript.
         """
-        super().__init__(config_section='upload_csv_files', requires_db=True)
+        super().__init__(config_section="upload_csv_files", requires_db=True)
 
     def run(self) -> None:
         """
@@ -51,7 +49,9 @@ class UploadCsvFiles(BaseScript):
 
             # 5. Check if the table exists
             if table_name in con.list_tables():
-                self.logger.info(f"Table '{table_name}' already exists in the database.")
+                self.logger.info(
+                    f"Table '{table_name}' already exists in the database."
+                )
             else:
                 # 6. Create the table if it doesn't exist
                 self.logger.info(f"Creating table '{table_name}' in the database.")
