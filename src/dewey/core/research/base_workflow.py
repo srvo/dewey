@@ -2,17 +2,23 @@
 """Base workflow for research tasks."""
 
 import csv
+from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, Dict, Iterator, Optional
-from abc import ABC, abstractmethod
 
-from .engines.base_engine import BaseEngine
-from .output_handler import ResearchOutputHandler
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection
+from dewey.core.research.output_handler import ResearchOutputHandler
+from dewey.core.engines.base import BaseEngine
 
 
 class BaseWorkflow(BaseScript, ABC):
-    """Base class for research workflows."""
+    """Base class for research workflows.
+
+    Provides a foundation for building research workflows within the Dewey
+    project, offering standardized configuration, logging, and database/LLM
+    integration.
+    """
 
     def __init__(
         self,
@@ -27,7 +33,7 @@ class BaseWorkflow(BaseScript, ABC):
             analysis_engine: Engine for analyzing search results.
             output_handler: Handler for research output.
         """
-        super().__init__()
+        super().__init__(config_section="research_workflow")
         self.search_engine = search_engine or BaseEngine()
         self.analysis_engine = analysis_engine or BaseEngine()
         self.output_handler = output_handler or ResearchOutputHandler()
@@ -40,9 +46,13 @@ class BaseWorkflow(BaseScript, ABC):
 
         Yields:
             Iterator[Dict[str, str]]: Iterator of company data dictionaries.
+
+        Raises:
+            FileNotFoundError: If the file is not found.
+            Exception: If there is an error reading the file.
         """
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 reader = csv.DictReader(f)
                 for row in reader:
                     yield row
@@ -67,7 +77,8 @@ class BaseWorkflow(BaseScript, ABC):
 
     @abstractmethod
     def run(self) -> None:
-        """
-        Run the script.
+        """Run the script.
+
+        This method must be implemented by all subclasses.
         """
         raise NotImplementedError("The run method must be implemented")
