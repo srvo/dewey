@@ -1,6 +1,9 @@
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection
+from dewey.llm.llm_utils import get_llm_client
 import logging
-from typing import Any, Dict
+from pathlib import Path
+from typing import Any, Dict, Optional, Union
 
 
 class PortModule(BaseScript):
@@ -12,9 +15,30 @@ class PortModule(BaseScript):
     execute the script's primary logic.
     """
 
-    def __init__(self, name: str, description: str = "Port Module"):
-        """Initializes the PortModule."""
-        super().__init__(name, description)
+    def __init__(
+        self,
+        name: str,
+        description: str = "Port Module",
+        config_section: Optional[str] = None,
+        requires_db: bool = False,
+        enable_llm: bool = False,
+    ) -> None:
+        """Initializes the PortModule.
+
+        Args:
+            name: The name of the port module.
+            description: A description of the port module.
+            config_section: The configuration section to use.
+            requires_db: Whether the module requires a database connection.
+            enable_llm: Whether the module requires an LLM client.
+        """
+        super().__init__(
+            name=name,
+            description=description,
+            config_section=config_section,
+            requires_db=requires_db,
+            enable_llm=enable_llm,
+        )
 
     def run(self) -> None:
         """
@@ -22,6 +46,27 @@ class PortModule(BaseScript):
         """
         self.logger.info("Running the port module...")
         # Add your implementation here
+        config_value = self.get_config_value("some_config_key", "default_value")
+        self.logger.info(f"Config value: {config_value}")
+
+        # Example database usage
+        if self.db_conn:
+            try:
+                # Execute a query (replace with your actual query)
+                with self.db_conn.cursor() as cur:
+                    cur.execute("SELECT 1")
+                    result = cur.fetchone()
+                    self.logger.info(f"Database query result: {result}")
+            except Exception as e:
+                self.logger.error(f"Error executing database query: {e}")
+
+        # Example LLM usage
+        if self.llm_client:
+            try:
+                response = self.llm_client.generate(prompt="Write a short poem.")
+                self.logger.info(f"LLM response: {response}")
+            except Exception as e:
+                self.logger.error(f"Error calling LLM: {e}")
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
         """
