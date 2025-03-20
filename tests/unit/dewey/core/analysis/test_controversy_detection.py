@@ -1,13 +1,24 @@
 """Tests for dewey.core.analysis.controversy_detection."""
 
 import logging
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from dewey.core.analysis.controversy_detection import ControversyDetection
+from dewey.core.analysis.controversy_detection import (
+    ControversyDetection,
+    LLMClientInterface,
+)
 from dewey.core.base_script import BaseScript
+
+
+class MockLLMClient(LLMClientInterface):
+    """Mock LLM client for testing."""
+
+    def generate_response(self, prompt: str) -> str:
+        """Mock generate_response method."""
+        return f"Mock LLM Response: {prompt}"
 
 
 @pytest.fixture
@@ -20,17 +31,25 @@ def mock_base_script() -> MagicMock:
 
 
 @pytest.fixture
-def controversy_detector(mock_base_script: MagicMock) -> ControversyDetection:
+def mock_llm_client() -> MockLLMClient:
+    """Fixture to create a mock LLM client."""
+    return MockLLMClient()
+
+
+@pytest.fixture
+def controversy_detector(
+    mock_base_script: MagicMock, mock_llm_client: MockLLMClient
+) -> ControversyDetection:
     """Fixture to create a ControversyDetection instance."""
     with patch(
         "dewey.core.analysis.controversy_detection.BaseScript.__init__",
         return_value=None,
     ):
-        detector = ControversyDetection()
+        detector = ControversyDetection(llm_client=mock_llm_client)
         detector.config = {"utils": {"example_config": "test_config_value"}}
         detector.logger = MagicMock()
         detector.db_conn = MagicMock()
-        detector.llm_client = MagicMock()
+        detector.llm_client = mock_llm_client
         return detector
 
 
@@ -42,6 +61,7 @@ def test_controversy_detection_initialization(
     assert controversy_detector.name == "ControversyDetection"
     assert controversy_detector.config is not None
     assert controversy_detector.logger is not None
+    assert isinstance(controversy_detector._llm_client, MockLLMClient)
 
 
 def test_controversy_detection_run_no_data(
@@ -61,7 +81,7 @@ def test_controversy_detection_run_with_data(
     controversy_detector.logger.info.return_value = None
     data = {"text": "This is a controversial topic."}
     result = controversy_detector.run(data)
-    assert result is None
+    assert result == "Mock LLM Response: Is this text controversial? {'text': 'This is a controversial topic.'}"
     controversy_detector.logger.info.assert_called()
 
 
@@ -84,8 +104,8 @@ def test_controversy_detection_llm_usage(
     mock_generate_response.return_value = "LLM Response"
     data = {"text": "Test text"}
     result = controversy_detector.run(data)
-    assert result == "LLM Response"
-    mock_generate_response.assert_called()
+    assert result == "Mock LLM Response: Is this text controversial? {'text': 'Test text'}"
+    mock_generate_response.assert_not_called()
 
 
 def test_controversy_detection_db_usage(
@@ -156,7 +176,10 @@ def test_get_path(controversy_detector: ControversyDetection) -> None:
 
 def test_get_config_value(controversy_detector: ControversyDetection) -> None:
     """Test the get_config_value method."""
-    controversy_detector.config = {"test_key": "test_value", "nested": {"test_key": "nested_value"}}
+    controversy_detector.config = {
+        "test_key": "test_value",
+        "nested": {"test_key": "nested_value"},
+    }
     config_value = controversy_detector.get_config_value("test_key", "default_value")
     assert config_value == "test_value"
 
