@@ -74,8 +74,26 @@ class AdminTasks(BaseScript):
                 )
                 table_exists = cursor.fetchone()[0]
                 if not table_exists:
-                    self.logger.error("The 'users' table does not exist.")
-                    raise ValueError("The 'users' table does not exist.")
+                    self.logger.info("The 'users' table does not exist. Creating it...")
+                    cursor.execute(
+                        """
+                        CREATE TABLE users (
+                            username VARCHAR(255) PRIMARY KEY,
+                            password VARCHAR(255)
+                        );
+                        """
+                    )
+                    self.logger.info("The 'users' table created successfully.")
+
+                # Check if the username already exists
+                cursor.execute(
+                    "SELECT EXISTS (SELECT 1 FROM users WHERE username = %s);",
+                    (username,),
+                )
+                username_exists = cursor.fetchone()[0]
+                if username_exists:
+                    self.logger.error(f"User {username} already exists.")
+                    raise ValueError(f"User {username} already exists.")
 
                 cursor.execute(
                     "INSERT INTO users (username, password) VALUES (%s, %s);",
