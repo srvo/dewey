@@ -1,30 +1,27 @@
 import fnmatch
 import hashlib
 import os
+from typing import Dict, List
+
 from dewey.core.base_script import BaseScript
 
 
 class DuplicateChecker(BaseScript):
-    """
-    Checks for duplicate ledger files in a directory.
-    """
+    """Checks for duplicate ledger files in a directory."""
 
-    def __init__(self):
-        """
-        Initializes the DuplicateChecker with the 'bookkeeping' config section.
-        """
+    def __init__(self) -> None:
+        """Initializes the DuplicateChecker with the 'bookkeeping' config section."""
         super().__init__(config_section="bookkeeping")
 
-    def find_ledger_files(self) -> dict[str, list[str]]:
-        """
-        Finds all ledger files and calculates their hashes.
+    def find_ledger_files(self) -> Dict[str, List[str]]:
+        """Finds all ledger files and calculates their hashes.
 
         Returns:
             A dictionary where keys are file hashes and values are lists of
             filepaths with that hash.
         """
-        hashes: dict[str, list[str]] = {}
-        ledger_dir = self.config.get("ledger_dir", "data/bookkeeping/ledger")
+        hashes: Dict[str, List[str]] = {}
+        ledger_dir = self.get_config_value("ledger_dir", "data/bookkeeping/ledger")
         for root, _dirnames, filenames in os.walk(ledger_dir):
             for filename in fnmatch.filter(filenames, "*.journal"):
                 filepath = os.path.join(root, filename)
@@ -40,8 +37,7 @@ class DuplicateChecker(BaseScript):
         return hashes
 
     def check_duplicates(self) -> bool:
-        """
-        Checks for duplicate ledger files.
+        """Checks for duplicate ledger files.
 
         Returns:
             True if duplicate files were found, False otherwise.
@@ -59,9 +55,7 @@ class DuplicateChecker(BaseScript):
             return False
 
     def run(self) -> None:
-        """
-        Runs the duplicate check and logs the result.
-        """
+        """Runs the duplicate check and logs the result."""
         if self.check_duplicates():
             self.logger.error("Duplicate ledger files found.")
         else:
@@ -69,9 +63,7 @@ class DuplicateChecker(BaseScript):
 
 
 def main():
-    """
-    Main entry point for the duplicate checker script.
-    """
+    """Main entry point for the duplicate checker script."""
     checker = DuplicateChecker()
     checker.run()
 
