@@ -100,7 +100,7 @@ class ClassificationVerifier(BaseScript):
                 return []
 
             # Connect to in-memory DuckDB database
-import duckdb
+            import duckdb
 
             with duckdb.connect(":memory:") as con:
                 # Create temp table from CSV data
@@ -135,6 +135,8 @@ import duckdb
         except Exception as e:
             self.logger.exception("DuckDB processing failed: %s", str(e))
             return []
+        finally:
+            pass
 
     def prompt_for_feedback(self, tx: Dict[str, Any]) -> None:
         """Interactive prompt for transaction verification.
