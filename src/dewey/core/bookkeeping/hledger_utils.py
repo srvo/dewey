@@ -17,7 +17,7 @@ class HledgerUpdater(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the HledgerUpdater with the 'bookkeeping' config section."""
-        super().__init__(config_section='bookkeeping')
+        super().__init__(config_section="bookkeeping")
 
     def get_balance(self, account: str, date: str) -> Optional[str]:
         """Get the balance for a specific account at a given date.
@@ -94,7 +94,9 @@ class HledgerUpdater(BaseScript):
 
             journal_file = f"{year}.journal"
             if not Path(journal_file).exists():
-                self.logger.warning("Journal file %s does not exist. Skipping.", journal_file)
+                self.logger.warning(
+                    "Journal file %s does not exist. Skipping.", journal_file
+                )
                 return
 
             with open(journal_file) as f:
