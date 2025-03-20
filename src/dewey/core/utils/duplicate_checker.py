@@ -17,6 +17,15 @@ class DuplicateChecker(BaseScript):
         """
         super().__init__(config_section="duplicate_checker")
 
+    def check_duplicates(self, threshold: float) -> None:
+        """
+        Placeholder for the actual duplicate checking logic.
+        This method should be overridden in a subclass or extended.
+        """
+        self.logger.info("Placeholder: Running duplicate check with threshold.")
+        # Add your duplicate checking logic here
+        pass
+
     def run(self) -> None:
         """
         Executes the duplicate checking process.
@@ -36,7 +45,8 @@ class DuplicateChecker(BaseScript):
             threshold: Any = self.get_config_value("similarity_threshold", 0.8)
             self.logger.debug(f"Similarity threshold: {threshold}")
 
-            # Add your duplicate checking logic here
+            self.check_duplicates(threshold)
+
             self.logger.info("Duplicate check complete.")
 
         except Exception as e:
