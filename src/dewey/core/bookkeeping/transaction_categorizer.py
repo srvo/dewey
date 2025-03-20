@@ -36,7 +36,9 @@ class JournalCategorizer(BaseScript):
             with open(rules_file) as f:
                 return json.load(f)
         except FileNotFoundError:
-            self.logger.exception(f"Classification rules file not found: {rules_file}")
+            self.logger.exception(
+                f"Classification rules file not found: {rules_file}"
+            )
             raise
         except json.JSONDecodeError as e:
             self.logger.exception(f"Failed to load classification rules: {str(e)}")
