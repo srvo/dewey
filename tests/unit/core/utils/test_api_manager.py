@@ -1,7 +1,13 @@
 import pytest
+import logging
 from unittest.mock import MagicMock
 from dewey.core.utils.api_manager import ApiManager
-import logging
+
+
+def test_api_manager_initialization():
+    """Test that ApiManager can be initialized without errors."""
+    api_manager = ApiManager(logger=logging.getLogger(__name__))
+    assert api_manager is not None
 
 
 def test_api_manager_run():
@@ -13,9 +19,3 @@ def test_api_manager_run():
     api_manager.run()
 
     mock_logger.info.assert_called()
-
-
-def test_api_manager_initialization():
-    """Test that ApiManager can be initialized without errors."""
-    api_manager = ApiManager(logger=logging.getLogger(__name__))
-    assert api_manager is not None
