@@ -2,7 +2,7 @@ import shutil
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union, Callable, Protocol
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection
@@ -13,15 +13,59 @@ class JournalWriteError(Exception):
     """Exception for journal writing failures."""
 
 
+class IOServiceInterface(Protocol):
+    """Interface for file operations."""
+
+    def read_text(self, path: Path) -> str:
+        """Read text from a file."""
+
+    def write_text(self, path: Path, text: str) -> None:
+        """Write text to a file."""
+
+    def copy_file(self, src: Path, dest: Path) -> None:
+        """Copy a file from source to destination."""
+
+
+class IOService:
+    """Default implementation of IOServiceInterface using standard file operations."""
+
+    def read_text(self, path: Path) -> str:
+        """Read text from a file."""
+        with open(path, "r") as f:
+            return f.read()
+
+    def write_text(self, path: Path, text: str) -> None:
+        """Write text to a file."""
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(text)
+
+    def copy_file(self, src: Path, dest: Path) -> None:
+        """Copy a file from source to destination."""
+        shutil.copy(src, dest)
+
+
+class ConfigInterface(Protocol):
+    """Interface for config operations."""
+
+    def get_config_value(self, key: str, default: Any) -> str:
+        """Get a config value."""
+
+
 class JournalWriter(BaseScript):
     """Handles journal file writing and management."""
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        io_service: IOServiceInterface | None = None,
+        config_source: ConfigInterface | None = None,
+    ) -> None:
         """Initializes the JournalWriter."""
         super().__init__(config_section="bookkeeping")
-        self.output_dir: Path = Path(self.get_config_value("journal_dir", "data/bookkeeping/journals"))
+        self.config_source = config_source or self
+        self.output_dir: Path = Path(self.config_source.get_config_value("journal_dir", "data/bookkeeping/journals"))
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.processed_hashes_file: Path = self.output_dir / ".processed_hashes"
+        self.io_service: IOServiceInterface = io_service or IOService()
         self.seen_hashes: set[str] = self._load_processed_hashes()
         self.audit_log: List[Dict[str, str]] = []
         self.db_conn: DatabaseConnection | None = None
@@ -35,7 +79,7 @@ class JournalWriter(BaseScript):
         self.logger.info("JournalWriter run method called.")
         # TODO: Implement actual script logic here
         # Example usage of config and database:
-        example_config_value = self.get_config_value("utils.example_config", "default_value")
+        example_config_value = self.config_source.get_config_value("utils.example_config", "default_value")
         self.logger.info(f"Example config value: {example_config_value}")
 
         if self.db_conn:
@@ -53,8 +97,8 @@ class JournalWriter(BaseScript):
         """
         try:
             if self.processed_hashes_file.exists():
-                with open(self.processed_hashes_file) as f:
-                    return set(f.read().splitlines())
+                content = self.io_service.read_text(self.processed_hashes_file)
+                return set(content.splitlines())
             return set()
         except Exception as e:
             self.logger.exception(f"Failed to load processed hashes: {e!s}")
@@ -67,46 +111,57 @@ class JournalWriter(BaseScript):
             seen_hashes: Set of processed transaction hashes to save.
         """
         try:
-            with open(self.processed_hashes_file, "w") as f:
-                f.write("\n".join(seen_hashes))
+            self.io_service.write_text(self.processed_hashes_file, "\n".join(seen_hashes))
         except Exception as e:
             self.logger.exception(f"Failed to save processed hashes: {e!s}")
 
-    def _write_file_with_backup(self, filename: Path, entries: List[str]) -> None:
+    def _write_file_with_backup(
+        self,
+        filename: Path,
+        entries: List[str],
+        now_func: Callable[[], datetime] = datetime.now,
+    ) -> None:
         """Write file with versioned backup if it exists.
 
         Args:
             filename: Path to the file to write.
             entries: List of journal entries to write.
+            now_func: Function to get the current datetime (for testing).
         """
         try:
             if filename.exists():
-                timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+                timestamp = now_func().strftime("%Y%m%d%H%M%S")
                 backup_name = f"{filename.stem}_{timestamp}{filename.suffix}"
-                shutil.copy(filename, filename.parent / backup_name)
+                self.io_service.copy_file(filename, filename.parent / backup_name)
 
-            with open(filename, "a", encoding="utf-8") as f:
-                f.write("\n".join(entries) + "\n")
+            self.io_service.write_text(filename, "\n".join(entries) + "\n")
         except Exception as e:
             self.logger.exception(f"Failed to write file with backup: {e!s}")
+
+    def _get_account_id(self) -> str:
+        """Get the account ID from the config."""
+        return self.config_source.get_config_value("default_account_id", "8542")
 
     def _group_entries_by_account_and_year(
         self,
         entries: Dict[str, List[str]],
+        get_account_id: Callable[[], str] | None = None,
     ) -> Dict[Tuple[str, str], List[str]]:
         """Organize entries by account ID and year.
 
         Args:
             entries: Dictionary of journal entries, keyed by year.
+            get_account_id: Function to retrieve the account ID.
 
         Returns:
             A dictionary of grouped entries, keyed by (account_id, year).
         """
         grouped: Dict[Tuple[str, str], List[str]] = defaultdict(list)
+        get_account_id = get_account_id or self._get_account_id
         for year, entries in entries.items():
             for entry in entries:
                 # Extract account ID from entry metadata
-                account_id = self.get_config_value("default_account_id", "8542")  # TODO: Get from transaction data
+                account_id = get_account_id()  # TODO: Get from transaction data
                 grouped[(account_id, year)].append(entry)
         return grouped
 
