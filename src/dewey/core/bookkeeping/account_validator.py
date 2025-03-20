@@ -105,4 +105,4 @@ class AccountValidator(BaseScript):
 
 if __name__ == "__main__":
     validator = AccountValidator()
-    validator.run()
+    validator.execute()
