@@ -10,13 +10,6 @@ from .engines.base_engine import BaseEngine
 from .output_handler import ResearchOutputHandler
 from dewey.core.base_script import BaseScript
 
-    def run(self) -> None:
-        """
-        Run the script.
-        """
-        # TODO: Implement script logic here
-        raise NotImplementedError("The run method must be implemented")
-
 
 class BaseWorkflow(BaseScript, ABC):
     """Base class for research workflows."""
@@ -30,10 +23,11 @@ class BaseWorkflow(BaseScript, ABC):
         """Initialize the workflow.
 
         Args:
-            search_engine: Engine for searching information
-            analysis_engine: Engine for analyzing search results
-            output_handler: Handler for research output
+            search_engine: Engine for searching information.
+            analysis_engine: Engine for analyzing search results.
+            output_handler: Handler for research output.
         """
+        super().__init__()
         self.search_engine = search_engine or BaseEngine()
         self.analysis_engine = analysis_engine or BaseEngine()
         self.output_handler = output_handler or ResearchOutputHandler()
@@ -42,23 +36,38 @@ class BaseWorkflow(BaseScript, ABC):
         """Read companies from CSV file.
 
         Args:
-            file_path: Path to CSV file
+            file_path: Path to CSV file.
 
-        Returns:
-            Iterator[Dict[str, str]]: Iterator of company data dictionaries
+        Yields:
+            Iterator[Dict[str, str]]: Iterator of company data dictionaries.
         """
-        with open(file_path) as f:
-            reader = csv.DictReader(f)
-            yield from reader
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    yield row
+        except FileNotFoundError:
+            self.logger.error(f"File not found: {file_path}")
+            raise
+        except Exception as e:
+            self.logger.error(f"Error reading file: {file_path} - {e}")
+            raise
 
     @abstractmethod
-    def execute(self, data_dir: str = None) -> Dict[str, Any]:
+    def execute(self, data_dir: Optional[str] = None) -> Dict[str, Any]:
         """Execute the workflow.
 
         Args:
-            data_dir: Optional directory for data files
+            data_dir: Optional directory for data files.
 
         Returns:
-            Dictionary containing results and statistics
+            Dictionary containing results and statistics.
         """
-        pass 
+        pass
+
+    @abstractmethod
+    def run(self) -> None:
+        """
+        Run the script.
+        """
+        raise NotImplementedError("The run method must be implemented")
