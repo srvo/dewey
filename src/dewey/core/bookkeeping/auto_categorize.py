@@ -2,7 +2,7 @@
 import re
 import shutil
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Protocol, Tuple
 
 from dewey.config import logging  # Centralized logging
 from dewey.core.base_script import BaseScript
@@ -11,14 +11,72 @@ from dewey.core.db.utils import create_table, upsert_data  # Database utilities
 from dewey.llm.llm_utils import get_llm_client  # LLM utilities
 
 
+class FileSystemInterface(Protocol):
+    """Interface for file system operations."""
+
+    def open(self, path: Path, mode: str = "r") -> Any:
+        ...
+
+    def copy2(self, src: Path, dst: Path) -> None:
+        ...
+
+    def move(self, src: Path, dst: Path) -> None:
+        ...
+
+    def exists(self, path: Path) -> bool:
+        ...
+
+
+class RealFileSystem:
+    """Real file system operations."""
+
+    def open(self, path: Path, mode: str = "r") -> Any:
+        return open(path, mode)
+
+    def copy2(self, src: Path, dst: Path) -> None:
+        shutil.copy2(src, dst)
+
+    def move(self, src: Path, dst: Path) -> None:
+        shutil.move(src, dst)
+
+    def exists(self, path: Path) -> bool:
+        return path.exists()
+
+
+class RuleLoaderInterface(Protocol):
+    """Interface for loading classification rules."""
+
+    def load_rules(self) -> Dict:
+        ...
+
+
+class DatabaseInterface(Protocol):
+    """Interface for database operations."""
+
+    def execute(self, query: str) -> list:
+        ...
+
+    def close(self) -> None:
+        ...
+
+
 class JournalProcessor(BaseScript):
     """
     Automatically categorizes transactions based on predefined rules.
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        file_system: FileSystemInterface = RealFileSystem(),
+        rule_loader: RuleLoaderInterface | None = None,
+        database: DatabaseInterface | None = None,
+    ) -> None:
         """Initializes the JournalProcessor."""
         super().__init__(config_section='bookkeeping')
+
+        self.file_system: FileSystemInterface = file_system
+        self.rule_loader: RuleLoaderInterface | None = rule_loader
+        self.database: DatabaseInterface | None = database
 
         # Use self.config for configuration values
         self.rule_sources: List[Tuple[str, int]] = [
@@ -40,6 +98,8 @@ class JournalProcessor(BaseScript):
             A dictionary containing the classification rules.
         """
         self.logger.info("Loading classification rules")
+        if self.rule_loader:
+            return self.rule_loader.load_rules()
         return {}  # Placeholder
 
     def process_transactions(self, transactions: List[Dict], rules: Dict) -> List[Dict]:
@@ -55,6 +115,23 @@ class JournalProcessor(BaseScript):
         self.logger.info("Processing transactions")
         return transactions  # Placeholder
 
+    def _parse_journal_entry(self, line: str, current_tx: Dict[str, Any]) -> None:
+        """Helper function to parse a single line of a journal entry."""
+        if not current_tx.get("date"):
+            # Transaction header line
+            date_match = re.match(r"^(\d{4}-\d{2}-\d{2})(\s+.*?)$", line)
+            if date_match:
+                current_tx["date"] = date_match.group(1)
+                current_tx["description"] = date_match.group(2).strip()
+            return
+
+        # Parse posting lines
+        if line.startswith("    "):
+            parts = re.split(r"\s{2,}", line.strip(), 1)
+            account = parts[0].strip()
+            amount = parts[1].strip() if len(parts) > 1 else ""
+            current_tx["postings"].append({"account": account, "amount": amount})
+
     def parse_journal_entries(self, file_path: Path) -> List[Dict]:
         """Parse hledger journal file into structured transactions.
 
@@ -66,10 +143,10 @@ class JournalProcessor(BaseScript):
         """
         self.logger.info(f"Parsing journal file: {file_path}")
 
-        with open(file_path) as f:
+        with self.file_system.open(file_path) as f:
             content = f.read()
 
-        transactions = []
+        transactions: List[Dict[str, Any]] = []
         current_tx: Dict[str, Any] = {"postings": []}
 
         for line in content.split("\n"):
@@ -80,20 +157,7 @@ class JournalProcessor(BaseScript):
                     current_tx = {"postings": []}
                 continue
 
-            if not current_tx.get("date"):
-                # Transaction header line
-                date_match = re.match(r"^(\d{4}-\d{2}-\d{2})(\s+.*?)$", line)
-                if date_match:
-                    current_tx["date"] = date_match.group(1)
-                    current_tx["description"] = date_match.group(2).strip()
-                continue
-
-            # Parse posting lines
-            if line.startswith("    "):
-                parts = re.split(r"\s{2,}", line.strip(), 1)
-                account = parts[0].strip()
-                amount = parts[1].strip() if len(parts) > 1 else ""
-                current_tx["postings"].append({"account": account, "amount": amount})
+            self._parse_journal_entry(line, current_tx)
 
         if current_tx.get("postings"):
             transactions.append(current_tx)
@@ -141,18 +205,18 @@ class JournalProcessor(BaseScript):
         try:
             # Create backup
             self.logger.info(f"Creating backup at {backup_path}")
-            shutil.copy2(file_path, backup_path)
+            self.file_system.copy2(file_path, backup_path)
 
             # Write new content
             self.logger.info(f"Writing updated journal to {file_path}")
-            with open(file_path, "w") as f:
+            with self.file_system.open(file_path, "w") as f:
                 f.write(content)
 
         except Exception as e:
             self.logger.exception(f"Failed to write journal file: {e!s}")
-            if backup_path.exists():
+            if self.file_system.exists(backup_path):
                 self.logger.info("Restoring from backup")
-                shutil.move(backup_path, file_path)
+                self.file_system.move(backup_path, file_path)
             raise
 
     def run(self) -> None:
