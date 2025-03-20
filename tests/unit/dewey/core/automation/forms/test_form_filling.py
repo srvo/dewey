@@ -1,13 +1,15 @@
 """Tests for FormFillingModule."""
 
-from typing import Any
+from typing import Any, Callable, Optional
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from dewey.core.automation.forms.form_filling import FormFillingModule
+from dewey.core.automation.forms.form_filling import (
+    FormFillingModule,
+    LLMClientInterface,
+)
 from dewey.core.db.connection import DatabaseConnection
-from dewey.llm.llm_utils import generate_text
 
 
 class TestFormFillingModule:
@@ -24,18 +26,12 @@ class TestFormFillingModule:
             assert module.requires_db is True
             assert module.enable_llm is True
 
-    @patch("dewey.core.automation.forms.form_filling.generate_text")
     def test_run_success(
-        self,
-        mock_generate_text: MagicMock,
-        mock_base_script: MagicMock,
-        mock_db_connection: MagicMock,
-        mock_llm_client: MagicMock,
+        self, mock_base_script: MagicMock, mock_db_connection: MagicMock, mock_llm_client: MagicMock
     ) -> None:
         """Tests the run method of FormFillingModule with mocked dependencies."""
         mock_base_script.db_conn = mock_db_connection
         mock_base_script.llm_client = mock_llm_client
-        mock_generate_text.return_value = "LLM response"
 
         with patch(
             "dewey.core.automation.forms.form_filling.BaseScript",
@@ -44,9 +40,9 @@ class TestFormFillingModule:
             module = FormFillingModule()
             module.run()
 
-        module.logger.info.assert_called()
-        module.logger.debug.assert_called()
-        mock_generate_text.assert_called()
+        mock_base_script.logger.info.assert_called()
+        mock_base_script.logger.debug.assert_called()
+        mock_llm_client.generate_text.assert_called()
         mock_db_connection.execute.assert_called()
 
     def test_run_exception(self, mock_base_script: MagicMock) -> None:
@@ -76,14 +72,10 @@ class TestFormFillingModule:
             default_value = module.get_config_value("non_existent_key", "default_value")
             assert default_value == "default_value"
 
-    @patch("dewey.core.automation.forms.form_filling.generate_text")
-    def test_run_no_db_no_llm(
-        self, mock_generate_text: MagicMock, mock_base_script: MagicMock
-    ) -> None:
+    def test_run_no_db_no_llm(self, mock_base_script: MagicMock) -> None:
         """Tests the run method when no database or LLM is enabled."""
         mock_base_script.db_conn = None
         mock_base_script.llm_client = None
-        mock_generate_text.return_value = "LLM response"
 
         with patch(
             "dewey.core.automation.forms.form_filling.BaseScript",
@@ -111,16 +103,12 @@ class TestFormFillingModule:
 
         mock_base_script.logger.error.assert_called()
 
-    @patch("dewey.core.automation.forms.form_filling.generate_text")
     def test_run_with_llm_exception(
-        self,
-        mock_generate_text: MagicMock,
-        mock_base_script: MagicMock,
-        mock_llm_client: MagicMock,
+        self, mock_base_script: MagicMock, mock_llm_client: MagicMock
     ) -> None:
         """Tests the run method when an LLM exception occurs."""
         mock_base_script.llm_client = mock_llm_client
-        mock_generate_text.side_effect = Exception("LLM Error")
+        mock_llm_client.generate_text.side_effect = Exception("LLM Error")
 
         with patch(
             "dewey.core.automation.forms.form_filling.BaseScript",
@@ -179,19 +167,12 @@ class TestFormFillingModule:
             module = FormFillingModule()
             assert module.config_section == "form_filling"  # Ensure it's still "form_filling"
 
-    @patch("dewey.core.automation.forms.form_filling.generate_text")
     def test_run_db_and_llm_interaction(
-        self,
-        mock_generate_text: MagicMock,
-        mock_base_script: MagicMock,
-        mock_db_connection: MagicMock,
-        mock_llm_client: MagicMock,
+        self, mock_base_script: MagicMock, mock_db_connection: MagicMock, mock_llm_client: MagicMock
     ) -> None:
         """Tests the interaction with both DB and LLM."""
         mock_base_script.db_conn = mock_db_connection
         mock_base_script.llm_client = mock_llm_client
-        mock_generate_text.return_value = "LLM response"
-        mock_db_connection.execute.return_value = "DB Result"
 
         with patch(
             "dewey.core.automation.forms.form_filling.BaseScript",
@@ -201,9 +182,9 @@ class TestFormFillingModule:
             module.run()
 
         mock_db_connection.execute.assert_called()
-        mock_generate_text.assert_called()
-        module.logger.debug.assert_called()
-        module.logger.info.assert_called()
+        mock_llm_client.generate_text.assert_called()
+        mock_base_script.logger.debug.assert_called()
+        mock_base_script.logger.info.assert_called()
 
     def test_get_config_value_no_key(self, mock_base_script: MagicMock) -> None:
         """Tests get_config_value with an empty key."""
@@ -214,3 +195,115 @@ class TestFormFillingModule:
             module = FormFillingModule()
             default_value = module.get_config_value("", "default")
             assert default_value == "default"
+
+    def test_run_with_provided_db_conn(
+        self, mock_base_script: MagicMock, mock_db_connection: MagicMock, mock_llm_client: MagicMock
+    ) -> None:
+        """Tests the run method with a provided database connection."""
+        mock_base_script.db_conn = MagicMock()  # Ensure it's different from provided
+        mock_base_script.llm_client = mock_llm_client
+
+        with patch(
+            "dewey.core.automation.forms.form_filling.BaseScript",
+            return_value=mock_base_script,
+        ):
+            module = FormFillingModule()
+            module.run(db_conn=mock_db_connection)
+
+        mock_db_connection.execute.assert_called()
+        mock_base_script.db_conn.execute.assert_not_called()  # Ensure original is not used
+
+    def test_run_with_provided_generate_text_func(
+        self, mock_base_script: MagicMock, mock_db_connection: MagicMock, mock_llm_client: MagicMock
+    ) -> None:
+        """Tests the run method with a provided generate_text function."""
+        mock_base_script.db_conn = mock_db_connection
+        mock_base_script.llm_client = mock_llm_client
+        generate_text_func = MagicMock(return_value="Custom LLM Response")
+
+        with patch(
+            "dewey.core.automation.forms.form_filling.BaseScript",
+            return_value=mock_base_script,
+        ):
+            module = FormFillingModule()
+            module.run(generate_text_func=generate_text_func)
+
+        generate_text_func.assert_called()
+        mock_llm_client.generate_text.assert_not_called()  # Ensure original is not used
+        mock_base_script.logger.info.assert_called_with("LLM response: Custom LLM Response")
+
+    def test_run_with_llm_client_interface(
+        self, mock_base_script: MagicMock, mock_db_connection: MagicMock
+    ) -> None:
+        """Tests the run method with a custom LLM client implementing the interface."""
+
+        class MockLLMClient(LLMClientInterface):
+            def generate_text(self, prompt: str) -> str:
+                return "Custom LLM Response from Interface"
+
+        mock_llm_client_instance = MockLLMClient()
+        mock_base_script.db_conn = mock_db_connection
+        mock_base_script.llm_client = mock_llm_client_instance
+
+        with patch(
+            "dewey.core.automation.forms.form_filling.BaseScript",
+            return_value=mock_base_script,
+        ):
+            module = FormFillingModule()
+            module.run()
+
+        mock_base_script.logger.info.assert_called_with(
+            "LLM response: Custom LLM Response from Interface"
+        )
+
+    def test_run_with_llm_client_interface_exception(
+        self, mock_base_script: MagicMock, mock_db_connection: MagicMock
+    ) -> None:
+        """Tests the run method with a custom LLM client implementing the interface, but raises an exception."""
+
+        class MockLLMClient(LLMClientInterface):
+            def generate_text(self, prompt: str) -> str:
+                raise ValueError("LLM Client Interface Error")
+
+        mock_llm_client_instance = MockLLMClient()
+        mock_base_script.db_conn = mock_db_connection
+        mock_base_script.llm_client = mock_llm_client_instance
+
+        with patch(
+            "dewey.core.automation.forms.form_filling.BaseScript",
+            return_value=mock_base_script,
+        ), pytest.raises(Exception, match="LLM Client Interface Error"):
+            module = FormFillingModule()
+            module.run()
+
+        mock_base_script.logger.error.assert_called()
+
+    def test_run_db_conn_none(self, mock_base_script: MagicMock, mock_llm_client: MagicMock) -> None:
+        """Tests the run method when db_conn is explicitly None."""
+        mock_base_script.db_conn = None
+        mock_base_script.llm_client = mock_llm_client
+
+        with patch(
+            "dewey.core.automation.forms.form_filling.BaseScript",
+            return_value=mock_base_script,
+        ):
+            module = FormFillingModule()
+            module.run()
+
+        mock_base_script.logger.debug.assert_not_called()  # No DB interaction
+
+    def test_run_generate_text_func_none(
+        self, mock_base_script: MagicMock, mock_db_connection: MagicMock
+    ) -> None:
+        """Tests the run method when generate_text_func is explicitly None."""
+        mock_base_script.db_conn = mock_db_connection
+        mock_base_script.llm_client = None
+
+        with patch(
+            "dewey.core.automation.forms.form_filling.BaseScript",
+            return_value=mock_base_script,
+        ):
+            module = FormFillingModule()
+            module.run()
+
+        mock_base_script.logger.info.assert_called()
