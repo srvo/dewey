@@ -5,12 +5,16 @@ from googleapiclient.errors import HttpError
 
 from dewey.core.base_script import BaseScript
 
+
 class GmailSync(BaseScript):
     """Handles synchronization of Gmail messages."""
 
     def __init__(self, gmail_client):
         """
         Initializes the GmailSync class with a GmailClient instance.
+
+        Args:
+            gmail_client: An instance of GmailClient for interacting with the Gmail API.
         """
         super().__init__(config_section='crm')
         self.gmail_client = gmail_client
