@@ -13,7 +13,7 @@ class DuckDuckGo(BaseScript):
         """
         Initializes the DuckDuckGo search engine.
         """
-        super().__init__()
+        super().__init__(config_section="duckduckgo")
 
     def run(self):
         """
@@ -21,9 +21,8 @@ class DuckDuckGo(BaseScript):
         """
         query = self.get_config_value("query", "default_query")
         self.logger.info(f"Searching DuckDuckGo for: {query}")
-        # Add your DuckDuckGo search logic here
-        # Example: results = self.search(query)
-        # self.logger.info(f"Results: {results}")
+        results = self.search(query)
+        self.logger.info(f"Results: {results}")
 
     def search(self, query: str) -> str:
         """
