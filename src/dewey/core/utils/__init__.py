@@ -1,10 +1,6 @@
-import logging
-import sys
-from typing import Any, Dict, List, Optional, Union
+from typing import Optional
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import (DatabaseConnection,
-                                       get_motherduck_connection, get_connection)
 from dewey.llm.llm_utils import call_llm
 
 
@@ -18,8 +14,8 @@ class MyUtils(BaseScript):
         """Initialize MyUtils with configuration and optional database/LLM.
 
         Args:
-            config_section (Optional[str]): Section in dewey.yaml to load for this script.
-                                            Defaults to "utils".
+            config_section (Optional[str]): Section in dewey.yaml to load for
+                this script. Defaults to "utils".
         """
         super().__init__(
             name=self.__class__.__name__,
