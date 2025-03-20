@@ -99,7 +99,9 @@ class AdminTasks(BaseScript):
                     )
                     username_exists: Optional[bool] = cursor.fetchone()[0]
                 except psycopg2.Error as e:
-                    self.logger.warning(f"Could not check if user {username} exists: {e}")
+                    self.logger.warning(
+                        f"Could not check if user {username} exists: {e}"
+                    )
                     username_exists = False  # Assume user doesn't exist if error
 
                 if username_exists:
