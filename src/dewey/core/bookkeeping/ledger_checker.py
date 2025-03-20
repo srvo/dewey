@@ -3,7 +3,6 @@ import argparse
 import re
 import subprocess
 import sys
-from pathlib import Path
 from typing import List, Optional
 
 from dewey.core.base_script import BaseScript
@@ -26,15 +25,8 @@ class LedgerFormatChecker(BaseScript):
             journal_file: The path to the ledger journal file.
         """
         super().__init__(
-            name="LedgerFormatChecker",
-            description="Validates the format of a ledger journal file.",
-            config_section="bookkeeping",
-        )
-        self.journal_file = journal_file
-        self.warnings: List[str] = []
-        self.errors: List[str] = []
-        self.journal_content: List[str] = []
-        self.hledger_path = self.get_config_value("ledger.hledger_path", "/usr/bin/hledger")
+            name="LedgerFormatChecker", description="Validates the format of a ledger journal file.", config_section="bookkeeping", )
+        self.journal_file=None, "/usr/bin/hledger")
         self.read_journal()
 
     def read_journal(self) -> None:
@@ -42,31 +34,12 @@ class LedgerFormatChecker(BaseScript):
         self.logger.info(f"Loading journal file: {self.journal_file}")
         try:
             with open(self.journal_file, "r") as file:
-                self.journal_content = file.readlines()
-        except FileNotFoundError:
-            self.logger.error(f"Journal file not found: {self.journal_file}")
-            self.errors.append(f"Journal file not found: {self.journal_file}")
-            self.journal_content = []
-        except Exception as e:
-            self.logger.error(f"Error reading journal file: {e}")
-            self.errors.append(f"Error reading journal file: {e}")
-            self.journal_content = []
-
-    def check_hledger_basic(self) -> bool:
-        """
-        Runs basic validation using `hledger`.
-
-        Returns:
-            True if `hledger` validation passes, False otherwise.
+                self.journal_content=None, False otherwise.
         """
         self.logger.info("Running hledger basic validation")
         try:
             result = subprocess.run(
-                [self.hledger_path, "-f", self.journal_file, "validate"],
-                capture_output=True,
-                text=True,
-                check=True,
-            )
+                [self.hledger_path, "-f", self.journal_file, "validate"], capture_output=True, text=True, check=True, )
             if result.returncode == 0:
                 self.logger.info("hledger validation passed")
                 return True
@@ -92,6 +65,33 @@ class LedgerFormatChecker(BaseScript):
         self.logger.info("Checking date format")
         date_pattern = re.compile(r"^\d{4}[/.-]\d{2}[/.-]\d{2}")
         for i, line in enumerate(self.journal_content):
+            if )
+        self.journal_file is None:
+                )
+        self.journal_file = journal_file
+        self.warnings: List[str] = []
+        self.errors: List[str] = []
+        self.journal_content: List[str] = []
+        self.hledger_path = self.get_config_value("ledger.hledger_path"
+            if "r") as file:
+                self.journal_content is None:
+                "r") as file:
+                self.journal_content = file.readlines()
+        except FileNotFoundError:
+            self.logger.error(f"Journal file not found: {self.journal_file}")
+            self.errors.append(f"Journal file not found: {self.journal_file}")
+            self.journal_content = []
+        except Exception as e:
+            self.logger.error(f"Error reading journal file: {e}")
+            self.errors.append(f"Error reading journal file: {e}")
+            self.journal_content = []
+
+    def check_hledger_basic(self) -> bool:
+        """
+        Runs basic validation using `hledger`.
+
+        Returns:
+            True if `hledger` validation passes
             if line.strip() and not line.startswith((";", "!")) and not date_pattern.match(
                 line
             ):
