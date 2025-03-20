@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
-#!/usr/bin/env python3
 import fnmatch
 import json
 import re
 import shutil
 from pathlib import Path
-from typing import List, Tuple, Dict, Any
+from typing import Any, Dict, List, Tuple, Union
 
 from dewey.config import load_config, logging  # Centralized logging
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import (DatabaseConnection,
+                                       get_connection,
+                                       get_motherduck_connection)
+from dewey.core.db.utils import (create_table, execute_query,
+                                  table_exists)  # Schema operations and query building
+from dewey.llm.llm_utils import get_llm_client  # LLM utilities
 
 
 class JournalProcessor(BaseScript):
@@ -16,11 +21,12 @@ class JournalProcessor(BaseScript):
     Automatically categorizes transactions based on predefined rules.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """Initializes the JournalProcessor."""
         super().__init__(config_section='bookkeeping')
 
         # Use self.config for configuration values
-        self.rule_sources = [
+        self.rule_sources: List[Tuple[str, int]] = [
             ("overrides.json", 0),  # Highest priority
             ("manual_rules.json", 1),
             ("base_rules.json", 2),  # Lowest priority
@@ -29,17 +35,29 @@ class JournalProcessor(BaseScript):
         # TODO: Fix search/replace block
 
         # Use self.config for file paths
-        self.classification_file = Path.home() / "books/import/mercury/classification_rules.json"
-        self.ledger_file = Path.home() / ".hledger.journal"
-        self.backup_ext = ".bak"
+        self.classification_file: Path = Path(self.get_config_value("classification_file", str(Path.home() / "books/import/mercury/classification_rules.json")))
+        self.ledger_file: Path = Path(self.get_config_value("ledger_file", str(Path.home() / ".hledger.journal")))
+        self.backup_ext: str = self.get_config_value("backup_ext", ".bak")
 
     def load_classification_rules(self) -> Dict:
-        """Load classification rules from JSON files."""
+        """Load classification rules from JSON files.
+
+        Returns:
+            A dictionary containing the classification rules.
+        """
         self.logger.info("Loading classification rules")
         return {}  # Placeholder
 
     def process_transactions(self, transactions: List[Dict], rules: Dict) -> List[Dict]:
-        """Process transactions and categorize them based on rules."""
+        """Process transactions and categorize them based on rules.
+
+        Args:
+            transactions: A list of transaction dictionaries.
+            rules: A dictionary containing the classification rules.
+
+        Returns:
+            A list of processed transaction dictionaries.
+        """
         self.logger.info("Processing transactions")
         return transactions  # Placeholder
 
@@ -47,13 +65,10 @@ class JournalProcessor(BaseScript):
         """Parse hledger journal file into structured transactions.
 
         Args:
-        ----
             file_path: The path to the hledger journal file.
 
         Returns:
-        -------
             A list of structured transactions.
-
         """
         self.logger.info(f"Parsing journal file: {file_path}")
 
@@ -61,7 +76,7 @@ class JournalProcessor(BaseScript):
             content = f.read()
 
         transactions = []
-        current_tx = {"postings": []}
+        current_tx: Dict[str, Any] = {"postings": []}
 
         for line in content.split("\n"):
             line = line.rstrip()
@@ -96,13 +111,10 @@ class JournalProcessor(BaseScript):
         """Convert structured transactions back to journal format.
 
         Args:
-        ----
             transactions: A list of structured transactions.
 
         Returns:
-        -------
             A string representation of the transactions in journal format.
-
         """
         journal_lines = []
 
@@ -124,10 +136,11 @@ class JournalProcessor(BaseScript):
         """Write updated journal file with backup.
 
         Args:
-        ----
             content: The content to write to the journal file.
             file_path: The path to the journal file.
 
+        Raises:
+            Exception: If writing to the journal file fails.
         """
         backup_path = file_path.with_suffix(f".{self.backup_ext}")
 
