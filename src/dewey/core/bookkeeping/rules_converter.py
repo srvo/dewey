@@ -3,23 +3,70 @@
 import json
 import re
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Protocol
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection
 from dewey.llm.llm_utils import LLMClient
 
 
+class FileSystemInterface(Protocol):
+    """Interface for file system operations."""
+
+    def open(self, path: Path, mode: str = "r") -> Any:
+        """Opens a file at the given path in the specified mode."""
+        ...
+
+    def glob(self, path: Path, pattern: str) -> Any:
+        """Returns a list of paths matching a glob pattern."""
+        ...
+
+
+class RegexInterface(Protocol):
+    """Interface for regex operations."""
+
+    def compile(self, pattern: str, flags: int = 0) -> Any:
+        """Compiles a regex pattern with the given flags."""
+        ...
+
+
+class DefaultFileSystem:
+    """Default implementation of the FileSystemInterface using standard file operations."""
+
+    def open(self, path: Path, mode: str = "r") -> Any:
+        """Opens a file at the given path in the specified mode."""
+        return open(path, mode)
+
+    def glob(self, path: Path, pattern: str) -> Any:
+        """Returns a list of paths matching a glob pattern."""
+        return path.glob(pattern)
+
+
+class DefaultRegex:
+    """Default implementation of the RegexInterface using standard re operations."""
+
+    def compile(self, pattern: str, flags: int = 0) -> Any:
+        """Compiles a regex pattern with the given flags."""
+        return re.compile(pattern, flags)
+
+
 class RulesConverter(BaseScript):
     """Converts legacy rule formats to the current JSON format."""
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        file_system: FileSystemInterface | None = None,
+        regex_compiler: RegexInterface | None = None,
+    ) -> None:
         """Initializes the RulesConverter."""
         super().__init__(config_section="rules_converter")
         self.db_conn: DatabaseConnection | None = None
         self.llm_client: LLMClient | None = None
+        self.file_system: FileSystemInterface = file_system or DefaultFileSystem()
+        self.regex_compiler: RegexInterface = regex_compiler or DefaultRegex()
 
-    def clean_category(self, category: str) -> str:
+    @staticmethod
+    def clean_category(category: str) -> str:
         """Cleans and standardizes the category string.
 
         Args:
@@ -60,7 +107,7 @@ class RulesConverter(BaseScript):
         """
         classifications: Dict[str, Dict[str, Any]] = {}
 
-        with open(rules_file) as f:
+        with self.file_system.open(rules_file) as f:
             for line in f:
                 line = line.strip()
 
@@ -83,7 +130,7 @@ class RulesConverter(BaseScript):
 
                         # Validate regex syntax
                         try:
-                            re.compile(pattern, re.IGNORECASE)
+                            self.regex_compiler.compile(pattern, re.IGNORECASE)
                         except re.error as e:
                             self.logger.exception(
                                 "Skipping invalid regex pattern '%s': %s",
@@ -118,8 +165,8 @@ class RulesConverter(BaseScript):
             journal_dir: Path to the directory containing journal files.
             classifications: A dictionary containing classification patterns.
         """
-        for journal_file in journal_dir.glob("**/*.journal"):
-            with open(journal_file) as f:
+        for journal_file in self.file_system.glob(journal_dir, "**/*.journal"):
+            with self.file_system.open(journal_file) as f:
                 content = f.read()
 
                 # Find all transactions
@@ -137,14 +184,14 @@ class RulesConverter(BaseScript):
                             if desc not in data["examples"]:
                                 data["examples"].append(desc)
 
-    def generate_rules_json(
-        self, classifications: Dict[str, Dict[str, Any]], output_file: Path,
-    ) -> None:
-        """Generates a JSON file with classification rules.
+    def generate_rules_data(self, classifications: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
+        """Generates a JSON-compatible data structure with classification rules.
 
         Args:
             classifications: A dictionary containing classification patterns.
-            output_file: Path to the output JSON file.
+
+        Returns:
+            A dictionary containing the rules in a format suitable for JSON serialization.
         """
         # Convert to a more efficient format for the classifier
         rules: Dict[str, Any] = {
@@ -165,9 +212,21 @@ class RulesConverter(BaseScript):
 
         # Convert sets to lists for JSON serialization
         rules["categories"] = sorted(list(rules["categories"]))
+        return rules
+
+    def generate_rules_json(
+        self, classifications: Dict[str, Dict[str, Any]], output_file: Path,
+    ) -> None:
+        """Generates a JSON file with classification rules.
+
+        Args:
+            classifications: A dictionary containing classification patterns.
+            output_file: Path to the output JSON file.
+        """
+        rules = self.generate_rules_data(classifications)
 
         # Save to JSON file
-        with open(output_file, "w") as f:
+        with self.file_system.open(output_file, "w") as f:
             json.dump(rules, f, indent=2)
 
         self.logger.info(f"Generated rules file: {output_file}")
