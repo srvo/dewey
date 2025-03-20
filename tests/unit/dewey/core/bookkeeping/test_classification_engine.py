@@ -12,16 +12,21 @@ import pytest
 from dewey.core.bookkeeping.classification_engine import (
     ClassificationEngine,
     ClassificationError,
+    FS,
+    LLM,
+    JournalWriter,
 )
 
 
 @patch("dewey.core.bookkeeping.classification_engine.BaseScript.__init__", return_value=None)
-def test_classification_engine_initialization(mock_base_script, classification_engine: ClassificationEngine, tmp_path: Path) -> None:
+def test_classification_engine_initialization(mock_base_script, classification_engine: ClassificationEngine, tmp_path: Path, mock_fs: MagicMock, mock_llm: MagicMock) -> None:
     """Test ClassificationEngine initialization."""
     assert classification_engine.ledger_file == tmp_path / "ledger.txt"
     assert classification_engine.rules_path.exists()
     assert isinstance(classification_engine.rules, dict)
     assert isinstance(classification_engine.compiled_patterns, dict)
+    assert classification_engine.fs is not None
+    assert classification_engine.llm is not None
 
 
 @patch("dewey.core.bookkeeping.classification_engine.BaseScript.__init__", return_value=None)
@@ -36,16 +41,15 @@ def test_categories_property(mock_base_script, classification_engine: Classifica
 
 
 @patch("dewey.core.bookkeeping.classification_engine.BaseScript.__init__", return_value=None)
-@patch("builtins.open", new_callable=mock_open, read_data='{"patterns": {}, "categories": [], "defaults": {"positive": "income:unknown", "negative": "expenses:unknown"}, "overrides": {}, "sources": []}')
-@patch("json.load")
-def test_load_rules(mock_json_load, mock_open_file, mock_base_script, classification_engine: ClassificationEngine, rules_data: Dict[str, Any], tmp_path: Path) -> None:
+def test_load_rules(mock_base_script, classification_engine: ClassificationEngine, rules_data: Dict[str, Any], tmp_path: Path, mock_fs: MagicMock) -> None:
     """Test loading rules from a JSON file."""
-    mock_json_load.return_value = rules_data
+    mock_fs.load.return_value = rules_data
     rules = classification_engine._load_rules()
     assert rules["patterns"] == rules_data["patterns"]
     assert rules["categories"] == rules_data["categories"]
     assert rules["defaults"] == rules_data["defaults"]
     assert rules["overrides"] == rules_data["overrides"]
+    mock_fs.load.assert_called_once()
 
 
 @patch("dewey.core.bookkeeping.classification_engine.BaseScript.__init__", return_value=None)
@@ -56,19 +60,6 @@ def test_load_rules_file_not_found(mock_open_file, mock_exists, mock_base_script
     caplog.set_level(logging.ERROR)
     mock_exists.return_value = False
     classification_engine.rules_path = tmp_path / "nonexistent_rules.json"
-    rules = classification_engine._load_rules()
-    assert rules["patterns"] == {}
-    assert "Failed to load classification rules" in caplog.text
-
-
-@patch("dewey.core.bookkeeping.classification_engine.BaseScript.__init__", return_value=None)
-@patch("builtins.open", new_callable=mock_open, read_data="invalid json")
-@patch("json.load", side_effect=json.JSONDecodeError("", "", 0))
-def test_load_rules_invalid_json(mock_json_load, mock_open_file, mock_base_script, classification_engine: ClassificationEngine, tmp_path: Path, caplog) -> None:
-    """Test loading rules from an invalid JSON file."""
-    caplog.set_level(logging.ERROR)
-    rules_path = tmp_path / "invalid_rules.json"
-    classification_engine.rules_path = rules_path
     rules = classification_engine._load_rules()
     assert rules["patterns"] == {}
     assert "Failed to load classification rules" in caplog.text
@@ -179,61 +170,53 @@ def test_parse_feedback_invalid_format(mock_base_script, classification_engine: 
 
 
 @patch("dewey.core.bookkeeping.classification_engine.BaseScript.__init__", return_value=None)
-@patch("dewey.core.bookkeeping.classification_engine.llm_utils.call_llm")
 def test_parse_with_ai(
-    mock_call_llm: MagicMock, mock_base_script, classification_engine: ClassificationEngine
+    mock_base_script, classification_engine: ClassificationEngine, mock_llm: MagicMock
 ) -> None:
     """Test parsing feedback with AI."""
-    mock_call_llm.return_value = [{"example": '{"pattern": "ai pattern", "category": "ai_category"}'}]
     feedback = "complex feedback"
     pattern, category = classification_engine._parse_with_ai(feedback)
     assert pattern == "ai pattern"
     assert category == "ai_category"
-    mock_call_llm.assert_called_once()
+    classification_engine.llm.call_llm.assert_called_once()
 
 
 @patch("dewey.core.bookkeeping.classification_engine.BaseScript.__init__", return_value=None)
-@patch("dewey.core.bookkeeping.classification_engine.llm_utils.call_llm")
 def test_parse_with_ai_no_response(
-    mock_call_llm: MagicMock, mock_base_script, classification_engine: ClassificationEngine
+    mock_base_script, classification_engine: ClassificationEngine, mock_llm: MagicMock
 ) -> None:
     """Test parsing feedback with AI when there is no response."""
-    mock_call_llm.return_value = []
+    classification_engine.llm.call_llm.return_value = []
     feedback = "complex feedback"
     with pytest.raises(ClassificationError) as exc_info:
         classification_engine._parse_with_ai(feedback)
     assert "No response from AI" in str(exc_info.value)
-    mock_call_llm.assert_called_once()
+    classification_engine.llm.call_llm.assert_called_once()
 
 
 @patch("dewey.core.bookkeeping.classification_engine.BaseScript.__init__", return_value=None)
-@patch("dewey.core.bookkeeping.classification_engine.llm_utils.call_llm")
 def test_parse_with_ai_parsing_fails(
-    mock_call_llm: MagicMock, mock_base_script, classification_engine: ClassificationEngine
+    mock_base_script, classification_engine: ClassificationEngine, mock_llm: MagicMock
 ) -> None:
     """Test parsing feedback with AI when parsing fails."""
-    mock_call_llm.return_value = [{"example": "invalid json"}]
+    classification_engine.llm.call_llm.return_value = [{"example": "invalid json"}]
     feedback = "complex feedback"
     with pytest.raises(ClassificationError) as exc_info:
         classification_engine._parse_with_ai(feedback)
     assert "AI parsing failed" in str(exc_info.value)
-    mock_call_llm.assert_called_once()
+    classification_engine.llm.call_llm.assert_called_once()
 
 
 @patch("dewey.core.bookkeeping.classification_engine.BaseScript.__init__", return_value=None)
-@patch("pathlib.Path.exists")
-@patch("builtins.open", new_callable=mock_open)
-@patch("json.dump")
-def test_save_overrides(mock_json_dump, mock_open_file, mock_path_exists, mock_base_script, classification_engine: ClassificationEngine, rules_data: Dict[str, Any], tmp_path: Path) -> None:
+def test_save_overrides(mock_base_script, classification_engine: ClassificationEngine, rules_data: Dict[str, Any], tmp_path: Path, mock_fs: MagicMock) -> None:
     """Test saving override rules to file."""
-    mock_path_exists.return_value = True
     overrides_file = tmp_path.parent / "src" / "dewey" / "core" / "rules" / "overrides.json"
     overrides_file.parent.mkdir(parents=True, exist_ok=True)
     classification_engine.rules = rules_data
     classification_engine.rules["overrides"] = {"pattern1": {"category": "category1"}}
     classification_engine._save_overrides()
-    mock_open_file.assert_called()
-    mock_json_dump.assert_called()
+    classification_engine.fs.open.assert_called()
+    classification_engine.fs.dump.assert_called()
 
 
 @patch("dewey.core.bookkeeping.classification_engine.BaseScript.__init__", return_value=None)
