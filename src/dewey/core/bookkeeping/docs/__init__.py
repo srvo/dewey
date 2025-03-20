@@ -1,5 +1,17 @@
 from dewey.core.base_script import BaseScript
-from typing import Any
+from typing import Any, Protocol, Optional
+
+
+class DocumentationTask(Protocol):
+    """
+    An interface for defining documentation tasks.
+    """
+
+    def execute(self) -> None:
+        """
+        Executes the documentation task.
+        """
+        raise NotImplementedError
 
 
 class DocsModule(BaseScript):
@@ -12,7 +24,7 @@ class DocsModule(BaseScript):
     primary logic.
     """
 
-    def __init__(self, name: str, description: str = "Documentation Module"):
+    def __init__(self, name: str, description: str = "Documentation Module", documentation_task: Optional[DocumentationTask] = None):
         """
         Initializes the DocsModule.
 
@@ -20,8 +32,11 @@ class DocsModule(BaseScript):
             name (str): The name of the module.
             description (str, optional): A brief description of the module.
                 Defaults to "Documentation Module".
+            documentation_task (DocumentationTask, optional): The documentation task to execute.
+                Defaults to None.
         """
         super().__init__(name=name, description=description, config_section="docs")
+        self._documentation_task = documentation_task
 
     def run(self) -> None:
         """
@@ -41,13 +56,7 @@ class DocsModule(BaseScript):
         """
         self.logger.info("Running the Docs module...")
         try:
-            # Example of accessing a configuration value
-            example_config_value = self.get_config_value(
-                "docs_setting", "default_value"
-            )
-            self.logger.info(f"Example config value: {example_config_value}")
-
-            # Add your documentation logic here
+            self._execute_documentation_task()
             self.logger.info("Documentation tasks completed.")
 
         except Exception as e:
@@ -55,6 +64,22 @@ class DocsModule(BaseScript):
                 f"An error occurred during documentation: {e}", exc_info=True
             )
             raise
+
+    def _execute_documentation_task(self) -> None:
+        """
+        Executes the documentation task.
+        """
+        if self._documentation_task:
+            self._documentation_task.execute()
+        else:
+            # Example of accessing a configuration value
+            example_config_value = self.get_config_value(
+                "docs_setting", "default_value"
+            )
+            self.logger.info(f"Example config value: {example_config_value}")
+
+            # Add your documentation logic here
+            pass
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
         """
