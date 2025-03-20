@@ -11,7 +11,7 @@ class DbConverters(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the DbConverters class."""
-        super().__init__()
+        super().__init__(config_section="db_converters")
 
     def run(self) -> None:
         """
