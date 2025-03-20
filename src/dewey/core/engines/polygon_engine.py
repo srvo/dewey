@@ -43,11 +43,15 @@ class PolygonEngine(BaseScript):
 
                 # Example: Insert data (replace with your actual data)
                 data = {"ticker": "AAPL", "timestamp": "2024-01-01", "price": 170.00}
-                insert_query = f"INSERT INTO {table_name} ({', '.join(data.keys())}) VALUES ({', '.join(['?' for _ in data.values()])})"
+                insert_query = (
+                    f"INSERT INTO {table_name} ({', '.join(data.keys())}) "
+                    f"VALUES ({', '.join(['?' for _ in data.values()])})"
+                )
                 execute_query(conn, insert_query, list(data.values()))
 
                 self.logger.info(
-                    f"Successfully created table {table_name} and inserted sample data."
+                    f"Successfully created table {table_name} and inserted"
+                    " sample data."
                 )
 
         except Exception as e:
