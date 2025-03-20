@@ -1,8 +1,6 @@
-
 # Refactored from: ethical_analysis
 # Date: 2025-03-16T16:19:10.266424
 # Refactor Version: 1.0
-```python
 """Ethical Analysis Workflows.
 
 Provides specialized workflows for ethical analysis using the DeepSeek engine.
@@ -133,4 +131,3 @@ class EthicalAnalysisWorkflow:
             context=context,
             template_name="ethical_analysis",
         )
-```
