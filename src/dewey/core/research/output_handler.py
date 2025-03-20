@@ -1,5 +1,6 @@
-from dewey.core.base_script import BaseScript
 from typing import Any, Dict
+
+from dewey.core.base_script import BaseScript
 
 
 class OutputHandler(BaseScript):
@@ -12,7 +13,7 @@ class OutputHandler(BaseScript):
             config_path: Path to the configuration file.
             **kwargs: Additional keyword arguments.
         """
-        super().__init__(config_path, **kwargs)
+        super().__init__(config_section="output_handler", **kwargs)
 
     def run(self) -> None:
         """Executes the core logic of the output handler.
