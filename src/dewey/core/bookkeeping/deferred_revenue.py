@@ -7,6 +7,8 @@ from typing import List
 from dateutil.relativedelta import relativedelta
 
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection
+from dewey.llm import llm_utils
 
 
 class AltruistIncomeProcessor(BaseScript):
@@ -15,7 +17,12 @@ class AltruistIncomeProcessor(BaseScript):
     def __init__(self) -> None:
         """Initializes the AltruistIncomeProcessor."""
         super().__init__(
-            name="Altruist Income Processor", description="Processes Altruist income for deferred revenue recognition.", config_section="bookkeeping", )
+            name="Altruist Income Processor",
+            description="Processes Altruist income for deferred revenue recognition.",
+            config_section="bookkeeping",
+            requires_db=False,
+            enable_llm=False,
+        )
 
     def _parse_altruist_transactions(self, journal_content: str) -> List[re.Match]:
         """Parses the journal content to find Altruist income transactions.
@@ -29,8 +36,9 @@ class AltruistIncomeProcessor(BaseScript):
         transaction_regex = re.compile(
             r"(\d{4}-\d{2}-\d{2})\s+"  # Date (YYYY-MM-DD)
             r"(.*?altruist.*?)\n"  # Description with altruist (case insensitive)
-            r"\s+Income:[^\s]+\s+([0-9.-]+)", # Income posting with amount
-            re.MULTILINE | re.IGNORECASE, )
+            r"\s+Income:[^\s]+\s+([0-9.-]+)",  # Income posting with amount
+            re.MULTILINE | re.IGNORECASE,
+        )
         return list(transaction_regex.finditer(journal_content))  # type: ignore
 
     def _generate_deferred_revenue_transactions(self, match: re.Match) -> List[str]:
