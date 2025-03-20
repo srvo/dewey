@@ -68,6 +68,15 @@ class AdminTasks(BaseScript):
         try:
             self.logger.info(f"Adding user {username}...")
             with self.db_conn.cursor() as cursor:
+                # Check if the users table exists
+                cursor.execute(
+                    "SELECT EXISTS (SELECT 1 FROM pg_tables WHERE tablename = 'users');"
+                )
+                table_exists = cursor.fetchone()[0]
+                if not table_exists:
+                    self.logger.error("The 'users' table does not exist.")
+                    raise ValueError("The 'users' table does not exist.")
+
                 cursor.execute(
                     "INSERT INTO users (username, password) VALUES (%s, %s);",
                     (username, password),
