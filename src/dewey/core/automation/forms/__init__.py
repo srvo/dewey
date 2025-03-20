@@ -13,14 +13,14 @@ class FormsModule(BaseScript):
     primary logic.
     """
 
-    def __init__(self, config: Optional[Dict[str, Any]] = None) -> None:
+    def __init__(self, config_section: Optional[str] = None) -> None:
         """
         Initializes the FormsModule with optional configuration.
 
         Args:
-            config: A dictionary containing configuration parameters.
+            config_section: The section in the dewey.yaml config file to use for configuration.
         """
-        super().__init__(config)
+        super().__init__(config_section=config_section)
 
     def run(self) -> None:
         """
@@ -28,10 +28,29 @@ class FormsModule(BaseScript):
 
         This method should be overridden in subclasses to implement
         specific form processing tasks.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            Exception: If an error occurs during form processing.
         """
         self.logger.info("Forms module started.")
-        # Add your form processing logic here
-        self.logger.info("Forms module finished.")
+        try:
+            # Add your form processing logic here
+            # Access configuration values using self.get_config_value("key")
+            # Example:
+            # api_key = self.get_config_value("api_key")
+            # self.logger.info(f"API Key: {api_key}")
+            pass
+        except Exception as e:
+            self.logger.error(f"An error occurred during form processing: {e}")
+            raise
+        finally:
+            self.logger.info("Forms module finished.")
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
         """
