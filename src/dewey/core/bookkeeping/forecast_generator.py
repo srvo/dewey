@@ -1,11 +1,33 @@
 from datetime import date, datetime
 from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Tuple, Protocol
 import sys
 
 from dateutil.relativedelta import relativedelta
 
 from dewey.core.base_script import BaseScript
+
+
+class FileSystemInterface(Protocol):
+    """Interface for file system operations."""
+
+    def open(self, path: str, mode: str = "r") -> object:
+        """Open a file."""
+
+    def exists(self, path: str) -> bool:
+        """Check if a file exists."""
+
+
+class RealFileSystem:
+    """Real file system operations."""
+
+    def open(self, path: str, mode: str = "r") -> object:
+        """Open a file."""
+        return open(path, mode)
+
+    def exists(self, path: str) -> bool:
+        """Check if a file exists."""
+        return Path(path).exists()
 
 
 class JournalEntryGenerator(BaseScript):
@@ -25,9 +47,10 @@ class JournalEntryGenerator(BaseScript):
         "Entries append to existing journal file",
     ]
 
-    def __init__(self) -> None:
+    def __init__(self, fs: FileSystemInterface = RealFileSystem()) -> None:
         """Initializes the JournalEntryGenerator with bookkeeping configurations."""
         super().__init__(config_section="bookkeeping")
+        self.fs: FileSystemInterface = fs
 
     def validate_assumptions(self) -> None:
         """Validates key assumptions with user input.
@@ -78,7 +101,7 @@ class JournalEntryGenerator(BaseScript):
         """
         acquisition_entry_exists = False
         try:
-            with open(complete_ledger_file) as f:  # type: ignore
+            with self.fs.open(complete_ledger_file) as f:  # type: ignore
                 if acquisition_entry in f.read():
                     acquisition_entry_exists = True
         except FileNotFoundError:
@@ -90,7 +113,7 @@ class JournalEntryGenerator(BaseScript):
 
         if not acquisition_entry_exists:
             try:
-                with open(complete_ledger_file, "a") as f:  # type: ignore
+                with self.fs.open(complete_ledger_file, "a") as f:  # type: ignore
                     f.write(acquisition_entry)
             except Exception as e:
                 self.logger.error(f"Error writing to file: {e}")
@@ -103,8 +126,8 @@ class JournalEntryGenerator(BaseScript):
             forecast_ledger_file: Path to the forecast ledger file.
         """
         try:
-            if not Path(forecast_ledger_file).exists():
-                with open(forecast_ledger_file, "w") as f:  # type: ignore
+            if not self.fs.exists(forecast_ledger_file):
+                with self.fs.open(forecast_ledger_file, "w") as f:  # type: ignore
                     account_declarations = """
 ; Account declarations
 account Assets:PPE:Mormair_E650
@@ -136,6 +159,16 @@ account Expenses:Hosting:Mormair_E650
             "    Assets:AccumulatedDepr:Mormair_E650   £-6.94\n\n"
         )
 
+    def calculate_revenue_share(self, recovered: float) -> float:
+        """Calculates the revenue share based on the recovered amount."""
+        if recovered < 125975:
+            revenue_share = 0.5
+        elif recovered < 359975:
+            revenue_share = 0.01
+        else:
+            revenue_share = 0
+        return revenue_share
+
     def create_revenue_entries(
         self,
         current_date: datetime,
@@ -152,14 +185,8 @@ account Expenses:Hosting:Mormair_E650
             A tuple containing the lease income, revenue share payment, and
             hosting fee payment entries.
         """
-        if generator["recovered"] < 125975:
-            revenue_share = 0.5
-        elif generator["recovered"] < 359975:
-            revenue_share = 0.01
-        else:
-            revenue_share = 0
-
         gross_revenue = 302495
+        revenue_share = self.calculate_revenue_share(generator["recovered"])
         revenue_share_amount = gross_revenue * revenue_share
         hosting_fee = gross_revenue * 0.25
 
@@ -192,6 +219,15 @@ account Expenses:Hosting:Mormair_E650
             hosting_fee_payment_entry,
         )
 
+    def write_journal_entry(self, file_path: str, entry: str) -> None:
+        """Writes a journal entry to the specified file."""
+        try:
+            with self.fs.open(file_path, "a") as f:
+                f.write(entry)
+        except Exception as e:
+            self.logger.error(f"Error writing to file: {e}")
+            raise
+
     def generate_journal_entries(
         self,
         complete_ledger_file: str,
@@ -217,8 +253,7 @@ account Expenses:Hosting:Mormair_E650
 
         while current_date <= end_date:
             depreciation_entry = self.create_depreciation_entry(current_date)
-            with open(forecast_ledger_file, "a") as f:
-                f.write(depreciation_entry)
+            self.write_journal_entry(forecast_ledger_file, depreciation_entry)
 
             for generator in generators:
                 (
@@ -227,10 +262,9 @@ account Expenses:Hosting:Mormair_E650
                     hosting_fee_payment_entry,
                 ) = self.create_revenue_entries(current_date, generator)
 
-                with open(forecast_ledger_file, "a") as f:
-                    f.write(lease_income_entry)
-                    f.write(revenue_share_payment_entry)
-                    f.write(hosting_fee_payment_entry)
+                self.write_journal_entry(forecast_ledger_file, lease_income_entry)
+                self.write_journal_entry(forecast_ledger_file, revenue_share_payment_entry)
+                self.write_journal_entry(forecast_ledger_file, hosting_fee_payment_entry)
 
             current_date += relativedelta(months=1)
             current_date = current_date.replace(day=1) + relativedelta(
