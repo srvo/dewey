@@ -25,9 +25,7 @@ class JournalWriter(BaseScript):
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.processed_hashes_file = self.output_dir / ".processed_hashes"
         self.seen_hashes: set[str] = self._load_processed_hashes()
-        self.audit_log: List[Dict[str, str]]=None):
-                if str]] is None:
-                    str]] = []
+        self.audit_log: List[Dict[str, str]] = []
 
     def run(self) -> None:
         """Runs the journal writer script.
@@ -44,7 +42,7 @@ class JournalWriter(BaseScript):
             A set of processed transaction hashes.
         """
         try:
-            if self.processed_hashes_file.exists(
+            if self.processed_hashes_file.exists():
                 with open(self.processed_hashes_file) as f:
                     return set(f.read().splitlines())
             return set()
