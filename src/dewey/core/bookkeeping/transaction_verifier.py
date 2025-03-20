@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import subprocess
 import sys
-from typing import Any, Dict, List
+from pathlib import Path
+from typing import Any, Dict, List, Protocol, Optional
 
 from prompt_toolkit import prompt
 from prompt_toolkit.shortcuts import confirm
@@ -12,13 +13,25 @@ from dewey.core.bookkeeping.classification_engine import (
     ClassificationError,
 )
 from dewey.core.bookkeeping.writers.journal_writer_fab1858b import JournalWriter
-from dewey.llm.llm_utils import classify_text
+
+
+class LLMClientInterface(Protocol):
+    """Interface for LLM clients."""
+
+    def classify_text(self, text: str, instructions: str) -> Optional[str]:
+        """Classify text using the LLM."""
+        ...
 
 
 class ClassificationVerifier(BaseScript):
     """Verifies transaction classifications and allows for correction via user feedback."""
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        classification_engine: Optional[ClassificationEngine] = None,
+        journal_writer: Optional[JournalWriter] = None,
+        llm_client: Optional[LLMClientInterface] = None,
+    ) -> None:
         """Initializes the ClassificationVerifier."""
         super().__init__(config_section="bookkeeping")
         self.rules_path = self.get_path(
@@ -27,9 +40,10 @@ class ClassificationVerifier(BaseScript):
         self.journal_path = self.get_path(
             self.get_config_value("journal_path", "~/.hledger.journal")
         ).expanduser()
-        self.engine = ClassificationEngine(self.rules_path)
-        self.writer = JournalWriter(self.journal_path.parent)
+        self.engine = classification_engine or ClassificationEngine(self.rules_path)
+        self.writer = journal_writer or JournalWriter(self.journal_path.parent)
         self.processed_feedback = 0
+        self.llm_client = llm_client or self.llm_client
 
         if not self.rules_path.exists():
             self.logger.error("Missing classification rules at %s", self.rules_path.resolve())
@@ -52,7 +66,7 @@ class ClassificationVerifier(BaseScript):
         return self.engine.categories
 
     def get_ai_suggestion(self, description: str) -> str:
-        """Get AI classification suggestion using DeepInfra.
+        """Get AI classification suggestion using an LLM.
 
         Args:
             description (str): Transaction description.
@@ -62,15 +76,61 @@ class ClassificationVerifier(BaseScript):
         """
         try:
             instructions = "Return ONLY the account path as category1:category2"
-            response = classify_text(
+            response = self.llm_client.classify_text(  # type: ignore
                 text=f"Classify transaction: '{description}'",
                 instructions=instructions,
-                llm_client=self.llm_client,
             )
             return response if response else ""
         except Exception as e:
             self.logger.exception("AI classification failed: %s", str(e))
             return ""
+
+    def _process_hledger_csv(self, csv_data: str, limit: int = 50) -> List[Dict[str, Any]]:
+        """Process hledger CSV data using DuckDB.
+
+        Args:
+            csv_data (str): CSV data from hledger.
+            limit (int, optional): Maximum number of transactions to retrieve. Defaults to 50.
+
+        Returns:
+            List[Dict[str, Any]]: List of transaction dictionaries.
+        """
+        try:
+            import duckdb
+
+            with duckdb.connect(":memory:") as con:
+                # Create temp table from CSV data
+                con.execute(
+                    """
+                    CREATE TEMP TABLE txns AS
+                    SELECT * FROM 'csv:stdin' (header=true)
+                    WHERE date BETWEEN
+                        DATE_TRUNC('month', CURRENT_DATE - INTERVAL 1 MONTH) AND
+                        DATE_TRUNC('month', CURRENT_DATE) - INTERVAL 1 DAY
+                """,
+                    [csv_data],
+                )
+
+                # Query with proper typing and ordering
+                query = f"""
+                    SELECT
+                        date,
+                        description,
+                        amount,
+                        account,
+                        STRFTIME(STRPTIME(date, '%Y-%m-%d'), '%Y-%m-%d') AS parsed_date
+                    FROM txns
+                    ORDER BY parsed_date DESC
+                    LIMIT {limit}
+                """
+                result = con.execute(query).fetchall()
+                columns = [col[0] for col in con.description]
+
+                return [dict(zip(columns, row, strict=False)) for row in result]
+
+        except Exception as e:
+            self.logger.exception("DuckDB processing failed: %s", str(e))
+            return []
 
     def get_transaction_samples(self, limit: int = 50) -> List[Dict[str, Any]]:
         """Get sample transactions using hledger + DuckDB.
@@ -99,38 +159,7 @@ class ClassificationVerifier(BaseScript):
                 self.logger.error("hledger export failed: %s", result.stderr)
                 return []
 
-            # Connect to in-memory DuckDB database
-            import duckdb
-
-            with duckdb.connect(":memory:") as con:
-                # Create temp table from CSV data
-                con.execute(
-                    """
-                    CREATE TEMP TABLE txns AS
-                    SELECT * FROM 'csv:stdin' (header=true)
-                    WHERE date BETWEEN
-                        DATE_TRUNC('month', CURRENT_DATE - INTERVAL 1 MONTH) AND
-                        DATE_TRUNC('month', CURRENT_DATE) - INTERVAL 1 DAY
-                """,
-                    [result.stdout],
-                )
-
-                # Query with proper typing and ordering
-                query = f"""
-                    SELECT
-                        date,
-                        description,
-                        amount,
-                        account,
-                        STRFTIME(STRPTIME(date, '%Y-%m-%d'), '%Y-%m-%d') AS parsed_date
-                    FROM txns
-                    ORDER BY parsed_date DESC
-                    LIMIT {limit}
-                """
-                result = con.execute(query).fetchall()
-                columns = [col[0] for col in con.description]
-
-                return [dict(zip(columns, row, strict=False)) for row in result]
+            return self._process_hledger_csv(result.stdout, limit)
 
         except Exception as e:
             self.logger.exception("DuckDB processing failed: %s", str(e))
