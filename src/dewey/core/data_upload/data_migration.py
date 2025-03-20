@@ -1,5 +1,7 @@
-from dewey.core.base_script import BaseScript
 from typing import Any
+
+from dewey.core.base_script import BaseScript
+
 
 class DataMigration(BaseScript):
     """
@@ -15,7 +17,7 @@ class DataMigration(BaseScript):
 
         Calls the superclass constructor to initialize the base script.
         """
-        super().__init__(config_section='data_migration')
+        super().__init__(config_section="data_migration")
 
     def run(self) -> None:
         """
@@ -53,7 +55,9 @@ class DataMigration(BaseScript):
         Returns:
             The transformed data.
         """
-        transformation_type = self.get_config_value("transformation_type", "default_transformation")
+        transformation_type = self.get_config_value(
+            "transformation_type", "default_transformation"
+        )
         self.logger.info(f"Transforming data using: {transformation_type}")
         # Add your data transformation logic here
         return data
@@ -65,7 +69,9 @@ class DataMigration(BaseScript):
         Args:
             data: The data to write.
         """
-        destination_type = self.get_config_value("destination_type", "default_destination")
+        destination_type = self.get_config_value(
+            "destination_type", "default_destination"
+        )
         self.logger.info(f"Writing data to destination type: {destination_type}")
         # Add your data writing logic here
         self.logger.info(f"Data written: {data}")
@@ -73,4 +79,4 @@ class DataMigration(BaseScript):
 
 if __name__ == "__main__":
     migration = DataMigration()
-    migration.run()
+    migration.execute()
