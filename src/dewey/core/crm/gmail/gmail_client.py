@@ -1,15 +1,13 @@
-import os
-import logging
-from pathlib import Path
-from typing import Optional, List, Dict, Any
 import base64
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
-from google.auth.transport.requests import Request
-from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from google.oauth2 import service_account
 
 from dewey.core.base_script import BaseScript
+
 
 class GmailClient(BaseScript):
     """Handles Gmail API authentication and interactions."""
@@ -18,42 +16,50 @@ class GmailClient(BaseScript):
         self,
         service_account_file: str,
         user_email: Optional[str] = None,
-        scopes: List[str] = None,
-    ):
-        """
-        Initializes the Gmail client with service account credentials.
+        scopes: Optional[List[str]] = None,
+    ) -> None:
+        """Initializes the Gmail client with service account credentials.
 
         Args:
             service_account_file: Path to the service account JSON file.
             user_email: Optional user email to impersonate (for domain-wide delegation).
             scopes: List of API scopes to request.
         """
-        super().__init__(config_section='crm')
-        self.service_account_file = Path(service_account_file)
+        super().__init__(config_section="crm")
+        self.service_account_file = service_account_file
         self.user_email = user_email
-        self.scopes = scopes or self.config.get("gmail_scopes") or ["https://www.googleapis.com/auth/gmail.readonly"]
+        self.scopes = scopes or self.get_config_value(
+            "gmail_scopes", ["https://www.googleapis.com/auth/gmail.readonly"]
+        )
         self.creds = None
         self.service = None
 
-    def authenticate(self):
-        """Authenticates with Gmail API using a service account."""
+    def authenticate(self) -> Optional[Any]:
+        """Authenticates with Gmail API using a service account.
+
+        Returns:
+            The Gmail service object if authentication is successful, otherwise None.
+        """
         try:
-            self.creds = service_account.Credentials.from_service_account_file(
+            creds = service_account.Credentials.from_service_account_file(
                 self.service_account_file, scopes=self.scopes
             )
             if self.user_email:
-                self.creds = self.creds.with_subject(self.user_email)
+                creds = creds.with_subject(self.user_email)
 
-            self.service = build("gmail", "v1", credentials=self.creds)
-            self.logger.info("Successfully authenticated with Gmail API using service account")
+            self.service = build("gmail", "v1", credentials=creds)
+            self.logger.info(
+                "Successfully authenticated with Gmail API using service account"
+            )
             return self.service
         except Exception as e:
             self.logger.error(f"Authentication failed: {e}")
             return None
 
-    def fetch_emails(self, query: str = None, max_results: int = 100, page_token: str = None) -> Optional[Dict[str, Any]]:
-        """
-        Fetches emails from Gmail based on the provided query.
+    def fetch_emails(
+        self, query: str = None, max_results: int = 100, page_token: str = None
+    ) -> Optional[Dict[str, Any]]:
+        """Fetches emails from Gmail based on the provided query.
 
         Args:
             query: Gmail search query (e.g., "from:user@example.com").
@@ -67,7 +73,12 @@ class GmailClient(BaseScript):
             results = (
                 self.service.users()
                 .messages()
-                .list(userId="me", q=query, maxResults=max_results, pageToken=page_token)
+                .list(
+                    userId="me",
+                    q=query,
+                    maxResults=max_results,
+                    pageToken=page_token,
+                )
                 .execute()
             )
             return results
@@ -75,9 +86,8 @@ class GmailClient(BaseScript):
             self.logger.error(f"An error occurred: {error}")
             return None
 
-    def get_message(self, msg_id: str, format: str = 'full') -> Optional[Dict[str, Any]]:
-        """
-        Retrieves a specific email message by ID.
+    def get_message(self, msg_id: str, format: str = "full") -> Optional[Dict[str, Any]]:
+        """Retrieves a specific email message by ID.
 
         Args:
             msg_id: The ID of the email message to retrieve.
@@ -99,8 +109,7 @@ class GmailClient(BaseScript):
             return None
 
     def decode_message_body(self, message: Dict[str, Any]) -> str:
-        """
-        Decodes the message body from base64.
+        """Decodes the message body from base64.
 
         Args:
             message: The email message dictionary.
@@ -109,13 +118,27 @@ class GmailClient(BaseScript):
             The decoded message body as a string.
         """
         try:
-            if 'data' in message:
-                return base64.urlsafe_b64decode(message['data'].encode('ASCII')).decode('utf-8')
+            if "data" in message:
+                return base64.urlsafe_b64decode(
+                    message["data"].encode("ASCII")
+                ).decode("utf-8")
             return ""
         except Exception as e:
             self.logger.error(f"Error decoding message body: {e}")
             return ""
 
-    def run(self):
+    def run(self) -> None:
         """Placeholder for the run method required by BaseScript."""
-        pass
+        self.logger.info("GmailClient run method called (placeholder).")
+        # Add your main logic here, e.g., fetching and processing emails.
+        # Example:
+        # emails = self.fetch_emails(query="from:example@example.com", max_results=10)
+        # if emails:
+        #     for email in emails['messages']:
+        #         message = self.get_message(email['id'])
+        #         if message:
+        #             body = self.decode_message_body(message['payload'])
+        #             self.logger.info(f"Email body: {body[:100]}...")  # Print first 100 chars
+        # else:
+        #     self.logger.info("No emails found.")
+
