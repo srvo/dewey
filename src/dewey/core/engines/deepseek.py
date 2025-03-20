@@ -3,10 +3,10 @@
 from typing import Any, Dict, List, Optional
 
 from dewey.core.base_script import BaseScript
-from dewey.core.engines.base import BaseEngine
+from dewey.llm.llm_utils import generate_response
 
 
-class DeepSeekEngine(BaseScript, BaseEngine):
+class DeepSeekEngine(BaseScript):
     """DeepSeek engine for research and analysis."""
 
     def __init__(self) -> None:
@@ -38,9 +38,12 @@ class DeepSeekEngine(BaseScript, BaseEngine):
         }
 
     def run(self) -> None:
-        """Runs the DeepSeek engine."""
+        """Runs the DeepSeek engine.
+
+        Raises:
+            NotImplementedError: The run method must be implemented.
+        """
         self.logger.info("DeepSeek engine started.")
-        # TODO: Implement script logic here
         example_config_value = self.get_config_value("example_config", "default_value")
         self.logger.info(f"Example config value: {example_config_value}")
         raise NotImplementedError("The run method must be implemented")
@@ -82,10 +85,22 @@ class DeepSeekEngine(BaseScript, BaseEngine):
             Analysis results.
         """
         self.logger.info(f"Analyzing content with template: {template}")
-        # Mock implementation for testing
-        return {
-            "content": "Test analysis",
-            "summary": "Test summary",
-            "ethical_score": 75,
-            "risk_level": "medium",
-        }
+        prompt = self.templates.get(template)
+        if not prompt:
+            self.logger.warning(f"Template '{template}' not found. Using default analysis.")
+            prompt = "Analyze the following content: {content}"
+
+        formatted_prompt = prompt.format(content=content, **kwargs)
+
+        try:
+            response = generate_response(prompt=formatted_prompt, llm_client=self.llm_client)
+            analysis_results = {
+                "content": response,
+                "summary": "Test summary",  # Consider extracting summary from response
+                "ethical_score": 75,  # Consider extracting ethical score from response
+                "risk_level": "medium",  # Consider extracting risk level from response
+            }
+            return analysis_results
+        except Exception as e:
+            self.logger.error(f"Error during analysis: {e}")
+            return {}
