@@ -2,6 +2,7 @@
 
 import os
 from pathlib import Path
+from typing import Dict, List
 from dewey.core.base_script import BaseScript
 
 
@@ -10,11 +11,17 @@ class JournalSplitter(BaseScript):
     Splits a journal file into separate files by year.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """Initializes the JournalSplitter."""
         super().__init__(config_section='bookkeeping')
 
     def split_journal_by_year(self, input_file: str, output_dir: str) -> None:
-        """Split a journal file into separate files by year."""
+        """Split a journal file into separate files by year.
+
+        Args:
+            input_file: Path to the input journal file.
+            output_dir: Path to the output directory.
+        """
         # Create output directory if it doesn't exist
         Path(output_dir).mkdir(parents=True, exist_ok=True)
 
@@ -23,9 +30,9 @@ class JournalSplitter(BaseScript):
         bank_account = f"assets:checking:mercury{account_num}"
 
         # Initialize files dict to store transactions by year
-        files = {}
-        current_year = None
-        current_transaction = []
+        files: Dict[str, open] = {}
+        current_year: str = None
+        current_transaction: List[str] = []
 
         with open(input_file) as f:
             for line in f:
@@ -73,14 +80,16 @@ class JournalSplitter(BaseScript):
 
     def run(self) -> None:
         """Process all journal files."""
-        input_dir = "import/mercury/journal"
+        input_dir = self.get_config_value("input_dir", "import/mercury/journal")
         output_dir = os.path.join(input_dir, "by_year")
 
         # Process each journal file
         for file in os.listdir(input_dir):
             if file.endswith(".journal") and not file.startswith("."):
                 input_file = os.path.join(input_dir, file)
+                self.logger.info(f"Splitting journal file: {input_file}")
                 self.split_journal_by_year(input_file, output_dir)
+                self.logger.info(f"Journal file split: {input_file}")
 
 
 def main() -> None:
