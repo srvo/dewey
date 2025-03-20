@@ -18,7 +18,8 @@ class FormsModule(BaseScript):
         Initializes the FormsModule with optional configuration.
 
         Args:
-            config_section: The section in the dewey.yaml config file to use for configuration.
+            config_section: The section in the dewey.yaml config file
+                to use for configuration.
         """
         super().__init__(config_section=config_section)
 
