@@ -5,10 +5,12 @@ from dewey.core.db.utils import create_table, execute_query
 
 class DataHandler(BaseScript):
     """
-    A comprehensive data processing class that combines initialization and representation functionalities.
+    A comprehensive data processing class that combines initialization and
+    representation functionalities.
 
-    This class provides a streamlined way to represent and initialize data objects,
-    handling potential edge cases and adhering to modern Python conventions.
+    This class provides a streamlined way to represent and initialize data
+    objects, handling potential edge cases and adhering to modern Python
+    conventions.
     """
 
     def __init__(self, name: str) -> None:
@@ -39,7 +41,8 @@ class DataHandler(BaseScript):
         This representation is suitable for debugging and logging purposes.
 
         Returns:
-            A string representing the DataHandler object in the format "DataHandler(name='<name>')".
+            A string representing the DataHandler object in the format
+            "DataHandler(name='<name>')".
 
         Examples:
             >>> processor = DataHandler("MyProcessor")
@@ -61,7 +64,7 @@ class DataHandler(BaseScript):
 
         # Invalid initialization (TypeError)
         try:
-            processor2 = DataHandler(123)
+            DataHandler(123)
         except TypeError as e:
             self.logger.error(f"Error initializing processor 2: {e}")
 
