@@ -35,7 +35,7 @@ class ConnectionPool:
         """Mock connection acquisition."""
         # This returns the mock_conn that was set up in the test
         # For compatibility with patched duckdb.connect
-        import duckdb
+import duckdb
         return duckdb.connect.return_value
     
     def release_connection(self, conn):
@@ -48,12 +48,12 @@ class ConnectionPool:
         try:
             # Always return True for first call, False for second call
             # to match test expectations
-            import inspect
+import inspect
             caller_frame = inspect.currentframe().f_back
             if caller_frame.f_locals.get('mock_conn', {}).execute.side_effect:
                 return False
             return True
-        except:
+        except Exception:
             return False
     
     def close_all(self):
@@ -61,7 +61,7 @@ class ConnectionPool:
         for conn in list(self.connections.keys()):
             try:
                 conn.close()
-            except:
+            except Exception:
                 pass
         self.connections.clear()
         self.in_use.clear()
@@ -78,7 +78,7 @@ class DatabaseManager:
         """Mock connection getter that returns a context manager."""
         # For patched ConnectionPool.get_connection, we need to return 
         # a value that will match what the test expects
-        import dewey.core.db.connection
+import dewey.core.db.connection
         if hasattr(dewey.core.db.connection, 'ConnectionPool') and \
            hasattr(dewey.core.db.connection.ConnectionPool, 'return_value'):
             mock_conn = dewey.core.db.connection.ConnectionPool.return_value.get_connection.return_value
@@ -125,7 +125,7 @@ class DatabaseManager:
                 conn.execute("SELECT 1")
                 self.offline_mode = False
                 return True
-        except:
+        except Exception:
             self.offline_mode = True
             return False
     
@@ -134,7 +134,7 @@ class DatabaseManager:
         if self.write_conn:
             try:
                 self.write_conn.close()
-            except:
+            except Exception:
                 pass
             self.write_conn = None
 
