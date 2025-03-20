@@ -8,15 +8,10 @@ import logging
 import os
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
-from urllib.parse import urlparse
 
 import duckdb
 
 from dewey.core.base_script import BaseScript
-
-# Default connection parameters
-DEFAULT_DB_PATH = Path.home() / "dewey" / "dewey.duckdb"
-DEFAULT_MOTHERDUCK_PREFIX = "md:"
 
 
 class DatabaseConnection(BaseScript):
@@ -45,7 +40,9 @@ class DatabaseConnection(BaseScript):
         """
         super().__init__(config_section='db')
         self.connection_string = connection_string
-        self.is_motherduck = connection_string and connection_string.startswith(DEFAULT_MOTHERDUCK_PREFIX)
+        self.is_motherduck = connection_string and self.connection_string.startswith(
+            self.get_config_value('default_motherduck_prefix', 'md:')
+        )
         self.conn = None
         self._connect(**kwargs)
 
@@ -138,7 +135,8 @@ def get_connection(config: Dict[str, Any]) -> DatabaseConnection:
             connection_string = f"{DEFAULT_MOTHERDUCK_PREFIX}{database}"
         else:
             # Use default local DuckDB path
-            connection_string = str(DEFAULT_DB_PATH)
+            default_db_path = Path.home() / "dewey" / "dewey.duckdb"
+            connection_string = str(default_db_path)
 
     # Get additional connection parameters
     kwargs = {}
@@ -192,7 +190,7 @@ def get_local_connection(db_path: Optional[Union[str, Path]] = None) -> Database
     """
     config = {
         'motherduck': False,
-        'connection_string': str(db_path or DEFAULT_DB_PATH),
+        'connection_string': str(db_path or Path.home() / "dewey" / "dewey.duckdb"),
     }
 
     return get_connection(config)
