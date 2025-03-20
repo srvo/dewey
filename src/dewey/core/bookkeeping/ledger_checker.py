@@ -3,9 +3,40 @@ import argparse
 import re
 import subprocess
 import sys
-from typing import List, Optional
-
+from typing import List, Optional, Callable
 from dewey.core.base_script import BaseScript
+
+
+class FileSystemInterface:
+    """Interface for file system operations."""
+
+    def open(self, path: str, mode: str = "r") -> object:
+        """Opens a file."""
+        raise NotImplementedError
+
+
+class RealFileSystem(FileSystemInterface):
+    """Real file system operations."""
+
+    def open(self, path: str, mode: str = "r") -> object:
+        """Opens a file using the built-in open function."""
+        return open(path, mode)
+
+
+class SubprocessInterface:
+    """Interface for subprocess operations."""
+
+    def run(self, cmd: List[str], capture_output: bool, text: bool, check: bool) -> subprocess.CompletedProcess:
+        """Runs a subprocess command."""
+        raise NotImplementedError
+
+
+class RealSubprocess(SubprocessInterface):
+    """Real subprocess operations."""
+
+    def run(self, cmd: List[str], capture_output: bool, text: bool, check: bool) -> subprocess.CompletedProcess:
+        """Runs a subprocess command using subprocess.run."""
+        return subprocess.run(cmd, capture_output=capture_output, text=text, check=check)
 
 
 class LedgerFormatChecker(BaseScript):
@@ -17,12 +48,16 @@ class LedgerFormatChecker(BaseScript):
     consistency. It also performs basic validation using `hledger`.
     """
 
-    def __init__(self, journal_file: str) -> None:
+    def __init__(self, journal_file: str,
+                 fs: Optional[FileSystemInterface] = None,
+                 subprocess_runner: Optional[SubprocessInterface] = None) -> None:
         """
         Initializes the LedgerFormatChecker.
 
         Args:
             journal_file: The path to the ledger journal file.
+            fs: An optional FileSystemInterface for file operations.
+            subprocess_runner: An optional SubprocessInterface for running subprocess commands.
         """
         super().__init__(
             name="LedgerFormatChecker", description="Validates the format of a ledger journal file.", config_section="bookkeeping")
@@ -31,13 +66,15 @@ class LedgerFormatChecker(BaseScript):
         self.journal_content: List[str] = []
         self.errors: List[str] = []
         self.warnings: List[str] = []
+        self.fs: FileSystemInterface = fs or RealFileSystem()
+        self.subprocess_runner: SubprocessInterface = subprocess_runner or RealSubprocess()
         self.read_journal()
 
     def read_journal(self) -> None:
         """Reads the ledger journal file into memory."""
         self.logger.info(f"Loading journal file: {self.journal_file}")
         try:
-            with open(self.journal_file, "r") as file:
+            with self.fs.open(self.journal_file, "r") as file:
                 self.journal_content = file.readlines()
         except FileNotFoundError:
             self.logger.error(f"Journal file not found: {self.journal_file}")
@@ -57,7 +94,7 @@ class LedgerFormatChecker(BaseScript):
         """
         self.logger.info("Running hledger basic validation")
         try:
-            result = subprocess.run(
+            result = self.subprocess_runner.run(
                 [self.hledger_path, "-f", self.journal_file, "validate"], capture_output=True, text=True, check=True)
             if result.returncode == 0:
                 self.logger.info("hledger validation passed")
@@ -164,17 +201,19 @@ class LedgerFormatChecker(BaseScript):
         else:
             return hledger_check
 
-    def run(self) -> None:
+    def run(self) -> bool:
         """Runs the ledger format checker."""
         if self.run_all_checks():
             self.logger.info("All ledger checks passed successfully")
+            return True
         else:
             if self.warnings:
                 self.logger.warning("Validation warnings occurred")
 
             if self.errors:
                 self.logger.error("Validation errors detected")
-                sys.exit(1)
+                return False
+            return False
 
 
 def main() -> None:
@@ -184,7 +223,8 @@ def main() -> None:
     args = parser.parse_args()
 
     checker = LedgerFormatChecker(args.journal_file)
-    checker.run()
+    if not checker.run():
+        sys.exit(1)
 
 
 if __name__ == "__main__":
