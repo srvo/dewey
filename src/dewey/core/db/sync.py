@@ -1,7 +1,5 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
-from dewey.core.db import utils as db_utils
-from dewey.llm import llm_utils
+from dewey.core.db.connection import get_connection
 
 
 class Sync(BaseScript):
@@ -16,7 +14,7 @@ class Sync(BaseScript):
         """
         Initializes the Sync class.
         """
-        super().__init__(config_section='sync')
+        super().__init__(config_section="sync")
 
     def run(self) -> None:
         """
