@@ -1,5 +1,6 @@
 from dewey.core.base_script import BaseScript
 from typing import Any
+import logging
 
 
 class FormatAndLint(BaseScript):
@@ -10,7 +11,7 @@ class FormatAndLint(BaseScript):
     formatting and linting code.
     """
 
-    def __init__(self, config_section: str = 'format_and_lint') -> None:
+    def __init__(self, config_section: str = 'format_and_lint', logger: logging.Logger = None) -> None:
         """
         Initializes the FormatAndLint class.
 
@@ -18,6 +19,8 @@ class FormatAndLint(BaseScript):
             config_section (str): The configuration section to use.
         """
         super().__init__(config_section=config_section)
+        if logger:
+            self.logger = logger
 
     def run(self) -> None:
         """
