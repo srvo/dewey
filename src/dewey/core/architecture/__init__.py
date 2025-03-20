@@ -1,4 +1,6 @@
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection
+from dewey.llm.llm_utils import generate_text
 
 
 class ArchitectureModule(BaseScript):
@@ -31,7 +33,7 @@ class ArchitectureModule(BaseScript):
         try:
             # Accessing a configuration value
             example_config_value: str = self.get_config_value(
-                "example_config", default="default_value"
+                "utils.example_config", default="default_value"
             )
             self.logger.info(f"Example config value: {example_config_value}")
 
@@ -39,10 +41,9 @@ class ArchitectureModule(BaseScript):
             if self.db_conn:
                 self.logger.info("Database connection is available.")
                 # Example: Execute a query (replace with actual query)
-                # with self.db_conn.cursor() as cur:
-                #     cur.execute("SELECT 1")
-                #     result = cur.fetchone()
-                #     self.logger.info(f"Database query result: {result}")
+                with DatabaseConnection(self.config) as db_conn:
+                    result_df = db_conn.execute("SELECT 1")
+                    self.logger.info(f"Database query result: {result_df}")
             else:
                 self.logger.warning("Database connection is not available.")
 
@@ -50,9 +51,9 @@ class ArchitectureModule(BaseScript):
             if self.llm_client:
                 self.logger.info("LLM client is available.")
                 # Example: Generate text (replace with actual prompt)
-                # response = self.llm_client.generate_text("Write a short poem
-                # about architecture.")
-                # self.logger.info(f"LLM response: {response}")
+                prompt = "Write a short poem about architecture."
+                response = generate_text(self.llm_client, prompt)
+                self.logger.info(f"LLM response: {response}")
             else:
                 self.logger.warning("LLM client is not available.")
 
