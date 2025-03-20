@@ -7,9 +7,9 @@ This script analyzes controversies related to entities using SearXNG and Farfall
 
 from __future__ import annotations
 
-import os
+import asyncio
 from datetime import datetime
-from typing import Optional
+from typing import Any, Dict, List, Optional
 
 import httpx
 from prefect import flow, task
@@ -20,16 +20,26 @@ from dewey.core.base_script import BaseScript
 class ControversyAnalyzer(BaseScript):
     """Analyzes controversies related to entities."""
 
-    def __init__(self):
-        super().__init__()
-        self.logger = self.get_logger()
-        self.config = self.get_config()
-        self.farfalle_api_url = self.config.settings.farfalle_api_url
-        self.searxng_url = self.config.settings.searxng_url
+    def __init__(self) -> None:
+        """Initializes the ControversyAnalyzer."""
+        super().__init__(
+            name="ControversyAnalyzer",
+            description="Analyzes controversies related to entities using SearXNG.",
+            config_section="controversy_analyzer",
+        )
+        self.searxng_url = self.get_config_value("searxng_url")
+        self.logger.info("ControversyAnalyzer initialized")
 
     @task(retries=3, retry_delay_seconds=5)
     async def search_controversies(self, entity: str) -> list[dict]:
-        """Search for controversies related to an entity using SearXNG."""
+        """Search for controversies related to an entity using SearXNG.
+
+        Args:
+            entity: Name of the entity to analyze.
+
+        Returns:
+            A list of dictionaries containing search results.
+        """
         async with httpx.AsyncClient() as client:
             # Search with specific controversy-related terms
             queries = [
@@ -58,9 +68,16 @@ class ControversyAnalyzer(BaseScript):
             return results
 
     @task(retries=2)
-    async def analyze_sources(self, results: list[dict]) -> dict:
-        """Analyze and categorize sources of controversy information."""
-        sources = {
+    async def analyze_sources(self, results: list[dict]) -> dict[str, list[dict]]:
+        """Analyze and categorize sources of controversy information.
+
+        Args:
+            results: A list of dictionaries containing search results.
+
+        Returns:
+            A dictionary containing categorized sources.
+        """
+        sources: dict[str, list[dict]] = {
             "news": [],
             "social_media": [],
             "regulatory": [],
@@ -80,7 +97,14 @@ class ControversyAnalyzer(BaseScript):
 
     @task
     async def categorize_source(self, url: str) -> Optional[str]:
-        """Categorize a source based on its URL."""
+        """Categorize a source based on its URL.
+
+        Args:
+            url: The URL of the source.
+
+        Returns:
+            The category of the source, or None if it cannot be categorized.
+        """
         try:
             if not url:
                 return None
@@ -107,11 +131,19 @@ class ControversyAnalyzer(BaseScript):
             return None
 
     @task
-    async def summarize_findings(self, entity: str, sources: dict) -> dict:
-        """Summarize findings about controversies."""
+    async def summarize_findings(self, entity: str, sources: dict[str, list[dict]]) -> dict[str, Any]:
+        """Summarize findings about controversies.
+
+        Args:
+            entity: The entity being analyzed.
+            sources: A dictionary containing categorized sources.
+
+        Returns:
+            A dictionary containing the summary of findings.
+        """
         try:
             total_sources = sum(len(items) for items in sources.values())
-            summary = {
+            summary: dict[str, Any] = {
                 "entity": entity,
                 "analysis_date": datetime.now().isoformat(),
                 "total_sources": total_sources,
@@ -150,19 +182,19 @@ class ControversyAnalyzer(BaseScript):
             }
 
     @flow(name="controversy-analysis")
-    async def analyze_entity_controversies(self, entity: str, lookback_days: int = 365) -> dict:
+    async def analyze_entity_controversies(self, entity: str, lookback_days: int = 365) -> dict[str, Any]:
         """Analyze controversies for a given entity.
 
         Args:
-            entity: Name of the entity to analyze
-            lookback_days: Number of days to look back for controversies
+            entity: Name of the entity to analyze.
+            lookback_days: Number of days to look back for controversies.
 
         Returns:
-            Dictionary containing analysis results
+            Dictionary containing analysis results.
         """
         try:
             self.logger.info(f"Starting controversy analysis for {entity}")
-            
+
             # Search for controversies
             results = await self.search_controversies(entity)
             self.logger.info(f"Found {len(results)} potential controversy sources")
@@ -184,27 +216,32 @@ class ControversyAnalyzer(BaseScript):
                 "analysis_date": datetime.now().isoformat(),
             }
 
-    def run(self, args):
-        """Main execution method."""
-        import asyncio
-        
+    def run(self, args: argparse.Namespace) -> dict[str, Any]:
+        """Main execution method.
+
+        Args:
+            args: Parsed command-line arguments.
+
+        Returns:
+            A dictionary containing the analysis results.
+        """
         entity = args.entity
         lookback_days = args.lookback_days or 365
-        
+
         self.logger.info(f"Running controversy analysis for {entity}")
         result = asyncio.run(self.analyze_entity_controversies(entity, lookback_days))
         self.logger.info(f"Analysis complete: found {len(result.get('recent_controversies', []))} recent controversies")
         return result
 
 
-def main():
+def main() -> None:
     """Main entry point."""
     import argparse
-    
+
     parser = argparse.ArgumentParser(description="Analyze controversies for an entity")
     parser.add_argument("entity", help="Name of the entity to analyze")
     parser.add_argument("--lookback-days", type=int, help="Number of days to look back")
-    
+
     args = parser.parse_args()
     analyzer = ControversyAnalyzer()
     analyzer.run(args)
