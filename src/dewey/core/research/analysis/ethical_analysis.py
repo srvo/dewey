@@ -8,12 +8,13 @@ Each workflow is designed to handle specific types of ethical analysis tasks.
 """
 
 from typing import List, Dict, Any, Optional
+
+from dewey.core.base_script import BaseScript
 from dewey.core.engines.deepseek import (
     DeepSeekEngine,
-    SearchResult,
     ResearchResult,
+    SearchResult,
 )
-from dewey.core.base_script import BaseScript
 
 
 class EthicalAnalysisWorkflow(BaseScript):
@@ -23,15 +24,16 @@ class EthicalAnalysisWorkflow(BaseScript):
     processes for different types of ethical evaluations.
     """
 
-    def __init__(self, engine: DeepSeekEngine, **kwargs: Any) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         """Initialize the workflow manager.
 
         Args:
-            engine: Configured DeepSeek engine instance.
             **kwargs: Keyword arguments passed to BaseScript.
         """
-        super().__init__(**kwargs)
-        self.engine = engine
+        super().__init__(config_section="ethical_analysis", **kwargs)
+        self.engine = DeepSeekEngine(
+            config=self.config.get("engine", {}), logger=self.logger
+        )  # Initialize engine with config and logger
         self._init_templates()
 
     def _init_templates(self) -> None:
@@ -144,7 +146,7 @@ class EthicalAnalysisWorkflow(BaseScript):
         self.logger.info("Completed deep research.")
         return research_results
 
-    def run(self, *args: Any, **kwargs: Any) -> None:
+    def run(self) -> None:
         """Executes the main workflow of the ethical analysis."""
         self.logger.info("Running ethical analysis workflow.")
         # Example usage (replace with actual implementation):
