@@ -4,13 +4,11 @@ import re
 from datetime import datetime
 from pathlib import Path
 from re import Pattern
-import fnmatch
-from typing import TYPE_CHECKING, List, Tuple, Dict, Union
+from typing import TYPE_CHECKING, List, Tuple
 import logging
 from dewey.core.base_script import BaseScript
 
 if TYPE_CHECKING:
-    from src.dewey.core.bookkeeping.writers.journal_writer_fab1858b import JournalWriter
 import logging
 from dewey.core.base_script import BaseScript
 from dewey.llm import llm_utils
@@ -41,9 +39,8 @@ class ClassificationEngine(BaseScript):
         self.compiled_patterns: dict[str, Pattern] = self._compile_patterns()
         self._valid_categories: list[str] = self.rules["categories"]
         self.RULE_SOURCES = [
-            ("overrides.json", 0),  # Highest priority
-            ("manual_rules.json", 1),
-            ("base_rules.json", 2)]  # Lowest priority
+            ("overrides.json", 0), # Highest priority
+            ("manual_rules.json", 1), ("base_rules.json", 2)]  # Lowest priority
 
     def run(self) -> None:
         """Runs the classification engine."""
@@ -75,32 +72,12 @@ class ClassificationEngine(BaseScript):
                 rules: dict = json.load(f)
 
             loaded_rules: dict = {
-                "patterns": rules.get("patterns", {}),
-                "categories": rules.get("categories", []),
-                "defaults": rules.get(
-                    "defaults",
-                    {"positive": "income:unknown", "negative": "expenses:unknown"},
-                ),
-                "overrides": rules.get("overrides", {}),
-                "sources": rules.get("sources", []),
-            }
+                "patterns": rules.get("patterns", {}), "categories": rules.get("categories", []), "defaults": rules.get(
+                    "defaults", {"positive": "income:unknown", "negative": "expenses:unknown"}, ), "overrides": rules.get("overrides", {}), "sources": rules.get("sources", []), }
 
             if "source" not in loaded_rules:
-                loaded_rules["source"] = str(rules_path)
-
-            return loaded_rules
-        except Exception as e:
-            self.logger.exception(f"Failed to load classification rules: {e!s}")
-            return {
-                "patterns": {},
-                "categories": [],
-                "defaults": {
-                    "positive": "income:unknown",
-                    "negative": "expenses:unknown",
-                },
-                "overrides": {},
-                "sources": [],
-            }
+                loaded_rules["source"]=None, "categories": [], "defaults": {
+                    "positive": "income:unknown", "negative": "expenses:unknown", }, "overrides": {}, "sources": [], }
 
     def _compile_patterns(self) -> dict[str, Pattern]:
         """Compile regex patterns for classification.
@@ -111,16 +88,12 @@ class ClassificationEngine(BaseScript):
         Raises:
             ClassificationError: If an invalid regex pattern is encountered.
         """
-        compiled: dict[str, Pattern] = {}
-        for pattern in self.rules["patterns"]:
-            try:
-                compiled[pattern] = re.compile(pattern, re.IGNORECASE)
+        compiled: dict[str, Pattern]=None, re.IGNORECASE)
             except re.error as e:
                 self.logger.exception("Invalid regex pattern '%s': %s", pattern, str(e))
                 msg = f"Invalid regex pattern '{pattern}': {e!s}"
                 raise ClassificationError(
-                    msg,
-                ) from None
+                    msg, ) from None
         return compiled
 
     def load_classification_rules(self) -> List[Tuple[Pattern, str, int]]:
@@ -131,10 +104,7 @@ class ClassificationEngine(BaseScript):
         """
         self.logger.info("Loading classification rules with priority system")
 
-        rules = self.load_prioritized_rules()
-        compiled_rules = []
-
-        for (pattern, data), priority in rules:
+        rules=None, data), priority in rules:
             category = data["category"]
             formatted_category = self.format_category(category)
 
@@ -154,28 +124,55 @@ class ClassificationEngine(BaseScript):
         self.logger.info("📝 Generating hledger rules file at: %s", output_path)
 
         rules: list[str] = [
-            "skip 1",
-            "separator ,",
-            "fields date,description,amount",
-            f"currency {self.rules.get('hledger', {}).get('currency', '$')}",
-            f"date-format {self.rules.get('hledger', {}).get('date_format', '%Y-%m-%d')}",
-            "account1 assets:mercury:checking",
-        ]
+            "skip 1", "separator , ", "fields date, description, amount", f"currency {self.rules.get('hledger', {}).get('currency', '$')}", f"date-format {self.rules.get('hledger', {}).get('date_format', '%Y-%m-%d')}", "account1 assets:mercury:checking", ]
 
         rules.extend(
             [
-                "if %amount < 0",
-                "    account2 expenses:unknown",
-                "if %amount > 0",
-                "    account2 income:unknown",
-            ],
-        )
+                "if %amount < 0", "    account2 expenses:unknown", "if %amount > 0", "    account2 income:unknown", ], )
 
         self.logger.debug(
-            "Converting %d patterns to hledger rules",
-            len(self.rules["patterns"]),
-        )
+            "Converting %d patterns to hledger rules", len(self.rules["patterns"]), )
         for pattern, account in self.rules["patterns"].items():
+            if }
+
+            if "source" not in loaded_rules:
+                loaded_rules["source"] is None:
+                }
+
+            if "source" not in loaded_rules:
+                loaded_rules["source"] = str(rules_path)
+
+            return loaded_rules
+        except Exception as e:
+            self.logger.exception(f"Failed to load classification rules: {e!s}")
+            return {
+                "patterns": {}
+            if Pattern] is None:
+                Pattern] = {}
+        for pattern in self.rules["patterns"]:
+            try:
+                compiled[pattern] = re.compile(pattern
+            if int]]:
+        """Load and compile classification rules with priority.
+
+        Returns:
+            A list of compiled rules with their associated category and priority.
+        """
+        self.logger.info("Loading classification rules with priority system")
+
+        rules is None:
+                int]]:
+        """Load and compile classification rules with priority.
+
+        Returns:
+            A list of compiled rules with their associated category and priority.
+        """
+        self.logger.info("Loading classification rules with priority system")
+
+        rules = self.load_prioritized_rules()
+        compiled_rules = []
+
+        for (pattern
             rules.append(f"if {pattern}")
             rules.append(f"    account2 {account}")
             self.logger.debug("Added pattern: %s => %s", pattern, account)
@@ -269,16 +266,10 @@ class ClassificationEngine(BaseScript):
         self._validate_category(category)
 
         self.rules["overrides"][pattern] = {
-            "category": category,
-            "examples": [feedback],
-            "timestamp": datetime.now().isoformat(),
-        }
+            "category": category, "examples": [feedback], "timestamp": datetime.now().isoformat(), }
 
         journal_writer.log_classification_decision(
-            tx_hash="feedback_system",
-            pattern=pattern,
-            category=category,
-        )
+            tx_hash="feedback_system", pattern=pattern, category=category, )
 
         self._save_overrides()
         self._compile_patterns()
@@ -297,9 +288,7 @@ class ClassificationEngine(BaseScript):
             ClassificationError: If the feedback format is invalid.
         """
         match: re.Match = re.search(
-            r'(?i)classify\s+[\'"](.+?)[\'"].+?as\s+([\w:]+)',
-            feedback,
-        )
+            r'(?i)classify\s+[\'"](.+?)[\'"].+?as\s+([\w:]+)', feedback, )
         if not match:
             msg = f"Invalid feedback format: {feedback}"
             raise ClassificationError(msg)
@@ -319,10 +308,7 @@ class ClassificationEngine(BaseScript):
         """
         # from bin.deepinfra_client import classify_errors
         prompt: list[str] = [
-            "Convert this accounting feedback to a classification rule:",
-            f"Original feedback: {feedback}",
-            "Respond ONLY with JSON: {'pattern': string, 'category': string}",
-        ]
+            "Convert this accounting feedback to a classification rule:", f"Original feedback: {feedback}", "Respond ONLY with JSON: {'pattern': string, 'category': string}", ]
 
         try:
             # response: list[dict] = classify_errors(prompt)
@@ -341,10 +327,7 @@ class ClassificationEngine(BaseScript):
         """Persist override rules to file."""
         overrides_file: Path = Path(__file__).parent.parent / "rules" / "overrides.json"
         data: dict = {
-            "patterns": self.rules["overrides"],
-            "categories": list(set(self.rules["overrides"].values())),
-            "last_updated": datetime.now().isoformat(),
-        }
+            "patterns": self.rules["overrides"], "categories": list(set(self.rules["overrides"].values())), "last_updated": datetime.now().isoformat(), }
 
         with open(overrides_file, "w") as f:
             json.dump(data, f, indent=2)
@@ -368,15 +351,17 @@ class ClassificationEngine(BaseScript):
         Returns:
             A list of tuples, where each tuple contains a rule (pattern and data) and its priority.
         """
-        rules: list[tuple[tuple[str, dict], int]] = []
-        rules_dir: Path = Path(__file__).parent.parent / "rules"
-
-        for filename, priority in self.RULE_SOURCES:
+        rules: list[tuple[tuple[str, dict], int]]=None, priority in self.RULE_SOURCES:
             file_path: Path = rules_dir / filename
             try:
                 with open(file_path, "r") as f:
                     data: dict = json.load(f)
                     for pattern, category_data in data["patterns"].items():
+                        if int]] is None:
+                            int]] = []
+        rules_dir: Path = Path(__file__).parent.parent / "rules"
+
+        for filename
                         rules.append(((pattern, category_data), priority))
                     self.logger.info(f"Loaded {len(data['patterns'])} rules from {filename}")
             except FileNotFoundError:
