@@ -5,13 +5,12 @@ import base64
 from typing import Tuple, Any
 
 from dewey.core.base_script import BaseScript
-import structlog
+from dewey.core.db.connection import get_connection
+from dewey.llm import llm_utils
 from database.models import AutomatedOperation, Email, EventLog
 from django.db import transaction
 from django.utils import timezone
-
-from .gmail_history_sync import get_gmail_service
-from .prioritization import EmailPrioritizer
+import structlog
 
 
 class EmailEnrichmentService(BaseScript):
@@ -27,9 +26,32 @@ class EmailEnrichmentService(BaseScript):
         Args:
             config_section: The configuration section to use. Defaults to 'crm'.
         """
-        super().__init__(config_section=config_section)
-        self.service = get_gmail_service()
-        self.prioritizer = EmailPrioritizer()
+        super().__init__(config_section=config_section, requires_db=True)
+        self.service = self.get_gmail_service()
+        self.prioritizer = llm_utils.EmailPrioritizer()
+
+    def get_gmail_service(self):
+        """Get the Gmail service object.
+
+        Returns:
+            The Gmail service object.
+        """
+        try:
+            from googleapiclient.discovery import build
+            from google.oauth2.credentials import Credentials
+
+            # Load credentials from config
+            credentials_config = self.get_config_value('gmail_credentials')
+            if not credentials_config:
+                raise ValueError(
+                    "Gmail credentials not found in configuration."
+                )
+
+            credentials = Credentials(**credentials_config)
+            return build('gmail', 'v1', credentials=credentials)
+        except Exception as e:
+            self.logger.error(f"Error getting Gmail service: {e}")
+            raise
 
     def run(self) -> None:
         """Placeholder for a run method.
@@ -178,3 +200,65 @@ class EmailEnrichmentService(BaseScript):
             if "enrichment_task" in locals():
                 self.fail_task(enrichment_task, str(e))
             return False
+
+    def create_enrichment_task(self, email_id: int) -> AutomatedOperation:
+        """Create an automated operation task for email enrichment.
+
+        Args:
+            email_id: The ID of the email to enrich.
+
+        Returns:
+            The created AutomatedOperation object.
+        """
+        try:
+            task = AutomatedOperation.objects.create(
+                operation_type="email_enrichment",
+                target_id=email_id,
+                status="pending",
+                start_time=timezone.now(),
+            )
+            self.logger.info(f"Created enrichment task {task.id} for email {email_id}")
+            return task
+        except Exception as e:
+            self.logger.error(
+                f"Failed to create enrichment task for email {email_id}: {e}"
+            )
+            raise
+
+    def complete_task(
+        self, task: AutomatedOperation, result: dict[str, Any]
+    ) -> None:
+        """Mark an automated operation task as completed.
+
+        Args:
+            task: The AutomatedOperation object to complete.
+            result: A dictionary containing the results of the operation.
+        """
+        try:
+            task.status = "completed"
+            task.end_time = timezone.now()
+            task.result = result
+            task.save()
+            self.logger.info(f"Completed enrichment task {task.id} with result: {result}")
+        except Exception as e:
+            self.logger.error(f"Failed to complete enrichment task {task.id}: {e}")
+            raise
+
+    def fail_task(self, task: AutomatedOperation, error_message: str) -> None:
+        """Mark an automated operation task as failed.
+
+        Args:
+            task: The AutomatedOperation object to fail.
+            error_message: The error message associated with the failure.
+        """
+        try:
+            task.status = "failed"
+            task.end_time = timezone.now()
+            task.error_message = error_message
+            task.save()
+            self.logger.error(
+                f"Enrichment task {task.id} failed with error: {error_message}"
+            )
+        except Exception as e:
+            self.logger.error(f"Failed to fail enrichment task {task.id}: {e}")
+            raise
