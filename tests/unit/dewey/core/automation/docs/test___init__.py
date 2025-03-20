@@ -13,9 +13,7 @@ from dewey.core.script import BaseScript
 class TestDocsModule:
     """Tests for the DocsModule class."""
 
-    def test_docs_module_initialization_without_config(
-        self, mock_base_script: Any
-    ) -> None:
+    def test_docs_module_initialization_without_config(self) -> None:
         """Tests DocsModule initialization without a config."""
         with patch("dewey.core.automation.docs.BaseScript.__init__") as mock_init:
             docs_module = DocsModule()
@@ -23,7 +21,7 @@ class TestDocsModule:
             mock_init.assert_called_once_with(None)
 
     def test_docs_module_initialization_with_config(
-        self, mock_base_script: Any, mock_config: Dict[str, Any]
+        self, mock_config: Dict[str, Any]
     ) -> None:
         """Tests DocsModule initialization with a config."""
         with patch("dewey.core.automation.docs.BaseScript.__init__") as mock_init:
@@ -32,29 +30,29 @@ class TestDocsModule:
             mock_init.assert_called_once_with(mock_config)
 
     def test_run_method_logs_info_message(
-        self, docs_module: DocsModule, caplog: pytest.LogCaptureFixture
+        self, docs_module: DocsModule, mock_logger: Any
     ) -> None:
         """Tests that the run method logs an info message."""
-        caplog.set_level(logging.INFO)
         docs_module.run()
-        assert "Running the Docs module..." in caplog.text
+        mock_logger.info.assert_called_once_with("Running the Docs module...")
 
-    def test_get_config_value_returns_value_if_key_exists(
-        self, docs_module: DocsModule, mock_config: Dict[str, Any]
+    @pytest.mark.parametrize(
+        "key, expected_value",
+        [
+            ("key", "value"),
+            ("nonexistent_key", "default"),
+        ],
+    )
+    def test_get_config_value(
+        self, docs_module: DocsModule, mock_config: Dict[str, Any], key: str, expected_value: str
     ) -> None:
-        """Tests that get_config_value returns the correct value when the key exists."""
+        """Tests that get_config_value returns the correct value."""
         docs_module.config = mock_config
-        value = docs_module.get_config_value("key")
-        assert value == "value"
-
-    def test_get_config_value_returns_default_if_key_does_not_exist(
-        self, docs_module: DocsModule
-    ) -> None:
-        """Tests that get_config_value returns the default value when the key does not exist."""
-        docs_module.config = {}
-        default_value = "default"
-        value = docs_module.get_config_value("nonexistent_key", default_value)
-        assert value == default_value
+        if key == "nonexistent_key":
+            value = docs_module.get_config_value(key, "default")
+        else:
+            value = docs_module.get_config_value(key)
+        assert value == expected_value
 
     def test_get_config_value_inherits_from_base_script(
         self, docs_module: DocsModule
@@ -68,7 +66,7 @@ class TestDocsModule:
             mock_get_config_value.assert_called_once_with("key", "default")
 
     def test_run_method_can_be_overridden(
-        self, docs_module: DocsModule, caplog: pytest.LogCaptureFixture
+        self, mock_logger: Any
     ) -> None:
         """Tests that the run method can be overridden in subclasses."""
 
@@ -79,24 +77,18 @@ class TestDocsModule:
                 """Overrides the run method to log a custom message."""
                 self.logger.info("Custom run method")
 
-        caplog.set_level(logging.INFO)
-        custom_module = CustomDocsModule()
+        custom_module = CustomDocsModule(logger=mock_logger)
         custom_module.run()
-        assert "Custom run method" in caplog.text
-        assert "Running the Docs module..." not in caplog.text
+        mock_logger.info.assert_called_once_with("Custom run method")
 
-    def test_docs_module_with_empty_config(
-        self, mock_base_script: Any
-    ) -> None:
+    def test_docs_module_with_empty_config(self) -> None:
         """Tests DocsModule initialization with an empty config."""
         with patch("dewey.core.automation.docs.BaseScript.__init__") as mock_init:
             docs_module = DocsModule(config={})
             assert docs_module.config == {}
             mock_init.assert_called_once_with({})
 
-    def test_docs_module_with_none_config(
-        self, mock_base_script: Any
-    ) -> None:
+    def test_docs_module_with_none_config(self) -> None:
         """Tests DocsModule initialization with a None config."""
         with patch("dewey.core.automation.docs.BaseScript.__init__") as mock_init:
             docs_module = DocsModule(config=None)
