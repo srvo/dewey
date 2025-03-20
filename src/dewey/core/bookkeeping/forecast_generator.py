@@ -28,15 +28,13 @@ class JournalEntryGenerator(BaseScript):
     def __init__(self) -> None:
         """Initializes the JournalEntryGenerator with bookkeeping configurations."""
         super().__init__(config_section="bookkeeping")
-        self.complete_ledger_file: str = self.get_config_value(
-            "complete_ledger_file", ""
-        )
-        self.forecast_ledger_file: str = self.get_config_value(
-            "forecast_ledger_file", ""
-        )
 
     def validate_assumptions(self) -> None:
-        """Validates key assumptions with user input."""
+        """Validates key assumptions with user input.
+
+        Raises:
+            SystemExit: If the user does not confirm an assumption.
+        """
         try:
             for i, assumption in enumerate(self.ASSUMPTIONS, 1):
                 while True:
@@ -241,10 +239,17 @@ account Expenses:Hosting:Mormair_E650
 
     def run(self) -> None:
         """Runs the journal entry generation process."""
+        complete_ledger_file = self.get_config_value(
+            "bookkeeping.complete_ledger_file", ""
+        )
+        forecast_ledger_file = self.get_config_value(
+            "bookkeeping.forecast_ledger_file", ""
+        )
+
         self.validate_assumptions()
         self.generate_journal_entries(
-            self.complete_ledger_file,
-            self.forecast_ledger_file,
+            complete_ledger_file,
+            forecast_ledger_file,
         )
 
 
@@ -259,7 +264,7 @@ if __name__ == "__main__":
     parser.add_argument("forecast_ledger_file", help="Path to the forecast.ledger file")
     args = parser.parse_args()
 
-    generator.complete_ledger_file = args.complete_ledger_file
-    generator.forecast_ledger_file = args.forecast_ledger_file
+    # generator.complete_ledger_file = args.complete_ledger_file
+    # generator.forecast_ledger_file = args.forecast_ledger_file
 
     generator.execute()
