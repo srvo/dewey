@@ -3,8 +3,7 @@
 Simple Gmail Email Import Script
 ===============================
 
-This script imports emails from Gmail using gcloud CLI authentication,
-without depending on the email_classifier module.
+This script imports emails from Gmail using gcloud CLI authentication.
 """
 
 import argparse
@@ -17,6 +16,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+import duckdb
 import google.auth
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -24,11 +24,12 @@ from google.oauth2 import service_account
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.discovery_cache.base import Cache
-import duckdb
 from dateutil import parser as date_parser
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.config import get_db_config, validate_config
+from dewey.core.db.connection import get_connection
+# from dewey.core.db.utils import create_table_if_not_exists # Removed direct schema operations
+# from dewey.llm.llm_utils import call_llm # Removed direct LLM calls
 
 # Disable file cache warning
 class MemoryCache(Cache):
@@ -40,132 +41,84 @@ class MemoryCache(Cache):
     def set(self, url, content):
         MemoryCache._CACHE[url] = content
 
+
 class GmailImporter(BaseScript):
     """Gmail email importer script."""
 
-    def __init__(self):
-        super().__init__()
-        self.logger = self.get_logger()
-        self.config = self.get_config()
-        self.log_dir = Path(self.config.paths.log_dir)
-        self.db_path = Path(self.config.paths.db_path)
-        self.credentials_dir = Path(self.config.paths.credentials_dir)
-        self.credentials_path = self.credentials_dir / self.config.settings.gmail_credentials_file
-        self.token_path = self.credentials_dir / self.config.settings.gmail_token_file
-        self.scopes = self.config.settings.gmail_scopes or [
+    def __init__(self) -> None:
+        """Initialize GmailImporter with configurations."""
+        super().__init__(
+            name="GmailImporter",
+            description="Imports emails from Gmail into a database.",
+            config_section="gmail_importer",
+            requires_db=True,
+        )
+        self.credentials_dir = Path(self.get_config_value("paths.credentials_dir"))
+        self.credentials_path = self.credentials_dir / self.get_config_value("settings.gmail_credentials_file")
+        self.token_path = self.credentials_dir / self.get_config_value("settings.gmail_token_file")
+        self.scopes = self.get_config_value("settings.gmail_scopes") or [
             'https://www.googleapis.com/auth/gmail.readonly',
             'https://www.googleapis.com/auth/gmail.modify'
         ]
-        self.oauth_token_uri = self.config.settings.oauth_token_uri or 'https://oauth2.googleapis.com/token'
+        self.oauth_token_uri = self.get_config_value("settings.oauth_token_uri") or 'https://oauth2.googleapis.com/token'
 
-    def get_db_connection(self, max_retries: int = 3, retry_delay: int = 5) -> duckdb.DuckDBPyConnection:
-        """Get a DuckDB/MotherDuck connection with retry logic.
-        
+    def _create_emails_table(self, conn: duckdb.DuckDBPyConnection) -> None:
+        """Creates the emails table in the database if it doesn't exist.
+
         Args:
-            max_retries: Maximum number of connection attempts
-            retry_delay: Delay in seconds between retries
-            
-        Returns:
-            A DuckDB connection
-            
-        Raises:
-            ValueError: If MOTHERDUCK_TOKEN is not set when using MotherDuck
-            Exception: If connection fails after max retries
+            conn: DuckDB connection object.
         """
-        for attempt in range(max_retries):
-            try:
-                # Check if using MotherDuck
-                if self.db_path.startswith('md:'):
-                    self.logger.info(f"Connecting to MotherDuck database: {self.db_path}")
-                    # Get token from environment variable
-                    token = os.getenv('MOTHERDUCK_TOKEN')
-                    if not token:
-                        raise ValueError(
-                            "MOTHERDUCK_TOKEN environment variable not set. "
-                            "Please set it using: export MOTHERDUCK_TOKEN='your_token'"
-                        )
-                    
-                    if token.strip() == '':
-                        raise ValueError("MOTHERDUCK_TOKEN environment variable is empty")
-                        
-                    # Set up MotherDuck connection with token validation
-                    try:
-                        conn = duckdb.connect(self.db_path, config={'motherduck_token': token})
-                        # Test the connection
-                        conn.execute("SELECT 1")
-                        self.logger.info("Successfully connected to MotherDuck")
-                    except Exception as e:
-                        if "token" in str(e).lower():
-                            raise ValueError(
-                                f"Invalid MotherDuck token. Please check your token is correct. Error: {e}"
-                            )
-                        raise
-                else:
-                    # Local DuckDB connection
-                    self.logger.info(f"Connecting to local database: {self.db_path}")
-                    os.makedirs(os.path.dirname(os.path.abspath(self.db_path)), exist_ok=True)
-                    conn = duckdb.connect(self.db_path)
-                
-                # Create emails table if it doesn't exist
-                conn.execute("""
-                CREATE TABLE IF NOT EXISTS emails (
-                    msg_id VARCHAR PRIMARY KEY,
-                    thread_id VARCHAR,
-                    subject VARCHAR,
-                    from_address VARCHAR,
-                    analysis_date TIMESTAMP,
-                    raw_analysis JSON,
-                    automation_score FLOAT,
-                    content_value FLOAT,
-                    human_interaction FLOAT,
-                    time_value FLOAT,
-                    business_impact FLOAT,
-                    uncertainty_score FLOAT,
-                    metadata JSON,
-                    priority INTEGER,
-                    label_ids JSON,
-                    snippet TEXT,
-                    internal_date BIGINT,
-                    size_estimate INTEGER,
-                    message_parts JSON,
-                    draft_id VARCHAR,
-                    draft_message JSON,
-                    attachments JSON,
-                    status VARCHAR DEFAULT 'new',
-                    error_message VARCHAR,
-                    batch_id VARCHAR,
-                    import_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-                """)
-                self.logger.info("Verified emails table exists with correct schema")
-                
-                # Create indexes if they don't exist
-                for idx in [
-                    "CREATE INDEX IF NOT EXISTS idx_emails_thread_id ON emails(thread_id)",
-                    "CREATE INDEX IF NOT EXISTS idx_emails_from_address ON emails(from_address)",
-                    "CREATE INDEX IF NOT EXISTS idx_emails_internal_date ON emails(internal_date)",
-                    "CREATE INDEX IF NOT EXISTS idx_emails_status ON emails(status)",
-                    "CREATE INDEX IF NOT EXISTS idx_emails_batch_id ON emails(batch_id)",
-                    "CREATE INDEX IF NOT EXISTS idx_emails_import_timestamp ON emails(import_timestamp)"
-                ]:
-                    try:
-                        conn.execute(idx)
-                    except Exception as e:
-                        self.logger.warning(f"Failed to create index: {e}")
-                
-                return conn
-                
-            except Exception as e:
-                if "Conflicting lock" in str(e):
-                    if attempt < max_retries - 1:
-                        self.logger.warning(f"Database lock conflict, retrying in {retry_delay} seconds...")
-                        time.sleep(retry_delay)
-                        continue
-                raise
-                
-        raise Exception(f"Failed to connect to database after {max_retries} attempts")
+        try:
+            conn.execute("""
+            CREATE TABLE IF NOT EXISTS emails (
+                msg_id VARCHAR PRIMARY KEY,
+                thread_id VARCHAR,
+                subject VARCHAR,
+                from_address VARCHAR,
+                analysis_date TIMESTAMP,
+                raw_analysis JSON,
+                automation_score FLOAT,
+                content_value FLOAT,
+                human_interaction FLOAT,
+                time_value FLOAT,
+                business_impact FLOAT,
+                uncertainty_score FLOAT,
+                metadata JSON,
+                priority INTEGER,
+                label_ids JSON,
+                snippet TEXT,
+                internal_date BIGINT,
+                size_estimate INTEGER,
+                message_parts JSON,
+                draft_id VARCHAR,
+                draft_message JSON,
+                attachments JSON,
+                status VARCHAR DEFAULT 'new',
+                error_message VARCHAR,
+                batch_id VARCHAR,
+                import_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """)
+            self.logger.info("Verified emails table exists with correct schema")
+            
+            # Create indexes if they don't exist
+            for idx in [
+                "CREATE INDEX IF NOT EXISTS idx_emails_thread_id ON emails(thread_id)",
+                "CREATE INDEX IF NOT EXISTS idx_emails_from_address ON emails(from_address)",
+                "CREATE INDEX IF NOT EXISTS idx_emails_internal_date ON emails(internal_date)",
+                "CREATE INDEX IF NOT EXISTS idx_emails_status ON emails(status)",
+                "CREATE INDEX IF NOT EXISTS idx_emails_batch_id ON emails(batch_id)",
+                "CREATE INDEX IF NOT EXISTS idx_emails_import_timestamp ON emails(import_timestamp)"
+            ]:
+                try:
+                    conn.execute(idx)
+                except Exception as e:
+                    self.logger.warning(f"Failed to create index: {e}")
+        except Exception as e:
+            self.logger.error(f"Error creating emails table: {e}")
+            raise
 
     def build_gmail_service(self, user_email: Optional[str] = None):
         """Build the Gmail API service.
@@ -766,33 +719,64 @@ class GmailImporter(BaseScript):
         except Exception as e:
             raise ValueError(f"Could not parse date string: {date_str}") from e
 
-    def run(self, args):
+    def run(self) -> None:
         """Main execution method."""
-        conn = self.get_db_connection()
-        service = self.build_gmail_service(args.user_email)
-        
-        self.logger.info(f"Starting email import for the past {args.days_back} days")
-        self.fetch_emails(
-            service,
-            conn,
-            days_back=args.days_back,
-            max_emails=args.max_emails,
-            historical=args.historical,
-            include_sent=args.include_sent
-        )
-        self.logger.info("Email import completed")
+        try:
+            # Access command-line arguments
+            args = self.parse_args()
+
+            # Build Gmail service
+            service = self.build_gmail_service(args.user_email)
+
+            # Get database connection
+            if self.db_conn is None:
+                raise ValueError("Database connection not initialized.")
+            
+            # Create emails table
+            self._create_emails_table(self.db_conn)
+
+            # Fetch emails
+            days_back = args.days_back
+            max_emails = args.max_emails
+            historical = args.historical
+            include_sent = args.include_sent
+
+            self.logger.info(f"Starting email import for the past {days_back} days")
+            email_ids = self.fetch_emails(
+                service,
+                self.db_conn,
+                days_back=days_back,
+                max_emails=max_emails,
+                user_id="me",
+                historical=historical,
+                include_sent=include_sent
+            )
+
+            # Fetch and store emails
+            batch_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+            email_batch = []
+            for msg_id in email_ids:
+                email = self.fetch_email(service, msg_id)
+                if email:
+                    email_batch.append(email)
+
+            # Store emails in batch
+            if email_batch:
+                success_count, error_count = self.store_emails_batch(self.db_conn, email_batch, batch_id)
+                self.logger.info(f"Successfully stored {success_count} emails, {error_count} errors.")
+            else:
+                self.logger.info("No new emails to store.")
+
+            self.logger.info("Email import completed")
+
+        except Exception as e:
+            self.logger.error(f"Error in run method: {e}")
+            raise
 
 def main():
-    parser = argparse.ArgumentParser(description="Import emails from Gmail")
-    parser.add_argument("--days-back", type=int, default=7, help="Number of days to look back")
-    parser.add_argument("--max-emails", type=int, default=100, help="Maximum number of emails to fetch")
-    parser.add_argument("--user-email", type=str, help="Email address to fetch from")
-    parser.add_argument("--historical", action="store_true", help="Fetch historical emails")
-    parser.add_argument("--include-sent", action="store_true", help="Include sent emails")
-    
-    args = parser.parse_args()
+    """Main entry point for the script."""
     importer = GmailImporter()
-    importer.run(args)
+    importer.execute()
 
 if __name__ == "__main__":
-    main() 
+    main()
