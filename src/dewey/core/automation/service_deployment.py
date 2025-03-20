@@ -1,19 +1,19 @@
 # Refactored from: service_deployment
 # Date: 2025-03-16T16:19:08.580204
 # Refactor Version: 1.0
-import os
 import json
+import os
 import shutil
-import tempfile
 import subprocess
+import tempfile
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection
+from dewey.llm.llm_utils import LLMClient
 from .models import Service
-
-
 
 
 class ServiceDeployment(BaseScript):
@@ -30,7 +30,9 @@ class ServiceDeployment(BaseScript):
         super().__init__(
             name="service_deployment",
             description="Service deployment and configuration management",
-            config_section="service_deployment"
+            config_section="service_deployment",
+            requires_db=False,
+            enable_llm=False,
         )
         self.service_manager = None  # Initialize to None, set in run()
         self.workspace_dir = Path(os.getenv("DEWEY_DIR", os.path.expanduser("~/dewey"))) / "workspace"
@@ -38,7 +40,7 @@ class ServiceDeployment(BaseScript):
         self.backups_dir = self.workspace_dir / "backups"
         self.backups_dir.mkdir(parents=True, exist_ok=True)
 
-    def run(self, service_manager) -> None:
+    def run(self, service_manager: Any) -> None:
         """Runs the service deployment process.
 
         Args:
@@ -51,19 +53,22 @@ class ServiceDeployment(BaseScript):
 
         Args:
             service: Service to create directories for.
+
+        Raises:
+            RuntimeError: If directories cannot be created.
         """
         try:
             # Create parent directories first
             service.path.parent.mkdir(parents=True, exist_ok=True)
             service.config_path.parent.mkdir(parents=True, exist_ok=True)
-            
+
             # Then create the actual service directories
             service.path.mkdir(exist_ok=True)
             service.config_path.mkdir(exist_ok=True)
         except OSError as e:
             raise RuntimeError(f"Failed to create service directories: {e}")
 
-    def deploy_service(self, service: Service, config: dict[str, Any]) -> None:
+    def deploy_service(self, service: Service, config: Dict[str, Any]) -> None:
         """Deploy or update a service.
 
         Args:
@@ -82,7 +87,7 @@ class ServiceDeployment(BaseScript):
             self.logger.exception("Deployment failed")
             raise RuntimeError(f"Deployment failed: {str(e)}") from e
 
-    def _generate_compose_config(self, config: dict[str, Any]) -> dict[str, Any]:
+    def _generate_compose_config(self, config: Dict[str, Any]) -> Dict[str, Any]:
         """Generate docker-compose configuration.
 
         Args:
@@ -90,13 +95,16 @@ class ServiceDeployment(BaseScript):
 
         Returns:
             Docker Compose configuration dictionary.
+
+        Raises:
+            KeyError: If a service is missing the 'image' field.
         """
         compose_config = {"version": "3", "services": {}}
 
         for name, service_config in config.get("services", {}).items():
             if "image" not in service_config:
                 raise KeyError(f"Missing required 'image' field for service {name}")
-                
+
             compose_config["services"][name] = {
                 "image": service_config["image"],
                 "container_name": service_config.get("container_name", name),
@@ -118,7 +126,7 @@ class ServiceDeployment(BaseScript):
 
         return compose_config
 
-    def _write_compose_config(self, service: Service, config: dict[str, Any]) -> None:
+    def _write_compose_config(self, service: Service, config: Dict[str, Any]) -> None:
         """Write docker-compose configuration to file.
 
         Args:
@@ -144,19 +152,19 @@ class ServiceDeployment(BaseScript):
         try:
             # Ensure backups directory exists
             self.backups_dir.mkdir(parents=True, exist_ok=True)
-            
+
             # Generate archive name with timestamp
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             archive_name = f"{service.name}_backup_{timestamp}.tar.gz"
             archive_path = self.backups_dir / archive_name
-            
+
             # Create archive
             shutil.make_archive(
                 str(archive_path.with_suffix("")),
                 "gztar",
                 str(backup_dir),
             )
-            
+
             return archive_path
         except Exception as e:
             raise RuntimeError(f"Failed to create archive: {str(e)}") from e
@@ -201,7 +209,7 @@ class ServiceDeployment(BaseScript):
             with tempfile.TemporaryDirectory() as temp_dir:
                 backup_dir = Path(temp_dir)
                 self._ensure_service_dirs(service)
-                
+
                 # Stop service and restore from backup
                 self._stop_service(service)
                 shutil.unpack_archive(str(backup_path), str(backup_dir))
@@ -217,7 +225,6 @@ class ServiceDeployment(BaseScript):
 
         Args:
             service: The service to start.
-
         """
         self.service_manager.run_command(f"cd {service.path} && docker-compose up -d")
 
@@ -226,7 +233,6 @@ class ServiceDeployment(BaseScript):
 
         Args:
             service: The service to stop.
-
         """
         self.service_manager.run_command(f"cd {service.path} && docker-compose down")
 
@@ -244,7 +250,7 @@ class ServiceDeployment(BaseScript):
             # Create config backup directory
             config_backup = backup_dir / "config"
             config_backup.mkdir(parents=True, exist_ok=True)
-            
+
             # Copy config if it exists
             if service.config_path.exists():
                 shutil.copytree(service.config_path, config_backup, dirs_exist_ok=True)
@@ -265,7 +271,7 @@ class ServiceDeployment(BaseScript):
             # Create data backup directory
             data_backup = backup_dir / "data"
             data_backup.mkdir(parents=True, exist_ok=True)
-            
+
             # Backup each container's volumes
             for container in service.containers:
                 # Get container info
@@ -274,21 +280,21 @@ class ServiceDeployment(BaseScript):
                 )
                 if not inspect:
                     continue
-                    
+
                 try:
                     inspect_data = json.loads(inspect)[0]
                 except (json.JSONDecodeError, IndexError):
                     continue
-                    
+
                 # Copy volume data
                 for mount in inspect_data.get("Mounts", []):
                     if mount["Type"] != "volume":
                         continue
-                        
+
                     volume_name = mount["Name"]
                     volume_path = data_backup / volume_name
                     volume_path.mkdir(parents=True, exist_ok=True)
-                    
+
                     # Copy volume contents
                     source_path = mount["Source"]
                     if Path(source_path).exists():
@@ -311,7 +317,7 @@ class ServiceDeployment(BaseScript):
             if config_backup.exists():
                 # Ensure config directory exists
                 service.config_path.mkdir(parents=True, exist_ok=True)
-                
+
                 # Copy config files
                 for item in config_backup.iterdir():
                     if item.is_file():
@@ -335,18 +341,18 @@ class ServiceDeployment(BaseScript):
             data_backup = backup_dir / "data"
             if not data_backup.exists():
                 return
-                
+
             # Restore each volume
             for volume_backup in data_backup.iterdir():
                 if not volume_backup.is_dir():
                     continue
-                    
+
                 volume_name = volume_backup.name
-                
+
                 # Recreate volume
                 self.service_manager.run_command(f"docker volume rm -f {volume_name}")
                 self.service_manager.run_command(f"docker volume create {volume_name}")
-                
+
                 # Get volume mount point
                 inspect = self.service_manager.run_command(
                     f"docker volume inspect {volume_name}",
@@ -355,7 +361,7 @@ class ServiceDeployment(BaseScript):
                     mount_point = json.loads(inspect)[0]["Mountpoint"]
                 except (json.JSONDecodeError, IndexError, KeyError):
                     continue
-                    
+
                 # Copy data to volume
                 mount_path = Path(mount_point)
                 if mount_path.exists():
@@ -367,9 +373,7 @@ class ServiceDeployment(BaseScript):
         """Sync local configuration to remote host.
 
         Args:
-        ----
             service: Service to sync configuration for.
-
         """
         self.service_manager.run_command(f"mkdir -p {service.path}")
 
