@@ -1,15 +1,16 @@
 """DeepSeek engine implementation for research tasks."""
 
 from dataclasses import dataclass
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
 
 from dewey.core.engines.base import BaseEngine
-from dewey.core.base_script import BaseScript
+from dewey.llm.llm_utils import call_llm
 
 
 @dataclass
 class SearchResult:
     """Represents a search result."""
+
     url: str
     content: str
 
@@ -17,6 +18,7 @@ class SearchResult:
 @dataclass
 class ResearchResult:
     """Represents a research result."""
+
     content: str
 
 
@@ -25,7 +27,13 @@ class DeepSeekEngine(BaseEngine):
 
     def __init__(self) -> None:
         """Initialize the DeepSeek engine."""
-        super().__init__()
+        super().__init__(
+            name="DeepSeekEngine",
+            description="Engine implementation using DeepSeek's API.",
+            config_section="deepseek_engine",
+            requires_db=False,
+            enable_llm=True,
+        )
         self.templates: Dict[str, List[Dict[str, str]]] = {}
 
     def add_template(self, name: str, template: List[Dict[str, str]]) -> None:
@@ -51,11 +59,21 @@ class DeepSeekEngine(BaseEngine):
         self.logger.info(f"Analyzing results with template: {template_name}")
         if not results:
             return {}
-        
+
         # TODO: Implement actual DeepSeek API call
-        api_key = self.get_config_value("deepseek_api_key")
+        api_key = self.get_config_value("llm.providers.deepinfra.api_key")
         self.logger.debug(f"DeepSeek API Key: {api_key}")
-        return {"ethical_score": 85}
+
+        # Example LLM call (replace with actual logic):
+        prompt = f"Analyze these search results: {results}"
+        response = await call_llm(
+            prompt=prompt,
+            llm_client=self.llm_client,
+            config=self.config,
+            logger=self.logger,
+        )
+
+        return {"ethical_score": 85, "llm_response": response}
 
     async def conduct_research(
         self,
