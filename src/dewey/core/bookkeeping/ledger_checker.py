@@ -43,6 +43,13 @@ class LedgerFormatChecker(BaseScript):
             self.logger.error(f"Error reading journal file: {e}")
             self.errors.append(f"Error reading journal file: {e}")
             self.journal_content = []
+
+    def check_hledger_basic(self) -> bool:
+        """
+        Runs basic validation using `hledger`.
+
+        Returns:
+            True if `hledger` validation passes
         """
         self.logger.info("Running hledger basic validation")
         try:
@@ -75,30 +82,10 @@ class LedgerFormatChecker(BaseScript):
         for i, line in enumerate(self.journal_content):
             if self.journal_file is None:
                 pass
-        self.journal_file = journal_file
-        self.warnings: List[str] = []
-        self.errors: List[str] = []
-        self.journal_content: List[str] = []
-        self.hledger_path = self.get_config_value("ledger.hledger_path")
             if self.journal_content is None:
                 pass
             if self.journal_content is None:
                 self.journal_content = file.readlines()
-        except FileNotFoundError:
-            self.logger.error(f"Journal file not found: {self.journal_file}")
-            self.errors.append(f"Journal file not found: {self.journal_file}")
-            self.journal_content = []
-        except Exception as e:
-            self.logger.error(f"Error reading journal file: {e}")
-            self.errors.append(f"Error reading journal file: {e}")
-            self.journal_content = []
-
-    def check_hledger_basic(self) -> bool:
-        """
-        Runs basic validation using `hledger`.
-
-        Returns:
-            True if `hledger` validation passes
             if line.strip() and not line.startswith((";", "!")) and not date_pattern.match(
                 line
             ):
