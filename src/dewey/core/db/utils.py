@@ -12,90 +12,11 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db import connection
-from dewey.core.db.connection import (
-    DatabaseConnection,
-)  # noqa: F401 - Import used for type hinting
+from dewey.core.db.connection import DatabaseConnection  # noqa: F401
 from dewey.core.exceptions import DatabaseConnectionError, DatabaseQueryError
 
 from . import connection
 from .models import TABLE_INDEXES, TABLE_SCHEMAS
-
-logger = logging.getLogger(__name__)
-
-
-def create_table(
-    conn: DatabaseConnection, 
-    table_name: str, 
-    if_not_exists: bool = True
-) -> None:
-    """Create a table in the database using schema from TABLE_SCHEMAS.
-    
-    Args:
-        conn: Database connection
-        table_name: Name of the table to create
-        if_not_exists: Whether to add IF NOT EXISTS to the query
-        
-    Raises:
-        DatabaseQueryError: If the table schema is not defined or the query fails
-    """
-    if table_name not in TABLE_SCHEMAS:
-        raise DatabaseQueryError(f"No schema defined for table '{table_name}'")
-        
-    schema = TABLE_SCHEMAS[table_name]
-    
-    # Build column definitions
-    columns = []
-    for column_name, column_type in schema.items():
-        columns.append(f"{column_name} {column_type}")
-    
-    # Construct CREATE TABLE query
-    exists_clause = "IF NOT EXISTS " if if_not_exists else ""
-    create_query = f"CREATE TABLE {exists_clause}{table_name} (\n  "
-    create_query += ",\n  ".join(columns)
-    create_query += "\n)"
-    
-    # Execute query
-    try:
-        conn.execute(create_query)
-        logger.info(f"Created table {table_name}")
-        
-        # Create indexes if defined
-        if table_name in TABLE_INDEXES:
-            for index_query in TABLE_INDEXES[table_name]:
-                conn.execute(index_query)
-            logger.info(f"Created indexes for table {table_name}")
-            
-    except Exception as e:
-        error_msg = f"Failed to create table {table_name}: {str(e)}"
-        logger.error(error_msg)
-        raise DatabaseQueryError(error_msg) from e
-
-
-def execute_query(
-    conn: DatabaseConnection, 
-    query: str, 
-    parameters: Optional[Dict[str, Any]] = None
-) -> Any:
-    """Execute a SQL query with optional parameters.
-    
-    Args:
-        conn: Database connection
-        query: SQL query to execute
-        parameters: Parameters to substitute in the query
-        
-    Returns:
-        Query result
-        
-    Raises:
-        DatabaseQueryError: If the query fails
-    """
-    try:
-        result = conn.execute(query, parameters)
-        return result
-    except Exception as e:
-        error_msg = f"Query execution failed: {str(e)}"
-        logger.error(error_msg)
-        raise DatabaseQueryError(error_msg) from e
 
 
 class DatabaseUtils(BaseScript):
@@ -111,13 +32,17 @@ class DatabaseUtils(BaseScript):
         super().__init__(
             name="DatabaseUtils",
             description="Provides utility functions for database operations.",
-            config_section="core",
+            config_section="database",
             requires_db=True,
             enable_llm=False,
         )
 
     def run(self) -> None:
-        """Runs the database utilities."""
+        """Runs the database utilities.
+
+        This method currently logs a start and completion message.  More
+        complex initialization or setup steps can be added here.
+        """
         self.logger.info("Running database utilities...")
         # Add any initialization or setup steps here if needed
         self.logger.info("Database utilities completed.")
@@ -570,16 +495,16 @@ class DatabaseUtils(BaseScript):
             self.logger.error(error_msg)
             raise DatabaseConnectionError(error_msg)
 
-    def ensure_table_exists(self, conn: Any, table_name: str, schema_sql: str) -> None:
+    def ensure_table_exists(self, conn: Any, table_name: str, schema: Dict[str, str]) -> None:
         """Ensure a table exists with the given schema.
 
         Args:
             conn: Database connection
             table_name: Name of the table
-            schema_sql: SQL schema definition
+            schema: Table schema definition
         """
         try:
-            conn.execute(schema_sql)
+            create_table(conn, table_name, schema)
             self.logger.debug(f"Ensured table {table_name} exists")
         except Exception as e:
             self.logger.error(f"Error creating table {table_name}: {e}")
@@ -610,8 +535,8 @@ class DatabaseUtils(BaseScript):
         # Get a connection to the database
         with connection.db_manager.get_connection(for_write=True) as conn:
             # Create tables if they don't exist
-            for table_name, schema_sql in TABLE_SCHEMAS.items():
-                self.ensure_table_exists(conn, table_name, schema_sql)
+            for table_name, schema in TABLE_SCHEMAS.items():
+                self.ensure_table_exists(conn, table_name, schema)
 
             # Create indexes
             for table_name, indexes in TABLE_INDEXES.items():
@@ -875,6 +800,73 @@ class DatabaseUtils(BaseScript):
         except Exception as e:
             self.logger.error(f"Error syncing tables: {e}")
             raise
+
+
+def create_table(
+    conn: DatabaseConnection, 
+    table_name: str, 
+    schema: Dict[str, str],
+    if_not_exists: bool = True
+) -> None:
+    """Create a table in the database using schema from TABLE_SCHEMAS.
+    
+    Args:
+        conn: Database connection
+        table_name: Name of the table to create
+        schema: Table schema definition
+        if_not_exists: Whether to add IF NOT EXISTS to the query
+        
+    Raises:
+        DatabaseQueryError: If the table schema is not defined or the query fails
+    """
+        
+    # Build column definitions
+    columns = []
+    for column_name, column_type in schema.items():
+        columns.append(f"{column_name} {column_type}")
+    
+    # Construct CREATE TABLE query
+    exists_clause = "IF NOT EXISTS " if if_not_exists else ""
+    create_query = f"CREATE TABLE {exists_clause}{table_name} (\n  "
+    create_query += ",\n  ".join(columns)
+    create_query += "\n)"
+    
+    # Execute query
+    try:
+        conn.execute(create_query)
+        logger.info(f"Created table {table_name}")
+        
+    except Exception as e:
+        error_msg = f"Failed to create table {table_name}: {str(e)}"
+        logger.error(error_msg)
+        raise DatabaseQueryError(error_msg) from e
+
+
+def execute_query(
+    conn: DatabaseConnection, 
+    query: str, 
+    parameters: Optional[Dict[str, Any]] = None
+) -> Any:
+    """Execute a SQL query with optional parameters.
+    
+    Args:
+        conn: Database connection
+        query: SQL query to execute
+        parameters: Parameters to substitute in the query
+        
+    Returns:
+        Query result
+        
+    Raises:
+        DatabaseQueryError: If the query fails
+    """
+    try:
+        result = conn.execute(query, parameters)
+        return result
+    except Exception as e:
+        error_msg = f"Query execution failed: {str(e)}"
+        logger.error(error_msg)
+        raise DatabaseQueryError(error_msg) from e
 
 
 if __name__ == "__main__":
