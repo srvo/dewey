@@ -37,6 +37,23 @@ class TestLogAnalyzer:
         """Test the __init__ method."""
         assert log_analyzer.name == "LogAnalyzer"
         assert log_analyzer.description == "Analyzes log files for specific patterns and insights."
+        assert log_analyzer.file_opener == open
+
+    @pytest.mark.parametrize(
+        "log_content, expected_calls",
+        [
+            ("This is a test log file.\nERROR: An error occurred.\n", 1),
+            ("This is a test log file.\nWARNING: A warning occurred.\n", 0),
+            ("", 0),
+            ("ERROR: An error occurred.\nERROR: Another error occurred.\n", 2),
+        ],
+    )
+    def test_process_log_lines(self, log_content: str, expected_calls: int, log_analyzer: LogAnalyzer) -> None:
+        """Test the _process_log_lines method with different log contents."""
+        mock_log_file = MagicMock()
+        mock_log_file.__iter__.return_value = log_content.splitlines()
+        log_analyzer._process_log_lines(mock_log_file)
+        assert log_analyzer.logger.error.call_count == expected_calls
 
     @patch("builtins.open", new_callable=mock_open, read_data="This is a test log file.\nERROR: An error occurred.\n")
     def test_analyze_logs_success(self, mock_file: MagicMock, log_analyzer: LogAnalyzer) -> None:
