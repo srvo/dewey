@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Tuple
 
 from dewey.config import logging  # Centralized logging
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection
+from dewey.core.db.connection import DatabaseConnection, get_connection
 from dewey.core.db.utils import create_table, upsert_data  # Database utilities
 from dewey.llm.llm_utils import get_llm_client  # LLM utilities
 
