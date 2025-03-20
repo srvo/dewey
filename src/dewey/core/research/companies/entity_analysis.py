@@ -1,6 +1,6 @@
-from dewey.core.base_script import BaseScript
-import logging
 from typing import Any, Dict
+
+from dewey.core.base_script import BaseScript
 
 
 class EntityAnalysis(BaseScript):
@@ -14,6 +14,10 @@ class EntityAnalysis(BaseScript):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Initializes the EntityAnalysis module.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
         """
         super().__init__(*args, **kwargs)
         self.name = "EntityAnalysis"
@@ -22,6 +26,19 @@ class EntityAnalysis(BaseScript):
     def run(self) -> None:
         """
         Executes the entity analysis process.
+
+        This method retrieves the API key from the configuration, logs
+        the start and completion of the analysis, and includes a placeholder
+        for the actual entity analysis logic.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            None
         """
         self.logger.info("Starting entity analysis...")
 
