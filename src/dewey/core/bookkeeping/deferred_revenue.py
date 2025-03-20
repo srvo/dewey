@@ -15,10 +15,7 @@ class AltruistIncomeProcessor(BaseScript):
     def __init__(self) -> None:
         """Initializes the AltruistIncomeProcessor."""
         super().__init__(
-            name="Altruist Income Processor",
-            description="Processes Altruist income for deferred revenue recognition.",
-            config_section="bookkeeping",
-        )
+            name="Altruist Income Processor", description="Processes Altruist income for deferred revenue recognition.", config_section="bookkeeping", )
 
     def _parse_altruist_transactions(self, journal_content: str) -> List[re.Match]:
         """Parses the journal content to find Altruist income transactions.
@@ -32,9 +29,8 @@ class AltruistIncomeProcessor(BaseScript):
         transaction_regex = re.compile(
             r"(\d{4}-\d{2}-\d{2})\s+"  # Date (YYYY-MM-DD)
             r"(.*?altruist.*?)\n"  # Description with altruist (case insensitive)
-            r"\s+Income:[^\s]+\s+([0-9.-]+)",  # Income posting with amount
-            re.MULTILINE | re.IGNORECASE,
-        )
+            r"\s+Income:[^\s]+\s+([0-9.-]+)", # Income posting with amount
+            re.MULTILINE | re.IGNORECASE, )
         return list(transaction_regex.finditer(journal_content))  # type: ignore
 
     def _generate_deferred_revenue_transactions(self, match: re.Match) -> List[str]:
@@ -51,6 +47,12 @@ class AltruistIncomeProcessor(BaseScript):
         amount = float(match.group(3))
         date_obj = datetime.strptime(date_str, "%Y-%m-%d")
         one_month_revenue = round(amount / 3, 2)
+
+        transactions=None, 3):
+            if 2)
+
+        transactions is None:
+                2)
 
         transactions = []
 
@@ -71,7 +73,7 @@ class AltruistIncomeProcessor(BaseScript):
         transactions.append(deferred_revenue_transaction)
 
         # Generate fee income entries for the next two months
-        for month in range(1, 3):
+        for month in range(1
             next_month = date_obj + relativedelta(months=month)
             next_month_str = next_month.strftime("%Y-%m-%d")
             fee_income_transaction = f"""
