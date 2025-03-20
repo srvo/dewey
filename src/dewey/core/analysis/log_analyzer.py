@@ -1,11 +1,33 @@
-from typing import Optional
+from typing import Callable, List, Optional
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection, get_connection
 from dewey.llm.llm_utils import LLMClient
 
 
-class LogAnalyzer(BaseScript):
+class LogAnalyzerInterface:
+    """
+    Interface for analyzing log files.
+    """
+
+    def analyze_logs(self, log_file_path: str) -> None:
+        """
+        Analyzes the log file for specific patterns.
+
+        Args:
+            log_file_path: The path to the log file.
+
+        Returns:
+            None
+
+        Raises:
+            FileNotFoundError: If the log file is not found.
+            Exception: If an error occurs during log analysis.
+        """
+        raise NotImplementedError
+
+
+class LogAnalyzer(BaseScript, LogAnalyzerInterface):
     """
     Analyzes log files for specific patterns and insights.
 
@@ -14,7 +36,7 @@ class LogAnalyzer(BaseScript):
     capabilities.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, file_opener: Optional[Callable[[str, str], object]] = None) -> None:
         """
         Initializes the LogAnalyzer.
 
@@ -28,6 +50,7 @@ class LogAnalyzer(BaseScript):
             enable_llm=False,
             description="Analyzes log files for specific patterns and insights.",
         )
+        self.file_opener = file_opener if file_opener is not None else open
 
     def run(self) -> None:
         """
@@ -73,17 +96,28 @@ class LogAnalyzer(BaseScript):
             Exception: If an error occurs during log analysis.
         """
         try:
-            with open(log_file_path, "r") as log_file:
-                for line in log_file:
-                    # Example: Check for error messages
-                    if "ERROR" in line:
-                        self.logger.error(f"Found error: {line.strip()}")
+            with self.file_opener(log_file_path, "r") as log_file:
+                self._process_log_lines(log_file)
         except FileNotFoundError:
             self.logger.error(f"Log file not found: {log_file_path}")
             raise
         except Exception as e:
             self.logger.exception(f"An error occurred during log analysis: {e}")
             raise
+
+    def _process_log_lines(self, log_file) -> None:
+        """
+        Processes each line of the log file.
+
+        Args:
+            log_file: The opened log file object.
+
+        Returns:
+            None
+        """
+        for line in log_file:
+            if "ERROR" in line:
+                self.logger.error(f"Found error: {line.strip()}")
 
 
 if __name__ == "__main__":
