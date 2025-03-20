@@ -1,3 +1,5 @@
+from abc import abstractmethod
+
 from dewey.core.base_script import BaseScript
 
 
