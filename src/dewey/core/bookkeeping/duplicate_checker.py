@@ -1,17 +1,50 @@
 import fnmatch
 import hashlib
 import os
-from typing import Dict, List
+from typing import Dict, List, Protocol, runtime_checkable
+
+
+@runtime_checkable
+class FileSystemInterface(Protocol):
+    """Interface for file system operations."""
+
+    def walk(self, directory: str) -> object:  # type: ignore
+        """Walks through a directory."""
+        ...
+
+    def open(self, path: str, mode: str = "r") -> object:
+        """Opens a file."""
+        ...
+
+
+class RealFileSystem:
+    """Real file system operations."""
+
+    def walk(self, directory: str) -> object:  # type: ignore
+        """Walks through a directory."""
+        return os.walk(directory)
+
+    def open(self, path: str, mode: str = "r") -> object:
+        """Opens a file."""
+        return open(path, mode)
+
 
 from dewey.core.base_script import BaseScript
+
+
+def calculate_file_hash(file_content: bytes) -> str:
+    """Calculates the SHA256 hash of a file's content."""
+    return hashlib.sha256(file_content).hexdigest()
 
 
 class DuplicateChecker(BaseScript):
     """Checks for duplicate ledger files in a directory."""
 
-    def __init__(self) -> None:
+    def __init__(self, file_system: FileSystemInterface = RealFileSystem(), ledger_dir: str | None = None) -> None:
         """Initializes the DuplicateChecker with the 'bookkeeping' config section."""
         super().__init__(config_section="bookkeeping")
+        self.file_system = file_system
+        self.ledger_dir = ledger_dir if ledger_dir is not None else self.get_config_value("ledger_dir", "data/bookkeeping/ledger")
 
     def find_ledger_files(self) -> Dict[str, List[str]]:
         """Finds all ledger files and calculates their hashes.
@@ -21,13 +54,12 @@ class DuplicateChecker(BaseScript):
             filepaths with that hash.
         """
         hashes: Dict[str, List[str]] = {}
-        ledger_dir = self.get_config_value("ledger_dir", "data/bookkeeping/ledger")
-        for root, _dirnames, filenames in os.walk(ledger_dir):
+        for root, _dirnames, filenames in self.file_system.walk(self.ledger_dir):
             for filename in fnmatch.filter(filenames, "*.journal"):
                 filepath = os.path.join(root, filename)
                 try:
-                    with open(filepath, "rb") as f:
-                        file_hash = hashlib.sha256(f.read()).hexdigest()
+                    with self.file_system.open(filepath, "rb") as f:
+                        file_hash = calculate_file_hash(f.read())
                         if file_hash not in hashes:
                             hashes[file_hash] = []
                         hashes[file_hash].append(filepath)
