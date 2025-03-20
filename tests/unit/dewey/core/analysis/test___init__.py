@@ -8,10 +8,22 @@ import argparse
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 
-from dewey.core.analysis import AnalysisScript
+from dewey.core.analysis import AnalysisScript, LLMClientInterface
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection
+from dewey.core.db.connection import DatabaseConnection, get_connection
 from dewey.llm.llm_utils import generate
+
+
+class MockLLMClient(LLMClientInterface):
+    """
+    A mock LLM client for testing purposes.
+    """
+
+    def generate(self, prompt: str) -> str:
+        """
+        Mock implementation of the generate method.
+        """
+        return f"Mock LLM response for prompt: {prompt}"
 
 
 class TestAnalysisScript:
@@ -35,6 +47,8 @@ class TestAnalysisScript:
             analysis_script.db_conn = None
             analysis_script.llm_client = None
             analysis_script.logger = MagicMock()
+            analysis_script._db_connection_getter = MagicMock()
+            analysis_script._llm_client = MagicMock()
             return analysis_script
 
     def test_analysis_script_initialization(self, analysis_script: AnalysisScript) -> None:
@@ -49,11 +63,16 @@ class TestAnalysisScript:
         assert analysis_script.config == {}
         assert analysis_script.db_conn is None
         assert analysis_script.llm_client is None
+        assert isinstance(analysis_script._db_connection_getter, MagicMock)
+        assert isinstance(analysis_script._llm_client, MagicMock)
 
     def test_analysis_script_initialization_with_params(self) -> None:
         """
         Test that the AnalysisScript is initialized correctly with parameters.
         """
+        mock_db_connection_getter = MagicMock()
+        mock_llm_client = MagicMock()
+
         with patch("dewey.core.analysis.BaseScript.__init__", return_value=None):
             analysis_script = AnalysisScript(
                 name="CustomScript",
@@ -61,6 +80,8 @@ class TestAnalysisScript:
                 config_section="custom_config",
                 requires_db=True,
                 enable_llm=True,
+                db_connection_getter=mock_db_connection_getter,
+                llm_client=mock_llm_client,
             )
             analysis_script.logger = MagicMock()
 
@@ -69,6 +90,8 @@ class TestAnalysisScript:
         assert analysis_script.config_section == "custom_config"
         assert analysis_script.requires_db is True
         assert analysis_script.enable_llm is True
+        assert analysis_script._db_connection_getter == mock_db_connection_getter
+        assert analysis_script._llm_client == mock_llm_client
 
     def test_run_method_raises_not_implemented_error(self, analysis_script: AnalysisScript) -> None:
         """
@@ -243,3 +266,44 @@ class TestAnalysisScript:
         analysis_script.parse_args()
         mock_get_llm_client.assert_called_once_with({"model": "test_llm_model"})
         assert analysis_script.llm_client == mock_get_llm_client.return_value
+
+    def test_get_llm_response_success(self) -> None:
+        """
+        Test that _get_llm_response returns the LLM response successfully.
+        """
+        mock_llm_client = MockLLMClient()
+        with patch("dewey.core.analysis.BaseScript.__init__", return_value=None):
+            analysis_script = AnalysisScript(enable_llm=True, llm_client=mock_llm_client)
+            analysis_script.logger = MagicMock()
+
+        prompt = "Test prompt"
+        response = analysis_script._get_llm_response(prompt)
+        assert response == f"Mock LLM response for prompt: {prompt}"
+
+    def test_get_llm_response_no_llm_client(self) -> None:
+        """
+        Test that _get_llm_response raises ValueError when LLM client is not initialized.
+        """
+        with patch("dewey.core.analysis.BaseScript.__init__", return_value=None):
+            analysis_script = AnalysisScript(enable_llm=False)
+            analysis_script.logger = MagicMock()
+            analysis_script._llm_client = None
+
+        with pytest.raises(ValueError) as exc_info:
+            analysis_script._get_llm_response("Test prompt")
+        assert "LLM client is not initialized." in str(exc_info.value)
+
+    def test_get_db_connection_success(self) -> None:
+        """
+        Test that _get_db_connection returns a database connection successfully.
+        """
+        mock_db_connection_getter = MagicMock(return_value=MagicMock(spec=DatabaseConnection))
+        with patch("dewey.core.analysis.BaseScript.__init__", return_value=None):
+            analysis_script = AnalysisScript(requires_db=True, db_connection_getter=mock_db_connection_getter)
+            analysis_script.logger = MagicMock()
+
+        db_config = {"connection_string": "test_connection_string"}
+        connection = analysis_script._get_db_connection(db_config)
+        mock_db_connection_getter.assert_called_once_with(db_config)
+        assert isinstance(connection, MagicMock)
+        assert isinstance(connection, object)
