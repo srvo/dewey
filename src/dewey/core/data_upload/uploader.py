@@ -1,5 +1,7 @@
-from dewey.core.base_script import BaseScript
 from typing import Any
+
+from dewey.core.base_script import BaseScript
+
 
 class Uploader(BaseScript):
     """
@@ -13,7 +15,7 @@ class Uploader(BaseScript):
         """
         Initializes the Uploader.
         """
-        super().__init__(config_section='uploader')
+        super().__init__(config_section="uploader")
 
     def run(self) -> None:
         """
@@ -21,8 +23,8 @@ class Uploader(BaseScript):
         """
         self.logger.info("Starting data upload process.")
 
-        # Example of accessing configuration values
-        upload_url = self.get_config_value('upload_url')
+        # Access configuration values
+        upload_url = self.get_config_value("upload_url")
         self.logger.debug(f"Upload URL: {upload_url}")
 
         # Add your data upload logic here
