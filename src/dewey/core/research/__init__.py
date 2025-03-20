@@ -2,25 +2,23 @@ from dewey.core.base_script import BaseScript
 from typing import Any, Dict
 
 class ResearchScript(BaseScript):
-    """
-    A base class for research scripts within the Dewey framework.
+    """A base class for research scripts within the Dewey framework.
+
     Inherits from BaseScript and provides a standardized structure
     for research-related tasks.
     """
 
-    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
-        """
-        Initializes the ResearchScript.
+    def __init__(self, config_section: str = 'research_script', **kwargs: Any) -> None:
+        """Initializes the ResearchScript.
 
         Args:
-            config (Dict[str, Any]): Configuration parameters for the script.
+            config_section (str): Configuration section name.
             **kwargs (Any): Additional keyword arguments.
         """
-        super().__init__(config=config, **kwargs)
+        super().__init__(config_section=config_section, **kwargs)
 
     def run(self) -> None:
-        """
-        Executes the core logic of the research script.
+        """Executes the core logic of the research script.
 
         This method should be overridden by subclasses to implement
         specific research tasks.
@@ -31,14 +29,13 @@ class ResearchScript(BaseScript):
         raise NotImplementedError("Subclasses must implement the run method.")
 
     def example_method(self, input_data: str) -> str:
-        """
-        An example method demonstrating the use of logger and config.
+        """An example method demonstrating the use of logger and config.
 
         Args:
-            input_data (str): Input string data.
+            input_data: Input string data.
 
         Returns:
-            str: A processed string.
+            A processed string.
         """
         config_value = self.get_config_value("example_config_key")
         self.logger.info(f"Processing data: {input_data} with config: {config_value}")
