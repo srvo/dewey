@@ -25,8 +25,8 @@ class LedgerFormatChecker(BaseScript):
             journal_file: The path to the ledger journal file.
         """
         super().__init__(
-            name="LedgerFormatChecker", description="Validates the format of a ledger journal file.", config_section="bookkeeping", )
-        self.journal_file=None, "/usr/bin/hledger")
+            name="LedgerFormatChecker", description="Validates the format of a ledger journal file.", config_section="bookkeeping")
+        self.journal_file, self.hledger_path = None, "/usr/bin/hledger"
         self.read_journal()
 
     def read_journal(self) -> None:
@@ -34,12 +34,12 @@ class LedgerFormatChecker(BaseScript):
         self.logger.info(f"Loading journal file: {self.journal_file}")
         try:
             with open(self.journal_file, "r") as file:
-                self.journal_content=None, False otherwise.
+                self.journal_content, self.hledger_valid = None, False
         """
         self.logger.info("Running hledger basic validation")
         try:
             result = subprocess.run(
-                [self.hledger_path, "-f", self.journal_file, "validate"], capture_output=True, text=True, check=True, )
+                [self.hledger_path, "-f", self.journal_file, "validate"], capture_output=True, text=True, check=True)
             if result.returncode == 0:
                 self.logger.info("hledger validation passed")
                 return True
@@ -65,17 +65,16 @@ class LedgerFormatChecker(BaseScript):
         self.logger.info("Checking date format")
         date_pattern = re.compile(r"^\d{4}[/.-]\d{2}[/.-]\d{2}")
         for i, line in enumerate(self.journal_content):
-            if )
-        self.journal_file is None:
-                )
+            if self.journal_file is None:
+                pass
         self.journal_file = journal_file
         self.warnings: List[str] = []
         self.errors: List[str] = []
         self.journal_content: List[str] = []
-        self.hledger_path = self.get_config_value("ledger.hledger_path"
-            if "r") as file:
-                self.journal_content is None:
-                "r") as file:
+        self.hledger_path = self.get_config_value("ledger.hledger_path")
+            if self.journal_content is None:
+                pass
+            if self.journal_content is None:
                 self.journal_content = file.readlines()
         except FileNotFoundError:
             self.logger.error(f"Journal file not found: {self.journal_file}")
