@@ -9,21 +9,15 @@ from typing import (
     Callable,
 )
 import time
-import logging
 from dataclasses import dataclass
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import get_connection
+from dewey.llm import llm_utils
 
 
 # Define placeholder classes for Contact and Email, replace with actual definitions if available
 @dataclass
-
-    def run(self) -> None:
-        """
-        Run the script.
-        """
-        # TODO: Implement script logic here
-        raise NotImplementedError("The run method must be implemented")
-class Contact(BaseScript):
+class Contact:
     """Placeholder for a Contact class."""
     id: int
     name: str
@@ -58,6 +52,41 @@ class EventManager(BaseScript):
         self.max_retries = max_retries
         self._events: List[Dict[str, Any]] = []  # Internal storage for events
         self._context: Dict[str, Any] = {}  # Contextual data
+
+    def run(self) -> None:
+        """
+        Executes the main logic of the EventManager.
+
+        This method currently serves as a placeholder and raises a NotImplementedError.
+        Subclasses should override this method to implement their specific logic.
+
+        Raises:
+            NotImplementedError: If the method is not overridden in a subclass.
+        """
+        self.logger.info("Running EventManager...")
+        # Example of accessing a config value
+        max_retries_config = self.get_config_value("settings.max_retries", 3)
+        self.logger.info(f"Max retries from config: {max_retries_config}")
+
+        # Example of using the database connection (if enabled)
+        if self.db_conn:
+            try:
+                with self.db_conn.cursor() as cur:
+                    cur.execute("SELECT 1")  # Example query
+                    result = cur.fetchone()
+                    self.logger.info(f"Database connection test: {result}")
+            except Exception as e:
+                self.logger.error(f"Error connecting to the database: {e}")
+
+        # Example of using the LLM client (if enabled)
+        if self.llm_client:
+            try:
+                response = self.llm_client.generate_text("Write a short poem about events.")
+                self.logger.info(f"LLM response: {response}")
+            except Exception as e:
+                self.logger.error(f"Error using LLM client: {e}")
+
+        raise NotImplementedError("The run method must be implemented")
 
     def objects(self) -> List[Dict[str, Any]]:
         """
