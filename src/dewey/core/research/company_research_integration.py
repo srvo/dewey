@@ -1,5 +1,9 @@
+from typing import Any, Dict
+
 from dewey.core.base_script import BaseScript
-from typing import Dict, Any
+from dewey.core.db.connection import DatabaseConnection
+from dewey.llm.llm_utils import LLMClient
+
 
 class CompanyResearchIntegration(BaseScript):
     """Integrates company research data using Dewey conventions.
@@ -8,13 +12,13 @@ class CompanyResearchIntegration(BaseScript):
     logging, and more.
     """
 
-    def __init__(self, config_section: str = 'company_research'):
+    def __init__(self, config_section: str = "company_research") -> None:
         """Initializes the CompanyResearchIntegration script.
 
         Args:
-            config_section (str): The configuration section to use.
+            config_section: The configuration section to use.
         """
-        super().__init__(config_section=config_section)
+        super().__init__(config_section=config_section, requires_db=True, enable_llm=True)
 
     def run(self) -> None:
         """Executes the company research integration process.
@@ -31,11 +35,11 @@ class CompanyResearchIntegration(BaseScript):
         try:
             self.logger.info("Starting company research integration...")
 
-            # Example of accessing configuration values
+            # Accessing configuration values
             api_key = self.get_config_value("api_key")
             self.logger.debug(f"API Key: {api_key}")
 
-            # Add your core logic here, replacing placeholders with actual implementation
+            # Core logic
             company_data = self._retrieve_company_data()
             processed_data = self._process_company_data(company_data)
             self._store_company_data(processed_data)
@@ -46,11 +50,11 @@ class CompanyResearchIntegration(BaseScript):
             self.logger.exception(f"An error occurred during company research integration: {e}")
             raise
 
-    def _retrieve_company_data(self) -> Dict:
+    def _retrieve_company_data(self) -> Dict[str, Any]:
         """Retrieves company data from an external source.
 
         Returns:
-            Dict: A dictionary containing the retrieved company data.
+            A dictionary containing the retrieved company data.
 
         Raises:
             NotImplementedError: If the method is not implemented.
@@ -60,14 +64,14 @@ class CompanyResearchIntegration(BaseScript):
         # For example, using an API client with the api_key
         raise NotImplementedError("Retrieval of company data not implemented.")
 
-    def _process_company_data(self, company_data: Dict) -> Dict:
+    def _process_company_data(self, company_data: Dict[str, Any]) -> Dict[str, Any]:
         """Processes the retrieved company data.
 
         Args:
-            company_data (Dict): A dictionary containing the company data.
+            company_data: A dictionary containing the company data.
 
         Returns:
-            Dict: A dictionary containing the processed company data.
+            A dictionary containing the processed company data.
 
         Raises:
             NotImplementedError: If the method is not implemented.
@@ -76,11 +80,11 @@ class CompanyResearchIntegration(BaseScript):
         # Replace with actual implementation to process the data
         raise NotImplementedError("Processing of company data not implemented.")
 
-    def _store_company_data(self, processed_data: Dict) -> None:
+    def _store_company_data(self, processed_data: Dict[str, Any]) -> None:
         """Stores the processed company data.
 
         Args:
-            processed_data (Dict): A dictionary containing the processed company data.
+            processed_data: A dictionary containing the processed company data.
 
         Returns:
             None
