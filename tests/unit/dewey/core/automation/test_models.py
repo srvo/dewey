@@ -5,8 +5,37 @@ from unittest.mock import patch, MagicMock, mock_open
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from dewey.core.automation.models import Script, Service
+from dewey.core.automation.models import Script, Service, PathHandler, DefaultPathHandler
 from dewey.core.base_script import BaseScript
+
+
+class TestPathHandler:
+    """Tests for the PathHandler protocol and DefaultPathHandler class."""
+
+    def test_default_path_handler(self) -> None:
+        """Test that DefaultPathHandler returns a Path object."""
+        handler = DefaultPathHandler()
+        path = handler("test_path")
+        assert isinstance(path, Path)
+        assert str(path) == "test_path"
+
+    def test_path_handler_protocol(self) -> None:
+        """Test that PathHandler is a runtime-checkable protocol."""
+        assert isinstance(DefaultPathHandler(), PathHandler)
+
+    def test_custom_path_handler(self) -> None:
+        """Test using a custom path handler."""
+
+        class CustomPathHandler:
+            """Custom path handler for testing."""
+
+            def __call__(self, path: str) -> Path:
+                """Create a Path object."""
+                return Path(f"/custom/{path}")
+
+        handler = CustomPathHandler()
+        path = handler("test_path")
+        assert str(path) == "/custom/test_path"
 
 
 class TestScript:
@@ -74,8 +103,8 @@ class TestService:
         """Test that a Service object can be initialized with valid data."""
         service = Service(
             name=service_data["name"],
-            path=Path(service_data["path"]),
-            config_path=Path(service_data["config_path"]),
+            path=service_data["path"],
+            config_path=service_data["config_path"],
             containers=service_data["containers"],
             description=service_data["description"],
             config=service_data["config"],
@@ -83,8 +112,42 @@ class TestService:
             version=service_data["version"],
         )
         assert service.name == service_data["name"]
-        assert service.path == Path(service_data["path"])
-        assert service.config_path == Path(service_data["config_path"])
+        assert str(service.path) == service_data["path"]
+        assert str(service.config_path) == service_data["config_path"]
+        assert service.containers == service_data["containers"]
+        assert service.description == service_data["description"]
+        assert service.config == service_data["config"]
+        assert service.status == service_data["status"]
+        assert service.version == service_data["version"]
+        mock_init.assert_called_once_with(config_section=service_data["name"])
+
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    def test_service_initialization_with_custom_path_handler(
+        self, mock_init: MagicMock, service_data: Dict[str, Any]
+    ) -> None:
+        """Test that a Service object can be initialized with a custom path handler."""
+
+        class CustomPathHandler:
+            """Custom path handler for testing."""
+
+            def __call__(self, path: str) -> Path:
+                """Create a Path object."""
+                return Path(f"/custom/{path}")
+
+        service = Service(
+            name=service_data["name"],
+            path=service_data["path"],
+            config_path=service_data["config_path"],
+            containers=service_data["containers"],
+            description=service_data["description"],
+            config=service_data["config"],
+            status=service_data["status"],
+            version=service_data["version"],
+            path_handler=CustomPathHandler(),
+        )
+        assert service.name == service_data["name"]
+        assert str(service.path) == "/custom//path/to/service"
+        assert str(service.config_path) == "/custom//path/to/config"
         assert service.containers == service_data["containers"]
         assert service.description == service_data["description"]
         assert service.config == service_data["config"]
@@ -97,8 +160,8 @@ class TestService:
         """Test that the to_dict method returns the correct dictionary representation."""
         service = Service(
             name=service_data["name"],
-            path=Path(service_data["path"]),
-            config_path=Path(service_data["config_path"]),
+            path=service_data["path"],
+            config_path=service_data["config_path"],
             containers=service_data["containers"],
             description=service_data["description"],
             config=service_data["config"],
@@ -118,17 +181,38 @@ class TestService:
     @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_service_from_dict(self, mock_init: MagicMock, service_data: Dict[str, Any]) -> None:
         """Test that the from_dict method creates a Service object from a dictionary."""
-        with patch("pathlib.Path") as MockPath:
-            MockPath.side_effect = lambda x: Path(x)  # Ensure Path objects are created
-            service = Service.from_dict(service_data)
-            assert service.name == service_data["name"]
-            assert service.path == Path(service_data["path"])
-            assert service.config_path == Path(service_data["config_path"])
-            assert service.containers == service_data["containers"]
-            assert service.description == service_data["description"]
-            assert service.config == service_data["config"]
-            assert service.status == service_data["status"]
-            assert service.version == service_data["version"]
+        service = Service.from_dict(service_data)
+        assert service.name == service_data["name"]
+        assert str(service.path) == service_data["path"]
+        assert str(service.config_path) == service_data["config_path"]
+        assert service.containers == service_data["containers"]
+        assert service.description == service_data["description"]
+        assert service.config == service_data["config"]
+        assert service.status == service_data["status"]
+        assert service.version == service_data["version"]
+
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    def test_service_from_dict_with_custom_path_handler(
+        self, mock_init: MagicMock, service_data: Dict[str, Any]
+    ) -> None:
+        """Test that the from_dict method creates a Service object from a dictionary with a custom path handler."""
+
+        class CustomPathHandler:
+            """Custom path handler for testing."""
+
+            def __call__(self, path: str) -> Path:
+                """Create a Path object."""
+                return Path(f"/custom/{path}")
+
+        service = Service.from_dict(service_data, path_handler=CustomPathHandler())
+        assert service.name == service_data["name"]
+        assert str(service.path) == "/custom//path/to/service"
+        assert str(service.config_path) == "/custom//path/to/config"
+        assert service.containers == service_data["containers"]
+        assert service.description == service_data["description"]
+        assert service.config == service_data["config"]
+        assert service.status == service_data["status"]
+        assert service.version == service_data["version"]
 
     @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_service_from_dict_with_missing_optional_fields(self, mock_init: MagicMock) -> None:
@@ -139,17 +223,15 @@ class TestService:
             "config_path": "/path/to/config",
             "containers": ["container1", "container2"],
         }
-        with patch("pathlib.Path") as MockPath:
-            MockPath.side_effect = lambda x: Path(x)  # Ensure Path objects are created
-            service = Service.from_dict(data)
-            assert service.name == data["name"]
-            assert service.path == Path(data["path"])
-            assert service.config_path == Path(data["config_path"])
-            assert service.containers == data["containers"]
-            assert service.description is None
-            assert service.config is None
-            assert service.status == "inactive"
-            assert service.version == "1.0.0"
+        service = Service.from_dict(data)
+        assert service.name == data["name"]
+        assert str(service.path) == data["path"]
+        assert str(service.config_path) == data["config_path"]
+        assert service.containers == data["containers"]
+        assert service.description is None
+        assert service.config is None
+        assert service.status == "inactive"
+        assert service.version == "1.0.0"
 
     @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
     def test_service_run_raises_not_implemented_error(
@@ -158,8 +240,8 @@ class TestService:
         """Test that the run method raises a NotImplementedError."""
         service = Service(
             name=service_data["name"],
-            path=Path(service_data["path"]),
-            config_path=Path(service_data["config_path"]),
+            path=service_data["path"],
+            config_path=service_data["config_path"],
             containers=service_data["containers"],
             description=service_data["description"],
             config=service_data["config"],
@@ -174,8 +256,8 @@ class TestService:
         """Test that the Service object initializes the BaseScript."""
         Service(
             name=service_data["name"],
-            path=Path(service_data["path"]),
-            config_path=Path(service_data["config_path"]),
+            path=service_data["path"],
+            config_path=service_data["config_path"],
             containers=service_data["containers"],
             description=service_data["description"],
             config=service_data["config"],
