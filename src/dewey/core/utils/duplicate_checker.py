@@ -1,5 +1,6 @@
-from dewey.core.base_script import BaseScript
 from typing import Any
+
+from dewey.core.base_script import BaseScript
 
 
 class DuplicateChecker(BaseScript):
@@ -14,21 +15,35 @@ class DuplicateChecker(BaseScript):
         """
         Initializes the DuplicateChecker.
         """
-        super().__init__(config_section='duplicate_checker')
+        super().__init__(config_section="duplicate_checker")
 
     def run(self) -> None:
         """
         Executes the duplicate checking process.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            Exception: If an error occurs during the duplicate checking process.
         """
         self.logger.info("Starting duplicate check...")
-        # Example of accessing a configuration value
-        threshold: Any = self.get_config_value('similarity_threshold', 0.8)
-        self.logger.debug(f"Similarity threshold: {threshold}")
+        try:
+            # Example of accessing a configuration value
+            threshold: Any = self.get_config_value("similarity_threshold", 0.8)
+            self.logger.debug(f"Similarity threshold: {threshold}")
 
-        # Add your duplicate checking logic here
-        self.logger.info("Duplicate check complete.")
+            # Add your duplicate checking logic here
+            self.logger.info("Duplicate check complete.")
+
+        except Exception as e:
+            self.logger.error(f"An error occurred: {e}", exc_info=True)
+            raise
 
 
 if __name__ == "__main__":
     checker = DuplicateChecker()
-    checker.run()
+    checker.execute()
