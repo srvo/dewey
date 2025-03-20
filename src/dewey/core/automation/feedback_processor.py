@@ -413,7 +413,7 @@ Failure to follow these requirements will cause critical system errors. Always r
                     legacy_feedback = json.load(f)
                     self.save_feedback(conn, legacy_feedback)
                 os.rename("feedback.json", "feedback.json.bak")
-            feedback_data = legacy_feedback
+            
         
             if not preferences.get("priority_map") and os.path.exists("email_preferences.json"):
                 self.logger.info("Migrating email_preferences.json to database...")
@@ -423,25 +423,25 @@ Failure to follow these requirements will cause critical system errors. Always r
                     os.rename("email_preferences.json", "email_preferences.json.bak")
             preferences = legacy_prefs
 
-        # --- Interactive Feedback Input ---
-        new_feedback_entries = []
-        if opportunities:
-            from collections import defaultdict
-            sender_groups = defaultdict(list)
-            for opp in opportunities:
-                sender_groups[opp[3]].append(opp)  # Group by from_address
+            # --- Interactive Feedback Input ---
+            new_feedback_entries = []
+            if opportunities:
+                from collections import defaultdict
+                sender_groups = defaultdict(list)
+                for opp in opportunities:
+                    sender_groups[opp[3]].append(opp)  # Group by from_address
 
-            self.logger.info(f"\nFound {len(opportunities)} emails from {len(sender_groups)} senders:")
-            
-            for sender_idx, (from_addr, emails) in enumerate(sender_groups.items(), 1):
-                self.logger.info(f"\n=== Sender {sender_idx}/{len(sender_groups)}: {from_addr} ===")
+                self.logger.info(f"\nFound {len(opportunities)} emails from {len(sender_groups)} senders:")
                 
-                # Show first 3 emails, then prompt if they want to see more
-                for idx, email in enumerate(emails[:3], 1):
-                    msg_id, subject, priority, _, snippet, total_from_sender = email
-                    self.logger.info(f"\n  Email {idx}: {subject}")
-                    self.logger.info(f"  Priority: {priority}")
-                    self.logger.info(f"  Snippet: {snippet[:100]}...")
+                for sender_idx, (from_addr, emails) in enumerate(sender_groups.items(), 1):
+                    self.logger.info(f"\n=== Sender {sender_idx}/{len(sender_groups)}: {from_addr} ===")
+                    
+                    # Show first 3 emails, then prompt if they want to see more
+                    for idx, email in enumerate(emails[:3], 1):
+                        msg_id, subject, priority, _, snippet, total_from_sender = email
+                        self.logger.info(f"\n  Email {idx}: {subject}")
+                        self.logger.info(f"  Priority: {priority}")
+                        self.logger.info(f"  Snippet: {snippet[:100]}...")
 
                 if len(emails) > 3:
                     show_more = input(f"\n  This sender has {len(emails)} emails. Show all? (y/n/q): ").strip().lower()
