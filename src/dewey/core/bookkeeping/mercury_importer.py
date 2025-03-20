@@ -10,7 +10,7 @@ class MercuryImporter(BaseScript):
         """
         Initializes the MercuryImporter.
         """
-        super().__init__()
+        super().__init__(config_section="mercury")
 
     def run(self) -> None:
         """
@@ -18,7 +18,7 @@ class MercuryImporter(BaseScript):
         """
         self.logger.info("Running Mercury importer")
         # Placeholder for mercury import logic
-        api_key = self.get_config_value("mercury_api_key")
+        api_key = self.get_config_value("api_key")
         if api_key:
             self.logger.info("Mercury API key found.")
         else:
