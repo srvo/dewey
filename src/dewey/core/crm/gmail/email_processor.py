@@ -1,11 +1,13 @@
-from dewey.core.base_script import BaseScript
-import logging
-import uuid
-from datetime import datetime
-from typing import Dict, Any, List, Optional
+from __future__ import annotations
+
 import base64
+import logging
+from datetime import datetime
 from email.utils import parsedate_to_datetime
+from typing import Any, Dict, List, Optional
 from zoneinfo import ZoneInfo
+
+from dewey.core.base_script import BaseScript
 
 logger = logging.getLogger(__name__)
 MOUNTAIN_TZ = ZoneInfo("America/Denver")
@@ -14,13 +16,12 @@ MOUNTAIN_TZ = ZoneInfo("America/Denver")
 class EmailProcessor(BaseScript):
     """Processes email messages and extracts relevant information."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initializes the EmailProcessor."""
-        super().__init__(config_section='crm')
+        super().__init__(config_section="crm")
 
     def process_email(self, email_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """
-        Processes a single email message.
+        """Processes a single email message.
 
         Args:
             email_data: A dictionary containing the email message data.
@@ -72,8 +73,7 @@ class EmailProcessor(BaseScript):
             return None
 
     def _parse_email_addresses(self, header_value: str) -> List[Dict[str, str]]:
-        """
-        Parses email addresses from header value into structured format.
+        """Parses email addresses from header value into structured format.
 
         Args:
             header_value: The header value containing email addresses.
@@ -96,8 +96,7 @@ class EmailProcessor(BaseScript):
         return addresses
 
     def _get_message_body(self, payload: Dict[str, Any]) -> Dict[str, str]:
-        """
-        Extract and decode message body from Gmail API payload.
+        """Extract and decode message body from Gmail API payload.
 
         Args:
             payload: The Gmail API payload.
@@ -127,8 +126,7 @@ class EmailProcessor(BaseScript):
         return body
 
     def _decode_body(self, body: Dict[str, Any]) -> str:
-        """
-        Decode base64-encoded email body content.
+        """Decode base64-encoded email body content.
 
         Args:
             body: The body dictionary.
@@ -143,8 +141,7 @@ class EmailProcessor(BaseScript):
         return ""
 
     def _parse_email_date(self, date_str: str) -> datetime:
-        """
-        Parse email date strings into timezone-aware datetime objects.
+        """Parse email date strings into timezone-aware datetime objects.
 
         Args:
             date_str: The date string from the email header.
@@ -160,6 +157,7 @@ class EmailProcessor(BaseScript):
             self.logger.error(f"Failed to parse date: {e}")
             return datetime.now(tz=MOUNTAIN_TZ)
 
-    def run(self):
+    def run(self) -> None:
         """Placeholder for the run method required by BaseScript."""
+        self.logger.info("EmailProcessor.run() called, but has no implementation.")
         pass
