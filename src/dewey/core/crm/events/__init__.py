@@ -1,6 +1,9 @@
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
+from dewey.llm.llm_utils import get_llm_client
 import logging
-from typing import Any
+from typing import Any, Dict, Optional
+
 
 class EventsModule(BaseScript):
     """
@@ -12,20 +15,69 @@ class EventsModule(BaseScript):
     primary logic.
     """
 
-    def __init__(self, name: str = "EventsModule", description: str = "Manages CRM events.") -> None:
+    def __init__(
+        self,
+        name: str = "EventsModule",
+        description: str = "Manages CRM events.",
+        config_section: Optional[str] = "events",
+        requires_db: bool = True,
+        enable_llm: bool = False,
+    ) -> None:
         """
         Initializes the EventsModule.
+
+        Args:
+            name: The name of the module. Defaults to "EventsModule".
+            description: A description of the module. Defaults to "Manages CRM events.".
+            config_section: The configuration section to use. Defaults to "events".
+            requires_db: Whether the module requires a database connection. Defaults to True.
+            enable_llm: Whether the module requires an LLM client. Defaults to False.
         """
-        super().__init__(name=name, description=description)
+        super().__init__(
+            name=name,
+            description=description,
+            config_section=config_section,
+            requires_db=requires_db,
+            enable_llm=enable_llm,
+        )
 
     def run(self) -> None:
         """
         Executes the primary logic of the EventsModule.
+
+        This method retrieves configuration values, connects to the database,
+        and performs event processing tasks.
         """
         self.logger.info("Running EventsModule...")
-        # Add event processing logic here
+
+        # Example of retrieving a configuration value
         config_value = self.get_config_value("some_config_key", "default_value")
         self.logger.debug(f"Config value for some_config_key: {config_value}")
+
+        # Example of using the database connection
+        try:
+            if self.db_conn:
+                # Perform database operations here
+                # Example:
+                # with self.db_conn.cursor() as cursor:
+                #     cursor.execute("SELECT * FROM events")
+                #     results = cursor.fetchall()
+                #     self.logger.debug(f"Retrieved {len(results)} events from the database.")
+                self.logger.info("Successfully connected to the database.")
+            else:
+                self.logger.warning("Database connection is not available.")
+        except Exception as e:
+            self.logger.error(f"Error interacting with the database: {e}")
+
+        # Example of using the LLM client
+        if self.llm_client:
+            try:
+                response = self.llm_client.generate_text("Summarize recent CRM events.")
+                self.logger.info(f"LLM Response: {response}")
+            except Exception as e:
+                self.logger.error(f"Error interacting with the LLM: {e}")
+        else:
+            self.logger.debug("LLM client is not enabled.")
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
         """
