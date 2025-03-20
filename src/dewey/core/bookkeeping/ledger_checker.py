@@ -26,7 +26,11 @@ class LedgerFormatChecker(BaseScript):
         """
         super().__init__(
             name="LedgerFormatChecker", description="Validates the format of a ledger journal file.", config_section="bookkeeping")
-        self.journal_file, self.hledger_path = None, "/usr/bin/hledger"
+        self.journal_file = journal_file
+        self.hledger_path = self.get_config_value("hledger_path", "/usr/bin/hledger")
+        self.journal_content: List[str] = []
+        self.errors: List[str] = []
+        self.warnings: List[str] = []
         self.read_journal()
 
     def read_journal(self) -> None:
@@ -80,12 +84,6 @@ class LedgerFormatChecker(BaseScript):
         self.logger.info("Checking date format")
         date_pattern = re.compile(r"^\d{4}[/.-]\d{2}[/.-]\d{2}")
         for i, line in enumerate(self.journal_content):
-            if self.journal_file is None:
-                pass
-            if self.journal_content is None:
-                pass
-            if self.journal_content is None:
-                self.journal_content = file.readlines()
             if line.strip() and not line.startswith((";", "!")) and not date_pattern.match(
                 line
             ):
@@ -154,7 +152,7 @@ class LedgerFormatChecker(BaseScript):
             True if all checks pass without errors, False otherwise.
         """
         self.logger.info("Starting ledger validation checks")
-        self.check_hledger_basic()
+        hledger_check = self.check_hledger_basic()
         self.check_date_format()
         self.check_accounts()
         self.check_amount_format()
@@ -164,7 +162,7 @@ class LedgerFormatChecker(BaseScript):
         if self.errors:
             return False
         else:
-            return True
+            return hledger_check
 
     def run(self) -> None:
         """Runs the ledger format checker."""
