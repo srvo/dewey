@@ -3,6 +3,7 @@
 import os
 from pathlib import Path
 from typing import Dict, List
+
 from dewey.core.base_script import BaseScript
 
 
@@ -21,6 +22,9 @@ class JournalSplitter(BaseScript):
         Args:
             input_file: Path to the input journal file.
             output_dir: Path to the output directory.
+
+        Returns:
+            None
         """
         # Create output directory if it doesn't exist
         Path(output_dir).mkdir(parents=True, exist_ok=True)
@@ -80,7 +84,7 @@ class JournalSplitter(BaseScript):
 
     def run(self) -> None:
         """Process all journal files."""
-        input_dir = self.get_config_value("input_dir", "import/mercury/journal")
+        input_dir = self.get_config_value("bookkeeping.journal_dir")
         output_dir = os.path.join(input_dir, "by_year")
 
         # Process each journal file
