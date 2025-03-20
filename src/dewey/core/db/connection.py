@@ -12,6 +12,8 @@ import duckdb
 
 from dewey.core.base_script import BaseScript
 
+DEFAULT_MOTHERDUCK_PREFIX = "md:"
+
 
 class DatabaseConnection(BaseScript):
     """Database connection wrapper for DuckDB/MotherDuck.
