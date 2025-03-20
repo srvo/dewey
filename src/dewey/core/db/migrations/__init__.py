@@ -1,7 +1,5 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
 from dewey.core.db import utils
-from dewey.llm import llm_utils
 
 
 class Migrations(BaseScript):
@@ -16,7 +14,7 @@ class Migrations(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the Migrations class."""
-        super().__init__(config_section='migrations', requires_db=True)
+        super().__init__(config_section="migrations", requires_db=True)
 
     def run(self) -> None:
         """Runs the database migrations.
