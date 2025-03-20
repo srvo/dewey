@@ -124,7 +124,12 @@ class FeedbackProcessor(BaseScript):
         Returns:
             Dictionary of preferences.
         """
-        result=None, conn: duckdb.DuckDBPyConnection, feedback_data: List[Dict]) -> None:
+        result = conn.execute(
+            "SELECT config FROM preferences WHERE key = 'latest'"
+        ).fetchone()
+        return result[0] if result else {"override_rules": []}
+
+    def save_feedback(self, conn: duckdb.DuckDBPyConnection, feedback_data: List[Dict]) -> None:
         """Save feedback entries to database.
 
         Args:
@@ -196,7 +201,15 @@ Key requirements:
 
 Failure to follow these requirements will cause critical system errors. Always return pure JSON.
 """
-        deepinfra_api_key=None, self.llm_client)
+        deepinfra_api_key = self.get_config_value("llm.providers.deepinfra.api_key")
+        if not deepinfra_api_key:
+            self.logger.error("DEEPINFRA_API_KEY environment variable not set")
+            self.logger.error("1. Get your API key from https://deepinfra.com")
+            self.logger.error("2. Run: export DEEPINFRA_API_KEY='your-key-here'")
+            return {}
+
+        try:
+            response_content = generate_json(prompt, deepinfra_api_key, self.llm_client)
             try:
                 feedback_json = json.loads(response_content.strip())
                 feedback_json["timestamp"] = time.time()
@@ -220,7 +233,27 @@ Failure to follow these requirements will cause critical system errors. Always r
         Returns:
             List of suggested changes.
         """
-        suggested_changes=None, subject, and feedback
+        suggested_changes = []
+        feedback_count = len(feedback_data)
+
+        # Minimum feedback count before suggestions are made
+        if feedback_count < 5:
+            self.logger.info("Not enough feedback data to suggest changes.")
+            return []
+
+        # 1. Analyze Feedback Distribution
+        priority_counts = Counter(entry["assigned_priority"] for entry in feedback_data)
+        self.logger.info(f"Priority Distribution in Feedback: {priority_counts}")
+
+        # 2. Identify Frequent Discrepancies
+        discrepancy_counts = Counter()
+        topic_suggestions = {}  # Store suggested topic changes
+        source_suggestions = {}
+
+        for entry in feedback_data:
+            if not entry:  # skip if empty
+                continue
+            # extract comment, subject, and feedback
             feedback_comment = entry.get("feedback_comments", "").lower()
             subject = entry.get("subject", "").lower()
             assigned_priority = int(entry.get("assigned_priority"))
@@ -259,91 +292,6 @@ Failure to follow these requirements will cause critical system errors. Always r
 
         # 3.  Suggest *new* override rules.  This is the most important part.
         for topic, suggestion in topic_suggestions.items():
-            if conn: duckdb.DuckDBPyConnection) -> Dict:
-        """Load preferences from database.
-
-        Args:
-            conn: DuckDB connection object.
-
-        Returns:
-            Dictionary of preferences.
-        """
-        result is None:
-                conn: duckdb.DuckDBPyConnection) -> Dict:
-        """Load preferences from database.
-
-        Args:
-            conn: DuckDB connection object.
-
-        Returns:
-            Dictionary of preferences.
-        """
-        result = conn.execute(
-            "SELECT config FROM preferences WHERE key = 'latest'"
-        ).fetchone()
-        return result[0] if result else {"override_rules": []}
-
-    def save_feedback(self
-            if use `null`
-
-Failure to follow these requirements will cause critical system errors. Always return pure JSON.
-"""
-        deepinfra_api_key is None:
-                use `null`
-
-Failure to follow these requirements will cause critical system errors. Always return pure JSON.
-"""
-        deepinfra_api_key = self.get_config_value("llm.providers.deepinfra.api_key")
-        if not deepinfra_api_key:
-            self.logger.error("DEEPINFRA_API_KEY environment variable not set")
-            self.logger.error("1. Get your API key from https://deepinfra.com")
-            self.logger.error("2. Run: export DEEPINFRA_API_KEY='your-key-here'")
-            return {}
-
-        try:
-            response_content = generate_json(prompt
-            if preferences: Dict) -> List[Dict]:
-        """Analyzes feedback and suggests changes to preferences.
-
-        Args:
-            feedback_data: List of feedback entries.
-            preferences: Dictionary of preferences.
-
-        Returns:
-            List of suggested changes.
-        """
-        suggested_changes is None:
-                preferences: Dict) -> List[Dict]:
-        """Analyzes feedback and suggests changes to preferences.
-
-        Args:
-            feedback_data: List of feedback entries.
-            preferences: Dictionary of preferences.
-
-        Returns:
-            List of suggested changes.
-        """
-        suggested_changes = []
-        feedback_count = len(feedback_data)
-
-        # Minimum feedback count before suggestions are made
-        if feedback_count < 5:
-            self.logger.info("Not enough feedback data to suggest changes.")
-            return []
-
-        # 1. Analyze Feedback Distribution
-        priority_counts = Counter(entry["assigned_priority"] for entry in feedback_data)
-        self.logger.info(f"Priority Distribution in Feedback: {priority_counts}")
-
-        # 2. Identify Frequent Discrepancies
-        discrepancy_counts = Counter()
-        topic_suggestions = {}  # Store suggested topic changes
-        source_suggestions = {}
-
-        for entry in feedback_data:
-            if not entry:  # skip if empty
-                continue
-            # extract comment
             if suggestion["count"] >= 3:  # Require at least 3 occurrences
                 suggested_changes.append(
                     {
