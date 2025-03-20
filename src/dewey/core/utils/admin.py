@@ -1,5 +1,6 @@
 from dewey.core.base_script import BaseScript
 import logging
+import psycopg2
 
 
 class AdminTasks(BaseScript):
@@ -23,8 +24,11 @@ class AdminTasks(BaseScript):
         try:
             self.perform_database_maintenance()
             self.logger.info("Administrative tasks completed.")
+        except psycopg2.Error as e:
+            self.logger.error(f"Database error during administrative tasks: {e}")
+            raise
         except Exception as e:
-            self.logger.error(f"Error during administrative tasks: {e}")
+            self.logger.error(f"Unexpected error during administrative tasks: {e}")
             raise
 
     def perform_database_maintenance(self):
@@ -41,8 +45,12 @@ class AdminTasks(BaseScript):
                 self.logger.info("ANALYZE completed.")
             self.db_conn.commit()
             self.logger.info("Database maintenance completed.")
+        except psycopg2.Error as e:
+            self.logger.error(f"Database error performing database maintenance: {e}")
+            self.db_conn.rollback()  # Rollback in case of error
+            raise
         except Exception as e:
-            self.logger.error(f"Error performing database maintenance: {e}")
+            self.logger.error(f"Unexpected error performing database maintenance: {e}")
             self.db_conn.rollback()  # Rollback in case of error
             raise
 
@@ -66,7 +74,11 @@ class AdminTasks(BaseScript):
                 )
             self.db_conn.commit()
             self.logger.info(f"User {username} added successfully.")
+        except psycopg2.Error as e:
+            self.logger.error(f"Database error adding user {username}: {e}")
+            self.db_conn.rollback()  # Rollback in case of error
+            raise
         except Exception as e:
-            self.logger.error(f"Error adding user {username}: {e}")
+            self.logger.error(f"Unexpected error adding user {username}: {e}")
             self.db_conn.rollback()  # Rollback in case of error
             raise
