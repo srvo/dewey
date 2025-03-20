@@ -1,5 +1,6 @@
+from typing import Any, Dict
+
 from dewey.core.base_script import BaseScript
-from typing import Any
 
 
 class ActionManager(BaseScript):
@@ -13,6 +14,10 @@ class ActionManager(BaseScript):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Initializes the ActionManager with configuration and logging.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
         """
         super().__init__(*args, **kwargs)
 
@@ -20,15 +25,13 @@ class ActionManager(BaseScript):
         """
         Executes the primary logic of the ActionManager.
 
-        This method should be overridden to define the specific actions
-        to be performed.
+        This method defines the specific actions to be performed.
         """
         self.logger.info("ActionManager is running.")
-        # Example of accessing a configuration value
         example_config_value = self.get_config_value("example_config_key", "default_value")
         self.logger.debug(f"Example config value: {example_config_value}")
 
-    def perform_action(self, event_data: dict) -> None:
+    def perform_action(self, event_data: Dict[str, Any]) -> None:
         """
         Performs a specific action based on the provided event data.
 
@@ -42,7 +45,7 @@ class ActionManager(BaseScript):
         else:
             self.logger.warning(f"Unknown action type: {action_type}")
 
-    def _default_action(self, event_data: dict) -> None:
+    def _default_action(self, event_data: Dict[str, Any]) -> None:
         """
         Executes the default action.
 
