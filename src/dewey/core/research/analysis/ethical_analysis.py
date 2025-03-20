@@ -8,26 +8,29 @@ Each workflow is designed to handle specific types of ethical analysis tasks.
 """
 
 from typing import List, Dict, Any, Optional
-from ..engines.deepseek import (
+from dewey.core.engines.deepseek import (
     DeepSeekEngine,
     SearchResult,
     ResearchResult,
 )
+from dewey.core.base_script import BaseScript
 
 
-class EthicalAnalysisWorkflow:
+class EthicalAnalysisWorkflow(BaseScript):
     """Manages ethical analysis workflows using the DeepSeek engine.
 
     This class provides specialized templates and multi-step analysis
     processes for different types of ethical evaluations.
     """
 
-    def __init__(self, engine: DeepSeekEngine) -> None:
+    def __init__(self, engine: DeepSeekEngine, **kwargs: Any) -> None:
         """Initialize the workflow manager.
 
         Args:
             engine: Configured DeepSeek engine instance.
+            **kwargs: Keyword arguments passed to BaseScript.
         """
+        super().__init__(**kwargs)
         self.engine = engine
         self._init_templates()
 
@@ -92,9 +95,12 @@ class EthicalAnalysisWorkflow:
         Returns:
             Complete analysis results with concerns and metrics.
         """
-        return await self.engine.analyze(
+        self.logger.info("Starting company profile analysis.")
+        analysis_result = await self.engine.analyze(
             results=search_results, template_name="ethical_analysis"
         )
+        self.logger.info("Completed company profile analysis.")
+        return analysis_result
 
     async def assess_risks(self, search_results: List[SearchResult]) -> Dict[str, Any]:
         """Perform focused risk assessment.
@@ -105,9 +111,12 @@ class EthicalAnalysisWorkflow:
         Returns:
             Risk assessment results with identified risks and metrics.
         """
-        return await self.engine.analyze(
+        self.logger.info("Starting risk assessment.")
+        risk_assessment_result = await self.engine.analyze(
             results=search_results, template_name="risk_analysis"
         )
+        self.logger.info("Completed risk assessment.")
+        return risk_assessment_result
 
     async def conduct_deep_research(
         self,
@@ -125,9 +134,21 @@ class EthicalAnalysisWorkflow:
         Returns:
             List of research results from each analysis step.
         """
-        return await self.engine.conduct_research(
+        self.logger.info(f"Starting deep research with query: {initial_query}")
+        research_results = await self.engine.conduct_research(
             initial_query=initial_query,
             follow_up_questions=follow_up_questions,
             context=context,
             template_name="ethical_analysis",
         )
+        self.logger.info("Completed deep research.")
+        return research_results
+
+    def run(self, *args: Any, **kwargs: Any) -> None:
+        """Executes the main workflow of the ethical analysis."""
+        self.logger.info("Running ethical analysis workflow.")
+        # Example usage (replace with actual implementation):
+        # results = self.conduct_deep_research(initial_query="...", follow_up_questions=["..."])
+        # self.analyze_company_profile(results)
+        self.logger.info("Ethical analysis workflow completed.")
+        pass
