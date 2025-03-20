@@ -1,9 +1,5 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
-from dewey.llm import llm_utils
-import logging
-from pathlib import Path
-from typing import Any, Dict, Optional, Union
+
 
 class DataUploader(BaseScript):
     """
@@ -13,14 +9,16 @@ class DataUploader(BaseScript):
     and other utilities provided by the BaseScript class.
     """
 
-    def __init__(self, config_section: str = 'data_uploader') -> None:
+    def __init__(self, config_section: str = "data_uploader") -> None:
         """
         Initializes the DataUploader.
 
         Args:
             config_section: The configuration section to use for this script.
         """
-        super().__init__(config_section=config_section, requires_db=True, enable_llm=True)
+        super().__init__(
+            config_section=config_section, requires_db=True, enable_llm=True
+        )
 
     def run(self) -> None:
         """
@@ -41,7 +39,7 @@ class DataUploader(BaseScript):
         self.logger.info("Data upload process started.")
         try:
             # Example of accessing a configuration value
-            api_key = self.get_config_value('api_key')
+            api_key = self.get_config_value("api_key")
             if api_key:
                 self.logger.debug(f"API Key: {api_key}")
             else:
@@ -73,6 +71,7 @@ class DataUploader(BaseScript):
         except Exception as e:
             self.logger.exception(f"An error occurred during data upload: {e}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     uploader = DataUploader()
     uploader.execute()
