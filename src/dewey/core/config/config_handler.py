@@ -1,9 +1,21 @@
-from typing import Any
+from typing import Any, Protocol
 
 from dewey.core.base_script import BaseScript
 
 
-class ConfigHandler(BaseScript):
+class ConfigHandlerInterface(Protocol):
+    """
+    Interface for ConfigHandler.
+    """
+
+    def get_value(self, key: str, default: Any = None) -> Any:
+        ...
+
+    def run(self) -> None:
+        ...
+
+
+class ConfigHandler(BaseScript, ConfigHandlerInterface):
     """
     Handles configuration settings for the application.
 
