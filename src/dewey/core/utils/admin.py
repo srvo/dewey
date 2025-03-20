@@ -23,6 +23,9 @@ class AdminTasks(BaseScript):
         """
         self.logger.info("Starting administrative tasks...")
         try:
+            if self.db_conn is None:
+                self.logger.error("Database connection is not established.")
+                raise ValueError("Database connection is not established.")
             self.perform_database_maintenance()
             self.logger.info("Administrative tasks completed.")
         except psycopg2.Error as e:
@@ -39,6 +42,9 @@ class AdminTasks(BaseScript):
         """
         try:
             self.logger.info("Performing database maintenance...")
+            if self.db_conn is None:
+                self.logger.error("Database connection is not established.")
+                raise ValueError("Database connection is not established.")
             with self.db_conn.cursor() as cursor:
                 cursor.execute("VACUUM;")
                 self.logger.info("VACUUM completed.")
@@ -72,6 +78,9 @@ class AdminTasks(BaseScript):
         """
         try:
             self.logger.info(f"Adding user {username}...")
+            if self.db_conn is None:
+                self.logger.error("Database connection is not established.")
+                raise ValueError("Database connection is not established.")
             with self.db_conn.cursor() as cursor:
                 # Check if the users table exists
                 try:
@@ -89,7 +98,7 @@ class AdminTasks(BaseScript):
                     self.logger.info("The 'users' table does not exist. Creating it...")
                     cursor.execute(
                         """
-                        CREATE TABLE users (
+                        CREATE TABLE IF NOT EXISTS users (
                             username VARCHAR(255) PRIMARY KEY,
                             password VARCHAR(255)
                         );
@@ -120,6 +129,10 @@ class AdminTasks(BaseScript):
                 )
             self.db_conn.commit()
             self.logger.info(f"User {username} added successfully.")
+        except ValueError as ve:
+            self.logger.error(f"Value error adding user {username}: {ve}")
+            self.db_conn.rollback()
+            raise
         except psycopg2.Error as e:
             self.logger.error(f"Database error adding user {username}: {e}")
             self.db_conn.rollback()  # Rollback in case of error
