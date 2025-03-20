@@ -12,56 +12,104 @@ import pytest
 import yaml
 
 from dewey.core.base_script import BaseScript
-from dewey.core.bookkeeping.auto_categorize import JournalProcessor
+from dewey.core.bookkeeping.auto_categorize import (
+    FileSystemInterface,
+    JournalProcessor,
+    RuleLoaderInterface,
+)
+
+
+class MockFileSystem:
+    """Mock implementation of the FileSystemInterface."""
+
+    def __init__(self, files: Dict[Path, str] = {}) -> None:
+        """Initializes the MockFileSystem with a dictionary of files."""
+        self.files = files
+        self.copied: List[Tuple[Path, Path]] = []
+        self.moved: List[Tuple[Path, Path]] = []
+        self.written: Dict[Path, str] = {}
+        self.exists_values: Dict[Path, bool] = {}
+
+    def open(self, path: Path, mode: str = "r") -> Any:
+        """Mocks opening a file."""
+        if mode == "r":
+            if path not in self.files:
+                raise FileNotFoundError(f"File not found: {path}")
+            return mock_open(read_data=self.files[path]).return_value
+        elif mode == "w":
+            return self._mock_file_writer(path)
+        else:
+            raise ValueError(f"Unsupported mode: {mode}")
+
+    def copy2(self, src: Path, dst: Path) -> None:
+        """Mocks copying a file."""
+        if src not in self.files:
+            raise FileNotFoundError(f"Source file not found: {src}")
+        self.copied.append((src, dst))
+
+    def move(self, src: Path, dst: Path) -> None:
+        """Mocks moving a file."""
+        if src not in self.files:
+            raise FileNotFoundError(f"Source file not found: {src}")
+        self.moved.append((src, dst))
+
+    def exists(self, path: Path) -> bool:
+        """Mocks checking if a file exists."""
+        return self.exists_values.get(path, path in self.files)
+
+    def _mock_file_writer(self, path: Path) -> Any:
+        """Returns a mock file writer that records written content."""
+        mock_file = MagicMock()
+        def write(content: str) -> None:
+            self.written[path] = content
+        mock_file.write = write
+        return mock_file
+
+
+class MockRuleLoader:
+    """Mock implementation of the RuleLoaderInterface."""
+
+    def __init__(self, rules: Dict) -> None:
+        """Initializes the MockRuleLoader with a dictionary of rules."""
+        self.rules = rules
+
+    def load_rules(self) -> Dict:
+        """Mocks loading rules."""
+        return self.rules
 
 
 @pytest.fixture
 def mock_base_script() -> MagicMock:
     """Mock BaseScript instance."""
     mock_script = MagicMock(spec=BaseScript)
-    mock_script.get_config_value.return_value = "test_value"
+    mock_script.get_config_value.side_effect = lambda key, default=None: {
+        "classification_file": "/path/to/classification_rules.json",
+        "ledger_file": "/path/to/ledger.journal",
+        "backup_ext": ".bak",
+    }.get(key, default)
     mock_script.logger = MagicMock()
+    mock_script.PROJECT_ROOT = Path("/project/root")  # Set PROJECT_ROOT
     return mock_script
 
 
 @pytest.fixture
-def journal_processor(mock_base_script: MagicMock, tmp_path: Path) -> JournalProcessor:
+def journal_processor(mock_base_script: MagicMock) -> JournalProcessor:
     """Fixture to create a JournalProcessor instance with mocked dependencies."""
-    # Create dummy config file
-    config_path = tmp_path / "dewey.yaml"
-    with open(config_path, "w") as f:
-        yaml.dump(
-            {
-                "bookkeeping": {
-                    "classification_file": str(tmp_path / "classification_rules.json"),
-                    "ledger_file": str(tmp_path / "ledger.journal"),
-                    "backup_ext": ".bak",
-                },
-                "logging": {
-                    "level": "DEBUG",
-                    "format": "%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-                    "date_format": "%Y-%m-%d %H:%M:%S",
-                },
-            },
-            f,
-        )
-
-    # Patch the CONFIG_PATH to point to the temporary config file
-    with patch("dewey.core.bookkeeping.auto_categorize.CONFIG_PATH", config_path):
-        with patch("dewey.core.base_script.BaseScript.__init__", return_value=None):
-            processor = JournalProcessor()
-            processor.config = {
-                "bookkeeping": {
-                    "classification_file": str(tmp_path / "classification_rules.json"),
-                    "ledger_file": str(tmp_path / "ledger.journal"),
-                    "backup_ext": ".bak",
-                }
+    with patch("dewey.core.base_script.BaseScript.__init__", return_value=None):
+        processor = JournalProcessor()
+        processor.config = {
+            "bookkeeping": {
+                "classification_file": "/path/to/classification_rules.json",
+                "ledger_file": "/path/to/ledger.journal",
+                "backup_ext": ".bak",
             }
-            processor.logger = MagicMock()
-            processor.classification_file = tmp_path / "classification_rules.json"
-            processor.ledger_file = tmp_path / "ledger.journal"
-            processor.backup_ext = ".bak"
-            return processor
+        }
+        processor.logger = mock_base_script.logger
+        processor.classification_file = Path("/path/to/classification_rules.json")
+        processor.ledger_file = Path("/path/to/ledger.journal")
+        processor.backup_ext = ".bak"
+        processor.PROJECT_ROOT = Path("/project/root")  # Set PROJECT_ROOT
+        return processor
 
 
 def create_journal_file(file_path: Path, content: str) -> None:
@@ -87,17 +135,19 @@ class TestJournalProcessor:
             ("manual_rules.json", 1),
             ("base_rules.json", 2),
         ]
-        assert isinstance(journal_processor.classification_file, Path)
-        assert isinstance(journal_processor.ledger_file, Path)
+        assert journal_processor.classification_file == Path("/path/to/classification_rules.json")
+        assert journal_processor.ledger_file == Path("/path/to/ledger.journal")
         assert journal_processor.backup_ext == ".bak"
         assert isinstance(journal_processor.logger, MagicMock)
 
     def test_load_classification_rules(self, journal_processor: JournalProcessor) -> None:
-        """Test loading classification rules (currently a placeholder)."""
+        """Test loading classification rules."""
         journal_processor.logger.info = MagicMock()
-        rules = journal_processor.load_classification_rules()
-        assert isinstance(rules, dict)
-        assert not rules
+        rules = {"rule1": "value1"}
+        rule_loader = MockRuleLoader(rules)
+        journal_processor.rule_loader = rule_loader
+        loaded_rules = journal_processor.load_classification_rules()
+        assert loaded_rules == rules
         journal_processor.logger.info.assert_called_once_with("Loading classification rules")
 
     def test_process_transactions(self, journal_processor: JournalProcessor) -> None:
@@ -173,18 +223,16 @@ class TestJournalProcessor:
             ),
         ],
     )
-    @patch("builtins.open", new_callable=mock_open)
     def test_parse_journal_entries(
         self,
-        mock_file: MagicMock,
         journal_processor: JournalProcessor,
-        tmp_path: Path,
         journal_content: str,
         expected_transactions: List[Dict[str, Any]],
     ) -> None:
         """Test parsing journal entries from a file."""
-        ledger_file = tmp_path / "ledger.journal"
-        mock_file.return_value.read.return_value = journal_content
+        ledger_file = Path("/path/to/ledger.journal")
+        mock_fs = MockFileSystem({ledger_file: journal_content})
+        journal_processor.file_system = mock_fs
         journal_processor.logger.info = MagicMock()
         transactions = journal_processor.parse_journal_entries(ledger_file)
         assert transactions == expected_transactions
@@ -212,89 +260,59 @@ class TestJournalProcessor:
         output = processor.serialize_transactions(transactions)
         assert output == expected_output
 
-    @patch("shutil.copy2")
-    @patch("builtins.open", new_callable=mock_open)
-    def test_write_journal_file(
-        self, mock_file: MagicMock, mock_copy2: MagicMock, journal_processor: JournalProcessor, tmp_path: Path
-    ) -> None:
+    def test_write_journal_file(self, journal_processor: JournalProcessor) -> None:
         """Test writing the journal file with backup."""
-        ledger_file = tmp_path / "ledger.journal"
-        backup_ext = journal_processor.backup_ext
-        backup_file = ledger_file.with_suffix(f".{backup_ext}")
+        ledger_file = Path("/path/to/ledger.journal")
+        backup_file = Path("/path/to/ledger.journal.bak")
         content = "Updated journal content"
-        original_content = "Original journal content"
-
-        mock_file.return_value.read.return_value = original_content
+        mock_fs = MockFileSystem({ledger_file: "Original journal content"})
+        journal_processor.file_system = mock_fs
         journal_processor.logger.info = MagicMock()
 
         journal_processor.write_journal_file(content, ledger_file)
 
-        mock_copy2.assert_called_once_with(ledger_file, backup_file)
-        mock_file.assert_called_with(ledger_file, "w")
-        mock_file.return_value.write.assert_called_with(content)
-
+        assert mock_fs.copied == [(ledger_file, backup_file)]
+        assert mock_fs.written[ledger_file] == content
         journal_processor.logger.info.assert_any_call(f"Creating backup at {backup_file}")
         journal_processor.logger.info.assert_any_call(f"Writing updated journal to {ledger_file}")
 
-    @patch("shutil.copy2", side_effect=Exception("Copy failed"))
-    @patch("builtins.open", new_callable=mock_open)
-    @patch("pathlib.Path.exists", return_value=True)
-    @patch("shutil.move")
-    def test_write_journal_file_exception(
-        self,
-        mock_move: MagicMock,
-        mock_exists: MagicMock,
-        mock_file: MagicMock,
-        mock_copy2: MagicMock,
-        journal_processor: JournalProcessor,
-        tmp_path: Path,
-    ) -> None:
+    def test_write_journal_file_exception(self, journal_processor: JournalProcessor) -> None:
         """Test handling exceptions during journal file writing."""
-        ledger_file = tmp_path / "ledger.journal"
-        backup_ext = journal_processor.backup_ext
-        backup_file = ledger_file.with_suffix(f".{backup_ext}")
+        ledger_file = Path("/path/to/ledger.journal")
+        backup_file = Path("/path/to/ledger.journal.bak")
         content = "Updated journal content"
-        original_content = "Original journal content"
-
-        mock_file.return_value.read.return_value = original_content
+        mock_fs = MockFileSystem({ledger_file: "Original journal content"})
+        mock_fs.copy2 = MagicMock(side_effect=Exception("Copy failed"))
+        mock_fs.exists_values[backup_file] = True
+        mock_fs.move = MagicMock()
+        journal_processor.file_system = mock_fs
         journal_processor.logger.exception = MagicMock()
         journal_processor.logger.info = MagicMock()
 
         with pytest.raises(Exception, match="Copy failed"):
             journal_processor.write_journal_file(content, ledger_file)
 
-        mock_copy2.assert_called_once_with(ledger_file, backup_file)
-        mock_move.assert_called_once_with(backup_file, ledger_file)
+        assert mock_fs.moved == [(backup_file, ledger_file)]
         journal_processor.logger.exception.assert_called_once()
         journal_processor.logger.info.assert_called_with("Restoring from backup")
 
-    @patch("shutil.copy2", side_effect=Exception("Copy failed"))
-    @patch("builtins.open", new_callable=mock_open)
-    @patch("pathlib.Path.exists", return_value=False)
-    @patch("shutil.move")
-    def test_write_journal_file_exception_no_backup(
-        self,
-        mock_move: MagicMock,
-        mock_exists: MagicMock,
-        mock_file: MagicMock,
-        mock_copy2: MagicMock,
-        journal_processor: JournalProcessor,
-        tmp_path: Path,
-    ) -> None:
+    def test_write_journal_file_exception_no_backup(self, journal_processor: JournalProcessor) -> None:
         """Test handling exceptions during journal file writing when backup fails."""
-        ledger_file = tmp_path / "ledger.journal"
+        ledger_file = Path("/path/to/ledger.journal")
+        backup_file = Path("/path/to/ledger.journal.bak")
         content = "Updated journal content"
-        original_content = "Original journal content"
-
-        mock_file.return_value.read.return_value = original_content
+        mock_fs = MockFileSystem({ledger_file: "Original journal content"})
+        mock_fs.copy2 = MagicMock(side_effect=Exception("Copy failed"))
+        mock_fs.exists_values[backup_file] = False
+        mock_fs.move = MagicMock()
+        journal_processor.file_system = mock_fs
         journal_processor.logger.exception = MagicMock()
         journal_processor.logger.info = MagicMock()
 
         with pytest.raises(Exception, match="Copy failed"):
             journal_processor.write_journal_file(content, ledger_file)
 
-        mock_copy2.assert_called_once_with(ledger_file, ledger_file.with_suffix(".bak"))
-        mock_move.assert_not_called()
+        assert mock_fs.moved == []
         journal_processor.logger.exception.assert_called_once()
 
     @patch("dewey.core.bookkeeping.auto_categorize.JournalProcessor.load_classification_rules")
@@ -310,10 +328,9 @@ class TestJournalProcessor:
         mock_parse_journal_entries: MagicMock,
         mock_load_classification_rules: MagicMock,
         journal_processor: JournalProcessor,
-        tmp_path: Path,
     ) -> None:
         """Test the main run method."""
-        ledger_file = tmp_path / "ledger.journal"
+        ledger_file = Path("/path/to/ledger.journal")
 
         # Mock the return values of the methods
         mock_load_classification_rules.return_value = {}
@@ -465,7 +482,7 @@ class TestJournalProcessor:
     level: DEBUG
     format: '%(asctime)s - %(levelname)s - %(name)s - %(message)s'
     date_format: '%Y-%m-%d %H:%M:%S'""")
-    def test_setup_logging_from_config(self, mock_open_config: MagicMock, journal_processor: JournalProcessor, tmp_path: Path) -> None:
+    def test_setup_logging_from_config(self, mock_open_config: MagicMock, journal_processor: JournalProcessor) -> None:
         """Test setting up logging from the configuration file."""
         # Re-initialize the JournalProcessor to apply the new config
         with patch("dewey.core.base_script.BaseScript.__init__", return_value=None):
@@ -481,7 +498,7 @@ class TestJournalProcessor:
 
     @patch("dewey.core.bookkeeping.auto_categorize.CONFIG_PATH", "mocked_config_path")
     @patch("builtins.open", new_callable=mock_open, read_data="{}")
-    def test_setup_logging_default(self, mock_open_config: MagicMock, journal_processor: JournalProcessor, tmp_path: Path) -> None:
+    def test_setup_logging_default(self, mock_open_config: MagicMock, journal_processor: JournalProcessor) -> None:
         """Test setting up logging with default values when config is missing."""
         # Re-initialize the JournalProcessor to apply the new config
         with patch("dewey.core.base_script.BaseScript.__init__", return_value=None):
@@ -497,7 +514,7 @@ class TestJournalProcessor:
 
     @patch("dewey.core.bookkeeping.auto_categorize.CONFIG_PATH", "mocked_config_path")
     @patch("builtins.open", new_callable=mock_open, read_data="invalid yaml")
-    def test_setup_logging_config_error(self, mock_open_config: MagicMock, journal_processor: JournalProcessor, tmp_path: Path) -> None:
+    def test_setup_logging_config_error(self, mock_open_config: MagicMock, journal_processor: JournalProcessor) -> None:
         """Test setting up logging when the config file is invalid."""
         # Re-initialize the JournalProcessor to apply the new config
         with patch("dewey.core.base_script.BaseScript.__init__", return_value=None):
@@ -510,3 +527,29 @@ class TestJournalProcessor:
                 assert journal_processor.logger.handlers[0].formatter._fmt == '%(asctime)s - %(levelname)s - %(name)s - %(message)s'
             else:
                 pytest.fail("No logging handlers found")
+
+    @pytest.mark.parametrize(
+        "line, current_tx, expected_tx",
+        [
+            (
+                "2024-01-01 Description",
+                {"postings": []},
+                {"date": "2024-01-01", "description": "Description", "postings": []},
+            ),
+            (
+                "    Account1  100",
+                {"date": "2024-01-01", "description": "Description", "postings": []},
+                {
+                    "date": "2024-01-01",
+                    "description": "Description",
+                    "postings": [{"account": "Account1", "amount": "100"}],
+                },
+            ),
+        ],
+    )
+    def test__parse_journal_entry(
+        self, journal_processor: JournalProcessor, line: str, current_tx: Dict[str, Any], expected_tx: Dict[str, Any]
+    ) -> None:
+        """Test the _parse_journal_entry method."""
+        journal_processor._parse_journal_entry(line, current_tx)
+        assert current_tx == expected_tx
