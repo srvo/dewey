@@ -84,9 +84,13 @@ class MyUtils(BaseScript):
             str: The processed output data.
         """
         self.logger.info(f"Processing input data: {input_data}")
-        output_data = f"Processed: {input_data}"
-        self.logger.info(f"Output data: {output_data}")
-        return output_data
+        try:
+            output_data = f"Processed: {input_data}"
+            self.logger.info(f"Output data: {output_data}")
+            return output_data
+        except Exception as e:
+            self.logger.error(f"Error in example_utility_function: {e}")
+            return ""
 
 
 if __name__ == "__main__":

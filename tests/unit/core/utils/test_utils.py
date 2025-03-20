@@ -1,27 +1,44 @@
 import pytest
-from unittest.mock import patch
 from dewey.core.utils import MyUtils
+from unittest.mock import patch
+
 
 @pytest.fixture
-def mock_base_script(mocker):
-    """Mock BaseScript methods to isolate MyUtils."""
-    mocker.patch("dewey.core.utils.BaseScript.__init__", return_value=None)
-    mocker.patch("dewey.core.utils.BaseScript.get_config_value", return_value="test_value")
-    mocker.patch("dewey.core.utils.BaseScript.db_conn", return_value=None)
-    mocker.patch("dewey.core.utils.BaseScript.llm_client", return_value=None)
-    mocker.patch("dewey.core.utils.BaseScript.logger")
+def utils_instance(caplog):
+    caplog.set_level("INFO")  # Ensure all log messages are captured
+    return MyUtils(config_section="test_config")
 
-@pytest.fixture
-def my_utils(mock_base_script):
-    """Fixture for MyUtils with mocked dependencies."""
-    return MyUtils()
 
-def test_my_utils_initialization(my_utils):
-    """Test that MyUtils can be initialized."""
-    assert my_utils is not None
-
-def test_example_utility_function(my_utils):
-    """Test the example utility function."""
+def test_example_utility_function(utils_instance, caplog):
     input_data = "test_input"
-    result = my_utils.example_utility_function(input_data)
-    assert result == f"Processed: {input_data}"
+    result = utils_instance.example_utility_function(input_data)
+    assert result == "Processed: test_input"
+    assert "Processing input data: test_input" in caplog.text
+    assert "Output data: Processed: test_input" in caplog.text
+
+
+@pytest.mark.usefixtures("utils_instance")
+def test_run_method(utils_instance, caplog):
+    caplog.set_level("INFO")
+    with patch.object(utils_instance, "db_conn") as mock_db_conn, \
+         patch.object(utils_instance, "llm_client") as mock_llm_client:
+
+        # Mock the db_conn and llm_client to simulate their availability
+        mock_db_conn.return_value = True
+        mock_llm_client.return_value = True
+
+        utils_instance.run()
+
+        assert "Starting utility functions..." in caplog.text
+
+        # Check if database operations were attempted
+        if mock_db_conn.return_value:
+            assert "Executing example database operation..." in caplog.text
+            # You might want to further mock the cursor and execute methods
+            # to avoid actual database calls during testing
+
+        # Check if LLM call was attempted
+        if mock_llm_client.return_value:
+            assert "Making example LLM call..." in caplog.text
+
+        assert "Utility functions completed." in caplog.text
