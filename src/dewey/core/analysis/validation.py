@@ -1,6 +1,8 @@
 from typing import Any, Dict
 
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection
+from dewey.llm import llm_utils
 
 
 class Validation(BaseScript):
@@ -18,7 +20,7 @@ class Validation(BaseScript):
         Args:
             config_section: The configuration section to use.
         """
-        super().__init__(config_section=config_section)
+        super().__init__(config_section=config_section, requires_db=True, enable_llm=True)
 
     def run(self) -> None:
         """
@@ -48,6 +50,17 @@ class Validation(BaseScript):
             if not isinstance(data, dict):
                 self.logger.error("Data is not a dictionary.")
                 return False
+            # Example LLM call
+            prompt = "Is this data valid?"
+            response = llm_utils.call_llm(self.llm_client, prompt, data)
+            self.logger.info(f"LLM Response: {response}")
+
+            # Example database operation
+            with self.db_conn.cursor() as cur:
+                cur.execute("SELECT 1;")
+                result = cur.fetchone()
+                self.logger.info(f"Database check: {result}")
+
             return True  # Placeholder for actual validation logic
         except Exception as e:
             self.logger.exception(f"An error occurred during validation: {e}")
@@ -56,4 +69,4 @@ class Validation(BaseScript):
 
 if __name__ == "__main__":
     validation_script = Validation()
-    validation_script.run()
+    validation_script.execute()
