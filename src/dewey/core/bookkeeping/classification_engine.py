@@ -5,11 +5,12 @@ from datetime import datetime
 from pathlib import Path
 from re import Pattern
 from typing import TYPE_CHECKING, List, Tuple
-import logging
+
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection
+from dewey.llm import llm_utils
 
 if TYPE_CHECKING:
-    import logging
     from dewey.core.base_script import BaseScript
     from dewey.llm import llm_utils
     from .journal_writer import JournalWriter
@@ -33,15 +34,17 @@ class ClassificationEngine(BaseScript):
             rules_path: Path to the JSON file containing classification rules.
             ledger_file: Path to the ledger file.
         """
-        super().__init__(config_section='bookkeeping')
+        super().__init__(config_section="bookkeeping")
         self.ledger_file = ledger_file
         self.rules_path = rules_path
         self.rules: dict = self._load_rules()
         self.compiled_patterns: dict[str, Pattern] = self._compile_patterns()
         self._valid_categories: list[str] = self.rules["categories"]
         self.RULE_SOURCES = [
-            ("overrides.json", 0), # Highest priority
-            ("manual_rules.json", 1), ("base_rules.json", 2)]  # Lowest priority
+            ("overrides.json", 0),  # Highest priority
+            ("manual_rules.json", 1),
+            ("base_rules.json", 2),
+        ]  # Lowest priority
 
     def run(self) -> None:
         """Runs the classification engine."""
@@ -73,11 +76,18 @@ class ClassificationEngine(BaseScript):
                 rules: dict = json.load(f)
 
             loaded_rules: dict = {
-                "patterns": rules.get("patterns", {}), "categories": rules.get("categories", []), "defaults": rules.get(
-                    "defaults", {"positive": "income:unknown", "negative": "expenses:unknown"}, ), "overrides": rules.get("overrides", {}), "sources": rules.get("sources", []), }
+                "patterns": rules.get("patterns", {}),
+                "categories": rules.get("categories", []),
+                "defaults": rules.get(
+                    "defaults",
+                    {"positive": "income:unknown", "negative": "expenses:unknown"},
+                ),
+                "overrides": rules.get("overrides", {}),
+                "sources": rules.get("sources", []),
+            }
 
             if "source" not in loaded_rules:
-                loaded_rules["source"]=None
+                loaded_rules["source"] = None
             return loaded_rules
         except Exception as e:
             self.logger.exception(f"Failed to load classification rules: {e!s}")
@@ -108,8 +118,7 @@ class ClassificationEngine(BaseScript):
             except re.error as e:
                 self.logger.exception("Invalid regex pattern '%s': %s", pattern, str(e))
                 msg = f"Invalid regex pattern '{pattern}': {e!s}"
-                raise ClassificationError(
-                    msg, ) from None
+                raise ClassificationError(msg,) from None
         return compiled
 
     def load_classification_rules(self) -> List[Tuple[Pattern, str, int]]:
@@ -143,14 +152,26 @@ class ClassificationEngine(BaseScript):
         self.logger.info("📝 Generating hledger rules file at: %s", output_path)
 
         rules: list[str] = [
-            "skip 1", "separator , ", "fields date, description, amount", f"currency {self.rules.get('hledger', {}).get('currency', '$')}", f"date-format {self.rules.get('hledger', {}).get('date_format', '%Y-%m-%d')}", "account1 assets:mercury:checking", ]
+            "skip 1",
+            "separator , ",
+            "fields date, description, amount",
+            f"currency {self.rules.get('hledger', {}).get('currency', '$')}",
+            f"date-format {self.rules.get('hledger', {}).get('date_format', '%Y-%m-%d')}",
+            "account1 assets:mercury:checking",
+        ]
 
         rules.extend(
             [
-                "if %amount < 0", "    account2 expenses:unknown", "if %amount > 0", "    account2 income:unknown", ], )
+                "if %amount < 0",
+                "    account2 expenses:unknown",
+                "if %amount > 0",
+                "    account2 income:unknown",
+            ],
+        )
 
         self.logger.debug(
-            "Converting %d patterns to hledger rules", len(self.rules["patterns"]), )
+            "Converting %d patterns to hledger rules", len(self.rules["patterns"]),
+        )
         for pattern, account in self.rules["patterns"].items():
             if pattern and account:
                 rules.append(f"if {pattern}")
@@ -246,10 +267,14 @@ class ClassificationEngine(BaseScript):
         self._validate_category(category)
 
         self.rules["overrides"][pattern] = {
-            "category": category, "examples": [feedback], "timestamp": datetime.now().isoformat(), }
+            "category": category,
+            "examples": [feedback],
+            "timestamp": datetime.now().isoformat(),
+        }
 
         journal_writer.log_classification_decision(
-            tx_hash="feedback_system", pattern=pattern, category=category, )
+            tx_hash="feedback_system", pattern=pattern, category=category,
+        )
 
         self._save_overrides()
         self._compile_patterns()
@@ -268,7 +293,8 @@ class ClassificationEngine(BaseScript):
             ClassificationError: If the feedback format is invalid.
         """
         match: re.Match = re.search(
-            r'(?i)classify\s+[\'"](.+?)[\'"].+?as\s+([\w:]+)', feedback, )
+            r"(?i)classify\s+[\'\"](.+?)[\'\"].+?as\s+([\w:]+)", feedback,
+        )
         if not match:
             msg = f"Invalid feedback format: {feedback}"
             raise ClassificationError(msg)
@@ -288,7 +314,10 @@ class ClassificationEngine(BaseScript):
         """
         # from bin.deepinfra_client import classify_errors
         prompt: list[str] = [
-            "Convert this accounting feedback to a classification rule:", f"Original feedback: {feedback}", "Respond ONLY with JSON: {'pattern': string, 'category': string}", ]
+            "Convert this accounting feedback to a classification rule:",
+            f"Original feedback: {feedback}",
+            "Respond ONLY with JSON: {'pattern': string, 'category': string}",
+        ]
 
         try:
             # response: list[dict] = classify_errors(prompt)
@@ -307,7 +336,10 @@ class ClassificationEngine(BaseScript):
         """Persist override rules to file."""
         overrides_file: Path = Path(__file__).parent.parent / "rules" / "overrides.json"
         data: dict = {
-            "patterns": self.rules["overrides"], "categories": list(set(self.rules["overrides"].values())), "last_updated": datetime.now().isoformat(), }
+            "patterns": self.rules["overrides"],
+            "categories": list(set(self.rules["overrides"].values())),
+            "last_updated": datetime.now().isoformat(),
+        }
 
         with open(overrides_file, "w") as f:
             json.dump(data, f, indent=2)
@@ -353,7 +385,7 @@ class ClassificationEngine(BaseScript):
         rules.sort(key=lambda x: x[1])
         return rules
 
-    def format_category(self, category: str) -> str:
+    def format_category(self, self, category: str) -> str:
         """Format the category string.
 
         Args:
