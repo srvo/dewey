@@ -4,6 +4,9 @@ from datetime import datetime
 from typing import Any, Dict
 
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection
+from dewey.core.db.utils import create_table, insert_data
+from dewey.llm.llm_utils import call_llm
 
 
 class DataValidationError(Exception):
@@ -22,6 +25,35 @@ class MercuryDataValidator(BaseScript):
     def run(self) -> None:
         """Placeholder for the main execution logic."""
         self.logger.info("MercuryDataValidator is running.")
+        # Example usage of config, db, and llm
+        example_config_value = self.get_config_value("example_config")
+        self.logger.info(f"Example config value: {example_config_value}")
+
+        if self.db_conn:
+            try:
+                # Example database operation
+                self.logger.info("Attempting database operation...")
+                # Assuming you have a table named 'transactions'
+                # and you want to fetch some data
+                query = "SELECT * FROM transactions LIMIT 10"
+                result = self.db_conn.execute(query)
+                self.logger.info(f"Database query result: {result}")
+            except Exception as e:
+                self.logger.error(f"Error during database operation: {e}")
+        else:
+            self.logger.warning("Database connection not initialized.")
+
+        if self.llm_client:
+            try:
+                # Example LLM call
+                self.logger.info("Attempting LLM call...")
+                prompt = "Summarize the following text: Example text."
+                response = call_llm(self.llm_client, prompt)
+                self.logger.info(f"LLM response: {response}")
+            except Exception as e:
+                self.logger.error(f"Error during LLM call: {e}")
+        else:
+            self.logger.warning("LLM client not initialized.")
 
     def normalize_description(self, description: str) -> str:
         """Normalize transaction description.
