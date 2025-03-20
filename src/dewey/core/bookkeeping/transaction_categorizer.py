@@ -4,18 +4,69 @@ import json
 import re
 import shutil
 import sys
+import os
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Protocol, Callable
 
 from dewey.core.base_script import BaseScript
+
+
+class FileSystemInterface(Protocol):
+    """Interface for file system operations."""
+
+    def open(self, path: str, mode: str = "r") -> Any:
+        """Open a file."""
+        ...
+
+    def copy2(self, src: str, dst: str) -> None:
+        """Copy a file."""
+        ...
+
+    def isdir(self, path: str) -> bool:
+        """Check if a path is a directory."""
+        ...
+
+    def listdir(self, path: str) -> list[str]:
+        """List directory contents."""
+        ...
+
+    def join(self, path1: str, path2: str) -> str:
+        """Join path components."""
+        ...
+
+
+class RealFileSystem:
+    """Real file system operations."""
+
+    def open(self, path: str, mode: str = "r") -> Any:
+        """Open a file."""
+        return open(path, mode)
+
+    def copy2(self, src: str, dst: str) -> None:
+        """Copy a file."""
+        shutil.copy2(src, dst)
+
+    def isdir(self, path: str) -> bool:
+        """Check if a path is a directory."""
+        return os.path.isdir(path)
+
+    def listdir(self, path: str) -> list[str]:
+        """List directory contents."""
+        return os.listdir(path)
+
+    def join(self, path1: str, path2: str) -> str:
+        """Join path components."""
+        return os.path.join(path1, path2)
 
 
 class JournalCategorizer(BaseScript):
     """Categorizes transactions in journal files based on predefined rules."""
 
-    def __init__(self) -> None:
+    def __init__(self, fs: FileSystemInterface = None, copy_func: Callable[[str, str], None] = None) -> None:
         """Initializes the JournalCategorizer with bookkeeping config."""
         super().__init__(config_section="bookkeeping")
+        self.fs: FileSystemInterface = fs or RealFileSystem()
+        self.copy_func = copy_func or shutil.copy2
 
     def load_classification_rules(self, rules_file: str) -> Dict[str, Any]:
         """Load classification rules from JSON file.
@@ -32,7 +83,7 @@ class JournalCategorizer(BaseScript):
         """
         self.logger.info(f"Loading classification rules from {rules_file}")
         try:
-            with open(rules_file) as f:
+            with self.fs.open(rules_file) as f:
                 return json.load(f)
         except FileNotFoundError:
             self.logger.exception(
@@ -57,7 +108,7 @@ class JournalCategorizer(BaseScript):
         """
         backup_path = str(file_path) + ".bak"
         try:
-            shutil.copy2(file_path, backup_path)
+            self.copy_func(str(file_path), backup_path)
             self.logger.debug(f"Created backup at {backup_path}")
             return backup_path
         except Exception as e:
@@ -100,7 +151,7 @@ class JournalCategorizer(BaseScript):
             return False
 
         try:
-            with open(file_path) as f:
+            with self.fs.open(file_path) as f:
                 journal = json.load(f)
         except Exception as e:
             self.logger.exception(f"Failed to load journal file: {str(e)}")
@@ -120,14 +171,14 @@ class JournalCategorizer(BaseScript):
 
         if modified:
             try:
-                with open(file_path, "w") as f:
+                with self.fs.open(file_path, "w") as f:
                     json.dump(journal, f, indent=4)
                 self.logger.info(f"Journal file updated: {file_path}")
             except Exception as e:
                 self.logger.exception(f"Failed to update journal file: {str(e)}")
                 # Restore from backup
                 try:
-                    shutil.copy2(backup_path, file_path)
+                    self.copy_func(backup_path, file_path)
                     self.logger.warning("Journal file restored from backup.")
                 except Exception as restore_e:
                     self.logger.exception(
@@ -144,12 +195,12 @@ class JournalCategorizer(BaseScript):
             base_dir: The base directory containing the journal files.
             rules: A dictionary containing the classification rules.
         """
-        for year_dir in os.listdir(base_dir):
-            year_path = os.path.join(base_dir, year_dir)
-            if os.path.isdir(year_path):
-                for filename in os.listdir(year_path):
+        for year_dir in self.fs.listdir(base_dir):
+            year_path = self.fs.join(base_dir, year_dir)
+            if self.fs.isdir(year_path):
+                for filename in self.fs.listdir(year_path):
                     if filename.endswith(".json"):
-                        file_path = os.path.join(year_path, filename)
+                        file_path = self.fs.join(year_path, filename)
                         self.process_journal_file(file_path, rules)
 
     def run(self) -> int:
