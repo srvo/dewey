@@ -2,7 +2,7 @@
 
 import logging
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from unittest.mock import MagicMock, patch, mock_open
 
 import pytest
@@ -598,3 +598,13 @@ class TestLoggingExample:
 
         # Assert that the close method was not called
         mock_cleanup.assert_not_called()
+
+    @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+    def test_init_with_logger(self, mock_init: MagicMock, caplog: pytest.LogCaptureFixture) -> None:
+        """Tests the __init__ method with a provided logger."""
+        caplog.set_level(logging.DEBUG)
+        custom_logger = logging.getLogger("custom_logger")
+        logging_example = LoggingExample(logger=custom_logger)
+        assert logging_example.logger == custom_logger
+        logging_example.logger.debug("test")
+        assert "test" in caplog.text
