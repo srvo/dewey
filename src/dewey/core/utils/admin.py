@@ -3,7 +3,8 @@ from dewey.core.base_script import BaseScript
 
 class AdminTasks(BaseScript):
     """
-    A class for performing administrative tasks, such as database maintenance and user management.
+    A class for performing administrative tasks, such as database
+    maintenance and user management.
     """
 
     def __init__(self):
@@ -22,7 +23,8 @@ class AdminTasks(BaseScript):
 
     def perform_database_maintenance(self):
         """
-        Performs database maintenance tasks, such as vacuuming and analyzing tables.
+        Performs database maintenance tasks, such as vacuuming and
+        analyzing tables.
         """
         try:
             self.logger.info("Performing database maintenance...")
