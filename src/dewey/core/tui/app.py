@@ -4,47 +4,53 @@
 This module provides the main TUI application class.
 """
 
+import argparse
+import sys
+from typing import Any, Callable, Dict, List, Optional, Union
+
 from textual.app import App, ComposeResult
-from textual.containers import Container, Horizontal, Vertical
-from textual.widgets import Header, Footer, Button, Static, Label
-from textual.screen import Screen
 from textual.binding import Binding
+from textual.containers import Container, Horizontal, Vertical
 from textual.reactive import reactive
+from textual.screen import Screen
+from textual.widgets import Button, Footer, Header, Label, Static
 
-from .screens import UploadScreen, AnalysisScreen, ConfigScreen
 from dewey.core.base_script import BaseScript
-
-    def run(self) -> None:
-        """
-        Run the script.
-        """
-        # TODO: Implement script logic here
-        raise NotImplementedError("The run method must be implemented")
+from dewey.core.db.connection import DatabaseConnection, get_connection
+from dewey.llm.llm_utils import LLMClient, get_llm_client
 
 class ModuleScreen(BaseScript, Screen):
     """Base screen for module displays."""
-    
+
     BINDINGS = [
         Binding("q", "quit", "Quit", show=True),
         Binding("b", "go_back", "Back", show=True),
-        Binding("r", "refresh", "Refresh", show=True)
+        Binding("r", "refresh", "Refresh", show=True),
     ]
 
-    def __init__(self, title: str):
-        """Initialize module screen."""
-        super().__init__()
+    def __init__(self, title: str) -> None:
+        """Initialize module screen.
+
+        Args:
+            title: The title of the module screen.
+        """
+        super().__init__(config_section="tui")
         self.title = title
         self.status = reactive("Idle")
 
     def compose(self) -> ComposeResult:
-        """Create child widgets."""
+        """Create child widgets.
+
+        Yields:
+            ComposeResult: The composed widgets.
+        """
         yield Header(show_clock=True)
         yield Container(
             Vertical(
                 Label(f"Module: {self.title}", id="module-title"),
                 Label("Status: [yellow]Loading...[/]", id="status"),
                 Static("", id="content"),
-                id="main-content"
+                id="main-content",
             )
         )
         yield Footer()
@@ -65,27 +71,31 @@ class ModuleScreen(BaseScript, Screen):
         """Refresh screen content."""
         self.update_content()
 
+
 class ResearchScreen(ModuleScreen):
     """Research module screen."""
 
     def update_content(self) -> None:
         """Update research content."""
         content = self.query_one("#content", Static)
-        content.update("""[bold]Research Module[/bold]
-        
+        content.update(
+            """[bold]Research Module[/bold]
+
 • Financial Analysis
   - Company Analysis
   - Portfolio Analysis
   - ESG Scoring
-        
+
 • Ethical Analysis
   - ESG Reports
   - Sustainability Metrics
-        
+
 • Research Workflows
   - Data Collection
   - Analysis Pipeline
-  - Report Generation""")
+  - Report Generation"""
+        )
+
 
 class DatabaseScreen(ModuleScreen):
     """Database module screen."""
@@ -93,17 +103,20 @@ class DatabaseScreen(ModuleScreen):
     def update_content(self) -> None:
         """Update database content."""
         content = self.query_one("#content", Static)
-        content.update("""[bold]Database Module[/bold]
-        
+        content.update(
+            """[bold]Database Module[/bold]
+
 • Schema Management
   - Table Definitions
   - Index Management
   - Migrations
-        
+
 • Data Operations
   - Query Interface
   - Backup/Restore
-  - Data Validation""")
+  - Data Validation"""
+        )
+
 
 class LLMAgentsScreen(ModuleScreen):
     """LLM Agents module screen."""
@@ -111,22 +124,25 @@ class LLMAgentsScreen(ModuleScreen):
     def update_content(self) -> None:
         """Update LLM agents content."""
         content = self.query_one("#content", Static)
-        content.update("""[bold]LLM Agents[/bold]
-        
+        content.update(
+            """[bold]LLM Agents[/bold]
+
 • RAG Agent
   - Document Retrieval
   - Context Generation
   - Response Synthesis
-        
+
 • Ethical Analysis Agent
   - ESG Assessment
   - Risk Analysis
   - Recommendations
-        
+
 • Research Agent
   - Data Collection
   - Analysis
-  - Report Generation""")
+  - Report Generation"""
+        )
+
 
 class EnginesScreen(ModuleScreen):
     """Engines module screen."""
@@ -134,29 +150,34 @@ class EnginesScreen(ModuleScreen):
     def update_content(self) -> None:
         """Update engines content."""
         content = self.query_one("#content", Static)
-        content.update("""[bold]Engines Module[/bold]
-        
+        content.update(
+            """[bold]Engines Module[/bold]
+
 • Research Engines
   - Base Engine
   - Deepseek Engine
-        
+
 • Analysis Engines
   - Financial Analysis
   - ESG Analysis
-        
+
 • Data Processing
   - ETL Pipeline
-  - Data Validation""")
+  - Data Validation"""
+        )
+
 
 class MainMenu(Screen):
     """Main menu screen."""
-    
-    BINDINGS = [
-        Binding("q", "quit", "Quit", show=True)
-    ]
+
+    BINDINGS = [Binding("q", "quit", "Quit", show=True)]
 
     def compose(self) -> ComposeResult:
-        """Create child widgets."""
+        """Create child widgets.
+
+        Yields:
+            ComposeResult: The composed widgets.
+        """
         yield Header(show_clock=True)
         yield Container(
             Vertical(
@@ -165,46 +186,51 @@ class MainMenu(Screen):
                     Button("Research", id="research", variant="primary"),
                     Button("Database", id="database", variant="primary"),
                     Button("Engines", id="engines", variant="primary"),
-                    id="row1"
+                    id="row1",
                 ),
                 Horizontal(
                     Button("Data Upload", id="data-upload", variant="primary"),
                     Button("CRM", id="crm", variant="primary"),
                     Button("Bookkeeping", id="bookkeeping", variant="primary"),
-                    id="row2"
+                    id="row2",
                 ),
                 Horizontal(
                     Button("Automation", id="automation", variant="primary"),
                     Button("Sync", id="sync", variant="primary"),
                     Button("Config", id="config", variant="primary"),
-                    id="row3"
+                    id="row3",
                 ),
                 Label("[bold]LLM Components[/bold]", id="llm-title"),
                 Horizontal(
                     Button("LLM Agents", id="llm-agents", variant="warning"),
-                    id="llm-row"
+                    id="llm-row",
                 ),
-                id="menu"
+                id="menu",
             )
         )
         yield Footer()
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        """Handle button press events."""
+        """Handle button press events.
+
+        Args:
+            event: The button press event.
+        """
         button_id = event.button.id
         screen_map = {
             "research": ResearchScreen("Research"),
             "database": DatabaseScreen("Database"),
             "engines": EnginesScreen("Engines"),
-            "llm-agents": LLMAgentsScreen("LLM Agents")
+            "llm-agents": LLMAgentsScreen("LLM Agents"),
         }
-        
+
         if button_id in screen_map:
             self.app.push_screen(screen_map[button_id])
 
+
 class DeweyTUI(App):
     """Main TUI application."""
-    
+
     TITLE = "Dewey TUI"
     CSS = """
     Screen {
@@ -256,17 +282,54 @@ class DeweyTUI(App):
         "research": ResearchScreen,
         "database": DatabaseScreen,
         "engines": EnginesScreen,
-        "llm-agents": LLMAgentsScreen
+        "llm-agents": LLMAgentsScreen,
     }
 
     def on_mount(self) -> None:
         """Handle app mount event."""
         self.push_screen("main")
 
-def run():
+
+class TUIApp(BaseScript):
+    """TUI Application class that integrates with BaseScript."""
+
+    def __init__(self) -> None:
+        """Initialize the TUI application."""
+        super().__init__(
+            name="DeweyTUI",
+            description="Textual User Interface for Dewey Core Modules",
+            config_section="tui",
+            requires_db=False,
+            enable_llm=False,
+        )
+        self.tui_app = DeweyTUI()
+
+    def run(self) -> None:
+        """Run the TUI application."""
+        self.logger.info("Starting Dewey TUI application")
+        self.tui_app.run()
+
+    def setup_argparse(self) -> argparse.ArgumentParser:
+        """Set up command line arguments.
+
+        Returns:
+            An argument parser configured with common options.
+        """
+        parser = super().setup_argparse()
+        # Add TUI-specific arguments here if needed
+        return parser
+
+    def _cleanup(self) -> None:
+        """Clean up resources."""
+        super()._cleanup()
+        self.logger.info("TUI application cleanup complete")
+
+
+def run() -> None:
     """Run the TUI application."""
-    app = DeweyTUI()
-    app.run()
+    app = TUIApp()
+    app.execute()
+
 
 if __name__ == "__main__":
-    run() 
+    run()
