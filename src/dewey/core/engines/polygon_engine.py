@@ -1,8 +1,7 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
+from dewey.core.db.connection import get_motherduck_connection
 from dewey.core.db.utils import create_table, execute_query
 from dewey.llm.llm_utils import call_llm
-from typing import Any, Dict, Optional
 
 
 class PolygonEngine(BaseScript):
@@ -10,7 +9,7 @@ class PolygonEngine(BaseScript):
     Engine for interacting with the Polygon API.
     """
 
-    def __init__(self, config_section: str = 'polygon_engine') -> None:
+    def __init__(self, config_section: str = "polygon_engine") -> None:
         """
         Initializes the PolygonEngine.
 
@@ -35,7 +34,11 @@ class PolygonEngine(BaseScript):
             with get_motherduck_connection() as conn:
                 # Example: Create a table (replace with your actual schema)
                 table_name = "polygon_data"
-                schema = {"ticker": "VARCHAR", "timestamp": "TIMESTAMP", "price": "DOUBLE"}
+                schema = {
+                    "ticker": "VARCHAR",
+                    "timestamp": "TIMESTAMP",
+                    "price": "DOUBLE",
+                }
                 create_table(conn, table_name, schema)
 
                 # Example: Insert data (replace with your actual data)
@@ -43,7 +46,9 @@ class PolygonEngine(BaseScript):
                 insert_query = f"INSERT INTO {table_name} ({', '.join(data.keys())}) VALUES ({', '.join(['?' for _ in data.values()])})"
                 execute_query(conn, insert_query, list(data.values()))
 
-                self.logger.info(f"Successfully created table {table_name} and inserted sample data.")
+                self.logger.info(
+                    f"Successfully created table {table_name} and inserted sample data."
+                )
 
         except Exception as e:
             self.logger.error(f"Error interacting with the database: {e}")
