@@ -1,5 +1,6 @@
-from dewey.core.base_script import BaseScript
 from typing import Any
+
+from dewey.core.base_script import BaseScript
 
 
 class DocsEngine(BaseScript):
@@ -13,8 +14,13 @@ class DocsEngine(BaseScript):
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initializes the DocsEngine module."""
-        super().__init__(*args, **kwargs)
+        """Initializes the DocsEngine module.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        """
+        super().__init__(*args, config_section="docs_engine", **kwargs)
 
     def run(self) -> None:
         """
