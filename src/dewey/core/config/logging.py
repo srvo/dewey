@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -13,7 +13,7 @@ class LoggingExample(BaseScript):
     accessing configuration values.
     """
 
-    def __init__(self, config_section: str = 'logging_example') -> None:
+    def __init__(self, config_section: str = 'logging') -> None:
         """
         Initializes the LoggingExample script.
 
@@ -43,4 +43,4 @@ class LoggingExample(BaseScript):
 
 if __name__ == "__main__":
     script = LoggingExample()
-    script.run()
+    script.execute()
