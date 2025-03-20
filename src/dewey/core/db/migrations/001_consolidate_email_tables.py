@@ -1,8 +1,4 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
-from dewey.core.db import utils
-from dewey.llm import llm_utils
-from typing import Any, Dict, Optional
 
 
 class ConsolidateEmailTables(BaseScript):
@@ -17,7 +13,9 @@ class ConsolidateEmailTables(BaseScript):
         """
         Initializes the ConsolidateEmailTables script.
         """
-        super().__init__(config_section='consolidate_email_tables', requires_db=True, enable_llm=True)
+        super().__init__(
+            config_section="consolidate_email_tables", requires_db=True, enable_llm=True
+        )
 
     def run(self) -> None:
         """
@@ -36,7 +34,9 @@ class ConsolidateEmailTables(BaseScript):
 
         try:
             # Example of accessing configuration values
-            some_config_value: str = self.get_config_value('some_config_key', 'default_value')
+            some_config_value: str = self.get_config_value(
+                "some_config_key", "default_value"
+            )
             self.logger.debug(f"Using some_config_value: {some_config_value}")
 
             # Example of using database connection
@@ -57,7 +57,10 @@ class ConsolidateEmailTables(BaseScript):
                 self.logger.error("Database connection is not available.")
 
         except Exception as e:
-            self.logger.error(f"An error occurred during email table consolidation: {e}", exc_info=True)
+            self.logger.error(
+                f"An error occurred during email table consolidation: {e}",
+                exc_info=True,
+            )
             raise
 
 
