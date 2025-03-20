@@ -76,8 +76,20 @@ class ClassificationEngine(BaseScript):
                     "defaults", {"positive": "income:unknown", "negative": "expenses:unknown"}, ), "overrides": rules.get("overrides", {}), "sources": rules.get("sources", []), }
 
             if "source" not in loaded_rules:
-                loaded_rules["source"]=None, "categories": [], "defaults": {
-                    "positive": "income:unknown", "negative": "expenses:unknown", }, "overrides": {}, "sources": [], }
+                loaded_rules["source"]=None
+            return loaded_rules
+        except Exception as e:
+            self.logger.exception(f"Failed to load classification rules: {e!s}")
+            return {
+                "patterns": {},
+                "categories": [],
+                "defaults": {
+                    "positive": "income:unknown",
+                    "negative": "expenses:unknown",
+                },
+                "overrides": {},
+                "sources": [],
+            }
 
     def _compile_patterns(self) -> dict[str, Pattern]:
         """Compile regex patterns for classification.
@@ -88,7 +100,10 @@ class ClassificationEngine(BaseScript):
         Raises:
             ClassificationError: If an invalid regex pattern is encountered.
         """
-        compiled: dict[str, Pattern]=None, re.IGNORECASE)
+        compiled: dict[str, Pattern] = {}
+        for pattern in self.rules["patterns"]:
+            try:
+                compiled[pattern] = re.compile(pattern, re.IGNORECASE)
             except re.error as e:
                 self.logger.exception("Invalid regex pattern '%s': %s", pattern, str(e))
                 msg = f"Invalid regex pattern '{pattern}': {e!s}"
@@ -104,7 +119,10 @@ class ClassificationEngine(BaseScript):
         """
         self.logger.info("Loading classification rules with priority system")
 
-        rules=None, data), priority in rules:
+        rules = self.load_prioritized_rules()
+        compiled_rules = []
+
+        for (pattern, data), priority in rules:
             category = data["category"]
             formatted_category = self.format_category(category)
 
@@ -133,49 +151,10 @@ class ClassificationEngine(BaseScript):
         self.logger.debug(
             "Converting %d patterns to hledger rules", len(self.rules["patterns"]), )
         for pattern, account in self.rules["patterns"].items():
-            if }
-
-            if "source" not in loaded_rules:
-                loaded_rules["source"] is None:
-                }
-
-            if "source" not in loaded_rules:
-                loaded_rules["source"] = str(rules_path)
-
-            return loaded_rules
-        except Exception as e:
-            self.logger.exception(f"Failed to load classification rules: {e!s}")
-            return {
-                "patterns": {}
-            if Pattern] is None:
-                Pattern] = {}
-        for pattern in self.rules["patterns"]:
-            try:
-                compiled[pattern] = re.compile(pattern
-            if int]]:
-        """Load and compile classification rules with priority.
-
-        Returns:
-            A list of compiled rules with their associated category and priority.
-        """
-        self.logger.info("Loading classification rules with priority system")
-
-        rules is None:
-                int]]:
-        """Load and compile classification rules with priority.
-
-        Returns:
-            A list of compiled rules with their associated category and priority.
-        """
-        self.logger.info("Loading classification rules with priority system")
-
-        rules = self.load_prioritized_rules()
-        compiled_rules = []
-
-        for (pattern
-            rules.append(f"if {pattern}")
-            rules.append(f"    account2 {account}")
-            self.logger.debug("Added pattern: %s => %s", pattern, account)
+            if pattern and account:
+                rules.append(f"if {pattern}")
+                rules.append(f"    account2 {account}")
+                self.logger.debug("Added pattern: %s => %s", pattern, account)
 
         self.logger.debug("Adding amount-based account switching")
 
@@ -351,17 +330,15 @@ class ClassificationEngine(BaseScript):
         Returns:
             A list of tuples, where each tuple contains a rule (pattern and data) and its priority.
         """
-        rules: list[tuple[tuple[str, dict], int]]=None, priority in self.RULE_SOURCES:
+        rules: list[tuple[tuple[str, dict], int]] = []
+        rules_dir: Path = Path(__file__).parent.parent / "rules"
+
+        for filename, priority in self.RULE_SOURCES:
             file_path: Path = rules_dir / filename
             try:
                 with open(file_path, "r") as f:
                     data: dict = json.load(f)
                     for pattern, category_data in data["patterns"].items():
-                        if int]] is None:
-                            int]] = []
-        rules_dir: Path = Path(__file__).parent.parent / "rules"
-
-        for filename
                         rules.append(((pattern, category_data), priority))
                     self.logger.info(f"Loaded {len(data['patterns'])} rules from {filename}")
             except FileNotFoundError:
