@@ -34,7 +34,6 @@ class UploadCsvFiles(BaseScript):
             # 1. Get configuration values
             file_path: str = self.get_config_value("file_path")
             table_name: str = self.get_config_value("table_name", "uploaded_csv_data")
-            motherduck_token: Optional[str] = self.get_config_value("motherduck_token")
 
             # 2. Validate file path
             if not file_path:
