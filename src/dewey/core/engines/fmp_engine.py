@@ -1,5 +1,6 @@
+from typing import Any, Dict, Optional
+
 from dewey.core.base_script import BaseScript
-from typing import Any
 
 
 class FMPEngine(BaseScript):
@@ -28,7 +29,7 @@ class FMPEngine(BaseScript):
         self.logger.info(f"FMP API Key: {api_key}")
         self.logger.info("FMP Engine Finished.")
 
-    def get_data(self, endpoint: str, params: dict = None) -> Any:
+    def get_data(self, endpoint: str, params: Optional[Dict[str, Any]] = None) -> Any:
         """
         Retrieves data from the specified FMP API endpoint.
 
