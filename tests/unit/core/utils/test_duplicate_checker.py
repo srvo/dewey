@@ -38,3 +38,13 @@ class TestDuplicateChecker:
             duplicate_checker.run()
 
         assert "An error occurred: Config Error" in caplog.text
+
+    def test_duplicate_checker_basic(self):
+        """
+        Test the basic functionality of the DuplicateChecker.
+        """
+        checker = DuplicateChecker()
+        data = ["item1", "item2", "item1", "item3", "item2"]
+        threshold = 0.8
+        duplicates = checker.check_duplicates(data, threshold)
+        assert set(duplicates) == {"item1", "item2"}
