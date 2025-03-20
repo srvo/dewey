@@ -3,17 +3,75 @@
 import os
 import re
 import shutil
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Protocol
 
 from dewey.core.base_script import BaseScript
 
 
-class JournalFixer(BaseScript):
+class FileSystemInterface(Protocol):
+    """Interface for file system operations."""
+
+    def exists(self, path: str) -> bool:
+        ...
+
+    def copy2(self, src: str, dst: str) -> None:
+        ...
+
+    def open(self, path: str, mode: str = "r") -> object:
+        ...
+
+    def move(self, src: str, dst: str) -> None:
+        ...
+
+    def listdir(self, path: str) -> List[str]:
+        ...
+
+
+class RealFileSystem:
+    """Real file system operations."""
+
+    def exists(self, path: str) -> bool:
+        return os.path.exists(path)
+
+    def copy2(self, src: str, dst: str) -> None:
+        shutil.copy2(src, dst)
+
+    def open(self, path: str, mode: str = "r") -> object:
+        return open(path, mode)
+
+    def move(self, src: str, dst: str) -> None:
+        shutil.move(src, dst)
+
+    def listdir(self, path: str) -> List[str]:
+        return os.listdir(path)
+
+
+class JournalFixerInterface(Protocol):
+    """Interface for the JournalFixer class."""
+
+    def parse_transactions(self, content: str) -> List[Dict]:
+        ...
+
+    def process_transactions(self, transactions: List[Dict]) -> str:
+        ...
+
+    def parse_transaction(self, lines: List[str]) -> Optional[Dict]:
+        ...
+
+    def process_journal_file(self, file_path: str) -> None:
+        ...
+
+    def run(self, filenames: Optional[List[str]] = None) -> None:
+        ...
+
+
+class JournalFixer(BaseScript, JournalFixerInterface):
     """Corrects formatting issues in Hledger journal files."""
 
-    def __init__(self) -> None:
+    def __init__(self, fs: Optional[FileSystemInterface] = None) -> None:
         """Initializes the JournalFixer with bookkeeping config."""
         super().__init__(config_section='bookkeeping')
+        self.fs: FileSystemInterface = fs if fs is not None else RealFileSystem()
 
     def parse_transactions(self, content: str) -> List[Dict]:
         """Parse all transactions from journal content.
@@ -115,7 +173,7 @@ class JournalFixer(BaseScript):
         Raises:
             Exception: If the file processing fails, the original exception is re-raised after attempting to restore from backup.
         """
-        if not os.path.exists(file_path):
+        if not self.fs.exists(file_path):
             self.logger.error(f"File not found: {file_path}")
             return
 
@@ -124,10 +182,10 @@ class JournalFixer(BaseScript):
         # Create backup first
         backup_path = file_path + ".bak"
         try:
-            shutil.copy2(file_path, backup_path)
+            self.fs.copy2(file_path, backup_path)
 
             # Read and process transactions
-            with open(file_path) as f:
+            with self.fs.open(file_path) as f:
                 content = f.read()
 
             transactions = self.parse_transactions(content)
@@ -137,22 +195,25 @@ class JournalFixer(BaseScript):
             fixed_content = self.process_transactions(transactions)
 
             # Write corrected content
-            with open(file_path, "w") as f:
+            with self.fs.open(file_path, "w") as f:
                 f.write(fixed_content)
 
         except Exception as e:
             self.logger.exception(f"Failed to process {file_path}")
-            if os.path.exists(backup_path):
+            if self.fs.exists(backup_path):
                 self.logger.info(f"Restoring from backup: {backup_path}")
-                shutil.move(backup_path, file_path)
+                self.fs.move(backup_path, file_path)
             raise
 
-    def run(self) -> None:
+    def run(self, filenames: Optional[List[str]] = None) -> None:
         """Main function to process all journal files."""
         self.logger.info("Starting journal entries correction")
 
         # Process all journal files in the current directory
-        for filename in os.listdir("."):
+        if filenames is None:
+            filenames = self.fs.listdir(".")
+
+        for filename in filenames:
             if filename.endswith(".journal"):
                 self.process_journal_file(filename)
 
