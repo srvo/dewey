@@ -1,23 +1,26 @@
 """Tests for research utilities."""
-import pytest
-from unittest.mock import Mock, patch
 import json
 from pathlib import Path
-from dewey.core.research.utils.universe_breakdown import UniverseBreakdown
-from dewey.core.research.utils.sts_xml_parser import STSXMLParser
-from dewey.core.research.utils.research_output_handler import ResearchOutputHandler
-import logging
+from typing import Any, Dict
+
+import pytest
+
 from dewey.core.base_script import BaseScript
-from typing import Dict, Any, List
+from dewey.core.research.utils.research_output_handler import (
+    ResearchOutputHandler,
+)
+from dewey.core.research.utils.sts_xml_parser import STSXMLParser
+from dewey.core.research.utils.universe_breakdown import UniverseBreakdown
+
 
 class TestUniverseBreakdown(BaseScript):
     """Test suite for universe breakdown utility."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initializes the TestUniverseBreakdown class."""
-        super().__init__(config_section='crm')
+        super().__init__(config_section="crm")
 
-    def run(self):
+    def run(self) -> None:
         """Runs all tests for the UniverseBreakdown utility."""
         self.test_initialization(self.breakdown())
         self.test_analyze_universe(self.breakdown())
@@ -25,7 +28,11 @@ class TestUniverseBreakdown(BaseScript):
 
     @pytest.fixture
     def breakdown(self) -> UniverseBreakdown:
-        """Create a test breakdown instance."""
+        """Create a test breakdown instance.
+
+        Returns:
+            A UniverseBreakdown instance.
+        """
         return UniverseBreakdown()
 
     def test_initialization(self, breakdown: UniverseBreakdown) -> None:
@@ -35,8 +42,8 @@ class TestUniverseBreakdown(BaseScript):
             breakdown: An instance of UniverseBreakdown.
         """
         assert breakdown is not None
-        assert hasattr(breakdown, 'analyze')
-        assert hasattr(breakdown, 'generate_report')
+        assert hasattr(breakdown, "analyze")
+        assert hasattr(breakdown, "generate_report")
 
     def test_analyze_universe(self, breakdown: UniverseBreakdown) -> None:
         """Test universe analysis.
@@ -48,7 +55,7 @@ class TestUniverseBreakdown(BaseScript):
             "companies": [
                 {"name": "Company A", "sector": "Technology", "market_cap": 1000000},
                 {"name": "Company B", "sector": "Healthcare", "market_cap": 2000000},
-                {"name": "Company C", "sector": "Technology", "market_cap": 1500000}
+                {"name": "Company C", "sector": "Technology", "market_cap": 1500000},
             ]
         }
 
@@ -67,7 +74,7 @@ class TestUniverseBreakdown(BaseScript):
         """
         analysis_data: Dict[str, Any] = {
             "sector_breakdown": {"Technology": 2, "Healthcare": 1},
-            "market_cap_distribution": {"large": 1, "medium": 2}
+            "market_cap_distribution": {"large": 1, "medium": 2},
         }
 
         report: Dict[str, Any] = breakdown.generate_report(analysis_data)
@@ -76,14 +83,15 @@ class TestUniverseBreakdown(BaseScript):
         assert "charts" in report
         assert isinstance(report["charts"], list)
 
+
 class TestSTSXMLParser(BaseScript):
     """Test suite for STS XML parser."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initializes the TestSTSXMLParser class."""
-        super().__init__(config_section='crm')
+        super().__init__(config_section="crm")
 
-    def run(self):
+    def run(self) -> None:
         """Runs all tests for the STSXMLParser utility."""
         self.test_initialization(self.parser())
         self.test_parse_xml(self.parser())
@@ -91,7 +99,11 @@ class TestSTSXMLParser(BaseScript):
 
     @pytest.fixture
     def parser(self) -> STSXMLParser:
-        """Create a test parser instance."""
+        """Create a test parser instance.
+
+        Returns:
+            An STSXMLParser instance.
+        """
         return STSXMLParser()
 
     def test_initialization(self, parser: STSXMLParser) -> None:
@@ -101,7 +113,7 @@ class TestSTSXMLParser(BaseScript):
             parser: An instance of STSXMLParser.
         """
         assert parser is not None
-        assert hasattr(parser, 'parse')
+        assert hasattr(parser, "parse")
 
     def test_parse_xml(self, parser: STSXMLParser) -> None:
         """Test XML parsing.
@@ -136,14 +148,15 @@ class TestSTSXMLParser(BaseScript):
         with pytest.raises(ValueError):
             parser.parse("<invalid>xml</invalid>")
 
+
 class TestResearchOutputHandler(BaseScript):
     """Test suite for research output handler."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initializes the TestResearchOutputHandler class."""
-        super().__init__(config_section='crm')
+        super().__init__(config_section="crm")
 
-    def run(self):
+    def run(self) -> None:
         """Runs all tests for the ResearchOutputHandler utility."""
         self.test_initialization(self.handler())
         self.test_save_output(self.handler(), self.tmp_path())
@@ -152,12 +165,23 @@ class TestResearchOutputHandler(BaseScript):
 
     @pytest.fixture
     def handler(self) -> ResearchOutputHandler:
-        """Create a test output handler instance."""
+        """Create a test output handler instance.
+
+        Returns:
+            A ResearchOutputHandler instance.
+        """
         return ResearchOutputHandler()
 
     @pytest.fixture
     def tmp_path(self, tmp_path: Path) -> Path:
-        """Create a temporary path for testing."""
+        """Create a temporary path for testing.
+
+        Args:
+            tmp_path: A pytest tmp_path fixture.
+
+        Returns:
+            A Path object representing the temporary directory.
+        """
         return tmp_path
 
     def test_initialization(self, handler: ResearchOutputHandler) -> None:
@@ -167,10 +191,12 @@ class TestResearchOutputHandler(BaseScript):
             handler: An instance of ResearchOutputHandler.
         """
         assert handler is not None
-        assert hasattr(handler, 'save')
-        assert hasattr(handler, 'load')
+        assert hasattr(handler, "save")
+        assert hasattr(handler, "load")
 
-    def test_save_output(self, handler: ResearchOutputHandler, tmp_path: Path) -> None:
+    def test_save_output(
+        self, handler: ResearchOutputHandler, tmp_path: Path
+    ) -> None:
         """Test saving research output.
 
         Args:
@@ -178,11 +204,8 @@ class TestResearchOutputHandler(BaseScript):
             tmp_path: A temporary directory path.
         """
         test_data: Dict[str, Any] = {
-            "analysis": {
-                "score": 85,
-                "recommendations": ["Test recommendation"]
-            },
-            "timestamp": "2024-03-19T12:00:00"
+            "analysis": {"score": 85, "recommendations": ["Test recommendation"]},
+            "timestamp": "2024-03-19T12:00:00",
         }
 
         output_path: Path = tmp_path / "test_output.json"
@@ -194,7 +217,9 @@ class TestResearchOutputHandler(BaseScript):
             saved_data: Dict[str, Any] = json.load(f)
         assert saved_data == test_data
 
-    def test_load_output(self, handler: ResearchOutputHandler, tmp_path: Path) -> None:
+    def test_load_output(
+        self, handler: ResearchOutputHandler, tmp_path: Path
+    ) -> None:
         """Test loading research output.
 
         Args:
@@ -202,15 +227,12 @@ class TestResearchOutputHandler(BaseScript):
             tmp_path: A temporary directory path.
         """
         test_data: Dict[str, Any] = {
-            "analysis": {
-                "score": 85,
-                "recommendations": ["Test recommendation"]
-            }
+            "analysis": {"score": 85, "recommendations": ["Test recommendation"]}
         }
 
         # Save test data
         output_path: Path = tmp_path / "test_output.json"
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             json.dump(test_data, f)
 
         # Load and verify
@@ -226,15 +248,16 @@ class TestResearchOutputHandler(BaseScript):
         with pytest.raises(FileNotFoundError):
             handler.load(Path("nonexistent.json"))
 
+
 @pytest.mark.integration
 class TestUtilsIntegration(BaseScript):
     """Integration tests for research utilities."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initializes the TestUtilsIntegration class."""
-        super().__init__(config_section='crm')
+        super().__init__(config_section="crm")
 
-    def run(self, tmp_path: Path):
+    def run(self, tmp_path: Path) -> None:
         """Runs the complete analysis workflow integration test.
 
         Args:
