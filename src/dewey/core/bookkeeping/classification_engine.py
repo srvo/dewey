@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     import logging
     from dewey.core.base_script import BaseScript
     from dewey.llm import llm_utils
+    from .journal_writer import JournalWriter
 
 logger = logging.getLogger(__name__)
 
