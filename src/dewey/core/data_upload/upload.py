@@ -1,5 +1,7 @@
-from dewey.core.base_script import BaseScript
 from typing import Any
+
+from dewey.core.base_script import BaseScript
+
 
 class Upload(BaseScript):
     """
@@ -13,15 +15,24 @@ class Upload(BaseScript):
         """
         Initializes the Upload script.
         """
-        super().__init__(config_section='upload')
+        super().__init__(config_section="upload")
 
     def run(self) -> None:
         """
         Executes the data upload process.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            Exception: If an error occurs during data upload.
         """
         try:
             # Example of accessing configuration
-            upload_url = self.get_config_value('upload_url', 'default_url')
+            upload_url = self.get_config_value("upload_url", "default_url")
             self.logger.info(f"Starting data upload to: {upload_url}")
 
             # Add your data upload logic here
