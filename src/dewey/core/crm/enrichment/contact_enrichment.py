@@ -3,13 +3,13 @@ from __future__ import annotations
 import json
 import re
 import uuid
-import logging
 from typing import Any, Dict, Optional
 
-import yaml
-
 from dewey.core.base_script import BaseScript
-from dewey.utils.database import get_db_connection
+from dewey.core.db.connection import get_connection
+from dewey.utils.database import execute_query
+from dewey.utils.database import fetch_one
+from dewey.utils.database import fetch_all
 
 
 class ContactEnrichment(BaseScript):
@@ -27,20 +27,13 @@ class ContactEnrichment(BaseScript):
     - Reliable: Implements task tracking and retry mechanisms
     - Extensible: Supports adding new data sources and extraction patterns
     - Auditable: Maintains detailed logs and task history
-
-    Key Features:
-    - Regex-based contact information extraction
-    - Task management system with status tracking
-    - Confidence scoring for extracted data
-    - Source versioning and validation
-    - Comprehensive logging and error handling
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initializes the ContactEnrichment module."""
-        super().__init__(*args, **kwargs)
+        super().__init__(config_section="crm", *args, **kwargs)
         self.patterns: Dict[str, str] = self.get_config_value("regex_patterns")["contact_info"]
-        self.enrichment_batch_size: int = self.get_config_value("enrichment_batch_size")
+        self.enrichment_batch_size: int = self.get_config_value("settings.analysis_batch_size")
 
     def run(self, batch_size: Optional[int] = None) -> None:
         """Runs the contact enrichment process.
@@ -90,14 +83,13 @@ class ContactEnrichment(BaseScript):
 
         try:
             # Insert new task record with initial status 'pending'
-            cursor.execute(
-                """
+            query = """
                 INSERT INTO enrichment_tasks (
                     id, entity_type, entity_id, task_type, status, metadata
                 ) VALUES (?, ?, ?, ?, 'pending', ?)
-                """,
-                (task_id, entity_type, entity_id, task_type, json.dumps(metadata or {})),
-            )
+                """
+            params = (task_id, entity_type, entity_id, task_type, json.dumps(metadata or {}))
+            execute_query(conn, query, params)
 
             self.logger.info(f"[TASK] Created task {task_id}")
             return task_id
@@ -139,7 +131,6 @@ class ContactEnrichment(BaseScript):
                 error=None
             )
         """
-        cursor = conn.cursor()
 
         self.logger.info(f"[TASK] Updating task {task_id} to status: {status}")
         if result:
@@ -149,8 +140,7 @@ class ContactEnrichment(BaseScript):
 
         try:
             # Update task record with new status and results
-            cursor.execute(
-                """
+            query = """
                 UPDATE enrichment_tasks
                 SET status = ?,
                     attempts = attempts + 1,
@@ -159,11 +149,11 @@ class ContactEnrichment(BaseScript):
                     error_message = ?,
                     updated_at = CURRENT_TIMESTAMP
                 WHERE id = ?
-                """,
-                (status, json.dumps(result or {}), error, task_id),
-            )
+                """
+            params = (status, json.dumps(result or {}), error, task_id)
+            row_count = execute_query(conn, query, params)
 
-            if cursor.rowcount == 0:
+            if row_count == 0:
                 self.logger.error(f"[TASK] Task {task_id} not found for status update")
             else:
                 self.logger.debug(f"[TASK] Successfully updated task {task_id}")
@@ -213,44 +203,41 @@ class ContactEnrichment(BaseScript):
             )
         """
         source_id = str(uuid.uuid4())
-        cursor = conn.cursor()
 
         self.logger.info(f"[SOURCE] Storing {source_type} data for {entity_type}:{entity_id}")
         self.logger.debug(f"[SOURCE] Data: {json.dumps(data)}, Confidence: {confidence}")
 
         try:
             # Mark previous source as invalid by setting valid_to timestamp
-            cursor.execute(
-                """
+            query = """
                 UPDATE enrichment_sources
                 SET valid_to = CURRENT_TIMESTAMP
                 WHERE entity_type = ? AND entity_id = ? AND source_type = ? AND valid_to IS NULL
-                """,
-                (entity_type, entity_id, source_type),
-            )
+                """
+            params = (entity_type, entity_id, source_type)
+            row_count = execute_query(conn, query, params)
 
-            if cursor.rowcount > 0:
+            if row_count > 0:
                 self.logger.info(
-                    f"[SOURCE] Marked {cursor.rowcount} previous sources as invalid",
+                    f"[SOURCE] Marked {row_count} previous sources as invalid",
                 )
 
             # Insert new source with current timestamp
-            cursor.execute(
-                """
+            query = """
                 INSERT INTO enrichment_sources (
                     id, source_type, entity_type, entity_id,
                     data, confidence, valid_from
                 ) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-                """,
-                (
-                    source_id,
-                    source_type,
-                    entity_type,
-                    entity_id,
-                    json.dumps(data),
-                    confidence,
-                ),
+                """
+            params = (
+                source_id,
+                source_type,
+                entity_type,
+                entity_id,
+                json.dumps(data),
+                confidence,
             )
+            execute_query(conn, query, params)
 
             self.logger.info(f"[SOURCE] Successfully stored source {source_id}")
             return source_id
@@ -371,19 +358,16 @@ class ContactEnrichment(BaseScript):
             success = self.process_email_for_enrichment(conn, "email_12345")
         """
         self.logger.info(f"[PROCESS] Starting enrichment for email {email_id}")
-        cursor = conn.cursor()
 
         try:
             # Retrieve email content from database
-            cursor.execute(
-                """
+            query = """
                 SELECT id, from_email, from_name, plain_body, html_body
                 FROM raw_emails WHERE id = ?
-                """,
-                (email_id,),
-            )
+                """
+            params = (email_id,)
+            result = fetch_one(conn, query, params)
 
-            result = cursor.fetchone()
             if not result:
                 self.logger.error(f"[PROCESS] Email {email_id} not found")
                 return False
@@ -419,8 +403,7 @@ class ContactEnrichment(BaseScript):
 
                     self.logger.info("[PROCESS] Updating contact record")
                     # Update contact record with new information
-                    cursor.execute(
-                        """
+                    query = """
                         UPDATE contacts
                         SET name = COALESCE(?, name),
                             job_title = COALESCE(?, job_title),
@@ -433,19 +416,19 @@ class ContactEnrichment(BaseScript):
                             confidence_score = ?,
                             updated_at = CURRENT_TIMESTAMP
                         WHERE email = ?
-                        """,
-                        (
-                            contact_info.get("name"),
-                            contact_info.get("job_title"),
-                            contact_info.get("company"),
-                            contact_info.get("phone"),
-                            contact_info.get("linkedin_url"),
-                            contact_info["confidence"],
-                            from_email,
-                        ),
+                        """
+                    params = (
+                        contact_info.get("name"),
+                        contact_info.get("job_title"),
+                        contact_info.get("company"),
+                        contact_info.get("phone"),
+                        contact_info.get("linkedin_url"),
+                        contact_info["confidence"],
+                        from_email,
                     )
+                    row_count = execute_query(conn, query, params)
 
-                    if cursor.rowcount == 0:
+                    if row_count == 0:
                         self.logger.warning(
                             f"[PROCESS] No contact record found for {from_email}",
                         )
@@ -506,13 +489,11 @@ class ContactEnrichment(BaseScript):
         self.logger.info(f"[BATCH] Starting contact enrichment batch (size={batch_size})")
 
         try:
-            with get_db_connection() as conn:
-                cursor = conn.cursor()
+            with get_connection() as conn:
 
                 # Get batch of unprocessed emails
                 self.logger.info("[BATCH] Querying for unprocessed emails")
-                cursor.execute(
-                    """
+                query = """
                     SELECT e.id
                     FROM raw_emails e
                     LEFT JOIN enrichment_tasks t ON
@@ -521,11 +502,9 @@ class ContactEnrichment(BaseScript):
                         t.task_type = 'contact_info'
                     WHERE t.id IS NULL
                     LIMIT ?
-                    """,
-                    (batch_size,),
-                )
-
-                email_ids = [row[0] for row in cursor.fetchall()]
+                    """
+                params = (batch_size,)
+                email_ids = [row[0] for row in fetch_all(conn, query, params)]
 
                 if not email_ids:
                     self.logger.info("[BATCH] No new emails to process")
@@ -551,3 +530,13 @@ class ContactEnrichment(BaseScript):
                 exc_info=True,
             )
             raise
+
+
+if __name__ == "__main__":
+    enrichment = ContactEnrichment(
+        name="ContactEnrichmentScript",
+        description="Enriches contact information from emails.",
+        config_section="crm",
+        requires_db=True,
+    )
+    enrichment.execute()
