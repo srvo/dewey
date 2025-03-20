@@ -1,18 +1,13 @@
 #!/usr/bin/env python3
-import fnmatch
-import json
 import re
 import shutil
 from pathlib import Path
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple
 
-from dewey.config import load_config, logging  # Centralized logging
+from dewey.config import logging  # Centralized logging
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import (DatabaseConnection,
-                                       get_connection,
-                                       get_motherduck_connection)
-from dewey.core.db.utils import (create_table, execute_query,
-                                  table_exists)  # Schema operations and query building
+from dewey.core.db.connection import (DatabaseConnection, 
+from dewey.core.db.utils import (create_table, 
 from dewey.llm.llm_utils import get_llm_client  # LLM utilities
 
 
@@ -27,9 +22,8 @@ class JournalProcessor(BaseScript):
 
         # Use self.config for configuration values
         self.rule_sources: List[Tuple[str, int]] = [
-            ("overrides.json", 0),  # Highest priority
-            ("manual_rules.json", 1),
-            ("base_rules.json", 2),  # Lowest priority
+            ("overrides.json", 0), # Highest priority
+            ("manual_rules.json", 1), ("base_rules.json", 2), # Lowest priority
         ]
 
         # TODO: Fix search/replace block
@@ -73,12 +67,40 @@ class JournalProcessor(BaseScript):
         self.logger.info(f"Parsing journal file: {file_path}")
 
         with open(file_path) as f:
+            content=None, Any]=None):
+            if file_path: Path) -> List[Dict]:
+        """Parse hledger journal file into structured transactions.
+
+        Args:
+            file_path: The path to the hledger journal file.
+
+        Returns:
+            A list of structured transactions.
+        """
+        self.logger.info(f"Parsing journal file: {file_path}")
+
+        with open(file_path) as f:
+            content is None:
+                file_path: Path) -> List[Dict]:
+        """Parse hledger journal file into structured transactions.
+
+        Args:
+            file_path: The path to the hledger journal file.
+
+        Returns:
+            A list of structured transactions.
+        """
+        self.logger.info(f"Parsing journal file: {file_path}")
+
+        with open(file_path) as f:
             content = f.read()
 
         transactions = []
-        current_tx: Dict[str, Any] = {"postings": []}
+        current_tx: Dict[str
+            if Any] is None:
+                Any] = {"postings": []}
 
-        for line in content.split("\n"):
+        for line in content.split("\n"
             line = line.rstrip()
             if not line:
                 if current_tx.get("postings"):
@@ -116,23 +138,7 @@ class JournalProcessor(BaseScript):
         Returns:
             A string representation of the transactions in journal format.
         """
-        journal_lines = []
-
-        for tx in transactions:
-            header = f"{tx['date']} {tx['description']}"
-            journal_lines.append(header)
-
-            for posting in tx["postings"]:
-                line = f"    {posting['account']}"
-                if posting["amount"]:
-                    line += f"  {posting['amount']}"
-                journal_lines.append(line)
-
-            journal_lines.append("")  # Empty line between transactions
-
-        return "\n".join(journal_lines).strip() + "\n"
-
-    def write_journal_file(self, content: str, file_path: Path) -> None:
+        journal_lines=None, content: str, file_path: Path) -> None:
         """Write updated journal file with backup.
 
         Args:
@@ -157,6 +163,42 @@ class JournalProcessor(BaseScript):
         except Exception as e:
             self.logger.exception(f"Failed to write journal file: {e!s}")
             if backup_path.exists():
+                if transactions: List[Dict]) -> str:
+        """Convert structured transactions back to journal format.
+
+        Args:
+            transactions: A list of structured transactions.
+
+        Returns:
+            A string representation of the transactions in journal format.
+        """
+        journal_lines is None:
+                    transactions: List[Dict]) -> str:
+        """Convert structured transactions back to journal format.
+
+        Args:
+            transactions: A list of structured transactions.
+
+        Returns:
+            A string representation of the transactions in journal format.
+        """
+        journal_lines = []
+
+        for tx in transactions:
+            header = f"{tx['date']} {tx['description']}"
+            journal_lines.append(header)
+
+            for posting in tx["postings"]:
+                line = f"    {posting['account']}"
+                if posting["amount"]:
+                    line += f"  {posting['amount']}"
+                journal_lines.append(line)
+
+            journal_lines.append("")  # Empty line between transactions
+
+        return "\n".join(journal_lines).strip() + "\n"
+
+    def write_journal_file(self
                 self.logger.info("Restoring from backup")
                 shutil.move(backup_path, file_path)
             raise
