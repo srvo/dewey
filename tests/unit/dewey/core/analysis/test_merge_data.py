@@ -1,10 +1,15 @@
+"""Tests for dewey.core.analysis.merge_data."""
+
 import logging
 from unittest.mock import MagicMock, patch
+from typing import Dict, List, Any, Optional
 
 import pytest
 
 from dewey.core.analysis.merge_data import MergeData
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection
+from dewey.llm import llm_utils
 
 
 class TestMergeData:
@@ -30,10 +35,15 @@ class TestMergeData:
             assert merge_data.requires_db is True
             assert merge_data.enable_llm is True
 
-    def test_run_success(self, merge_data: MergeData) -> None:
+    @patch("dewey.core.analysis.merge_data.get_connection")
+    def test_run_success(self, mock_get_connection: MagicMock, merge_data: MergeData) -> None:
         """Test the run method with successful execution."""
         merge_data.get_config_value = MagicMock(return_value="/test/path")
-        merge_data.db_conn.cursor = MagicMock()
+        mock_db_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_db_conn.cursor.return_value.__enter__.return_value = mock_cursor
+        mock_get_connection.return_value = mock_db_conn
+        merge_data.db_conn = mock_db_conn
         merge_data.llm_client = MagicMock()
 
         with patch(
@@ -72,10 +82,15 @@ class TestMergeData:
 
         merge_data.logger.warning.assert_called_with("LLM client is not available.")
 
-    def test_run_llm_error(self, merge_data: MergeData) -> None:
+    @patch("dewey.core.analysis.merge_data.get_connection")
+    def test_run_llm_error(self, mock_get_connection: MagicMock, merge_data: MergeData) -> None:
         """Test the run method when an error occurs during the LLM call."""
         merge_data.get_config_value = MagicMock(return_value="/test/path")
-        merge_data.db_conn.cursor = MagicMock()
+        mock_db_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_db_conn.cursor.return_value.__enter__.return_value = mock_cursor
+        mock_get_connection.return_value = mock_db_conn
+        merge_data.db_conn = mock_db_conn
 
         with patch(
             "dewey.core.analysis.merge_data.llm_utils.generate_response"
