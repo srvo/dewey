@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-from __future__ import annotations
-
 import argparse
 import os
 import sys
 from datetime import date, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict, Tuple
 
 from dateutil.relativedelta import relativedelta
 
@@ -15,9 +13,8 @@ from dewey.core.base_script import BaseScript
 
 
 class JournalEntryGenerator(BaseScript):
-    """
-    Generates journal entries for the Mormair_E650 asset, including acquisition,
-    depreciation, lease income, revenue sharing, and hosting fees.
+    """Generates journal entries for the Mormair_E650 asset, including
+    acquisition, depreciation, lease income, revenue sharing, and hosting fees.
     """
 
     ASSUMPTIONS = [
@@ -33,12 +30,10 @@ class JournalEntryGenerator(BaseScript):
     ]
 
     def __init__(self) -> None:
-        """
-        Initializes the JournalEntryGenerator with bookkeeping configurations.
-        """
+        """Initializes the JournalEntryGenerator with bookkeeping configurations."""
         super().__init__(config_section="bookkeeping")
-        self.complete_ledger_file: str = ""
-        self.forecast_ledger_file: str = ""
+        self.complete_ledger_file: str = self.get_config_value("complete_ledger_file", "")
+        self.forecast_ledger_file: str = self.get_config_value("forecast_ledger_file", "")
 
     def validate_assumptions(self) -> None:
         """Validates key assumptions with user input."""
@@ -47,7 +42,7 @@ class JournalEntryGenerator(BaseScript):
                 while True:
                     response = input(f"{i}. {assumption} (y/n): ").strip().lower()
                     if response == "y":
-                        break  # type: ignore
+                        break
                     if response == "n":
                         sys.exit()
                     else:
@@ -60,13 +55,10 @@ class JournalEntryGenerator(BaseScript):
         """Create the acquisition journal entry.
 
         Args:
-        ----
             acquisition_date: The date of the asset acquisition.
 
         Returns:
-        -------
             The formatted acquisition journal entry string.
-
         """
         return f"""\
 {acquisition_date.strftime('%Y-%m-%d')} Acquired Mormair_E650 via barter
@@ -81,10 +73,8 @@ class JournalEntryGenerator(BaseScript):
         already exist.
 
         Args:
-        ----
             complete_ledger_file: Path to the complete ledger file.
             acquisition_entry: The acquisition journal entry string.
-
         """
         acquisition_entry_exists = False
         try:
@@ -106,12 +96,11 @@ class JournalEntryGenerator(BaseScript):
                 self.logger.error(f"Error writing to file: {e}")
 
     def initialize_forecast_ledger(self, forecast_ledger_file: str) -> None:
-        """Initializes the forecast ledger file with account declarations if it doesn't exist.
+        """Initializes the forecast ledger file with account declarations if it
+        doesn't exist.
 
         Args:
-        ----
             forecast_ledger_file: Path to the forecast ledger file.
-
         """
         if not os.path.exists(forecast_ledger_file):
             with open(forecast_ledger_file, "w") as f:  # type: ignore
@@ -132,13 +121,10 @@ account Expenses:Hosting:Mormair_E650
         """Create a depreciation journal entry for a given date.
 
         Args:
-        ----
             current_date: The date for which to create the depreciation entry.
 
         Returns:
-        -------
             The formatted depreciation journal entry string.
-
         """
         return (
             f"{current_date.strftime('%Y-%m-%d')} Depreciation - Mormair_E650\n"
@@ -149,19 +135,18 @@ account Expenses:Hosting:Mormair_E650
     def create_revenue_entries(
         self,
         current_date: datetime,
-        generator: dict,
-    ) -> tuple[str, str, str]:  # type: ignore
-        """Creates revenue-related journal entries (lease income, revenue share, hosting fee).
+        generator: Dict[str, Any],
+    ) -> Tuple[str, str, str]:
+        """Creates revenue-related journal entries (lease income, revenue share,
+        hosting fee).
 
         Args:
-        ----
             current_date: The date for which to create the entries.
             generator: A dictionary containing revenue recovery information.
 
         Returns:
-        -------
-            A tuple containing the lease income, revenue share payment, and hosting fee payment entries.
-
+            A tuple containing the lease income, revenue share payment, and
+            hosting fee payment entries.
         """
         if generator["recovered"] < 125975:
             revenue_share = 0.5
@@ -205,10 +190,8 @@ account Expenses:Hosting:Mormair_E650
         """Generates journal entries and appends them to the journal files.
 
         Args:
-        ----
             complete_ledger_file: Path to the complete ledger file.
             forecast_ledger_file: Path to the forecast ledger file.
-
         """
         acquisition_date_str = "2023-12-01"
         acquisition_date = datetime.strptime(acquisition_date_str, "%Y-%m-%d").date()
@@ -249,6 +232,7 @@ account Expenses:Hosting:Mormair_E650
             self.complete_ledger_file,
             self.forecast_ledger_file,
         )
+
 
 if __name__ == "__main__":
     generator = JournalEntryGenerator()
