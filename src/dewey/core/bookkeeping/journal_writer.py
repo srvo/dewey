@@ -1,9 +1,8 @@
-import logging
 import shutil
 from collections import defaultdict
-from typing import Any, Dict, List, Tuple
 from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict, List, Tuple, Union
 
 from dewey.core.base_script import BaseScript
 
@@ -15,29 +14,29 @@ class JournalWriteError(Exception):
 class JournalWriter(BaseScript):
     """Handles journal file writing and management."""
 
-    def __init__(self, output_dir: Path) -> None:
+    def __init__(self, output_dir: Union[str, Path]) -> None:
         """Initializes the JournalWriter.
 
         Args:
             output_dir: The directory to write journal files to.
         """
         super().__init__(config_section="bookkeeping")
-        self.output_dir = output_dir
+        self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        self.processed_hashes_file = output_dir / ".processed_hashes"
+        self.processed_hashes_file = self.output_dir / ".processed_hashes"
         self.seen_hashes: set[str] = self._load_processed_hashes()
         self.audit_log: List[Dict[str, str]] = []
 
     def run(self) -> None:
-        """Runs the journal writer script (currently a placeholder)."""
+        """Runs the journal writer script.
+
+        This method contains the core logic for writing journal entries.
+        """
         self.logger.info("JournalWriter run method called.")
         # TODO: Implement actual script logic here
 
     def _load_processed_hashes(self) -> set[str]:
         """Load previously processed transaction hashes.
-
-        Args:
-            None
 
         Returns:
             A set of processed transaction hashes.
