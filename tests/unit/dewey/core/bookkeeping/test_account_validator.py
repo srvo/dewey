@@ -11,8 +11,27 @@ from unittest.mock import MagicMock, patch, mock_open
 import pytest
 import yaml
 
-from dewey.core.bookkeeping.account_validator import AccountValidator
+from dewey.core.bookkeeping.account_validator import AccountValidator, FileSystemInterface, RealFileSystem
 from dewey.core.base_script import BaseScript
+
+
+class MockFileSystem:
+    """Mock file system for testing."""
+
+    def __init__(self, files: Dict[Path, str]) -> None:
+        """Initialize with a dictionary of files."""
+        self.files = files
+
+    def open(self, path: Path, mode: str = "r") -> MagicMock:
+        """Mock open function."""
+        if path not in self.files:
+            raise FileNotFoundError(f"File not found: {path}")
+        mock_file = mock_open(read_data=self.files[path]).return_value
+        return mock_file
+
+    def exists(self, path: Path) -> bool:
+        """Mock exists function."""
+        return path in self.files
 
 
 class TestAccountValidator:
@@ -65,70 +84,75 @@ class TestAccountValidator:
             "Liabilities:CreditCard",
         ]
 
-    def test_init(self, account_validator: AccountValidator) -> None:
+    def test_init(self) -> None:
         """Test the __init__ method."""
-        assert account_validator.name == "AccountValidator"
-        assert account_validator.config_section == "bookkeeping"
+        with patch("dewey.core.bookkeeping.account_validator.BaseScript.__init__", return_value=None):
+            validator = AccountValidator()
+            assert isinstance(validator.fs, RealFileSystem)
 
-    @patch("json.load")
-    @patch("builtins.open", new_callable=mock_open, read_data='{"categories": ["Assets:Bank"]}')
+            mock_fs = MagicMock(spec=FileSystemInterface)
+            validator = AccountValidator(fs=mock_fs)
+            assert validator.fs == mock_fs
+
     def test_load_rules_success(
         self,
-        mock_open_file: MagicMock,
-        mock_json_load: MagicMock,
-        account_validator: AccountValidator,
-        tmp_path: Path,
         mock_rules: Dict[str, List[str]],
+        tmp_path: Path,
     ) -> None:
         """Test loading rules from a valid JSON file."""
         rules_file = tmp_path / "rules.json"
-        mock_json_load.return_value = mock_rules
+        mock_fs = MockFileSystem({rules_file: json.dumps(mock_rules)})
+        validator = AccountValidator(fs=mock_fs)
+        validator.logger = MagicMock()
 
-        loaded_rules = account_validator.load_rules(rules_file)
+        loaded_rules = validator.load_rules(rules_file)
         assert loaded_rules == mock_rules
-        mock_open_file.assert_called_once_with(rules_file)
-        mock_json_load.assert_called_once()
 
-    @patch("sys.exit")
-    @patch("builtins.open", side_effect=FileNotFoundError)
     def test_load_rules_file_not_found(
-        self, mock_open_file: MagicMock, mock_exit: MagicMock, account_validator: AccountValidator, tmp_path: Path
+        self,
+        tmp_path: Path
     ) -> None:
         """Test loading rules when the file does not exist."""
         rules_file = tmp_path / "nonexistent_rules.json"
-        account_validator.load_rules(rules_file)
-        mock_exit.assert_called_once_with(1)
-        account_validator.logger.exception.assert_called_once()
+        mock_fs = MockFileSystem({})
+        validator = AccountValidator(fs=mock_fs)
+        validator.logger = MagicMock()
 
-    @patch("sys.exit")
-    @patch("json.load", side_effect=json.JSONDecodeError("", "", 0))
-    @patch("builtins.open", new_callable=mock_open, read_data="invalid json")
+        with pytest.raises(FileNotFoundError):
+            validator.load_rules(rules_file)
+        validator.logger.exception.assert_called_once()
+
     def test_load_rules_invalid_json(
-        self, mock_open_file: MagicMock, mock_json_load: MagicMock, mock_exit: MagicMock, account_validator: AccountValidator, tmp_path: Path
+        self,
+        tmp_path: Path
     ) -> None:
         """Test loading rules from an invalid JSON file."""
         rules_file = tmp_path / "invalid_rules.json"
+        mock_fs = MockFileSystem({rules_file: "invalid json"})
+        validator = AccountValidator(fs=mock_fs)
+        validator.logger = MagicMock()
 
-        account_validator.load_rules(rules_file)
-        mock_exit.assert_called_once_with(1)
-        account_validator.logger.exception.assert_called_once()
+        with pytest.raises(json.JSONDecodeError):
+            validator.load_rules(rules_file)
+        validator.logger.exception.assert_called_once()
 
-    @patch("subprocess.run")
     def test_validate_accounts_success(
         self,
-        mock_run: MagicMock,
-        account_validator: AccountValidator,
-        tmp_path: Path,
         mock_rules: Dict[str, List[str]],
         mock_existing_accounts: List[str],
+        tmp_path: Path,
     ) -> None:
         """Test successful account validation."""
         journal_file = tmp_path / "journal.ldg"
+        mock_fs = MockFileSystem({journal_file: ""})
+        validator = AccountValidator(fs=mock_fs)
+        validator.logger = MagicMock()
 
+        mock_run = MagicMock()
         mock_run.return_value.returncode = 0
         mock_run.return_value.stdout = "\n".join(mock_existing_accounts)
 
-        is_valid = account_validator.validate_accounts(journal_file, mock_rules)
+        is_valid = validator.validate_accounts(journal_file, mock_rules, run_command=mock_run)
         assert is_valid is True
         mock_run.assert_called_once_with(
             ["hledger", "accounts", "-f", journal_file, "--declared", "--used"],
@@ -137,81 +161,86 @@ class TestAccountValidator:
             check=True,
         )
 
-    @patch("subprocess.run")
     def test_validate_accounts_missing_accounts(
         self,
-        mock_run: MagicMock,
-        account_validator: AccountValidator,
-        tmp_path: Path,
         mock_rules: Dict[str, List[str]],
+        tmp_path: Path,
     ) -> None:
         """Test account validation with missing accounts."""
         journal_file = tmp_path / "journal.ldg"
         existing_accounts = ["Assets:Bank", "Expenses:Food"]  # Missing "Income:Salary"
+        mock_fs = MockFileSystem({journal_file: ""})
+        validator = AccountValidator(fs=mock_fs)
+        validator.logger = MagicMock()
 
+        mock_run = MagicMock()
         mock_run.return_value.returncode = 0
         mock_run.return_value.stdout = "\n".join(existing_accounts)
 
-        is_valid = account_validator.validate_accounts(journal_file, mock_rules)
+        is_valid = validator.validate_accounts(journal_file, mock_rules, run_command=mock_run)
         assert is_valid is False
         mock_run.assert_called_once()
-        assert account_validator.logger.error.call_count >= 3
+        assert validator.logger.error.call_count >= 3
 
-    @patch("subprocess.run", side_effect=subprocess.CalledProcessError(1, "hledger"))
     def test_validate_accounts_hledger_command_fails(
         self,
-        mock_run: MagicMock,
-        account_validator: AccountValidator,
-        tmp_path: Path,
         mock_rules: Dict[str, List[str]],
+        tmp_path: Path,
     ) -> None:
         """Test when the hledger command fails."""
         journal_file = tmp_path / "journal.ldg"
+        mock_fs = MockFileSystem({journal_file: ""})
+        validator = AccountValidator(fs=mock_fs)
+        validator.logger = MagicMock()
 
-        is_valid = account_validator.validate_accounts(journal_file, mock_rules)
-        assert is_valid is False
+        mock_run = MagicMock(side_effect=subprocess.CalledProcessError(1, "hledger"))
+
+        with pytest.raises(subprocess.CalledProcessError):
+            validator.validate_accounts(journal_file, mock_rules, run_command=mock_run)
         mock_run.assert_called_once()
-        account_validator.logger.exception.assert_called_once()
+        validator.logger.exception.assert_called_once()
 
-    @patch("subprocess.run", side_effect=Exception("Some error"))
     def test_validate_accounts_general_exception(
         self,
-        mock_run: MagicMock,
-        account_validator: AccountValidator,
-        tmp_path: Path,
         mock_rules: Dict[str, List[str]],
+        tmp_path: Path,
     ) -> None:
         """Test when a general exception occurs during validation."""
         journal_file = tmp_path / "journal.ldg"
+        mock_fs = MockFileSystem({journal_file: ""})
+        validator = AccountValidator(fs=mock_fs)
+        validator.logger = MagicMock()
 
-        is_valid = account_validator.validate_accounts(journal_file, mock_rules)
-        assert is_valid is False
+        mock_run = MagicMock(side_effect=Exception("Some error"))
+
+        with pytest.raises(Exception):
+            validator.validate_accounts(journal_file, mock_rules, run_command=mock_run)
         mock_run.assert_called_once()
-        account_validator.logger.exception.assert_called_once()
+        validator.logger.exception.assert_called_once()
 
     @patch("sys.argv", ["account_validator.py", "journal.ldg", "rules.json"])
     @patch.object(AccountValidator, "load_rules")
     @patch.object(AccountValidator, "validate_accounts")
     @patch("sys.exit")
-    @patch("pathlib.Path.exists", return_value=True)
     def test_run_success(
         self,
-        mock_path_exists: MagicMock,
         mock_exit: MagicMock,
         mock_validate_accounts: MagicMock,
         mock_load_rules: MagicMock,
-        account_validator: AccountValidator,
         tmp_path: Path,
         mock_rules: Dict[str, List[str]],
     ) -> None:
         """Test successful execution of the run method."""
         journal_file = tmp_path / "journal.ldg"
         rules_file = tmp_path / "rules.json"
+        mock_fs = MockFileSystem({journal_file: "", rules_file: ""})
+        validator = AccountValidator(fs=mock_fs)
+        validator.logger = MagicMock()
 
         mock_load_rules.return_value = mock_rules
         mock_validate_accounts.return_value = True
 
-        account_validator.run()
+        validator.run()
 
         mock_load_rules.assert_called_once_with(rules_file)
         mock_validate_accounts.assert_called_once_with(journal_file, mock_rules)
@@ -221,25 +250,25 @@ class TestAccountValidator:
     @patch.object(AccountValidator, "load_rules")
     @patch.object(AccountValidator, "validate_accounts")
     @patch("sys.exit")
-    @patch("pathlib.Path.exists", return_value=True)
     def test_run_validation_fails(
         self,
-        mock_path_exists: MagicMock,
         mock_exit: MagicMock,
         mock_validate_accounts: MagicMock,
         mock_load_rules: MagicMock,
-        account_validator: AccountValidator,
         tmp_path: Path,
         mock_rules: Dict[str, List[str]],
     ) -> None:
         """Test run method when account validation fails."""
         journal_file = tmp_path / "journal.ldg"
         rules_file = tmp_path / "rules.json"
+        mock_fs = MockFileSystem({journal_file: "", rules_file: ""})
+        validator = AccountValidator(fs=mock_fs)
+        validator.logger = MagicMock()
 
         mock_load_rules.return_value = mock_rules
         mock_validate_accounts.return_value = False
 
-        account_validator.run()
+        validator.run()
 
         mock_load_rules.assert_called_once_with(rules_file)
         mock_validate_accounts.assert_called_once_with(journal_file, mock_rules)
@@ -249,51 +278,51 @@ class TestAccountValidator:
     @patch.object(AccountValidator, "load_rules")
     @patch.object(AccountValidator, "validate_accounts")
     @patch("sys.exit")
-    @patch("pathlib.Path.exists", side_effect=[False, True])
     def test_run_missing_journal_file(
         self,
-        mock_path_exists: MagicMock,
         mock_exit: MagicMock,
         mock_validate_accounts: MagicMock,
         mock_load_rules: MagicMock,
-        account_validator: AccountValidator,
         tmp_path: Path,
         mock_rules: Dict[str, List[str]],
     ) -> None:
         """Test run method when journal file is missing."""
         rules_file = tmp_path / "rules.json"
+        mock_fs = MockFileSystem({rules_file: ""})
+        validator = AccountValidator(fs=mock_fs)
+        validator.logger = MagicMock()
 
-        account_validator.run()
+        validator.run()
 
         mock_load_rules.assert_not_called()
         mock_validate_accounts.assert_not_called()
         mock_exit.assert_called_once_with(1)
-        account_validator.logger.error.assert_called_once()
+        validator.logger.error.assert_called_once()
 
     @patch("sys.argv", ["account_validator.py", "journal.ldg", "rules.json"])
     @patch.object(AccountValidator, "load_rules")
     @patch.object(AccountValidator, "validate_accounts")
     @patch("sys.exit")
-    @patch("pathlib.Path.exists", side_effect=[True, False])
     def test_run_missing_rules_file(
         self,
-        mock_path_exists: MagicMock,
         mock_exit: MagicMock,
         mock_validate_accounts: MagicMock,
         mock_load_rules: MagicMock,
-        account_validator: AccountValidator,
         tmp_path: Path,
         mock_rules: Dict[str, List[str]],
     ) -> None:
         """Test run method when rules file is missing."""
         journal_file = tmp_path / "journal.ldg"
+        mock_fs = MockFileSystem({journal_file: ""})
+        validator = AccountValidator(fs=mock_fs)
+        validator.logger = MagicMock()
 
-        account_validator.run()
+        validator.run()
 
         mock_load_rules.assert_not_called()
         mock_validate_accounts.assert_not_called()
         mock_exit.assert_called_once_with(1)
-        account_validator.logger.error.assert_called_once()
+        validator.logger.error.assert_called_once()
 
     @patch("sys.argv", ["account_validator.py"])
     @patch("sys.exit")
@@ -301,7 +330,11 @@ class TestAccountValidator:
         self, mock_exit: MagicMock, account_validator: AccountValidator
     ) -> None:
         """Test run method with incorrect number of arguments."""
-        account_validator.run()
+        account_validator.logger = MagicMock()
+        mock_fs = MockFileSystem({})
+        with patch("dewey.core.bookkeeping.account_validator.AccountValidator", return_value=AccountValidator(fs=mock_fs)):
+            account_validator = AccountValidator()
+            account_validator.run()
         mock_exit.assert_called_once_with(1)
         account_validator.logger.error.assert_called_once()
 
@@ -317,8 +350,11 @@ class TestAccountValidator:
     ) -> None:
         """Test successful execution of the execute method."""
         mock_parse_args.return_value = MagicMock()
-
-        account_validator.execute()
+        account_validator.logger = MagicMock()
+        mock_fs = MockFileSystem({})
+        with patch("dewey.core.bookkeeping.account_validator.AccountValidator", return_value=AccountValidator(fs=mock_fs)):
+            account_validator = AccountValidator()
+            account_validator.execute()
 
         mock_parse_args.assert_called_once()
         mock_run.assert_called_once()
@@ -339,8 +375,11 @@ class TestAccountValidator:
         """Test execute method when a KeyboardInterrupt occurs."""
         mock_parse_args.return_value = MagicMock()
         mock_run.side_effect = KeyboardInterrupt
-
-        account_validator.execute()
+        account_validator.logger = MagicMock()
+        mock_fs = MockFileSystem({})
+        with patch("dewey.core.bookkeeping.account_validator.AccountValidator", return_value=AccountValidator(fs=mock_fs)):
+            account_validator = AccountValidator()
+            account_validator.execute()
 
         mock_parse_args.assert_called_once()
         mock_run.assert_called_once()
@@ -363,8 +402,11 @@ class TestAccountValidator:
         """Test execute method when a general exception occurs."""
         mock_parse_args.return_value = MagicMock()
         mock_run.side_effect = Exception("Some error")
-
-        account_validator.execute()
+        account_validator.logger = MagicMock()
+        mock_fs = MockFileSystem({})
+        with patch("dewey.core.bookkeeping.account_validator.AccountValidator", return_value=AccountValidator(fs=mock_fs)):
+            account_validator = AccountValidator()
+            account_validator.execute()
 
         mock_parse_args.assert_called_once()
         mock_run.assert_called_once()
@@ -374,6 +416,7 @@ class TestAccountValidator:
 
     def test_cleanup_db_conn_none(self, account_validator: AccountValidator) -> None:
         """Test cleanup method when db_conn is None."""
+        account_validator.logger = MagicMock()
         account_validator._cleanup()  # db_conn is None by default
         # Assert that no exception is raised
 
@@ -383,6 +426,7 @@ class TestAccountValidator:
         """Test cleanup method when db_conn is successfully closed."""
         mock_db_conn = MagicMock()
         account_validator.db_conn = mock_db_conn
+        account_validator.logger = MagicMock()
         account_validator._cleanup()
         mock_db_conn.close.assert_called_once()
 
@@ -393,18 +437,21 @@ class TestAccountValidator:
         mock_db_conn = MagicMock()
         mock_db_conn.close.side_effect = Exception("Failed to close connection")
         account_validator.db_conn = mock_db_conn
+        account_validator.logger = MagicMock()
         account_validator._cleanup()
         mock_db_conn.close.assert_called_once()
         account_validator.logger.warning.assert_called_once()
 
     def test_get_path_absolute(self, account_validator: AccountValidator) -> None:
         """Test get_path method with an absolute path."""
+        account_validator.logger = MagicMock()
         absolute_path = "/absolute/path/to/file.txt"
         result = account_validator.get_path(absolute_path)
         assert result == Path(absolute_path)
 
     def test_get_path_relative(self, account_validator: AccountValidator) -> None:
         """Test get_path method with a relative path."""
+        account_validator.logger = MagicMock()
         relative_path = "relative/path/to/file.txt"
         expected_path = BaseScript.PROJECT_ROOT / relative_path
         result = account_validator.get_path(relative_path)
@@ -416,6 +463,7 @@ class TestAccountValidator:
         """Test get_config_value method when the key exists."""
         account_validator.config = mock_config
         account_validator.config = mock_config["core"]
+        account_validator.logger = MagicMock()
         value = account_validator.get_config_value("logging.level")
         assert value == "INFO"
 
@@ -424,6 +472,7 @@ class TestAccountValidator:
     ) -> None:
         """Test get_config_value method when the key does not exist."""
         account_validator.config = mock_config
+        account_validator.logger = MagicMock()
         value = account_validator.get_config_value("nonexistent.key", "default_value")
         assert value == "default_value"
 
@@ -432,6 +481,7 @@ class TestAccountValidator:
     ) -> None:
         """Test get_config_value method when a nested key does not exist."""
         account_validator.config = mock_config
+        account_validator.logger = MagicMock()
         value = account_validator.get_config_value(
             "core.nonexistent.key", "default_value"
         )
@@ -439,6 +489,8 @@ class TestAccountValidator:
 
     def test_setup_argparse(self, account_validator: AccountValidator) -> None:
         """Test the setup_argparse method."""
+        account_validator.description = "Test Description"
+        account_validator.logger = MagicMock()
         parser = account_validator.setup_argparse()
         assert parser.description == account_validator.description
         assert parser.format_help()  # Ensure help message can be generated
@@ -455,6 +507,7 @@ class TestAccountValidator:
         mock_args.log_level = "DEBUG"
         mock_args.config = None
         mock_parse_args.return_value = mock_args
+        account_validator.logger = MagicMock()
 
         account_validator.parse_args()
 
@@ -481,6 +534,7 @@ class TestAccountValidator:
         mock_args.log_level = None
         mock_args.config = str(config_file)
         mock_parse_args.return_value = mock_args
+        account_validator.logger = MagicMock()
 
         account_validator.parse_args()
 
@@ -498,6 +552,7 @@ class TestAccountValidator:
         mock_args.log_level = None
         mock_args.config = "nonexistent_config.yaml"
         mock_parse_args.return_value = mock_args
+        account_validator.logger = MagicMock()
 
         account_validator.parse_args()
 
@@ -516,6 +571,7 @@ class TestAccountValidator:
         mock_args.config = None
         mock_args.db_connection_string = "test_connection_string"
         mock_parse_args.return_value = mock_args
+        account_validator.logger = MagicMock()
 
         account_validator.parse_args()
         mock_get_connection.assert_called_once_with(
@@ -534,11 +590,13 @@ class TestAccountValidator:
         mock_args.config = None
         mock_args.llm_model = "test_llm_model"
         mock_parse_args.return_value = mock_args
+        account_validator.logger = MagicMock()
 
         account_validator.parse_args()
         mock_get_llm_client.assert_called_once_with({"model": "test_llm_model"})
 
     def test_run_abstract(self, account_validator: AccountValidator) -> None:
         """Test that the run method is abstract."""
+        account_validator.logger = MagicMock()
         with pytest.raises(TypeError):
             BaseScript.run(account_validator)
