@@ -1,17 +1,15 @@
 """Core enrichment workflow coordinating Attio and Onyx integrations."""
 
 from datetime import datetime
-from typing import Dict, List, Any
-
-from sqlalchemy import create_engine, inspect
-from sqlalchemy.exc import IntegrityError, OperationalError
-from sqlalchemy.orm import sessionmaker
+from typing import Any, Dict, List
 
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection
+from dewey.llm.llm_utils import LLMClient
 from api_clients.api_docs_manager import load_docs
 from api_clients.attio_client import AttioAPIError, AttioClient
 from api_clients.onyx_client import OnyxAPIError, OnyxClient
-from schema import Base, OnyxEnrichment
+from schema import OnyxEnrichment
 
 
 class EnrichmentEngine(BaseScript):
@@ -23,15 +21,7 @@ class EnrichmentEngine(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the EnrichmentEngine with database and API clients."""
-        super().__init__(config_section='crm', name="EnrichmentEngine")
-
-        db_url = self.get_config_value("db_url")
-        if not db_url:
-            raise ValueError("Database URL not found in configuration.")
-
-        self.engine = create_engine(db_url)
-        Base.metadata.create_all(self.engine)
-        self.Session = sessionmaker(bind=self.engine)
+        super().__init__(config_section="crm", name="EnrichmentEngine", requires_db=True)
 
         self.attio = AttioClient()
         self.onyx = OnyxClient()
@@ -42,6 +32,10 @@ class EnrichmentEngine(BaseScript):
 
         Args:
             batch_size: The number of contacts to process in each batch.
+
+        Raises:
+            AttioAPIError: If the Attio API integration fails.
+            OnyxAPIError: If the Onyx API integration fails.
         """
         try:
             contacts = self.attio.get_contacts(batch_size)
@@ -52,8 +46,10 @@ class EnrichmentEngine(BaseScript):
 
         except AttioAPIError as e:
             self.logger.error(f"Attio integration failed: {e}")
+            raise
         except OnyxAPIError as e:
             self.logger.error(f"Onyx integration failed: {e}")
+            raise
 
     def _process_contact(self, contact: Dict[str, Any]) -> None:
         """Handles the full lifecycle for a single contact.
@@ -103,15 +99,10 @@ class EnrichmentEngine(BaseScript):
 
         Args:
             record: A dictionary containing the record to store.
+
+        Raises:
+            Exception: If any database operation fails.
         """
-        inspector = inspect(self.engine)
-
-        if not inspector.has_table("attio_contacts") or not inspector.has_table(
-            "onyx_enrichments"
-        ):
-            Base.metadata.create_all(self.engine)
-
-        session = self.Session()
         try:
             self.logger.debug(
                 f"Attempting to save enrichment for contact {record['contact_id']}"
@@ -123,36 +114,20 @@ class EnrichmentEngine(BaseScript):
                 timestamp=datetime.fromisoformat(record["timestamp"]),
             )
 
-            session.add(enrichment)
-
-            self.logger.debug(
-                f"Committing enrichment for contact {record['contact_id']}"
-            )
-            session.commit()
+            self.db_conn.add(enrichment)
+            self.db_conn.commit()
 
             self.logger.info(
                 f"Successfully saved enrichment for contact {record['contact_id']}"
             )
 
-        except IntegrityError as e:
-            session.rollback()
-            self.logger.error(
-                f"Database integrity error for contact {record['contact_id']}: {e}"
+        except Exception as e:
+            self.db_conn.rollback()
+            self.logger.exception(
+                f"Failed to save enrichment for contact {record['contact_id']}: {e}"
             )
             raise
 
-        except OperationalError as e:
-            session.rollback()
-            self.logger.error(f"Database operational error: {e}")
-            self.logger.info("Check database connection and retry the operation")
-            raise
-
-        except Exception as e:
-            session.rollback()
-            self.logger.exception(f"Unexpected database error: {e}")
-            self.logger.debug(f"Failed record: {record}")
-            raise
-
         finally:
-            session.close()
+            self.db_conn.close()
             self.logger.debug("Database session closed")
