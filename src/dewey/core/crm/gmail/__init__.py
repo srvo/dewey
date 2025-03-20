@@ -1,5 +1,4 @@
 from dewey.core.base_script import BaseScript
-import logging
 from typing import Any, Optional
 
 
@@ -16,20 +15,16 @@ class GmailModule(BaseScript):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initializes the GmailModule."""
         super().__init__(*args, **kwargs)
-        self.name = "GmailModule"
-        self.description = "Manages Gmail-related tasks."
 
     def run(self) -> None:
         """
         Executes the primary logic of the Gmail module.
+
+        This method should be overridden in subclasses to implement
+        specific Gmail-related tasks.
         """
         self.logger.info("Gmail module started.")
         # Add your Gmail logic here
-        api_key: Optional[str] = self.get_config_value("gmail_api_key")
-        if api_key:
-            self.logger.debug("Gmail API key found in config.")
-        else:
-            self.logger.warning("Gmail API key not found in config.")
         self.logger.info("Gmail module finished.")
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
@@ -41,7 +36,7 @@ class GmailModule(BaseScript):
             default: The default value to return if the key is not found.
 
         Returns:
-            The configuration value associated with the key, or the default value
-            if the key is not found.
+            The configuration value associated with the key, or the default
+            value if the key is not found.
         """
         return super().get_config_value(key, default)
