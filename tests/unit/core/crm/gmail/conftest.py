@@ -9,6 +9,7 @@ import pytest
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import HttpMockSequence
+import duckdb
 
 @pytest.fixture
 def temp_db_path() -> Generator[str, None, None]:
@@ -78,7 +79,6 @@ def mock_credentials():
 @pytest.fixture
 def mock_duckdb_connection(temp_db_path):
     """Create a mock DuckDB connection."""
-import duckdb
     conn = duckdb.connect(temp_db_path)
     
     # Create necessary tables
@@ -128,4 +128,4 @@ def sample_email_batch() -> list:
             'sizeEstimate': 1000 + i
         }
         for i in range(5)
-    ] 
+    ]
