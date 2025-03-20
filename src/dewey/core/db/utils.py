@@ -12,7 +12,10 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db import connection
-from dewey.core.db.connection import (DatabaseConnection, 
+from dewey.core.db.connection import (
+    DatabaseConnection,
+)  # noqa: F401 - Import used for type hinting
+from dewey.core.exceptions import DatabaseConnectionError
 
 from . import connection
 from .models import TABLE_INDEXES, TABLE_SCHEMAS
@@ -271,16 +274,10 @@ class DatabaseUtils(BaseScript):
         if not conditions:
             return "", []
 
-        clauses=None, val in conditions.items():
-            if []
-
-        clauses is None:
-                []
-
         clauses = []
         params = []
 
-        for col
+        for col, val in conditions.items():
             if val is None:
                 clauses.append(f"{col} IS NULL")
             elif isinstance(val, (list, tuple)):
@@ -342,7 +339,13 @@ class DatabaseUtils(BaseScript):
 
     @staticmethod
     def build_select_query(
-        table_name: str, columns: Optional[List[str]] = None, conditions: Optional[Dict[str, Any]] = None, order_by: Optional[Union[str, List[str]]] = None, limit: Optional[int] = None, offset: Optional[int] = None, ) -> Tuple[str, List[Any]]:
+        table_name: str,
+        columns: Optional[List[str]] = None,
+        conditions: Optional[Dict[str, Any]] = None,
+        order_by: Optional[Union[str, List[str]]] = None,
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
+    ) -> Tuple[str, List[Any]]:
         """Build a SELECT query.
 
         Args:
@@ -360,7 +363,9 @@ class DatabaseUtils(BaseScript):
         col_list = "*" if not columns else ", ".join(columns)
 
         # Build clauses
-        where_clause, params=None, offset)
+        where_clause, params = DatabaseUtils.build_where_clause(conditions or {})
+        order_clause = DatabaseUtils.build_order_clause(order_by)
+        limit_clause = DatabaseUtils.build_limit_clause(limit, offset)
 
         # Combine query
         query = f"""
@@ -519,10 +524,6 @@ class DatabaseUtils(BaseScript):
         """
         # Check if we should use an existing database file
         if existing_db_path and os.path.exists(existing_db_path):
-            if params is None:
-                params = DatabaseUtils.build_where_clause(conditions or {})
-        order_clause = DatabaseUtils.build_order_clause(order_by)
-        limit_clause = DatabaseUtils.build_limit_clause(limit
             self.logger.info(f"Using existing database at {existing_db_path}")
             try:
                 with connection.db_manager.get_connection(for_write=True) as conn:
@@ -703,7 +704,7 @@ class DatabaseUtils(BaseScript):
                     FROM {table_name}
                 """,
                     local_only=local_only,
-                )[0]
+                )[0][0]
 
                 stats[col_name] = {
                     "count": result[0],
