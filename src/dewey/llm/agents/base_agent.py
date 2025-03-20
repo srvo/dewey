@@ -25,17 +25,19 @@ class BaseAgent(BaseScript):
         config_section: Optional[str] = None,
         requires_db: bool = False,
         enable_llm: bool = True,  # BaseAgent likely needs LLM
+        disable_rate_limit: bool = False,
         **kwargs: Any,
     ) -> None:
         """
         Initializes the BaseAgent script.
-
+    
         Args:
             name: Name of the agent (used for logging)
             description: Description of the agent
             config_section: Section in dewey.yaml to load for this agent
             requires_db: Whether this agent requires database access
             enable_llm: Whether this agent requires LLM access
+            disable_rate_limit: Whether to disable LLM rate limiting
             **kwargs: Keyword arguments passed to the BaseScript constructor.
         """
         super().__init__(
@@ -50,7 +52,7 @@ class BaseAgent(BaseScript):
         self.executor_type: str = "local"  # Example attribute
         self.executor_kwargs: Dict[str, Any] = {}  # Example attribute
         self.max_print_outputs_length: int = 1000  # Example attribute
-        self.disable_rate_limit: bool = False  # New attribute to disable rate limiting
+        self.disable_rate_limit = disable_rate_limit  # Set from parameter
 
     def run(self) -> None:
         """
