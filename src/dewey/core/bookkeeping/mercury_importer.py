@@ -1,6 +1,27 @@
+from typing import Optional, Protocol
+
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection
 from dewey.llm.llm_utils import get_llm_client
+from dewey.core.config import DeweyConfig
+
+
+class DatabaseInterface(Protocol):
+    """
+    A simple interface for database operations.
+    """
+
+    def execute(self, query: str) -> list:
+        """
+        Executes a database query.
+
+        Args:
+            query: The SQL query to execute.
+
+        Returns:
+            The result of the query.
+        """
+        ...
 
 
 class MercuryImporter(BaseScript):
@@ -8,11 +29,18 @@ class MercuryImporter(BaseScript):
     Imports data from Mercury.
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        config: Optional[DeweyConfig] = None,
+        db_conn: Optional[DatabaseInterface] = None,
+        llm_client: Optional[object] = None,
+    ) -> None:
         """
         Initializes the MercuryImporter.
         """
-        super().__init__(config_section="mercury")
+        super().__init__(config_section="mercury", config=config)
+        self.db_conn = db_conn
+        self.llm_client = llm_client
 
     def run(self) -> None:
         """
@@ -42,9 +70,8 @@ class MercuryImporter(BaseScript):
             if self.db_conn:
                 self.logger.info("Database connection available.")
                 # Example database operation
-                # with DatabaseConnection(self.config) as db_conn:
-                #     result = db_conn.execute("SELECT * FROM some_table")
-                #     self.logger.info(f"Query result: {result}")
+                # result = self.db_conn.execute("SELECT * FROM some_table")
+                # self.logger.info(f"Query result: {result}")
             else:
                 self.logger.warning("No database connection configured.")
 
@@ -60,3 +87,4 @@ class MercuryImporter(BaseScript):
         except Exception as e:
             self.logger.error(f"Error during Mercury import: {e}")
             raise
+
