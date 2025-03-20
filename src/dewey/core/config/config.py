@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 from dewey.core.base_script import BaseScript
 
@@ -11,13 +11,13 @@ class Config(BaseScript):
     logging, and other utilities.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, name: str = "Config", config_section: str = "core") -> None:
         """
         Initializes the Config object.
 
         Calls the BaseScript constructor with the 'config' section.
         """
-        super().__init__(name="Config", config_section="core")
+        super().__init__(name=name, config_section=config_section)
 
     def run(self) -> None:
         """
