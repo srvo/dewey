@@ -7,15 +7,9 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from dotenv import load_dotenv
-
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
 from dewey.llm.llm_utils import generate_content
-
-# Load environment variables from .env file
-load_dotenv()
-
-CONVENTIONS_PATH = Path("../.aider/CONVENTIONS.md")
 
 
 class DirectoryDocumenter(BaseScript):
@@ -29,18 +23,12 @@ class DirectoryDocumenter(BaseScript):
         """
         super().__init__(config_section="architecture", name="DirectoryDocumenter")
         self.root_dir = Path(root_dir).resolve()
-        self._validate_directory()
-
-        self.conventions_path = CONVENTIONS_PATH  # Relative path to CONVENTIONS.md
+        self.conventions_path = self.get_path(
+            self.get_config_value("core.conventions_document", "../.aider/CONVENTIONS.md"),
+        )  # Relative path to CONVENTIONS.md
         self.checkpoint_file = self.root_dir / ".dewey_documenter_checkpoint.json"
         self.checkpoints: Dict[str, str] = self._load_checkpoints()
         self.conventions: str = self._load_conventions()
-
-        if not self.conventions_path.exists():
-            self.logger.error(
-                f"Could not find CONVENTIONS.md at {self.conventions_path}. Please ensure the path is correct.",
-            )
-            sys.exit(1)
 
     def _validate_directory(self) -> None:
         """Ensure directory exists and is accessible.
@@ -282,6 +270,17 @@ class DirectoryDocumenter(BaseScript):
             The content of the README file.
         """
         dir_analysis = self._analyze_directory_structure()
+        expected_modules = [
+            "src/dewey/core",
+            "src/dewey/llm",
+            "src/dewey/pipeline",
+            "src/dewey/utils",
+            "ui/screens",
+            "ui/components",
+            "config",
+            "tests",
+            "docs",
+        ]
 
         readme_content = [
             f"# {directory.name} Documentation",
@@ -294,7 +293,7 @@ class DirectoryDocumenter(BaseScript):
                 if "code_quality" in data
             ],
             "\n## Directory Structure",
-            f"- Expected Modules: {', '.join(dir_analysis['expected_modules'])}",
+            f"- Expected Modules: {', '.join(expected_modules)}",
             f"- Structural Deviations ({len(dir_analysis['deviations'])}):",
             *[f"  - {d}" for d in dir_analysis["deviations"]],
             "\n## Future Development Plans\nTBD",
