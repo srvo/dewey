@@ -1,5 +1,7 @@
-from dewey.core.base_script import BaseScript
 from typing import Any
+
+from dewey.core.base_script import BaseScript
+
 
 class TestEnrichment(BaseScript):
     """
@@ -14,14 +16,31 @@ class TestEnrichment(BaseScript):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Initializes the TestEnrichment module.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
         """
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, config_section="test_enrichment", **kwargs)
         self.name = "TestEnrichment"
         self.description = "Tests the CRM enrichment process."
 
     def run(self) -> None:
         """
         Executes the test enrichment process.
+
+        This method retrieves an example configuration value and logs
+        messages to indicate the start and completion of the test
+        enrichment process.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            Exception: If there is an error during the enrichment process.
         """
         self.logger.info("Starting test enrichment process.")
 
