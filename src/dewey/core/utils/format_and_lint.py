@@ -28,11 +28,15 @@ class FormatAndLint(BaseScript):
         Runs the formatting and linting process.
         """
         self.logger.info("Starting formatting and linting process.")
-        # Add your formatting and linting logic here
-        config_value: Any = self.get_config_value('some_config_key', 'default_value')
-        self.logger.info(f"Example config value: {config_value}")
+        try:
+            # Add your formatting and linting logic here
+            config_value: Any = self.get_config_value('some_config_key', 'default_value')
+            self.logger.info(f"Example config value: {config_value}")
 
-        # Placeholder for formatting/linting
-        self.formatting_performed = True  # Set the flag to True
+            # Placeholder for formatting/linting
+            self.formatting_performed = True  # Set the flag to True
 
-        self.logger.info("Formatting and linting process completed.")
+            self.logger.info("Formatting and linting process completed.")
+        except Exception as e:
+            self.logger.error(f"An error occurred during formatting and linting: {e}")
+            raise  # Re-raise the exception to indicate test failure
