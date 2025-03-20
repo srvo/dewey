@@ -5,7 +5,7 @@ from datetime import datetime
 from pathlib import Path
 from re import Pattern
 import fnmatch
-from typing import TYPE_CHECKING, List, Tuple, Dict
+from typing import TYPE_CHECKING, List, Tuple, Dict, Union
 import logging
 from dewey.core.base_script import BaseScript
 
@@ -13,16 +13,16 @@ if TYPE_CHECKING:
     from src.dewey.core.bookkeeping.writers.journal_writer_fab1858b import JournalWriter
 import logging
 from dewey.core.base_script import BaseScript
+from dewey.llm import llm_utils
 
 logger = logging.getLogger(__name__)
 
 
-class ClassificationError(BaseScript):
+class ClassificationError(Exception):
     """Exception for classification failures."""
 
+    pass
 
-    def __init__(self):
-        super().__init__(config_section='bookkeeping')
 
 class ClassificationEngine(BaseScript):
     """Handles transaction categorization logic."""
@@ -31,12 +31,13 @@ class ClassificationEngine(BaseScript):
         """Initializes the ClassificationEngine.
 
         Args:
-        ----
             rules_path: Path to the JSON file containing classification rules.
-
+            ledger_file: Path to the ledger file.
         """
+        super().__init__(config_section='bookkeeping')
         self.ledger_file = ledger_file
-        self.rules: dict = self._load_rules(rules_path)
+        self.rules_path = rules_path
+        self.rules: dict = self._load_rules()
         self.compiled_patterns: dict[str, Pattern] = self._compile_patterns()
         self._valid_categories: list[str] = self.rules["categories"]
         self.RULE_SOURCES = [
@@ -44,29 +45,31 @@ class ClassificationEngine(BaseScript):
             ("manual_rules.json", 1),
             ("base_rules.json", 2)]  # Lowest priority
 
+    def run(self) -> None:
+        """Runs the classification engine."""
+        self.logger.info("Starting classification engine...")
+        # Add any initialization or setup steps here if needed
+        self.logger.info("Classification engine ready.")
+
     @property
     def categories(self) -> list[str]:
         """Accessor for valid classification categories.
 
-        Returns
-        -------
+        Returns:
             A list of valid classification categories.
-
         """
         return self._valid_categories
 
-    def _load_rules(self, rules_path: Path) -> dict:
+    def _load_rules(self) -> dict:
         """Load classification rules from JSON file.
 
         Args:
-        ----
             rules_path: Path to the JSON file.
 
         Returns:
-        -------
             A dictionary containing the loaded rules.  Returns default rules on failure.
-
         """
+        rules_path = self.rules_path
         try:
             with open(rules_path) as f:
                 rules: dict = json.load(f)
@@ -102,14 +105,11 @@ class ClassificationEngine(BaseScript):
     def _compile_patterns(self) -> dict[str, Pattern]:
         """Compile regex patterns for classification.
 
-        Returns
-        -------
+        Returns:
             A dictionary mapping patterns to compiled regex objects.
 
-        Raises
-        ------
+        Raises:
             ClassificationError: If an invalid regex pattern is encountered.
-
         """
         compiled: dict[str, Pattern] = {}
         for pattern in self.rules["patterns"]:
@@ -123,36 +123,33 @@ class ClassificationEngine(BaseScript):
                 ) from None
         return compiled
 
-   def load_classification_rules(self) -> List[Tuple[Pattern, str, int]]:
-       """Load and compile classification rules with priority.
+    def load_classification_rules(self) -> List[Tuple[Pattern, str, int]]:
+        """Load and compile classification rules with priority.
 
-       Returns
-       -------
-           A list of compiled rules with their associated category and priority.
+        Returns:
+            A list of compiled rules with their associated category and priority.
+        """
+        self.logger.info("Loading classification rules with priority system")
 
-       """
-       self.logger.info("Loading classification rules with priority system")
+        rules = self.load_prioritized_rules()
+        compiled_rules = []
 
-       rules = self.load_prioritized_rules()
-       compiled_rules = []
+        for (pattern, data), priority in rules:
+            category = data["category"]
+            formatted_category = self.format_category(category)
 
-       for (pattern, data), priority in rules:
-           category = data["category"]
-           formatted_category = self.format_category(category)
+            # Handle different pattern types
+            compiled = self.compile_pattern(pattern)
 
-           # Handle different pattern types
-           compiled = self.compile_pattern(pattern)
+            compiled_rules.append((compiled, formatted_category, priority))
 
-           compiled_rules.append((compiled, formatted_category, priority))
+        self.logger.info(f"Loaded {len(compiled_rules)} classification rules")
 
-       self.logger.info(f"Loaded {len(compiled_rules)} classification rules")
-   def export_hledger_rules(self, output_path: Path) -> None:
-       """Export rules in hledger's CSV format.
+    def export_hledger_rules(self, output_path: Path) -> None:
+        """Export rules in hledger's CSV format.
 
         Args:
-        ----
             output_path: Path to the output file.
-
         """
         self.logger.info("📝 Generating hledger rules file at: %s", output_path)
 
@@ -193,9 +190,7 @@ class ClassificationEngine(BaseScript):
         """Export rules in Paisa's template format.
 
         Args:
-        ----
             output_path: Path to the output file.
-
         """
         self.logger.info("📝 Generating Paisa template at: %s", output_path)
 
@@ -233,14 +228,11 @@ class ClassificationEngine(BaseScript):
         """Classify transaction using rules and AI fallback.
 
         Args:
-        ----
             description: Transaction description.
             amount: Transaction amount.
 
         Returns:
-        -------
             A tuple containing the income account, expense account, and absolute amount.
-
         """
         for pattern, compiled in self.compiled_patterns.items():
             if compiled.search(description):
@@ -265,10 +257,8 @@ class ClassificationEngine(BaseScript):
         """Process user feedback to improve classification rules.
 
         Args:
-        ----
             feedback: User feedback string.
             journal_writer: JournalWriter instance for logging.
-
         """
         try:
             parsed: tuple[str, str] = self._parse_feedback(feedback)
@@ -298,17 +288,13 @@ class ClassificationEngine(BaseScript):
         """Parse natural language feedback.
 
         Args:
-        ----
             feedback: User feedback string.
 
         Returns:
-        -------
             A tuple containing the pattern and category.
 
         Raises:
-        ------
             ClassificationError: If the feedback format is invalid.
-
         """
         match: re.Match = re.search(
             r'(?i)classify\s+[\'"](.+?)[\'"].+?as\s+([\w:]+)',
@@ -323,22 +309,15 @@ class ClassificationEngine(BaseScript):
         """Use DeepInfra to parse complex feedback.
 
         Args:
-        ----
             feedback: User feedback string.
 
         Returns:
-        -------
             A tuple containing the pattern and category.
 
         Raises:
-        ------
             ClassificationError: If AI parsing fails.
-
         """
-        from bin.deepinfra_client import classify_errors
-import logging
-from dewey.core.base_script import BaseScript
-
+        # from bin.deepinfra_client import classify_errors
         prompt: list[str] = [
             "Convert this accounting feedback to a classification rule:",
             f"Original feedback: {feedback}",
@@ -346,7 +325,8 @@ from dewey.core.base_script import BaseScript
         ]
 
         try:
-            response: list[dict] = classify_errors(prompt)
+            # response: list[dict] = classify_errors(prompt)
+            response: list[dict] = llm_utils.call_llm(prompt)
             if not response:
                 msg = "No response from AI"
                 raise ClassificationError(msg)
@@ -373,14 +353,73 @@ from dewey.core.base_script import BaseScript
         """Validate if a category is in the allowed categories.
 
         Args:
-        ----
             category: Category to validate.
 
         Raises:
-        ------
             ValueError: If category is not in allowed categories.
-
         """
         if category not in self.categories:
             msg = f"Category {category} is not an allowed category."
             raise ValueError(msg)
+
+    def load_prioritized_rules(self) -> list[tuple[tuple[str, dict], int]]:
+        """Load classification rules from multiple sources with priority.
+
+        Returns:
+            A list of tuples, where each tuple contains a rule (pattern and data) and its priority.
+        """
+        rules: list[tuple[tuple[str, dict], int]] = []
+        rules_dir: Path = Path(__file__).parent.parent / "rules"
+
+        for filename, priority in self.RULE_SOURCES:
+            file_path: Path = rules_dir / filename
+            try:
+                with open(file_path, "r") as f:
+                    data: dict = json.load(f)
+                    for pattern, category_data in data["patterns"].items():
+                        rules.append(((pattern, category_data), priority))
+                    self.logger.info(f"Loaded {len(data['patterns'])} rules from {filename}")
+            except FileNotFoundError:
+                self.logger.warning(f"Rules file not found: {filename}")
+            except json.JSONDecodeError as e:
+                self.logger.error(f"Error decoding JSON in {filename}: {e}")
+            except Exception as e:
+                self.logger.exception(f"Error loading rules from {filename}: {e}")
+
+        # Sort rules by priority (lower value means higher priority)
+        rules.sort(key=lambda x: x[1])
+        return rules
+
+    def format_category(self, category: str) -> str:
+        """Format the category string.
+
+        Args:
+            category: The category string to format.
+
+        Returns:
+            The formatted category string.
+        """
+        category = category.lower().strip()
+        if ":" not in category:
+            category = f"expenses:{category}"  # Default to 'expenses' if no subcategory
+        return category
+
+    def compile_pattern(self, pattern: str) -> Pattern:
+        """Compile a regex pattern.
+
+        Args:
+            pattern: The regex pattern to compile.
+
+        Returns:
+            The compiled regex pattern.
+
+        Raises:
+            ClassificationError: If the pattern is invalid.
+        """
+        try:
+            compiled: Pattern = re.compile(pattern, re.IGNORECASE)
+            return compiled
+        except re.error as e:
+            self.logger.exception(f"Invalid regex pattern '{pattern}': {e!s}")
+            msg = f"Invalid regex pattern '{pattern}': {e!s}"
+            raise ClassificationError(msg) from None
