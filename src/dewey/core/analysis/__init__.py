@@ -31,11 +31,16 @@ class AnalysisScript(BaseScript):
         Initialize the AnalysisScript.
 
         Args:
-            name (Optional[str]): Name of the script (used for logging). Defaults to the class name.
-            description (Optional[str]): Description of the script. Defaults to None.
-            config_section (Optional[str]): Section in dewey.yaml to load for this script. Defaults to None.
-            requires_db (bool): Whether this script requires database access. Defaults to False.
-            enable_llm (bool): Whether this script requires LLM access. Defaults to False.
+            name (Optional[str]): Name of the script (used for logging).
+                Defaults to the class name.
+            description (Optional[str]): Description of the script.
+                Defaults to None.
+            config_section (Optional[str]): Section in dewey.yaml to load
+                for this script. Defaults to None.
+            requires_db (bool): Whether this script requires database access.
+                Defaults to False.
+            enable_llm (bool): Whether this script requires LLM access.
+                Defaults to False.
         """
         super().__init__(
             name=name,
