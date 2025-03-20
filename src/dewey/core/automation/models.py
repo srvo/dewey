@@ -1,8 +1,25 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Protocol, runtime_checkable
 
 from dewey.core.base_script import BaseScript
+
+
+@runtime_checkable
+class PathHandler(Protocol):
+    """Protocol for handling paths."""
+
+    def __call__(self, path: str) -> Path:
+        """Create a Path object."""
+        ...
+
+
+class DefaultPathHandler:
+    """Default class for handling paths using pathlib.Path."""
+
+    def __call__(self, path: str) -> Path:
+        """Create a Path object."""
+        return Path(path)
 
 
 @dataclass
@@ -42,13 +59,14 @@ class Service(BaseScript):
     def __init__(
         self,
         name: str,
-        path: Path,
-        config_path: Path,
+        path: str,
+        config_path: str,
         containers: List[Any],
         description: Optional[str] = None,
         config: Optional[Dict[str, Any]] = None,
         status: str = "inactive",
         version: str = "1.0.0",
+        path_handler: Optional[PathHandler] = None,
     ) -> None:
         """Initializes a Service instance.
 
@@ -61,11 +79,13 @@ class Service(BaseScript):
             config: The configuration for the service.
             status: The status of the service.
             version: The version of the service.
+            path_handler: Handler for creating Path objects.
         """
         super().__init__(config_section=name)
         self.name = name
-        self.path = path
-        self.config_path = config_path
+        self._path_handler: PathHandler = path_handler or DefaultPathHandler()
+        self.path: Path = self._path_handler(path)
+        self.config_path: Path = self._path_handler(config_path)
         self.containers = containers
         self.description = description
         self.config = config
@@ -90,24 +110,27 @@ class Service(BaseScript):
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Service":
+    def from_dict(cls, data: Dict[str, Any], path_handler: Optional[PathHandler] = None) -> "Service":
         """Create a service from a dictionary.
 
         Args:
             data: A dictionary containing the service data.
+            path_handler: Handler for creating Path objects.
 
         Returns:
             A Service instance created from the dictionary.
         """
+        _path_handler = path_handler or DefaultPathHandler()
         return cls(
             name=data["name"],
-            path=Path(data["path"]),
-            config_path=Path(data["config_path"]),
+            path=data["path"],
+            config_path=data["config_path"],
             containers=data["containers"],
             description=data.get("description"),
             config=data.get("config"),
             status=data.get("status", "inactive"),
             version=data.get("version", "1.0.0"),
+            path_handler=_path_handler,
         )
 
     def run(self) -> None:
