@@ -47,11 +47,15 @@ class AdminTasks(BaseScript):
             self.db_conn.commit()
             self.logger.info("Database maintenance completed.")
         except psycopg2.Error as e:
-            self.logger.error(f"Database error performing database maintenance: {e}")
+            self.logger.error(
+                f"Database error performing database maintenance: {e}"
+            )
             self.db_conn.rollback()  # Rollback in case of error
             raise
         except Exception as e:
-            self.logger.error(f"Unexpected error performing database maintenance: {e}")
+            self.logger.error(
+                f"Unexpected error performing database maintenance: {e}"
+            )
             self.db_conn.rollback()  # Rollback in case of error
             raise
 
@@ -76,7 +80,9 @@ class AdminTasks(BaseScript):
                     )
                     table_exists: Optional[bool] = cursor.fetchone()[0]
                 except psycopg2.Error as e:
-                    self.logger.warning(f"Could not check if 'users' table exists: {e}")
+                    self.logger.warning(
+                        f"Could not check if 'users' table exists: {e}"
+                    )
                     table_exists = False  # Assume table doesn't exist if error
 
                 if not table_exists:
