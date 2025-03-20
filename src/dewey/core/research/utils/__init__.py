@@ -14,7 +14,13 @@ class ResearchUtils(BaseScript):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initializes the ResearchUtils module."""
-        super().__init__(*args, **kwargs)
+        super().__init__(
+            *args,
+            config_section="research_utils",
+            requires_db=False,
+            enable_llm=False,
+            **kwargs,
+        )
         self.name = "ResearchUtils"
         self.description = "Provides utility functions for research workflows."
 
