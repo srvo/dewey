@@ -1,6 +1,7 @@
 from dewey.core.base_script import BaseScript
 from typing import Any
 
+
 class FormatAndLint(BaseScript):
     """
     A class for formatting and linting code.
