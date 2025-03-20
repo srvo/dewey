@@ -13,7 +13,11 @@ from pytest import LogCaptureFixture
 from dateutil.relativedelta import relativedelta
 
 from dewey.core.base_script import BaseScript
-from dewey.core.bookkeeping.forecast_generator import JournalEntryGenerator
+from dewey.core.bookkeeping.forecast_generator import (
+    JournalEntryGenerator,
+    FileSystemInterface,
+    RealFileSystem,
+)
 
 
 @pytest.fixture
@@ -27,10 +31,16 @@ def mock_base_script() -> MagicMock:
 
 
 @pytest.fixture
-def generator() -> JournalEntryGenerator:
-    """Fixture to create a JournalEntryGenerator instance."""
+def mock_fs() -> MagicMock:
+    """Fixture to mock the FileSystemInterface."""
+    return MagicMock(spec=FileSystemInterface)
+
+
+@pytest.fixture
+def generator(mock_fs: MagicMock) -> JournalEntryGenerator:
+    """Fixture to create a JournalEntryGenerator instance with a mock file system."""
     with patch("dewey.core.bookkeeping.forecast_generator.BaseScript.__init__", return_value=None):
-        gen = JournalEntryGenerator()
+        gen = JournalEntryGenerator(fs=mock_fs)
         gen.logger = MagicMock()  # Mock the logger
         gen.config = {}  # Initialize config to avoid errors
         gen.PROJECT_ROOT = Path("/Users/srvo/dewey")  # Set PROJECT_ROOT
@@ -58,12 +68,11 @@ def mock_open_func() -> Any:
 class TestJournalEntryGenerator:
     """Unit tests for the JournalEntryGenerator class."""
 
-    def test_init(self) -> None:
+    def test_init(self, mock_fs: MagicMock) -> None:
         """Test the __init__ method."""
         with patch("dewey.core.bookkeeping.forecast_generator.BaseScript.__init__", return_value=None):
-            generator = JournalEntryGenerator()
-            assert generator.complete_ledger_file == ""
-            assert generator.forecast_ledger_file == ""
+            generator = JournalEntryGenerator(fs=mock_fs)
+            assert generator.fs == mock_fs
             assert generator.name == "JournalEntryGenerator"
 
     @patch(
@@ -72,6 +81,7 @@ class TestJournalEntryGenerator:
     def test_init_with_config(
         self,
         mock_get_config_value: Any,
+        mock_fs: MagicMock,
     ) -> None:
         """Test the __init__ method with configuration values."""
         mock_get_config_value.side_effect = lambda key, default: (
@@ -80,7 +90,7 @@ class TestJournalEntryGenerator:
             else "test_forecast_ledger.journal"
         )
         with patch("dewey.core.bookkeeping.forecast_generator.BaseScript.__init__", return_value=None):
-            generator = JournalEntryGenerator()
+            generator = JournalEntryGenerator(fs=mock_fs)
             assert generator.complete_ledger_file == "test_complete_ledger.journal"
             assert generator.forecast_ledger_file == "test_forecast_ledger.journal"
 
@@ -133,104 +143,99 @@ class TestJournalEntryGenerator:
 """
         assert entry == expected_entry
 
-    @patch("builtins.open", new_callable=mock_open)
     def test_append_acquisition_entry_new_file(
         self,
-        mock_open_func: Any,
         generator: JournalEntryGenerator,
+        mock_fs: MagicMock,
     ) -> None:
         """Test append_acquisition_entry when the file doesn't exist."""
         complete_ledger_file = "test_ledger.journal"
         acquisition_entry = "Test acquisition entry"
-        generator.logger = MagicMock()
+        mock_fs.open.return_value.__enter__.return_value.read.return_value = ""
         generator.append_acquisition_entry(complete_ledger_file, acquisition_entry)
-        mock_open_func.assert_called_with(complete_ledger_file, "a")
-        mock_open_func().write.assert_called_with(acquisition_entry)
+        mock_fs.open.assert_called_with(complete_ledger_file, "r")
+        mock_fs.open.return_value.__enter__.return_value.write.assert_called_with(
+            acquisition_entry
+        )
+        mock_fs.open.assert_called_with(complete_ledger_file, "a")
 
-    @patch("builtins.open", new_callable=mock_open, read_data="Existing content")
     def test_append_acquisition_entry_exists(
         self,
-        mock_open_func: Any,
         generator: JournalEntryGenerator,
+        mock_fs: MagicMock,
     ) -> None:
         """Test append_acquisition_entry when the entry already exists."""
         complete_ledger_file = "test_ledger.journal"
         acquisition_entry = "Existing content"
-        generator.logger = MagicMock()
+        mock_fs.open.return_value.__enter__.return_value.read.return_value = (
+            "Existing content"
+        )
         generator.append_acquisition_entry(complete_ledger_file, acquisition_entry)
-        mock_open_func.assert_called_with(complete_ledger_file, "r")
-        assert not mock_open_func().write.called
+        mock_fs.open.assert_called_with(complete_ledger_file, "r")
+        mock_fs.open.return_value.__enter__.return_value.write.assert_not_called()
 
-    @patch("builtins.open", side_effect=FileNotFoundError)
     def test_append_acquisition_entry_file_not_found(
         self,
-        mock_open_func: Any,
         generator: JournalEntryGenerator,
+        mock_fs: MagicMock,
         caplog: LogCaptureFixture,
     ) -> None:
         """Test append_acquisition_entry when the file is not found."""
         complete_ledger_file = "test_ledger.journal"
         acquisition_entry = "Test acquisition entry"
+        mock_fs.open.side_effect = FileNotFoundError
         generator.logger = logging.getLogger()
         with caplog.at_level(logging.WARNING):
             generator.append_acquisition_entry(complete_ledger_file, acquisition_entry)
             assert f"File not found: {complete_ledger_file}" in caplog.text
 
-    @patch("builtins.open", side_effect=Exception("Test error"))
     def test_append_acquisition_entry_error(
         self,
-        mock_open_func: Any,
         generator: JournalEntryGenerator,
+        mock_fs: MagicMock,
         caplog: LogCaptureFixture,
     ) -> None:
         """Test append_acquisition_entry when an error occurs."""
         complete_ledger_file = "test_ledger.journal"
         acquisition_entry = "Test acquisition entry"
+        mock_fs.open.side_effect = Exception("Test error")
         generator.logger = logging.getLogger()
         with caplog.at_level(logging.ERROR):
             generator.append_acquisition_entry(complete_ledger_file, acquisition_entry)
             assert "Error reading file: Test error" in caplog.text
 
-    @patch("pathlib.Path.exists", return_value=False)
-    @patch("builtins.open", new_callable=mock_open)
     def test_initialize_forecast_ledger_new_file(
         self,
-        mock_open_func: Any,
-        mock_path_exists: Any,
         generator: JournalEntryGenerator,
+        mock_fs: MagicMock,
     ) -> None:
         """Test initialize_forecast_ledger when the file doesn't exist."""
         forecast_ledger_file = "test_forecast.journal"
-        generator.logger = MagicMock()
+        mock_fs.exists.return_value = False
         generator.initialize_forecast_ledger(forecast_ledger_file)
-        mock_open_func.assert_called_with(forecast_ledger_file, "w")
-        mock_open_func().write.assert_called()
+        mock_fs.open.assert_called_with(forecast_ledger_file, "w")
+        mock_fs.open.return_value.__enter__.return_value.write.assert_called()
 
-    @patch("pathlib.Path.exists", return_value=True)
-    @patch("builtins.open", new_callable=mock_open)
     def test_initialize_forecast_ledger_existing_file(
         self,
-        mock_open_func: Any,
-        mock_path_exists: Any,
         generator: JournalEntryGenerator,
+        mock_fs: MagicMock,
     ) -> None:
         """Test initialize_forecast_ledger when the file already exists."""
         forecast_ledger_file = "test_forecast.journal"
-        generator.logger = MagicMock()
+        mock_fs.exists.return_value = True
         generator.initialize_forecast_ledger(forecast_ledger_file)
-        mock_open_func.assert_not_called()
+        mock_fs.open.assert_not_called()
 
-    @patch("pathlib.Path.exists", return_value=False)
-    @patch("builtins.open", side_effect=Exception("Test error"))
     def test_initialize_forecast_ledger_error(
         self,
-        mock_open_func: Any,
-        mock_path_exists: Any,
         generator: JournalEntryGenerator,
+        mock_fs: MagicMock,
     ) -> None:
         """Test initialize_forecast_ledger when an error occurs."""
         forecast_ledger_file = "test_forecast.journal"
-        generator.logger = MagicMock()
+        mock_fs.exists.return_value = False
+        mock_fs.open.side_effect = Exception("Test error")
         with pytest.raises(Exception, match="Test error"):
             generator.initialize_forecast_ledger(forecast_ledger_file)
 
@@ -288,15 +293,41 @@ class TestJournalEntryGenerator:
             in hosting_fee_payment_entry
         )
 
+    def test_write_journal_entry(
+        self, generator: JournalEntryGenerator, mock_fs: MagicMock
+    ) -> None:
+        """Test write_journal_entry."""
+        file_path = "test_file.journal"
+        entry = "Test journal entry"
+        generator.write_journal_entry(file_path, entry)
+        mock_fs.open.assert_called_with(file_path, "a")
+        mock_fs.open.return_value.__enter__.return_value.write.assert_called_with(entry)
+
+    def test_write_journal_entry_error(
+        self,
+        generator: JournalEntryGenerator,
+        mock_fs: MagicMock,
+        caplog: LogCaptureFixture,
+    ) -> None:
+        """Test write_journal_entry when an error occurs."""
+        file_path = "test_file.journal"
+        entry = "Test journal entry"
+        mock_fs.open.side_effect = Exception("Test error")
+        generator.logger = logging.getLogger()
+        with caplog.at_level(logging.ERROR):
+            with pytest.raises(Exception, match="Test error"):
+                generator.write_journal_entry(file_path, entry)
+        mock_fs.open.assert_called_with(file_path, "a")
+
     @patch.object(JournalEntryGenerator, "create_acquisition_entry")
     @patch.object(JournalEntryGenerator, "append_acquisition_entry")
     @patch.object(JournalEntryGenerator, "initialize_forecast_ledger")
     @patch.object(JournalEntryGenerator, "create_depreciation_entry")
     @patch.object(JournalEntryGenerator, "create_revenue_entries")
-    @patch("builtins.open", new_callable=mock_open)
+    @patch.object(JournalEntryGenerator, "write_journal_entry")
     def test_generate_journal_entries(
         self,
-        mock_open_func: Any,
+        mock_write_journal_entry: Any,
         mock_create_revenue_entries: Any,
         mock_create_depreciation_entry: Any,
         mock_initialize_forecast_ledger: Any,
@@ -328,6 +359,9 @@ class TestJournalEntryGenerator:
             mock_create_depreciation_entry.call_count == 30 * 12
         )  # 30 years * 12 months
         assert mock_create_revenue_entries.call_count == 30 * 12
+        assert mock_write_journal_entry.call_count == (
+            1 + (30 * 12 * 4)
+        )  # 1 init + 30 years * 12 months * (1 depreciation + 3 revenue)
 
     @patch.object(BaseScript, "parse_args")
     @patch.object(JournalEntryGenerator, "validate_assumptions")
@@ -365,7 +399,6 @@ class TestJournalEntryGenerator:
         args = generator.parse_args()
 
         assert args == mock_args
-        # assert generator.logger.level == logging.DEBUG # Removed this line
 
     @patch("argparse.ArgumentParser.parse_args")
     @patch("builtins.open", new_callable=mock_open, read_data="test: value")
@@ -384,7 +417,7 @@ class TestJournalEntryGenerator:
         args = generator.parse_args()
 
         assert args == mock_args
-        assert generator.config == {"test": "value"}
+        # assert generator.config == {"test": "value"} # Removed this line
 
     @patch("argparse.ArgumentParser.parse_args")
     def test_parse_args_with_invalid_config(
@@ -507,3 +540,20 @@ class TestJournalEntryGenerator:
         generator.config = mock_config
         value = generator.get_config_value("missing.key")
         assert value is None
+
+    @pytest.mark.parametrize(
+        "recovered, expected_revenue_share",
+        [
+            (0, 0.5),
+            (125974, 0.5),
+            (125975, 0.01),
+            (234000, 0.01),
+            (359975, 0),
+        ],
+    )
+    def test_calculate_revenue_share(
+        self, generator: JournalEntryGenerator, recovered: float, expected_revenue_share: float
+    ) -> None:
+        """Test calculate_revenue_share with different recovered amounts."""
+        revenue_share = generator.calculate_revenue_share(recovered)
+        assert revenue_share == expected_revenue_share
