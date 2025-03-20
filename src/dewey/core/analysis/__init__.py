@@ -1,11 +1,5 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
-from dewey.llm.llm_utils import get_llm_client
-import argparse
-import logging
-import sys
-from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Optional
 
 
 class AnalysisScript(BaseScript):
@@ -68,6 +62,7 @@ if __name__ == "__main__":
         """
 
         def __init__(self):
+            """Function __init__."""
             super().__init__(
                 name="MyAnalysisScript",
                 description="An example analysis script",
