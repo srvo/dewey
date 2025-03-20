@@ -4,6 +4,7 @@ import os
 import pytest
 from typing import Generator
 from unittest.mock import Mock, patch
+
 from dewey.core.base_script import BaseScript
 
 
