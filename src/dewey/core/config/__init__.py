@@ -1,6 +1,21 @@
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
-from typing import Any
+from typing import Any, Protocol
+
+
+class DatabaseInterface(Protocol):
+    """
+    An interface for database operations, allowing for easy mocking in tests.
+    """
+    def execute(self, query: str) -> Any:
+        ...
+
+class MotherDuckInterface(Protocol):
+    """
+    An interface for MotherDuck operations, allowing for easy mocking in tests.
+    """
+    def execute(self, query: str) -> Any:
+        ...
 
 
 class ConfigManager(BaseScript):
@@ -10,14 +25,23 @@ class ConfigManager(BaseScript):
     and accessing configuration values.
     """
 
-    def __init__(self, config_section: str = "config_manager") -> None:
+    def __init__(
+        self,
+        config_section: str = "config_manager",
+        db_connection: DatabaseInterface | None = None,
+        motherduck_connection: MotherDuckInterface | None = None,
+    ) -> None:
         """Initializes the ConfigManager.
 
         Args:
             config_section: The section in the configuration file to use.
+            db_connection: An optional database connection to use.  Defaults to None, which will create a connection.
+            motherduck_connection: An optional MotherDuck connection to use. Defaults to None, which will create a connection.
         """
         super().__init__(config_section=config_section, requires_db=True)
         self.logger.info("ConfigManager initialized.")
+        self._db_connection = db_connection
+        self._motherduck_connection = motherduck_connection
 
     def run(self) -> None:
         """Runs the configuration manager.
@@ -31,13 +55,22 @@ class ConfigManager(BaseScript):
 
         # Example of using the database connection
         try:
-            with DatabaseConnection(self.config) as db_conn:
+            if self._db_connection is None:
+                db_conn = DatabaseConnection(self.config)
+            else:
+                db_conn = self._db_connection
+
+            with db_conn:
                 # Execute a query
                 result = db_conn.execute("SELECT value FROM example_table WHERE id = 1")
                 self.logger.info(f"Database query result: {result}")
 
                 # Example of using MotherDuck connection
-                md_conn = get_motherduck_connection()
+                if self._motherduck_connection is None:
+                    md_conn = get_motherduck_connection()
+                else:
+                    md_conn = self._motherduck_connection
+
                 md_result = md_conn.execute("SELECT 42")
                 self.logger.info(f"MotherDuck query result: {md_result}")
 
