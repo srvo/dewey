@@ -268,3 +268,5 @@ database:
         value INTEGER
     );
     INSERT INTO example_table (id, value) VALUES (1, 1) ON CONFLICT (id) DO NOTHING;
+
+api_manager: {}
