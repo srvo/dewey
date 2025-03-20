@@ -9,7 +9,7 @@ import time
 import threading
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Protocol
 
 import duckdb
 import pandas as pd
@@ -17,6 +17,40 @@ import pandas as pd
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import get_local_connection, get_motherduck_connection, DatabaseConnection, get_connection
 from dewey.core.db import utils
+
+
+class DBConnector(Protocol):
+    """A protocol for database connectors."""
+
+    def get_local_connection(self, db_path: str) -> DatabaseConnection:
+        ...
+
+    def get_motherduck_connection(self, db_name: str, token: Optional[str]) -> DatabaseConnection:
+        ...
+
+
+class DuckDBExecutor(Protocol):
+    """A protocol for executing DuckDB queries."""
+
+    def execute(self, query: str, parameters: Optional[List[Any]] = None) -> Any:
+        ...
+
+    def fetchall(self) -> List[Tuple[Any, ...]]:
+        ...
+
+    def fetchone(self) -> Optional[Tuple[Any, ...]]:
+        ...
+
+    @property
+    def empty(self) -> bool:
+        ...
+
+    @property
+    def columns(self) -> List[str]:
+        ...
+
+    def close(self) -> None:
+        ...
 
 
 class DuckDBSync(BaseScript):
@@ -54,6 +88,7 @@ class DuckDBSync(BaseScript):
         sync_interval: Optional[int] = None,
         max_sync_age: Optional[int] = None,
         auto_sync: bool = True,
+        db_connector: Optional[DBConnector] = None,
     ) -> None:
         """Initialize the DuckDBSync with local and cloud connections.
 
@@ -69,6 +104,7 @@ class DuckDBSync(BaseScript):
             sync_interval: Time between automatic syncs in seconds (default: 6 hours).
             max_sync_age: Maximum time to allow before forcing a sync (default: 7 days).
             auto_sync: Whether to start automatic sync thread (default: True).
+            db_connector: Optional database connector to use for creating connections.
         """
         super().__init__(
             name=name,
@@ -86,21 +122,24 @@ class DuckDBSync(BaseScript):
 
         # Initialize state tracking
         self._last_sync_time = None
-        self._tables_modified_locally = set()
+        self._tables_modified_locally: Set[str] = set()
         self._sync_lock = threading.RLock()
         self._stop_sync_thread = threading.Event()
         self._sync_thread = None
+
+        # Use provided connector or default to using the standard connection functions
+        self._db_connector = db_connector or self._default_db_connector()
 
         # Set up connections
         self.logger.info(f"Initializing DuckDBSync with local DB: {self.local_db_path}")
         self.logger.info(f"MotherDuck database: {self.motherduck_db}")
 
         try:
-            self.local_conn = get_local_connection(self.local_db_path)
+            self.local_conn = self._db_connector.get_local_connection(self.local_db_path)
             self.logger.info("Connected to local DuckDB")
 
             motherduck_token_effective = motherduck_token or os.environ.get("MOTHERDUCK_TOKEN")
-            self.motherduck_conn = get_motherduck_connection(self.motherduck_db, motherduck_token_effective)
+            self.motherduck_conn = self._db_connector.get_motherduck_connection(self.motherduck_db, motherduck_token_effective)
             self.logger.info(f"Connected to MotherDuck: {self.motherduck_db}")
 
             # Initialize sync metadata table in local DB
@@ -113,6 +152,17 @@ class DuckDBSync(BaseScript):
         except Exception as e:
             self.logger.error(f"Error initializing DuckDBSync: {e}")
             raise
+
+    def _default_db_connector(self) -> DBConnector:
+        """Return a DBConnector that uses the standard connection functions."""
+        class DefaultDBConnector:
+            def get_local_connection(self, db_path: str) -> DatabaseConnection:
+                return get_local_connection(db_path)
+
+            def get_motherduck_connection(self, db_name: str, token: Optional[str]) -> DatabaseConnection:
+                return get_motherduck_connection(db_name, token)
+
+        return DefaultDBConnector()
 
     def _init_sync_metadata(self) -> None:
         """Initialize the sync metadata table in local DB."""
@@ -524,7 +574,7 @@ class DuckDBSync(BaseScript):
 
             try:
                 # Get list of modified tables
-                modified_tables = list(self._tables_modified_locally)
+                modified_tables = list(self.tables_modified_locally)
                 self.logger.info(f"Found {len(modified_tables)} locally modified tables to sync.")
 
                 # Sync each modified table
@@ -563,7 +613,7 @@ class DuckDBSync(BaseScript):
         success = self.sync_all_to_local()
 
         # Then sync modified tables back to MotherDuck
-        if success and self._tables_modified_locally:
+        if success and self.tables_modified_locally:
             success = self.sync_modified_to_motherduck()
 
         return success
@@ -624,7 +674,7 @@ class DuckDBSync(BaseScript):
             True if sync is needed, False otherwise.
         """
         # If we have locally modified tables, sync is needed
-        if self._tables_modified_locally:
+        if self.tables_modified_locally:
             return True
 
         # If we've never synced before, sync is needed
@@ -640,6 +690,11 @@ class DuckDBSync(BaseScript):
 
         # No need to sync
         return False
+
+    @property
+    def tables_modified_locally(self) -> Set[str]:
+        """Get the set of tables modified locally."""
+        return self._tables_modified_locally
 
     def close(self) -> None:
         """Close connections and stop background threads."""
