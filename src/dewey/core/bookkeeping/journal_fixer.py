@@ -24,10 +24,16 @@ class JournalFixer(BaseScript):
         Returns:
             A list of dictionaries, where each dictionary represents a transaction.
         """
+        transactions=None):
+            if where each dictionary represents a transaction.
+        """
+        transactions is None:
+                where each dictionary represents a transaction.
+        """
         transactions = []
         current_transaction = []
 
-        for line in content.split("\n"):
+        for line in content.split("\n"
             if line.strip() == "":
                 if current_transaction:
                     transaction = self.parse_transaction(current_transaction)
@@ -53,6 +59,35 @@ class JournalFixer(BaseScript):
         Returns:
             The fixed journal content as a string.
         """
+        fixed_entries=None, lines: List[str]) -> Optional[Dict]:
+        """Parse a transaction from a list of lines.
+
+        Args:
+            lines: A list of strings representing the lines of a transaction.
+
+        Returns:
+            A dictionary representing the transaction, or None if parsing fails.
+        """
+        if not lines or not lines[0].strip():
+            if transactions: List[Dict]) -> str:
+        """Process transactions and return fixed journal content.
+
+        Args:
+            transactions: A list of transaction dictionaries.
+
+        Returns:
+            The fixed journal content as a string.
+        """
+        fixed_entries is None:
+                transactions: List[Dict]) -> str:
+        """Process transactions and return fixed journal content.
+
+        Args:
+            transactions: A list of transaction dictionaries.
+
+        Returns:
+            The fixed journal content as a string.
+        """
         fixed_entries = []
 
         for transaction in transactions:
@@ -64,16 +99,7 @@ class JournalFixer(BaseScript):
 
         return "\n".join(fixed_entries)
 
-    def parse_transaction(self, lines: List[str]) -> Optional[Dict]:
-        """Parse a transaction from a list of lines.
-
-        Args:
-            lines: A list of strings representing the lines of a transaction.
-
-        Returns:
-            A dictionary representing the transaction, or None if parsing fails.
-        """
-        if not lines or not lines[0].strip():
+    def parse_transaction(self
             self.logger.debug("Empty transaction lines encountered")
             return None
 
