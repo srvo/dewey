@@ -4,10 +4,11 @@ import pytest
 from unittest.mock import MagicMock, patch
 from typing import Dict, Any
 from smolagents import DuckDuckGoSearchTool
-from dewey.llm.agents.base_agent import DeweyBaseAgent, EngineTool
+from dewey.llm.agents.base_agent import DeweyBaseAgent, EngineTool, BaseAgent
 from dewey.llm.llm_utils import LLMHandler
 from dewey.core.engines.base import BaseEngine
 import json
+import logging
 
 
 class MockEngine(BaseEngine):
@@ -53,6 +54,101 @@ def sample_config() -> Dict[str, Any]:
         },
     }
 
+
+class TestBaseAgent:
+    """Test suite for BaseAgent functionality."""
+
+    @pytest.fixture
+    def base_agent(self, sample_config: Dict[str, Any]) -> BaseAgent:
+        """Provide a BaseAgent instance for testing."""
+        return BaseAgent(
+            name="test_agent",
+            description="Test agent",
+            config_section="test_section",
+            requires_db=True,
+            enable_llm=True,
+            config=sample_config
+        )
+
+    def test_initialization(self, base_agent: BaseAgent):
+        """Test agent initialization with valid parameters."""
+        assert base_agent.name == "test_agent"
+        assert base_agent.description == "Test agent"
+        assert base_agent.config_section == "test_section"
+        assert base_agent.requires_db is True
+        assert base_agent.enable_llm is True
+        assert isinstance(base_agent.logger, logging.LoggerAdapter)
+
+    def test_run_not_implemented(self, base_agent: BaseAgent):
+        """Test run method raises NotImplementedError."""
+        with pytest.raises(NotImplementedError):
+            base_agent.run()
+
+    def test_get_variable_names(self, base_agent: BaseAgent):
+        """Test template variable extraction."""
+        template = "Hello {{ name }}! Today is {{ day }}."
+        variables = base_agent.get_variable_names(template)
+        assert variables == {"name", "day"}
+
+    def test_populate_template_valid(self, base_agent: BaseAgent):
+        """Test template population with valid variables."""
+        template = "Hello {{ name }}!"
+        result = base_agent.populate_template(template, {"name": "World"})
+        assert result == "Hello World!"
+
+    def test_populate_template_missing_variable(self, base_agent: BaseAgent):
+        """Test template population with missing variable."""
+        template = "Hello {{ name }}!"
+        with pytest.raises(Exception) as exc_info:
+            base_agent.populate_template(template, {})
+        assert "UndefinedError" in str(exc_info.type)
+
+    def test_generate_code_success(self, base_agent: BaseAgent):
+        """Test code generation with mock LLM."""
+        mock_response = MagicMock()
+        mock_response.text = "print('Hello World')"
+        
+        with patch.object(base_agent.llm_client, 'generate', return_value=mock_response):
+            code = base_agent._generate_code("test prompt")
+            assert code == "print('Hello World')"
+
+    def test_generate_code_no_llm(self, base_agent: BaseAgent):
+        """Test code generation without LLM client."""
+        base_agent.llm_client = None
+        with pytest.raises(ValueError, match="LLM client is not initialized"):
+            base_agent._generate_code("test prompt")
+
+    def test_execute_flow(self, base_agent: BaseAgent):
+        """Test full execution flow with mock run."""
+        with patch.object(base_agent, 'run'), \
+             patch.object(base_agent, 'parse_args') as mock_parse, \
+             patch.object(base_agent.logger, 'info') as mock_log:
+            
+            mock_parse.return_value = MagicMock()
+            base_agent.execute()
+            
+            mock_log.assert_any_call("Starting execution of test_agent")
+            mock_log.assert_any_call("Completed execution of test_agent")
+
+    def test_execute_error_handling(self, base_agent: BaseAgent):
+        """Test error handling during execution."""
+        with patch.object(base_agent, 'run', side_effect=Exception("Test error")), \
+             patch.object(base_agent.logger, 'error') as mock_log:
+            
+            with pytest.raises(SystemExit):
+                base_agent.execute()
+            
+            mock_log.assert_called_with("Error executing script: Test error", exc_info=True)
+
+    def test_to_dict_representation(self, base_agent: BaseAgent):
+        """Test dictionary representation of agent."""
+        agent_dict = base_agent.to_dict()
+        assert agent_dict["name"] == "test_agent"
+        assert agent_dict["description"] == "Test agent"
+        assert agent_dict["config_section"] == "test_section"
+        assert agent_dict["requires_db"] is True
+        assert agent_dict["enable_llm"] is True
+        assert isinstance(agent_dict["authorized_imports"], list)
 
 class TestDeweyBaseAgent:
     """Test suite for DeweyBaseAgent."""
