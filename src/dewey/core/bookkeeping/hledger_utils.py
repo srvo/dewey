@@ -4,18 +4,30 @@ import re
 import subprocess
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 from dewey.core.base_script import BaseScript
 
+
 class HledgerUpdater(BaseScript):
-    """
-    Updates opening balances in hledger journal files.
+    """Updates opening balances in hledger journal files.
+
+    Inherits from BaseScript for standardized configuration and logging.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """Initializes the HledgerUpdater with the 'bookkeeping' config section."""
         super().__init__(config_section='bookkeeping')
 
-    def get_balance(self, account, date):
-        """Get the balance for a specific account at a given date."""
+    def get_balance(self, account: str, date: str) -> Optional[str]:
+        """Get the balance for a specific account at a given date.
+
+        Args:
+            account: The account to check.
+            date: The date to check the balance.
+
+        Returns:
+            The balance amount as a string, or None if an error occurred.
+        """
         try:
             self.logger.debug("🔍 Checking balance | account=%s date=%s", account, date)
             cmd = f"hledger -f all.journal bal {account} -e {date} --depth 1"
@@ -57,8 +69,12 @@ class HledgerUpdater(BaseScript):
             )
             return None
 
-    def update_opening_balances(self, year) -> None:
-        """Update opening balances in the journal file for the specified year."""
+    def update_opening_balances(self, year: int) -> None:
+        """Update opening balances in the journal file for the specified year.
+
+        Args:
+            year: The year to update the opening balances for.
+        """
         try:
             # Calculate the previous year's end date
             prev_year = year - 1
@@ -69,10 +85,15 @@ class HledgerUpdater(BaseScript):
             bal_9281 = self.get_balance("assets:checking:mercury9281", date)
 
             if not bal_8542 or not bal_9281:
+                self.logger.warning(
+                    "⚠️ Could not retrieve balances for accounts. Skipping update for year %s",
+                    year,
+                )
                 return
 
             journal_file = f"{year}.journal"
             if not Path(journal_file).exists():
+                self.logger.warning("Journal file %s does not exist. Skipping.", journal_file)
                 return
 
             with open(journal_file) as f:
@@ -92,18 +113,26 @@ class HledgerUpdater(BaseScript):
 
             with open(journal_file, "w") as f:
                 f.write(content)
+            self.logger.info("✅ Updated opening balances for year %s", year)
 
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.exception(
+                "🔥 Error updating opening balances for year %s: %s", year, str(e)
+            )
 
     def run(self) -> None:
+        """Runs the hledger update process for a range of years."""
         current_year = datetime.now().year
-        # Process years from 2022 up to and including current year + 1
-        for year in range(2022, current_year + 2):
+        start_year = int(self.get_config_value("start_year", 2022))
+        end_year = current_year + 1
+
+        # Process years from start_year up to and including current year + 1
+        for year in range(start_year, end_year + 1):
             self.update_opening_balances(year)
 
 
 def main() -> None:
+    """Main entry point for the script."""
     HledgerUpdater().run()
 
 
