@@ -1,4 +1,5 @@
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection
 
 
 class BookkeepingScript(BaseScript):
@@ -15,7 +16,7 @@ class BookkeepingScript(BaseScript):
         Initializes the BookkeepingScript.
 
         Args:
-            config_section (str, optional): The configuration section
+            config_section: The configuration section
                 to use from the dewey.yaml file. Defaults to 'bookkeeping'.
         """
         super().__init__(
@@ -31,5 +32,8 @@ class BookkeepingScript(BaseScript):
         Abstract method to be implemented by subclasses.
 
         This method contains the core logic of the bookkeeping script.
+
+        Raises:
+            NotImplementedError: If the subclass does not implement this method.
         """
         raise NotImplementedError("Subclasses must implement the run method.")
