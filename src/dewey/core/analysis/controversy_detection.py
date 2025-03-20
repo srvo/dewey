@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from dewey.core.base_script import BaseScript
 
@@ -11,14 +11,13 @@ class ControversyDetection(BaseScript):
     and running controversy detection.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, config_section: Optional[str] = None) -> None:
         """
         Initializes the ControversyDetection class.
 
         Calls the superclass constructor to initialize the base script.
         """
-        super().__init__()
-        self.name = "ControversyDetection"
+        super().__init__(config_section=config_section, name="ControversyDetection")
 
     def run(self, data: Any = None) -> Any:
         """
@@ -47,5 +46,4 @@ class ControversyDetection(BaseScript):
 if __name__ == "__main__":
     # Example usage
     detector = ControversyDetection()
-    result = detector.run()
-    print(result)
+    detector.execute()
