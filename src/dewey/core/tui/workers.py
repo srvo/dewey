@@ -1,6 +1,9 @@
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
+from dewey.llm.llm_utils import get_llm_client
 import logging
 from typing import Any
+
 
 class Workers(BaseScript):
     """
@@ -19,11 +22,47 @@ class Workers(BaseScript):
     def run(self) -> None:
         """
         Main method to execute the worker's functionality.
+
+        This method contains the core logic of the worker.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            Exception: If an error occurs during worker execution.
         """
         self.logger.info("Worker started.")
-        # Add worker logic here
-        config_value = self.get_config_value("some_config_key", "default_value")
-        self.logger.info(f"Config value: {config_value}")
+        try:
+            # Access configuration values
+            config_value = self.get_config_value("some_config_key", "default_value")
+            self.logger.info(f"Config value: {config_value}")
+
+            # Example database operation (replace with actual logic)
+            if self.db_conn:
+                try:
+                    # Example query (replace with your actual query)
+                    # Assuming you have a table named 'example_table'
+                    with self.db_conn.cursor() as cursor:
+                        cursor.execute("SELECT 1")
+                        result = cursor.fetchone()
+                        self.logger.info(f"Database query result: {result}")
+                except Exception as e:
+                    self.logger.error(f"Error executing database query: {e}")
+
+            # Example LLM call (replace with actual logic)
+            if self.llm_client:
+                try:
+                    response = self.llm_client.generate_content("Tell me a joke.")
+                    self.logger.info(f"LLM response: {response.text}")
+                except Exception as e:
+                    self.logger.error(f"Error calling LLM: {e}")
+
+        except Exception as e:
+            self.logger.error(f"Worker failed: {e}", exc_info=True)
+            raise
 
     def some_method(self, arg: str) -> None:
         """
@@ -31,6 +70,12 @@ class Workers(BaseScript):
 
         Args:
             arg: A string argument.
+
+        Returns:
+            None
+
+        Raises:
+            None
         """
         self.logger.debug(f"Some method called with arg: {arg}")
         some_other_config = self.get_config_value("some_other_config", 123)
