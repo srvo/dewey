@@ -79,14 +79,18 @@ class CsvContactIntegration(BaseScript):
             import pandas as pd
 
             df = pd.read_csv(file_path)
+            
+            # Check if the dataframe is empty
+            if df.empty:
+                self.logger.info("CSV file is empty or contains only headers.")
+            else:
+                # Example: Iterate over rows and insert data into the database
+                for index, row in df.iterrows():
+                    # Extract contact data from the row
+                    contact_data = row.to_dict()
 
-            # Example: Iterate over rows and insert data into the database
-            for index, row in df.iterrows():
-                # Extract contact data from the row
-                contact_data = row.to_dict()
-
-                # Example: Insert contact data into the database
-                self.insert_contact(contact_data)
+                    # Example: Insert contact data into the database
+                    self.insert_contact(contact_data)
 
             self.logger.info("CSV processing completed.")
 
@@ -111,6 +115,15 @@ class CsvContactIntegration(BaseScript):
             Exception: If any error occurs during contact insertion.
         """
         try:
+            # Validate data
+            if not contact_data:
+                raise ValueError("Empty contact data")
+                
+            # Validate data types - ensure all values can be safely converted to strings
+            for key, value in contact_data.items():
+                if not isinstance(value, (str, int, float, bool, type(None))):
+                    raise TypeError(f"Unsupported data type for {key}: {type(value)}")
+            
             # Example: Insert contact data into the database
             table_name = "contacts"  # Replace with your actual table name
             columns = ", ".join(contact_data.keys())
