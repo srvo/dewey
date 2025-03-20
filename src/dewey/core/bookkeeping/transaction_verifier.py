@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
-import logging
-import os
 import subprocess
 import sys
-from pathlib import Path
 from typing import Any, Dict, List
 
 from prompt_toolkit import prompt
@@ -103,7 +100,7 @@ class ClassificationVerifier(BaseScript):
                 return []
 
             # Connect to in-memory DuckDB database
-            import duckdb
+import duckdb
 
             with duckdb.connect(":memory:") as con:
                 # Create temp table from CSV data
