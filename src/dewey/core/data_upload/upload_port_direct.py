@@ -1,5 +1,9 @@
-from dewey.core.base_script import BaseScript
 from typing import Any
+
+from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection
+from dewey.llm.llm_utils import LLMClient, get_llm_client
+
 
 class UploadPortDirect(BaseScript):
     """
@@ -13,15 +17,24 @@ class UploadPortDirect(BaseScript):
         """
         Initializes the UploadPortDirect class.
         """
-        super().__init__(config_section='upload_port_direct')
+        super().__init__(config_section="upload_port_direct")
 
     def run(self) -> None:
         """
         Runs the data upload process.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            Exception: If an error occurs during data upload.
         """
         try:
             # Example of accessing configuration values
-            port_name = self.get_config_value('port_name', 'default_port')
+            port_name = self.get_config_value("port_name", "default_port")
             self.logger.info(f"Starting data upload to port: {port_name}")
 
             # Add your data upload logic here
