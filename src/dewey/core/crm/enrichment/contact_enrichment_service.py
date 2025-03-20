@@ -1,4 +1,5 @@
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
 
 
 class ContactEnrichmentService(BaseScript):
@@ -10,12 +11,30 @@ class ContactEnrichmentService(BaseScript):
     """
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        """
+        Initializes the ContactEnrichmentService.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        """
+        super().__init__(*args, **kwargs, config_section="crm.enrichment")
 
     def run(self) -> None:
-        """Runs the contact enrichment process."""
+        """
+        Runs the contact enrichment process.
+
+        Fetches the enrichment API key from the configuration, logs its usage,
+        and then logs the completion of the process.
+
+        Raises:
+            ValueError: If the enrichment API key is not found in the configuration.
+
+        Returns:
+            None
+        """
         self.logger.info("Starting contact enrichment process.")
-        # Implement enrichment logic here
+
         api_key = self.get_config_value("enrichment_api_key")
         if not api_key:
             self.logger.warning("Enrichment API key not found in config.")
