@@ -1,57 +1,79 @@
-#!/usr/bin/env python3
-"""
-Standalone IMAP Email Import Script
-==================================
-
-This script imports emails using IMAP, with no dependencies on the dewey package structure.
-It is more reliable for bulk imports than the Gmail API.
-"""
-
-import argparse
+from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection
 import email
 import imaplib
 import json
-import logging
-import os
-import sys
 import time
 from datetime import datetime, timedelta
 from email.header import decode_header
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
-
-import duckdb
-from dateutil import parser as date_parser
 from email.message import Message
+from typing import Any, Dict, List, Optional
 
-# Custom JSON encoder to handle non-serializable types like email Header objects
-class EmailHeaderEncoder(json.JSONEncoder):
-    def default(self, obj):
-        try:
-            # Check if the object has a __str__ method
-            if hasattr(obj, '__str__'):
-                return str(obj)
-            # If we still can't serialize it, fallback to its representation
-            return repr(obj)
-        except Exception:
-            # Last resort
-            return "Non-serializable data"
+class IMAPSync(BaseScript):
+    """IMAP email synchronization script with database integration."""
+    
+    def __init__(self) -> None:
+        super().__init__(
+            name="imap_sync",
+            description="Synchronizes emails from IMAP server to database",
+            config_section="imap",
+            requires_db=True,
+            enable_llm=False
+        )
 
-# Configure logging
-log_dir = Path("logs")
-log_dir.mkdir(exist_ok=True)
-log_file = log_dir / f"imap_import_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+    # Email table schema matching project conventions
+    EMAIL_SCHEMA = '''
+    CREATE TABLE IF NOT EXISTS emails (
+        msg_id VARCHAR PRIMARY KEY,
+        thread_id VARCHAR,
+        subject VARCHAR,
+        from_address VARCHAR,
+        analysis_date TIMESTAMP,
+        raw_analysis JSON,
+        automation_score FLOAT,
+        content_value FLOAT,
+        human_interaction FLOAT,
+        time_value FLOAT,
+        business_impact FLOAT,
+        uncertainty_score FLOAT,
+        metadata JSON,
+        priority INTEGER,
+        label_ids JSON,
+        snippet TEXT,
+        internal_date BIGINT,
+        size_estimate INTEGER,
+        message_parts JSON,
+        draft_id VARCHAR,
+        draft_message JSON,
+        attachments JSON,
+        status VARCHAR DEFAULT 'new',
+        error_message VARCHAR,
+        batch_id VARCHAR,
+        import_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    '''
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.FileHandler(log_file),
-        logging.StreamHandler()
+    # Indexes matching project performance requirements
+    EMAIL_INDEXES = [
+        "CREATE INDEX IF NOT EXISTS idx_emails_thread_id ON emails(thread_id)",
+        "CREATE INDEX IF NOT EXISTS idx_emails_from_address ON emails(from_address)",
+        "CREATE INDEX IF NOT EXISTS idx_emails_internal_date ON emails(internal_date)",
+        "CREATE INDEX IF NOT EXISTS idx_emails_status ON emails(status)",
+        "CREATE INDEX IF NOT EXISTS idx_emails_batch_id ON emails(batch_id)",
+        "CREATE INDEX IF NOT EXISTS idx_emails_import_timestamp ON emails(import_timestamp)"
     ]
-)
 
-logger = logging.getLogger("imap_import")
+    class EmailHeaderEncoder(json.JSONEncoder):
+        """Custom JSON encoder following project data handling conventions"""
+        def default(self, obj):
+            try:
+                if hasattr(obj, '__str__'):
+                    return str(obj)
+                return repr(obj)
+            except Exception:
+                return "Non-serializable data"
 
 # Email table schema
 EMAIL_ANALYSES_SCHEMA = """
@@ -87,62 +109,33 @@ CREATE TABLE IF NOT EXISTS emails (
 )
 """
 
-def get_db_connection(db_path: str) -> duckdb.DuckDBPyConnection:
-    """Connect to DuckDB/MotherDuck database"""
-    try:
-        if db_path.startswith('md:'):
-            logger.info(f"Connecting to MotherDuck database: {db_path}")
-            token = os.getenv('MOTHERDUCK_TOKEN')
-            if not token:
-                raise ValueError("MOTHERDUCK_TOKEN environment variable not set")
-            conn = duckdb.connect(db_path, config={'motherduck_token': token})
-        else:
-            logger.info(f"Connecting to local database: {db_path}")
-            os.makedirs(os.path.dirname(os.path.abspath(db_path)), exist_ok=True)
-            conn = duckdb.connect(db_path)
+    def _init_database(self) -> None:
+        """Initialize database schema using BaseScript's connection"""
+        try:
+            self.logger.info("Initializing email database schema")
+            
+            # Create table
+            self.db_conn.execute(self.EMAIL_SCHEMA)
+            
+            # Create indexes
+            for index_sql in self.EMAIL_INDEXES:
+                self.db_conn.execute(index_sql)
+                
+        except Exception as e:
+            self.logger.error(f"Database initialization failed: {e}")
+            raise
 
-        # Create emails table if it doesn't exist
-        conn.execute(EMAIL_ANALYSES_SCHEMA)
-        logger.info("Verified emails table exists with correct schema")
-
-        # Create indexes if they don't exist
-        for idx in [
-            "CREATE INDEX IF NOT EXISTS idx_emails_thread_id ON emails(thread_id)",
-            "CREATE INDEX IF NOT EXISTS idx_emails_from_address ON emails(from_address)",
-            "CREATE INDEX IF NOT EXISTS idx_emails_internal_date ON emails(internal_date)",
-            "CREATE INDEX IF NOT EXISTS idx_emails_status ON emails(status)",
-            "CREATE INDEX IF NOT EXISTS idx_emails_batch_id ON emails(batch_id)",
-            "CREATE INDEX IF NOT EXISTS idx_emails_import_timestamp ON emails(import_timestamp)"
-        ]:
-            try:
-                conn.execute(idx)
-            except Exception as e:
-                logger.warning(f"Failed to create index: {e}")
-
-        return conn
-
-    except Exception as e:
-        logger.error(f"Failed to connect to database: {e}")
-        raise
-
-def connect_to_gmail(username: str, password: str) -> imaplib.IMAP4_SSL:
-    """Connect to Gmail using IMAP.
-    
-    Args:
-        username: Gmail username
-        password: App-specific password
-        
-    Returns:
-        IMAP connection
-    """
-    try:
-        # Connect to Gmail's IMAP server
-        imap = imaplib.IMAP4_SSL("imap.gmail.com")
-        imap.login(username, password)
-        return imap
-    except Exception as e:
-        logger.error(f"Failed to connect to Gmail: {e}")
-        raise
+    def _connect_imap(self, config: dict) -> imaplib.IMAP4_SSL:
+        """Connect to IMAP server using configured credentials"""
+        try:
+            self.logger.info(f"Connecting to IMAP server {config['host']}:{config['port']}")
+            imap = imaplib.IMAP4_SSL(config["host"], config["port"])
+            imap.login(config["user"], config["password"])
+            imap.select(config["mailbox"])
+            return imap
+        except Exception as e:
+            self.logger.error(f"IMAP connection failed: {e}")
+            raise
 
 def decode_email_header(header: str) -> str:
     """Decode email header properly handling various encodings.
@@ -496,55 +489,43 @@ def store_email(conn: duckdb.DuckDBPyConnection, email_data: Dict[str, Any], bat
         logger.error(f"Error storing email: {e}")
         return False
 
-def main():
-    parser = argparse.ArgumentParser(description="Import emails using IMAP")
-    parser.add_argument("--username", required=True, help="Gmail username")
-    parser.add_argument("--password", help="App-specific password (or set GOOGLE_APP_PASSWORD env var)")
-    parser.add_argument("--days", type=int, default=7, help="Number of days to look back")
-    parser.add_argument("--max", type=int, default=1000, help="Maximum number of emails to import")
-    parser.add_argument("--batch-size", type=int, default=10, help="Number of emails per batch")
-    parser.add_argument("--db", type=str, help="Database path (default: md:dewey)")
-    parser.add_argument("--historical", action="store_true", help="Import all historical emails")
-    parser.add_argument("--start-date", type=str, help="Start date for import (YYYY-MM-DD)")
-    parser.add_argument("--end-date", type=str, help="End date for import (YYYY-MM-DD)")
-    
-    args = parser.parse_args()
-    
-    try:
-        # Get password from args or environment
-        password = args.password or os.getenv('GOOGLE_APP_PASSWORD')
-        if not password:
-            raise ValueError("Password must be provided via --password or GOOGLE_APP_PASSWORD environment variable")
-            
-        # Connect to database
-        db_path = args.db or "md:dewey"
-        conn = get_db_connection(db_path)
-        logger.info(f"Connected to database at {db_path}")
-        
+    def run(self) -> None:
+        """Main execution method following BaseScript pattern"""
         try:
-            # Connect to Gmail
-            imap = connect_to_gmail(args.username, password)
-            logger.info("Connected to Gmail IMAP")
+            args = self.parse_args()
+            self._init_database()
             
-            # Fetch emails
-            fetch_emails(
-                imap=imap,
-                conn=conn,
-                days_back=args.days,
-                max_emails=args.max,
-                batch_size=args.batch_size,
-                historical=args.historical,
-                start_date=args.start_date,
-                end_date=args.end_date
-            )
+            imap_config = {
+                "host": self.get_config_value("host", "imap.gmail.com"),
+                "port": self.get_config_value("port", 993),
+                "user": args.username,
+                "password": args.password or self.get_config_value("password"),
+                "mailbox": self.get_config_value("mailbox", "INBOX")
+            }
+
+            with self._connect_imap(imap_config) as imap:
+                self._fetch_and_process_emails(imap, args)
+                
+            self.logger.info("IMAP sync completed successfully")
+
+        except Exception as e:
+            self.logger.error(f"IMAP sync failed: {str(e)}", exc_info=True)
+            raise
+
+    def _fetch_and_process_emails(self, imap: imaplib.IMAP4_SSL, args: argparse.Namespace) -> None:
+        """Orchestrate email fetching and processing"""
+        try:
+            self.logger.info(f"Starting email sync with params: {vars(args)}")
+            message_ids = self._search_emails(imap, args)
+            emails = self._fetch_email_batches(imap, message_ids, args.batch_size)
+            self._store_emails(emails)
             
+        except imaplib.IMAP4.error as e:
+            self.logger.error(f"IMAP protocol error: {e}")
+            raise
         finally:
-            conn.close()
-            logger.info("Database connection closed")
-            
-    except Exception as e:
-        logger.error(f"Import failed: {e}")
-        sys.exit(1)
+            imap.close()
+            imap.logout()
 
 if __name__ == "__main__":
-    main() 
+    IMAPSync().execute()
