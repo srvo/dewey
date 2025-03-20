@@ -1,6 +1,7 @@
 from dewey.core.base_script import BaseScript
 import logging
 import psycopg2
+from typing import Optional
 
 
 class AdminTasks(BaseScript):
@@ -16,7 +17,7 @@ class AdminTasks(BaseScript):
         super().__init__(config_section="admin", requires_db=True)
         self.logger = logging.getLogger(__name__)  # Get logger instance
 
-    def run(self):
+    def run(self) -> None:
         """
         Executes the administrative tasks.
         """
@@ -31,7 +32,7 @@ class AdminTasks(BaseScript):
             self.logger.error(f"Unexpected error during administrative tasks: {e}")
             raise
 
-    def perform_database_maintenance(self):
+    def perform_database_maintenance(self) -> None:
         """
         Performs database maintenance tasks, such as vacuuming and
         analyzing tables.
@@ -54,7 +55,7 @@ class AdminTasks(BaseScript):
             self.db_conn.rollback()  # Rollback in case of error
             raise
 
-    def add_user(self, username, password):
+    def add_user(self, username: str, password: str) -> None:
         """
         Adds a new user to the system.
 
@@ -72,7 +73,7 @@ class AdminTasks(BaseScript):
                 cursor.execute(
                     "SELECT EXISTS (SELECT 1 FROM pg_tables WHERE tablename = 'users');"
                 )
-                table_exists = cursor.fetchone()[0]
+                table_exists: Optional[bool] = cursor.fetchone()[0]
                 if not table_exists:
                     self.logger.info("The 'users' table does not exist. Creating it...")
                     cursor.execute(
@@ -90,7 +91,7 @@ class AdminTasks(BaseScript):
                     "SELECT EXISTS (SELECT 1 FROM users WHERE username = %s);",
                     (username,),
                 )
-                username_exists = cursor.fetchone()[0]
+                username_exists: Optional[bool] = cursor.fetchone()[0]
                 if username_exists:
                     self.logger.error(f"User {username} already exists.")
                     raise ValueError(f"User {username} already exists.")
