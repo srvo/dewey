@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 import argparse
-import logging
-import os
 import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import List, Optional, Any
+from typing import List, Optional
 
-import yaml
 from dewey.core.base_script import BaseScript
 
 
@@ -28,26 +25,30 @@ class LedgerFormatChecker(BaseScript):
         Args:
             journal_file: The path to the ledger journal file.
         """
-        super().__init__(config_section='bookkeeping')
+        super().__init__(
+            name="LedgerFormatChecker",
+            description="Validates the format of a ledger journal file.",
+            config_section="bookkeeping",
+        )
         self.journal_file = journal_file
         self.warnings: List[str] = []
         self.errors: List[str] = []
         self.journal_content: List[str] = []
-        self.hledger_path = self.get_config_value('ledger.hledger_path', '/usr/bin/hledger')
+        self.hledger_path = self.get_config_value("ledger.hledger_path", "/usr/bin/hledger")
         self.read_journal()
 
     def read_journal(self) -> None:
         """Reads the ledger journal file into memory."""
-        self.logger.info("Loading journal file: %s", self.journal_file)
+        self.logger.info(f"Loading journal file: {self.journal_file}")
         try:
             with open(self.journal_file, "r") as file:
                 self.journal_content = file.readlines()
         except FileNotFoundError:
-            self.logger.error("Journal file not found: %s", self.journal_file)
+            self.logger.error(f"Journal file not found: {self.journal_file}")
             self.errors.append(f"Journal file not found: {self.journal_file}")
             self.journal_content = []
         except Exception as e:
-            self.logger.error("Error reading journal file: %s", e)
+            self.logger.error(f"Error reading journal file: {e}")
             self.errors.append(f"Error reading journal file: {e}")
             self.journal_content = []
 
@@ -74,12 +75,16 @@ class LedgerFormatChecker(BaseScript):
                 self.warnings.append("hledger validation failed")
                 return False
         except subprocess.CalledProcessError as e:
-            self.logger.error("hledger command failed: %s", e)
+            self.logger.error(f"hledger command failed: {e}")
             self.errors.append(f"hledger command failed: {e}")
             return False
         except FileNotFoundError:
-            self.logger.error("hledger not found. Please ensure it is installed and in your PATH.")
-            self.errors.append("hledger not found. Please ensure it is installed and in your PATH.")
+            self.logger.error(
+                "hledger not found. Please ensure it is installed and in your PATH."
+            )
+            self.errors.append(
+                "hledger not found. Please ensure it is installed and in your PATH."
+            )
             return False
 
     def check_date_format(self) -> None:
@@ -87,8 +92,10 @@ class LedgerFormatChecker(BaseScript):
         self.logger.info("Checking date format")
         date_pattern = re.compile(r"^\d{4}[/.-]\d{2}[/.-]\d{2}")
         for i, line in enumerate(self.journal_content):
-            if line.strip() and not line.startswith((";", "!")) and not date_pattern.match(line):
-                self.logger.warning("Invalid date format on line %d: %s", i + 1, line.strip())
+            if line.strip() and not line.startswith((";", "!")) and not date_pattern.match(
+                line
+            ):
+                self.logger.warning(f"Invalid date format on line {i + 1}: {line.strip()}")
                 self.warnings.append(f"Invalid date format on line {i + 1}: {line.strip()}")
 
     def check_accounts(self) -> None:
@@ -98,7 +105,9 @@ class LedgerFormatChecker(BaseScript):
         for i, line in enumerate(self.journal_content):
             if line.strip().startswith(("Assets", "Expenses", "Income", "Liabilities")):
                 if not account_pattern.match(line):
-                    self.logger.warning("Invalid account format on line %d: %s", i + 1, line.strip())
+                    self.logger.warning(
+                        f"Invalid account format on line {i + 1}: {line.strip()}"
+                    )
                     self.warnings.append(f"Invalid account format on line {i + 1}: {line.strip()}")
 
     def check_amount_format(self) -> None:
@@ -107,18 +116,18 @@ class LedgerFormatChecker(BaseScript):
         amount_pattern = re.compile(r"[-+]?\s*\d+(?:,\d{3})*(?:\.\d{2})?\s*[A-Z]{3}")
         for i, line in enumerate(self.journal_content):
             if re.search(r"\s+-?\s*\d", line) and not amount_pattern.search(line):
-                self.logger.warning("Invalid amount format on line %d: %s", i + 1, line.strip())
+                self.logger.warning(f"Invalid amount format on line {i + 1}: {line.strip()}")
                 self.warnings.append(f"Invalid amount format on line {i + 1}: {line.strip()}")
 
     def check_description_length(self) -> None:
         """Checks if descriptions exceed the maximum allowed length."""
         self.logger.info("Checking description length")
-        max_length: int = self.get_config_value('max_description_length', 50)
+        max_length: int = self.get_config_value("max_description_length", 50)
         for i, line in enumerate(self.journal_content):
             parts = line.split("  ")
             if len(parts) > 1 and len(parts[0]) > max_length:
                 self.logger.warning(
-                    "Description too long on line %d: %s", i + 1, line.strip()
+                    f"Description too long on line {i + 1}: {line.strip()}"
                 )
                 self.warnings.append(f"Description too long on line {i + 1}: {line.strip()}")
 
@@ -137,10 +146,7 @@ class LedgerFormatChecker(BaseScript):
                         first_currency = currency
                     elif currency != first_currency:
                         self.logger.warning(
-                            "Currency inconsistency on line %d: %s (expected %s)",
-                            i + 1,
-                            line.strip(),
-                            first_currency,
+                            f"Currency inconsistency on line {i + 1}: {line.strip()} (expected {first_currency})"
                         )
                         self.warnings.append(
                             f"Currency inconsistency on line {i + 1}: {line.strip()} (expected {first_currency})"
