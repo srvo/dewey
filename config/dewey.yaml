@@ -260,3 +260,11 @@ vector_stores:
 
 utils:
   example_config: "example_value_in_config"
+
+database:
+  init_sql: |
+    CREATE TABLE IF NOT EXISTS example_table (
+        id INTEGER PRIMARY KEY,
+        value INTEGER
+    );
+    INSERT INTO example_table (id, value) VALUES (1, 1) ON CONFLICT (id) DO NOTHING;
