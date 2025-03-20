@@ -1,6 +1,8 @@
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import DatabaseConnection, get_connection
+from dewey.llm import llm_utils
 import logging
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 
 class PypiSearch(BaseScript):
@@ -11,13 +13,16 @@ class PypiSearch(BaseScript):
     using configuration values.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, config_section: Optional[str] = None) -> None:
         """
         Initializes the PypiSearch class.
 
         Calls the superclass constructor to initialize the base script.
+
+        Args:
+            config_section: The section of the config file to use for this script.
         """
-        super().__init__()
+        super().__init__(config_section=config_section, requires_db=False, enable_llm=False)
         self.name = "PypiSearch"
 
     def run(self) -> None:
@@ -25,6 +30,9 @@ class PypiSearch(BaseScript):
         Executes the PyPI search.
 
         This method retrieves configuration values and performs the PyPI search.
+
+        Raises:
+            Exception: If an error occurs during the PyPI search.
         """
         try:
             package_name = self.get_config_value("package_name", "requests")
