@@ -14,7 +14,7 @@ class FMPEngine(BaseScript):
         """
         Initializes the FMPEngine.
         """
-        super().__init__(config_section='fmp_engine')
+        super().__init__(config_section="fmp_engine")
 
     def run(self) -> None:
         """
