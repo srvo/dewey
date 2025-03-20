@@ -1,4 +1,5 @@
-from typing import Any
+from typing import Any, Optional, Union
+import logging
 
 from dewey.core.base_script import BaseScript
 
@@ -12,14 +13,16 @@ class LoggingExample(BaseScript):
     accessing configuration values.
     """
 
-    def __init__(self, config_section: str = "logging") -> None:
+    def __init__(self, config_section: str = "logging", logger: Optional[logging.Logger] = None) -> None:
         """
         Initializes the LoggingExample script.
 
         Args:
             config_section: The configuration section to use.
+            logger: Optional logger to use.  If None, the default logger will be used.
         """
         super().__init__(config_section=config_section)
+        self.logger = logger if logger is not None else self.logger
 
     def run(self) -> None:
         """
