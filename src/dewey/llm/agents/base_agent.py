@@ -50,6 +50,7 @@ class BaseAgent(BaseScript):
         self.executor_type: str = "local"  # Example attribute
         self.executor_kwargs: Dict[str, Any] = {}  # Example attribute
         self.max_print_outputs_length: int = 1000  # Example attribute
+        self.disable_rate_limit: bool = False  # New attribute to disable rate limiting
 
     def run(self) -> None:
         """
@@ -88,7 +89,11 @@ class BaseAgent(BaseScript):
             raise ValueError("LLM client is not initialized. Ensure enable_llm=True in the constructor.")
 
         try:
-            response = self.llm_client.generate(prompt)  # Assuming a generate method exists
+            # Check if rate limiting should be disabled
+            if self.disable_rate_limit:
+                self.logger.warning("Rate limiting is disabled for this agent.")
+            
+            response = self.llm_client.generate(prompt, disable_rate_limit=self.disable_rate_limit)  # Assuming a generate method exists
             return response.text  # Assuming the response has a text attribute
         except Exception as e:
             self.logger.error(f"LLM code generation failed: {e}")
@@ -142,5 +147,6 @@ class BaseAgent(BaseScript):
             "executor_type": self.executor_type,
             "executor_kwargs": self.executor_kwargs,
             "max_print_outputs_length": self.max_print_outputs_length,
+            "disable_rate_limit": self.disable_rate_limit,
         }
         return agent_dict
