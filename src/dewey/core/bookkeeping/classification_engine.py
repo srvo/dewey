@@ -9,9 +9,9 @@ import logging
 from dewey.core.base_script import BaseScript
 
 if TYPE_CHECKING:
-import logging
-from dewey.core.base_script import BaseScript
-from dewey.llm import llm_utils
+    import logging
+    from dewey.core.base_script import BaseScript
+    from dewey.llm import llm_utils
 
 logger = logging.getLogger(__name__)
 
