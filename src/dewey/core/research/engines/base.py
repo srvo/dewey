@@ -16,13 +16,17 @@ class BaseEngine(BaseScript):
             name: The name of the engine.
             description: A brief description of the engine.
         """
-        super().__init__(name=name, description=description)
+        super().__init__(name=name, description=description, config_section="engines")
         self.templates: Dict[str, str] = {}
 
     def run(self) -> None:
-        """
-        Run the engine.  This method should be overridden by subclasses
+        """Run the engine.
+
+        This method should be overridden by subclasses
         to implement the engine's primary logic.
+
+        Raises:
+            NotImplementedError: If the run method is not implemented in the subclass.
         """
         self.logger.info(f"Running {self.name}...")
         raise NotImplementedError("The run method must be implemented in the subclass.")
