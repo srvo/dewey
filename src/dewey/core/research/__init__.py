@@ -1,6 +1,7 @@
 from dewey.core.base_script import BaseScript
 from typing import Any, Dict
 
+
 class ResearchScript(BaseScript):
     """A base class for research scripts within the Dewey framework.
 
