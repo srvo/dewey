@@ -21,6 +21,15 @@ class AnalyzeArchitecture(BaseScript):
 
         This method orchestrates the analysis of the system architecture,
         collects relevant data, and generates a report.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            Exception: If any error occurs during the analysis.
         """
         self.logger.info("Starting architecture analysis...")
 
@@ -34,4 +43,4 @@ class AnalyzeArchitecture(BaseScript):
 
 if __name__ == "__main__":
     analyzer = AnalyzeArchitecture()
-    analyzer.run()
+    analyzer.execute()
