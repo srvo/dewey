@@ -23,14 +23,30 @@ class TestHledgerUpdater:
         with patch(
             "dewey.core.bookkeeping.hledger_utils.BaseScript.__init__", return_value=None
         ):
-            with patch(
-                "dewey.core.bookkeeping.hledger_utils.BaseScript.config",
-                new_callable=pytest.helpers.MockConfig,
-                config=mock_config,
-            ):
-                updater = HledgerUpdater()
-                updater.logger = MagicMock()  # Mock the logger
+            updater = HledgerUpdater()
+            updater.config = mock_config
+            updater.logger = MagicMock()  # Mock the logger
+            updater.get_config_value = MagicMock(
+                return_value=2022
+            )  # Mock get_config_value
         return updater
+
+    @pytest.fixture
+    def mock_subprocess_result(self) -> MagicMock:
+        """Fixture to create a mock subprocess result."""
+        result = MagicMock(spec=subprocess.CompletedProcess)
+        result.returncode = 0
+        result.stdout = ""
+        result.stderr = ""
+        return result
+
+    @pytest.fixture
+    def mock_fs(self) -> MagicMock:
+        """Fixture to create a mock file system."""
+        fs = MagicMock()
+        fs.exists.return_value = True
+        fs.open.return_value.__enter__.return_value.read.return_value = ""
+        return fs
 
     def test_hledger_updater_initialization(
         self, hledger_updater: HledgerUpdater
@@ -39,34 +55,35 @@ class TestHledgerUpdater:
         assert hledger_updater.config_section == "bookkeeping"
         assert isinstance(hledger_updater.logger, MagicMock)
 
+    @pytest.mark.parametrize(
+        "account, date, stdout, expected_balance",
+        [
+            (
+                "assets:checking:mercury8542",
+                "2023-12-31",
+                "Some header lines\n$1,234.56",
+                "$1,234.56",
+            ),
+            ("assets:checking:mercury8542", "2023-12-31", "Some header lines\n", None),
+        ],
+    )
     @patch("subprocess.run")
     def test_get_balance_success(
         self,
         mock_subprocess_run: MagicMock,
         hledger_updater: HledgerUpdater,
+        mock_subprocess_result: MagicMock,
+        account: str,
+        date: str,
+        stdout: str,
+        expected_balance: Optional[str],
     ) -> None:
         """Test get_balance method with a successful hledger command execution."""
-        mock_subprocess_run.return_value.returncode = 0
-        mock_subprocess_run.return_value.stdout = "Some header lines\n$1,234.56"
-        balance = hledger_updater.get_balance(
-            "assets:checking:mercury8542", "2023-12-31"
-        )
-        assert balance == "$1,234.56"
-        mock_subprocess_run.assert_called_once()
-
-    @patch("subprocess.run")
-    def test_get_balance_no_balance_found(
-        self,
-        mock_subprocess_run: MagicMock,
-        hledger_updater: HledgerUpdater,
-    ) -> None:
-        """Test get_balance method when no balance is found in the output."""
-        mock_subprocess_run.return_value.returncode = 0
-        mock_subprocess_run.return_value.stdout = "Some header lines\n"
-        balance = hledger_updater.get_balance(
-            "assets:checking:mercury8542", "2023-12-31"
-        )
-        assert balance is None
+        mock_subprocess_result.returncode = 0
+        mock_subprocess_result.stdout = stdout
+        mock_subprocess_run.return_value = mock_subprocess_result
+        balance = hledger_updater.get_balance(account, date)
+        assert balance == expected_balance
         mock_subprocess_run.assert_called_once()
 
     @patch("subprocess.run")
@@ -74,10 +91,12 @@ class TestHledgerUpdater:
         self,
         mock_subprocess_run: MagicMock,
         hledger_updater: HledgerUpdater,
+        mock_subprocess_result: MagicMock,
     ) -> None:
         """Test get_balance method when hledger command returns an error."""
-        mock_subprocess_run.return_value.returncode = 1
-        mock_subprocess_run.return_value.stderr = "Error message from hledger"
+        mock_subprocess_result.returncode = 1
+        mock_subprocess_result.stderr = "Error message from hledger"
+        mock_subprocess_run.return_value = mock_subprocess_result
         balance = hledger_updater.get_balance(
             "assets:checking:mercury8542", "2023-12-31"
         )
@@ -90,6 +109,7 @@ class TestHledgerUpdater:
         self,
         mock_subprocess_run: MagicMock,
         hledger_updater: HledgerUpdater,
+        mock_subprocess_result: MagicMock,
     ) -> None:
         """Test get_balance method when an exception occurs during hledger execution."""
         mock_subprocess_run.side_effect = Exception("Some exception")
@@ -107,11 +127,14 @@ class TestHledgerUpdater:
         mock_path_exists: MagicMock,
         mock_subprocess_run: MagicMock,
         hledger_updater: HledgerUpdater,
+        mock_subprocess_result: MagicMock,
+        mock_fs: MagicMock,
     ) -> None:
         """Test update_opening_balances method with successful balance retrieval and journal update."""
         # Mock successful balance retrieval
-        mock_subprocess_run.return_value.returncode = 0
-        mock_subprocess_run.return_value.stdout = "$1,234.56"
+        mock_subprocess_result.returncode = 0
+        mock_subprocess_result.stdout = "$1,234.56"
+        mock_subprocess_run.return_value = mock_subprocess_result
 
         # Mock file operations
         mock_path_exists.return_value = True
@@ -123,22 +146,25 @@ class TestHledgerUpdater:
             assets:checking:mercury9281  = $0.00
         """
         )
-        with patch("builtins.open", mock_file):
+        with patch("builtins.open", mock_file) as mocked_open:
+            hledger_updater._fs = mock_fs
             hledger_updater.update_opening_balances(2023)
 
-        # Assert that subprocess.run was called twice (once for each account)
-        assert mock_subprocess_run.call_count == 2
+            # Assert that subprocess.run was called twice (once for each account)
+            assert mock_subprocess_run.call_count == 2
 
-        # Assert that the file was opened in write mode and written to
-        mock_file.assert_called_with("2023.journal", "w")
-        handle = mock_file()
-        assert (
-            "assets:checking:mercury8542  = $1,234.56" in handle.write.call_args[0][0]
-        )
-        assert (
-            "assets:checking:mercury9281  = $1,234.56" in handle.write.call_args[0][0]
-        )
-        hledger_updater.logger.info.assert_called()
+            # Assert that the file was opened in write mode and written to
+            mocked_open.assert_called_with("2023.journal", "w")
+            handle = mocked_open()
+            assert (
+                "assets:checking:mercury8542  = $1,234.56"
+                in handle.write.call_args[0][0]
+            )
+            assert (
+                "assets:checking:mercury9281  = $1,234.56"
+                in handle.write.call_args[0][0]
+            )
+            hledger_updater.logger.info.assert_called()
 
     @patch("subprocess.run")
     @patch("pathlib.Path.exists")
@@ -147,11 +173,13 @@ class TestHledgerUpdater:
         mock_path_exists: MagicMock,
         mock_subprocess_run: MagicMock,
         hledger_updater: HledgerUpdater,
+        mock_subprocess_result: MagicMock,
     ) -> None:
         """Test update_opening_balances method when balance retrieval fails."""
         # Mock failed balance retrieval
-        mock_subprocess_run.return_value.returncode = 1
-        mock_subprocess_run.return_value.stderr = "Error message from hledger"
+        mock_subprocess_result.returncode = 1
+        mock_subprocess_result.stderr = "Error message from hledger"
+        mock_subprocess_run.return_value = mock_subprocess_result
 
         # Mock file operations
         mock_path_exists.return_value = True
@@ -171,10 +199,12 @@ class TestHledgerUpdater:
         self,
         mock_path_exists: MagicMock,
         hledger_updater: HledgerUpdater,
+        mock_fs: MagicMock,
     ) -> None:
         """Test update_opening_balances method when the journal file does not exist."""
         # Mock Path.exists() to return False
         mock_path_exists.return_value = False
+        hledger_updater._fs = mock_fs
         hledger_updater.update_opening_balances(2023)
 
         # Assert that subprocess.run was not called
@@ -187,11 +217,14 @@ class TestHledgerUpdater:
         mock_path_exists: MagicMock,
         mock_subprocess_run: MagicMock,
         hledger_updater: HledgerUpdater,
+        mock_subprocess_result: MagicMock,
+        mock_fs: MagicMock,
     ) -> None:
         """Test update_opening_balances method when an exception occurs."""
         # Mock successful balance retrieval
-        mock_subprocess_run.return_value.returncode = 0
-        mock_subprocess_run.return_value.stdout = "$1,234.56"
+        mock_subprocess_result.returncode = 0
+        mock_subprocess_result.stdout = "$1,234.56"
+        mock_subprocess_run.return_value = mock_subprocess_result
 
         # Mock file operations
         mock_path_exists.return_value = True
@@ -213,13 +246,14 @@ class TestHledgerUpdater:
     ) -> None:
         """Test the run method to ensure it iterates through the years and calls update_opening_balances."""
         # Mock the update_opening_balances method
-        hledger_updater.get_config_value = MagicMock(return_value=2022)
         hledger_updater.run()
 
         # Assert that update_opening_balances is called for each year in the range
         start_year = int(hledger_updater.get_config_value("start_year", 2022))
         current_year = datetime.now().year
-        expected_calls = current_year - start_year + 2  # +1 for current year, +1 for end_year
+        expected_calls = (
+            current_year - start_year + 2
+        )  # +1 for current year, +1 for end_year
         assert mock_update_opening_balances.call_count == expected_calls
 
         # Assert that update_opening_balances is called with the correct years
@@ -234,3 +268,20 @@ class TestHledgerUpdater:
 
         # Assert that HledgerUpdater.run was called
         mock_run.assert_called_once()
+
+    def test_read_journal_file(self, hledger_updater: HledgerUpdater, mock_fs: MagicMock) -> None:
+        """Test that _read_journal_file reads the content of the journal file."""
+        mock_fs.open.return_value.__enter__.return_value.read.return_value = "test content"
+        hledger_updater._fs = mock_fs
+        content = hledger_updater._read_journal_file("test.journal")
+        assert content == "test content"
+        mock_fs.open.assert_called_once_with("test.journal")
+
+    def test_write_journal_file(self, hledger_updater: HledgerUpdater, mock_fs: MagicMock) -> None:
+        """Test that _write_journal_file writes the content to the journal file."""
+        hledger_updater._fs = mock_fs
+        hledger_updater._write_journal_file("test.journal", "test content")
+        mock_fs.open.assert_called_once_with("test.journal", "w")
+        mock_fs.open.return_value.__enter__.return_value.write.assert_called_once_with(
+            "test content"
+        )
