@@ -1,5 +1,6 @@
 """Philosophical agent using smolagents."""
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
+
 from smolagents import Tool
 
 from dewey.core.base_script import BaseScript

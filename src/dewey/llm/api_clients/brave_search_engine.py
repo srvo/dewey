@@ -1,6 +1,8 @@
-from dewey.core.base_script import BaseScript
 from typing import Any, Dict, Optional
+
 import requests
+
+from dewey.core.base_script import BaseScript
 
 
 class BraveSearchEngine(BaseScript):

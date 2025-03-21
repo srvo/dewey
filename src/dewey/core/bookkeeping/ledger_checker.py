@@ -3,7 +3,8 @@ import argparse
 import re
 import subprocess
 import sys
-from typing import List, Optional, Callable
+from typing import Callable, List, Optional
+
 from dewey.core.base_script import BaseScript
 
 

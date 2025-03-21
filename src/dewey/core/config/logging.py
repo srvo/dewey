@@ -1,5 +1,5 @@
-from typing import Any, Optional, Union
 import logging
+from typing import Any, Optional, Union
 
 from dewey.core.base_script import BaseScript
 

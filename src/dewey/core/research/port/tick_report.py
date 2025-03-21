@@ -1,7 +1,8 @@
+from typing import Any
+
 from dewey.core.base_script import BaseScript
 from dewey.core.db.utils import execute_query
 from dewey.llm.llm_utils import generate_text
-from typing import Any
 
 
 class TickReport(BaseScript):

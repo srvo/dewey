@@ -15,6 +15,7 @@ from dewey.core.db.connection import get_connection as get_local_connection
 from dewey.core.db.connection import (
     get_motherduck_connection as get_motherduck_connection,
 )
+
 from .models import Service
 
 

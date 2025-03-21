@@ -1,0 +1,138 @@
+/* Port5 (ethifinx) Screen Styles */
+
+#main-container {
+    width: 100%;
+    height: 90%;
+    layout: vertical;
+    padding: 1;
+}
+
+#search-container {
+    height: auto;
+    margin-bottom: 1;
+    align: center middle;
+}
+
+#ticker-input {
+    width: 60%;
+}
+
+#content-container {
+    width: 100%;
+    height: 1fr;
+}
+
+#companies-container {
+    width: 40%;
+    height: 100%;
+    border: solid $accent;
+    border-title-align: center;
+    border-title-color: $accent;
+    border-title-background: $surface;
+    border-subtitle-align: center;
+}
+
+#details-container {
+    width: 60%;
+    height: 100%;
+    border: solid $accent;
+    border-title-align: center;
+    border-title-color: $accent;
+    border-title-background: $surface;
+    padding: 1;
+}
+
+#companies-header, #details-header {
+    text-style: bold;
+    background: $accent;
+    color: $surface;
+    width: 100%;
+    height: auto;
+    content-align: center middle;
+    padding: 0 1;
+}
+
+.section-header {
+    text-style: bold;
+    color: $text;
+    background: $accent;
+    opacity: 0.7;
+    padding: 0 1;
+}
+
+#companies-table {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+#analysis-details {
+    width: 100%;
+    height: 100%;
+    padding: 0 1;
+}
+
+#company-name, #risk-score, #confidence-score, #recommendation, #themes {
+    width: 100%;
+    height: auto;
+    margin-bottom: 1;
+}
+
+#company-name {
+    text-style: bold;
+    color: $success;
+    margin-bottom: 2;
+}
+
+#risk-score {
+    color: $warning;
+}
+
+#summary-text {
+    width: 100%;
+    height: 1fr;
+    border: solid $accent;
+    margin-top: 1;
+}
+
+#status-container {
+    height: auto;
+    margin-top: 1;
+    background: $surface;
+    padding: 1;
+}
+
+#loading-indicator {
+    margin-right: 1;
+}
+
+#status-text {
+    color: $text-muted;
+}
+
+/* Button styling */
+Button {
+    margin-right: 1;
+}
+
+Button#analyze-button {
+    background: $success;
+}
+
+Button#top-companies-button {
+    background: $accent;
+}
+
+Button#status-button {
+    background: $accent;
+}
+
+/* DataTable row styling */
+#companies-table .datatable--cursor {
+    background: $accent;
+}
+
+/* Makes the text area look more like a read-only display */
+#summary-text {
+    background: $surface;
+} 

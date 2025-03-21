@@ -879,4 +879,242 @@ pipeline-stages =
    - Implement query caching where appropriate
    - Regular query performance monitoring
 
+### MotherDuck/Local Sync Implementation
+1. **Required Pattern:**
+   - **ALWAYS** use the DatabaseConnection class from `dewey.core.db.connection`
+   - Database operations that modify data must use `execute` method to ensure changes are tracked
+   - Never create direct connections to DuckDB or MotherDuck outside of the connection module
+
+2. **Sync Operations:**
+   - Full sync runs daily at 3 AM via scheduled job (`scripts/schedule_db_sync.py`)
+   - Incremental syncs are automatically triggered after write operations
+   - Manual sync can be initiated via `scripts/direct_db_sync.py --mode incremental`
+   - Emergency full sync can be run via `scripts/direct_db_sync.py --mode full`
+
+3. **Code Pattern:**
+   ```python
+   from dewey.core.db.connection import DatabaseConnection, get_motherduck_connection, get_connection
+   
+   # For most operations, use DatabaseConnection
+   conn = DatabaseConnection(config)
+   
+   # Write operations - tracked automatically for sync
+   conn.execute("INSERT INTO table_name VALUES (...)")
+   
+   # Read operations
+   result_df = conn.execute("SELECT * FROM table_name")
+   
+   # Only use direct connections for special cases
+   md_conn = get_motherduck_connection()  # For MotherDuck-specific operations
+   local_conn = get_connection()  # For local-only operations
+   ```
+
+4. **Configuration:**
+   - MotherDuck token must be in environment as `MOTHERDUCK_TOKEN`
+   - Connection details are defined in `dewey.yaml` under the `db` section
+   - Sync configuration is in `dewey.yaml` under `db.sync` section
+
+5. **Monitoring:**
+   - Check sync status in `dewey_sync_metadata` table
+   - Monitor logs in `logs/db_sync_*.log`
+   - Use `--verbose` flag for detailed sync information
+
+[file:tests/*.py]
+
+Settings for test files (assuming you're using pytest)
+Test files should be in a separate tests directory.
+Test function names should start with test_.
+Use assertions to verify the expected behavior of your code.
+Write tests for different scenarios, including edge cases and error conditions.
+test-prefix = test_
+test-framework = pytest
+
+### Test Structure and Organization
+1. **Directory Structure:**
+   - Unit tests in `tests/unit/[module_path]/test_[filename].py`
+   - Integration tests in `tests/integration/`
+   - Test directory structure should mirror the src directory structure
+
+2. **File Naming:**
+   - Test files must be named `test_*.py`
+   - Test functions must be named `test_*`
+   - Test classes must be named `Test*`
+
+3. **Required Test Components:**
+   - `conftest.py` with common fixtures in each test directory
+   - Proper imports with absolute paths
+   - Type annotations on all test functions and fixtures
+   - Docstrings for all test functions describing what is being tested
+
+### Database Testing
+1. **NEVER Connect to Real Databases:**
+   - Always mock database connections in tests
+   - Use `unittest.mock` to patch connection functions
+   - Create mock fixtures that return pandas DataFrames
+
+2. **Standard Database Fixtures:**
+   ```python
+   @pytest.fixture
+   def mock_db_connection():
+       """Create a mock database connection."""
+       mock_conn = MagicMock()
+       mock_conn.execute.return_value = pd.DataFrame({"col1": [1, 2, 3]})
+       return mock_conn
+   
+   @pytest.fixture
+   def mock_motherduck_connection():
+       """Create a mock MotherDuck connection."""
+       return mock_db_connection()
+   ```
+
+3. **Mocking Connection Functions:**
+   ```python
+   @patch("dewey.core.db.connection.get_motherduck_connection")
+   @patch("dewey.core.db.connection.get_connection")
+   def test_database_function(mock_get_conn, mock_get_motherduck, mock_db_connection):
+       # Arrange
+       mock_get_conn.return_value = mock_db_connection
+       mock_get_motherduck.return_value = mock_db_connection
+       
+       # Act
+       result = function_under_test()
+       
+       # Assert
+       assert result is not None
+       mock_db_connection.execute.assert_called_once()
+   ```
+
+### Testing External Dependencies
+1. **Mock ALL External Dependencies:**
+   - API calls (patch requests, httpx, etc.)
+   - File system operations (patch open, Path.exists, etc.)
+   - Environment variables
+   - LLM calls and responses
+   - Time-dependent functions
+
+2. **Standard Pattern for File Operations:**
+   ```python
+   @patch("pathlib.Path.exists")
+   @patch("builtins.open", new_callable=mock_open, read_data="test data")
+   def test_file_operations(mock_file_open, mock_exists):
+       # Arrange
+       mock_exists.return_value = True
+       
+       # Act
+       result = function_under_test("file.txt")
+       
+       # Assert
+       mock_file_open.assert_called_once_with("file.txt", "r")
+       assert result == "test data"
+   ```
+
+### Test Fixtures and Setup
+1. **Use Fixtures for All Setup:**
+   - Common test data should be defined in fixtures
+   - Complex object creation should be in fixtures
+   - Environment setup/teardown should be handled by fixtures
+   - Use fixture scope appropriately (function, class, module, session)
+
+2. **Fixture Patterns:**
+   - Use `@pytest.fixture` decorator
+   - Add type annotations to fixtures
+   - Document fixtures with docstrings
+   - Return test objects from fixtures
+   - Use `yield` for fixtures that need teardown
+
+3. **BaseScript Testing:**
+   ```python
+   @pytest.fixture
+   def mock_base_script() -> MagicMock:
+       """Mock BaseScript instance."""
+       mock_script = MagicMock(spec=BaseScript)
+       mock_script.get_config_value.return_value = "test_value"
+       mock_script.logger = MagicMock()
+       return mock_script
+   
+   @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
+   def test_script_class(mock_init, mock_base_script):
+       # Test code that uses BaseScript
+       pass
+   ```
+
+### Assertion Best Practices
+1. **Complete Assertions:**
+   - Assert both function results and side effects
+   - Verify all expected method calls
+   - Check for expected exceptions with `pytest.raises`
+   - Verify log messages when relevant
+
+2. **Parameterized Tests:**
+   ```python
+   @pytest.mark.parametrize(
+       "input_value,expected_result",
+       [
+           (1, 2),
+           (2, 4),
+           (3, 6),
+           (-1, -2),
+           (0, 0),
+       ],
+   )
+   def test_double_function(input_value: int, expected_result: int) -> None:
+       """Test that double() correctly multiplies values by 2."""
+       assert double(input_value) == expected_result
+   ```
+
+3. **Testing Exceptions:**
+   ```python
+   def test_value_error_raised():
+       """Test that ValueError is raised for invalid inputs."""
+       with pytest.raises(ValueError) as exc_info:
+           function_under_test(-1)
+       assert "Invalid input" in str(exc_info.value)
+   ```
+
+Ibis-Specific Testing Guidance:
+- Use the Ibis testing framework for backend-agnostic tests: https://ibis-project.org/reference/backendtest
+- Utilize Ibis test fixtures (e.g., con, alltypes, lineitem) where appropriate.
+- Test against multiple backends (at least DuckDB) if feasible. Use pytest.mark.parametrize.
+- Focus on testing Ibis expressions and their transformations.
+- For complex transformations, consider using the Ibis compiler to generate SQL and compare it to expected SQL.
+- Test with different data inputs, including edge cases (empty tables, null values, etc.).
+ibis-testing-guidelines = [
+"Use Ibis testing framework: https://ibis-project.org/reference/backendtest",
+"Utilize Ibis test fixtures (con, alltypes, lineitem)",
+"Test against multiple backends (at least DuckDB)",
+"Focus on testing Ibis expressions",
+"Consider using Ibis compiler for SQL comparison",
+"Test with various data inputs (edge cases)",
+]
+
+DuckDB-Specific Testing Guidance:
+- Use DuckDB's SQL Logic Test (sqllogictest) framework for testing SQL queries: https://duckdb.org/docs/stable/dev/sqllogictest/writing_tests.html
+- Create .test files containing SQL statements and expected results.
+- Use the duckdb-test CLI to run the tests.
+- Test specific DuckDB features and functions you're using.
+- Test error handling (e.g., invalid SQL, data type mismatches).
+- Consider using parameterized tests (test files) to cover multiple scenarios with the same query.
+duckdb-testing-guidelines = [
+"Use DuckDB SQL Logic Test (sqllogictest): https://duckdb.org/docs/stable/dev/sqllogictest/writing_tests.html",
+"Create .test files with SQL statements and expected results",
+"Use duckdb-test CLI to run tests",
+"Test specific DuckDB features and functions",
+"Test error handling",
+"Consider parameterized tests",
+]
+
+Testing Strategy:
+- Aim for high test coverage, but prioritize testing critical functionality.
+- Write unit tests for individual functions and classes.
+- Write integration tests to verify the interaction between different parts of the system (e.g., Ibis and DuckDB).
+- Use test fixtures to set up and tear down test data.
+- Use mocking/patching sparingly, and prefer integration tests when possible.
+testing-strategy = [
+"High test coverage (prioritize critical functionality)",
+"Write unit tests",
+"Write integration tests",
+"Use test fixtures",
+"Use mocking/patching sparingly",
+]
+
 

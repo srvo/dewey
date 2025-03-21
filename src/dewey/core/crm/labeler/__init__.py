@@ -1,8 +1,13 @@
-from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
-from dewey.llm import llm_utils
 import logging
 from typing import Any, Dict
+
+from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import (
+    DatabaseConnection,
+    get_connection,
+    get_motherduck_connection,
+)
+from dewey.llm import llm_utils
 
 
 class LabelerModule(BaseScript):

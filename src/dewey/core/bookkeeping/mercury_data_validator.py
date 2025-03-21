@@ -1,6 +1,6 @@
 import re
 from abc import ABC, abstractmethod
-from datetime import datetime, date
+from datetime import date, datetime
 from typing import Any, Dict, Optional
 
 from dewey.core.base_script import BaseScript

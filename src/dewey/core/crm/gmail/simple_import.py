@@ -18,16 +18,17 @@ from typing import Any, Dict, List, Optional
 
 import duckdb
 import google.auth
+from dateutil import parser as date_parser
 from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
 from google.oauth2 import service_account
+from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.discovery_cache.base import Cache
-from dateutil import parser as date_parser
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import get_connection
+
 # from dewey.core.db.utils import create_table_if_not_exists # Removed direct schema operations
 # from dewey.llm.llm_utils import call_llm # Removed direct LLM calls
 

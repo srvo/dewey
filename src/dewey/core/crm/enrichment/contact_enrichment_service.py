@@ -1,5 +1,9 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
+from dewey.core.db.connection import (
+    DatabaseConnection,
+    get_connection,
+    get_motherduck_connection,
+)
 
 
 class ContactEnrichmentService(BaseScript):

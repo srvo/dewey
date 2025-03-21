@@ -1,5 +1,6 @@
-from dewey.core.base_script import BaseScript
 from typing import Any, Dict
+
+from dewey.core.base_script import BaseScript
 
 
 class E2BCodeInterpreter(BaseScript):

@@ -1,9 +1,9 @@
 from typing import Optional, Protocol
 
 from dewey.core.base_script import BaseScript
+from dewey.core.config import DeweyConfig
 from dewey.core.db.connection import DatabaseConnection
 from dewey.llm.llm_utils import get_llm_client
-from dewey.core.config import DeweyConfig
 
 
 class DatabaseInterface(Protocol):

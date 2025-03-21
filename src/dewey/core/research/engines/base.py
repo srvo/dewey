@@ -1,96 +1,102 @@
-from typing import Any, Dict, List, Optional
+import argparse
+from abc import abstractmethod
+from typing import Any
+
 from dewey.core.base_script import BaseScript
 
 
 class BaseEngine(BaseScript):
-    """Base class for search and analysis engines.
+    """Base class for all engines.
 
-    Inherits from BaseScript and provides standardized access to
-    configuration, logging, and other utilities.
+    This class provides a foundation for building engines within the Dewey
+    project, offering standardized configuration, logging, and database/LLM
+    integration.
     """
 
-    def __init__(self, name: str, description: str = "Base Engine") -> None:
-        """Initialize the engine.
+    def __init__(self, config_section: str = "base_engine") -> None:
+        """Initializes the BaseEngine.
 
         Args:
-            name: The name of the engine.
-            description: A brief description of the engine.
+            config_section: The configuration section to use for this engine.
         """
-        super().__init__(name=name, description=description, config_section="engines")
-        self.templates: Dict[str, str] = {}
+        super().__init__(config_section=config_section)
+        self.logger.debug(
+            f"BaseEngine initialized with config section: {config_section}"
+        )
 
+    @abstractmethod
     def run(self) -> None:
-        """Run the engine.
+        """Runs the engine.
 
-        This method should be overridden by subclasses
-        to implement the engine's primary logic.
+        This method must be overridden by subclasses to implement the
+        engine's specific functionality.
 
         Raises:
-            NotImplementedError: If the run method is not implemented in the subclass.
+            NotImplementedError: If the method is not implemented in a subclass.
         """
-        self.logger.info(f"Running {self.name}...")
-        raise NotImplementedError("The run method must be implemented in the subclass.")
+        raise NotImplementedError("Subclasses must implement the run method.")
 
-    def add_template(self, name: str, template: str) -> None:
-        """Add a template to the engine.
+    def get_config_value(self, key: str, default: Any = None) -> Any:
+        """Gets a configuration value for this engine.
 
         Args:
-            name: Template name.
-            template: Template string.
-        """
-        self.logger.debug(f"Adding template: {name}")
-        self.templates[name] = template
-
-    def get_template(self, name: str) -> Optional[str]:
-        """Get a template by name.
-
-        Args:
-            name: Template name.
+            key: The key of the configuration value to retrieve.
+            default: The default value to return if the key is not found.
 
         Returns:
-            Template string if found, None otherwise.
+            The configuration value, or the default value if the key is not found.
         """
-        self.logger.debug(f"Getting template: {name}")
-        return self.templates.get(name)
+        return super().get_config_value(key, default)
 
-    def search(self, query: str) -> List[Dict[str, str]]:
-        """Search for information.
+    def info(self, message: str) -> None:
+        """Logs an info message using the engine's logger.
 
         Args:
-            query: Search query.
-
-        Returns:
-            List of search results.
+            message: The message to log.
         """
-        self.logger.info(f"Searching for: {query}")
-        return []
+        self.logger.info(message)
 
-    def analyze(self, template_name: str, **kwargs: Any) -> str:
-        """Analyze data using a template.
+    def error(self, message: str) -> None:
+        """Logs an error message using the engine's logger.
 
         Args:
-            template_name: Name of the template to use.
-            **kwargs: Template variables.
+            message: The message to log.
+        """
+        self.logger.error(message)
+
+    def setup_argparse(self) -> argparse.ArgumentParser:
+        """Set up command line arguments.
 
         Returns:
-            Analysis result.
+            An argument parser configured with common options.
         """
-        self.logger.info(f"Analyzing with template: {template_name}")
-        template = self.get_template(template_name)
-        if template is None:
-            error_message = f"No template found with name: {template_name}"
-            self.logger.error(error_message)
-            return error_message
+        parser = super().setup_argparse()
+        parser.add_argument(
+            "--engine-config",
+            help="Path to engine configuration file (overrides default config)",
+        )
+        return parser
 
-        try:
-            formatted_template = template.format(**kwargs)
-            self.logger.debug(f"Formatted template: {formatted_template}")
-            return formatted_template
-        except KeyError as e:
-            error_message = f"Missing required variable: {e}"
-            self.logger.error(error_message)
-            return error_message
-        except Exception as e:
-            error_message = f"Error formatting template: {e}"
-            self.logger.exception(error_message)
-            return error_message
+    def parse_args(self) -> argparse.Namespace:
+        """Parse command line arguments.
+
+        Returns:
+            Parsed arguments
+        """
+        args = super().parse_args()
+
+        # Update config if specified
+        if hasattr(args, "engine_config") and args.engine_config:
+            config_path = self.get_path(args.engine_config)
+            if not config_path.exists():
+                self.logger.error(
+                    f"Configuration file not found: {config_path}"
+                )
+                raise FileNotFoundError(
+                    f"Configuration file not found: {config_path}"
+                )
+
+            self.config = self._load_config()  # Reload the entire config
+            self.logger.info(f"Loaded configuration from {config_path}")
+
+        return args

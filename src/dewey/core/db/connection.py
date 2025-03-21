@@ -1,422 +1,453 @@
-"""Database connection utilities for Dewey.
+"""Database connection management module.
 
-This module provides functions to establish and manage database connections
-for DuckDB and MotherDuck instances used in the Dewey project.
+This module provides a centralized way to manage database connections to both
+MotherDuck cloud and local DuckDB instances, with automatic fallback and
+connection pooling.
 """
 
-import os
-import re
-import time
 import logging
-import subprocess
+import os
+import time
+from contextlib import contextmanager
+from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Optional, Union, List, Set, Tuple, Protocol
+from typing import Any, Dict, List, Optional, Union, TypeAlias
 
 import duckdb
-import pandas as pd
+from dotenv import load_dotenv
 
-from dewey.core.base_script import BaseScript
-
-DEFAULT_MOTHERDUCK_PREFIX = "md:"
-
-# Regular expressions to detect write operations
-INSERT_PATTERN = re.compile(r"^\s*INSERT\s+INTO", re.IGNORECASE)
-UPDATE_PATTERN = re.compile(r"^\s*UPDATE\s+", re.IGNORECASE)
-DELETE_PATTERN = re.compile(r"^\s*DELETE\s+FROM", re.IGNORECASE)
-CREATE_PATTERN = re.compile(r"^\s*CREATE\s+TABLE", re.IGNORECASE)
-DROP_PATTERN = re.compile(r"^\s*DROP\s+TABLE", re.IGNORECASE)
-ALTER_PATTERN = re.compile(r"^\s*ALTER\s+TABLE", re.IGNORECASE)
-
+# Configure logging
 logger = logging.getLogger(__name__)
 
-# Additional import for sync functionality
-from datetime import datetime
+# Load environment variables
+load_dotenv()
 
-class DuckDBSyncInterface(Protocol):
-    """Interface for DuckDB sync operations."""
-    def mark_table_modified(self, table_name: str) -> None:
-        ...
-    def sync_modified_to_motherduck(self) -> None:
-        ...
+# Type aliases
+DatabaseConnection: TypeAlias = duckdb.DuckDBPyConnection
 
-class DatabaseConnection(BaseScript):
-    """Database connection wrapper for DuckDB/MotherDuck.
+# Constants
+DEFAULT_POOL_SIZE = 5
+MAX_RETRIES = 3
+RETRY_DELAY = 1  # seconds
+MOTHERDUCK_TOKEN = os.getenv('MOTHERDUCK_TOKEN')
+LOCAL_DB_PATH = os.path.expanduser('~/dewey/dewey.duckdb')
+MOTHERDUCK_DB = 'md:dewey@motherduck/dewey.duckdb'
 
-    This class provides a unified interface for both local DuckDB and
-    cloud MotherDuck database connections.
+# Flag for testing - when True, disable dual-database writes
+TEST_MODE = False
 
-    Attributes:
-        conn: DuckDB connection object
-        is_motherduck: Whether this connection is to MotherDuck
-        connection_string: Connection string used to establish the connection
-        auto_sync: Whether to automatically sync modified tables
-    """
+class DatabaseConnectionError(Exception):
+    """Custom exception for database connection errors."""
+    pass
 
-    # Set to track tables modified locally
-    _locally_modified_tables: Set[str] = set()
-
-    def __init__(
-        self,
-        connection_string: Optional[str] = None,
-        db_connection: Optional[duckdb.DuckDBPyConnection] = None,
-        duckdb_sync: Optional[DuckDBSyncInterface] = None,
-        **kwargs
-    ):
-        """Initialize a database connection.
-
-        Args:
-            connection_string: Connection string for the database.
-                For DuckDB, this is a path to the database file.
-                For MotherDuck, this is a URL starting with "md:".
-            db_connection: Optional DuckDB connection object (for testing).
-            duckdb_sync: Optional DuckDBSyncInterface instance (for testing).
-            **kwargs: Additional connection parameters to pass to DuckDB.
-
-        Raises:
-            RuntimeError: If the connection cannot be established.
-        """
-        super().__init__(config_section='database', requires_db=False)
-        self.connection_string = connection_string
-        self.is_motherduck = connection_string and self.connection_string.startswith(
-            self.get_config_value('default_motherduck_prefix', 'md:')
-        )
-        self.conn = db_connection
-        self.auto_sync = kwargs.pop('auto_sync', True)
-        self._duckdb_sync = duckdb_sync
-        if self.conn is None:
-            self._connect(**kwargs)
-
-    def _connect(self, **kwargs) -> None:
-        """Establish a database connection.
-
-        Args:
-            **kwargs: Additional connection parameters to pass to DuckDB.
-
-        Raises:
-            RuntimeError: If the connection cannot be established.
-        """
-        try:
-            self.conn = duckdb.connect(self.connection_string, **kwargs)
-            if self.is_motherduck:
-                self.logger.info(f"Connected to MotherDuck: {self.connection_string}")
-            else:
-                self.logger.info(f"Connected to DuckDB: {self.connection_string}")
-        except Exception as e:
-            self.logger.error(f"Failed to connect to database: {e}")
-            raise RuntimeError(f"Failed to connect to database: {e}")
-
-    def execute(self, query: str, parameters: Optional[Dict[str, Any]] = None) -> pd.DataFrame:
-        """Execute a SQL query.
-
-        Args:
-            query: SQL query to execute.
-            parameters: Optional parameters for the query.
-
-        Returns:
-            Query result as a pandas DataFrame.
-
-        Raises:
-            RuntimeError: If the query execution fails.
-        """
-        try:
-            # Track table modifications for sync
-            if not self.is_motherduck:
-                self._track_modified_table(query)
-                
-            # Execute the query and convert result to pandas DataFrame
-            if parameters:
-                result = self.conn.execute(query, parameters)
-            else:
-                result = self.conn.execute(query)
-                
-            # Convert result to pandas DataFrame
-            try:
-                # For DuckDB >= 0.8.0
-                return result.to_df()
-            except AttributeError:
-                # For older DuckDB versions that might return DataFrame directly
-                if isinstance(result, pd.DataFrame):
-                    return result
-                # Fallback
-                return pd.DataFrame()
-        except Exception as e:
-            self.logger.error(f"Failed to execute query: {e}")
-            raise RuntimeError(f"Failed to execute query: {e}")
+class ConnectionPool:
+    """A simple connection pool for DuckDB connections."""
     
-    def _track_modified_table(self, query: str) -> None:
-        """Track tables that are modified by write operations.
-        
-        This is used to automatically sync changes to MotherDuck.
+    def __init__(self, db_url: str, pool_size: int = DEFAULT_POOL_SIZE):
+        """Initialize the connection pool.
         
         Args:
-            query: SQL query to analyze
+            db_url: Database URL (local path or MotherDuck URL)
+            pool_size: Maximum number of connections in the pool
         """
-        # Only proceed if not a MotherDuck connection
-        if self.is_motherduck:
-            return
+        self.db_url = db_url
+        self.pool_size = pool_size
+        self.connections: List[duckdb.DuckDBPyConnection] = []
+        self.in_use: Dict[duckdb.DuckDBPyConnection, bool] = {}
+        
+    def get_connection(self) -> duckdb.DuckDBPyConnection:
+        """Get a connection from the pool.
+        
+        Returns:
+            A DuckDB connection
             
-        # Check if this is a write operation
-        is_write = (
-            INSERT_PATTERN.search(query) or
-            UPDATE_PATTERN.search(query) or
-            DELETE_PATTERN.search(query) or
-            CREATE_PATTERN.search(query) or
-            DROP_PATTERN.search(query) or
-            ALTER_PATTERN.search(query)
-        )
+        Raises:
+            DatabaseConnectionError: If no connections are available
+        """
+        # Try to find an available connection
+        for conn in self.connections:
+            if not self.in_use[conn]:
+                self.in_use[conn] = True
+                return conn
+                
+        # If we have room for a new connection, create one
+        if len(self.connections) < self.pool_size:
+            try:
+                if self.db_url.startswith('md:'):
+                    conn = duckdb.connect(self.db_url, config={'motherduck_token': MOTHERDUCK_TOKEN})
+                else:
+                    conn = duckdb.connect(self.db_url)
+                self.connections.append(conn)
+                self.in_use[conn] = True
+                return conn
+            except Exception as e:
+                raise DatabaseConnectionError(f"Failed to create new connection: {e}")
+                
+        raise DatabaseConnectionError("No connections available in the pool")
         
-        if not is_write:
-            return
+    def release_connection(self, conn: duckdb.DuckDBPyConnection):
+        """Release a connection back to the pool.
+        
+        Args:
+            conn: The connection to release
+        """
+        if conn in self.in_use:
+            self.in_use[conn] = False
             
-        # Extract table name from different query types
-        table_name = None
+    def close_all(self):
+        """Close all connections in the pool."""
+        for conn in self.connections:
+            try:
+                conn.close()
+            except:
+                pass
+        self.connections.clear()
+        self.in_use.clear()
+
+class DatabaseManager:
+    """Manages database connections and operations."""
+    
+    def __init__(self):
+        """Initialize the database manager."""
+        self.motherduck_pool = ConnectionPool(MOTHERDUCK_DB)
+        self.local_pool = ConnectionPool(LOCAL_DB_PATH)
+        self.write_conn = None  # Single connection for writes to local DB
+        self.md_write_conn = None  # Single connection for writes to MotherDuck
         
-        if INSERT_PATTERN.search(query):
-            # INSERT INTO [table_name]
-            match = re.search(r"INSERT\s+INTO\s+([^\s\(]+)", query, re.IGNORECASE)
-            if match:
-                table_name = match.group(1)
-                
-        elif UPDATE_PATTERN.search(query):
-            # UPDATE [table_name]
-            match = re.search(r"UPDATE\s+([^\s]+)", query, re.IGNORECASE)
-            if match:
-                table_name = match.group(1)
-                
-        elif DELETE_PATTERN.search(query):
-            # DELETE FROM [table_name]
-            match = re.search(r"DELETE\s+FROM\s+([^\s]+)", query, re.IGNORECASE)
-            if match:
-                table_name = match.group(1)
-                
-        elif CREATE_PATTERN.search(query):
-            # CREATE TABLE [table_name]
-            match = re.search(r"CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?([^\s\(]+)", query, re.IGNORECASE)
-            if match:
-                table_name = match.group(1)
-                
-        elif DROP_PATTERN.search(query):
-            # DROP TABLE [table_name]
-            match = re.search(r"DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?([^\s\(]+)", query, re.IGNORECASE)
-            if match:
-                table_name = match.group(1)
-                
-        elif ALTER_PATTERN.search(query):
-            # ALTER TABLE [table_name]
-            match = re.search(r"ALTER\s+TABLE\s+([^\s\(]+)", query, re.IGNORECASE)
-            if match:
-                table_name = match.group(1)
+    def _get_write_connection(self, motherduck: bool = False) -> duckdb.DuckDBPyConnection:
+        """Get the single write connection, creating it if necessary.
         
-        # Clean the table name
-        if table_name:
-            # Remove quotes, schema references, etc.
-            clean_table = table_name.strip('"`[]\'')
-            if '.' in clean_table:
-                clean_table = clean_table.split('.')[-1]
+        Args:
+            motherduck: Whether to get the MotherDuck write connection
+            
+        Returns:
+            The write connection
+        """
+        if motherduck:
+            if not self.md_write_conn:
+                try:
+                    self.md_write_conn = duckdb.connect(MOTHERDUCK_DB, config={'motherduck_token': MOTHERDUCK_TOKEN})
+                except Exception as e:
+                    raise DatabaseConnectionError(f"Failed to create MotherDuck write connection: {e}")
+            return self.md_write_conn
+        else:
+            if not self.write_conn:
+                try:
+                    self.write_conn = duckdb.connect(LOCAL_DB_PATH)
+                except Exception as e:
+                    raise DatabaseConnectionError(f"Failed to create local write connection: {e}")
+            return self.write_conn
+        
+    @contextmanager
+    def get_connection(self, for_write: bool = False, local_only: bool = False) -> duckdb.DuckDBPyConnection:
+        """Get a database connection.
+        
+        Args:
+            for_write: Whether the connection is for write operations
+            local_only: Whether to only try the local database
+            
+        Yields:
+            A database connection
+        """
+        conn = None
+        
+        try:
+            if for_write:
+                if local_only:
+                    # For local-only writes, use the local write connection
+                    conn = self._get_write_connection(motherduck=False)
+                    yield conn
+                    return
+                else:
+                    # For regular writes, use MotherDuck by default
+                    try:
+                        conn = self._get_write_connection(motherduck=True)
+                        yield conn
+                        return
+                    except Exception as e:
+                        logger.warning(f"Failed to connect to MotherDuck for write: {e}")
+                        # Fallback to local if MotherDuck fails
+                        conn = self._get_write_connection(motherduck=False)
+                        yield conn
+                        return
                 
-            # Skip tracking for internal tables
-            if (clean_table.startswith('sqlite_') or 
-                clean_table.startswith('dewey_sync_') or
-                clean_table.startswith('information_schema')):
+            if not local_only:
+                try:
+                    # Try MotherDuck first for reads
+                    conn = self.motherduck_pool.get_connection()
+                    yield conn
+                    return
+                except Exception as e:
+                    logger.warning(f"Failed to connect to MotherDuck: {e}")
+                    # No retries in get_connection, moved to execute_query
+            
+            # Fallback to local or if local_only was specified
+            conn = self.local_pool.get_connection()
+            yield conn
+            
+        except Exception as e:
+            raise DatabaseConnectionError(f"Failed to get database connection: {e}")
+            
+        finally:
+            if conn:
+                if for_write:
+                    if conn == self.write_conn or conn == self.md_write_conn:
+                        # Don't release the write connections
+                        pass
+                    else:
+                        # This shouldn't happen, but just in case
+                        if conn in self.motherduck_pool.connections:
+                            self.motherduck_pool.release_connection(conn)
+                        elif conn in self.local_pool.connections:
+                            self.local_pool.release_connection(conn)
+                else:
+                    if conn in self.motherduck_pool.connections:
+                        self.motherduck_pool.release_connection(conn)
+                    elif conn in self.local_pool.connections:
+                        self.local_pool.release_connection(conn)
+                        
+    def close(self):
+        """Close all database connections."""
+        if self.write_conn:
+            try:
+                self.write_conn.close()
+            except:
+                pass
+            self.write_conn = None
+            
+        if self.md_write_conn:
+            try:
+                self.md_write_conn.close()
+            except:
+                pass
+            self.md_write_conn = None
+            
+        self.motherduck_pool.close_all()
+        self.local_pool.close_all()
+        
+    def execute_query(self, query: str, params: Optional[List[Any]] = None, 
+                     for_write: bool = False, local_only: bool = False) -> List[Any]:
+        """Execute a query and return the results.
+        
+        Args:
+            query: The SQL query to execute
+            params: Query parameters
+            for_write: Whether this is a write operation
+            local_only: Whether to only try the local database
+            
+        Returns:
+            Query results
+        """
+        # In test mode, disable dual-database writes
+        if TEST_MODE:
+            with self.get_connection(for_write=for_write, local_only=local_only) as conn:
+                try:
+                    if params:
+                        result = conn.execute(query, params).fetchall()
+                    else:
+                        result = conn.execute(query).fetchall()
+                    return result
+                except Exception as e:
+                    raise DatabaseConnectionError(f"Query execution failed: {e}")
+        
+        # Normal mode (non-test)
+        if for_write and not local_only:
+            # For write operations, we want to write to both databases by default
+            # First try MotherDuck
+            md_result = None
+            try:
+                with self.get_connection(for_write=True, local_only=False) as md_conn:
+                    if params:
+                        md_result = md_conn.execute(query, params).fetchall()
+                    else:
+                        md_result = md_conn.execute(query).fetchall()
+            except Exception as e:
+                logger.warning(f"Failed to execute write query on MotherDuck, falling back to local: {e}")
+                
+            # Then always write to local DB (even if MotherDuck succeeded)
+            try:
+                with self.get_connection(for_write=True, local_only=True) as local_conn:
+                    if params:
+                        local_result = local_conn.execute(query, params).fetchall()
+                    else:
+                        local_result = local_conn.execute(query).fetchall()
+                    
+                # Return the MotherDuck result if available, otherwise local result
+                return md_result if md_result is not None else local_result
+            except Exception as e:
+                # If both failed, raise error
+                if md_result is None:
+                    raise DatabaseConnectionError(f"Query execution failed on both databases: {e}")
+                # If MotherDuck succeeded but local failed, log warning and return MotherDuck result
+                logger.warning(f"Failed to execute write query on local DB, but succeeded on MotherDuck: {e}")
+                return md_result
+        else:
+            # For read operations or local_only, use the standard connection
+            with self.get_connection(for_write=for_write, local_only=local_only) as conn:
+                try:
+                    if params:
+                        result = conn.execute(query, params).fetchall()
+                    else:
+                        result = conn.execute(query).fetchall()
+                    return result
+                except Exception as e:
+                    raise DatabaseConnectionError(f"Query execution failed: {e}")
+                
+    def sync_to_motherduck(self):
+        """Synchronize the local database to MotherDuck."""
+        try:
+            # Get the last sync timestamp
+            last_sync = self.execute_query("""
+                SELECT MAX(sync_time) FROM sync_status 
+                WHERE status = 'success'
+            """, local_only=True)
+            
+            last_sync_time = last_sync[0][0] if last_sync and last_sync[0][0] else datetime.min
+            
+            # Get changes since last sync
+            changes = self.execute_query("""
+                SELECT table_name, operation, record_id, changed_at
+                FROM change_log
+                WHERE changed_at > ?
+                ORDER BY changed_at
+            """, [last_sync_time], local_only=True)
+            
+            if not changes:
+                logger.info("No changes to sync")
                 return
                 
-            # Add to the set of modified tables
-            DatabaseConnection._locally_modified_tables.add(clean_table)
+            # Apply changes to MotherDuck
+            with self.get_connection(for_write=True, local_only=False) as md_conn:
+                for table, operation, record_id, changed_at in changes:
+                    try:
+                        if operation == 'INSERT' or operation == 'UPDATE':
+                            # Get the record from local
+                            record = self.execute_query(
+                                f"SELECT * FROM {table} WHERE id = ?",
+                                [record_id],
+                                local_only=True
+                            )
+                            if record:
+                                # Apply to MotherDuck
+                                columns = ', '.join(record[0].keys())
+                                placeholders = ', '.join(['?' for _ in record[0]])
+                                md_conn.execute(f"""
+                                    INSERT OR REPLACE INTO {table} ({columns})
+                                    VALUES ({placeholders})
+                                """, list(record[0].values()))
+                                
+                        elif operation == 'DELETE':
+                            md_conn.execute(f"""
+                                DELETE FROM {table} WHERE id = ?
+                            """, [record_id])
+                            
+                    except Exception as e:
+                        logger.error(f"Failed to sync change to {table}: {e}")
+                        # Log the conflict
+                        self.execute_query("""
+                            INSERT INTO sync_conflicts (
+                                table_name, record_id, operation, 
+                                error_message, sync_time
+                            ) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
+                        """, [table, record_id, operation, str(e)], for_write=True)
+                        
+            # Update sync status
+            self.execute_query("""
+                INSERT INTO sync_status (sync_time, status, message)
+                VALUES (CURRENT_TIMESTAMP, 'success', 'Sync completed successfully')
+            """, for_write=True)
             
-            self.logger.debug(f"Tracked modification to table: {clean_table}")
+            logger.info(f"Successfully synced {len(changes)} changes to MotherDuck")
             
-            # If auto-sync is enabled, trigger sync to MotherDuck
-            if self.auto_sync:
-                self._trigger_sync(clean_table)
-    
-    def _trigger_sync(self, table_name: str) -> None:
-        """Trigger a sync for a modified table.
-        
-        This imports the sync module only when needed to avoid circular imports.
-        
-        Args:
-            table_name: Name of the table to sync
-        """
-        try:
-            # Import here to avoid circular imports
-            from dewey.core.db.duckdb_sync import get_duckdb_sync
-            
-            # Use injected sync instance or get default
-            sync_instance: DuckDBSyncInterface = self._duckdb_sync or get_duckdb_sync()
-            
-            # Mark table as modified
-            sync_instance.mark_table_modified(table_name)
-            
-            self.logger.debug(f"Triggered sync for modified table: {table_name}")
         except Exception as e:
-            self.logger.warning(f"Failed to trigger sync for table {table_name}: {e}")
+            error_msg = f"Sync to MotherDuck failed: {e}"
+            logger.error(error_msg)
+            # Log the sync failure
+            self.execute_query("""
+                INSERT INTO sync_status (sync_time, status, message)
+                VALUES (CURRENT_TIMESTAMP, 'failed', ?)
+            """, [error_msg], for_write=True)
+            raise DatabaseConnectionError(error_msg)
 
-    def close(self) -> None:
-        """Close the database connection."""
-        if self.conn:
-            try:
-                if not self.is_motherduck and self.auto_sync and DatabaseConnection._locally_modified_tables:
-                    # Trigger final sync before closing
-                    self._sync_modified_tables()
-                
-                self.conn.close()
-                self.logger.debug("Database connection closed")
-            except Exception as e:
-                self.logger.warning(f"Error closing database connection: {e}")
-            finally:
-                self.conn = None
-                
-    def _sync_modified_tables(self) -> None:
-        """Sync all modified tables to MotherDuck before closing."""
-        try:
-            # Import here to avoid circular imports
-            from dewey.core.db.duckdb_sync import get_duckdb_sync
-            
-            # Use injected sync instance or get default
-            sync_instance: DuckDBSyncInterface = self._duckdb_sync or get_duckdb_sync()
-            
-            if DatabaseConnection._locally_modified_tables:
-                self.logger.info(f"Syncing {len(DatabaseConnection._locally_modified_tables)} modified tables before closing")
-                sync_instance.sync_modified_to_motherduck()
-        except Exception as e:
-            self.logger.warning(f"Error syncing modified tables: {e}")
+# Global instance
+db_manager = DatabaseManager()
 
-    def run(self) -> None:
-        """Placeholder for abstract method."""
-        pass
+# Initialize the db_manager in utils to break circular dependencies
+from .utils import set_db_manager
+set_db_manager(db_manager)
 
-
-def get_connection(config: Dict[str, Any]) -> DatabaseConnection:
-    """Get a database connection based on configuration.
-
-    Args:
-        config: Configuration dictionary with connection parameters.
-            Expected keys:
-            - connection_string: Connection string for the database
-            - motherduck: Boolean indicating whether to use MotherDuck
-            - token: MotherDuck token (if using MotherDuck)
-            - database: Database name (if using MotherDuck)
-
-    Returns:
-        A DatabaseConnection instance.
-
-    Raises:
-        RuntimeError: If the connection cannot be established.
-    """
-    # Extract connection parameters
-    connection_string = config.get('connection_string')
-    use_motherduck = config.get('motherduck', False)
-    motherduck_token = config.get('token') or os.environ.get('MOTHERDUCK_TOKEN')
-    database = config.get('database', 'dewey')
-
-    # Build connection string if not provided
-    if not connection_string:
-        if use_motherduck:
-            if not motherduck_token:
-                raise ValueError("MotherDuck token is required for MotherDuck connections")
-            # Set token in environment
-            os.environ['MOTHERDUCK_TOKEN'] = motherduck_token
-            connection_string = f"{DEFAULT_MOTHERDUCK_PREFIX}{database}"
-        else:
-            # Use default local DuckDB path
-            default_db_path = Path.home() / "dewey" / "dewey.duckdb"
-            connection_string = str(default_db_path)
-
-    # Get additional connection parameters
-    kwargs = {}
-    for k, v in config.items():
-        if k not in ('connection_string', 'motherduck', 'token', 'database'):
-            kwargs[k] = v
-
-    return DatabaseConnection(connection_string, **kwargs)
-
-
-def get_motherduck_connection(database: str, token: Optional[str] = None) -> DatabaseConnection:
-    """Convenience function to get a MotherDuck connection.
-
-    Args:
-        database: MotherDuck database name.
-        token: MotherDuck token. If not provided, will be read from
-            MOTHERDUCK_TOKEN environment variable.
-
-    Returns:
-        A DatabaseConnection instance for MotherDuck.
-
-    Raises:
-        ValueError: If token is not provided and not in environment.
-        RuntimeError: If the connection cannot be established.
-    """
-    token = token or os.environ.get('MOTHERDUCK_TOKEN')
-    if not token:
-        raise ValueError("MotherDuck token is required for MotherDuck connections")
-
-    config = {
-        'motherduck': True,
-        'token': token,
-        'database': database,
-    }
-
-    return get_connection(config)
-
-
-def get_local_connection(db_path: Optional[Union[str, Path]] = None) -> DatabaseConnection:
-    """Convenience function to get a local DuckDB connection.
-
-    Args:
-        db_path: Path to the DuckDB database file. If not provided,
-            uses the default path.
-
-    Returns:
-        A DatabaseConnection instance for local DuckDB.
-
-    Raises:
-        RuntimeError: If the connection cannot be established.
-    """
-    config = {
-        'motherduck': False,
-        'connection_string': str(db_path or Path.home() / "dewey" / "dewey.duckdb"),
-    }
-
-    return get_connection(config)
-
-def get_local_dewey_connection() -> DatabaseConnection:
-    """Get a connection to the local dewey.duckdb in the repository root.
+# Direct connection functions for backward compatibility
+@contextmanager
+def get_connection(config: Optional[Dict] = None) -> duckdb.DuckDBPyConnection:
+    """Get a direct connection to the local DuckDB database.
     
-    This is a convenience function to make it easier to work with the
-    repository's default database location.
+    This is provided for backward compatibility. Prefer using db_manager.
     
-    Returns:
-        A DatabaseConnection instance for the local dewey.duckdb
+    Args:
+        config: Optional configuration for the connection
+        
+    Yields:
+        DuckDB connection
     """
-    # Try to find the repository root
     try:
-        # Look for a repository root marker file like pyproject.toml
-        repo_root = None
-        current_dir = Path.cwd()
-        
-        # Look up to 5 levels for the repository root
-        for _ in range(5):
-            if (current_dir / "pyproject.toml").exists() or (current_dir / ".git").exists():
-                repo_root = current_dir
-                break
-            if current_dir.parent == current_dir:  # Reached root directory
-                break
-            current_dir = current_dir.parent
-        
-        if repo_root:
-            db_path = repo_root / "dewey.duckdb"
-            return get_local_connection(db_path)
-        else:
-            # Fall back to default
-            return get_local_connection()
-    except Exception as e:
-        # Fall back to default
-        return get_local_connection()
+        conn = duckdb.connect(LOCAL_DB_PATH, config=config)
+        yield conn
+    finally:
+        if conn:
+            conn.close()
 
-def get_modified_tables() -> List[str]:
-    """Get a list of tables that have been modified locally.
+@contextmanager
+def get_motherduck_connection(config: Optional[Dict] = None) -> duckdb.DuckDBPyConnection:
+    """Get a direct connection to the MotherDuck cloud database.
     
-    Returns:
-        List of modified table names
+    This is provided for backward compatibility. Prefer using db_manager.
+    
+    Args:
+        config: Optional configuration for the connection
+        
+    Yields:
+        DuckDB connection
     """
-    return list(DatabaseConnection._locally_modified_tables)
+    try:
+        md_config = {'motherduck_token': MOTHERDUCK_TOKEN}
+        if config:
+            md_config.update(config)
+        conn = duckdb.connect(MOTHERDUCK_DB, config=md_config)
+        yield conn
+    finally:
+        if conn:
+            conn.close()
+
+@contextmanager
+def get_duckdb_connection(db_path: Optional[str] = None, config: Optional[Dict] = None) -> duckdb.DuckDBPyConnection:
+    """Get a direct connection to a DuckDB database.
+    
+    This is provided for backward compatibility. Prefer using db_manager.
+    
+    Args:
+        db_path: Path to the DuckDB database file
+        config: Optional configuration for the connection
+        
+    Yields:
+        DuckDB connection
+    """
+    try:
+        path = db_path or LOCAL_DB_PATH
+        conn = duckdb.connect(path, config=config)
+        yield conn
+    finally:
+        if conn:
+            conn.close()
+
+# Alias for backward compatibility with UI modules
+DatabaseConnection = DatabaseManager
+
+# For testing purposes - enables test mode
+def set_test_mode(enabled: bool = True) -> None:
+    """Set test mode to skip dual-database writes during tests.
+    
+    Args:
+        enabled: Whether to enable test mode
+    """
+    global TEST_MODE
+    TEST_MODE = enabled

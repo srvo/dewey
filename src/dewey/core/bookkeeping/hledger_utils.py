@@ -4,7 +4,7 @@ import re
 import subprocess
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Callable, Protocol
+from typing import Any, Callable, Optional, Protocol
 
 from dewey.core.base_script import BaseScript
 

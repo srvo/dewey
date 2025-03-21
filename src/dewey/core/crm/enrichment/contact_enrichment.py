@@ -7,9 +7,7 @@ from typing import Any, Dict, Optional
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import get_connection
-from dewey.utils.database import execute_query
-from dewey.utils.database import fetch_one
-from dewey.utils.database import fetch_all
+from dewey.utils.database import execute_query, fetch_all, fetch_one
 
 
 class ContactEnrichment(BaseScript):

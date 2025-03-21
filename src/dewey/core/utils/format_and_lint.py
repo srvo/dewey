@@ -1,6 +1,7 @@
-from dewey.core.base_script import BaseScript
-from typing import Any
 import logging
+from typing import Any
+
+from dewey.core.base_script import BaseScript
 
 
 class FormatAndLint(BaseScript):

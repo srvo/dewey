@@ -10,15 +10,17 @@ from datetime import datetime, timezone
 from typing import Dict, List
 
 import duckdb
-from dotenv import load_dotenv
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-from google_auth_oauthlib.flow import InstalledAppFlow  # pylint: disable=unused-import
-from openai import OpenAI
 import google.auth.exceptions
 import google.auth.transport.requests
 import requests
+from dotenv import load_dotenv
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import (
+    InstalledAppFlow,  # pylint: disable=unused-import
+)
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from openai import OpenAI
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import get_connection

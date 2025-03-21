@@ -4,7 +4,7 @@ import re
 from datetime import datetime
 from pathlib import Path
 from re import Pattern
-from typing import TYPE_CHECKING, List, Tuple, Protocol, Dict, Any, Callable
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Protocol, Tuple
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection
@@ -13,6 +13,7 @@ from dewey.llm import llm_utils
 if TYPE_CHECKING:
     from dewey.core.base_script import BaseScript
     from dewey.llm import llm_utils
+
     from .journal_writer import JournalWriter
 
 logger = logging.getLogger(__name__)

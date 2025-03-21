@@ -17,12 +17,8 @@ from textual.widgets import (
     TextArea,
 )
 
-    def run(self) -> None:
-        """
-        Run the script.
-        """
-        # TODO: Implement script logic here
-        raise NotImplementedError("The run method must be implemented")
+# Import screens
+from .screens.feedback_screen import FeedbackScreen
 
 
 class ServiceItem(BaseScript, BaseScriptListItem):
@@ -239,10 +235,12 @@ class ServiceManagerApp(BaseScriptApp):
     SCREENS = {
         "services": ServiceControlScreen,
         "issue": IssueScreen,
+        "feedback": FeedbackScreen,
     }
     BINDINGS = [
         Binding("s", "push_screen('services')", "Services", show=True),
         Binding("i", "push_screen('issue')", "Issue", show=True),
+        Binding("f", "push_screen('feedback')", "Feedback", show=True),
         Binding("q", "quit", "Quit", show=True),
     ]
 

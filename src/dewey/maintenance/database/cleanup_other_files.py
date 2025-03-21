@@ -1,6 +1,8 @@
-from dewey.core.base_script import BaseScript
 import logging
 from typing import Any
+
+from dewey.core.base_script import BaseScript
+
 
 class CleanupOtherFiles(BaseScript):
     """

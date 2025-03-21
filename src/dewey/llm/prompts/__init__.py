@@ -1,5 +1,7 @@
-from dewey.core.base_script import BaseScript
 from typing import Any, Dict
+
+from dewey.core.base_script import BaseScript
+
 
 class Prompts(BaseScript):
     """A class for managing and executing prompt-related tasks.

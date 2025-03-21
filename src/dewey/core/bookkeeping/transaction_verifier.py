@@ -2,7 +2,7 @@
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Protocol, Optional
+from typing import Any, Dict, List, Optional, Protocol
 
 from prompt_toolkit import prompt
 from prompt_toolkit.shortcuts import confirm
@@ -12,7 +12,9 @@ from dewey.core.bookkeeping.classification_engine import (
     ClassificationEngine,
     ClassificationError,
 )
-from dewey.core.bookkeeping.writers.journal_writer_fab1858b import JournalWriter
+from dewey.core.bookkeeping.writers.journal_writer_fab1858b import (
+    JournalWriter,
+)
 
 
 class LLMClientInterface(Protocol):

@@ -2,15 +2,16 @@
 from __future__ import annotations
 
 import base64
-from typing import Tuple, Any
+from typing import Any, Tuple
+
+import structlog
+from database.models import AutomatedOperation, Email, EventLog
+from django.db import transaction
+from django.utils import timezone
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import get_connection
 from dewey.llm import llm_utils
-from database.models import AutomatedOperation, Email, EventLog
-from django.db import transaction
-from django.utils import timezone
-import structlog
 
 
 class EmailEnrichmentService(BaseScript):
@@ -37,8 +38,8 @@ class EmailEnrichmentService(BaseScript):
             The Gmail service object.
         """
         try:
-            from googleapiclient.discovery import build
             from google.oauth2.credentials import Credentials
+            from googleapiclient.discovery import build
 
             # Load credentials from config
             credentials_config = self.get_config_value('gmail_credentials')

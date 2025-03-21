@@ -1,9 +1,11 @@
-import os
 import logging
-import yaml
+import os
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
+
+import yaml
+
 
 def load_config() -> Dict[str, Any]:
     """Load configuration from dewey.yaml."""

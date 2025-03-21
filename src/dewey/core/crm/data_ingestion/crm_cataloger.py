@@ -1,8 +1,13 @@
+from typing import Any, Dict, Optional
+
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
+from dewey.core.db.connection import (
+    DatabaseConnection,
+    get_connection,
+    get_motherduck_connection,
+)
 from dewey.core.db.utils import create_table, execute_query
 from dewey.llm.llm_utils import call_llm
-from typing import Any, Dict, Optional
 
 
 class CrmCataloger(BaseScript):

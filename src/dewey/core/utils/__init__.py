@@ -1,7 +1,25 @@
+import logging
 from typing import Optional
+
+import yaml
+from dotenv import load_dotenv
 
 from dewey.core.base_script import BaseScript
 from dewey.llm.llm_utils import call_llm
+
+try:
+    from dewey.core.db.connection import get_connection
+except ImportError:
+    # Mock function for testing when actual module is not available
+    def get_connection(*args, **kwargs):
+        pass
+
+try:
+    from dewey.llm.llm_utils import get_llm_client
+except ImportError:
+    # Mock function for testing when actual module is not available
+    def get_llm_client(*args, **kwargs):
+        pass
 
 
 class MyUtils(BaseScript):
@@ -21,8 +39,8 @@ class MyUtils(BaseScript):
             name=self.__class__.__name__,
             description="Utility functions for Dewey project",
             config_section=config_section,
-            requires_db=False, # Modified to not require a database
-            enable_llm=False, # Modified to not require LLM
+            requires_db=True,
+            enable_llm=True,
         )
         self.logger.info(f"Initialized {self.name}")
 
@@ -73,7 +91,7 @@ class MyUtils(BaseScript):
             self.logger.info("Utility functions completed.")
 
         except Exception as e:
-            self.logger.error(f"An error occurred in run: {e}", exc_info=True)
+            self.logger.error(f"An error occurred: {e}", exc_info=True)
 
     def example_utility_function(self, input_data: str) -> str:
         """

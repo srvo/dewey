@@ -9,8 +9,10 @@ import os
 import subprocess
 import sys
 import re
+import tempfile
+import json
 from pathlib import Path
-from typing import List, Tuple, Optional, Dict, Set
+from typing import List, Tuple, Optional, Dict, Set, Any
 
 # Set up logging
 logging.basicConfig(
@@ -27,46 +29,45 @@ except ImportError:
     logger.error("Error: Unable to import aider_refactor module. Make sure it's in the same directory.")
     sys.exit(1)
 
+# Try to import repomix if available
+try:
+    import repomix
+    HAS_REPOMIX = True
+except ImportError:
+    logger.info("Repomix not available; repository context will be limited. Consider installing with 'pip install repomix'")
+    HAS_REPOMIX = False
+
 
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        description="Run tests and fix failures using Aider."
+        description="Run tests and fix failing code using Aider."
     )
     parser.add_argument(
         "--dir",
-        type=str,
         required=True,
-        help="Directory to process (e.g., src/dewey/core/db)",
+        help="Directory or file to process",
     )
     parser.add_argument(
         "--test-dir",
-        type=str,
         default="tests",
         help="Directory containing tests (default: tests)",
     )
     parser.add_argument(
         "--model",
-        type=str,
         default="deepinfra/google/gemini-2.0-flash-001",
-        help="Model to use for refactoring",
+        help="Model to use (default: deepinfra/google/gemini-2.0-flash-001)",
     )
     parser.add_argument(
         "--max-iterations",
         type=int,
         default=5,
-        help="Maximum number of test-fix iterations (default: 5)",
+        help="Maximum number of iterations to run (default: 5)",
     )
     parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Don't make any changes, just show what would be done",
-    )
-    parser.add_argument(
-        "--conventions-file",
-        type=str,
-        default="CONVENTIONS.md",
-        help="Path to conventions file",
     )
     parser.add_argument(
         "--verbose",
@@ -77,7 +78,32 @@ def parse_args() -> argparse.Namespace:
         "--timeout",
         type=int,
         default=120,
-        help="Timeout in seconds for processing each file with Aider",
+        help="Timeout in seconds for processing each file (default: 120)",
+    )
+    parser.add_argument(
+        "--conventions-file",
+        default="CONVENTIONS.md",
+        help="Path to conventions file (default: CONVENTIONS.md)",
+    )
+    parser.add_argument(
+        "--persist-session",
+        action="store_true",
+        help="Use a persistent Aider session to maintain context across files",
+    )
+    parser.add_argument(
+        "--session-dir",
+        default=".aider",
+        help="Directory to store persistent session files (default: .aider)",
+    )
+    parser.add_argument(
+        "--skip-refactor",
+        action="store_true",
+        help="Skip refactoring step and only run tests",
+    )
+    parser.add_argument(
+        "--no-testability",
+        action="store_true",
+        help="Don't modify source files for testability",
     )
     return parser.parse_args()
 
@@ -421,6 +447,92 @@ def generate_fix_prompt(file_path: str, error_messages: List[str], additional_co
     return prompt
 
 
+def get_repo_context(directory: str, verbose: bool = False) -> Dict[str, Any]:
+    """
+    Generate a repository context using repomix if available, or a simpler approach if not.
+    
+    Args:
+        directory: Directory to analyze
+        verbose: Enable verbose output
+        
+    Returns:
+        Dictionary with repository context information
+    """
+    repo_context = {}
+    
+    # Create a simple file list if repomix isn't available
+    if not HAS_REPOMIX:
+        if verbose:
+            logger.info("Using fallback method to create repository context (repomix not available)")
+        
+        # Find Python files in the directory
+        try:
+            python_files = {}
+            dir_path = Path(directory)
+            if dir_path.is_dir():
+                for py_file in dir_path.glob("**/*.py"):
+                    rel_path = py_file.relative_to(Path.cwd())
+                    try:
+                        with open(py_file, 'r') as f:
+                            content = f.read()
+                        
+                        # Extract imports
+                        imports = []
+                        import_lines = re.findall(r'^(?:from|import)\s+[^\n]+', content, re.MULTILINE)
+                        for line in import_lines:
+                            imports.append(line.strip())
+                        
+                        # Extract classes and functions (very basic)
+                        classes = re.findall(r'class\s+(\w+)', content)
+                        functions = re.findall(r'def\s+(\w+)', content)
+                        
+                        python_files[str(rel_path)] = {
+                            "imports": imports,
+                            "classes": classes,
+                            "functions": functions,
+                            "content": content[:500] + "..." if len(content) > 500 else content
+                        }
+                    except Exception as e:
+                        logger.error(f"Error reading file {py_file}: {e}")
+            
+            repo_context["files"] = python_files
+        except Exception as e:
+            logger.error(f"Error creating repository context: {e}")
+    else:
+        try:
+            if verbose:
+                logger.info(f"Generating repository context for {directory} using repomix")
+            
+            # Use repomix to create a repository map
+            # Get the repository structure
+            repo_map = repomix.get_repo_map(directory)
+            
+            # Get summaries of each file
+            file_summaries = []
+            for file_path in repo_map.get("python_files", []):
+                if os.path.exists(file_path):
+                    try:
+                        summary = repomix.summarize_file(file_path)
+                        file_summaries.append({
+                            "path": file_path,
+                            "summary": summary
+                        })
+                    except Exception as e:
+                        logger.error(f"Error summarizing file {file_path}: {e}")
+            
+            repo_context = {
+                "repo_map": repo_map,
+                "file_summaries": file_summaries
+            }
+            
+            if verbose:
+                logger.info(f"Generated context for {len(file_summaries)} files")
+        except Exception as e:
+            logger.error(f"Error generating repository context with repomix: {e}")
+    
+    return repo_context
+
+
 def fix_failing_files(
     file_errors: Dict[str, List[str]],
     model_name: str,
@@ -428,60 +540,281 @@ def fix_failing_files(
     conventions_file: Optional[str] = None,
     verbose: bool = False,
     timeout: int = 120,
+    persist_session: bool = False,
+    session_dir: str = ".aider",
+    no_testability: bool = False,
 ) -> List[str]:
-    """
-    Fix files with failing tests using Aider.
+    """Fix failing files using Aider.
     
     Args:
-        file_errors: Dict mapping source files to error messages
-        model_name: AI model to use
-        dry_run: If True, don't make actual changes
-        conventions_file: Path to coding conventions file
+        file_errors: Dict mapping files to their error messages
+        model_name: Model to use for fixing
+        dry_run: Don't actually make changes, just simulate
+        conventions_file: Path to project conventions file
         verbose: Enable verbose output
-        timeout: Timeout in seconds for processing each file
+        timeout: Maximum time in seconds to spend on each file
+        persist_session: Whether to use a persistent Aider session
+        session_dir: Directory to store session files
+        no_testability: Don't modify source files for testability
         
     Returns:
-        List of files that were fixed
+        List of modified files
     """
-    fixed_files = []
+    modified_files = []
     
-    if not file_errors:
-        logger.warning("No files with errors identified")
-        return fixed_files
-    
-    # Sort files by number of errors (prioritize files with more errors)
-    sorted_files = sorted(file_errors.items(), key=lambda x: len(x[1]), reverse=True)
-    
-    for file_path, errors in sorted_files:
-        if verbose:
-            logger.info(f"Attempting to fix {file_path} with {len(errors)} errors")
-        
-        # Create a Path object
-        path = Path(file_path)
-        if not path.exists():
+    for file_path, errors in file_errors.items():
+        if not os.path.exists(file_path):
             logger.warning(f"File {file_path} does not exist, skipping")
             continue
+            
+        logger.info(f"Fixing file: {file_path}")
         
-        # Generate prompt for Aider
-        prompt = generate_fix_prompt(file_path, errors)
+        # Skip fixing if dry run
+        if dry_run:
+            logger.info(f"[DRY RUN] Would fix {file_path} for the following errors:")
+            for error in errors:
+                logger.info(f" - {error}")
+            continue
         
-        # Set up environment for fix_file_with_aider
-        if fix_file_with_aider(
-            path,
-            model_name,
-            dry_run=dry_run,
-            conventions_file=conventions_file,
-            verbose=verbose,
-            timeout=timeout,
-            custom_prompt=prompt,
-        ):
-            fixed_files.append(file_path)
-            if verbose:
-                logger.info(f"Successfully applied fixes to {file_path}")
-        else:
-            logger.warning(f"Failed to fix {file_path}")
+        # Get additional context for the fix
+        repo_context = get_repo_context(file_path, verbose)
+        
+        # Generate prompt for fixing the file
+        fix_prompt = generate_fix_prompt(file_path, errors, repo_context.get("summary", ""))
+        
+        try:
+            # Determine if this is a test file or a source file
+            is_test = "test_" in os.path.basename(file_path) or "tests/" in file_path
+            
+            if is_test:
+                # If it's a test file, we need to find the corresponding source file
+                source_file = None
+                test_basename = os.path.basename(file_path)
+                if test_basename.startswith("test_"):
+                    source_basename = test_basename[5:]  # Remove "test_" prefix
+                    source_dir = os.path.dirname(file_path).replace("tests/unit", "src")
+                    potential_source = os.path.join(source_dir, source_basename)
+                    if os.path.exists(potential_source):
+                        source_file = potential_source
+                
+                # If we found a source file and testability is enabled, we'll modify both
+                if source_file and not no_testability:
+                    logger.info(f"Found corresponding source file: {source_file}")
+                    # First, fix the test file
+                    fix_file_with_aider(
+                        file_path,
+                        fix_prompt,
+                        model_name,
+                        verbose=verbose,
+                        timeout=timeout,
+                        persist_session=persist_session,
+                        session_dir=session_dir
+                    )
+                    modified_files.append(file_path)
+                    
+                    # Now, make the source file more testable
+                    make_testable_prompt = f"""
+This test file has issues with the source file {source_file}. Please modify the source file to make it more testable.
+Focus on:
+1. Adding dependency injection
+2. Extracting complex logic into testable functions
+3. Adding appropriate interfaces
+4. Improving error handling
+5. Adding type hints
+
+The goal is to make the source file compatible with the test that we're trying to write.
+
+Here's the current state of the test file with issues:
+```python
+{open(file_path, 'r').read()}
+```
+
+And here's the source file that needs to be modified:
+```python
+{open(source_file, 'r').read()}
+```
+
+Please improve the source file to make it more testable while preserving its functionality.
+"""
+                    # Now fix the source file
+                    fix_file_with_aider(
+                        source_file,
+                        make_testable_prompt,
+                        model_name,
+                        verbose=verbose,
+                        timeout=timeout,
+                        persist_session=persist_session,
+                        session_dir=session_dir
+                    )
+                    modified_files.append(source_file)
+                    
+                    # Fix the test file again with the updated source
+                    updated_test_prompt = f"""
+The source file has been updated to be more testable. Please update the test file to match the new source file.
+
+Here's the updated source file:
+```python
+{open(source_file, 'r').read()}
+```
+
+Here's the current test file that needs to be fixed:
+```python
+{open(file_path, 'r').read()}
+```
+
+Please update the test to work with the modified source file.
+"""
+                    fix_file_with_aider(
+                        file_path,
+                        updated_test_prompt,
+                        model_name,
+                        verbose=verbose,
+                        timeout=timeout,
+                        persist_session=persist_session,
+                        session_dir=session_dir
+                    )
+                else:
+                    # Just fix the test file normally
+                    fix_file_with_aider(
+                        file_path,
+                        fix_prompt,
+                        model_name,
+                        verbose=verbose,
+                        timeout=timeout,
+                        persist_session=persist_session,
+                        session_dir=session_dir
+                    )
+                    modified_files.append(file_path)
+            else:
+                # It's a source file, just fix it normally
+                fix_file_with_aider(
+                    file_path,
+                    fix_prompt,
+                    model_name,
+                    verbose=verbose,
+                    timeout=timeout,
+                    persist_session=persist_session,
+                    session_dir=session_dir
+                )
+                modified_files.append(file_path)
+                
+                # Additionally, generate or fix tests if testability is enabled
+                if not no_testability:
+                    # Figure out the test file path for this source file
+                    source_basename = os.path.basename(file_path)
+                    test_basename = f"test_{source_basename}"
+                    source_rel_path = os.path.relpath(file_path)
+                    
+                    # Convert src/path/to/file.py to tests/unit/path/to/test_file.py
+                    if source_rel_path.startswith("src/"):
+                        source_rel_path = source_rel_path[4:]  # Remove "src/" prefix
+                    test_path = os.path.join("tests/unit", os.path.dirname(source_rel_path), test_basename)
+                    
+                    # Check if the test file exists
+                    if os.path.exists(test_path):
+                        # Fix the existing test file
+                        logger.info(f"Fixing existing test file: {test_path}")
+                        fix_test_prompt = f"""
+The source file has been updated. Please update the test file to work with the modified source.
+
+Source file:
+```python
+{open(file_path, 'r').read()}
+```
+
+Current test file:
+```python
+{open(test_path, 'r').read()}
+```
+
+Please update the test to work correctly with the source file.
+"""
+                        fix_file_with_aider(
+                            test_path,
+                            fix_test_prompt,
+                            model_name,
+                            verbose=verbose,
+                            timeout=timeout,
+                            persist_session=persist_session,
+                            session_dir=session_dir
+                        )
+                        modified_files.append(test_path)
+                    else:
+                        # Create the test directory if it doesn't exist
+                        test_dir = os.path.dirname(test_path)
+                        if not os.path.exists(test_dir):
+                            os.makedirs(test_dir, exist_ok=True)
+                        
+                        # Create a new test file
+                        logger.info(f"Creating new test file: {test_path}")
+                        with open(test_path, 'w') as f:
+                            f.write(f"""\"\"\"Tests for {os.path.basename(file_path)}.\"\"\"
+
+import pytest
+from unittest.mock import patch, MagicMock
+
+# Import the module being tested
+""")
+                            
+                        generate_test_prompt = f"""
+Please create comprehensive unit tests for the source file. The tests should follow Dewey conventions:
+1. Use pytest fixtures for all dependencies
+2. Mock external dependencies (database, files, APIs)
+3. Include tests for all public functions with edge cases
+4. Use parameterized tests where appropriate
+5. Ensure tests can run in isolation
+
+Source file:
+```python
+{open(file_path, 'r').read()}
+```
+
+Please create tests that verify the functionality while following best practices.
+"""
+                        fix_file_with_aider(
+                            test_path,
+                            generate_test_prompt,
+                            model_name,
+                            verbose=verbose,
+                            timeout=timeout,
+                            persist_session=persist_session,
+                            session_dir=session_dir
+                        )
+                        modified_files.append(test_path)
+                        
+                        # Check if we need to create a conftest.py file
+                        conftest_path = os.path.join(os.path.dirname(test_path), "conftest.py")
+                        if not os.path.exists(conftest_path):
+                            logger.info(f"Creating conftest.py at {conftest_path}")
+                            with open(conftest_path, 'w') as f:
+                                f.write("""\"\"\"Common test fixtures for this directory.\"\"\"
+
+import pytest
+from unittest.mock import MagicMock, patch
+import pandas as pd
+
+@pytest.fixture
+def mock_db_connection():
+    \"\"\"Create a mock database connection.\"\"\"
+    mock_conn = MagicMock()
+    mock_conn.execute.return_value = pd.DataFrame({"col1": [1, 2, 3]})
+    return mock_conn
+
+@pytest.fixture
+def mock_config():
+    \"\"\"Create a mock configuration.\"\"\"
+    return {
+        "settings": {"key": "value"},
+        "database": {"connection_string": "mock_connection"}
+    }
+""")
+                            modified_files.append(conftest_path)
+                
+        except Exception as e:
+            logger.error(f"Error fixing file {file_path}: {e}")
+            continue
     
-    return fixed_files
+    return modified_files
 
 
 def analyze_test_files(test_path: str, failed_tests: List[str]) -> Dict[str, str]:
@@ -534,284 +867,94 @@ def analyze_test_files(test_path: str, failed_tests: List[str]) -> Dict[str, str
 
 
 def main():
-    """Main function to run the script."""
+    """Main function."""
     args = parse_args()
-    directory = args.dir
     
+    # Enable verbose logging if requested
+    if args.verbose:
+        logger.setLevel(logging.DEBUG)
+        logging.getLogger().setLevel(logging.DEBUG)
+    
+    directory = args.dir
     if not os.path.exists(directory):
-        logger.error(f"Error: Directory {directory} does not exist")
+        logger.error(f"Directory or file not found: {directory}")
         sys.exit(1)
     
-    logger.info(f"Starting test-and-fix process for {directory}")
-    logger.info(f"Maximum iterations: {args.max_iterations}")
+    # Set up fixed paths
+    directory = os.path.abspath(directory)
+    test_dir = os.path.abspath(args.test_dir)
     
-    # Check if there are any test files for this directory
-    module_path = normalize_path(directory)
-    test_paths = [
-        f"{args.test_dir}/unit/{module_path}",
-        f"{args.test_dir}/unit/{module_path.replace('.', '/')}",
-        f"{args.test_dir}/integration/{module_path}",
-        f"{args.test_dir}/integration/{module_path.replace('.', '/')}"
-    ]
+    logger.info(f"Processing: {directory}")
+    logger.info(f"Test directory: {test_dir}")
     
-    has_test_files = False
-    for test_path in test_paths:
-        if os.path.exists(test_path):
-            # Check if there are any .py files
-            py_files = list(Path(test_path).glob("**/*.py"))
-            if py_files:
-                has_test_files = True
-                break
+    # If target is a file, extract directory for test discovery
+    target_files = []
+    if os.path.isfile(directory):
+        target_files = [directory]
+        directory = os.path.dirname(directory)
     
-    if not has_test_files:
-        logger.warning(f"No test files found for {directory}")
-        logger.info("No tests to run means no failures to fix. Exiting with success.")
-        return 0
+    iteration = 0
+    all_modified_files = set()
     
-    # Track if any real fixes were attempted
-    fixes_attempted = False
+    # Create session directory if using persistent sessions
+    if args.persist_session:
+        os.makedirs(args.session_dir, exist_ok=True)
     
-    iteration = 1
-    while iteration <= args.max_iterations:
-        logger.info(f"Iteration {iteration}/{args.max_iterations}")
+    # Keep running the test-fix cycle until all tests pass or max iterations is reached
+    while iteration < args.max_iterations:
+        iteration += 1
+        logger.info(f"\n===== Iteration {iteration}/{args.max_iterations} =====")
         
-        # Step 1: Run tests
-        logger.info("Running tests...")
-        tests_passed, errors, file_errors = run_tests(directory, args.test_dir, args.verbose, args.timeout)
+        # Run the tests
+        try:
+            passed, errors, file_errors = run_tests(directory, test_dir, args.verbose, args.timeout)
+        except Exception as e:
+            logger.error(f"Error running tests: {e}")
+            sys.exit(1)
         
-        # If tests pass, we're done
-        if tests_passed and not args.dry_run:
-            logger.info(f"All tests passed after {iteration} iterations!")
-            return 0
-        elif tests_passed and args.dry_run:
-            logger.info(f"All tests would pass after applying the suggested fixes!")
-            return 0
+        if passed:
+            logger.info("All tests have passed!")
+            break
         
-        # Check if we need to fix a conftest.py file first
-        conftest_files = [file for file in file_errors.keys() if "conftest.py" in file]
-        if conftest_files:
-            conftest_file = conftest_files[0]
-            logger.warning(f"Detected issue in {conftest_file}. Fixing this file first...")
-            
-            conftest_path = Path(conftest_file)
-            if not conftest_path.exists():
-                logger.error(f"Conftest file {conftest_file} does not exist")
-                return 1
-            
-            # Create a more specific prompt for the conftest file
-            conftest_errors = file_errors[conftest_file]
-            conftest_prompt = f"Fix the syntax error in {conftest_file}:\n\n"
-            for error in conftest_errors:
-                conftest_prompt += f"- {error}\n"
-            conftest_prompt += "\nThis file needs to be fixed before any tests can run. Please correct the syntax issues."
-            
-            # Try to fix the conftest file - allow multiple attempts (up to 3)
-            max_conftest_attempts = 3
-            for attempt in range(1, max_conftest_attempts + 1):
-                logger.info(f"Attempt {attempt}/{max_conftest_attempts} to fix {conftest_file}")
-                
-                # If this is a subsequent attempt, enhance the prompt
-                if attempt > 1:
-                    conftest_prompt += f"\n\nThis is attempt {attempt}. Previous attempts failed to completely fix the syntax error. Please be more thorough in your fix."
-                
-                fix_result = fix_file_with_aider(
-                    conftest_path,
-                    args.model,
-                    args.dry_run,
-                    args.conventions_file,
-                    args.verbose,
-                    args.timeout,
-                    False,  # check_for_urls
-                    conftest_prompt,
-                )
-                
-                if fix_result:
-                    logger.info(f"Successfully fixed {conftest_file}")
-                    fixes_attempted = True
-                    # Verify the fix by trying to import the module
-                    if not args.dry_run:  # Skip verification in dry-run mode
-                        logger.info(f"Verifying fix by importing {conftest_file}")
-                        try:
-                            # Try to compile the file to check for syntax errors
-                            with open(conftest_file, 'r') as f:
-                                code = compile(f.read(), conftest_file, 'exec')
-                            logger.info(f"Verification successful: {conftest_file} compiles without syntax errors")
-                            break  # Exit the attempt loop if successful
-                        except SyntaxError as e:
-                            logger.error(f"Verification failed: {conftest_file} still has syntax errors: {e}")
-                            if attempt == max_conftest_attempts:
-                                logger.error(f"Failed to fix {conftest_file} after {max_conftest_attempts} attempts")
-                                return 1
-                            # Continue to next attempt
-                            continue
-                    else:
-                        # In dry-run mode, we can't verify, so just continue
-                        break
-                elif attempt == max_conftest_attempts:
-                    logger.error(f"Failed to fix {conftest_file} after {max_conftest_attempts} attempts")
-                    return 1
-            
-            # If we get here, we either fixed the conftest file or we're in dry-run mode
-            # Continue with the next iteration to run tests again
-            iteration += 1
-            continue
+        # If target_files were specified, filter file_errors to include only those files
+        if target_files:
+            file_errors = {f: errs for f, errs in file_errors.items() if f in target_files}
         
-        # If no files have errors but tests fail, try a more aggressive approach
-        if not file_errors:
-            logger.warning("Tests are failing but no specific files with errors were identified")
-            
-            # Try running the tests for just this directory specifically
-            test_pattern = normalize_path(directory).replace(".", "/")
-            fallback_test_path = f"{args.test_dir}/unit/{test_pattern}"
-            
-            # Extract failed test names from the error messages
-            failed_tests = []
-            for error in errors:
-                if "::" in error:
-                    test_name = error.split("::")[1].split()[0]
-                    failed_tests.append(test_name)
-            
-            if os.path.exists(fallback_test_path):
-                logger.info(f"Trying to run tests directly from {fallback_test_path}")
-                
-                # Try to get contents of the failed test file to provide more context
-                failed_test_file_contents = ""
-                try:
-                    # Look for test files in the fallback test path
-                    test_files = list(Path(fallback_test_path).glob("**/*.py"))
-                    if test_files:
-                        logger.info(f"Found {len(test_files)} test files in {fallback_test_path}")
-                        for test_file in test_files:
-                            with open(test_file, 'r') as f:
-                                failed_test_file_contents += f"\nContents of {test_file}:\n```python\n{f.read()}\n```\n"
-                except Exception as e:
-                    logger.error(f"Error reading test files: {e}")
-                
-                # Analyze the test files to provide more context
-                logger.info("Analyzing test files to understand failures")
-                test_contents = analyze_test_files(fallback_test_path, failed_tests)
-                
-                # Add test content to the prompt for better context
-                test_context = ""
-                if test_contents:
-                    test_context = "Here are the relevant test functions:\n\n"
-                    for test_name, content in test_contents.items():
-                        test_context += f"```python\n{content}\n```\n\n"
-                elif failed_test_file_contents:
-                    test_context = failed_test_file_contents
-                
-                # Create a detailed prompt with test context
-                detailed_prompt = (
-                    f"Fix the code in {directory} to make the tests pass. "
-                    f"The tests are located at {fallback_test_path}.\n\n"
-                    f"The following tests are failing:\n"
-                )
-                for failed_test in failed_tests:
-                    detailed_prompt += f"- {failed_test}\n"
-                
-                detailed_prompt += f"\n{test_context}\n"
-                detailed_prompt += "Examine the code and tests carefully to understand what needs to be fixed."
-                
-                # Try to fix the directory itself
-                fix_result = fix_file_with_aider(
-                    Path(directory),
-                    args.model,
-                    args.dry_run,
-                    args.conventions_file,
-                    args.verbose,
-                    args.timeout,
-                    False,  # check_for_urls
-                    detailed_prompt,
-                )
-                
-                if fix_result:
-                    logger.info(f"Successfully applied fixes to {directory}")
-                    fixes_attempted = True
-                else:
-                    logger.warning(f"Failed to fix {directory}")
-            else:
-                # Look for the actual test file
-                test_files = list(Path(args.test_dir).glob(f"**/*{module_path.split('.')[-1]}*.py"))
-                if test_files:
-                    logger.info(f"Found test files potentially related to {directory}: {test_files}")
-                    for test_file in test_files:
-                        try:
-                            with open(test_file, 'r') as f:
-                                test_content = f.read()
-                                
-                            # Create a prompt using the actual test file
-                            test_prompt = (
-                                f"Fix the code in {directory} to make the tests pass. "
-                                f"Here is the content of the test file:\n\n"
-                                f"```python\n{test_content}\n```\n\n"
-                                f"Examine the code and tests carefully to understand what needs to be fixed."
-                            )
-                            
-                            # Try to fix the directory
-                            fix_result = fix_file_with_aider(
-                                Path(directory),
-                                args.model,
-                                args.dry_run,
-                                args.conventions_file,
-                                args.verbose,
-                                args.timeout,
-                                False,  # check_for_urls
-                                test_prompt,
-                            )
-                            
-                            if fix_result:
-                                logger.info(f"Successfully applied fixes to {directory} using test file {test_file}")
-                                fixes_attempted = True
-                                break
-                            else:
-                                logger.warning(f"Failed to fix {directory} using test file {test_file}")
-                        except Exception as e:
-                            logger.error(f"Error processing test file {test_file}: {e}")
-                else:
-                    logger.warning(f"No test directory or files found related to {directory}")
-                    logger.warning("Cannot identify specific files to fix. Will try next iteration.")
-        else:
-            # Step 2: Fix failing files
-            logger.info(f"Fixing {len(file_errors)} files with test failures...")
-            fixed_files = fix_failing_files(
+        # Fix failing files
+        try:
+            modified_files = fix_failing_files(
                 file_errors,
                 args.model,
                 args.dry_run,
                 args.conventions_file,
                 args.verbose,
-                args.timeout
+                args.timeout,
+                args.persist_session,
+                args.session_dir,
+                args.no_testability
             )
-            
-            if fixed_files:
-                logger.info(f"Fixed {len(fixed_files)} files in iteration {iteration}")
-                fixes_attempted = True
-            else:
-                logger.warning("No files were fixed in this iteration")
-                if iteration < args.max_iterations:
-                    logger.info("Moving to next iteration...")
-                else:
-                    logger.warning("Maximum iterations reached without fixing all issues")
-                    break
+            for file in modified_files:
+                all_modified_files.add(file)
+        except Exception as e:
+            logger.error(f"Error fixing files: {e}")
+            sys.exit(1)
         
-        iteration += 1
+        # If no files were modified, break out of the loop
+        if not modified_files and not args.dry_run:
+            logger.warning("No files were modified in this iteration, stopping")
+            break
+        
+        # If doing a dry run, we'll just pretend it's fixed and exit
+        if args.dry_run:
+            logger.info("[DRY RUN] Simulating success after modifications")
+            break
     
-    # Final test run to verify
-    logger.info("Running final test verification...")
-    tests_passed, _, _ = run_tests(directory, args.test_dir, args.verbose, args.timeout)
-    
-    if tests_passed:
-        logger.info("SUCCESS: All tests are now passing!")
-        return 0
+    if iteration >= args.max_iterations and not passed:
+        logger.warning(f"Reached maximum iterations ({args.max_iterations}) without passing all tests")
+        sys.exit(1)
     else:
-        # If we're in dry-run mode and fixes were attempted, we can't guarantee tests would fail
-        if args.dry_run and fixes_attempted:
-            logger.warning("DRY RUN: Tests are still failing, but would likely pass if the suggested fixes were applied")
-            # Return 0 to indicate successful dry run with identified fixes
-            return 0
-        else:
-            logger.error("FAILURE: Tests are still failing after maximum iterations")
-        logger.error("FAILURE: Tests are still failing after maximum iterations")
-        return 1
+        logger.info(f"Fixed {len(all_modified_files)} files: {', '.join(all_modified_files)}")
+        sys.exit(0)
 
 
 if __name__ == "__main__":

@@ -3,7 +3,11 @@ from typing import Any, Dict, Optional
 import pandas as pd
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
+from dewey.core.db.connection import (
+    DatabaseConnection,
+    get_connection,
+    get_motherduck_connection,
+)
 from dewey.core.db.utils import create_table, execute_query
 from dewey.llm.llm_utils import generate_text
 

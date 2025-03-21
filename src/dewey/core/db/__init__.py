@@ -1,56 +1,194 @@
-from dewey.core.base_script import BaseScript
+"""Database module initialization.
 
+This module initializes the database system and provides a high-level interface
+for database operations.
+"""
 
-class DatabaseManager(BaseScript):
+import logging
+import os
+import threading
+from typing import Dict, Optional
+
+from .config import initialize_environment
+from .connection import db_manager, DatabaseConnection, DatabaseConnectionError
+from .schema import initialize_schema
+from .sync import sync_all_tables
+from .monitor import monitor_database
+from .operations import (
+    insert_record,
+    update_record,
+    delete_record,
+    get_record,
+    query_records,
+    bulk_insert,
+    execute_custom_query
+)
+from .backup import (
+    create_backup,
+    restore_backup,
+    list_backups,
+    cleanup_old_backups,
+    verify_backup,
+    get_backup_info,
+    export_table,
+    import_table
+)
+
+logger = logging.getLogger(__name__)
+
+def get_connection(for_write: bool = False, local_only: bool = False) -> DatabaseConnection:
+    """Get a database connection.
+    
+    Args:
+        for_write: Whether the connection is for write operations
+        local_only: Whether to only try the local database
+        
+    Returns:
+        A database connection
     """
-    Manages database operations using Dewey conventions.
+    return db_manager.get_connection(for_write=for_write, local_only=local_only)
 
-    This class inherits from BaseScript and provides methods for
-    interacting with the database, leveraging utilities from
-    `dewey.core.db.connection` and `dewey.core.db.utils`.
+def get_motherduck_connection(for_write: bool = False) -> Optional[DatabaseConnection]:
+    """Get a connection to the MotherDuck cloud database.
+    
+    Args:
+        for_write: Whether the connection is for write operations
+        
+    Returns:
+        A database connection or None if connection fails
     """
+    try:
+        return db_manager.get_connection(for_write=for_write, local_only=False)
+    except DatabaseConnectionError:
+        logger.warning("Failed to get MotherDuck connection")
+        return None
 
-    def __init__(self) -> None:
-        """
-        Initializes the DatabaseManager.
+def get_duckdb_connection(for_write: bool = False) -> DatabaseConnection:
+    """Get a connection to the local DuckDB database.
+    
+    Args:
+        for_write: Whether the connection is for write operations
+        
+    Returns:
+        A database connection
+    """
+    return db_manager.get_connection(for_write=for_write, local_only=True)
 
-        Calls the superclass constructor with the 'database' config section,
-        enabling database and LLM functionalities.
-        """
-        super().__init__(config_section="database", requires_db=True, enable_llm=True)
-
-    def run(self) -> None:
-        """
-        Executes the main database operations.
-
-        This method demonstrates accessing configuration values,
-        establishing a database connection, and performing
-        example database operations.
-
-        Raises:
-            Exception: If any error occurs during database operations.
-        """
-        self.logger.info("Starting database operations...")
-
+def initialize_database(motherduck_token: Optional[str] = None) -> bool:
+    """Initialize the database system.
+    
+    Args:
+        motherduck_token: MotherDuck API token
+        
+    Returns:
+        True if initialization successful, False otherwise
+    """
+    try:
+        # Set up environment
+        if motherduck_token:
+            os.environ['MOTHERDUCK_TOKEN'] = motherduck_token
+            
+        if not initialize_environment(motherduck_token):
+            logger.error("Failed to initialize environment")
+            return False
+            
+        # Initialize schema
         try:
-            # Accessing a config value
-            db_host = self.get_config_value("host", "localhost")
-            self.logger.info(f"Database host: {db_host}")
-
-            # Example of using database connection
-            if self.db_conn:
-                self.logger.info("Successfully connected to the database.")
-                # Example of using database utilities (replace with actual logic)
-                # For example, if you had a function to create a table:
-                # utils.create_table(self.db_conn, "my_table", {"id": "INT", "name": "VARCHAR"})
-                # self.logger.info("Created table 'my_table'")
-            else:
-                self.logger.warning("Database connection not established.")
-
-            self.logger.info("Database operations completed.")
-
+            initialize_schema()
+            logger.info("Schema initialized successfully")
         except Exception as e:
-            self.logger.error(
-                f"An error occurred during database operations: {e}", exc_info=True
+            logger.error(f"Failed to initialize schema: {e}")
+            return False
+            
+        # Start monitoring in background
+        try:
+            monitor_thread = threading.Thread(
+                target=monitor_database,
+                daemon=True
             )
-            raise
+            monitor_thread.start()
+            logger.info("Database monitoring started")
+        except Exception as e:
+            logger.warning(f"Failed to start monitoring: {e}")
+            
+        return True
+        
+    except Exception as e:
+        logger.error(f"Database initialization failed: {e}")
+        return False
+
+def get_database_info() -> Dict:
+    """Get information about the database system.
+    
+    Returns:
+        Dictionary containing database information
+    """
+    try:
+        # Get health check results
+        from .monitor import run_health_check
+        health = run_health_check(include_performance=True)
+        
+        # Get backup information
+        backups = list_backups()
+        latest_backup = backups[0] if backups else None
+        
+        # Get sync information
+        from .sync import get_last_sync_time
+        last_sync = get_last_sync_time()
+        
+        return {
+            'health': health,
+            'backups': {
+                'count': len(backups),
+                'latest': latest_backup
+            },
+            'sync': {
+                'last_sync': last_sync.isoformat() if last_sync else None
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get database info: {e}")
+        return {
+            'error': str(e)
+        }
+
+def close_database() -> None:
+    """Close all database connections."""
+    try:
+        db_manager.close()
+        logger.info("Database connections closed")
+        
+        # Import monitor module at the top level to avoid circular imports
+        import src.dewey.core.db.monitor as monitor
+        monitor.stop_monitoring()
+        
+        logger.info("Database monitoring stopped")
+    except Exception as e:
+        logger.error(f"Failed to close database connections: {e}")
+
+__all__ = [
+    'initialize_database',
+    'get_database_info',
+    'close_database',
+    'get_connection',
+    'get_motherduck_connection',
+    'get_duckdb_connection',
+    'DatabaseConnection',
+    'DatabaseConnectionError',
+    'insert_record',
+    'update_record',
+    'delete_record',
+    'get_record',
+    'query_records',
+    'bulk_insert',
+    'execute_custom_query',
+    'create_backup',
+    'restore_backup',
+    'list_backups',
+    'cleanup_old_backups',
+    'verify_backup',
+    'get_backup_info',
+    'export_table',
+    'import_table'
+]

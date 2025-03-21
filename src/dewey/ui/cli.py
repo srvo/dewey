@@ -1,5 +1,7 @@
-from dewey.core.base_script import BaseScript
 from typing import Any
+
+from dewey.core.base_script import BaseScript
+
 
 class CLI(BaseScript):
     """

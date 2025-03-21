@@ -1,1 +1,0 @@
-import sys; sys.path.append("jupyter"); from search_flow import ResearchWorkflow, get_top_companies; companies = get_top_companies(5); workflow = ResearchWorkflow(timeout=30); [workflow.research_company(c) for c in companies]

@@ -169,18 +169,20 @@ class BaseScript(ABC):
     def _initialize_llm_client(self) -> None:
         """Initialize LLM client if required."""
         try:
-            from dewey.llm.llm_utils import get_llm_client
+            from dewey.llm.litellm_client import LiteLLMClient, LiteLLMConfig
             
             self.logger.debug("Initializing LLM client")
             llm_config = self.config.get('llm', {})
-            self.llm_client = get_llm_client(llm_config)
+            config = LiteLLMConfig(**llm_config)
+            self.llm_client = LiteLLMClient(config=config)
             self.logger.debug("LLM client initialized")
         except ImportError:
             self.logger.error("Could not import LLM module. Is it installed?")
-            raise
+            # Don't raise to allow scripts to run without LLM support
+            self.llm_client = None 
         except Exception as e:
             self.logger.error(f"Failed to initialize LLM client: {e}")
-            raise
+            self.llm_client = None
 
     def setup_argparse(self) -> argparse.ArgumentParser:
         """Set up command line arguments.
@@ -249,8 +251,8 @@ class BaseScript(ABC):
             
         # Update LLM model if specified
         if self.enable_llm and hasattr(args, 'llm_model') and args.llm_model:
-            from dewey.llm.llm_utils import get_llm_client
-            self.llm_client = get_llm_client({"model": args.llm_model})
+            from dewey.llm.litellm_client import LiteLLMClient, LiteLLMConfig
+            self.llm_client = LiteLLMClient(config=LiteLLMConfig(model=args.llm_model))
             self.logger.info(f"Using custom LLM model: {args.llm_model}")
             
         return args
@@ -325,10 +327,17 @@ class BaseScript(ABC):
         Returns:
             Configuration value or default
         """
+        if not key:
+            return default
+            
         parts = key.split('.')
         config = self.config
         
         for part in parts:
+            # Handle empty part (e.g., "level1.")
+            if part == "":
+                return default
+                
             if isinstance(config, dict) and part in config:
                 config = config[part]
             else:

@@ -4,7 +4,7 @@ import sys
 from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
-from typing import List, Protocol, Match
+from typing import List, Match, Protocol
 
 from dateutil.relativedelta import relativedelta
 

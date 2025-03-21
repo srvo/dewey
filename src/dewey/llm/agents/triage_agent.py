@@ -1,8 +1,10 @@
 """Triage agent for initial analysis and delegation of incoming items using smolagents."""
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
+
 from smolagents import Tool
 
 from dewey.core.base_script import BaseScript
+
 
 class TriageAgent(BaseScript):
     """

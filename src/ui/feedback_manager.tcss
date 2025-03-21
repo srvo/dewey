@@ -1,0 +1,110 @@
+/* Feedback Manager TUI Stylesheet */
+
+Screen {
+    background: $surface;
+    color: $text;
+}
+
+#main-container {
+    layout: grid;
+    grid-size: 1 3;
+    grid-rows: 1 1fr 1fr;
+    height: 100%;
+    width: 100%;
+}
+
+#status-bar {
+    background: $primary-background;
+    color: $text;
+    padding: 1 2;
+    width: 100%;
+    height: 3;
+    content-align: center middle;
+}
+
+#search-input {
+    margin: 1 1;
+}
+
+#feedback-table {
+    min-height: 10;
+    height: 100%;
+    border: solid $primary;
+    margin: 0 1;
+}
+
+#detail-container {
+    height: 100%;
+    padding: 1;
+    border: solid $primary;
+    margin: 0 1;
+}
+
+#detail-header {
+    background: $primary-darken-2;
+    color: $text;
+    padding: 1;
+    text-align: center;
+    text-style: bold;
+}
+
+#feedback-details {
+    margin: 1 0;
+}
+
+#contact-details {
+    margin: 1 0;
+    border-top: solid $primary;
+    padding-top: 1;
+}
+
+#feedback-subject, #contact-header {
+    text-style: bold;
+    color: $secondary;
+}
+
+#feedback-metadata, #contact-info {
+    color: $text-muted;
+}
+
+/* Modal styling */
+
+#feedback-modal, #contact-modal {
+    background: $surface;
+    border: thick $primary;
+    padding: 1 2;
+    margin: 2 4;
+    height: auto;
+    min-width: 40;
+    max-width: 90%;
+    min-height: 20;
+    max-height: 90%;
+}
+
+#button-container {
+    content-align: center middle;
+    width: 100%;
+    height: auto;
+    margin-top: 2;
+}
+
+Button {
+    margin: 0 1;
+}
+
+TextArea {
+    min-height: 5;
+    margin: 1 0;
+}
+
+#communication-table {
+    margin: 1 0;
+    height: auto;
+    min-height: 5;
+    max-height: 10;
+}
+
+Footer {
+    background: $surface;
+    color: $text;
+} 

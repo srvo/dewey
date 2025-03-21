@@ -1,12 +1,11 @@
-from dewey.core.base_script import BaseScript
-
 # Formatting failed: LLM generation failed: Gemini API error: Model gemini-2.0-flash in cooldown until Sat Mar 15 00:33:42 2025
-
 import json
 from pathlib import Path
 
 import pytest
 from ethifinx.research.workflows.ethical import EthicalAnalysisWorkflow
+
+from dewey.core.base_script import BaseScript
 
 from .test_workflow_integration import (
     BaseEngine,

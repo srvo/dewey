@@ -1,6 +1,7 @@
-import pytest
 from unittest.mock import MagicMock, patch
+
 import pandas as pd
+import pytest
 
 from dewey.core.base_script import BaseScript
 

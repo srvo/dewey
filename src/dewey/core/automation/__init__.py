@@ -2,7 +2,7 @@ from typing import Any, Optional, Protocol
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection
-from dewey.llm.llm_utils import LLMClient
+from dewey.llm.litellm_client import LiteLLMClient as LLMClient
 
 
 class LLMClientInterface(Protocol):

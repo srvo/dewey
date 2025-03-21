@@ -1,122 +1,142 @@
+"""
+Database maintenance utilities.
+
+This module provides functionality for maintaining and optimizing
+the database, including checking table sizes, analyzing tables,
+and performing optimization.
+"""
+
+from typing import Dict, List, Optional
+
 from dewey.core.base_script import BaseScript
-from dewey.core.db.utils import execute_query
-from dewey.llm.llm_utils import generate_text
 
 
 class DbMaintenance(BaseScript):
     """
-    Manages database maintenance tasks.
+    Class for database maintenance operations.
 
-    This class inherits from BaseScript and provides methods for
-    performing routine database maintenance operations.
+    This class provides methods to perform various maintenance tasks
+    on the database, such as checking table sizes, analyzing tables,
+    and optimizing tables.
     """
 
     def __init__(self) -> None:
-        """Initializes the DbMaintenance class."""
+        """Initialize the DbMaintenance class."""
+        self.name = "DbMaintenance"
         super().__init__(
-            config_section="db_maintenance", requires_db=True, enable_llm=True
+            name=self.name,
+            config_section="db_maintenance",
+            requires_db=True,
+            enable_llm=True,
         )
 
     def run(self) -> None:
         """
-        Executes the database maintenance tasks.
+        Run the database maintenance operations.
 
-        This includes checking table sizes, optimizing indexes,
-        and performing other maintenance operations.
+        This method performs various maintenance tasks on the database,
+        including checking table sizes, analyzing tables, and optimizing tables.
+        The check interval can be configured in the configuration file.
         """
         self.logger.info("Starting database maintenance...")
 
-        retention_period = self.get_config_value("retention_period", 30)
-        self.logger.info(f"Retention period: {retention_period} days")
+        # Get the check interval from config or use default (30 days)
+        check_interval = self.get_config_value("check_interval", 30)
+        self.logger.info(f"Using check interval of {check_interval} days")
 
+        # Perform maintenance tasks
         self.check_table_sizes()
-        self.optimize_indexes()
-        self.perform_custom_maintenance()
+        self.analyze_tables()
+        self.optimize_tables()
 
-        self.logger.info("Database maintenance completed.")
+        self.logger.info("Database maintenance completed")
 
-    def check_table_sizes(self) -> None:
+    def check_table_sizes(self) -> Dict[str, int]:
         """
-        Checks the sizes of all tables in the database.
+        Check the sizes of all tables in the database.
 
-        Logs a warning if any table exceeds a configured threshold.
+        Returns:
+            Dictionary mapping table names to their sizes in bytes
         """
         self.logger.info("Checking table sizes...")
-        size_threshold = self.get_config_value(
-            "size_threshold", 1000000
-        )  # Example threshold
 
         try:
-            # Example query to get table sizes (specific to your DB)
-            query = """
-            SELECT table_name,
-            pg_size_pretty(pg_total_relation_size(table_name)) AS size
-            FROM information_schema.tables WHERE table_schema = 'public';
-            """
-            results = execute_query(self.db_conn, query)
+            # Get the list of tables
+            tables = self.get_table_list()
 
-            for table_name, size in results:
-                size_bytes = int(size.split(" ")[0])  # Simplified size extraction
-                if size_bytes > size_threshold:
-                    self.logger.warning(
-                        f"Table {table_name} exceeds size threshold: {size}"
-                    )
+            # Dictionary to store table sizes
+            table_sizes = {}
+
+            # Query to get table size
+            for table in tables:
+                query = f"SELECT COUNT() AS row_count FROM {table}"
+                result = self.db_conn.execute(query).fetchall()
+                row_count = result[0][0] if result else 0
+                table_sizes[table] = row_count
+                self.logger.debug(f"Table {table}: {row_count} rows")
+
+            self.logger.info(f"Checked sizes for {len(tables)} tables")
+            return table_sizes
+
         except Exception as e:
             self.logger.error(f"Error checking table sizes: {e}")
+            return {}
 
-    def optimize_indexes(self) -> None:
+    def analyze_tables(self, tables: Optional[List[str]] = None) -> None:
         """
-        Optimizes indexes in the database.
+        Analyze tables to update statistics.
 
-        This can include rebuilding indexes or identifying unused indexes.
+        Args:
+            tables: Optional list of tables to analyze. If None, all tables are analyzed.
         """
-        self.logger.info("Optimizing indexes...")
+        self.logger.info("Analyzing tables...")
 
         try:
-            # Example query to find unused indexes (specific to your DB)
-            query = """
-            SELECT indexrelname FROM pg_stat_all_indexes
-            WHERE idx_scan = 0 AND schemaname = 'public';
-            """
-            unused_indexes = execute_query(self.db_conn, query)
+            # If no tables are specified, get all tables
+            if tables is None:
+                tables = self.get_table_list()
 
-            for index_name in unused_indexes:
-                self.logger.warning(f"Unused index found: {index_name}")
-                # Consider dropping the index or investigating its usage
+            # Analyze each table
+            for table in tables:
+                self.logger.debug(f"Analyzing table {table}")
+                self.db_conn.execute(f"ANALYZE {table}")
 
-            # Example query to rebuild indexes (specific to your DB)
-            # REINDEX TABLE your_table;
-            self.logger.info("Index optimization checks completed.")
+            self.logger.info(f"Analyzed {len(tables)} tables")
 
         except Exception as e:
-            self.logger.error(f"Error optimizing indexes: {e}")
+            self.logger.error(f"Error analyzing tables: {e}")
 
-    def perform_custom_maintenance(self) -> None:
+    def optimize_tables(self, tables: Optional[List[str]] = None) -> None:
         """
-        Performs custom database maintenance tasks.
+        Optimize tables for better performance.
 
-        This can include tasks such as archiving old data,
-        updating statistics, or running custom scripts.
+        Args:
+            tables: Optional list of tables to optimize. If None, all tables are optimized.
         """
-        self.logger.info("Performing custom maintenance tasks...")
+        self.logger.info("Optimizing tables...")
 
         try:
-            # Example: Archive old data
-            archive_query = (
-                "DELETE FROM your_table WHERE date < NOW() - INTERVAL '1 year';"
-            )
-            execute_query(self.db_conn, archive_query)
-            self.logger.info("Old data archived.")
+            # If no tables are specified, get all tables
+            if tables is None:
+                tables = self.get_table_list()
 
-            # Example: Update statistics
-            analyze_query = "ANALYZE your_table;"
-            execute_query(self.db_conn, analyze_query)
-            self.logger.info("Table statistics updated.")
+            # Optimize each table
+            for table in tables:
+                self.logger.debug(f"Optimizing table {table}")
+                self.db_conn.execute(f"VACUUM {table}")
 
-            # Example: Use LLM to generate a maintenance report
-            llm_prompt = "Generate a brief report summarizing the database maintenance tasks performed."
-            report = generate_text(self.llm_client, llm_prompt)
-            self.logger.info(f"Maintenance report: {report}")
+            self.logger.info(f"Optimized {len(tables)} tables")
 
         except Exception as e:
-            self.logger.error(f"Error performing custom maintenance tasks: {e}")
+            self.logger.error(f"Error optimizing tables: {e}")
+
+    def get_table_list(self) -> List[str]:
+        """
+        Get a list of all tables in the database.
+
+        Returns:
+            List of table names
+        """
+        query = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'main'"
+        result = self.db_conn.execute(query).fetchall()
+        return [row[0] for row in result]

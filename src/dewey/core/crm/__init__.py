@@ -2,7 +2,14 @@ from typing import Any, Optional
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection, get_connection
-from dewey.llm.llm_utils import get_llm_client
+# TODO: Update all CRM modules to use LiteLLMClient directly instead of get_llm_client
+# Temporary import fix during migration from llm_utils to litellm_client
+from dewey.llm.litellm_client import LiteLLMClient
+
+# Shim function to maintain compatibility during migration
+def get_llm_client(*args, **kwargs):
+    """Temporary compatibility function during migration to LiteLLMClient."""
+    return LiteLLMClient(*args, **kwargs)
 
 
 class CrmModule(BaseScript):

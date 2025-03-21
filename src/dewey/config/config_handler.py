@@ -27,11 +27,13 @@ class ConfigProcessor(BaseScript):
                       initialization of internal data structures or
                       configuration settings.
         """
-        super().__init__(config_section='config_handler')
+        super().__init__(config_section="config_handler")
         self.args = args
         self.kwargs = kwargs
         self.settings: Dict[str, Any] = {}  # Placeholder for settings
-        self.parser: Optional[argparse.ArgumentParser] = None  # Placeholder for argument parser
+        self.parser: Optional[argparse.ArgumentParser] = (
+            None  # Placeholder for argument parser
+        )
 
         self.logger.info("ConfigProcessor initialized")
 
@@ -41,7 +43,9 @@ class ConfigProcessor(BaseScript):
         """
         pass
 
-    def init_argument_parser(self, name: Optional[str] = None, **kwargs: Any) -> argparse.ArgumentParser:
+    def init_argument_parser(
+        self, name: Optional[str] = None, **kwargs: Any
+    ) -> argparse.ArgumentParser:
         """
         Initializes and returns an argument parser.
 
@@ -55,7 +59,9 @@ class ConfigProcessor(BaseScript):
         self.parser = argparse.ArgumentParser(name=name, **kwargs)
         return self.parser
 
-    def get_argument_parser(self, name: Optional[str] = None, **kwargs: Any) -> argparse.ArgumentParser:
+    def get_argument_parser(
+        self, name: Optional[str] = None, **kwargs: Any
+    ) -> argparse.ArgumentParser:
         """
         Returns an existing or initializes and returns an argument parser.
 
@@ -108,7 +114,9 @@ class ConfigProcessor(BaseScript):
             return data
         except toml.TomlDecodeError as e:
             self.logger.debug(f"TOML parsing failed: {e}")
-            raise ValueError("Failed to parse configuration file as YAML or TOML.") from e
+            raise ValueError(
+                "Failed to parse configuration file as YAML or TOML."
+            ) from e
         except Exception as e:
             self.logger.error(f"Error during parsing: {e}")
             raise ValueError(f"Error during parsing: {e}") from e
@@ -149,12 +157,14 @@ class ConfigProcessor(BaseScript):
             return False
 
         if triple:
-            if (text.startswith('"""') and text.endswith('"""')) or \
-               (text.startswith("'''") and text.endswith("'''")):
+            if (text.startswith('"""') and text.endswith('"""')) or (
+                text.startswith("'''") and text.endswith("'''")
+            ):
                 return True
 
-        if (text.startswith('"') and text.endswith('"')) or \
-           (text.startswith("'") and text.endswith("'")):
+        if (text.startswith('"') and text.endswith('"')) or (
+            text.startswith("'") and text.endswith("'")
+        ):
             return True
 
         return False
@@ -172,11 +182,13 @@ class ConfigProcessor(BaseScript):
         """
         if self.is_quoted(text, triple):
             if triple:
-                if (text.startswith('"""') and text.endswith('"""')) or \
-                   (text.startswith("'''") and text.endswith("'''")):
+                if (text.startswith('"""') and text.endswith('"""')) or (
+                    text.startswith("'''") and text.endswith("'''")
+                ):
                     return text[3:-3]
-            if (text.startswith('"') and text.endswith('"')) or \
-               (text.startswith("'") and text.endswith("'")):
+            if (text.startswith('"') and text.endswith('"')) or (
+                text.startswith("'") and text.endswith("'")
+            ):
                 return text[1:-1]
         return text
 
@@ -192,7 +204,9 @@ class ConfigProcessor(BaseScript):
         """
         return self.unquote_str(section_name, triple=False)
 
-    def get_toml_section(self, data: Dict[str, Any], section: str) -> Optional[Dict[str, Any]]:
+    def get_toml_section(
+        self, data: Dict[str, Any], section: str
+    ) -> Optional[Dict[str, Any]]:
         """
         Retrieves a TOML section from a dictionary.
 
@@ -216,7 +230,12 @@ class ConfigProcessor(BaseScript):
         """
         return self.settings  # Placeholder - replace with actual logic
 
-    def write_config_file(self, parsed_namespace: argparse.Namespace, output_file_paths: List[str], exit_after: bool = False) -> None:
+    def write_config_file(
+        self,
+        parsed_namespace: argparse.Namespace,
+        output_file_paths: List[str],
+        exit_after: bool = False,
+    ) -> None:
         """
         Writes configuration settings to a file.  This implementation is a placeholder.
 
@@ -233,7 +252,9 @@ class ConfigProcessor(BaseScript):
             # sys.exit(0)  # Uncomment to exit the program
         pass
 
-    def get_command_line_key_for_unknown_config_file_setting(self, key: str) -> str:
+    def get_command_line_key_for_unknown_config_file_setting(
+        self, key: str
+    ) -> str:
         """
         Converts a configuration file setting key to a command-line argument key.
 
@@ -245,10 +266,12 @@ class ConfigProcessor(BaseScript):
             converts camelCase to snake_case and prepends '--'.
         """
         # Convert camelCase to snake_case
-        snake_case_key = re.sub(r'(?<!^)(?=[A-Z])', '_', key).lower()
+        snake_case_key = re.sub(r"(?<!^)(?=[A-Z])", "_", key).lower()
         return f"--{snake_case_key}"
 
-    def convert_item_to_command_line_arg(self, action: str, key: str, value: Any) -> str:
+    def convert_item_to_command_line_arg(
+        self, action: str, key: str, value: Any
+    ) -> str:
         """
         Converts a configuration item (key-value pair) to a command-line argument string.
 
@@ -260,11 +283,13 @@ class ConfigProcessor(BaseScript):
         Returns:
             A string representing the command-line argument.
         """
-        arg_key = self.get_command_line_key_for_unknown_config_file_setting(key)
+        arg_key = self.get_command_line_key_for_unknown_config_file_setting(
+            key
+        )
 
-        if action == 'store_true':
+        if action == "store_true":
             return arg_key
-        elif action == 'store_false':
+        elif action == "store_false":
             return arg_key
         else:  # 'store' or other actions
             if isinstance(value, bool):

@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 
 import requests
+
 from dewey.core.base_script import BaseScript
 from dewey.utils import get_logger
 

@@ -1,5 +1,7 @@
-from dewey.core.base_script import BaseScript
 from typing import Any, Dict, List
+
+from dewey.core.base_script import BaseScript
+
 
 class GenerateLegacyTodos(BaseScript):
     """A script to generate legacy todos."""

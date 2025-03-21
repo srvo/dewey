@@ -8,8 +8,6 @@
 
 ## Human Tasks
 
-- clarify prd builder invocation -- is there a proper alias in zshrc?
-
 ### Database Integration (High Priority)
 1. [ ] Set up MotherDuck cloud instance
    - [ ] Create account and configure access
@@ -31,73 +29,6 @@
    - [ ] Set up local backup scripts
    - [ ] Configure MotherDuck snapshots
    - [ ] Test restore procedures
-6. [ ] Database Optimization
-   - [x] Create indexes:
-     - [x] unified_emails: (thread_id, created_at) for thread-based queries
-     - [x] unified_emails: (from_address, created_at) for sender analysis
-     - [x] unified_contacts: (domain, email) for company-based lookups
-     - [x] unified_contacts: (last_interaction_date) for activity tracking
-     - [x] email_metadata: (email_id) for quick metadata lookups
-   - [ ] Add constraints:
-     - [ ] Foreign key between email_client_updates.email_id and unified_emails.id
-     - [ ] Foreign key between email_metadata.email_id and unified_emails.id
-     - [ ] Check constraint on unified_contacts.email for valid email format
-     - [ ] Not null constraints on critical fields (thread_id, from_address in unified_emails)
-   - [ ] Optimize table statistics:
-     - [ ] Regular ANALYZE on unified_emails and unified_contacts
-     - [ ] Set up auto-vacuum for large tables
-     - [ ] Monitor and adjust table storage parameters
-
-### Email Import System (In Progress)
-1. [ ] Historical Email Import
-   - [x] Set up IMAP-based import system
-   - [x] Implement proper Gmail ID extraction (X-GM-MSGID, X-GM-THRID)
-   - [x] Create client communications index view
-   - [ ] Monitor import progress (currently importing 2021-2022 emails)
-   - [ ] Create progress tracking dashboard
-   - [ ] Set up automated monitoring for import process
-   - [ ] Document import coverage and gaps
-
-2. [ ] Email Processing Pipeline
-   - [ ] Create robust error handling for IMAP timeouts
-   - [ ] Implement rate limiting and backoff strategies
-   - [ ] Add checkpointing for import progress
-   - [ ] Set up email deduplication system
-   - [ ] Create email threading visualization
-   - [ ] Implement email categorization system
-
-3. [ ] Data Quality Checks
-   - [ ] Verify email dates are correctly preserved
-   - [ ] Ensure thread IDs are properly linked
-   - [ ] Validate client vs system email classification
-   - [ ] Check for missing or corrupted content
-   - [ ] Monitor storage efficiency
-
-### Test Suite Refinement (High Priority)
-1. [ ] Test Infrastructure
-   - [ ] Set up test data fixtures
-   - [ ] Create mock IMAP server for testing
-   - [ ] Implement test database isolation
-   - [ ] Add CI/CD pipeline for tests
-
-2. [ ] Test Coverage
-   - [ ] Add unit tests for email processing
-   - [ ] Create integration tests for IMAP import
-   - [ ] Test thread ID extraction and linking
-   - [ ] Verify client communication indexing
-   - [ ] Test email categorization logic
-
-3. [ ] Test Performance
-   - [ ] Benchmark import operations
-   - [ ] Profile database queries
-   - [ ] Optimize slow tests
-   - [ ] Add performance regression tests
-
-4. [ ] Test Maintenance
-   - [ ] Clean up obsolete tests
-   - [ ] Update test documentation
-   - [ ] Standardize test naming conventions
-   - [ ] Add test coverage reporting
 
 ### Automated Tasks
 1. [ ] Regular database maintenance
@@ -113,89 +44,13 @@
    - [ ] Test restore procedures
    - [ ] Clean up old backups
 
-### Code Consolidation
-1. [ ] Review code_consolidator.py report
-2. [ ] Prioritize key clusters for consolidation
-3. [ ] Implement canonical versions of clustered functions
-4. [ ] Update dependent code to use canonical implementations
-5. [ ] Analyze code_consolidator.py report and identify top consolidation opportunities
-6. [ ] Reimplement PyPI search with proper API integration
-7. [x] Organize orphaned scripts into maintenance directory structure:
-   - [x] Move database maintenance scripts:
-     - [x] cleanup_tables.py -> src/dewey/maintenance/database/cleanup_tables.py
-     - [x] consolidate_schemas.py -> Archived (functionality in BaseMaintenanceScript)
-     - [x] cleanup_database.py -> Archived (functionality in BaseMaintenanceScript)
-     - [x] check_tables.py -> Archived (functionality in BaseMaintenanceScript)
-     - [x] drop_other_tables.py -> Archived (functionality in BaseMaintenanceScript)
-     - [x] cleanup_other_tables.py -> Archived (functionality in BaseMaintenanceScript)
-   - [x] Move data cleanup scripts:
-     - [x] cleanup_small_csvs.py -> Archived
-     - [x] cleanup_other_files.py -> Archived
-     - [x] migrate_input_data.py -> Archived
-   Note: Scripts have been archived and their functionality is now part of the BaseMaintenanceScript class
-- [ ] Fix search/replace block in auto_categorize.py (low priority)
-
-### CSV Corpus Classification (High Priority)
-1. [ ] Develop classification criteria:
-   - [ ] Define data quality metrics
-   - [ ] Create relevance scoring system
-   - [ ] Establish content categories (financial, gaming, config, etc.)
-   - [ ] Set retention/deletion rules for each category
-
-2. [ ] Implement automated classification:
-   - [ ] Create script to analyze CSV structure and content
-   - [ ] Detect configuration files and game data
-   - [ ] Identify personally identifiable information (PII)
-   - [ ] Flag low-quality or corrupted data
-
-3. [ ] Data organization:
-   - [ ] Create directory structure for categorized data
-   - [ ] Move files to appropriate categories
-   - [ ] Document classification decisions
-   - [ ] Track excluded/deleted files
-
-4. [ ] Quality assurance:
-   - [ ] Review auto-classification results
-   - [ ] Validate PII detection
-   - [ ] Verify data integrity after moves
-   - [ ] Update database references
-
-5. [ ] Documentation:
-   - [ ] Document classification methodology
-   - [ ] Create data catalog
-   - [ ] Record excluded data types
-   - [ ] Update data pipeline documentation
-
-## Documentation
-
-### PRD Development (High Priority)
-1. [ ] Core Module PRD - Data ingestion, processing, analysis
-2. [ ] LLM Integration PRD - API clients, rate limiting, model management  
-3. [ ] Pipeline Architecture PRD - Read/Resolve/Unify stages
-4. [ ] UI Components PRD - Screen hierarchy and data flow
-5. [ ] Deployment Strategy PRD - Cloud integration and scaling
-
-### LLM Tasks
-
-#### High Priority
-- Ensure various scripts are neatly integrated and well documented
-
-#### Medium Priority
-6. LLM helper functions foundation
-7. Google Gemini API scaffolding
-8. Documentation initialization
-
-### CRM Module
-- Refactor database connection and error handling in `add_enrichment_a154a675.py` to use centralized utilities
-- Move `src/dewey/core/automation/service_deployment.py` to `src/dewey/core/automation/`
-
 ## Import Statements
 When importing from dewey modules, use absolute imports:
 ```python
 from dewey.core.architecture import analyze_architecture
 from dewey.maintenance import prd_builder
 from dewey.core.automation import service_deployment
-from dewey.llm import llm_utils
+from dewey.llm.litellm_client import LiteLLMClient  # Preferred over deprecated llm_utils
 ```
 
 For third-party imports, specify version requirements in pyproject.toml:
@@ -247,6 +102,11 @@ x Ensure Python 3.12 + uv setup
 x Decide first core module (Accounting)
 x Generate complete `pyproject.toml` with dependencies
 x Create core directory structure
+x Implement DuckDB/MotherDuck sync functionality
+  - Created DuckDBSync class for bidirectional sync
+  - Added auto-sync for modified tables
+  - Created command-line sync script
+  - Added tests for sync functionality
 
 # *SEARCH/REPLACE block* Rules:
 

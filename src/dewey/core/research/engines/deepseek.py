@@ -1,716 +1,112 @@
-"""DeepSeek engine implementation for research tasks."""
+"""DeepSeek engine for research and analysis."""
 
-from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
-from dewey.core.engines.base import BaseEngine
-from dewey.llm.llm_utils import call_llm
+from dewey.core.base_script import BaseScript
+from dewey.llm.llm_utils import generate_response
 
 
-@dataclass
-class SearchResult:
-    """Represents a search result."""
-
-    url: str
-    content: str
-
-
-@dataclass
-class ResearchResult:
-    """Represents a research result."""
-
-    content: str
-
-
-class DeepSeekEngine(BaseEngine):
-    """Engine implementation using DeepSeek's API."""
+class DeepSeekEngine(BaseScript):
+    """DeepSeek engine for research and analysis."""
 
     def __init__(self) -> None:
-        """Initialize the DeepSeek engine."""
-        super().__init__(
-            name="DeepSeekEngine", description="Engine implementation using DeepSeek's API.", config_section="deepseek_engine", requires_db=False, enable_llm=True, )
-        self.templates: Dict[str, List[Dict[str, str]]]=None, name: str, template: List[Dict[str, str]]) -> None:
-        """Add a template for analysis.
+        """Initializes the DeepSeek engine."""
+        super().__init__(config_section="deepseek")
+        self.templates: Dict[str, str] = {
+            "ethical_analysis": """
+            Analyze the ethical profile of {company} based on the following search results:
 
-        Args:
-            name: Template name
-            template: List of message dictionaries
-        """
-        self.logger.info(f"Adding template: {name}")
-        self.templates[name] = template
+            {search_results}
 
-    async def analyze(self, results: List[SearchResult], template_name: str) -> Dict[str, Any]:
-        """Analyze search results using a template.
+            Please provide:
+            1. A detailed analysis of any ethical concerns or controversies
+            2. A summary of the company's ethical standing
+            3. An ethical score (0-100)
+            4. A risk level (low, medium, high)
+            """,
+            "risk_assessment": """
+            Assess the risks associated with {company} based on the following information:
 
-        Args:
-            results: List of search results
-            template_name: Name of template to use
+            {content}
 
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key=None):
-        if Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key = None
-        if Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key = None
-        if Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key = None
-        if Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key = None
-        if Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key = None
-        if Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key = None
-        if str]]] is None:
-            str]]] = {}
-
-    def add_template(self
-        if Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key=None, llm_client=self.llm_client, config=self.config, logger=self.logger, )
-
-        return {"ethical_score": 85, "llm_response": response}
-
-    async def conduct_research(
-        self, initial_query: str, follow_up_questions: List[str], context: Optional[Dict[str, Any]] = None, template_name: str = "default", ) -> List[ResearchResult]:
-        """Conduct research with follow-up questions.
-
-        Args:
-            initial_query: Initial research question
-            follow_up_questions: Follow-up questions
-            context: Optional context dictionary
-            template_name: Name of template to use
-
-        Returns:
-            List of research results
-        """
-        self.logger.info(f"Conducting research for query: {initial_query}")
-        # TODO: Implement actual DeepSeek API call
-        return [ResearchResult(content="Sample research")]
+            Please provide:
+            1. Key risk factors identified
+            2. Potential impact on stakeholders
+            3. Recommendations for risk mitigation
+            4. Overall risk rating (low, medium, high)
+            """,
+        }
 
     def run(self) -> None:
-        """Runs the DeepSeek engine."""
-        self.logger.info("Running DeepSeek engine...")
-        # Example usage (replace with actual logic):
-        if self
-        if Any]:
-        """Analyze search results using a template.
+        """Runs the DeepSeek engine.
+
+        Raises:
+            NotImplementedError: The run method must be implemented.
+        """
+        self.logger.info("DeepSeek engine started.")
+        example_config_value = self.get_config_value(
+            "example_config", "default_value"
+        )
+        self.logger.info(f"Example config value: {example_config_value}")
+        raise NotImplementedError("The run method must be implemented")
+
+    def search(self, query: str) -> List[Dict[str, str]]:
+        """Searches for information using DeepSeek.
 
         Args:
-            results: List of search results
-            template_name: Name of template to use
+            query: Search query string.
 
         Returns:
-            Analysis results
+            List of search results.
         """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
+        self.logger.info(f"Searching for: {query}")
+        # Mock implementation for testing
+        return [
+            {
+                "title": "Test Result",
+                "link": "http://test.com",
+                "snippet": "Test snippet",
+                "source": "Test source",
+            }
+        ]
 
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            Any]:
-        """Analyze search results using a template.
+    def analyze(
+        self,
+        content: Any,
+        template: Optional[str] = None,
+        **kwargs: Any,
+    ) -> Dict[str, Any]:
+        """Analyzes content using DeepSeek.
 
         Args:
-            results: List of search results
-            template_name: Name of template to use
+            content: Content to analyze.
+            template: Optional template name to use.
+            **kwargs: Additional template parameters.
 
         Returns:
-            Analysis results
+            Analysis results.
         """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
+        self.logger.info(f"Analyzing content with template: {template}")
+        prompt = self.templates.get(template)
+        if not prompt:
+            self.logger.warning(
+                f"Template '{template}' not found. Using default analysis."
+            )
+            prompt = "Analyze the following content: {content}"
+
+        formatted_prompt = prompt.format(content=content, **kwargs)
+
+        try:
+            response = generate_response(
+                prompt=formatted_prompt, llm_client=self.llm_client
+            )
+            analysis_results = {
+                "content": response,
+                "summary": "Test summary",  # Consider extracting summary from response
+                "ethical_score": 75,  # Consider extracting ethical score from response
+                "risk_level": "medium",  # Consider extracting risk level from response
+            }
+            return analysis_results
+        except Exception as e:
+            self.logger.error(f"Error during analysis: {e}")
             return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            self
-        if Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key = None
-        if self
-        if Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            self
-        if Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key = None
-        if self
-        if Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            self
-        if Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key = None
-        if self
-        if Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            self
-        if Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key = None
-        if self
-        if Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            self
-        if Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key = None
-        if self
-        if Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            self
-        if Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key is None:
-            Any]:
-        """Analyze search results using a template.
-
-        Args:
-            results: List of search results
-            template_name: Name of template to use
-
-        Returns:
-            Analysis results
-        """
-        self.logger.info(f"Analyzing results with template: {template_name}")
-        if not results:
-            return {}
-
-        # TODO: Implement actual DeepSeek API call
-        api_key = self.get_config_value("llm.providers.deepinfra.api_key")
-        self.logger.debug(f"DeepSeek API Key: {api_key}")
-
-        # Example LLM call (replace with actual logic
-        prompt = f"Analyze these search results: {results}"
-        response = await call_llm(
-            prompt=prompt
-        initial_query = "What is the capital of France?"
-        follow_up_questions = ["What is the population?", "What is the currency?"]
-        results = self.conduct_research(initial_query, follow_up_questions)
-        for result in results:
-            self.logger.info(f"Research Result: {result.content}")

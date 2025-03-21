@@ -1,5 +1,6 @@
 """Transcript analysis agent for extracting action items and insights from meetings."""
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
+
 from smolagents import Tool
 
 from dewey.core.base_script import BaseScript

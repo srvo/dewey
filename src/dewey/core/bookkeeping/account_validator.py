@@ -4,7 +4,7 @@ import json
 import subprocess
 import sys
 from pathlib import Path
-from typing import Dict, List, Callable, Protocol
+from typing import Callable, Dict, List, Protocol
 
 from dewey.core.base_script import BaseScript
 

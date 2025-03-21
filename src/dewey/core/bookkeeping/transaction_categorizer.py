@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
 import json
+import os
 import re
 import shutil
 import sys
-import os
 from pathlib import Path
-from typing import Any, Dict, Protocol, Callable
+from typing import Any, Callable, Dict, Protocol
 
 from dewey.core.base_script import BaseScript
 

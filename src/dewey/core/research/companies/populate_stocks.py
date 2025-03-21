@@ -1,5 +1,6 @@
-from dewey.core.base_script import BaseScript
 from typing import Optional
+
+from dewey.core.base_script import BaseScript
 
 
 class PopulateStocks(BaseScript):

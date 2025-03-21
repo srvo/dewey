@@ -1,5 +1,7 @@
+from typing import Any, Dict
+
 from dewey.core.base_script import BaseScript
-from typing import Dict, Any
+
 
 class ImageGeneration(BaseScript):
     """A class for generating images using an external API.

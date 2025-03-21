@@ -1,15 +1,16 @@
+import time
+from dataclasses import dataclass
 from typing import (
     Any,
+    Callable,
     Dict,
     Iterator,
     List,
     Optional,
-    Union,
     Tuple,
-    Callable,
+    Union,
 )
-import time
-from dataclasses import dataclass
+
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import get_connection
 from dewey.llm import llm_utils

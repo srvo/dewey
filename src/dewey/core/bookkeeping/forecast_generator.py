@@ -1,7 +1,7 @@
+import sys
 from datetime import date, datetime
 from pathlib import Path
-from typing import Any, Dict, Tuple, Protocol
-import sys
+from typing import Any, Dict, Protocol, Tuple
 
 from dateutil.relativedelta import relativedelta
 

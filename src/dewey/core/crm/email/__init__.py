@@ -1,5 +1,6 @@
 from dewey.core.base_script import BaseScript
 
+
 class EmailProcessor(BaseScript):
     """
     A class for processing emails, adhering to Dewey project conventions.

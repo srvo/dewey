@@ -1,5 +1,6 @@
 from dewey.core.base_script import BaseScript
 
+
 class Utils(BaseScript):
     """
     A collection of utility functions for the Dewey project.

@@ -2,7 +2,8 @@
 
 import os
 from pathlib import Path
-from typing import Dict, List, Protocol, IO
+from typing import IO, Dict, List, Protocol
+
 from dewey.core.base_script import BaseScript
 
 

@@ -1,4 +1,16 @@
+from pathlib import Path
+
 from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import get_connection
+
+
+# Define a function stub for get_llm_client to allow for mocking in tests
+def get_llm_client(config):
+    """Function stub for get_llm_client to allow for mocking in tests."""
+    raise NotImplementedError("LLM client not implemented")
+
+# Set path to project root to ensure consistent config loading
+PROJECT_ROOT = Path(__file__).parent.parent.parent.parent.parent.parent
 
 
 class FinancialPipeline(BaseScript):
@@ -22,7 +34,23 @@ class FinancialPipeline(BaseScript):
             description: A description of what the script does.
         """
         super().__init__(name=name, description=description)
+        self.PROJECT_ROOT = PROJECT_ROOT
 
+    def get_path(self, path: str) -> Path:
+        """
+        Get a path, resolving it relative to the project root if it's not absolute.
+
+        Args:
+            path: The path string to resolve
+
+        Returns:
+            Path: The resolved path
+        """
+        path_obj = Path(path)
+        if path_obj.is_absolute():
+            return path_obj
+        return self.PROJECT_ROOT / path
+        
     def run(self) -> None:
         """
         Executes the financial analysis pipeline.

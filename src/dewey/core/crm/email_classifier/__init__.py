@@ -1,8 +1,9 @@
+import logging
+from typing import Any, Dict, Optional
+
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection
 from dewey.llm.llm_utils import LLMClient
-import logging
-from typing import Any, Dict, Optional
 
 
 class EmailClassifier(BaseScript):

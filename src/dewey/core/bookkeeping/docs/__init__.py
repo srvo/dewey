@@ -1,5 +1,6 @@
+from typing import Any, Optional, Protocol
+
 from dewey.core.base_script import BaseScript
-from typing import Any, Protocol, Optional
 
 
 class DocumentationTask(Protocol):

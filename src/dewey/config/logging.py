@@ -4,9 +4,10 @@ import logging
 import sys
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 
 import colorlog
+
 from dewey.core.base_script import BaseScript
 
 
@@ -18,7 +19,7 @@ class LoggingConfigurator(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the LoggingConfigurator, setting the configuration section."""
-        super().__init__(config_section='logging')
+        super().__init__(config_section="logging")
 
     def run(self) -> None:
         """Configures logging based on the provided configuration.
@@ -30,7 +31,11 @@ class LoggingConfigurator(BaseScript):
 
         self.logger.setLevel(self.get_config_value("level", logging.INFO))
 
-        formatter = logging.Formatter(self.get_config_value("format", "%(asctime)s - %(levelname)s - %(message)s"))
+        formatter = logging.Formatter(
+            self.get_config_value(
+                "format", "%(asctime)s - %(levelname)s - %(message)s"
+            )
+        )
 
         # Console handler
         ch = logging.StreamHandler(sys.stdout)

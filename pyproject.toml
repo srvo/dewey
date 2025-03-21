@@ -23,23 +23,20 @@ dependencies = [
     "sqlalchemy",
     "setuptools",
     "pandas",
-    "numpy==1.26.4",  # Updated for aider-chat compatibility while maintaining spaCy support
-    
+    "numpy==1.26.4", # Updated for aider-chat compatibility while maintaining spaCy support
     # CLI and UI
     "click",
     "typer>=0.9.0",
     "rich>=13.0.0",
     "textual>=2.1.2",
-    
     # AI and ML
     "openai>=1.0.0",
     "google-generativeai",
     "spacy>=3.8.4",
     "chromadb>=0.4.15",
     "sentence-transformers>=2.2.2",
-    "smolagents==1.9.2",  # Pinned version for stability
+    "smolagents==1.9.2", # Pinned version for stability
     "aider-chat @ git+https://github.com/paul-gauthier/aider.git",
-    
     # Web and API
     "uvicorn",
     "httpx",
@@ -47,30 +44,28 @@ dependencies = [
     "asgiref",
     "asyncpg",
     "psycopg2-binary",
-    
     # AWS
     "boto3",
     "botocore",
-    
     # Development and Testing
     "ruff",
     "pytest",
     "pytest-mock",
     "pytest-cov",
-    "pytest-asyncio>=0.23.5",  # Added for async test support
+    "pytest-asyncio>=0.23.5", # Added for async test support
     "coverage",
     "flake8",
     "black>=25.1.0",
     "pre-commit",
-    
     # Utilities
     "joblib",
     "duckduckgo-search",
     "ulid-py",
-    "tomli-w",  # For proper TOML handling
+    "tomli-w", # For proper TOML handling
     "tqdm",
     "humanize",
-    "chardet>=5.2.0",  # For CSV encoding detection
+    "chardet>=5.2.0", # For CSV encoding detection
+    "litellm>=1.63.7",
 ]
 
 [tool.setuptools]
@@ -101,3 +96,46 @@ asyncio_default_fixture_loop_scope = "function"
 testpaths = [
     "tests"
 ]
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+skip-string-normalization = true
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.flake8]
+max-line-length = 79
+extend-ignore = ["E203", "W503"]
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = ["E203"]

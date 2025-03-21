@@ -3,7 +3,7 @@
 import os
 import re
 import shutil
-from typing import List, Dict, Optional, Protocol
+from typing import Dict, List, Optional, Protocol
 
 from dewey.core.base_script import BaseScript
 

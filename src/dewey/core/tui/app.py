@@ -6,6 +6,7 @@ This module provides the main TUI application class.
 
 import argparse
 import sys
+import os
 from typing import Any, Callable, Dict, List, Optional, Union
 
 from textual.app import App, ComposeResult
@@ -18,6 +19,12 @@ from textual.widgets import Button, Footer, Header, Label, Static
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection, get_connection
 from dewey.llm.llm_utils import LLMClient, get_llm_client
+
+# Import our custom screens
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
+from src.ui.screens.feedback_manager_screen import FeedbackManagerScreen
+from src.ui.screens.port5_screen import Port5Screen
+
 
 class ModuleScreen(BaseScript, Screen):
     """Base screen for module displays."""
@@ -205,6 +212,12 @@ class MainMenu(Screen):
                     Button("LLM Agents", id="llm-agents", variant="warning"),
                     id="llm-row",
                 ),
+                Label("[bold]Tools & Utilities[/bold]", id="tools-title"),
+                Horizontal(
+                    Button("Feedback Manager", id="feedback-manager", variant="success"),
+                    Button("Port5 Research", id="port5", variant="success"),
+                    id="tools-row",
+                ),
                 id="menu",
             )
         )
@@ -222,10 +235,16 @@ class MainMenu(Screen):
             "database": DatabaseScreen("Database"),
             "engines": EnginesScreen("Engines"),
             "llm-agents": LLMAgentsScreen("LLM Agents"),
+            "feedback-manager": "feedback-manager",
+            "port5": "port5",
         }
 
         if button_id in screen_map:
-            self.app.push_screen(screen_map[button_id])
+            screen = screen_map[button_id]
+            if isinstance(screen, str):
+                self.app.push_screen(screen)
+            else:
+                self.app.push_screen(screen)
 
 
 class DeweyTUI(App):
@@ -244,7 +263,7 @@ class DeweyTUI(App):
         padding: 1;
     }
 
-    #title, #llm-title {
+    #title, #llm-title, #tools-title {
         text-align: center;
         padding: 1;
     }
@@ -254,7 +273,7 @@ class DeweyTUI(App):
         margin: 1 2;
     }
 
-    #row1, #row2, #row3, #llm-row {
+    #row1, #row2, #row3, #llm-row, #tools-row {
         height: auto;
         align: center middle;
         padding: 1;
@@ -283,7 +302,18 @@ class DeweyTUI(App):
         "database": DatabaseScreen,
         "engines": EnginesScreen,
         "llm-agents": LLMAgentsScreen,
+        "feedback-manager": FeedbackManagerScreen,
+        "port5": Port5Screen,
     }
+
+    def __init__(self):
+        """Initialize the Dewey TUI application."""
+        super().__init__()
+        # Load additional CSS files
+        self.stylesheet_paths = [
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../src/ui/assets/feedback_manager.tcss")),
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../src/ui/assets/port5.tcss"))
+        ]
 
     def on_mount(self) -> None:
         """Handle app mount event."""

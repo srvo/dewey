@@ -1,6 +1,7 @@
-from dewey.core.base_script import BaseScript
 import logging
 from typing import Any, Dict
+
+from dewey.core.base_script import BaseScript
 
 
 class AnalyzeTables(BaseScript):

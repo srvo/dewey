@@ -1,5 +1,6 @@
 """Client relationship and task prioritization agent using smolagents."""
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
+
 from smolagents import Tool
 
 from dewey.core.base_script import BaseScript

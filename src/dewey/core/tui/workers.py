@@ -1,8 +1,13 @@
-from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
-from dewey.llm.llm_utils import get_llm_client
 import logging
 from typing import Any
+
+from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import (
+    DatabaseConnection,
+    get_connection,
+    get_motherduck_connection,
+)
+from dewey.llm.llm_utils import get_llm_client
 
 
 class Workers(BaseScript):

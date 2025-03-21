@@ -2,7 +2,7 @@ import shutil
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Tuple, Union, Callable, Protocol
+from typing import Any, Callable, Dict, List, Protocol, Tuple, Union
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection

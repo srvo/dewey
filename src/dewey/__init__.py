@@ -1,6 +1,7 @@
 """Dewey - A Python package for managing research, analysis, and client interactions."""
-from dewey.core.base_script import BaseScript
 import logging
+
+from dewey.core.base_script import BaseScript
 
 
 class DeweyManager(BaseScript):

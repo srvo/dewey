@@ -15,12 +15,15 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
-import logging
 
 import duckdb
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection, get_motherduck_connection
+from dewey.core.db.connection import (
+    DatabaseConnection,
+    get_connection,
+    get_motherduck_connection,
+)
 
 
 class ContactConsolidation(BaseScript):

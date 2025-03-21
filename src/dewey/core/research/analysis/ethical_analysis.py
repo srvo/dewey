@@ -7,7 +7,7 @@ Provides specialized workflows for ethical analysis using the DeepSeek engine.
 Each workflow is designed to handle specific types of ethical analysis tasks.
 """
 
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
 
 from dewey.core.base_script import BaseScript
 from dewey.core.engines.deepseek import (
