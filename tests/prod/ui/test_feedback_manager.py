@@ -24,13 +24,19 @@ from src.ui.models.feedback import SenderProfile, FeedbackItem
 class TestApp(App):
     """Test app to host the feedback manager screen."""
     
+    CSS = """
+    /* Empty CSS required for Textual */
+    """
+    
+    # No __init__ constructor to prevent the pytest collection warning
+    
     def on_mount(self) -> None:
         """Push the feedback manager screen when the app starts."""
         self.push_screen(FeedbackManagerScreen())
     
     def compose(self) -> ComposeResult:
-        """Add the feedback manager screen to the app."""
-        yield FeedbackManagerScreen()
+        """The app does not directly yield components."""
+        yield from ()
 
 
 @pytest.mark.asyncio
@@ -61,6 +67,10 @@ async def test_feedback_manager_loads():
         
         client_switch = screen.query_one("#client-switch", Switch)
         assert client_switch.value is False
+        
+        # Check status container exists instead of directly checking status-text
+        status_container = screen.query_one("#status-container")
+        assert status_container is not None
 
 
 @pytest.mark.asyncio

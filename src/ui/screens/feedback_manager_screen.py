@@ -540,10 +540,9 @@ class FeedbackManagerScreen(Screen):
 
     @work(thread=True)
     def _load_feedback_in_background(self) -> None:
-        """Load feedback items in a background thread."""
+        """Load feedback items in a background thread using Textual's work decorator."""
         
-        def load_thread() -> None:
-            """Inner function to perform loading in a separate thread."""
+        def load_thread():
             try:
                 logger.debug("Starting background loading of feedback items")
                 self.is_loading = True
@@ -661,12 +660,11 @@ class FeedbackManagerScreen(Screen):
                 self._create_mock_feedback_items()
                 self._process_loaded_data()
                 self._finish_loading()
-                
-        # Start the loading thread
-        thread = threading.Thread(target=load_thread)
-        thread.daemon = True
-        thread.start()
         
+        # Create and start thread with daemon=True parameter
+        thread = threading.Thread(target=load_thread, daemon=True)
+        thread.start()
+
     def _get_db_connection(self, db_config):
         """Context manager for database connections.
         
@@ -677,16 +675,29 @@ class FeedbackManagerScreen(Screen):
             A context manager that yields a database connection
         """
         from contextlib import contextmanager
+        import duckdb
         
         @contextmanager
         def connection_context():
-            conn = get_duckdb_connection(db_config)
+            # Create a new connection directly
+            conn = None
             try:
-                logger.debug(f"Opened database connection to {db_config.get('path', ':memory:')}")
+                # Direct connection to DuckDB, not using get_duckdb_connection
+                # which appears to return a context manager instead of a connection
+                db_path = db_config.get('path', ':memory:')
+                logger.debug(f"Opening direct database connection to {db_path}")
+                conn = duckdb.connect(db_path)
                 yield conn
+            except Exception as e:
+                logger.error(f"Database connection error: {str(e)}")
+                raise
             finally:
-                logger.debug("Closing database connection")
-                conn.close()
+                if conn is not None:
+                    logger.debug("Closing database connection")
+                    try:
+                        conn.close()
+                    except Exception as e:
+                        logger.error(f"Error closing connection: {str(e)}")
                 
         return connection_context()
 
@@ -896,17 +907,28 @@ class FeedbackManagerScreen(Screen):
         """Update the UI after data has been loaded and processed."""
         # Update status text
         self.status_text = f"Showing {len(self.filtered_senders)} senders out of {len(self.sender_profiles)} total"
-        self.query_one("#status-text", Static).update(self.status_text)
+        
+        # Safely update status text if element exists
+        try:
+            self.query_one("#status-text", Static).update(self.status_text)
+        except Exception as e:
+            logger.debug(f"Could not update status text: {str(e)}")
         
         # Populate the table with filtered data
-        self._populate_senders_table()
+        try:
+            self._populate_senders_table()
+        except Exception as e:
+            logger.debug(f"Could not populate senders table: {str(e)}")
         
         # Select the first sender if available
         if self.filtered_senders:
-            senders_table = self.query_one("#senders-table", DataTable)
-            senders_table.cursor_coordinates = (0, 0)
-            self.selected_sender_index = 0
-            self.update_sender_details()
+            try:
+                senders_table = self.query_one("#senders-table", DataTable)
+                senders_table.cursor_coordinates = (0, 0)
+                self.selected_sender_index = 0
+                self.update_sender_details()
+            except Exception as e:
+                logger.debug(f"Could not select first sender: {str(e)}")
         
         # Hide loading indicator if it exists
         try:

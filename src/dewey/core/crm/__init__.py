@@ -1,6 +1,16 @@
+"""
+Customer Relationship Management (CRM) Module for Dewey
+
+This module provides CRM functionality for managing contacts, communication,
+data import/export, and various CRM-related utilities.
+"""
+
 from typing import Any, Optional
 
 from dewey.core.base_script import BaseScript
+from dewey.core.crm.communication import EmailClient
+from dewey.core.crm.contacts import ContactConsolidation, CsvContactIntegration
+from dewey.core.crm.data import DataImporter
 from dewey.core.db.connection import DatabaseConnection, get_connection
 # TODO: Update all CRM modules to use LiteLLMClient directly instead of get_llm_client
 # Temporary import fix during migration from llm_utils to litellm_client
@@ -83,3 +93,12 @@ class CrmModule(BaseScript):
         except Exception as e:
             self.logger.error(f"Error in CRM module: {e}")
             raise
+
+
+__all__ = [
+    "CrmModule",
+    "ContactConsolidation",
+    "CsvContactIntegration",
+    "EmailClient",
+    "DataImporter"
+]

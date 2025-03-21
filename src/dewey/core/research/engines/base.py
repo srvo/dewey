@@ -19,7 +19,7 @@ class BaseEngine(BaseScript):
         Args:
             config_section: The configuration section to use for this engine.
         """
-        super().__init__(config_section=config_section)
+        super().__init__(config_section=config_section, requires_db=False, enable_llm=False)
         self.logger.debug(
             f"BaseEngine initialized with config section: {config_section}"
         )
@@ -63,6 +63,22 @@ class BaseEngine(BaseScript):
             message: The message to log.
         """
         self.logger.error(message)
+
+    def debug(self, message: str) -> None:
+        """Logs a debug message using the engine's logger.
+
+        Args:
+            message: The message to log.
+        """
+        self.logger.debug(message)
+
+    def warning(self, message: str) -> None:
+        """Logs a warning message using the engine's logger.
+
+        Args:
+            message: The message to log.
+        """
+        self.logger.warning(message)
 
     def setup_argparse(self) -> argparse.ArgumentParser:
         """Set up command line arguments.

@@ -4,7 +4,7 @@ import shutil
 from pathlib import Path
 from typing import Any, Dict, List, Protocol, Tuple
 
-from dewey.config import logging  # Centralized logging
+from dewey.core.config import logging  # Centralized logging
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection, get_connection
 from dewey.core.db.utils import create_table, upsert_data  # Database utilities
