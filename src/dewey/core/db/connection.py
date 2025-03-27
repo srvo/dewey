@@ -17,7 +17,6 @@ class DatabaseConnection:
     def _init_connections(self):
         """Initialize database connections using config."""
         import duckdb
-        from motherduck import connect
         
         # Get MotherDuck token from environment
         md_token = os.getenv("MOTHERDUCK_TOKEN")
@@ -27,8 +26,14 @@ class DatabaseConnection:
         # Initialize local DuckDB connection
         self.local_conn = duckdb.connect(self.config.get("local_db_path", ":memory:"))
         
-        # Initialize MotherDuck connection
-        self.md_conn = connect(f"md:?motherduck_token={md_token}")
+        # Initialize MotherDuck connection using DuckDB's native method
+        self.md_conn = duckdb.connect(
+            database='md:',
+            config={
+                'motherduck_token': md_token,
+                'allow_unsigned_extensions': 'true'
+            }
+        )
         
         # Set up schema if needed
         self._ensure_schema()
