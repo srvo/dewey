@@ -14,6 +14,10 @@ class DatabaseConnection:
         self.md_conn = None
         self.logger = logging.getLogger(__name__)
         
+    def get_connection(self, for_write: bool = False, local_only: bool = False) -> 'DatabaseConnection':
+        """Get a database connection."""
+        return self
+        
     def execute_query(self, query: str, params: Optional[List[Any]] = None, 
                      for_write: bool = False, local_only: bool = False) -> List[Tuple]:
         """Execute a SQL query on the appropriate database."""

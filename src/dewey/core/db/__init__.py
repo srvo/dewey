@@ -46,7 +46,7 @@ def get_connection(for_write: bool = False, local_only: bool = False) -> Databas
     Returns:
         A database connection
     """
-    return db_manager.get_connection(for_write=for_write, local_only=local_only)
+    return db_manager
 
 def get_motherduck_connection(for_write: bool = False) -> Optional[DatabaseConnection]:
     """Get a connection to the MotherDuck cloud database.
