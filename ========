@@ -1,0 +1,46 @@
+    def _is_sensitive_data(self, table: str) -> bool:
+        """
+        Determine if a table contains sensitive data.
+        
+        Args:
+            table: The name of the table to check.
+            
+        Returns:
+            True if the table contains sensitive data, False otherwise.
+        """
+        # TODO: Implement logic to determine data sensitivity based on table name or schema
+        # This is a placeholder; replace with actual implementation
+        sensitive_tables = ['contacts', 'ledger', 'transactions']  # Example list
+        return table in sensitive_tables
+
+    def route_to_ai_provider(self, provider: str):
+        """
+        Route data processing to a specific AI provider.
+        
+        Args:
+            provider: The name of the AI provider to use (e.g., 'deepinfra', 'gemini').
+            
+        Returns:
+            An object or function that can process the data using the specified provider.
+        """
+        # TODO: Implement routing logic to different AI providers
+        # This is a placeholder; replace with actual implementation
+        if provider == 'deepinfra':
+            # Logic to use Deepinfra
+            logger.info("Routing to Deepinfra for processing")
+            return self  # Replace with actual Deepinfra processor
+        elif provider == 'gemini':
+            # Logic to use Gemini
+            logger.info("Routing to Gemini for processing")
+            return self  # Replace with actual Gemini processor
+        else:
+            raise ValueError(f"Unsupported AI provider: {provider}")
+
+    def sync_to_motherduck(self):
+        """Synchronize the local database to MotherDuck."""
+        try:
+            # Get the last sync timestamp
+            last_sync = self.execute_query("""
+                SELECT MAX(sync_time) FROM sync_status 
+                WHERE status = 'success'
+            """, local_only=True)
