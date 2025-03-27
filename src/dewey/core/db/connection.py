@@ -1,10 +1,36 @@
 import logging
+from typing import Any, List, Optional, Tuple
 
 from dewey.core.exceptions import DatabaseConnectionError
 
 logger = logging.getLogger(__name__)
 
-def sync_to_motherduck(self):
+class DatabaseConnection:
+    """Main database connection class handling both local and MotherDuck connections."""
+    
+    def __init__(self, config: dict):
+        self.config = config
+        self.local_conn = None
+        self.md_conn = None
+        self.logger = logging.getLogger(__name__)
+        
+    def execute_query(self, query: str, params: Optional[List[Any]] = None, 
+                     for_write: bool = False, local_only: bool = False) -> List[Tuple]:
+        """Execute a SQL query on the appropriate database."""
+        # Implementation would go here
+        return []
+        
+    def list_tables(self) -> List[str]:
+        """List all tables in the database."""
+        # Implementation would go here
+        return []
+        
+    def get_schema(self, table_name: str) -> dict:
+        """Get schema for a specific table."""
+        # Implementation would go here
+        return {}
+        
+    def sync_to_motherduck(self):
         """Synchronize the local database to MotherDuck with schema checks."""
         try:
             # Check schema versions first
@@ -41,77 +67,73 @@ def sync_to_motherduck(self):
             """, [str(e), str(e)], for_write=True, local_only=False)
             raise
 
-def _sync_schema_versions(self, local_version, md_version):
-    """Handle schema version synchronization."""
-    if local_version > md_version:
-        self.logger.info("Pushing local schema changes to MotherDuck")
-        self.execute_query("CALL motherduck_push_schema()", for_write=True)
-    elif md_version > local_version:
-        self.logger.info("Pulling MotherDuck schema changes")
-        self.execute_query("CALL motherduck_pull_schema()", for_write=True)
+    def _sync_schema_versions(self, local_version, md_version):
+        """Handle schema version synchronization."""
+        if local_version > md_version:
+            self.logger.info("Pushing local schema changes to MotherDuck")
+            self.execute_query("CALL motherduck_push_schema()", for_write=True)
+        elif md_version > local_version:
+            self.logger.info("Pulling MotherDuck schema changes")
+            self.execute_query("CALL motherduck_pull_schema()", for_write=True)
 
-def _sync_with_schema_validation(self):
-    """Perform schema-validated sync with conflict resolution."""
-    self.execute_query("""
-        CREATE OR REPLACE TABLE local_changes AS
-        SELECT * EXCLUDE (__rowid__), 'local' as source_db
-        FROM (SELECT * FROM EXCLUDE_CHANGES('*'))
-    """, for_write=True, local_only=True)
-    
-    self.execute_query("""
-        CREATE OR REPLACE TABLE motherduck_changes AS
-        SELECT * EXCLUDE (__rowid__), 'motherduck' as source_db
-        FROM (SELECT * FROM EXCLUDE_CHANGES('*'))
-    """, for_write=True, local_only=False)
-    
-    self.execute_query("""
-        INSERT INTO motherduck.main.sync_conflicts
-        SELECT 
-            lc.*,
-            'schema_mismatch' as conflict_type,
-            CURRENT_TIMESTAMP as detected_at
-        FROM local_changes lc
-        FULL OUTER JOIN motherduck_changes mc 
-            ON lc.table_name = mc.table_id
-            AND lc.record_id = mc.record_id
-        WHERE lc != mc
-    """, for_write=True)
-
-def _sync_feedback_tables(self):
-    """Special handling for feedback-related tables."""
-    self.execute_query("""
-        CREATE TABLE IF NOT EXISTS motherduck.main.ai_feedback (
-            id VARCHAR PRIMARY KEY,
-            source_table VARCHAR NOT NULL,
-            source_id VARCHAR NOT NULL,
-            feedback_type VARCHAR NOT NULL,
-            feedback_content JSON NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            resolved_at TIMESTAMP,
-            resolution_details JSON,
-            resolution_status VARCHAR DEFAULT 'pending'
-        )
-    """, for_write=True)
-    
-    self.execute_query("""
-        SYNC motherduck.main.ai_feedback
-    """, for_write=True)
-
-def get_current_version(self, local_only: bool = False) -> int:
-    """Get the current schema version.
-    
-    Args:
-        local_only: Whether to only check the local database
+    def _sync_with_schema_validation(self):
+        """Perform schema-validated sync with conflict resolution."""
+        self.execute_query("""
+            CREATE OR REPLACE TABLE local_changes AS
+            SELECT * EXCLUDE (__rowid__), 'local' as source_db
+            FROM (SELECT * FROM EXCLUDE_CHANGES('*'))
+        """, for_write=True, local_only=True)
         
-    Returns:
-        Current schema version number
-    """
-    try:
-        result = self.execute_query("""
-            SELECT MAX(version) FROM schema_versions
-            WHERE status = 'success'
-        """, local_only=local_only)
+        self.execute_query("""
+            CREATE OR REPLACE TABLE motherduck_changes AS
+            SELECT * EXCLUDE (__rowid__), 'motherduck' as source_db
+            FROM (SELECT * FROM EXCLUDE_CHANGES('*'))
+        """, for_write=True, local_only=False)
         
-        return result[0][0] if result and result[0][0] else 0
-    except Exception as e:
-        raise DatabaseConnectionError(f"Failed to get schema version: {e}")
+        self.execute_query("""
+            INSERT INTO motherduck.main.sync_conflicts
+            SELECT 
+                lc.*,
+                'schema_mismatch' as conflict_type,
+                CURRENT_TIMESTAMP as detected_at
+            FROM local_changes lc
+            FULL OUTER JOIN motherduck_changes mc 
+                ON lc.table_name = mc.table_id
+                AND lc.record_id = mc.record_id
+            WHERE lc != mc
+        """, for_write=True)
+
+    def _sync_feedback_tables(self):
+        """Special handling for feedback-related tables."""
+        self.execute_query("""
+            CREATE TABLE IF NOT EXISTS motherduck.main.ai_feedback (
+                id VARCHAR PRIMARY KEY,
+                source_table VARCHAR NOT NULL,
+                source_id VARCHAR NOT NULL,
+                feedback_type VARCHAR NOT NULL,
+                feedback_content JSON NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                resolved_at TIMESTAMP,
+                resolution_details JSON,
+                resolution_status VARCHAR DEFAULT 'pending'
+            )
+        """, for_write=True)
+        
+        self.execute_query("""
+            SYNC motherduck.main.ai_feedback
+        """, for_write=True)
+
+    def get_current_version(self, local_only: bool = False) -> int:
+        """Get the current schema version."""
+        try:
+            result = self.execute_query("""
+                SELECT MAX(version) FROM schema_versions
+                WHERE status = 'success'
+            """, local_only=local_only)
+            
+            return result[0][0] if result and result[0][0] else 0
+        except Exception as e:
+            raise DatabaseConnectionError(f"Failed to get schema version: {e}")
+
+# Singleton instance used by the system
+db_manager = DatabaseConnection(config={})

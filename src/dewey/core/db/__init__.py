@@ -10,7 +10,7 @@ import threading
 from typing import Dict, Optional
 
 from .config import initialize_environment
-from .connection import db_manager, DatabaseConnection, DatabaseConnectionError
+from .connection import DatabaseConnection, db_manager, DatabaseConnectionError
 from .schema import initialize_schema
 from .sync import sync_all_tables
 from .monitor import monitor_database
