@@ -1,4 +1,5 @@
 import logging
+import os
 from typing import Any, List, Optional, Tuple
 
 from dewey.core.exceptions import DatabaseConnectionError
