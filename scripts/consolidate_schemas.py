@@ -147,4 +147,4 @@ class ConsolidateSchemas(BaseScript):
         self.logger.info("Schema consolidation complete")
 
 if __name__ == "__main__":
-    ConsolidateSchemas().main()
+    ConsolidateSchemas().run()
