@@ -115,8 +115,8 @@ class ConsolidateSchemas(BaseScript):
             for table in group_tables:
                 try:
                     # Check if table is empty
-                    count_result = self.db_conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()
-                    if count_result and count_result[0] == 0:
+                    count_result = self.db_conn.execute_query(f"SELECT COUNT(*) FROM {table}")
+                    if count_result and count_result[0][0] == 0:
                         empty_tables.append(table)
                         self.logger.info(f"Found empty table: {table}")
                         continue
@@ -129,7 +129,7 @@ class ConsolidateSchemas(BaseScript):
                         
                         # Create insert statement with explicit column order
                         insert_stmt = f"INSERT INTO {consolidated_table} ({columns_str}) SELECT {columns_str} FROM {table}"
-                        self.db_conn.execute(insert_stmt)
+                        self.db_conn.execute_query(insert_stmt)
                         self.logger.info(f"Merged data from {table}")
                     else:
                         self.logger.warning(f"Schema mismatch for table {table}, skipping")
@@ -140,7 +140,7 @@ class ConsolidateSchemas(BaseScript):
         self.logger.info(f"Found {len(empty_tables)} empty tables to delete")
         for table in empty_tables:
             try:
-                self.db_conn.execute(f"DROP TABLE IF EXISTS {table}")
+                self.db_conn.execute_query(f"DROP TABLE IF EXISTS {table}")
                 self.logger.info(f"Deleted empty table: {table}")
             except Exception as e:
                 self.logger.error(f"Error deleting table {table}: {str(e)}")
