@@ -80,8 +80,12 @@ class ConsolidateSchemas(BaseScript):
         # Group tables by their schema pattern
         schema_groups = {}
         for table in tables:
-            # Extract schema pattern (e.g. 'emails', 'documents', etc.)
-            schema_type = table.split('_')[0] if '_' in table else 'misc'
+            # Special handling for feedback-related tables
+            if table.startswith('feedback_') or table == 'ai_feedback':
+                schema_type = 'feedback'
+            else:
+                schema_type = table.split('_')[0] if '_' in table else 'misc'
+            
             if schema_type not in schema_groups:
                 schema_groups[schema_type] = []
             schema_groups[schema_type].append(table)
@@ -143,4 +147,4 @@ class ConsolidateSchemas(BaseScript):
         self.logger.info("Schema consolidation complete")
 
 if __name__ == "__main__":
-    ConsolidateSchemas().main() 
+    ConsolidateSchemas().main()

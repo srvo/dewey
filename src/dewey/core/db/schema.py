@@ -160,6 +160,20 @@ CREATE TABLE IF NOT EXISTS tasks (
 )
 """
 
+AI_FEEDBACK_TABLE = """
+CREATE TABLE IF NOT EXISTS ai_feedback (
+    id VARCHAR PRIMARY KEY,
+    source_table VARCHAR NOT NULL,
+    source_id VARCHAR NOT NULL,
+    feedback_type VARCHAR NOT NULL,
+    feedback_content JSON NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    resolved_at TIMESTAMP,
+    resolution_details JSON,
+    resolution_status VARCHAR DEFAULT 'pending'
+)
+"""
+
 # List of all tables and their creation SQL
 TABLES = {
     'schema_versions': SCHEMA_VERSION_TABLE,
@@ -170,7 +184,8 @@ TABLES = {
     'email_analyses': EMAIL_ANALYSES_TABLE,
     'company_context': COMPANY_CONTEXT_TABLE,
     'documents': DOCUMENTS_TABLE,
-    'tasks': TASKS_TABLE
+    'tasks': TASKS_TABLE,
+    'ai_feedback': AI_FEEDBACK_TABLE
 }
 
 def initialize_schema(local_only: bool = False):
