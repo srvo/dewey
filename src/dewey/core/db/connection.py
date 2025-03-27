@@ -10,13 +10,42 @@ class DatabaseConnection:
     
     def __init__(self, config: dict):
         self.config = config
-        self.local_conn = None
-        self.md_conn = None
         self.logger = logging.getLogger(__name__)
+        self._init_connections()
+
+    def _init_connections(self):
+        """Initialize database connections using config."""
+        import duckdb
+        from motherduck import connect
+        
+        # Get MotherDuck token from environment
+        md_token = os.getenv("MOTHERDUCK_TOKEN")
+        if not md_token:
+            raise DatabaseConnectionError("MOTHERDUCK_TOKEN not found in environment")
+
+        # Initialize local DuckDB connection
+        self.local_conn = duckdb.connect(self.config.get("local_db_path", ":memory:"))
+        
+        # Initialize MotherDuck connection
+        self.md_conn = connect(f"md:?motherduck_token={md_token}")
+        
+        # Set up schema if needed
+        self._ensure_schema()
+
+    def _ensure_schema(self):
+        """Ensure required schema exists."""
+        self.md_conn.execute("CREATE SCHEMA IF NOT EXISTS main")
         
     def get_connection(self, for_write: bool = False, local_only: bool = False) -> 'DatabaseConnection':
         """Get a database connection."""
-        return self
+        return self.md_conn if not local_only else self.local_conn
+
+    def close(self) -> None:
+        """Close all database connections."""
+        if self.local_conn:
+            self.local_conn.close()
+        if self.md_conn:
+            self.md_conn.close()
         
     def execute_query(self, query: str, params: Optional[List[Any]] = None, 
                      for_write: bool = False, local_only: bool = False) -> List[Tuple]:
@@ -26,13 +55,21 @@ class DatabaseConnection:
         
     def list_tables(self) -> List[str]:
         """List all tables in the database."""
-        # Implementation would go here
-        return []
+        try:
+            result = self.md_conn.execute("SHOW TABLES").fetchall()
+            return [row[0] for row in result] if result else []
+        except Exception as e:
+            self.logger.error(f"Error listing tables: {e}")
+            return []
         
     def get_schema(self, table_name: str) -> dict:
         """Get schema for a specific table."""
-        # Implementation would go here
-        return {}
+        try:
+            result = self.md_conn.execute(f"DESCRIBE {table_name}").fetchall()
+            return {row[0]: row[1] for row in result} if result else {}
+        except Exception as e:
+            self.logger.error(f"Error getting schema for {table_name}: {e}")
+            return {}
         
     def sync_to_motherduck(self):
         """Synchronize the local database to MotherDuck with schema checks."""
