@@ -1,5 +1,7 @@
 import logging
 
+from dewey.core.db.schema import DatabaseConnectionError
+
 logger = logging.getLogger(__name__)
 
 def sync_to_motherduck(self):
