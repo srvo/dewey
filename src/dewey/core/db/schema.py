@@ -8,7 +8,8 @@ import logging
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from .connection import db_manager, DatabaseConnectionError
+from .connection import db_manager
+from dewey.core.exceptions import DatabaseConnectionError
 
 logger = logging.getLogger(__name__)
 

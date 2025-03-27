@@ -1,6 +1,6 @@
 import logging
 
-from dewey.core.db.schema import DatabaseConnectionError
+from dewey.core.exceptions import DatabaseConnectionError
 
 logger = logging.getLogger(__name__)
 
