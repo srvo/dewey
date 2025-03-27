@@ -1,4 +1,4 @@
- def sync_to_motherduck(self):
+def sync_to_motherduck(self):
         """Synchronize the local database to MotherDuck."""
         try:
             # Get the last sync timestamp
