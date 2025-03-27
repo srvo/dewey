@@ -69,8 +69,8 @@ class ConsolidateSchemas(BaseScript):
                 
         return True
 
-    def run(self):
-        """Run the schema consolidation process."""
+    def execute(self) -> None:
+        """Execute the schema consolidation process."""
         self.logger.info("Starting schema consolidation")
 
         # Get list of all tables
