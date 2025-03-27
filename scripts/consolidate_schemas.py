@@ -10,7 +10,8 @@ class ConsolidateSchemas(BaseScript):
         """Function __init__."""
         super().__init__(
             name="consolidate_schemas",
-            description="Consolidate and clean up schemas in MotherDuck"
+            description="Consolidate and clean up schemas in MotherDuck",
+            requires_db=True
         )
         
     def _are_types_compatible(self, type1: str, type2: str) -> bool:
@@ -74,7 +75,7 @@ class ConsolidateSchemas(BaseScript):
         self.logger.info("Starting schema consolidation")
 
         # Get list of all tables
-        tables = self.db_engine.list_tables()
+        tables = self.db_conn.list_tables()
         self.logger.info(f"Found {len(tables)} tables")
 
         # Group tables by their schema pattern
@@ -101,26 +102,26 @@ class ConsolidateSchemas(BaseScript):
                 continue
 
             # Get schema of first table as reference
-            ref_schema = self.db_engine.get_schema(group_tables[0])
+            ref_schema = self.db_conn.get_schema(group_tables[0])
             
             # Create consolidated table name
             consolidated_table = f"{schema_type}_consolidated"
             
             # Create consolidated table with reference schema
             create_stmt = f"CREATE TABLE IF NOT EXISTS {consolidated_table} AS SELECT * FROM {group_tables[0]} WHERE 1=0"
-            self.db_engine.execute(create_stmt)
+            self.db_conn.execute(create_stmt)
             
             # Insert data from all tables with compatible schema
             for table in group_tables:
                 try:
                     # Check if table is empty
-                    count_result = self.db_engine.execute(f"SELECT COUNT(*) FROM {table}").fetchone()
+                    count_result = self.db_conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()
                     if count_result and count_result[0] == 0:
                         empty_tables.append(table)
                         self.logger.info(f"Found empty table: {table}")
                         continue
 
-                    table_schema = self.db_engine.get_schema(table)
+                    table_schema = self.db_conn.get_schema(table)
                     if self._are_schemas_compatible(ref_schema, table_schema):
                         # Get column names in the correct order
                         columns = list(ref_schema.keys())
@@ -128,7 +129,7 @@ class ConsolidateSchemas(BaseScript):
                         
                         # Create insert statement with explicit column order
                         insert_stmt = f"INSERT INTO {consolidated_table} ({columns_str}) SELECT {columns_str} FROM {table}"
-                        self.db_engine.execute(insert_stmt)
+                        self.db_conn.execute(insert_stmt)
                         self.logger.info(f"Merged data from {table}")
                     else:
                         self.logger.warning(f"Schema mismatch for table {table}, skipping")
@@ -139,7 +140,7 @@ class ConsolidateSchemas(BaseScript):
         self.logger.info(f"Found {len(empty_tables)} empty tables to delete")
         for table in empty_tables:
             try:
-                self.db_engine.execute(f"DROP TABLE IF EXISTS {table}")
+                self.db_conn.execute(f"DROP TABLE IF EXISTS {table}")
                 self.logger.info(f"Deleted empty table: {table}")
             except Exception as e:
                 self.logger.error(f"Error deleting table {table}: {str(e)}")
