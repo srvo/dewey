@@ -245,7 +245,7 @@ class BaseScript(ABC):
             
         # Update database connection if specified
         if self.requires_db and hasattr(args, "db_connection_string") and args.db_connection_string:
-            from dewey.core.db.connection import get_connection
+            from dewey.core.db import get_connection
             self.db_conn = get_connection({"connection_string": args.db_connection_string})
             self.logger.info("Using custom database connection")
             
