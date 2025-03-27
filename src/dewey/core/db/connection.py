@@ -53,11 +53,18 @@ class DatabaseConnection:
         if self.md_conn:
             self.md_conn.close()
         
+    def execute(self, query: str) -> None:
+        """Execute a SQL statement on the appropriate database."""
+        conn = self.get_connection(local_only=False)  # Use MotherDuck by default
+        conn.execute(query)
+
     def execute_query(self, query: str, params: Optional[List[Any]] = None, 
                      for_write: bool = False, local_only: bool = False) -> List[Tuple]:
-        """Execute a SQL query on the appropriate database."""
-        # Implementation would go here
-        return []
+        """Execute a SQL query and return results."""
+        conn = self.get_connection(local_only=local_only)
+        if params:
+            return conn.execute(query, params).fetchall()
+        return conn.execute(query).fetchall()
         
     def list_tables(self) -> List[str]:
         """List all tables in the database."""
