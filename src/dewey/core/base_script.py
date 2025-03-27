@@ -258,40 +258,37 @@ class BaseScript(ABC):
         return args
 
     @abstractmethod
-    def run(self) -> None:
-        """Run the script.
-        
-        This method must be implemented by all subclasses.
-        """
-        pass
-
     def execute(self) -> None:
         """Execute the script.
         
-        This method handles the common setup and execution flow:
-        1. Parse arguments
-        2. Set up logging and configuration
-        3. Run the script
-        4. Handle exceptions
-        5. Clean up resources
+        This method should be implemented by all subclasses to define
+        the main functionality of the script. It should handle:
+        
+        1. Setting up any required resources (DB, LLM, etc.)
+        2. Running the script's main functionality
+        3. Cleaning up resources
+        4. Handling exceptions
         """
+        pass
+
+    def run(self) -> None:
+        """Legacy method for backward compatibility.
+        
+        New scripts should implement execute() instead of run().
+        This method will be deprecated in a future version.
+        """
+        self.logger.warning("Using deprecated run() method. Update to use execute() instead.")
         try:
-            # Parse arguments
-            args = self.parse_args()
-            
-            # Run the script
             self.logger.info(f"Starting execution of {self.name}")
-            self.run()
-            self.logger.info(f"Completed execution of {self.name}")
             
-        except KeyboardInterrupt:
-            self.logger.warning("Script interrupted by user")
-            sys.exit(1)
+            # Call execute method
+            self.execute()
+                
+            self.logger.info(f"Successfully completed {self.name}")
         except Exception as e:
-            self.logger.error(f"Error executing script: {e}", exc_info=True)
-            sys.exit(1)
+            self.logger.error(f"Error executing {self.name}: {e}", exc_info=True)
+            raise
         finally:
-            # Clean up resources
             self._cleanup()
 
     def _cleanup(self) -> None:
