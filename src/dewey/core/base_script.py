@@ -153,7 +153,7 @@ class BaseScript(ABC):
     def _initialize_db_connection(self) -> None:
         """Initialize database connection if required."""
         try:
-            from dewey.core.db.connection import get_connection
+            from dewey.core.db import get_connection
             
             self.logger.debug("Initializing database connection")
             db_config = self.config.get("core", {}).get("database", {})
