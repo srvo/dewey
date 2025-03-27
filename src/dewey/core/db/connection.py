@@ -8,10 +8,11 @@ connection pooling.
 import logging
 import os
 import time
+import random
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union, TypeAlias
+from typing import Any, Dict, List, Optional, Union, TypeAlias, Tuple
 
 import duckdb
 from dotenv import load_dotenv
@@ -31,7 +32,7 @@ MAX_RETRIES = 3
 RETRY_DELAY = 1  # seconds
 MOTHERDUCK_TOKEN = os.getenv('MOTHERDUCK_TOKEN')
 LOCAL_DB_PATH = os.path.expanduser('~/dewey/dewey.duckdb')
-MOTHERDUCK_DB = 'md:dewey@motherduck/dewey.duckdb'
+MOTHERDUCK_DB = 'md:dewey'
 
 # Flag for testing - when True, disable dual-database writes
 TEST_MODE = False
@@ -224,7 +225,54 @@ class DatabaseManager:
             
         self.motherduck_pool.close_all()
         self.local_pool.close_all()
+
+    def _execute_with_retry(self, conn, query, params=None, max_retries=3, base_delay=0.1):
+        """Execute a query with exponential backoff and jitter for retrying write operations.
         
+        Args:
+            conn: DuckDB connection
+            query: Query to execute
+            params: Query parameters
+            max_retries: Maximum number of retry attempts
+            base_delay: Base delay time in seconds (will be multiplied by 2^retry)
+            
+        Returns:
+            Query results
+        """
+        retry = 0
+        last_exception = None
+        
+        while retry <= max_retries:
+            try:
+                if params:
+                    result = conn.execute(query, params).fetchall()
+                else:
+                    result = conn.execute(query).fetchall()
+                return result
+            except Exception as e:
+                last_exception = e
+                # Check if this is a write-write conflict that might be resolved by retrying
+                if "write-write conflict" in str(e):
+                    retry += 1
+                    if retry <= max_retries:
+                        # Calculate delay with exponential backoff and jitter
+                        delay = base_delay * (2 ** (retry - 1))
+                        # Add jitter (±30% randomness)
+                        jitter = random.uniform(0.7, 1.3)
+                        actual_delay = delay * jitter
+                        
+                        logger.warning(
+                            f"Write-write conflict on attempt {retry}/{max_retries}, "
+                            f"retrying in {actual_delay:.3f}s: {str(e)}"
+                        )
+                        time.sleep(actual_delay)
+                        continue
+                # If not a retriable error or we've exhausted retries, raise the exception
+                raise last_exception
+        
+        # If we got here, we've exhausted retries
+        raise last_exception
+
     def execute_query(self, query: str, params: Optional[List[Any]] = None, 
                      for_write: bool = False, local_only: bool = False) -> List[Any]:
         """Execute a query and return the results.
@@ -242,11 +290,7 @@ class DatabaseManager:
         if TEST_MODE:
             with self.get_connection(for_write=for_write, local_only=local_only) as conn:
                 try:
-                    if params:
-                        result = conn.execute(query, params).fetchall()
-                    else:
-                        result = conn.execute(query).fetchall()
-                    return result
+                    return self._execute_with_retry(conn, query, params)
                 except Exception as e:
                     raise DatabaseConnectionError(f"Query execution failed: {e}")
         
@@ -257,20 +301,20 @@ class DatabaseManager:
             md_result = None
             try:
                 with self.get_connection(for_write=True, local_only=False) as md_conn:
-                    if params:
-                        md_result = md_conn.execute(query, params).fetchall()
-                    else:
-                        md_result = md_conn.execute(query).fetchall()
+                    try:
+                        # Use retry mechanism for write operations to MotherDuck
+                        md_result = self._execute_with_retry(md_conn, query, params)
+                    except Exception as e:
+                        logger.warning(f"Failed to execute write query on MotherDuck: {e}")
+                        raise
             except Exception as e:
                 logger.warning(f"Failed to execute write query on MotherDuck, falling back to local: {e}")
                 
             # Then always write to local DB (even if MotherDuck succeeded)
             try:
                 with self.get_connection(for_write=True, local_only=True) as local_conn:
-                    if params:
-                        local_result = local_conn.execute(query, params).fetchall()
-                    else:
-                        local_result = local_conn.execute(query).fetchall()
+                    # Local DB writes typically don't need retry, but use it for consistency
+                    local_result = self._execute_with_retry(local_conn, query, params, max_retries=1)
                     
                 # Return the MotherDuck result if available, otherwise local result
                 return md_result if md_result is not None else local_result
@@ -285,11 +329,16 @@ class DatabaseManager:
             # For read operations or local_only, use the standard connection
             with self.get_connection(for_write=for_write, local_only=local_only) as conn:
                 try:
-                    if params:
-                        result = conn.execute(query, params).fetchall()
+                    if local_only:
+                        # Local reads typically don't need retry
+                        if params:
+                            result = conn.execute(query, params).fetchall()
+                        else:
+                            result = conn.execute(query).fetchall()
+                        return result
                     else:
-                        result = conn.execute(query).fetchall()
-                    return result
+                        # MotherDuck reads may benefit from retry
+                        return self._execute_with_retry(conn, query, params, max_retries=2)
                 except Exception as e:
                     raise DatabaseConnectionError(f"Query execution failed: {e}")
                 
@@ -331,15 +380,24 @@ class DatabaseManager:
                                 # Apply to MotherDuck
                                 columns = ', '.join(record[0].keys())
                                 placeholders = ', '.join(['?' for _ in record[0]])
-                                md_conn.execute(f"""
+                                
+                                # Use retry mechanism for writes
+                                self._execute_with_retry(
+                                    md_conn,
+                                    f"""
                                     INSERT OR REPLACE INTO {table} ({columns})
                                     VALUES ({placeholders})
-                                """, list(record[0].values()))
+                                    """,
+                                    list(record[0].values())
+                                )
                                 
                         elif operation == 'DELETE':
-                            md_conn.execute(f"""
-                                DELETE FROM {table} WHERE id = ?
-                            """, [record_id])
+                            # Use retry mechanism for writes
+                            self._execute_with_retry(
+                                md_conn,
+                                f"DELETE FROM {table} WHERE id = ?",
+                                [record_id]
+                            )
                             
                     except Exception as e:
                         logger.error(f"Failed to sync change to {table}: {e}")
