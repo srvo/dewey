@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
 def sync_to_motherduck(self):
         """Synchronize the local database to MotherDuck."""
         try:
