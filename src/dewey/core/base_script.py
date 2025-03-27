@@ -18,7 +18,7 @@ import os
 import sys
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, Dict, List, Optional, Union
 
 import yaml
 from dotenv import load_dotenv
@@ -92,10 +92,10 @@ class BaseScript(ABC):
         """Set up logging for this script."""
         # Configure logging format from config if available
         try:
-            with open(CONFIG_PATH, 'r') as f:
+            with open(CONFIG_PATH, "r") as f:
                 config = yaml.safe_load(f)
-                log_config = config.get('core', {}).get('logging', {})
-                log_level = getattr(logging, log_config.get('level', 'INFO'))
+                log_config = config.get("core", {}).get("logging", {})
+                log_level = getattr(logging, log_config.get("level", "INFO"))
                 log_format = log_config.get(
                     'format', 
                     '%(asctime)s - %(levelname)s - %(name)s - %(message)s'
@@ -156,7 +156,7 @@ class BaseScript(ABC):
             from dewey.core.db.connection import get_connection
             
             self.logger.debug("Initializing database connection")
-            db_config = self.config.get('core', {}).get('database', {})
+            db_config = self.config.get("core", {}).get("database", {})
             self.db_conn = get_connection(db_config)
             self.logger.debug("Database connection established")
         except ImportError:
@@ -172,7 +172,7 @@ class BaseScript(ABC):
             from dewey.llm.litellm_client import LiteLLMClient, LiteLLMConfig
             
             self.logger.debug("Initializing LLM client")
-            llm_config = self.config.get('llm', {})
+            llm_config = self.config.get("llm", {})
             config = LiteLLMConfig(**llm_config)
             self.llm_client = LiteLLMClient(config=config)
             self.logger.debug("LLM client initialized")
@@ -244,13 +244,13 @@ class BaseScript(ABC):
             self.logger.info(f"Loaded configuration from {config_path}")
             
         # Update database connection if specified
-        if self.requires_db and hasattr(args, 'db_connection_string') and args.db_connection_string:
+        if self.requires_db and hasattr(args, "db_connection_string") and args.db_connection_string:
             from dewey.core.db.connection import get_connection
             self.db_conn = get_connection({"connection_string": args.db_connection_string})
             self.logger.info("Using custom database connection")
             
         # Update LLM model if specified
-        if self.enable_llm and hasattr(args, 'llm_model') and args.llm_model:
+        if self.enable_llm and hasattr(args, "llm_model") and args.llm_model:
             from dewey.llm.litellm_client import LiteLLMClient, LiteLLMConfig
             self.llm_client = LiteLLMClient(config=LiteLLMConfig(model=args.llm_model))
             self.logger.info(f"Using custom LLM model: {args.llm_model}")
@@ -315,7 +315,8 @@ class BaseScript(ABC):
         return PROJECT_ROOT / path
         
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """Get a value from the configuration.
+        """
+        Get a value from the configuration.
         
         Args:
             key: Dot-separated path to the configuration value (e.g., "llm.model")
