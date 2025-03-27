@@ -38,7 +38,7 @@ def setup_logging(debug=False):
     
     # Set specific loggers to debug level if requested
     if debug:
-        logging.getLogger('src.dewey.core.crm.gmail').setLevel(logging.DEBUG)
+        logging.getLogger('dewey.core.crm.gmail').setLevel(logging.DEBUG)
         logging.getLogger('EmailEnrichment').setLevel(logging.DEBUG)
         logging.getLogger('UnifiedEmailProcessor').setLevel(logging.DEBUG)
         logging.getLogger('gmail_sync').setLevel(logging.DEBUG)
@@ -49,7 +49,7 @@ def run_processor(batch_size=None, max_emails=None, debug=False):
     """Run the UnifiedEmailProcessor with the specified parameters."""
     try:
         # Import here to avoid circular imports
-        from src.dewey.core.crm.gmail.unified_email_processor import UnifiedEmailProcessor
+        from dewey.core.crm.gmail.unified_email_processor import UnifiedEmailProcessor
         
         # Set up logging
         setup_logging(debug)
@@ -83,4 +83,4 @@ def main():
     run_processor(args.batch_size, args.max_emails, args.debug)
 
 if __name__ == "__main__":
-    main() 
+    main()
