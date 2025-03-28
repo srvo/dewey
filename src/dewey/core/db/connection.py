@@ -13,7 +13,12 @@ class DatabaseConnection:
     def __init__(self, config: Dict[str, Any]):
         self.config = config
         self.engine = self._create_postgres_engine()
-        self.Session = scoped_session(sessionmaker(bind=self.engine))
+        self.SessionLocal = sessionmaker(
+            autocommit=False, 
+            autoflush=False, 
+            bind=self.engine
+        )
+        self.Session = scoped_session(self.SessionLocal)
         self.validate_connection()
 
     def _create_postgres_engine(self):
