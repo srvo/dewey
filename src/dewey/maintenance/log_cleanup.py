@@ -6,7 +6,7 @@ class LogCleanup(BaseScript):
     def execute(self):
         """Main execution method for log cleanup."""
         log_dir = Path(self.get_config_value("logging.root_dir", "logs"))
-        retention_days = self.get_config_value("logging.retention_days", 3))
+        retention_days = self.get_config_value("logging.retention_days", 3)
         
         self.logger.info(f"Starting log cleanup in {log_dir} (retention: {retention_days} days)")
         self._cleanup_directory(log_dir, retention_days)
