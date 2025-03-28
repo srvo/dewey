@@ -57,6 +57,7 @@ dependencies = [
     "flake8",
     "black>=25.1.0",
     "pre-commit",
+    "alembic",
     # Utilities
     "joblib",
     "duckduckgo-search",
