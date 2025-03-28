@@ -5,6 +5,7 @@ import sys
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
+from datetime import datetime, timedelta
 
 import colorlog
 
@@ -36,6 +37,7 @@ class LoggingConfigurator(BaseScript):
                 "format", "%(asctime)s - %(levelname)s - %(message)s"
             )
         )
+        self.formatter = formatter  # Store formatter for use in _configure_rotating_handler
 
         # Console handler
         ch = logging.StreamHandler(sys.stdout)
@@ -48,14 +50,7 @@ class LoggingConfigurator(BaseScript):
         log_dir.mkdir(exist_ok=True)
         log_file = log_dir / self.get_config_value("filename", "app.log")
 
-        fh = RotatingFileHandler(
-            log_file,
-            maxBytes=self.get_config_value("maxBytes", 5 * 1024 * 1024),  # 5MB
-            backupCount=self.get_config_value("backupCount", 3),
-            encoding="utf-8",
-        )
-        fh.setLevel(self.get_config_value("file_level", logging.DEBUG))
-        fh.setFormatter(formatter)
+        fh = self._configure_rotating_handler(log_file)
         self.logger.addHandler(fh)
 
         # Colorlog handler (optional)
@@ -65,6 +60,34 @@ class LoggingConfigurator(BaseScript):
                 datefmt="%Y-%m-%d %H:%M:%S",
             )
             ch.setFormatter(console_formatter)
+
+        # Clean up old logs
+        retention_days = self.get_config_value("retention_days", 3)
+        self._cleanup_old_logs(log_dir, retention_days)
+
+    def _configure_rotating_handler(self, log_file: Path) -> RotatingFileHandler:
+        """Configure rotating file handler with retention settings."""
+        handler = RotatingFileHandler(
+            log_file,
+            maxBytes=self.get_config_value("maxBytes", 10 * 1024 * 1024),  # 10MB
+            backupCount=self.get_config_value("backupCount", 5),
+            encoding="utf-8",
+        )
+        handler.setFormatter(self.formatter)
+        return handler
+
+    def _cleanup_old_logs(self, log_dir: Path, retention_days: int) -> None:
+        """Delete log files older than retention_days."""
+        now = datetime.now()
+        cutoff = now - timedelta(days=retention_days)
+
+        for log_file in log_dir.glob("**/*.log"):  # Recursive search
+            if log_file.is_file() and datetime.fromtimestamp(log_file.stat().st_mtime) < cutoff:
+                try:
+                    log_file.unlink()
+                    self.logger.info(f"Removed old log file: {log_file}")
+                except Exception as e:
+                    self.logger.error(f"Error removing {log_file}: {e}")
 
 
 def configure_logging(config: dict) -> None:

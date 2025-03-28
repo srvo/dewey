@@ -4,6 +4,16 @@
 
 set -eo pipefail
 
+# Check for log files in the commit
+LOG_FILE_CHECK=$(git diff --cached --name-only | grep -E '\.log$')
+
+if [ -n "$LOG_FILE_CHECK" ]; then
+    echo "Error: Attempting to commit log files:"
+    echo "$LOG_FILE_CHECK"
+    echo "Run 'python src/dewey/maintenance/log_cleanup.py' and try again."
+    exit 1
+fi
+
 TARGET_DIR="${1}"
 CONVENTIONS_FILE="../.aider/CONVENTIONS.md"
 

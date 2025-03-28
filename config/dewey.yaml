@@ -96,6 +96,10 @@ logging:
   level: INFO
   format: "%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s"
   root_dir: logs
+  retention_days: 3  # Keep logs for 3 days
+  maxBytes: 10485760  # 10MB
+  backupCount: 3  # Keep 3 backups
+  archive_dir: logs/archived  # Separate archive directory
   subdirectories:
     app: app
     tests: tests
