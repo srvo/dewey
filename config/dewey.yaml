@@ -304,3 +304,93 @@ crm:
       company_match: 0.1
       urgent_keywords: 0.2
       opportunity_keywords: 0.2
+test_config:
+  local_db_path: ':memory:'
+  motherduck_db: 'md:dewey_test'
+  motherduck_token: 'test_token'
+  pool_size: 2
+  max_retries: 2
+  retry_delay: 0.1
+  sync_interval: 60
+  max_sync_age: 3600
+  backup_dir: '/tmp/dewey_test_backups'
+  backup_retention_days: 1
+regex_patterns:
+  contact_info:
+    company: (?i)(?:at|@)\s*([A-Za-z0-9][A-Za-z0-9\s&-]+(?:\s+(?:LLC|Inc|Ltd|Limited|Corp|Corporation|Capital|Partners|Group|Advisory|Consulting))?)
+    job_title: (?i)(CEO|CTO|CFO|Director|Manager|Analyst|Associate|Partner|VP|President|Founder|Co-founder|Principal|Advisor|Consultant)
+    linkedin: LinkedIn:\s*(linkedin\.com/in/[a-zA-Z0-9_-]+)
+    name_email: ([^<\n]*?)\s*<([^>]+)>
+    phone: Phone:\s*(\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})
+  opportunity:
+    cancellation: \bcancel\b|\bneed to cancel\b|\bneed to reschedule\b
+    demo: \bdemo\b|\bschedule a demo\b
+    publicity: \bpublicity opportunity\b|\bmedia\b
+    speaking: \bspeaking opportunity\b|\bpresentation\b
+    submission: \bpaper submission\b|\bsubmit a paper\b
+vector_stores:
+  code_consolidation:
+    collection_name: code_functions
+    embedding_model: sentence-transformers/all-MiniLM-L6-v2
+    hnsw_config:
+      M: 24
+      construction_ef: 300
+      search_ef: 200
+      space: cosine
+    persist_dir: .chroma_cache
+    similarity_threshold: 0.85
+  document_store:
+    collection_name: document_chunks
+    embedding_model: all-mpnet-base-v2
+    hnsw_config:
+      M: 32
+      construction_ef: 500
+      search_ef: 300
+      space: cosine
+    persist_dir: .chroma_docs
+
+utils:
+  example_config: "example_value_in_config"
+
+database:
+  postgres:
+    host: ${POSTGRES_HOST:-localhost}
+    port: ${POSTGRES_PORT:-5432}
+    dbname: ${POSTGRES_DB:-dewey}
+    user: ${POSTGRES_USER:-postgres}
+    password: ${POSTGRES_PASSWORD}
+    pool_min: 5
+    pool_max: 20
+    sslmode: prefer
+
+api_manager: {}
+
+crm:
+  gmail:
+    sync_interval_seconds: 300
+    max_results_per_sync: 1000
+    # Add OAuth2 configuration
+    client_secrets_path: ${CRM_GMAIL_CREDENTIALS_PATH:-config/credentials/gmail_credentials.json}
+    token_path: ${CRM_GMAIL_TOKEN_PATH:-config/credentials/gmail_token.json}
+    scopes:
+      - https://www.googleapis.com/auth/gmail.readonly
+      - https://www.googleapis.com/auth/gmail.modify
+      - https://www.googleapis.com/auth/gmail.metadata
+    # Existing regex patterns remain unchanged
+    regex_patterns:
+      contact_info:
+        phone: '(?:Phone|Tel|Mobile|Cell)?\s*[:.]?\s*((?:\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})'
+        email: '[\w\.-]+@[\w\.-]+\.\w+'
+        title: '(?:^|\n)([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s*(?:\||,|\n)'
+        company: '(?:@|at)\s*([A-Z][A-Za-z0-9\s&]+)(?:\s|$|\n)'
+        linkedin: 'linkedin\.com/in/[\w-]+'
+        twitter: 'twitter\.com/[\w-]+'
+  enrichment:
+    batch_size: 100
+    confidence_threshold: 0.7
+    priority_weights:
+      is_client: 0.5
+      title_match: 0.2
+      company_match: 0.1
+      urgent_keywords: 0.2
+      opportunity_keywords: 0.2
