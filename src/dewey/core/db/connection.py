@@ -1,5 +1,6 @@
 import contextlib
 import logging
+import os
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, scoped_session
 from typing import Any, Dict, Iterator
@@ -23,13 +24,46 @@ class DatabaseConnection:
         self.validate_connection()
 
     def _create_postgres_engine(self):
-        """Create SQLAlchemy engine for PostgreSQL."""
+        """Create PostgreSQL engine using SQLAlchemy with env var support."""
         try:
-            db_config = self.config["postgres"]
+            # Check for direct database URL in environment
+            if "DATABASE_URL" in os.environ:
+                self.logger.debug("Using DATABASE_URL from environment")
+                return create_engine(
+                    os.environ["DATABASE_URL"],
+                    pool_size=self.config.get("pool_min", 5),
+                    max_overflow=self.config.get("pool_max", 10),
+                    pool_pre_ping=True
+                )
+
+            # Build from environment variables with config fallbacks
+            db_config = self.config.get("postgres", {})
+            connection_params = {
+                'host': os.getenv('POSTGRES_HOST', db_config.get('host')),
+                'port': os.getenv('POSTGRES_PORT', db_config.get('port', 5432)),
+                'dbname': os.getenv('POSTGRES_DB', db_config.get('dbname')),
+                'user': os.getenv('POSTGRES_USER', db_config.get('user')),
+                'password': os.getenv('POSTGRES_PASSWORD', db_config.get('password')),
+                'sslmode': os.getenv('POSTGRES_SSLMODE', db_config.get('sslmode', 'prefer'))
+            }
+
+            # Validate required parameters
+            required = ['host', 'dbname', 'user', 'password']
+            missing = [field for field in required if not connection_params[field]]
+            if missing:
+                raise DatabaseConnectionError(
+                    f"Missing PostgreSQL config: {', '.join(missing)}. "
+                    "Set via environment variables or config file."
+                )
+
             connection_str = (
-                f"postgresql+psycopg2://{db_config['user']}:{db_config['password']}"
-                f"@{db_config['host']}:{db_config['port']}/{db_config['dbname']}"
+                f"postgresql+psycopg2://"
+                f"{connection_params['user']}:{connection_params['password']}"
+                f"@{connection_params['host']}:{connection_params['port']}"
+                f"/{connection_params['dbname']}"
+                f"?sslmode={connection_params['sslmode']}"
             )
+            
             return create_engine(
                 connection_str,
                 pool_size=db_config.get('pool_min', 5),
