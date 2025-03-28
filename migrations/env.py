@@ -63,12 +63,6 @@ if __name__ == "__main__":
     from rich.prompt import Confirm
     
     if Confirm.ask("[bold yellow]Apply database migrations?[/]", default=False):
-        if __name__ == "__main__":
-            from rich.prompt import Confirm
-    
-            if Confirm.ask("[bold yellow]Apply database migrations?[/]", default=False):
-                run_migrations_online()
-            else:
-                console.print("[bold red]× Migration cancelled[/]")
+        run_migrations_online()
     else:
         console.print("[bold red]× Migration cancelled[/]")
