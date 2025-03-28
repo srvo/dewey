@@ -1,7 +1,8 @@
+import contextlib
 import logging
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, scoped_session
-from typing import Any, Dict
+from typing import Any, Dict, Iterator
 
 from dewey.core.exceptions import DatabaseConnectionError
 
@@ -49,9 +50,19 @@ class DatabaseConnection:
         except Exception as e:
             raise DatabaseConnectionError(f"Connection validation failed: {str(e)}")
 
-    def get_session(self):
-        """Get a new scoped database session."""
-        return self.Session()
+    @contextlib.contextmanager
+    def get_session(self) -> Iterator[scoped_session]:
+        """Get a database session context manager."""
+        session = self.Session()
+        try:
+            yield session
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            logger.error(f"Database operation failed: {str(e)}")
+            raise DatabaseConnectionError(str(e)) from e
+        finally:
+            session.close()
 
     def close(self):
         """Close all connections and cleanup resources."""
