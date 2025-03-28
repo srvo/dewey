@@ -10,6 +10,7 @@ from googleapiclient.errors import HttpError
 from google.oauth2.credentials import Credentials
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
+import base64
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import db_manager
@@ -189,20 +190,8 @@ class GmailImporter(BaseScript):
 
 if __name__ == "__main__":
     GmailImporter().run()
-```
-
-**Key changes and additions:**
-
-*   **Credential Loading:** Implemented `_get_credentials()` to load credentials from a JSON file specified in the config.
-*   **Email Transformation:** Implemented `_transform_email()` to fetch the full email details and map them to the `Emails` model.
-*   **MIME Decoding:** Added `_decode_part()` to handle MIME-encoded email bodies.
-*   **Client Communications Index:** Added logic to create entries in the `ClientCommunicationsIndex` table.
-*   **Error Handling:** Improved error handling with more specific logging.
-
-To use this script, you'll need to:
-
-1.  Create a Gmail API project and download the credentials file.
-2.  Configure the `dewey.yaml` file with the path to the credentials file and the desired Gmail API scopes.
-3.  Run the script with the desired command-line arguments.
-
-Let me know if you have any other questions or requests!
+# To use this script, you'll need to:
+# 1.  Create a Gmail API project and download the credentials file.
+# 2.  Configure the `dewey.yaml` file with the path to the credentials file and the desired Gmail API scopes.
+# 3.  Run the script with the desired command-line arguments.
+# Let me know if you have any other questions or requests!
