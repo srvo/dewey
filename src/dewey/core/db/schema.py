@@ -264,7 +264,9 @@ def verify_schema_consistency():
         postgres_tables = {row[0] for row in result} if result else set()
 
         # Compare against expected tables
-        expected_tables = set(TABLES.keys())
+        expected_tables = {'emails', 'email_analyses', 'company_context', 'documents', 
+                          'tasks', 'ai_feedback', 'schema_versions', 'change_log',
+                          'sync_status', 'sync_conflicts'}
         
         missing_tables = expected_tables - postgres_tables
         if missing_tables:
