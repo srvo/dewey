@@ -279,6 +279,14 @@ crm:
   gmail:
     sync_interval_seconds: 300
     max_results_per_sync: 1000
+    # Add OAuth2 configuration
+    client_secrets_path: ${CRM_GMAIL_CREDENTIALS_PATH:-config/credentials/gmail_credentials.json}
+    token_path: ${CRM_GMAIL_TOKEN_PATH:-config/credentials/gmail_token.json}
+    scopes:
+      - https://www.googleapis.com/auth/gmail.readonly
+      - https://www.googleapis.com/auth/gmail.modify
+      - https://www.googleapis.com/auth/gmail.metadata
+    # Existing regex patterns remain unchanged
     regex_patterns:
       contact_info:
         phone: '(?:Phone|Tel|Mobile|Cell)?\s*[:.]?\s*((?:\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})'
