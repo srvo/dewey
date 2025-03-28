@@ -270,3 +270,25 @@ database:
     INSERT INTO example_table (id, value) VALUES (1, 1) ON CONFLICT (id) DO NOTHING;
 
 api_manager: {}
+
+crm:
+  gmail:
+    sync_interval_seconds: 300
+    max_results_per_sync: 1000
+    regex_patterns:
+      contact_info:
+        phone: '(?:Phone|Tel|Mobile|Cell)?\s*[:.]?\s*((?:\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})'
+        email: '[\w\.-]+@[\w\.-]+\.\w+'
+        title: '(?:^|\n)([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s*(?:\||,|\n)'
+        company: '(?:@|at)\s*([A-Z][A-Za-z0-9\s&]+)(?:\s|$|\n)'
+        linkedin: 'linkedin\.com/in/[\w-]+'
+        twitter: 'twitter\.com/[\w-]+'
+  enrichment:
+    batch_size: 100
+    confidence_threshold: 0.7
+    priority_weights:
+      is_client: 0.5
+      title_match: 0.2
+      company_match: 0.1
+      urgent_keywords: 0.2
+      opportunity_keywords: 0.2
