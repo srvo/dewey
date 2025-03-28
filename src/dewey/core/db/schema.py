@@ -175,40 +175,18 @@ CREATE TABLE IF NOT EXISTS ai_feedback (
 )
 """
 
-# List of all tables and their creation SQL
-TABLES = {
-    'schema_versions': SCHEMA_VERSION_TABLE,
-    'change_log': CHANGE_LOG_TABLE,
-    'sync_status': SYNC_STATUS_TABLE,
-    'sync_conflicts': SYNC_CONFLICTS_TABLE,
-    'emails': EMAILS_TABLE,
-    'email_analyses': EMAIL_ANALYSES_TABLE,
-    'company_context': COMPANY_CONTEXT_TABLE,
-    'documents': DOCUMENTS_TABLE,
-    'tasks': TASKS_TABLE,
-    'ai_feedback': AI_FEEDBACK_TABLE
-}
-
-def initialize_schema(local_only: bool = False):
-    """Initialize the database schema.
-    
-    Args:
-        local_only: Whether to only initialize the local database
-    """
-    try:
-        # Create tables in local database
-        for table_name, create_sql in TABLES.items():
-            db_manager.execute_query(create_sql, for_write=True, local_only=True)
-            logger.info(f"Created table {table_name} in local database")
-            
-        if not local_only:
-            # Create tables in MotherDuck
-            for table_name, create_sql in TABLES.items():
-                db_manager.execute_query(create_sql, for_write=True, local_only=False)
-                logger.info(f"Created table {table_name} in MotherDuck")
-                
-    except Exception as e:
-        raise DatabaseConnectionError(f"Failed to initialize schema: {e}")
+# Schema version tracking table (PostgreSQL compatible)
+SCHEMA_VERSION_TABLE = """
+CREATE TABLE IF NOT EXISTS schema_versions (
+    id SERIAL PRIMARY KEY,
+    version INTEGER NOT NULL,
+    applied_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    description TEXT,
+    checksum VARCHAR(64),
+    status TEXT DEFAULT 'pending',
+    error_message TEXT
+)
+"""
         
 def get_current_version(local_only: bool = False) -> int:
     """Get the current schema version.
