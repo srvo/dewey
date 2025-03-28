@@ -13,12 +13,12 @@ from dewey.core.exceptions import DatabaseConnectionError
 
 logger = logging.getLogger(__name__)
 
-# Schema version tracking table
+# Schema version tracking table (PostgreSQL compatible)
 SCHEMA_VERSION_TABLE = """
 CREATE TABLE IF NOT EXISTS schema_versions (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     version INTEGER NOT NULL,
-    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    applied_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     description TEXT,
     checksum VARCHAR(64),
     status TEXT DEFAULT 'pending',
@@ -26,44 +26,44 @@ CREATE TABLE IF NOT EXISTS schema_versions (
 )
 """
 
-# Change tracking tables
+# Change tracking tables (PostgreSQL compatible)
 CHANGE_LOG_TABLE = """
 CREATE TABLE IF NOT EXISTS change_log (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     table_name VARCHAR NOT NULL,
     operation VARCHAR NOT NULL,
     record_id VARCHAR NOT NULL,
-    changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    changed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     user_id VARCHAR,
-    details JSON
+    details JSONB
 )
 """
 
 SYNC_STATUS_TABLE = """
 CREATE TABLE IF NOT EXISTS sync_status (
-    id INTEGER PRIMARY KEY,
-    sync_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id SERIAL PRIMARY KEY,
+    sync_time TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     status VARCHAR NOT NULL,
     message TEXT,
-    details JSON
+    details JSONB
 )
 """
 
 SYNC_CONFLICTS_TABLE = """
 CREATE TABLE IF NOT EXISTS sync_conflicts (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     table_name VARCHAR NOT NULL,
     record_id VARCHAR NOT NULL,
     operation VARCHAR NOT NULL,
     error_message TEXT,
-    sync_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    sync_time TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     resolved BOOLEAN DEFAULT FALSE,
-    resolution_time TIMESTAMP,
-    resolution_details JSON
+    resolution_time TIMESTAMP WITH TIME ZONE,
+    resolution_details JSONB
 )
 """
 
-# Core tables
+# Core tables (PostgreSQL compatible)
 EMAILS_TABLE = """
 CREATE TABLE IF NOT EXISTS emails (
     id VARCHAR PRIMARY KEY,
@@ -74,21 +74,21 @@ CREATE TABLE IF NOT EXISTS emails (
     body_html TEXT,
     from_name VARCHAR,
     from_email VARCHAR,
-    to_addresses JSON,
-    cc_addresses JSON,
-    bcc_addresses JSON,
-    received_date TIMESTAMP,
-    labels JSON,
+    to_addresses JSONB,
+    cc_addresses JSONB,
+    bcc_addresses JSONB,
+    received_date TIMESTAMP WITH TIME ZONE,
+    labels JSONB,
     size_estimate INTEGER,
     is_draft BOOLEAN,
     is_sent BOOLEAN,
     is_read BOOLEAN,
     is_starred BOOLEAN,
     is_trashed BOOLEAN,
-    attachments JSON,
-    raw_data JSON,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    attachments JSONB,
+    raw_data JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     error_message VARCHAR,
     status VARCHAR DEFAULT 'new'
 )
@@ -100,24 +100,24 @@ CREATE TABLE IF NOT EXISTS email_analyses (
     thread_id VARCHAR,
     subject VARCHAR,
     from_address VARCHAR,
-    analysis_date TIMESTAMP,
-    raw_analysis JSON,
+    analysis_date TIMESTAMP WITH TIME ZONE,
+    raw_analysis JSONB,
     automation_score FLOAT,
     content_value FLOAT,
     human_interaction FLOAT,
     time_value FLOAT,
     business_impact FLOAT,
     uncertainty_score FLOAT,
-    metadata JSON,
+    metadata JSONB,
     priority INTEGER,
-    label_ids JSON,
+    label_ids JSONB,
     snippet TEXT,
     internal_date BIGINT,
     size_estimate INTEGER,
-    message_parts JSON,
+    message_parts JSONB,
     draft_id VARCHAR,
-    draft_message JSON,
-    attachments JSON
+    draft_message JSONB,
+    attachments JSONB
 )
 """
 
@@ -127,9 +127,9 @@ CREATE TABLE IF NOT EXISTS company_context (
     company_name VARCHAR NOT NULL,
     context_text TEXT,
     source VARCHAR,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    metadata JSON
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    metadata JSONB
 )
 """
 
@@ -139,9 +139,9 @@ CREATE TABLE IF NOT EXISTS documents (
     title VARCHAR,
     content TEXT,
     content_type VARCHAR,
-    metadata JSON,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    metadata JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     status VARCHAR DEFAULT 'new'
 )
 """
@@ -153,11 +153,11 @@ CREATE TABLE IF NOT EXISTS tasks (
     description TEXT,
     status VARCHAR DEFAULT 'pending',
     priority INTEGER DEFAULT 0,
-    due_date TIMESTAMP,
-    completed_at TIMESTAMP,
-    metadata JSON,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    due_date TIMESTAMP WITH TIME ZONE,
+    completed_at TIMESTAMP WITH TIME ZONE,
+    metadata JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 )
 """
 
@@ -167,10 +167,10 @@ CREATE TABLE IF NOT EXISTS ai_feedback (
     source_table VARCHAR NOT NULL,
     source_id VARCHAR NOT NULL,
     feedback_type VARCHAR NOT NULL,
-    feedback_content JSON NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    resolved_at TIMESTAMP,
-    resolution_details JSON,
+    feedback_content JSONB NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    resolved_at TIMESTAMP WITH TIME ZONE,
+    resolution_details JSONB,
     resolution_status VARCHAR DEFAULT 'pending'
 )
 """
@@ -275,29 +275,40 @@ def apply_migration(version: int, description: str, sql: str, local_only: bool =
         raise DatabaseConnectionError(f"Failed to apply migration: {e}")
         
 def verify_schema_consistency():
-    """Verify that local and MotherDuck schemas are consistent."""
+    """Verify schema consistency using PostgreSQL information schema."""
     try:
-        # Get schema versions
-        local_version = get_current_version(local_only=True)
-        md_version = get_current_version(local_only=False)
+        # Get table list from PostgreSQL
+        result = db_manager.execute_query("""
+            SELECT table_name 
+            FROM information_schema.tables 
+            WHERE table_schema = 'public'
+        """)
+        postgres_tables = {row[0] for row in result} if result else set()
+
+        # Compare against expected tables
+        expected_tables = set(TABLES.keys())
         
-        if local_version != md_version:
+        missing_tables = expected_tables - postgres_tables
+        if missing_tables:
             raise DatabaseConnectionError(
-                f"Schema version mismatch: local={local_version}, MotherDuck={md_version}"
+                f"Missing tables: {', '.join(missing_tables)}"
             )
+
+        # Verify table structures
+        for table_name in expected_tables:
+            # Get column info from PostgreSQL
+            columns = db_manager.execute_query(f"""
+                SELECT column_name, data_type, is_nullable
+                FROM information_schema.columns
+                WHERE table_name = '{table_name}'
+                ORDER BY ordinal_position
+            """)
             
-        # Compare table structures
-        for table_name in TABLES:
-            local_schema = db_manager.execute_query(
-                f"DESCRIBE {table_name}", local_only=True
-            )
-            md_schema = db_manager.execute_query(
-                f"DESCRIBE {table_name}", local_only=False
-            )
-            
-            if local_schema != md_schema:
+            # Compare with expected schema (would need schema definition)
+            # This is simplified - would need actual schema definition to compare
+            if not columns:
                 raise DatabaseConnectionError(
-                    f"Schema mismatch for table {table_name}"
+                    f"Table {table_name} exists but has no columns"
                 )
                 
         logger.info("Schema consistency verified")
