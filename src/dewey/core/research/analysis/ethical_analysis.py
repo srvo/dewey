@@ -158,3 +158,36 @@ class EthicalAnalysisWorkflow(BaseScript):
         # self.analyze_company_profile(results)
         self.logger.info("Ethical analysis workflow completed.")
         pass
+
+    async def execute(self) -> None:
+        """Executes the ethical analysis workflow.
+
+        This method orchestrates the ethical analysis process, including
+        conducting deep research and analyzing the company profile.
+        """
+        self.logger.info("Starting ethical analysis workflow execution.")
+
+        initial_query = "What is the ethical profile of this company?"
+        follow_up_questions = [
+            "What are the environmental impacts of this company?",
+            "What are the social responsibilities of this company?",
+            "What is the governance structure of this company?",
+            "What ethical controversies has this company been involved in?",
+            "What are the key risk factors for this company?",
+        ]
+
+        try:
+            research_results = await self.conduct_deep_research(
+                initial_query=initial_query, follow_up_questions=follow_up_questions
+            )
+
+            analysis_result = await self.analyze_company_profile(
+                search_results=research_results
+            )
+
+            self.logger.info(f"Analysis results: {analysis_result}")
+            self.logger.info("Ethical analysis workflow execution completed.")
+
+        except Exception as e:
+            self.logger.error(f"Error during ethical analysis: {e}", exc_info=True)
+            raise
