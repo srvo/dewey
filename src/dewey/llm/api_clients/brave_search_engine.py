@@ -83,3 +83,19 @@ class BraveSearchEngine(BaseScript):
         except requests.RequestException as e:
             self.logger.error(f"Request failed: {e}")
             raise
+
+    def execute(self) -> None:
+        """Executes a search query using the Brave search engine.
+
+        Retrieves the search query from the configuration and calls the run method.
+        """
+        query = self.get_config_value("query", "Dewey project")
+        if query:
+            self.logger.info(f"Executing Brave search with query: {query}")
+            results = self.run(query)
+            if results:
+                self.logger.info(f"Brave search results: {results}")
+            else:
+                self.logger.warning("Brave search failed to return results.")
+        else:
+            self.logger.warning("No search query found in configuration.")
