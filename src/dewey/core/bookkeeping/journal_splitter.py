@@ -52,9 +52,8 @@ class JournalSplitter(BaseScript):
     """
     Splits a journal file into separate files by year.
     """
-
     def __init__(
-        self, file_system: FileSystemInterface = None, config: ConfigInterface = None,
+        self, file_system: FileSystemInterface = None, config: ConfigInterface = None
     ) -> None:
         """Initializes the JournalSplitter."""
         super().__init__(config_section="bookkeeping")

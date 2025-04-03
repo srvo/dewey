@@ -15,7 +15,6 @@ class DocsModule(BaseScript):
     """
     A module for managing documentation tasks within Dewey.
     """
-
     """
     This module inherits from BaseScript and provides a
     standardized structure for documentation-related scripts,
