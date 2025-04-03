@@ -4,7 +4,7 @@ import re
 import subprocess
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Callable, Optional, Protocol
+from typing import Any, Optional, Protocol
 
 from dewey.core.base_script import BaseScript
 
@@ -18,31 +18,25 @@ class SubprocessRunnerInterface(Protocol):
         capture_output: bool = True,
         text: bool = True,
         check: bool = False,
-    ) -> subprocess.CompletedProcess:
-        ...
+    ) -> subprocess.CompletedProcess: ...
 
 
 class FileSystemInterface(Protocol):
     """Interface for file system operations."""
 
-    def exists(self, path: Path | str) -> bool:
-        ...
+    def exists(self, path: Path | str) -> bool: ...
 
-    def open(self, path: Path | str, mode: str = "r") -> Any:
-        ...
+    def open(self, path: Path | str, mode: str = "r") -> Any: ...
 
 
 class HledgerUpdaterInterface(Protocol):
     """Interface for HledgerUpdater."""
 
-    def get_balance(self, account: str, date: str) -> Optional[str]:
-        ...
+    def get_balance(self, account: str, date: str) -> str | None: ...
 
-    def update_opening_balances(self, year: int) -> None:
-        ...
+    def update_opening_balances(self, year: int) -> None: ...
 
-    def run(self) -> None:
-        ...
+    def run(self) -> None: ...
 
 
 class HledgerUpdater(BaseScript, HledgerUpdaterInterface):
@@ -53,15 +47,15 @@ class HledgerUpdater(BaseScript, HledgerUpdaterInterface):
 
     def __init__(
         self,
-        subprocess_runner: Optional[SubprocessRunnerInterface] = None,
-        fs: Optional[FileSystemInterface] = None,
+        subprocess_runner: SubprocessRunnerInterface | None = None,
+        fs: FileSystemInterface | None = None,
     ) -> None:
         """Initializes the HledgerUpdater with the 'bookkeeping' config section."""
         super().__init__(config_section="bookkeeping")
         self._subprocess_runner = subprocess_runner or subprocess.run
         self._fs = fs or PathFileSystem()
 
-    def get_balance(self, account: str, date: str) -> Optional[str]:
+    def get_balance(self, account: str, date: str) -> str | None:
         """Get the balance for a specific account at a given date.
 
         Args:
@@ -70,6 +64,7 @@ class HledgerUpdater(BaseScript, HledgerUpdaterInterface):
 
         Returns:
             The balance amount as a string, or None if an error occurred.
+
         """
         try:
             self.logger.debug("🔍 Checking balance | account=%s date=%s", account, date)
@@ -120,6 +115,7 @@ class HledgerUpdater(BaseScript, HledgerUpdaterInterface):
 
         Returns:
             The content of the journal file.
+
         """
         with self._fs.open(journal_file) as f:
             content = f.read()
@@ -131,6 +127,7 @@ class HledgerUpdater(BaseScript, HledgerUpdaterInterface):
         Args:
             journal_file: The path to the journal file.
             content: The content to write to the file.
+
         """
         with self._fs.open(journal_file, "w") as f:
             f.write(content)
@@ -140,6 +137,7 @@ class HledgerUpdater(BaseScript, HledgerUpdaterInterface):
 
         Args:
             year: The year to update the opening balances for.
+
         """
         try:
             # Calculate the previous year's end date
@@ -186,7 +184,7 @@ class HledgerUpdater(BaseScript, HledgerUpdaterInterface):
                 "🔥 Error updating opening balances for year %s: %s", year, str(e)
             )
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Runs the hledger update process for a range of years."""
         current_year = datetime.now().year
         start_year = int(self.get_config_value("start_year", 2022))

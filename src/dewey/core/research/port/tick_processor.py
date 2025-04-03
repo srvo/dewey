@@ -8,11 +8,6 @@ import requests
 from dotenv import load_dotenv
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import (
-    DatabaseConnection,
-    get_connection,
-    get_motherduck_connection,
-)
 
 # Load environment variables
 load_dotenv()
@@ -34,14 +29,10 @@ SCHEMA = {
 
 
 class TickProcessor(BaseScript):
-    """
-    Processes stock tick data from Polygon.io and stores it in a DuckDB database.
-    """
+    """Processes stock tick data from Polygon.io and stores it in a DuckDB database."""
 
     def __init__(self) -> None:
-        """
-        Initializes the TickProcessor with configuration, database connection, and logging.
-        """
+        """Initializes the TickProcessor with configuration, database connection, and logging."""
         super().__init__(
             name="TickProcessor",
             description="Processes stock tick data from Polygon.io and stores it in a DuckDB database.",
@@ -50,9 +41,8 @@ class TickProcessor(BaseScript):
             enable_llm=False,
         )
 
-    def _fetch_ticks(self, ticker: str, date: datetime.date) -> List[Dict[str, Any]]:
-        """
-        Fetches stock tick data from the Polygon.io API for a given ticker and date.
+    def _fetch_ticks(self, ticker: str, date: datetime.date) -> list[dict[str, Any]]:
+        """Fetches stock tick data from the Polygon.io API for a given ticker and date.
 
         Args:
             ticker: The stock ticker symbol (e.g., "AAPL").
@@ -63,6 +53,7 @@ class TickProcessor(BaseScript):
 
         Raises:
             requests.exceptions.RequestException: If there is an error during the API request.
+
         """
         url = TICK_API_URL.format(ticker=ticker, date=date.strftime("%Y-%m-%d"))
         params = {"apiKey": POLYGON_API_KEY, "limit": 50000}
@@ -82,10 +73,9 @@ class TickProcessor(BaseScript):
             raise
 
     def _transform_ticks(
-        self, ticks: List[Dict[str, Any]], ticker: str
+        self, ticks: list[dict[str, Any]], ticker: str
     ) -> pd.DataFrame:
-        """
-        Transforms raw tick data into a Pandas DataFrame with appropriate data types.
+        """Transforms raw tick data into a Pandas DataFrame with appropriate data types.
 
         Args:
             ticks: A list of dictionaries representing raw tick data.
@@ -93,6 +83,7 @@ class TickProcessor(BaseScript):
 
         Returns:
             A Pandas DataFrame containing the transformed tick data.
+
         """
         df = pd.DataFrame(ticks)
         if df.empty:
@@ -133,11 +124,11 @@ class TickProcessor(BaseScript):
         return df
 
     def _store_ticks(self, df: pd.DataFrame) -> None:
-        """
-        Stores the transformed tick data into the DuckDB database.
+        """Stores the transformed tick data into the DuckDB database.
 
         Args:
             df: A Pandas DataFrame containing the transformed tick data.
+
         """
         if df.empty:
             self.logger.info("No data to store.")
@@ -165,9 +156,7 @@ class TickProcessor(BaseScript):
                 con.close()
 
     def run(self) -> None:
-        """
-        Runs the tick processing workflow for a specific ticker and date.
-        """
+        """Runs the tick processing workflow for a specific ticker and date."""
         ticker = "AAPL"  # Example ticker
         date = datetime.date(2024, 1, 2)  # Example date
 

@@ -83,7 +83,7 @@ need_historical_import() {
     if [ -f "$HISTORICAL_FLAG_FILE" ]; then
         return 1
     fi
-    
+
     # Check if database exists and has emails
     if [ -f "$DB_PATH" ]; then
         EMAIL_COUNT=$(duckdb "$DB_PATH" "SELECT COUNT(*) FROM emails;" 2>/dev/null || echo "0")
@@ -93,14 +93,14 @@ need_historical_import() {
             return 1
         fi
     fi
-    
+
     return 0
 }
 
 # Function to run historical import
 run_historical_import() {
     log_message "Starting historical email import..."
-    
+
     # Import all emails from the last 10 years
     python src/dewey/core/crm/gmail/simple_import.py \
         --historical \
@@ -109,7 +109,7 @@ run_historical_import() {
         --batch-size 100 \
         --db "md:dewey" \
         >> "$SYNC_LOG" 2>&1
-    
+
     HIST_STATUS=$?
     if [ $HIST_STATUS -eq 0 ]; then
         log_message "Historical import completed successfully"
@@ -130,7 +130,7 @@ run_email_sync() {
         --batch-size 100 \
         --db "md:dewey" \
         >> "$SYNC_LOG" 2>&1
-    
+
     return $?
 }
 
@@ -141,7 +141,7 @@ run_enrichment() {
         --batch-size 50 \
         --max-emails 100 \
         >> "$SYNC_LOG" 2>&1
-    
+
     return $?
 }
 
@@ -152,7 +152,7 @@ run_motherduck_sync() {
         --local-db "$DB_PATH" \
         --dedup-strategy "update" \
         >> "$SYNC_LOG" 2>&1
-    
+
     return $?
 }
 
@@ -164,7 +164,7 @@ run_consistency_check() {
         --batch-size 100 \
         --db "md:dewey" \
         >> "$SYNC_LOG" 2>&1
-    
+
     return $?
 }
 
@@ -172,7 +172,7 @@ run_consistency_check() {
 if need_historical_import; then
     log_message "No historical import found. Starting historical import..."
     run_historical_import
-    
+
     if [ $? -ne 0 ]; then
         log_message "Historical import failed. Will try again next time."
         cleanup
@@ -196,22 +196,22 @@ SYNC_STATUS=$?
 
 if [ $SYNC_STATUS -eq 0 ]; then
     log_message "Email sync completed successfully"
-    
+
     # Run enrichment after successful sync
     run_enrichment
     ENRICH_STATUS=$?
-    
+
     if [ $ENRICH_STATUS -eq 0 ]; then
         log_message "Email enrichment completed successfully"
     else
         log_message "Email enrichment failed with status $ENRICH_STATUS"
     fi
-    
+
     # Check if we should run MotherDuck sync (every 15 minutes)
     if [ $(($(date +%M) % 15)) -eq 0 ]; then
         run_motherduck_sync
         MD_STATUS=$?
-        
+
         if [ $MD_STATUS -eq 0 ]; then
             log_message "MotherDuck sync completed successfully"
         else
@@ -232,4 +232,4 @@ log_message "Script completed"
 #
 # To install cron jobs:
 # crontab -e
-# Add the above line 
+# Add the above line

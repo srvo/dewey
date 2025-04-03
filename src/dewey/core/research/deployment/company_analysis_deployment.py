@@ -27,11 +27,12 @@ class CompanyAnalysisDeployment(BaseScript):
             config_section="paths",  # Assuming relevant paths are under 'paths'
         )
 
-    def run(self, args: Optional[Any] = None) -> None:
+    def run(self, args: Any | None = None) -> None:
         """Main execution method to deploy the company analysis flow.
 
         Args:
             args: Optional arguments (not used in this implementation).
+
         """
         self.deploy()
 

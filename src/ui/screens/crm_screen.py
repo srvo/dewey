@@ -5,13 +5,6 @@ from rich.table import Table
 
 from dewey.core.crm.models import CRMContact
 
-    def run(self) -> None:
-        """
-        Run the script.
-        """
-        # TODO: Implement script logic here
-        raise NotImplementedError("The run method must be implemented")
-
 
 class CRMInterface(BaseScript):
     """User interface for CRM interactions."""

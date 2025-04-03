@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
-"""
-Example of using Azure OpenAI with the LiteLLM client.
+"""Example of using Azure OpenAI with the LiteLLM client.
 
 This script demonstrates how to configure and use Azure OpenAI
 through the LiteLLM client.
 """
 
-import os
 import logging
+import os
 from typing import List
 
 from dewey.llm import (
@@ -84,7 +83,7 @@ def main():
     )
 
     # Create a list of messages for the conversation
-    messages: List[Message] = [system_message, user_message]
+    messages: list[Message] = [system_message, user_message]
 
     # Generate a completion
     try:

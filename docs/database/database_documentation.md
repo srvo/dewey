@@ -424,9 +424,165 @@ tax_rate | conv | ipo_prospectus | distribution_dates |
 
 | id | thread_id | subject | from_email | from_name | plain_body | html_body | importance | is_mailing_list | to_address | body_preview | analysis_date | raw_analysis | automation_score | content_value | human_interaction | time_value | business_impact | uncertainty_score | metadata | priority | label_ids | snippet | internal_date | size_estimate | message_parts | draft_id | draft_message | attachments | status | error_message | batch_id | import_timestamp | created_at | updated_at |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 17b73bf61f3c33da | 17b73bf61f3c33da | quick question... | sales@wealthbox.com | Krystal Stanley | Hi Sloane,<br><br>Quick question about Wealthbox CRM: Do you need any help getting started?<br><br>We're here for you. We'd like to invite you to join one of our These online sessions are...<br><br> * Live demonstrations of Wealthbox<br> * Held daily at 1pm ET, Monday - Friday<br> * Only 20 minutes long, plus Q&A<br>   <br><br>Interested? to jumpstart your Wealthbox experience. Or you can watch a on demand, right now.<br><br>Any questions? You can reply to this email, or get answers in our .<br><br>Talk soon,<br><br>Krystal Stanley<br>Team Wealthbox<br><br>If you don't want to hear from me anymore, [https://apus5.com/unsubscribe/v2?s=wealthbox&m=s_fe6f69f1-c957-484b-8812-ddeaedf5c7c9] . Hi Sloane, Quick question about Wealthbox CRM: Do you need any help getting started? We're here for you. We'd like to invite you to join one of our live demos. These online sessions are... Live demonstrations of Wealthbox Held daily at 1pm ET, Monday - Friday Only 20 minutes long, plus Q&A Interested? Sign up for a demo to jumpstart your Weal | None | 0 | True | Sloane Ortel <sloane@investvegan.org> | Hi Sloane,<br><br>Quick question about Wealthbox CRM: Do you need any help getting started?<br><br>We're here for you. We'd like to invite you to join one of our These online sessions are...<br><br> * Live demonstrations of Wealthbox<br> * Held daily at 1pm ET, Monday - Friday<br> * Only 20 minutes long, plus Q&A<br>   <br><br>Interested? to jumpstart your Wealthbox experience. Or you can watch a on demand, right now.<br><br>Any questions? You can reply to this email, or get answers in our .<br><br>Talk soon,<br><br>Krystal Stanley<br>Team Wealthbox<br><br>If you don't want to hear from me anymore, [https://apus5.com/unsubscribe/v2?s=wealthbox&m=s_fe6f69f1-c957-484b-8812-ddeaedf5c7c9] . Hi Sloane, Quick question about Wealthbox CRM: Do you need any help getting started? We're here for you. We'd like to invite you to join one of our live demos. These online sessions are... Live demonstrations of Wealthbox Held daily at 1pm ET, Monday - Friday Only 20 minutes long, plus Q&A Interested? Sign up for a demo to jumpstart your Weal | 2021-08-23 16:02:05 | None | None | None | None | None | None | None | None | None | None | Hi Sloane,<br><br>Quick question about Wealthbox CRM: Do you need any help getting started?<br><br>We're here for you. We'd like to invite you to join one of our These online sessions are...<br><br> * Live demonstrations of Wealthbox<br> * Held daily at 1pm ET, Monday - Friday<br> * Only 20 minutes long, plus Q&A<br>   <br><br>Interested? to jumpstart your Wealthbox experience. Or you can watch a on demand, right now.<br><br>Any questions? You can reply to this email, or get answers in our .<br><br>Talk soon,<br><br>Krystal Stanley<br>Team Wealthbox<br><br>If you don't want to hear from me anymore, [https://apus5.com/unsubscribe/v2?s=wealthbox&m=s_fe6f69f1-c957-484b-8812-ddeaedf5c7c9] . Hi Sloane, Quick question about Wealthbox CRM: Do you need any help getting started? We're here for you. We'd like to invite you to join one of our live demos. These online sessions are... Live demonstrations of Wealthbox Held daily at 1pm ET, Monday - Friday Only 20 minutes long, plus Q&A Interested? Sign up for a demo to jumpstart your Weal | None | None | None | None | None | None | imported | None | None | 2021-08-23 16:02:05 | 2021-08-23 16:02:05 | 2021-08-23 16:02:05 |
-| 17b73c00680dad26 | 17b73c00680dad26 | Test | sloane@investvegan.org | Sloane Ortel | I send you email from fancy new platform.<br><br>  <br><br>Sloane Ortel  <br>Founder  <br>Invest Vegan  <br>[Click here to schedule a<br>meeting](https://nyl.as/t1/296/6kjira38fvpi1l1m9i7357m3p/0/c957df034ee69324c4354c2e96404efc5108545a6693bcc691ec0ef0ccc0e27a<br>"https://calendly.com/investvegan")<br><br>  <br><br>(845) 684-2779  <br>813 Halsey Street, Third Floor  <br>Brooklyn, New York, 11233  <br>  <br>Investment advisory services are offered through Invest Vegan LLC; a New York<br>domiciled registered investment adviser. This communication is not to be<br>directly or indirectly interpreted as a solicitation of investment advisory<br>services to residents of another jurisdiction unless the firm and the sender<br>of this message are registered and/or licensed in that jurisdiction, or as<br>otherwise permitted by statute.  <br>  <br>The contents of this email communication and any accompanying documents are<br>confidential and for the sole use of the recipient. They are not to be copied,<br>quoted, excerpted or distributed without exp | None | 0 | False | sloane@srvo.org | I send you email from fancy new platform.<br><br>  <br><br>Sloane Ortel  <br>Founder  <br>Invest Vegan  <br>[Click here to schedule a<br>meeting](https://nyl.as/t1/296/6kjira38fvpi1l1m9i7357m3p/0/c957df034ee69324c4354c2e96404efc5108545a6693bcc691ec0ef0ccc0e27a<br>"https://calendly.com/investvegan")<br><br>  <br><br>(845) 684-2779  <br>813 Halsey Street, Third Floor  <br>Brooklyn, New York, 11233  <br>  <br>Investment advisory services are offered through Invest Vegan LLC; a New York<br>domiciled registered investment adviser. This communication is not to be<br>directly or indirectly interpreted as a solicitation of investment advisory<br>services to residents of another jurisdiction unless the firm and the sender<br>of this message are registered and/or licensed in that jurisdiction, or as<br>otherwise permitted by statute.  <br>  <br>The contents of this email communication and any accompanying documents are<br>confidential and for the sole use of the recipient. They are not to be copied,<br>quoted, excerpted or distributed without exp | 2021-08-23 16:02:49 | None | None | None | None | None | None | None | None | None | None | I send you email from fancy new platform.<br><br>  <br><br>Sloane Ortel  <br>Founder  <br>Invest Vegan  <br>[Click here to schedule a<br>meeting](https://nyl.as/t1/296/6kjira38fvpi1l1m9i7357m3p/0/c957df034ee69324c4354c2e96404efc5108545a6693bcc691ec0ef0ccc0e27a<br>"https://calendly.com/investvegan")<br><br>  <br><br>(845) 684-2779  <br>813 Halsey Street, Third Floor  <br>Brooklyn, New York, 11233  <br>  <br>Investment advisory services are offered through Invest Vegan LLC; a New York<br>domiciled registered investment adviser. This communication is not to be<br>directly or indirectly interpreted as a solicitation of investment advisory<br>services to residents of another jurisdiction unless the firm and the sender<br>of this message are registered and/or licensed in that jurisdiction, or as<br>otherwise permitted by statute.  <br>  <br>The contents of this email communication and any accompanying documents are<br>confidential and for the sole use of the recipient. They are not to be copied,<br>quoted, excerpted or distributed without exp | None | None | None | None | None | None | imported | None | None | 2021-08-23 16:02:49 | 2021-08-23 16:02:49 | 2021-08-23 16:02:49 |
-| 17b73f2197ba814e | 17b73f2197ba814e | Form shared with you: "Invest Vegan Email Signup " | drive-shares-dm-noreply@google.com | Sloane Ortel (via Google Forms) | I've shared an item with you:<br><br>Invest Vegan Email Signup<br>https://docs.google.com/forms/d/1izOkczwVACugF2Cm83B2mOQdMfYC5d7YGtxoQvGlAuw/edit?usp=sharing&ts=6123d37a<br><br>It's not an attachment -- it's stored online. To open this item, just click  <br>the link above. Sloane Ortel shared a form Sloane Ortel has invited you to edit the following form: Invest Vegan Email Signup Sloane Ortel is outside your organization. Open Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA You have received this email because Sloane@srvo.org shared a file or folder located in Google Drive with you. | None | 0 | False | sloane@investvegan.org | I've shared an item with you:<br><br>Invest Vegan Email Signup<br>https://docs.google.com/forms/d/1izOkczwVACugF2Cm83B2mOQdMfYC5d7YGtxoQvGlAuw/edit?usp=sharing&ts=6123d37a<br><br>It's not an attachment -- it's stored online. To open this item, just click  <br>the link above. Sloane Ortel shared a form Sloane Ortel has invited you to edit the following form: Invest Vegan Email Signup Sloane Ortel is outside your organization. Open Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA You have received this email because Sloane@srvo.org shared a file or folder located in Google Drive with you. | 2021-08-23 16:57:30 | None | None | None | None | None | None | None | None | None | None | I've shared an item with you:<br><br>Invest Vegan Email Signup<br>https://docs.google.com/forms/d/1izOkczwVACugF2Cm83B2mOQdMfYC5d7YGtxoQvGlAuw/edit?usp=sharing&ts=6123d37a<br><br>It's not an attachment -- it's stored online. To open this item, just click  <br>the link above. Sloane Ortel shared a form Sloane Ortel has invited you to edit the following form: Invest Vegan Email Signup Sloane Ortel is outside your organization. Open Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA You have received this email because Sloane@srvo.org shared a file or folder located in Google Drive with you. | None | None | None | None | None | None | imported | None | None | 2021-08-23 16:57:30 | 2021-08-23 16:57:30 | 2021-08-23 16:57:30 |
+| 17b73bf61f3c33da | 17b73bf61f3c33da | quick question... | sales@wealthbox.com | Krystal Stanley | Hi Sloane,
+<br>
+<br>Quick question about Wealthbox CRM: Do you need any help getting started?
+<br>
+<br>We're here for you. We'd like to invite you to join one of our These online sessions are...
+<br>
+<br> * Live demonstrations of Wealthbox
+<br> * Held daily at 1pm ET, Monday - Friday
+<br> * Only 20 minutes long, plus Q&A
+<br>
+<br>
+<br>Interested? to jumpstart your Wealthbox experience. Or you can watch a on demand, right now.
+<br>
+<br>Any questions? You can reply to this email, or get answers in our .
+<br>
+<br>Talk soon,
+<br>
+<br>Krystal Stanley
+<br>Team Wealthbox
+<br>
+<br>If you don't want to hear from me anymore, [https://apus5.com/unsubscribe/v2?s=wealthbox&m=s_fe6f69f1-c957-484b-8812-ddeaedf5c7c9] . Hi Sloane, Quick question about Wealthbox CRM: Do you need any help getting started? We're here for you. We'd like to invite you to join one of our live demos. These online sessions are... Live demonstrations of Wealthbox Held daily at 1pm ET, Monday - Friday Only 20 minutes long, plus Q&A Interested? Sign up for a demo to jumpstart your Weal | None | 0 | True | Sloane Ortel <sloane@investvegan.org> | Hi Sloane,
+<br>
+<br>Quick question about Wealthbox CRM: Do you need any help getting started?
+<br>
+<br>We're here for you. We'd like to invite you to join one of our These online sessions are...
+<br>
+<br> * Live demonstrations of Wealthbox
+<br> * Held daily at 1pm ET, Monday - Friday
+<br> * Only 20 minutes long, plus Q&A
+<br>
+<br>
+<br>Interested? to jumpstart your Wealthbox experience. Or you can watch a on demand, right now.
+<br>
+<br>Any questions? You can reply to this email, or get answers in our .
+<br>
+<br>Talk soon,
+<br>
+<br>Krystal Stanley
+<br>Team Wealthbox
+<br>
+<br>If you don't want to hear from me anymore, [https://apus5.com/unsubscribe/v2?s=wealthbox&m=s_fe6f69f1-c957-484b-8812-ddeaedf5c7c9] . Hi Sloane, Quick question about Wealthbox CRM: Do you need any help getting started? We're here for you. We'd like to invite you to join one of our live demos. These online sessions are... Live demonstrations of Wealthbox Held daily at 1pm ET, Monday - Friday Only 20 minutes long, plus Q&A Interested? Sign up for a demo to jumpstart your Weal | 2021-08-23 16:02:05 | None | None | None | None | None | None | None | None | None | None | Hi Sloane,
+<br>
+<br>Quick question about Wealthbox CRM: Do you need any help getting started?
+<br>
+<br>We're here for you. We'd like to invite you to join one of our These online sessions are...
+<br>
+<br> * Live demonstrations of Wealthbox
+<br> * Held daily at 1pm ET, Monday - Friday
+<br> * Only 20 minutes long, plus Q&A
+<br>
+<br>
+<br>Interested? to jumpstart your Wealthbox experience. Or you can watch a on demand, right now.
+<br>
+<br>Any questions? You can reply to this email, or get answers in our .
+<br>
+<br>Talk soon,
+<br>
+<br>Krystal Stanley
+<br>Team Wealthbox
+<br>
+<br>If you don't want to hear from me anymore, [https://apus5.com/unsubscribe/v2?s=wealthbox&m=s_fe6f69f1-c957-484b-8812-ddeaedf5c7c9] . Hi Sloane, Quick question about Wealthbox CRM: Do you need any help getting started? We're here for you. We'd like to invite you to join one of our live demos. These online sessions are... Live demonstrations of Wealthbox Held daily at 1pm ET, Monday - Friday Only 20 minutes long, plus Q&A Interested? Sign up for a demo to jumpstart your Weal | None | None | None | None | None | None | imported | None | None | 2021-08-23 16:02:05 | 2021-08-23 16:02:05 | 2021-08-23 16:02:05 |
+| 17b73c00680dad26 | 17b73c00680dad26 | Test | sloane@investvegan.org | Sloane Ortel | I send you email from fancy new platform.
+<br>
+<br>
+<br>
+<br>Sloane Ortel
+<br>Founder
+<br>Invest Vegan
+<br>[Click here to schedule a
+<br>meeting](https://nyl.as/t1/296/6kjira38fvpi1l1m9i7357m3p/0/c957df034ee69324c4354c2e96404efc5108545a6693bcc691ec0ef0ccc0e27a
+<br>"https://calendly.com/investvegan")
+<br>
+<br>
+<br>
+<br>(845) 684-2779
+<br>813 Halsey Street, Third Floor
+<br>Brooklyn, New York, 11233
+<br>
+<br>Investment advisory services are offered through Invest Vegan LLC; a New York
+<br>domiciled registered investment adviser. This communication is not to be
+<br>directly or indirectly interpreted as a solicitation of investment advisory
+<br>services to residents of another jurisdiction unless the firm and the sender
+<br>of this message are registered and/or licensed in that jurisdiction, or as
+<br>otherwise permitted by statute.
+<br>
+<br>The contents of this email communication and any accompanying documents are
+<br>confidential and for the sole use of the recipient. They are not to be copied,
+<br>quoted, excerpted or distributed without exp | None | 0 | False | sloane@srvo.org | I send you email from fancy new platform.
+<br>
+<br>
+<br>
+<br>Sloane Ortel
+<br>Founder
+<br>Invest Vegan
+<br>[Click here to schedule a
+<br>meeting](https://nyl.as/t1/296/6kjira38fvpi1l1m9i7357m3p/0/c957df034ee69324c4354c2e96404efc5108545a6693bcc691ec0ef0ccc0e27a
+<br>"https://calendly.com/investvegan")
+<br>
+<br>
+<br>
+<br>(845) 684-2779
+<br>813 Halsey Street, Third Floor
+<br>Brooklyn, New York, 11233
+<br>
+<br>Investment advisory services are offered through Invest Vegan LLC; a New York
+<br>domiciled registered investment adviser. This communication is not to be
+<br>directly or indirectly interpreted as a solicitation of investment advisory
+<br>services to residents of another jurisdiction unless the firm and the sender
+<br>of this message are registered and/or licensed in that jurisdiction, or as
+<br>otherwise permitted by statute.
+<br>
+<br>The contents of this email communication and any accompanying documents are
+<br>confidential and for the sole use of the recipient. They are not to be copied,
+<br>quoted, excerpted or distributed without exp | 2021-08-23 16:02:49 | None | None | None | None | None | None | None | None | None | None | I send you email from fancy new platform.
+<br>
+<br>
+<br>
+<br>Sloane Ortel
+<br>Founder
+<br>Invest Vegan
+<br>[Click here to schedule a
+<br>meeting](https://nyl.as/t1/296/6kjira38fvpi1l1m9i7357m3p/0/c957df034ee69324c4354c2e96404efc5108545a6693bcc691ec0ef0ccc0e27a
+<br>"https://calendly.com/investvegan")
+<br>
+<br>
+<br>
+<br>(845) 684-2779
+<br>813 Halsey Street, Third Floor
+<br>Brooklyn, New York, 11233
+<br>
+<br>Investment advisory services are offered through Invest Vegan LLC; a New York
+<br>domiciled registered investment adviser. This communication is not to be
+<br>directly or indirectly interpreted as a solicitation of investment advisory
+<br>services to residents of another jurisdiction unless the firm and the sender
+<br>of this message are registered and/or licensed in that jurisdiction, or as
+<br>otherwise permitted by statute.
+<br>
+<br>The contents of this email communication and any accompanying documents are
+<br>confidential and for the sole use of the recipient. They are not to be copied,
+<br>quoted, excerpted or distributed without exp | None | None | None | None | None | None | imported | None | None | 2021-08-23 16:02:49 | 2021-08-23 16:02:49 | 2021-08-23 16:02:49 |
+| 17b73f2197ba814e | 17b73f2197ba814e | Form shared with you: "Invest Vegan Email Signup " | drive-shares-dm-noreply@google.com | Sloane Ortel (via Google Forms) | I've shared an item with you:
+<br>
+<br>Invest Vegan Email Signup
+<br>https://docs.google.com/forms/d/1izOkczwVACugF2Cm83B2mOQdMfYC5d7YGtxoQvGlAuw/edit?usp=sharing&ts=6123d37a
+<br>
+<br>It's not an attachment -- it's stored online. To open this item, just click
+<br>the link above. Sloane Ortel shared a form Sloane Ortel has invited you to edit the following form: Invest Vegan Email Signup Sloane Ortel is outside your organization. Open Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA You have received this email because Sloane@srvo.org shared a file or folder located in Google Drive with you. | None | 0 | False | sloane@investvegan.org | I've shared an item with you:
+<br>
+<br>Invest Vegan Email Signup
+<br>https://docs.google.com/forms/d/1izOkczwVACugF2Cm83B2mOQdMfYC5d7YGtxoQvGlAuw/edit?usp=sharing&ts=6123d37a
+<br>
+<br>It's not an attachment -- it's stored online. To open this item, just click
+<br>the link above. Sloane Ortel shared a form Sloane Ortel has invited you to edit the following form: Invest Vegan Email Signup Sloane Ortel is outside your organization. Open Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA You have received this email because Sloane@srvo.org shared a file or folder located in Google Drive with you. | 2021-08-23 16:57:30 | None | None | None | None | None | None | None | None | None | None | I've shared an item with you:
+<br>
+<br>Invest Vegan Email Signup
+<br>https://docs.google.com/forms/d/1izOkczwVACugF2Cm83B2mOQdMfYC5d7YGtxoQvGlAuw/edit?usp=sharing&ts=6123d37a
+<br>
+<br>It's not an attachment -- it's stored online. To open this item, just click
+<br>the link above. Sloane Ortel shared a form Sloane Ortel has invited you to edit the following form: Invest Vegan Email Signup Sloane Ortel is outside your organization. Open Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA You have received this email because Sloane@srvo.org shared a file or folder located in Google Drive with you. | None | None | None | None | None | None | imported | None | None | 2021-08-23 16:57:30 | 2021-08-23 16:57:30 | 2021-08-23 16:57:30 |
 
 ### email_analyses
 

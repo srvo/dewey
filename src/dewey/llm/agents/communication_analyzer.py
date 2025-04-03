@@ -1,49 +1,52 @@
-"""
-LLM agent for analyzing client communications from the database.
-"""
+"""LLM agent for analyzing client communications from the database."""
 
-from typing import Dict, List, Optional
+from typing import Dict, List
+
 from pydantic import BaseModel
-from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import joinedload
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import get_connection
-from dewey.core.db.models import Emails, ClientCommunicationsIndex, ClientProfiles
-from dewey.llm.litellm_client import LiteLLMClient, Message
+from dewey.core.db.models import ClientCommunicationsIndex, ClientProfiles, Emails
 from dewey.core.exceptions import DatabaseConnectionError, LLMError
+from dewey.llm.litellm_client import LiteLLMClient, Message
+
 
 class CommunicationAnalysis(BaseModel):
     """Structured output format for communication analysis."""
+
     summary: str
-    key_topics: List[str]
+    key_topics: list[str]
     sentiment: str
-    action_items: List[str]
+    action_items: list[str]
     urgency: str
-    client_concerns: List[str]
-    communication_trends: List[str]
+    client_concerns: list[str]
+    communication_trends: list[str]
+
 
 class CommunicationAnalyzerAgent(BaseScript):
     """LLM agent for analyzing client email communications."""
-    
+
     def __init__(self):
         super().__init__(
             name="communication_analyzer",
             description="Analyzes client communications using LLMs",
             config_section="llm.agents.communication",
-            enable_llm=True
+            enable_llm=True,
         )
         self.llm_client = LiteLLMClient()
         self.analysis_model = self.get_config_value("analysis_model", "gpt-4-turbo")
 
-    def retrieve_communications(self, client_identifier: str) -> List[Dict]:
+    def retrieve_communications(self, client_identifier: str) -> list[dict]:
         """Retrieve communications for a client.
-        
+
         Args:
             client_identifier: Email address or client_profile_id
-            
+
         Returns:
             List of communication dictionaries with subject, content, and dates
+
         """
         try:
             db_config = self.config.get("database", {})
@@ -51,25 +54,34 @@ class CommunicationAnalyzerAgent(BaseScript):
             session = db_conn.get_session()
             try:
                 # Try to find by email first
-                query = session.query(ClientCommunicationsIndex).join(Emails).join(ClientProfiles).filter(
-                    (ClientCommunicationsIndex.client_email == client_identifier) |
-                    (ClientProfiles.id == client_identifier)
-                ).options(
-                    joinedload(ClientCommunicationsIndex.email_analysis)
+                query = (
+                    session.query(ClientCommunicationsIndex)
+                    .join(Emails)
+                    .join(ClientProfiles)
+                    .filter(
+                        (ClientCommunicationsIndex.client_email == client_identifier)
+                        | (ClientProfiles.id == client_identifier)
+                    )
+                    .options(joinedload(ClientCommunicationsIndex.email_analysis))
                 )
-                
+
                 communications = query.limit(50).all()
-                
+
                 if not communications:
-                    self.logger.warning(f"No communications found for {client_identifier}")
+                    self.logger.warning(
+                        f"No communications found for {client_identifier}"
+                    )
                     return []
 
-                return [{
-                    "subject": comm.Emails.subject,
-                    "snippet": comm.Emails.snippet,
-                    "sent_date": comm.Emails.analysis_date,
-                    "direction": "inbound" if comm.client_email else "outbound"
-                } for comm in communications]
+                return [
+                    {
+                        "subject": comm.Emails.subject,
+                        "snippet": comm.Emails.snippet,
+                        "sent_date": comm.Emails.analysis_date,
+                        "direction": "inbound" if comm.client_email else "outbound",
+                    }
+                    for comm in communications
+                ]
 
             except SQLAlchemyError as e:
                 self.logger.error(f"Database error retrieving communications: {e}")
@@ -82,7 +94,7 @@ class CommunicationAnalyzerAgent(BaseScript):
             self.logger.error(f"Failed to initialize database connection: {e}")
             raise
 
-    def format_communications_prompt(self, communications: List[Dict]) -> List[Message]:
+    def format_communications_prompt(self, communications: list[dict]) -> list[Message]:
         """Format communications for LLM analysis."""
         system_prompt = """You are a financial communications analyst. Analyze client emails and:
 1. Summarize key discussion points
@@ -104,7 +116,9 @@ Return JSON format with: summary, key_topics, sentiment, action_items, urgency, 
 
         return [
             Message(role="system", content=system_prompt),
-            Message(role="user", content=f"Analyze these communications:\n{comms_text}")
+            Message(
+                role="user", content=f"Analyze these communications:\n{comms_text}"
+            ),
         ]
 
     def analyze_communications(self, client_identifier: str) -> CommunicationAnalysis:
@@ -120,7 +134,7 @@ Return JSON format with: summary, key_topics, sentiment, action_items, urgency, 
                     action_items=[],
                     urgency="low",
                     client_concerns=[],
-                    communication_trends=[]
+                    communication_trends=[],
                 )
 
             # Format and send to LLM
@@ -129,9 +143,9 @@ Return JSON format with: summary, key_topics, sentiment, action_items, urgency, 
                 messages=messages,
                 model=self.analysis_model,
                 temperature=0.3,
-                response_format={"type": "json_object"}
+                response_format={"type": "json_object"},
             )
-            
+
             # Parse and validate response
             return CommunicationAnalysis.parse_raw(response.choices[0].message.content)
 
@@ -147,9 +161,10 @@ Return JSON format with: summary, key_topics, sentiment, action_items, urgency, 
         parser = self.setup_argparse()
         parser.add_argument("client_identifier", help="Client email or ID")
         args = parser.parse_args()
-        
+
         analysis = self.analyze_communications(args.client_identifier)
         self.logger.info(f"Analysis results:\n{analysis.json(indent=2)}")
+
 
 if __name__ == "__main__":
     CommunicationAnalyzerAgent().run()

@@ -17,10 +17,11 @@ class ExceptionsScript(BaseScript):
 
         Args:
             **kwargs: Keyword arguments passed to the BaseScript constructor.
+
         """
         super().__init__(**kwargs)
 
-    def run(self) -> Dict[str, Any]:
+    def run(self) -> dict[str, Any]:
         """Executes the core logic of the ExceptionsScript.
 
         This method retrieves configuration values, processes data, and
@@ -31,16 +32,22 @@ class ExceptionsScript(BaseScript):
 
         Raises:
             Exception: If an error occurs during script execution.
+
         """
         try:
             # Retrieve configuration values
             model_name: str = self.get_config_value("model_name")
             temperature: float = self.get_config_value("temperature")
 
-            self.logger.info(f"Using model: {model_name} with temperature: {temperature}")
+            self.logger.info(
+                f"Using model: {model_name} with temperature: {temperature}"
+            )
 
             # Placeholder for core logic
-            result: Dict[str, Any] = {"status": "success", "message": "Exceptions handled successfully."}
+            result: dict[str, Any] = {
+                "status": "success",
+                "message": "Exceptions handled successfully.",
+            }
 
             return result
 

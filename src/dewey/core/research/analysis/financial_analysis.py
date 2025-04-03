@@ -10,14 +10,10 @@ from dewey.core.db.connection import DatabaseConnection, get_connection
 
 
 class FinancialAnalysis(BaseScript):
-    """
-    Analyzes financial data to identify significant changes and material events for a given set of stocks.
-    """
+    """Analyzes financial data to identify significant changes and material events for a given set of stocks."""
 
     def __init__(self):
-        """
-        Initializes the FinancialAnalysis script with necessary configurations and connections.
-        """
+        """Initializes the FinancialAnalysis script with necessary configurations and connections."""
         super().__init__(
             name="Financial Analysis",
             description="Analyzes financial data for significant changes and material events.",
@@ -26,7 +22,9 @@ class FinancialAnalysis(BaseScript):
             enable_llm=False,
         )
 
-    def sync_current_universe(self, local_conn: DatabaseConnection, md_conn: DatabaseConnection) -> None:
+    def sync_current_universe(
+        self, local_conn: DatabaseConnection, md_conn: DatabaseConnection
+    ) -> None:
         """Sync current universe from MotherDuck to local DuckDB.
 
         Args:
@@ -38,6 +36,7 @@ class FinancialAnalysis(BaseScript):
 
         Raises:
             Exception: If connection to MotherDuck fails.
+
         """
         if not md_conn:
             self.logger.warning("No MotherDuck connection available, skipping sync")
@@ -55,7 +54,8 @@ class FinancialAnalysis(BaseScript):
                     AND workflow IS NOT NULL  -- Only include stocks with a workflow
                     AND workflow != 'excluded'  -- Exclude explicitly excluded stocks
                     AND workflow != 'ignore'  -- Exclude ignored stocks
-            """, ).fetchdf()
+            """,
+            ).fetchdf()
 
             # Create and populate table in local DuckDB
             local_conn.execute(
@@ -63,7 +63,8 @@ class FinancialAnalysis(BaseScript):
                 CREATE TABLE IF NOT EXISTS current_universe (
                     ticker VARCHAR PRIMARY KEY, name VARCHAR, sector VARCHAR, industry VARCHAR
                 )
-            """, )
+            """,
+            )
 
             # Clear existing data
             local_conn.execute("DELETE FROM current_universe")
@@ -86,6 +87,7 @@ class FinancialAnalysis(BaseScript):
 
         Raises:
             Exception: If database query fails.
+
         """
         try:
             with get_connection() as conn:
@@ -100,23 +102,21 @@ class FinancialAnalysis(BaseScript):
                         ts.symbol = cu.ticker
                         OR ts.entity_id = REPLACE(ts.symbol, 'C', '')
                     ORDER BY cu.sector, cu.industry, cu.ticker
-                    """, ).fetchdf()
+                    """,
+                ).fetchdf()
 
-                stocks=None, row in stocks_df.iterrows():
-                    if ).fetchdf()
-
-                stocks is None:
-                        ).fetchdf()
+                if stocks_df is None or stocks_df.empty:
+                    return []
 
                 stocks = []
-                for _
+                for _, row in stocks_df.iterrows():
                     stocks.append(
                         {
                             "ticker": row["ticker"],
                             "name": row["name"],
                             "sector": row["sector"],
                             "industry": row["industry"],
-                        },
+                        }
                     )
 
                 return stocks
@@ -135,6 +135,7 @@ class FinancialAnalysis(BaseScript):
 
         Raises:
             Exception: If database query fails.
+
         """
         try:
             # Get the last 2 months of financial metrics
@@ -171,11 +172,15 @@ class FinancialAnalysis(BaseScript):
                             WHEN prev_value = 0 OR prev_value IS NULL THEN 0
                             ELSE ((current_value - prev_value) / ABS(prev_value)) * 100
                         END) > 20  -- Only show significant changes (>20%)
-                    """, [ticker, two_months_ago], ).fetchdf()
+                    """,
+                    [ticker, two_months_ago],
+                ).fetchdf()
 
                 return metrics.to_dict("records") if not metrics.empty else []
         except Exception as e:
-            self.logger.exception(f"Error analyzing financial changes for {ticker}: {e}")
+            self.logger.exception(
+                f"Error analyzing financial changes for {ticker}: {e}"
+            )
             raise
 
     def analyze_material_events(self, ticker: str) -> List[str]:
@@ -189,13 +194,28 @@ class FinancialAnalysis(BaseScript):
 
         Raises:
             Exception: If database query fails.
+
         """
         try:
             # Get recent filings
-            two_months_ago=None, )
+            two_months_ago = (datetime.now() - timedelta(days=60)).strftime("%Y-%m-%d")
+            events = []
+
+            # Look for significant events in financial metrics
+            changes = self.analyze_financial_changes(ticker)
+            for change in changes:
+                metric = change["metric_name"]
+                pct_change = change["pct_change"]
+                date = change["end_date"].strftime("%Y-%m-%d")
+
+                if abs(pct_change) > 50:  # Very significant change
+                    events.append(
+                        f"MAJOR CHANGE: {metric} {'increased' if pct_change > 0 else 'decreased'} by {pct_change:.1f}% as of {date}"
+                    )
                 else:
                     events.append(
-                        f"Significant change in {metric}: {'increased' if pct_change > 0 else 'decreased'} by {pct_change:.1f}% as of {date}", )
+                        f"Significant change in {metric}: {'increased' if pct_change > 0 else 'decreased'} by {pct_change:.1f}% as of {date}"
+                    )
 
             # Look for specific material events in filings
             with get_connection() as conn:
@@ -225,51 +245,23 @@ class FinancialAnalysis(BaseScript):
                             OR metric_name LIKE '%Severance%'
                         )
                     ORDER BY filed_date DESC
-                    """, [ticker, two_months_ago], ).fetchdf()
+                    """,
+                    [ticker, two_months_ago],
+                ).fetchdf()
 
                 if not material_events.empty:
                     for _, event in material_events.iterrows():
-                        if each representing a material event.
-
-        Raises:
-            Exception: If database query fails.
-        """
-        try:
-            # Get recent filings
-            two_months_ago is None:
-                            each representing a material event.
-
-        Raises:
-            Exception: If database query fails.
-        """
-        try:
-            # Get recent filings
-            two_months_ago = (datetime.now() - timedelta(days=60)).strftime("%Y-%m-%d")
-
-            events = []
-
-            # Look for significant events in financial metrics
-            changes = self.analyze_financial_changes(ticker)
-            for change in changes:
-                metric = change["metric_name"]
-                pct_change = change["pct_change"]
-                date = change["end_date"].strftime("%Y-%m-%d")
-
-                if abs(pct_change) > 50:  # Very significant change
-                    events.append(
-                        f"MAJOR CHANGE: {metric} {'increased' if pct_change > 0 else 'decreased'} by {pct_change:.1f}% as of {date}"
                         events.append(
-                            f"Material event ({event['form']} filed {event['filed_date'].strftime('%Y-%m-%d')}): {event['metric_name']}",
+                            f"Material event ({event['form']} filed {event['filed_date'].strftime('%Y-%m-%d')}): {event['metric_name']}"
                         )
 
-                return events
+            return events
         except Exception as e:
             self.logger.exception(f"Error analyzing material events for {ticker}: {e}")
             raise
 
     def run(self) -> None:
-        """
-        Executes the financial analysis process.
+        """Executes the financial analysis process.
 
         This includes:
         1. Retrieving the current universe of stocks.
@@ -284,59 +276,7 @@ class FinancialAnalysis(BaseScript):
 
         Raises:
             Exception: If any part of the analysis fails.
-        """
-        try:
-            # Get current universe
-            stocks=None, )
 
-                events = self.analyze_material_events(ticker)
-                if events:
-                    material_findings.append(
-                        {
-                            "ticker": ticker, "name": stock["name"], "sector": stock["sector"], "industry": stock["industry"], "events": events, }, )
-
-            # Print summary of material findings
-            if material_findings:
-                # Group by sector
-                by_sector=None, findings in by_sector.items():
-                    if self) -> None:
-        """
-        Executes the financial analysis process.
-
-        This includes:
-        1. Retrieving the current universe of stocks.
-        2. Analyzing each stock for material events.
-        3. Printing a summary of material findings.
-
-        Args:
-            None
-
-        Returns:
-            None
-
-        Raises:
-            Exception: If any part of the analysis fails.
-        """
-        try:
-            # Get current universe
-            stocks is None:
-                        self) -> None:
-        """
-        Executes the financial analysis process.
-
-        This includes:
-        1. Retrieving the current universe of stocks.
-        2. Analyzing each stock for material events.
-        3. Printing a summary of material findings.
-
-        Args:
-            None
-
-        Returns:
-            None
-
-        Raises:
-            Exception: If any part of the analysis fails.
         """
         try:
             # Get current universe
@@ -350,13 +290,19 @@ class FinancialAnalysis(BaseScript):
                 ticker = stock["ticker"]
                 self.logger.info(
                     f"\nAnalyzing {ticker} ({stock['name']}) - {stock['sector']}/{stock['industry']}..."
-                    if )
+                )
 
-            # Print summary of material findings
-            if material_findings:
-                # Group by sector
-                by_sector is None:
-                        )
+                events = self.analyze_material_events(ticker)
+                if events:
+                    material_findings.append(
+                        {
+                            "ticker": ticker,
+                            "name": stock["name"],
+                            "sector": stock["sector"],
+                            "industry": stock["industry"],
+                            "events": events,
+                        }
+                    )
 
             # Print summary of material findings
             if material_findings:
@@ -369,7 +315,7 @@ class FinancialAnalysis(BaseScript):
                     by_sector[sector].append(finding)
 
                 # Print findings by sector
-                for sector
+                for sector, findings in by_sector.items():
                     for finding in findings:
                         for event in finding["events"]:
                             self.logger.info(f"{finding['ticker']} ({sector}): {event}")
@@ -384,9 +330,7 @@ class FinancialAnalysis(BaseScript):
 
 
 def main() -> None:
-    """
-    Main entry point for the financial analysis script.
-    """
+    """Main entry point for the financial analysis script."""
     analysis = FinancialAnalysis()
     analysis.execute()
 

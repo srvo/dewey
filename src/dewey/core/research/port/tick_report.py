@@ -6,17 +6,14 @@ from dewey.llm.llm_utils import generate_text
 
 
 class TickReport(BaseScript):
-    """
-    A module for generating tick reports.
+    """A module for generating tick reports.
 
     This module inherits from BaseScript and provides methods for
     generating reports based on tick data.
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """
-        Initializes the TickReport module.
-        """
+        """Initializes the TickReport module."""
         super().__init__(
             *args,
             config_section="tick_report",
@@ -26,8 +23,7 @@ class TickReport(BaseScript):
         )
 
     def run(self) -> None:
-        """
-        Executes the tick report generation process.
+        """Executes the tick report generation process.
 
         Args:
             None
@@ -37,6 +33,7 @@ class TickReport(BaseScript):
 
         Raises:
             Exception: If there is an error during tick report generation.
+
         """
         self.logger.info("Starting tick report generation...")
 

@@ -2,8 +2,7 @@ from dewey.core.base_script import BaseScript
 
 
 class ResearchEngines(BaseScript):
-    """
-    Base class for research engines within Dewey.
+    """Base class for research engines within Dewey.
 
     This class provides a standardized structure for research engines,
     including configuration loading, logging, and a `run` method to
@@ -18,8 +17,7 @@ class ResearchEngines(BaseScript):
         requires_db: bool = False,
         enable_llm: bool = False,
     ) -> None:
-        """
-        Initializes the ResearchEngines class.
+        """Initializes the ResearchEngines class.
 
         Args:
             name: The name of the research engine. Defaults to the class name.
@@ -27,6 +25,7 @@ class ResearchEngines(BaseScript):
             config_section: The section in the dewey.yaml config file to use.
             requires_db: Whether the engine requires a database connection.
             enable_llm: Whether the engine requires an LLM client.
+
         """
         super().__init__(
             name=name,
@@ -37,8 +36,7 @@ class ResearchEngines(BaseScript):
         )
 
     def run(self) -> None:
-        """
-        Executes the primary logic of the research engine.
+        """Executes the primary logic of the research engine.
 
         This method retrieves the engine name from the configuration and logs
         it.  Subclasses should override this method to implement their specific
@@ -52,6 +50,7 @@ class ResearchEngines(BaseScript):
 
         Raises:
             Exception: If there is an error during execution.
+
         """
         self.logger.info("Running research engine...")
         try:

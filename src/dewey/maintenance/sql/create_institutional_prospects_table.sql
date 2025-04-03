@@ -71,4 +71,4 @@ CREATE INDEX IF NOT EXISTS idx_institutional_prospects_crd ON institutional_pros
 CREATE INDEX IF NOT EXISTS idx_institutional_prospects_name ON institutional_prospects(ria_firm_name);
 
 -- Comment to explain the table's purpose
-COMMENT ON TABLE institutional_prospects IS 'Table containing RIA (Registered Investment Advisor) firm data for institutional prospecting, sourced from Schwab database'; 
+COMMENT ON TABLE institutional_prospects IS 'Table containing RIA (Registered Investment Advisor) firm data for institutional prospecting, sourced from Schwab database';

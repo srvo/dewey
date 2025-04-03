@@ -45,7 +45,7 @@ else
     DB_CONN="dewey.duckdb"
 fi
 
-# Get count directly 
+# Get count directly
 TOTAL_COUNT=2463  # Expected count - use hardcoded value
 ACTUAL_COUNT=$(duckdb "$DB_CONN" -c "SELECT COUNT(*) FROM family_offices;")
 echo "family_offices table contains records: $ACTUAL_COUNT"
@@ -54,7 +54,7 @@ echo "family_offices table contains records: $ACTUAL_COUNT"
 echo -e "\nBreakdown by office type:"
 duckdb -c "SELECT mf_sf, COUNT(*) as count FROM family_offices GROUP BY mf_sf ORDER BY count DESC;" "$DB_CONN"
 
-# Show AUM statistics 
+# Show AUM statistics
 echo -e "\nAUM statistics:"
 duckdb -c "SELECT MIN(aum_numeric) as min_aum, MAX(aum_numeric) as max_aum, AVG(aum_numeric) as avg_aum, MEDIAN(aum_numeric) as median_aum, COUNT(aum_numeric) as offices_with_aum, COUNT(*) as total_offices FROM family_offices;" "$DB_CONN"
 
@@ -73,4 +73,4 @@ else
     echo "⚠️ WARNING: Expected $TOTAL_COUNT records, but a different number were imported."
 fi
 echo "---------------------------------------------"
-exit 0 
+exit 0

@@ -2,8 +2,7 @@ from dewey.core.base_script import BaseScript
 
 
 class GithubAnalyzer(BaseScript):
-    """
-    Analyzes GitHub repositories.
+    """Analyzes GitHub repositories.
 
     This class inherits from BaseScript and provides methods for
     analyzing GitHub repositories, retrieving information,

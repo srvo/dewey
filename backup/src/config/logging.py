@@ -4,10 +4,8 @@ import logging
 import sys
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from typing import Any, Dict, Optional
 
 import colorlog
-
 from dewey.core.base_script import BaseScript
 
 
@@ -32,9 +30,7 @@ class LoggingConfigurator(BaseScript):
         self.logger.setLevel(self.get_config_value("level", logging.INFO))
 
         formatter = logging.Formatter(
-            self.get_config_value(
-                "format", "%(asctime)s - %(levelname)s - %(message)s"
-            )
+            self.get_config_value("format", "%(asctime)s - %(levelname)s - %(message)s")
         )
 
         # Console handler

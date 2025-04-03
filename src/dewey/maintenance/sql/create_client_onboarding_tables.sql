@@ -123,4 +123,4 @@ CREATE INDEX IF NOT EXISTS idx_legitimate_household ON legitimate_onboarding(lin
 COMMENT ON TABLE client_intake_questionnaire IS 'Table containing client intake questionnaire responses with personal and investment data';
 COMMENT ON TABLE onboarding_responses IS 'Table containing email communications with clients during onboarding process';
 COMMENT ON TABLE forminator_onboarding IS 'Table containing detailed client information from web form submissions';
-COMMENT ON TABLE legitimate_onboarding IS 'Table containing verified onboarding form responses from potential clients'; 
+COMMENT ON TABLE legitimate_onboarding IS 'Table containing verified onboarding form responses from potential clients';

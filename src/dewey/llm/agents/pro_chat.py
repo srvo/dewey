@@ -6,12 +6,13 @@ from dewey.core.base_script import BaseScript
 class ProChat(BaseScript):
     """A class for professional chat interactions, inheriting from BaseScript."""
 
-    def __init__(self, config_section: str = 'pro_chat', **kwargs: Any) -> None:
+    def __init__(self, config_section: str = "pro_chat", **kwargs: Any) -> None:
         """Initializes the ProChat agent.
 
         Args:
             config_section (str): Configuration section name. Defaults to 'pro_chat'.
             **kwargs (Any): Additional keyword arguments.
+
         """
         super().__init__(config_section=config_section, **kwargs)
 
@@ -23,13 +24,16 @@ class ProChat(BaseScript):
 
         Raises:
             Exception: If there is an error during the execution.
+
         """
         try:
             # Access configuration values using self.get_config_value()
             model_name = self.get_config_value("model_name", default="gpt-3.5-turbo")
             temperature = self.get_config_value("temperature", default=0.7)
 
-            self.logger.info(f"Starting ProChat with model: {model_name} and temperature: {temperature}")
+            self.logger.info(
+                f"Starting ProChat with model: {model_name} and temperature: {temperature}"
+            )
 
             # Simulate chat interactions
             self.logger.info("Simulating chat interactions...")
@@ -45,9 +49,6 @@ class ProChat(BaseScript):
 
 if __name__ == "__main__":
     # Example usage (replace with actual configuration)
-    config: Dict[str, Any] = {
-        "model_name": "gpt-4",
-        "temperature": 0.8
-    }
+    config: dict[str, Any] = {"model_name": "gpt-4", "temperature": 0.8}
     agent = ProChat()
     agent.run()

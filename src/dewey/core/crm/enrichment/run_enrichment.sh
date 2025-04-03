@@ -75,4 +75,4 @@ exit $EXIT_CODE
 # 0 * * * * $HOME/dewey/src/dewey/core/crm/enrichment/run_enrichment.sh
 
 # Run after email import (every 5 minutes)
-# */5 * * * * $HOME/dewey/src/dewey/core/crm/gmail/run_import.sh && sleep 30 && $HOME/dewey/src/dewey/core/crm/enrichment/run_enrichment.sh 
+# */5 * * * * $HOME/dewey/src/dewey/core/crm/gmail/run_import.sh && sleep 30 && $HOME/dewey/src/dewey/core/crm/enrichment/run_enrichment.sh

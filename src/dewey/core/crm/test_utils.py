@@ -1,4 +1,5 @@
 """Tests for research utilities."""
+
 import json
 from pathlib import Path
 from typing import Any, Dict
@@ -20,11 +21,18 @@ class TestUniverseBreakdown(BaseScript):
         """Initializes the TestUniverseBreakdown class."""
         super().__init__(config_section="crm")
 
-    def run(self) -> None:
-        """Runs all tests for the UniverseBreakdown utility."""
+    def execute(self) -> None:
+        """Executes all tests for the UniverseBreakdown utility."""
         self.test_initialization(self.breakdown())
         self.test_analyze_universe(self.breakdown())
         self.test_generate_report(self.breakdown())
+
+    def run(self) -> None:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()
 
     @pytest.fixture
     def breakdown(self) -> UniverseBreakdown:
@@ -32,6 +40,7 @@ class TestUniverseBreakdown(BaseScript):
 
         Returns:
             A UniverseBreakdown instance.
+
         """
         return UniverseBreakdown()
 
@@ -40,6 +49,7 @@ class TestUniverseBreakdown(BaseScript):
 
         Args:
             breakdown: An instance of UniverseBreakdown.
+
         """
         assert breakdown is not None
         assert hasattr(breakdown, "analyze")
@@ -50,8 +60,9 @@ class TestUniverseBreakdown(BaseScript):
 
         Args:
             breakdown: An instance of UniverseBreakdown.
+
         """
-        test_data: Dict[str, Any] = {
+        test_data: dict[str, Any] = {
             "companies": [
                 {"name": "Company A", "sector": "Technology", "market_cap": 1000000},
                 {"name": "Company B", "sector": "Healthcare", "market_cap": 2000000},
@@ -59,7 +70,7 @@ class TestUniverseBreakdown(BaseScript):
             ]
         }
 
-        analysis: Dict[str, Any] = breakdown.analyze(test_data)
+        analysis: dict[str, Any] = breakdown.analyze(test_data)
         assert isinstance(analysis, dict)
         assert "sector_breakdown" in analysis
         assert "market_cap_distribution" in analysis
@@ -71,13 +82,14 @@ class TestUniverseBreakdown(BaseScript):
 
         Args:
             breakdown: An instance of UniverseBreakdown.
+
         """
-        analysis_data: Dict[str, Any] = {
+        analysis_data: dict[str, Any] = {
             "sector_breakdown": {"Technology": 2, "Healthcare": 1},
             "market_cap_distribution": {"large": 1, "medium": 2},
         }
 
-        report: Dict[str, Any] = breakdown.generate_report(analysis_data)
+        report: dict[str, Any] = breakdown.generate_report(analysis_data)
         assert isinstance(report, dict)
         assert "summary" in report
         assert "charts" in report
@@ -91,11 +103,18 @@ class TestSTSXMLParser(BaseScript):
         """Initializes the TestSTSXMLParser class."""
         super().__init__(config_section="crm")
 
-    def run(self) -> None:
-        """Runs all tests for the STSXMLParser utility."""
+    def execute(self) -> None:
+        """Executes all tests for the STSXMLParser utility."""
         self.test_initialization(self.parser())
-        self.test_parse_xml(self.parser())
+        self.test_parse极_xml(self.parser())
         self.test_error_handling(self.parser())
+
+    def run(self) -> None:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update极 to use execute() instead."
+        )
+        self.execute()
 
     @pytest.fixture
     def parser(self) -> STSXMLParser:
@@ -103,6 +122,7 @@ class TestSTSXMLParser(BaseScript):
 
         Returns:
             An STSXMLParser instance.
+
         """
         return STSXMLParser()
 
@@ -111,6 +131,7 @@ class TestSTSXMLParser(BaseScript):
 
         Args:
             parser: An instance of STSXMLParser.
+
         """
         assert parser is not None
         assert hasattr(parser, "parse")
@@ -120,6 +141,7 @@ class TestSTSXMLParser(BaseScript):
 
         Args:
             parser: An instance of STSXMLParser.
+
         """
         test_xml: str = """
         <sts-analysis>
@@ -133,7 +155,7 @@ class TestSTSXMLParser(BaseScript):
         </sts-analysis>
         """
 
-        result: Dict[str, Any] = parser.parse(test_xml)
+        result: dict[str, Any] = parser.parse(test_xml)
         assert isinstance(result, dict)
         assert "company" in result
         assert result["company"]["name"] == "Test Corp"
@@ -144,6 +166,7 @@ class TestSTSXMLParser(BaseScript):
 
         Args:
             parser: An instance of STSXMLParser.
+
         """
         with pytest.raises(ValueError):
             parser.parse("<invalid>xml</invalid>")
@@ -156,12 +179,19 @@ class TestResearchOutputHandler(BaseScript):
         """Initializes the TestResearchOutputHandler class."""
         super().__init__(config_section="crm")
 
-    def run(self) -> None:
-        """Runs all tests for the ResearchOutputHandler utility."""
+    def execute(self) -> None:
+        """Executes all tests for the ResearchOutputHandler utility."""
         self.test_initialization(self.handler())
         self.test_save_output(self.handler(), self.tmp_path())
         self.test_load_output(self.handler(), self.tmp_path())
         self.test_error_handling(self.handler())
+
+    def run(self) -> None:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()
 
     @pytest.fixture
     def handler(self) -> ResearchOutputHandler:
@@ -169,6 +199,7 @@ class TestResearchOutputHandler(BaseScript):
 
         Returns:
             A ResearchOutputHandler instance.
+
         """
         return ResearchOutputHandler()
 
@@ -181,6 +212,7 @@ class TestResearchOutputHandler(BaseScript):
 
         Returns:
             A Path object representing the temporary directory.
+
         """
         return tmp_path
 
@@ -189,21 +221,21 @@ class TestResearchOutputHandler(BaseScript):
 
         Args:
             handler: An instance of ResearchOutputHandler.
+
         """
         assert handler is not None
         assert hasattr(handler, "save")
         assert hasattr(handler, "load")
 
-    def test_save_output(
-        self, handler: ResearchOutputHandler, tmp_path: Path
-    ) -> None:
+    def test_save_output(self, handler: ResearchOutputHandler, tmp_path: Path) -> None:
         """Test saving research output.
 
         Args:
             handler: An instance of ResearchOutputHandler.
             tmp_path: A temporary directory path.
+
         """
-        test_data: Dict[str, Any] = {
+        test_data: dict[str, Any] = {
             "analysis": {"score": 85, "recommendations": ["Test recommendation"]},
             "timestamp": "2024-03-19T12:00:00",
         }
@@ -214,19 +246,18 @@ class TestResearchOutputHandler(BaseScript):
 
         # Verify saved content
         with open(output_path) as f:
-            saved_data: Dict[str, Any] = json.load(f)
+            saved_data: dict[str, Any] = json.load(f)
         assert saved_data == test_data
 
-    def test_load_output(
-        self, handler: ResearchOutputHandler, tmp_path: Path
-    ) -> None:
+    def test_load_output(self, handler: ResearchOutputHandler, tmp_path: Path) -> None:
         """Test loading research output.
 
         Args:
             handler: An instance of ResearchOutputHandler.
             tmp_path: A temporary directory path.
+
         """
-        test_data: Dict[str, Any] = {
+        test_data: dict[str, Any] = {
             "analysis": {"score": 85, "recommendations": ["Test recommendation"]}
         }
 
@@ -236,7 +267,7 @@ class TestResearchOutputHandler(BaseScript):
             json.dump(test_data, f)
 
         # Load and verify
-        loaded_data: Dict[str, Any] = handler.load(output_path)
+        loaded_data: dict[str, Any] = handler.load(output_path)
         assert loaded_data == test_data
 
     def test_error_handling(self, handler: ResearchOutputHandler) -> None:
@@ -244,6 +275,7 @@ class TestResearchOutputHandler(BaseScript):
 
         Args:
             handler: An instance of ResearchOutputHandler.
+
         """
         with pytest.raises(FileNotFoundError):
             handler.load(Path("nonexistent.json"))
@@ -257,12 +289,21 @@ class TestUtilsIntegration(BaseScript):
         """Initializes the TestUtilsIntegration class."""
         super().__init__(config_section="crm")
 
-    def run(self, tmp_path: Path) -> None:
-        """Runs the complete analysis workflow integration test.
+    def execute(self, tmp_path: Path) -> None:
+        """Executes the complete analysis workflow integration test.
 
         Args:
             tmp_path: A temporary directory path.
+
         """
+        self.logger.info("Running integration test workflow...")
+
+    def run(self, tmp_path: Path) -> None:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute(tmp_path)
         # Create test instances
         breakdown: UniverseBreakdown = UniverseBreakdown()
         parser: STSXMLParser = STSXMLParser()
@@ -287,15 +328,15 @@ class TestUtilsIntegration(BaseScript):
         """
 
         # Parse XML
-        parsed_data: Dict[str, Any] = parser.parse(test_xml)
+        parsed_data: dict[str, Any] = parser.parse(test_xml)
         assert isinstance(parsed_data, dict)
 
         # Analyze universe
-        analysis: Dict[str, Any] = breakdown.analyze(parsed_data)
+        analysis: dict[str, Any] = breakdown.analyze(parsed_data)
         assert isinstance(analysis, dict)
 
         # Generate report
-        report: Dict[str, Any] = breakdown.generate_report(analysis)
+        report: dict[str, Any] = breakdown.generate_report(analysis)
         assert isinstance(report, dict)
 
         # Save output
@@ -304,5 +345,5 @@ class TestUtilsIntegration(BaseScript):
         assert output_path.exists()
 
         # Load and verify output
-        loaded_report: Dict[str, Any] = handler.load(output_path)
+        loaded_report: dict[str, Any] = handler.load(output_path)
         assert loaded_report == report

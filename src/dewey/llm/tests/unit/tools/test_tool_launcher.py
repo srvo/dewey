@@ -1,7 +1,8 @@
 """Unit tests for the ToolLauncher class."""
 
-import pytest
 from unittest.mock import MagicMock, patch
+
+import pytest
 
 from dewey.llm.tools.tool_launcher import ToolLauncher
 
@@ -25,10 +26,10 @@ class TestToolLauncher:
         # Arrange
         tool_name = "test_tool"
         input_data = {"param1": "value1"}
-        
+
         # Act
         result = launcher.run(tool_name, input_data)
-        
+
         # Assert
         assert result == {"status": "success"}
         launcher.logger.info.assert_called()
@@ -40,11 +41,11 @@ class TestToolLauncher:
         tool_name = "invalid_tool"
         input_data = {"param1": "value1"}
         launcher._execute_tool.side_effect = ValueError("Invalid tool")
-        
+
         # Act/Assert
         with pytest.raises(ValueError) as exc_info:
             launcher.run(tool_name, input_data)
-        
+
         assert "Invalid tool" in str(exc_info.value)
         launcher.logger.error.assert_called()
 
@@ -54,10 +55,10 @@ class TestToolLauncher:
         tool_name = "error_tool"
         input_data = {"param1": "value1"}
         launcher._execute_tool.side_effect = Exception("Tool execution failed")
-        
+
         # Act/Assert
         with pytest.raises(Exception) as exc_info:
             launcher.run(tool_name, input_data)
-        
+
         assert "Tool execution failed" in str(exc_info.value)
-        launcher.logger.exception.assert_called() 
+        launcher.logger.exception.assert_called()

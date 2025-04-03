@@ -160,4 +160,4 @@ Button {
 /* Selected email highlight */
 #recent-emails-table .datatable--cursor {
     background: $warning;
-} 
+}

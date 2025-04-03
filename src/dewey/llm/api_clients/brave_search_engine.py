@@ -8,16 +8,17 @@ from dewey.core.base_script import BaseScript
 class BraveSearchEngine(BaseScript):
     """A class for interacting with the Brave search engine."""
 
-    def __init__(self, config: Dict[str, Any], name: str = "BraveSearchEngine") -> None:
+    def __init__(self, config: dict[str, Any], name: str = "BraveSearchEngine") -> None:
         """Initializes the BraveSearchEngine.
 
         Args:
             config (Dict[str, Any]): A dictionary containing configuration parameters.
             name (str): The name of the script instance.
+
         """
         super().__init__(config=config, name=name)
 
-    def run(self, query: str) -> Optional[str]:
+    def run(self, query: str) -> str | None:
         """Executes a search query using the Brave search engine.
 
         Args:
@@ -28,11 +29,14 @@ class BraveSearchEngine(BaseScript):
 
         Raises:
             Exception: If there is an issue with the search query or API request.
+
         """
         try:
             api_key = self.get_config_value("brave_search_api_key")
             if not api_key:
-                self.logger.error("Brave Search API key is missing in the configuration.")
+                self.logger.error(
+                    "Brave Search API key is missing in the configuration."
+                )
                 return None
 
             # Construct the search URL
@@ -58,7 +62,7 @@ class BraveSearchEngine(BaseScript):
             )
             return None
 
-    def make_request(self, url: str, headers: Dict[str, str]) -> requests.Response:
+    def make_request(self, url: str, headers: dict[str, str]) -> requests.Response:
         """Makes an HTTP request to the specified URL.
 
         Args:
@@ -70,6 +74,7 @@ class BraveSearchEngine(BaseScript):
 
         Raises:
             requests.RequestException: If there is an issue with the request.
+
         """
         try:
             response = requests.get(url, headers=headers)

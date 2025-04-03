@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import List
 
 from dewey.core.base_script import BaseScript
 
@@ -16,6 +16,7 @@ class CleanupTables(BaseScript):
         Args:
             config_path: Path to the configuration file.
             dry_run: If True, the script will only simulate the cleanup.
+
         """
         super().__init__(config_path=config_path)
         self.dry_run = dry_run
@@ -29,13 +30,16 @@ class CleanupTables(BaseScript):
 
         Raises:
             Exception: If there is an error during the database operation.
+
         """
         try:
-            tables_to_clean: List[str] = self.get_config_value("tables_to_clean")
+            tables_to_clean: list[str] = self.get_config_value("tables_to_clean")
             self.logger.info(f"Tables to clean: {tables_to_clean}")
 
             if self.dry_run:
-                self.logger.info("Dry run mode enabled. No actual data will be deleted.")
+                self.logger.info(
+                    "Dry run mode enabled. No actual data will be deleted."
+                )
             else:
                 # Placeholder for actual database cleanup logic
                 self.logger.info("Starting actual data cleanup...")

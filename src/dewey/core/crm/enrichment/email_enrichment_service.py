@@ -1,16 +1,15 @@
 """Service for enriching email metadata."""
+
 from __future__ import annotations
 
 import base64
 from typing import Any, Tuple
 
-import structlog
 from database.models import AutomatedOperation, Email, EventLog
 from django.db import transaction
 from django.utils import timezone
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import get_connection
 from dewey.llm import llm_utils
 
 
@@ -21,11 +20,12 @@ class EmailEnrichmentService(BaseScript):
     prioritize emails, and update email records in the database.
     """
 
-    def __init__(self, config_section: str = 'crm') -> None:
+    def __init__(self, config_section: str = "crm") -> None:
         """Initialize EmailEnrichmentService.
 
         Args:
             config_section: The configuration section to use. Defaults to 'crm'.
+
         """
         super().__init__(config_section=config_section, requires_db=True)
         self.service = self.get_gmail_service()
@@ -36,20 +36,19 @@ class EmailEnrichmentService(BaseScript):
 
         Returns:
             The Gmail service object.
+
         """
         try:
             from google.oauth2.credentials import Credentials
             from googleapiclient.discovery import build
 
             # Load credentials from config
-            credentials_config = self.get_config_value('gmail_credentials')
+            credentials_config = self.get_config_value("gmail_credentials")
             if not credentials_config:
-                raise ValueError(
-                    "Gmail credentials not found in configuration."
-                )
+                raise ValueError("Gmail credentials not found in configuration.")
 
             credentials = Credentials(**credentials_config)
-            return build('gmail', 'v1', credentials=credentials)
+            return build("gmail", "v1", credentials=credentials)
         except Exception as e:
             self.logger.error(f"Error getting Gmail service: {e}")
             raise
@@ -64,7 +63,7 @@ class EmailEnrichmentService(BaseScript):
         self.logger.info("EmailEnrichmentService run method called.")
         pass
 
-    def extract_message_bodies(self, message_data: dict) -> Tuple[str, str]:
+    def extract_message_bodies(self, message_data: dict) -> tuple[str, str]:
         """Extract plain and HTML message bodies from Gmail message data.
 
         Args:
@@ -72,6 +71,7 @@ class EmailEnrichmentService(BaseScript):
 
         Returns:
             A tuple containing the plain text body and the HTML body.
+
         """
         plain_body = ""
         html_body = ""
@@ -120,6 +120,7 @@ class EmailEnrichmentService(BaseScript):
 
         Returns:
             True if enrichment was successful, False otherwise.
+
         """
         enrichment_task = self.create_enrichment_task(email.id)
 
@@ -210,6 +211,7 @@ class EmailEnrichmentService(BaseScript):
 
         Returns:
             The created AutomatedOperation object.
+
         """
         try:
             task = AutomatedOperation.objects.create(
@@ -226,21 +228,22 @@ class EmailEnrichmentService(BaseScript):
             )
             raise
 
-    def complete_task(
-        self, task: AutomatedOperation, result: dict[str, Any]
-    ) -> None:
+    def complete_task(self, task: AutomatedOperation, result: dict[str, Any]) -> None:
         """Mark an automated operation task as completed.
 
         Args:
             task: The AutomatedOperation object to complete.
             result: A dictionary containing the results of the operation.
+
         """
         try:
             task.status = "completed"
             task.end_time = timezone.now()
             task.result = result
             task.save()
-            self.logger.info(f"Completed enrichment task {task.id} with result: {result}")
+            self.logger.info(
+                f"Completed enrichment task {task.id} with result: {result}"
+            )
         except Exception as e:
             self.logger.error(f"Failed to complete enrichment task {task.id}: {e}")
             raise
@@ -251,6 +254,7 @@ class EmailEnrichmentService(BaseScript):
         Args:
             task: The AutomatedOperation object to fail.
             error_message: The error message associated with the failure.
+
         """
         try:
             task.status = "failed"

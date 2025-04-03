@@ -6,14 +6,15 @@ from dewey.core.base_script import BaseScript
 class CsvIngestion(BaseScript):
     """A script for ingesting CSV data."""
 
-    def __init__(self, script_name: str, config: Dict[str, Any]):
+    def __init__(self, script_name: str, config: dict[str, Any]):
         """Initializes the CsvIngestion script.
 
         Args:
             script_name: The name of the script.
             config: The configuration dictionary.
+
         """
-        super().__init__(script_name=script_name, config_section='csv_ingestion')
+        super().__init__(script_name=script_name, config_section="csv_ingestion")
         self.config = config
 
     def run(self) -> None:
@@ -27,6 +28,7 @@ class CsvIngestion(BaseScript):
 
         Raises:
             Exception: If an error occurs during the CSV ingestion process.
+
         """
         try:
             # Retrieve configuration values using self.get_config_value()
@@ -37,7 +39,7 @@ class CsvIngestion(BaseScript):
 
             # Add your CSV processing logic here
             # For example:
-            with open(csv_file_path, 'r') as file:
+            with open(csv_file_path) as file:
                 # Process each line of the CSV file
                 for line in file:
                     self.logger.debug(f"Processing line: {line.strip()}")

@@ -13,21 +13,22 @@ class EmailService(BaseScript):
     and lifecycle management.
     """
 
-    def __init__(self, gmail_client, email_processor, config_section: str = 'crm'):
+    def __init__(self, gmail_client, email_processor, config_section: str = "crm"):
         """Initializes the EmailService with dependencies and configuration.
 
         Args:
             gmail_client: An instance of the GmailClient class.
             email_processor: An instance of the EmailProcessor class.
             config_section: The configuration section to use for this service.
+
         """
         super().__init__(config_section=config_section)
         self.gmail_client = gmail_client
         self.email_processor = email_processor
-        self.fetch_interval: float = float(self.get_config_value('fetch_interval', 900))
-        self.check_interval: float = float(self.get_config_value('check_interval', 1.0))
+        self.fetch_interval: float = float(self.get_config_value("fetch_interval", 900))
+        self.check_interval: float = float(self.get_config_value("check_interval", 1.0))
         self.running: bool = False
-        self.last_run: Optional[datetime] = None
+        self.last_run: datetime | None = None
         self._setup_signal_handlers()
 
     def _setup_signal_handlers(self) -> None:
@@ -41,6 +42,7 @@ class EmailService(BaseScript):
         Args:
             signum: The signal number.
             frame: The frame object.
+
         """
         self.logger.warning(f"Received signal {signum}. Shutting down...")
         self.running = False
@@ -51,15 +53,19 @@ class EmailService(BaseScript):
             self.logger.info("Starting email fetch cycle")
             # Fetch emails
             results = self.gmail_client.fetch_emails()
-            if results and results['messages']:
-                for message in results['messages']:
-                    email_data = self.gmail_client.get_message(message['id'])
+            if results and results["messages"]:
+                for message in results["messages"]:
+                    email_data = self.gmail_client.get_message(message["id"])
                     if email_data:
                         processed_email = self.email_processor.process_email(email_data)
                         if processed_email:
-                            self.logger.info(f"Successfully processed email {message['id']}")
+                            self.logger.info(
+                                f"Successfully processed email {message['id']}"
+                            )
                         else:
-                            self.logger.warning(f"Failed to fully process email {message['id']}")
+                            self.logger.warning(
+                                f"Failed to fully process email {message['id']}"
+                            )
                     else:
                         self.logger.warning(f"Could not retrieve email {message['id']}")
             else:
@@ -77,7 +83,9 @@ class EmailService(BaseScript):
         try:
             while self.running:
                 current_time = datetime.now()
-                if self.last_run is None or (current_time - self.last_run) >= timedelta(seconds=self.fetch_interval):
+                if self.last_run is None or (current_time - self.last_run) >= timedelta(
+                    seconds=self.fetch_interval
+                ):
                     self.fetch_cycle()
                 time.sleep(self.check_interval)
         except Exception as e:

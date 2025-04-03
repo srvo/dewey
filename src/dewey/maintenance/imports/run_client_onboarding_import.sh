@@ -47,7 +47,7 @@ if [ $? -eq 0 ]; then
     echo "---------------------------------------------"
     echo "Import completed successfully"
     echo "Verifying data in DuckDB..."
-    
+
     # Connect to DuckDB and get some stats
     # Use MotherDuck if token exists, otherwise use local DB
     if [ -n "$MOTHERDUCK_TOKEN" ]; then
@@ -57,27 +57,27 @@ if [ $? -eq 0 ]; then
         DB_CONNECTION="dewey.duckdb"
         echo "Using local database: $DB_CONNECTION"
     fi
-    
+
     # Count records in tables
     echo "Table record counts:"
     echo "- client_profiles: $(duckdb "$DB_CONNECTION" -csv -c "SELECT COUNT(*) FROM client_profiles") records"
     echo "- client_data_sources: $(duckdb "$DB_CONNECTION" -csv -c "SELECT COUNT(*) FROM client_data_sources") records"
-    
+
     # Show sample client profile data
     echo ""
     echo "Sample client profile data (3 records):"
     duckdb "$DB_CONNECTION" -c "SELECT name, email, phone, preferred_investment_amount, risk_tolerance, primary_data_source FROM client_profiles LIMIT 3"
-    
+
     # Show data source distribution
     echo ""
     echo "Data sources distribution:"
     duckdb "$DB_CONNECTION" -c "SELECT SPLIT(primary_data_source, ',')[1] as main_source, COUNT(*) FROM client_profiles GROUP BY main_source ORDER BY COUNT(*) DESC"
-    
+
     # Show household linking stats
     echo ""
     echo "Household linking stats:"
     duckdb "$DB_CONNECTION" -c "SELECT COUNT(*) as linked_profiles FROM client_profiles WHERE household_id IS NOT NULL"
-    
+
     echo "---------------------------------------------"
     echo "Process complete"
     exit 0
@@ -85,4 +85,4 @@ else
     echo "---------------------------------------------"
     echo "ERROR: Import process failed. Check the output above for details."
     exit 1
-fi 
+fi

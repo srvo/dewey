@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -12,6 +12,7 @@ class OpenRouterClient(BaseScript):
         Args:
             config_section (str): The configuration section to use.
             **kwargs: Additional keyword arguments.
+
         """
         super().__init__(config_section=config_section, **kwargs)
 
@@ -26,13 +27,15 @@ class OpenRouterClient(BaseScript):
 
         Returns:
             None
+
         """
         try:
             api_key = self.get_config_value("openrouter_api_key")
             self.logger.info("OpenRouter client started.")
             # Add your core logic here, e.g., interacting with the OpenRouter API
-            self.logger.info(f"Using API key: {api_key[:4]}...{api_key[-4:]}")  # Masking API key in logs
+            self.logger.info(
+                f"Using API key: {api_key[:4]}...{api_key[-4:]}"
+            )  # Masking API key in logs
         except ValueError as e:
             self.logger.error(f"Configuration error: {e}")
             raise
-

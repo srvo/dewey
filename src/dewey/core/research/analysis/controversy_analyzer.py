@@ -1,11 +1,10 @@
-"""
-Controversy Analyzer
+"""Controversy Analyzer
 ==================
 
 This script analyzes controversies related to entities using SearXNG and Farfalle API.
 """
 
-
+import argparse
 import asyncio
 from datetime import datetime
 from typing import Any, Optional
@@ -22,7 +21,10 @@ class ControversyAnalyzer(BaseScript):
     def __init__(self) -> None:
         """Initializes the ControversyAnalyzer."""
         super().__init__(
-            name="ControversyAnalyzer", description="Analyzes controversies related to entities using SearXNG.", config_section="controversy_analyzer", )
+            name="ControversyAnalyzer",
+            description="Analyzes controversies related to entities using SearXNG.",
+            config_section="controversy_analyzer",
+        )
         self.searxng_url = self.get_config_value("searxng_url")
         self.logger.info("ControversyAnalyzer initialized")
 
@@ -35,23 +37,39 @@ class ControversyAnalyzer(BaseScript):
 
         Returns:
             A list of dictionaries containing search results.
+
         """
         async with httpx.AsyncClient() as client:
             # Search with specific controversy-related terms
             queries = [
-                f"{entity} controversy", f"{entity} scandal", f"{entity} criticism", f"{entity} investigation", ]
-            results=None, params={"q": query, "format": "json"}, headers={"Accept": "application/json"}, )
+                f"{entity} controversy",
+                f"{entity} scandal",
+                f"{entity} criticism",
+                f"{entity} investigation",
+            ]
+            results = []
+
+            for query in queries:
+                try:
+                    response = await client.get(
+                        f"{self.searxng_url}/search",
+                        params={"q": query, "format": "json"},
+                        headers={"Accept": "application/json"},
+                    )
                     if response.status_code == 200:
                         data = response.json()
                         results.extend(data.get("results", []))
                     else:
-                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
+                        self.logger.warning(
+                            f"Failed to search for {query}: {response.status_code}"
+                        )
                 except Exception as e:
                     self.logger.error(f"Error searching for {query}: {e}")
 
             return results
 
-    @task(retries=None, results: list[dict]) -> dict[str, list[dict]]:
+    @task(retries=3, retry_delay_seconds=5)
+    async def analyze_sources(self, results: list[dict]) -> dict[str, list[dict]]:
         """Analyze and categorize sources of controversy information.
 
         Args:
@@ -59,8 +77,15 @@ class ControversyAnalyzer(BaseScript):
 
         Returns:
             A dictionary containing categorized sources.
+
         """
-        sources: dict[str, list[dict]]=None, "social_media": [], "regulatory": [], "academic": [], "other": [], }
+        sources: dict[str, list[dict]] = {
+            "news": [],
+            "social_media": [],
+            "regulatory": [],
+            "academic": [],
+            "other": [],
+        }
 
         for result in results:
             try:
@@ -81,162 +106,23 @@ class ControversyAnalyzer(BaseScript):
 
         Returns:
             The category of the source, or None if it cannot be categorized.
+
         """
         try:
             if not url:
                 return None
 
             # News sites
-            if any(domain in url.lower() for domain in ["news", "reuters", "bloomberg", "wsj", "ft.com"]):
-                if []))
-                    else:
-                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
-                except Exception as e:
-                    self.logger.error(f"Error searching for {query}: {e}")
-
-            return results
-
-    @task(retries is None:
-                    []))
-                    else:
-                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
-                except Exception as e:
-                    self.logger.error(f"Error searching for {query}: {e}")
-
-            return results
-
-    @task(retries = None
-                if []))
-                    else:
-                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
-                except Exception as e:
-                    self.logger.error(f"Error searching for {query}: {e}")
-
-            return results
-
-    @task(retries is None:
-                    []))
-                    else:
-                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
-                except Exception as e:
-                    self.logger.error(f"Error searching for {query}: {e}")
-
-            return results
-
-    @task(retries = None
-                if []))
-                    else:
-                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
-                except Exception as e:
-                    self.logger.error(f"Error searching for {query}: {e}")
-
-            return results
-
-    @task(retries is None:
-                    []))
-                    else:
-                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
-                except Exception as e:
-                    self.logger.error(f"Error searching for {query}: {e}")
-
-            return results
-
-    @task(retries = None
-                if []))
-                    else:
-                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
-                except Exception as e:
-                    self.logger.error(f"Error searching for {query}: {e}")
-
-            return results
-
-    @task(retries is None:
-                    []))
-                    else:
-                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
-                except Exception as e:
-                    self.logger.error(f"Error searching for {query}: {e}")
-
-            return results
-
-    @task(retries = None
-                if []))
-                    else:
-                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
-                except Exception as e:
-                    self.logger.error(f"Error searching for {query}: {e}")
-
-            return results
-
-    @task(retries is None:
-                    []))
-                    else:
-                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
-                except Exception as e:
-                    self.logger.error(f"Error searching for {query}: {e}")
-
-            return results
-
-    @task(retries = None
-                if []))
-                    else:
-                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
-                except Exception as e:
-                    self.logger.error(f"Error searching for {query}: {e}")
-
-            return results
-
-    @task(retries is None:
-                    []))
-                    else:
-                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
-                except Exception as e:
-                    self.logger.error(f"Error searching for {query}: {e}")
-
-            return results
-
-    @task(retries = None
-                if ]
-            results is None:
-                    ]
-            results = []
-
-            for query in queries:
-                try:
-                    response = await client.get(
-                        f"{self.searxng_url}/search"
-                if []))
-                    else:
-                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
-                except Exception as e:
-                    self.logger.error(f"Error searching for {query}: {e}")
-
-            return results
-
-    @task(retries is None:
-                    []))
-                    else:
-                        self.logger.warning(f"Failed to search for {query}: {response.status_code}")
-                except Exception as e:
-                    self.logger.error(f"Error searching for {query}: {e}")
-
-            return results
-
-    @task(retries = 2)
-    async def analyze_sources(self
-                if list[dict]] is None:
-                    list[dict]]=None, "linkedin", "facebook"]):
-                if self
-                if list[dict]] is None:
-                    list[dict]] is None:
-                    self
-                if list[dict]] is None:
-                    list[dict]] = {
-            "news": []
+            if any(
+                domain in url.lower()
+                for domain in ["news", "reuters", "bloomberg", "wsj", "ft.com"]
+            ):
                 return "news"
 
             # Social media
-            if any(domain in url.lower() for domain in ["twitter"
+            if any(
+                domain in url.lower() for domain in ["twitter", "linkedin", "facebook"]
+            ):
                 return "social_media"
 
             # Regulatory
@@ -253,7 +139,9 @@ class ControversyAnalyzer(BaseScript):
             return None
 
     @task
-    async def summarize_findings(self, entity: str, sources: dict[str, list[dict]]) -> dict[str, Any]:
+    async def summarize_findings(
+        self, entity: str, sources: dict[str, list[dict]]
+    ) -> dict[str, Any]:
         """Summarize findings about controversies.
 
         Args:
@@ -262,6 +150,7 @@ class ControversyAnalyzer(BaseScript):
 
         Returns:
             A dictionary containing the summary of findings.
+
         """
         try:
             total_sources = sum(len(items) for items in sources.values())
@@ -270,8 +159,7 @@ class ControversyAnalyzer(BaseScript):
                 "analysis_date": datetime.now().isoformat(),
                 "total_sources": total_sources,
                 "source_breakdown": {
-                    category: len(items)
-                    for category, items in sources.items()
+                    category: len(items) for category, items in sources.items()
                 },
                 "recent_controversies": [],
                 "historical_controversies": [],
@@ -289,7 +177,9 @@ class ControversyAnalyzer(BaseScript):
                     }
 
                     # Categorize as recent or historical
-                    if item.get("published_date", "").startswith(str(datetime.now().year)):
+                    if item.get("published_date", "").startswith(
+                        str(datetime.now().year)
+                    ):
                         summary["recent_controversies"].append(controversy)
                     else:
                         summary["historical_controversies"].append(controversy)
@@ -304,7 +194,9 @@ class ControversyAnalyzer(BaseScript):
             }
 
     @flow(name="controversy-analysis")
-    async def analyze_entity_controversies(self, entity: str, lookback_days: int = 365) -> dict[str, Any]:
+    async def analyze_entity_controversies(
+        self, entity: str, lookback_days: int = 365
+    ) -> dict[str, Any]:
         """Analyze controversies for a given entity.
 
         Args:
@@ -313,6 +205,7 @@ class ControversyAnalyzer(BaseScript):
 
         Returns:
             Dictionary containing analysis results.
+
         """
         try:
             self.logger.info(f"Starting controversy analysis for {entity}")
@@ -323,7 +216,9 @@ class ControversyAnalyzer(BaseScript):
 
             # Analyze and categorize sources
             sources = await self.analyze_sources(results)
-            self.logger.info(f"Categorized sources: {', '.join(f'{k}: {len(v)}' for k, v in sources.items())}")
+            self.logger.info(
+                f"Categorized sources: {', '.join(f'{k}: {len(v)}' for k, v in sources.items())}"
+            )
 
             # Summarize findings
             summary = await self.summarize_findings(entity, sources)
@@ -346,20 +241,21 @@ class ControversyAnalyzer(BaseScript):
 
         Returns:
             A dictionary containing the analysis results.
+
         """
         entity = args.entity
         lookback_days = args.lookback_days or 365
 
         self.logger.info(f"Running controversy analysis for {entity}")
         result = asyncio.run(self.analyze_entity_controversies(entity, lookback_days))
-        self.logger.info(f"Analysis complete: found {len(result.get('recent_controversies', []))} recent controversies")
+        self.logger.info(
+            f"Analysis complete: found {len(result.get('recent_controversies', []))} recent controversies"
+        )
         return result
 
 
 def main() -> None:
     """Main entry point."""
-import argparse
-
     parser = argparse.ArgumentParser(description="Analyze controversies for an entity")
     parser.add_argument("entity", help="Name of the entity to analyze")
     parser.add_argument("--lookback-days", type=int, help="Number of days to look back")

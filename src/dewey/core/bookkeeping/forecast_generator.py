@@ -57,6 +57,7 @@ class JournalEntryGenerator(BaseScript):
 
         Raises:
             SystemExit: If the user does not confirm an assumption.
+
         """
         try:
             for i, assumption in enumerate(self.ASSUMPTIONS, 1):
@@ -80,9 +81,10 @@ class JournalEntryGenerator(BaseScript):
 
         Returns:
             The formatted acquisition journal entry string.
+
         """
         return f"""\
-{acquisition_date.strftime('%Y-%m-%d')} Acquired Mormair_E650 via barter
+{acquisition_date.strftime("%Y-%m-%d")} Acquired Mormair_E650 via barter
     Assets:PPE:Mormair_E650             £2500.00
     Assets:Cash                            £-25.00
     Income:Consulting:Services          £-2475.00
@@ -98,6 +100,7 @@ class JournalEntryGenerator(BaseScript):
         Args:
             complete_ledger_file: Path to the complete ledger file.
             acquisition_entry: The acquisition journal entry string.
+
         """
         acquisition_entry_exists = False
         try:
@@ -124,6 +127,7 @@ class JournalEntryGenerator(BaseScript):
 
         Args:
             forecast_ledger_file: Path to the forecast ledger file.
+
         """
         try:
             if not self.fs.exists(forecast_ledger_file):
@@ -152,6 +156,7 @@ account Expenses:Hosting:Mormair_E650
 
         Returns:
             The formatted depreciation journal entry string.
+
         """
         return (
             f"{current_date.strftime('%Y-%m-%d')} Depreciation - Mormair_E650\n"
@@ -172,8 +177,8 @@ account Expenses:Hosting:Mormair_E650
     def create_revenue_entries(
         self,
         current_date: datetime,
-        generator: Dict[str, Any],
-    ) -> Tuple[str, str, str]:
+        generator: dict[str, Any],
+    ) -> tuple[str, str, str]:
         """Creates revenue-related journal entries (lease income, revenue share,
         hosting fee).
 
@@ -184,6 +189,7 @@ account Expenses:Hosting:Mormair_E650
         Returns:
             A tuple containing the lease income, revenue share payment, and
             hosting fee payment entries.
+
         """
         gross_revenue = 302495
         revenue_share = self.calculate_revenue_share(generator["recovered"])
@@ -238,6 +244,7 @@ account Expenses:Hosting:Mormair_E650
         Args:
             complete_ledger_file: Path to the complete ledger file.
             forecast_ledger_file: Path to the forecast ledger file.
+
         """
         acquisition_date_str = "2023-12-01"
         acquisition_date = datetime.strptime(acquisition_date_str, "%Y-%m-%d").date()
@@ -263,15 +270,19 @@ account Expenses:Hosting:Mormair_E650
                 ) = self.create_revenue_entries(current_date, generator)
 
                 self.write_journal_entry(forecast_ledger_file, lease_income_entry)
-                self.write_journal_entry(forecast_ledger_file, revenue_share_payment_entry)
-                self.write_journal_entry(forecast_ledger_file, hosting_fee_payment_entry)
+                self.write_journal_entry(
+                    forecast_ledger_file, revenue_share_payment_entry
+                )
+                self.write_journal_entry(
+                    forecast_ledger_file, hosting_fee_payment_entry
+                )
 
             current_date += relativedelta(months=1)
             current_date = current_date.replace(day=1) + relativedelta(
                 months=1, days=-1
             )
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Runs the journal entry generation process."""
         complete_ledger_file = self.get_config_value(
             "bookkeeping.complete_ledger_file", ""

@@ -5,11 +5,8 @@ from pathlib import Path
 import pytest
 from ethifinx.research.workflows.ethical import EthicalAnalysisWorkflow
 
-from dewey.core.base_script import BaseScript
-
 from .test_workflow_integration import (
     BaseEngine,
-    BaseWorkflowIntegrationTest,
     MockAnalysisEngine,
     MockSearchEngine,
     ResearchOutputHandler,

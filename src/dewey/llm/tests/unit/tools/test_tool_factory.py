@@ -1,7 +1,8 @@
 """Unit tests for the ToolFactory class."""
 
-import pytest
 from unittest.mock import MagicMock, patch
+
+import pytest
 
 from dewey.llm.tools.tool_factory import ToolFactory
 
@@ -15,7 +16,7 @@ class TestToolFactory:
         return {
             "tool_name": "TestTool",
             "description": "A test tool",
-            "parameters": {"param1": "value1", "param2": "value2"}
+            "parameters": {"param1": "value1", "param2": "value2"},
         }
 
     @patch("dewey.core.base_script.BaseScript.__init__", return_value=None)
@@ -23,7 +24,7 @@ class TestToolFactory:
         """Test that ToolFactory initializes correctly."""
         # Arrange
         factory = ToolFactory(config=mock_config)
-        
+
         # Assert
         mock_init.assert_called_once()
         assert isinstance(factory, ToolFactory)
@@ -35,10 +36,10 @@ class TestToolFactory:
         factory = ToolFactory(config=mock_config)
         factory.logger = MagicMock()
         factory.get_config_value = MagicMock(return_value="TestTool")
-        
+
         # Act
         factory.run()
-        
+
         # Assert
         factory.logger.info.assert_called()
-        factory.get_config_value.assert_called_with("tool_name", default="DefaultTool") 
+        factory.get_config_value.assert_called_with("tool_name", default="DefaultTool")

@@ -1,11 +1,10 @@
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from dewey.core.base_script import BaseScript
 
 
 class EmailSync(BaseScript):
-    """
-    A module for synchronizing emails from Gmail.
+    """A module for synchronizing emails from Gmail.
 
     This module inherits from BaseScript and provides a standardized
     structure for email synchronization scripts, including configuration
@@ -13,19 +12,21 @@ class EmailSync(BaseScript):
     primary logic.
     """
 
-    def __init__(self, config_section: Optional[str] = None, *args: Any, **kwargs: Any) -> None:
+    def __init__(
+        self, config_section: str | None = None, *args: Any, **kwargs: Any
+    ) -> None:
         """Initializes the EmailSync module.
 
         Args:
             config_section: Section in dewey.yaml to load for this script. Defaults to None.
             *args: Additional positional arguments.
             **kwargs: Additional keyword arguments.
+
         """
         super().__init__(config_section=config_section, *args, **kwargs)
 
     def run(self) -> None:
-        """
-        Executes the email synchronization process.
+        """Executes the email synchronization process.
 
         This method retrieves the Gmail API key from the configuration,
         logs the start and completion of the synchronization process,

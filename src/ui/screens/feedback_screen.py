@@ -1,12 +1,11 @@
-"""
-Feedback Manager Screen
+"""Feedback Manager Screen
 
 A screen for the Dewey UI that provides access to the Feedback Manager.
 """
 
 from textual.app import ComposeResult
 from textual.screen import Screen
-from textual.widgets import Static, Button, Footer
+from textual.widgets import Button, Footer, Static
 
 from ..feedback_manager_tui import FeedbackManagerApp
 
@@ -17,7 +16,10 @@ class FeedbackScreen(Screen):
     def compose(self) -> ComposeResult:
         """Compose the screen."""
         yield Static("Feedback Manager", id="screen-title")
-        yield Static("Manage feedback, flag follow-ups, and annotate contacts", id="screen-description")
+        yield Static(
+            "Manage feedback, flag follow-ups, and annotate contacts",
+            id="screen-description",
+        )
         yield Button("Launch Feedback Manager", id="launch-button", variant="primary")
         yield Footer()
 
@@ -30,7 +32,7 @@ class FeedbackScreen(Screen):
         """Launch the feedback manager application."""
         # First remove this screen
         self.app.pop_screen()
-        
+
         # Launch the feedback manager app
         feedback_app = FeedbackManagerApp()
-        feedback_app.run() 
+        feedback_app.run()

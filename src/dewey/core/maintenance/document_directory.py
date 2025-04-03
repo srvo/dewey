@@ -9,12 +9,6 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Protocol, Tuple
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import (
-    DatabaseConnection,
-    get_connection,
-    get_motherduck_connection,
-)
-from dewey.llm.llm_utils import generate_content
 
 
 class LLMClientInterface(Protocol):
@@ -59,7 +53,7 @@ class FileSystemInterface(ABC):
         ...
 
     @abstractmethod
-    def listdir(self, path: Path) -> List[str]:
+    def listdir(self, path: Path) -> list[str]:
         """List directory contents."""
         ...
 
@@ -108,7 +102,7 @@ class RealFileSystem(FileSystemInterface):
 
         shutil.move(src, dest)
 
-    def listdir(self, path: Path) -> List[str]:
+    def listdir(self, path: Path) -> list[str]:
         """List directory contents."""
         return os.listdir(path)
 
@@ -131,8 +125,8 @@ class DirectoryDocumenter(BaseScript):
     def __init__(
         self,
         root_dir: str = ".",
-        llm_client: Optional[LLMClientInterface] = None,
-        fs: Optional[FileSystemInterface] = None,
+        llm_client: LLMClientInterface | None = None,
+        fs: FileSystemInterface | None = None,
     ) -> None:
         """Initializes the DirectoryDocumenter.
 
@@ -140,16 +134,21 @@ class DirectoryDocumenter(BaseScript):
             root_dir: The root directory to document. Defaults to the current directory.
             llm_client: The LLM client to use for code analysis.
             fs: The file system interface.
+
         """
         super().__init__(config_section="architecture", name="DirectoryDocumenter")
         self.root_dir = Path(root_dir).resolve()
         self.conventions_path = self.get_path(
-            self.get_config_value("core.conventions_document", "../.aider/CONVENTIONS.md"),
+            self.get_config_value(
+                "core.conventions_document", "../.aider/CONVENTIONS.md"
+            ),
         )  # Relative path to CONVENTIONS.md
         self.checkpoint_file = self.root_dir / ".dewey_documenter_checkpoint.json"
-        self.checkpoints: Dict[str, str] = self._load_checkpoints()
+        self.checkpoints: dict[str, str] = self._load_checkpoints()
         self.conventions: str = self._load_conventions()
-        self.llm_client: LLMClientInterface = llm_client if llm_client else self.llm_client  # type: ignore[assignment]
+        self.llm_client: LLMClientInterface = (
+            llm_client if llm_client else self.llm_client
+        )  # type: ignore[assignment]
         self.fs: FileSystemInterface = fs if fs else RealFileSystem()
 
     def _validate_directory(self) -> None:
@@ -158,6 +157,7 @@ class DirectoryDocumenter(BaseScript):
         Raises:
             FileNotFoundError: If the directory does not exist.
             PermissionError: If the directory is not accessible.
+
         """
         if not self.fs.exists(self.root_dir):
             msg = f"Directory not found: {self.root_dir}"
@@ -175,6 +175,7 @@ class DirectoryDocumenter(BaseScript):
         Raises:
             FileNotFoundError: If the CONVENTIONS.md file is not found.
             Exception: If there is an error loading the conventions.
+
         """
         try:
             return self.fs.read_text(self.conventions_path)
@@ -187,11 +188,12 @@ class DirectoryDocumenter(BaseScript):
             self.logger.exception(f"Failed to load conventions: {e}")
             sys.exit(1)
 
-    def _load_checkpoints(self) -> Dict[str, str]:
+    def _load_checkpoints(self) -> dict[str, str]:
         """Load checkpoint data from file.
 
         Returns:
             A dictionary containing the checkpoint data.
+
         """
         if self.fs.exists(self.checkpoint_file):
             try:
@@ -206,7 +208,9 @@ class DirectoryDocumenter(BaseScript):
     def _save_checkpoints(self) -> None:
         """Save checkpoint data to file."""
         try:
-            self.fs.write_text(self.checkpoint_file, json.dumps(self.checkpoints, indent=4))
+            self.fs.write_text(
+                self.checkpoint_file, json.dumps(self.checkpoints, indent=4)
+            )
         except Exception as e:
             self.logger.exception(f"Could not save checkpoint file: {e}")
 
@@ -221,6 +225,7 @@ class DirectoryDocumenter(BaseScript):
 
         Raises:
             Exception: If the hash calculation fails.
+
         """
         try:
             file_size = self.fs.stat(file_path).st_size
@@ -240,6 +245,7 @@ class DirectoryDocumenter(BaseScript):
 
         Returns:
             True if the file has been processed, False otherwise.
+
         """
         try:
             current_hash = self._calculate_file_hash(file_path)
@@ -253,6 +259,7 @@ class DirectoryDocumenter(BaseScript):
 
         Args:
             file_path: The path to the file.
+
         """
         try:
             content = self.fs.read_text(file_path)
@@ -262,7 +269,7 @@ class DirectoryDocumenter(BaseScript):
         except Exception as e:
             self.logger.exception(f"Could not checkpoint file: {e}")
 
-    def analyze_code(self, code: str) -> Tuple[str, Optional[str]]:
+    def analyze_code(self, code: str) -> tuple[str, str | None]:
         """Analyzes the given code using an LLM and returns a summary.
 
         Args:
@@ -270,6 +277,7 @@ class DirectoryDocumenter(BaseScript):
 
         Returns:
             A tuple containing the analysis and the suggested module.
+
         """
         prompt = f"""
         Analyze the following code and provide:
@@ -308,7 +316,7 @@ class DirectoryDocumenter(BaseScript):
             self.logger.exception(f"Unexpected error during code analysis: {e}")
             raise
 
-    def _analyze_code_quality(self, file_path: Path) -> Dict[str, List[str]]:
+    def _analyze_code_quality(self, file_path: Path) -> dict[str, list[str]]:
         """Run code quality checks using flake8 and ruff.
 
         Args:
@@ -316,8 +324,9 @@ class DirectoryDocumenter(BaseScript):
 
         Returns:
             A dictionary containing the results of the code quality checks.
+
         """
-        results: Dict[str, List[str]] = {"flake8": [], "ruff": []}
+        results: dict[str, list[str]] = {"flake8": [], "ruff": []}
         try:
             # Run flake8
             flake8_result = subprocess.run(
@@ -340,11 +349,12 @@ class DirectoryDocumenter(BaseScript):
             self.logger.exception(f"Code quality analysis failed: {e}")
         return results
 
-    def _analyze_directory_structure(self) -> Dict[str, Any]:
+    def _analyze_directory_structure(self) -> dict[str, Any]:
         """Check directory structure against project conventions.
 
         Returns:
             A dictionary containing the directory structure analysis.
+
         """
         expected_modules = [
             "src/dewey/core",
@@ -358,8 +368,8 @@ class DirectoryDocumenter(BaseScript):
             "docs",
         ]
 
-        dir_structure: Dict[str, Any] = {}
-        deviations: List[str] = []
+        dir_structure: dict[str, Any] = {}
+        deviations: list[str] = []
 
         for root, dirs, files in os.walk(self.root_dir):
             rel_path = Path(root).relative_to(self.root_dir)
@@ -377,7 +387,7 @@ class DirectoryDocumenter(BaseScript):
 
         return {"structure": dir_structure, "deviations": deviations}
 
-    def generate_readme(self, directory: Path, analysis_results: Dict[str, str]) -> str:
+    def generate_readme(self, directory: Path, analysis_results: dict[str, str]) -> str:
         """Generate comprehensive README with quality and structure analysis.
 
         Args:
@@ -386,6 +396,7 @@ class DirectoryDocumenter(BaseScript):
 
         Returns:
             The content of the README file.
+
         """
         dir_analysis = self._analyze_directory_structure()
         expected_modules = [
@@ -427,6 +438,7 @@ class DirectoryDocumenter(BaseScript):
 
         Returns:
             The corrected code.
+
         """
         prompt = f"""
         Correct the style of the following code to adhere to these conventions:
@@ -444,7 +456,7 @@ class DirectoryDocumenter(BaseScript):
             self.logger.exception(f"LLM failed to correct code style: {e}")
             raise
 
-    def suggest_filename(self, code: str) -> Optional[str]:
+    def suggest_filename(self, code: str) -> str | None:
         """Suggests a more human-readable filename for the given code using an LLM.
 
         Args:
@@ -452,6 +464,7 @@ class DirectoryDocumenter(BaseScript):
 
         Returns:
             The suggested filename.
+
         """
         prompt = f"""
         Suggest a concise, human-readable filename (without the .py extension) for a Python script
@@ -468,7 +481,7 @@ class DirectoryDocumenter(BaseScript):
             self.logger.exception(f"LLM failed to suggest filename: {e}")
             return None
 
-    def _process_file(self, file_path: Path) -> Tuple[Optional[str], Optional[str]]:
+    def _process_file(self, file_path: Path) -> tuple[str | None, str | None]:
         """Processes a single file, analyzes its contents, and suggests improvements.
 
         Args:
@@ -476,6 +489,7 @@ class DirectoryDocumenter(BaseScript):
 
         Returns:
             A tuple containing the analysis and the suggested module, if applicable.
+
         """
         try:
             code = self.fs.read_text(file_path)
@@ -493,12 +507,15 @@ class DirectoryDocumenter(BaseScript):
             self.logger.exception(f"Failed to process {file_path.name}: {e}")
             return None, None
 
-    def _apply_improvements(self, file_path: Path, suggested_module: Optional[str]) -> None:
+    def _apply_improvements(
+        self, file_path: Path, suggested_module: str | None
+    ) -> None:
         """Applies suggested improvements to a file, such as moving, renaming, and correcting code style.
 
         Args:
             file_path: The path to the file.
             suggested_module: The suggested module to move the file to, if applicable.
+
         """
         filename = file_path.name
         # Determine the target path
@@ -506,7 +523,9 @@ class DirectoryDocumenter(BaseScript):
             target_dir = (
                 self.root_dir / "src" / "dewey" / suggested_module.replace(".", "/")
             )
-            self.fs.mkdir(target_dir, parents=True, exist_ok=True)  # Ensure the directory exists
+            self.fs.mkdir(
+                target_dir, parents=True, exist_ok=True
+            )  # Ensure the directory exists
             target_path = target_dir / filename
             move_file = input(
                 f"Move {filename} to {target_path}? (y/n): ",
@@ -582,6 +601,7 @@ class DirectoryDocumenter(BaseScript):
 
         Args:
             directory: The directory to process.
+
         """
         directory_path = Path(directory).resolve()
 
@@ -589,7 +609,7 @@ class DirectoryDocumenter(BaseScript):
             self.logger.error(f"Directory '{directory}' not found.")
             return
 
-        analysis_results: Dict[str, str] = {}
+        analysis_results: dict[str, str] = {}
         for filename in self.fs.listdir(directory_path):
             file_path = directory_path / filename
             if file_path.suffix == ".py":

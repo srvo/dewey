@@ -11,8 +11,7 @@ from dewey.llm import llm_utils
 
 
 class LabelerModule(BaseScript):
-    """
-    A module for managing label-related tasks within Dewey's CRM.
+    """A module for managing label-related tasks within Dewey's CRM.
 
     This module inherits from BaseScript and provides a standardized
     structure for label processing scripts, including configuration
@@ -22,11 +21,10 @@ class LabelerModule(BaseScript):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initializes the LabelerModule."""
-        super().__init__(*args, config_section='labeler', **kwargs)
+        super().__init__(*args, config_section="labeler", **kwargs)
 
     def run(self) -> None:
-        """
-        Executes the primary logic of the labeler module.
+        """Executes the primary logic of the labeler module.
 
         This method demonstrates accessing configuration values and using the logger.
         Add your label processing logic here.
@@ -39,12 +37,15 @@ class LabelerModule(BaseScript):
 
         Raises:
             Exception: If something goes wrong during label processing.
+
         """
         self.logger.info("Labeler module started.")
 
         try:
             # Example of accessing a configuration value
-            some_config_value = self.get_config_value("some_config_key", "default_value")
+            some_config_value = self.get_config_value(
+                "some_config_key", "default_value"
+            )
             self.logger.debug(f"Some config value: {some_config_value}")
 
             # Example of using database connection
@@ -75,8 +76,7 @@ class LabelerModule(BaseScript):
             raise
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """
-        Retrieves a configuration value associated with the given key.
+        """Retrieves a configuration value associated with the given key.
 
         Args:
             key: The key of the configuration value to retrieve.
@@ -85,5 +85,6 @@ class LabelerModule(BaseScript):
         Returns:
             The configuration value associated with the key, or the default value
             if the key is not found.
+
         """
         return super().get_config_value(key, default)

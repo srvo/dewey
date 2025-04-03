@@ -2,19 +2,14 @@ from dewey.core.base_script import BaseScript
 
 
 class PortfolioWidget(BaseScript):
-    """
-    A script to manage and display portfolio information.
-    """
+    """A script to manage and display portfolio information."""
 
     def __init__(self) -> None:
-        """
-        Initializes the PortfolioWidget script.
-        """
+        """Initializes the PortfolioWidget script."""
         super().__init__(config_section="portfolio_widget")
 
     def run(self) -> None:
-        """
-        Executes the portfolio widget script.
+        """Executes the portfolio widget script.
 
         This method retrieves portfolio data, calculates performance metrics,
         and displays the information.

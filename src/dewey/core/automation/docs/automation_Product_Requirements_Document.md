@@ -33,4 +33,3 @@ Initialize database connection and create tables if needed
 - dotenv library
 
 ## Architectural Decisions
-

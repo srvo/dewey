@@ -10,12 +10,13 @@ class Prompts(BaseScript):
         BaseScript
     """
 
-    def __init__(self, config_section: str = 'prompts', **kwargs: Any) -> None:
+    def __init__(self, config_section: str = "prompts", **kwargs: Any) -> None:
         """Initializes the Prompts class.
 
         Args:
             config_section (str): The configuration section to use. Defaults to 'prompts'.
             **kwargs (Any): Additional keyword arguments.
+
         """
         super().__init__(config_section=config_section, **kwargs)
 
@@ -31,6 +32,7 @@ class Prompts(BaseScript):
 
         Returns:
             None
+
         """
         try:
             prompt: str = self.get_config_value("prompt")

@@ -28,7 +28,7 @@ if [ -z "$MOTHERDUCK_TOKEN" ]; then
     if [ -f "$DEWEY_DIR/.env" ]; then
         source "$DEWEY_DIR/.env"
     fi
-    
+
     # Check again
     if [ -z "$MOTHERDUCK_TOKEN" ]; then
         echo "$(date): MOTHERDUCK_TOKEN environment variable not set. Exiting." >> "$LOG_FILE"
@@ -50,4 +50,4 @@ else
     echo "$(date): MotherDuck sync failed with exit code $EXIT_CODE." >> "$LOG_FILE"
 fi
 
-exit $EXIT_CODE 
+exit $EXIT_CODE

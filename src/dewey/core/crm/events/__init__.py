@@ -11,8 +11,7 @@ from dewey.llm.llm_utils import get_llm_client
 
 
 class EventsModule(BaseScript):
-    """
-    A module for managing event-related tasks within Dewey's CRM.
+    """A module for managing event-related tasks within Dewey's CRM.
 
     This module inherits from BaseScript and provides a standardized
     structure for event processing scripts, including configuration
@@ -24,12 +23,11 @@ class EventsModule(BaseScript):
         self,
         name: str = "EventsModule",
         description: str = "Manages CRM events.",
-        config_section: Optional[str] = "events",
+        config_section: str | None = "events",
         requires_db: bool = True,
         enable_llm: bool = False,
     ) -> None:
-        """
-        Initializes the EventsModule.
+        """Initializes the EventsModule.
 
         Args:
             name: The name of the module. Defaults to "EventsModule".
@@ -37,6 +35,7 @@ class EventsModule(BaseScript):
             config_section: The configuration section to use. Defaults to "events".
             requires_db: Whether the module requires a database connection. Defaults to True.
             enable_llm: Whether the module requires an LLM client. Defaults to False.
+
         """
         super().__init__(
             name=name,
@@ -47,8 +46,7 @@ class EventsModule(BaseScript):
         )
 
     def run(self) -> None:
-        """
-        Executes the primary logic of the EventsModule.
+        """Executes the primary logic of the EventsModule.
 
         This method retrieves configuration values, connects to the database,
         and performs event processing tasks.
@@ -85,8 +83,7 @@ class EventsModule(BaseScript):
             self.logger.debug("LLM client is not enabled.")
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """
-        Retrieves a configuration value by key.
+        """Retrieves a configuration value by key.
 
         Args:
             key: The key of the configuration value to retrieve.
@@ -94,5 +91,6 @@ class EventsModule(BaseScript):
 
         Returns:
             The configuration value, or the default value if the key is not found.
+
         """
         return super().get_config_value(key, default)

@@ -2,19 +2,26 @@ from dewey.core.base_script import BaseScript
 
 
 class TicDeltaWorkflow(BaseScript):
-    """
-    Workflow to process and analyze tick data for delta analysis.
-    """
+    """Workflow to process and analyze tick data for delta analysis."""
 
     def __init__(self):
-        """
-        Initializes the TicDeltaWorkflow with configurations.
-        """
+        """Initializes the TicDeltaWorkflow with configurations."""
+        super().__init__(config_section="tic_delta_workflow")
+
+
+from dewey.core.db.connection import get_connection
+from dewey.core.db.utils import create_table, execute_query
+
+
+class TicDeltaWorkflow(BaseScript):
+    """Workflow to process and analyze tick data for delta analysis."""
+
+    def __init__(self):
+        """Initializes the TicDeltaWorkflow with configurations."""
         super().__init__(config_section="tic_delta_workflow")
 
     def run(self):
-        """
-        Executes the tick data processing and delta analysis workflow.
+        """Executes the tick data processing and delta analysis workflow.
 
         This includes:
         1. Fetching data from the database.
@@ -23,6 +30,7 @@ class TicDeltaWorkflow(BaseScript):
 
         Raises:
             Exception: If any error occurs during the workflow execution.
+
         """
         self.logger.info("Starting Tic Delta Workflow...")
 
@@ -35,9 +43,6 @@ class TicDeltaWorkflow(BaseScript):
             self.logger.info(f"Using output table: {output_table}")
 
             # Example: Database operations using utilities from dewey.core.db
-from dewey.core.db.connection import get_connection
-from dewey.core.db.utils import create_table, execute_query
-
             db_config = self.config.get("database", {})
             with get_connection(db_config) as con:
                 # Example: Create a table (replace with actual schema)

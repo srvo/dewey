@@ -12,13 +12,6 @@ import requests
 if TYPE_CHECKING:
     from ethifinx.core.config import Config
 
-    def run(self) -> None:
-        """
-        Run the script.
-        """
-        # TODO: Implement script logic here
-        raise NotImplementedError("The run method must be implemented")
-
 
 class APIClient(BaseScript):
     """API client for making HTTP requests."""
@@ -34,6 +27,19 @@ class APIClient(BaseScript):
         self.config = config or config
         self.base_url = self.config.API_BASE_URL
         self.api_key = self.config.API_KEY
+
+    def execute(self) -> None:
+        """Execute the API client's main logic."""
+        self.logger.info("Starting API client execution...")
+        # Add main API client logic here
+        pass
+
+    def run(self) -> None:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()
 
     def fetch_data(
         self,

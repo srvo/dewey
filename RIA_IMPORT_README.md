@@ -51,4 +51,4 @@ The institutional_prospects table includes these key fields:
 
 - The CSV file is expected to be located at: `/Users/srvo/input_data/csv_files/RIA Schwab.xlsx - Standard Template.csv`
 - To use with MotherDuck, set the `MOTHERDUCK_TOKEN` environment variable
-- The table structure includes additional fields for record management (created_at, updated_at) 
+- The table structure includes additional fields for record management (created_at, updated_at)

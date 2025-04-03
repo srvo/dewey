@@ -2,7 +2,8 @@ import shutil
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Protocol, Tuple, Union
+from typing import Any, Dict, List, Protocol, Tuple
+from collections.abc import Callable
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection
@@ -31,7 +32,7 @@ class IOService:
 
     def read_text(self, path: Path) -> str:
         """Read text from a file."""
-        with open(path, "r") as f:
+        with open(path) as f:
             return f.read()
 
     def write_text(self, path: Path, text: str) -> None:
@@ -62,38 +63,38 @@ class JournalWriter(BaseScript):
         """Initializes the JournalWriter."""
         super().__init__(config_section="bookkeeping")
         self.config_source = config_source or self
-        self.output_dir: Path = Path(self.config_source.get_config_value("journal_dir", "data/bookkeeping/journals"))
+        self.output_dir: Path = Path(
+            self.config_source.get_config_value(
+                "journal_dir", "data/bookkeeping/journals"
+            )
+        )
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.processed_hashes_file: Path = self.output_dir / ".processed_hashes"
         self.io_service: IOServiceInterface = io_service or IOService()
         self.seen_hashes: set[str] = self._load_processed_hashes()
-        self.audit_log: List[Dict[str, str]] = []
+        self.audit_log: list[dict[str, str]] = []
         self.db_conn: DatabaseConnection | None = None
         self.llm_client: LLMClient | None = None
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Runs the journal writer script.
 
         This method contains the core logic for writing journal entries.
         """
-        self.logger.info("JournalWriter run method called.")
-        # TODO: Implement actual script logic here
         # Example usage of config and database:
-        example_config_value = self.config_source.get_config_value("utils.example_config", "default_value")
-        self.logger.info(f"Example config value: {example_config_value}")
+        example_config_value = self.config_source.get_config_value(
+            "utils.example_config", "default_value"
+        )
 
         if self.db_conn:
-            try:
-                result = self.db_conn.execute("SELECT 1")
-                self.logger.info(f"Database connection test: {result}")
-            except Exception as e:
-                self.logger.error(f"Error connecting to the database: {e}")
+            result = self.db_conn.execute("SELECT 1")
 
     def _load_processed_hashes(self) -> set[str]:
         """Load previously processed transaction hashes.
 
         Returns:
             A set of processed transaction hashes.
+
         """
         try:
             if self.processed_hashes_file.exists():
@@ -109,16 +110,19 @@ class JournalWriter(BaseScript):
 
         Args:
             seen_hashes: Set of processed transaction hashes to save.
+
         """
         try:
-            self.io_service.write_text(self.processed_hashes_file, "\n".join(seen_hashes))
+            self.io_service.write_text(
+                self.processed_hashes_file, "\n".join(seen_hashes)
+            )
         except Exception as e:
             self.logger.exception(f"Failed to save processed hashes: {e!s}")
 
     def _write_file_with_backup(
         self,
         filename: Path,
-        entries: List[str],
+        entries: list[str],
         now_func: Callable[[], datetime] = datetime.now,
     ) -> None:
         """Write file with versioned backup if it exists.
@@ -127,6 +131,7 @@ class JournalWriter(BaseScript):
             filename: Path to the file to write.
             entries: List of journal entries to write.
             now_func: Function to get the current datetime (for testing).
+
         """
         try:
             if filename.exists():
@@ -144,9 +149,9 @@ class JournalWriter(BaseScript):
 
     def _group_entries_by_account_and_year(
         self,
-        entries: Dict[str, List[str]],
+        entries: dict[str, list[str]],
         get_account_id: Callable[[], str] | None = None,
-    ) -> Dict[Tuple[str, str], List[str]]:
+    ) -> dict[tuple[str, str], list[str]]:
         """Organize entries by account ID and year.
 
         Args:
@@ -155,8 +160,9 @@ class JournalWriter(BaseScript):
 
         Returns:
             A dictionary of grouped entries, keyed by (account_id, year).
+
         """
-        grouped: Dict[Tuple[str, str], List[str]] = defaultdict(list)
+        grouped: dict[tuple[str, str], list[str]] = defaultdict(list)
         get_account_id = get_account_id or self._get_account_id
         for year, entries in entries.items():
             for entry in entries:
@@ -165,11 +171,12 @@ class JournalWriter(BaseScript):
                 grouped[(account_id, year)].append(entry)
         return grouped
 
-    def write_entries(self, entries: Dict[str, List[str]]) -> None:
+    def write_entries(self, entries: dict[str, list[str]]) -> None:
         """Write journal entries to appropriate files.
 
         Args:
             entries: Dictionary of journal entries, keyed by year.
+
         """
         total_entries = sum(len(e) for e in entries.values())
         self.logger.info(f"Writing {total_entries} journal entries")
@@ -194,6 +201,7 @@ class JournalWriter(BaseScript):
             tx_hash: The transaction hash.
             pattern: The pattern that matched.
             category: The category the transaction was classified into.
+
         """
         self.audit_log.append(
             {
@@ -204,11 +212,12 @@ class JournalWriter(BaseScript):
             },
         )
 
-    def get_classification_report(self) -> Dict[str, Any]:
+    def get_classification_report(self) -> dict[str, Any]:
         """Generate classification quality metrics.
 
         Returns:
             A dictionary containing classification quality metrics.
+
         """
         unique_rules = len({entry["pattern"] for entry in self.audit_log})
         categories = [entry["category"] for entry in self.audit_log]

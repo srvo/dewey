@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -10,12 +10,13 @@ class PrdBuilder(BaseScript):
     other utilities.
     """
 
-    def __init__(self, config_section: str = 'prd_builder', **kwargs: Any) -> None:
+    def __init__(self, config_section: str = "prd_builder", **kwargs: Any) -> None:
         """Initializes the PrdBuilder.
 
         Args:
             config_section (str): The configuration section to use.
             **kwargs (Any): Additional keyword arguments to pass to BaseScript.
+
         """
         super().__init__(config_section=config_section, **kwargs)
 
@@ -28,6 +29,7 @@ class PrdBuilder(BaseScript):
 
         Raises:
             NotImplementedError: If the PRD building process is not implemented.
+
         """
         self.logger.info("Starting PRD building process...")
 
@@ -48,6 +50,7 @@ class PrdBuilder(BaseScript):
 
         Raises:
             NotImplementedError: Always, as this is a placeholder.
+
         """
         raise NotImplementedError("PRD building logic not implemented yet.")
 

@@ -2,23 +2,18 @@ from dewey.core.base_script import BaseScript
 
 
 class ConsolidatedGmailApi(BaseScript):
-    """
-    A class for interacting with the Gmail API.
+    """A class for interacting with the Gmail API.
 
     This class inherits from BaseScript and provides methods for
     consolidating and managing Gmail interactions.
     """
 
     def __init__(self) -> None:
-        """
-        Initializes the ConsolidatedGmailApi class.
-        """
+        """Initializes the ConsolidatedGmailApi class."""
         super().__init__(config_section="consolidated_gmail_api")
 
-    def run(self) -> None:
-        """
-        Executes the main logic of the ConsolidatedGmailApi script.
-        """
+    def execute(self) -> None:
+        """Executes the main logic of the ConsolidatedGmailApi script."""
         self.logger.info("Starting Consolidated Gmail API script")
         # Example of accessing configuration values
         api_key = self.get_config_value("api_key")
@@ -29,3 +24,10 @@ class ConsolidatedGmailApi(BaseScript):
 
         # Add your main script logic here
         self.logger.info("Consolidated Gmail API script finished")
+
+    def run(self) -> None:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()

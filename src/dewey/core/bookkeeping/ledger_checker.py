@@ -3,7 +3,7 @@ import argparse
 import re
 import subprocess
 import sys
-from typing import Callable, List, Optional
+from typing import List, Optional
 
 from dewey.core.base_script import BaseScript
 
@@ -27,7 +27,9 @@ class RealFileSystem(FileSystemInterface):
 class SubprocessInterface:
     """Interface for subprocess operations."""
 
-    def run(self, cmd: List[str], capture_output: bool, text: bool, check: bool) -> subprocess.CompletedProcess:
+    def run(
+        self, cmd: list[str], capture_output: bool, text: bool, check: bool
+    ) -> subprocess.CompletedProcess:
         """Runs a subprocess command."""
         raise NotImplementedError
 
@@ -35,40 +37,51 @@ class SubprocessInterface:
 class RealSubprocess(SubprocessInterface):
     """Real subprocess operations."""
 
-    def run(self, cmd: List[str], capture_output: bool, text: bool, check: bool) -> subprocess.CompletedProcess:
+    def run(
+        self, cmd: list[str], capture_output: bool, text: bool, check: bool
+    ) -> subprocess.CompletedProcess:
         """Runs a subprocess command using subprocess.run."""
-        return subprocess.run(cmd, capture_output=capture_output, text=text, check=check)
+        return subprocess.run(
+            cmd, capture_output=capture_output, text=text, check=check
+        )
 
 
 class LedgerFormatChecker(BaseScript):
-    """
-    Validates the format of a ledger journal file.
+    """Validates the format of a ledger journal file.
 
     This class checks for various formatting issues such as date formats,
     account formats, amount formats, description lengths, and currency
     consistency. It also performs basic validation using `hledger`.
     """
 
-    def __init__(self, journal_file: str,
-                 fs: Optional[FileSystemInterface] = None,
-                 subprocess_runner: Optional[SubprocessInterface] = None) -> None:
-        """
-        Initializes the LedgerFormatChecker.
+    def __init__(
+        self,
+        journal_file: str,
+        fs: FileSystemInterface | None = None,
+        subprocess_runner: SubprocessInterface | None = None,
+    ) -> None:
+        """Initializes the LedgerFormatChecker.
 
         Args:
             journal_file: The path to the ledger journal file.
             fs: An optional FileSystemInterface for file operations.
             subprocess_runner: An optional SubprocessInterface for running subprocess commands.
+
         """
         super().__init__(
-            name="LedgerFormatChecker", description="Validates the format of a ledger journal file.", config_section="bookkeeping")
+            name="LedgerFormatChecker",
+            description="Validates the format of a ledger journal file.",
+            config_section="bookkeeping",
+        )
         self.journal_file = journal_file
         self.hledger_path = self.get_config_value("hledger_path", "/usr/bin/hledger")
-        self.journal_content: List[str] = []
-        self.errors: List[str] = []
-        self.warnings: List[str] = []
+        self.journal_content: list[str] = []
+        self.errors: list[str] = []
+        self.warnings: list[str] = []
         self.fs: FileSystemInterface = fs or RealFileSystem()
-        self.subprocess_runner: SubprocessInterface = subprocess_runner or RealSubprocess()
+        self.subprocess_runner: SubprocessInterface = (
+            subprocess_runner or RealSubprocess()
+        )
         self.read_journal()
 
     def read_journal(self) -> None:
@@ -87,16 +100,20 @@ class LedgerFormatChecker(BaseScript):
             self.journal_content = []
 
     def check_hledger_basic(self) -> bool:
-        """
-        Runs basic validation using `hledger`.
+        """Runs basic validation using `hledger`.
 
         Returns:
             True if `hledger` validation passes
+
         """
         self.logger.info("Running hledger basic validation")
         try:
             result = self.subprocess_runner.run(
-                [self.hledger_path, "-f", self.journal_file, "validate"], capture_output=True, text=True, check=True)
+                [self.hledger_path, "-f", self.journal_file, "validate"],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
             if result.returncode == 0:
                 self.logger.info("hledger validation passed")
                 return True
@@ -122,11 +139,17 @@ class LedgerFormatChecker(BaseScript):
         self.logger.info("Checking date format")
         date_pattern = re.compile(r"^\d{4}[/.-]\d{2}[/.-]\d{2}")
         for i, line in enumerate(self.journal_content):
-            if line.strip() and not line.startswith((";", "!")) and not date_pattern.match(
-                line
+            if (
+                line.strip()
+                and not line.startswith((";", "!"))
+                and not date_pattern.match(line)
             ):
-                self.logger.warning(f"Invalid date format on line {i + 1}: {line.strip()}")
-                self.warnings.append(f"Invalid date format on line {i + 1}: {line.strip()}")
+                self.logger.warning(
+                    f"Invalid date format on line {i + 1}: {line.strip()}"
+                )
+                self.warnings.append(
+                    f"Invalid date format on line {i + 1}: {line.strip()}"
+                )
 
     def check_accounts(self) -> None:
         """Checks if account names are in the correct format."""
@@ -138,7 +161,9 @@ class LedgerFormatChecker(BaseScript):
                     self.logger.warning(
                         f"Invalid account format on line {i + 1}: {line.strip()}"
                     )
-                    self.warnings.append(f"Invalid account format on line {i + 1}: {line.strip()}")
+                    self.warnings.append(
+                        f"Invalid account format on line {i + 1}: {line.strip()}"
+                    )
 
     def check_amount_format(self) -> None:
         """Checks if amounts are in the correct format."""
@@ -146,8 +171,12 @@ class LedgerFormatChecker(BaseScript):
         amount_pattern = re.compile(r"[-+]?\s*\d+(?:,\d{3})*(?:\.\d{2})?\s*[A-Z]{3}")
         for i, line in enumerate(self.journal_content):
             if re.search(r"\s+-?\s*\d", line) and not amount_pattern.search(line):
-                self.logger.warning(f"Invalid amount format on line {i + 1}: {line.strip()}")
-                self.warnings.append(f"Invalid amount format on line {i + 1}: {line.strip()}")
+                self.logger.warning(
+                    f"Invalid amount format on line {i + 1}: {line.strip()}"
+                )
+                self.warnings.append(
+                    f"Invalid amount format on line {i + 1}: {line.strip()}"
+                )
 
     def check_description_length(self) -> None:
         """Checks if descriptions exceed the maximum allowed length."""
@@ -159,13 +188,15 @@ class LedgerFormatChecker(BaseScript):
                 self.logger.warning(
                     f"Description too long on line {i + 1}: {line.strip()}"
                 )
-                self.warnings.append(f"Description too long on line {i + 1}: {line.strip()}")
+                self.warnings.append(
+                    f"Description too long on line {i + 1}: {line.strip()}"
+                )
 
     def check_currency_consistency(self) -> None:
         """Checks if all transactions use the same currency."""
         self.logger.info("Checking currency consistency")
         currency_pattern = re.compile(r"[A-Z]{3}")
-        first_currency: Optional[str] = None
+        first_currency: str | None = None
 
         for i, line in enumerate(self.journal_content):
             if re.search(r"\s+-?\s*\d", line):
@@ -183,11 +214,11 @@ class LedgerFormatChecker(BaseScript):
                         )
 
     def run_all_checks(self) -> bool:
-        """
-        Runs all validation checks.
+        """Runs all validation checks.
 
         Returns:
             True if all checks pass without errors, False otherwise.
+
         """
         self.logger.info("Starting ledger validation checks")
         hledger_check = self.check_hledger_basic()
@@ -202,17 +233,12 @@ class LedgerFormatChecker(BaseScript):
         else:
             return hledger_check
 
-    def run(self) -> bool:
+    def execute(self) -> bool:
         """Runs the ledger format checker."""
         if self.run_all_checks():
-            self.logger.info("All ledger checks passed successfully")
             return True
         else:
-            if self.warnings:
-                self.logger.warning("Validation warnings occurred")
-
             if self.errors:
-                self.logger.error("Validation errors detected")
                 return False
             return False
 

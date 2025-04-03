@@ -2,8 +2,7 @@ from dewey.core.base_script import BaseScript
 
 
 class SetupAuth(BaseScript):
-    """
-    Sets up authentication for Gmail.
+    """Sets up authentication for Gmail.
 
     This script handles the authentication process required to access Gmail
     services. It leverages the BaseScript class for configuration, logging,
@@ -12,7 +11,9 @@ class SetupAuth(BaseScript):
 
     def __init__(self):
         """Initializes the SetupAuth script."""
-        super().__init__(config_section="gmail_auth", requires_db=False, enable_llm=False)
+        super().__init__(
+            config_section="gmail_auth", requires_db=False, enable_llm=False
+        )
 
     def run(self) -> None:
         """Runs the Gmail authentication setup."""

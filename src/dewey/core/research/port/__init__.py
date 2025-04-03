@@ -4,8 +4,7 @@ from dewey.core.base_script import BaseScript
 
 
 class PortModule(BaseScript):
-    """
-    Base class for port modules within Dewey.
+    """Base class for port modules within Dewey.
 
     This class provides a standardized structure for port scripts,
     including configuration loading, logging, and a `run` method to
@@ -16,7 +15,7 @@ class PortModule(BaseScript):
         self,
         name: str,
         description: str = "Port Module",
-        config_section: Optional[str] = None,
+        config_section: str | None = None,
         requires_db: bool = False,
         enable_llm: bool = False,
     ) -> None:
@@ -28,6 +27,7 @@ class PortModule(BaseScript):
             config_section: The configuration section to use.
             requires_db: Whether the module requires a database connection.
             enable_llm: Whether the module requires an LLM client.
+
         """
         super().__init__(
             name=name,
@@ -38,9 +38,7 @@ class PortModule(BaseScript):
         )
 
     def run(self) -> None:
-        """
-        Executes the primary logic of the port module.
-        """
+        """Executes the primary logic of the port module."""
         self.logger.info("Running the port module...")
         # Add your implementation here
         config_value = self.get_config_value("some_config_key", "default_value")
@@ -66,8 +64,7 @@ class PortModule(BaseScript):
                 self.logger.error(f"Error calling LLM: {e}")
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """
-        Retrieves a configuration value by key.
+        """Retrieves a configuration value by key.
 
         Args:
             key: The key of the configuration value to retrieve.
@@ -75,5 +72,6 @@ class PortModule(BaseScript):
 
         Returns:
             The configuration value, or the default value if the key is not found.
+
         """
         return super().get_config_value(key, default)

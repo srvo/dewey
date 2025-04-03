@@ -15,14 +15,21 @@ from dewey.llm.llm_utils import get_llm_client
 from ..base_workflow import BaseWorkflow
 from ..engines import BaseEngine
 from ...engines.deepseek import DeepSeekEngine
-from tests.dewey.core.research.analysis.test_workflow_integration import ResearchOutputHandler
+from tests.dewey.core.research.analysis.test_workflow_integration import (
+    ResearchOutputHandler,
+)
 
 
 class EthicalAnalysisWorkflow(BaseScript, BaseWorkflow):
     """Workflow for analyzing companies from an ethical perspective."""
 
     def __init__(
-        self, data_dir: Union[str, Path], search_engine: Optional[BaseEngine] = None, analysis_engine: Optional[BaseEngine] = None, output_handler: Optional[ResearchOutputHandler] = None, ) -> None:
+        self,
+        data_dir: Union[str, Path],
+        search_engine: Optional[BaseEngine] = None,
+        analysis_engine: Optional[BaseEngine] = None,
+        output_handler: Optional[ResearchOutputHandler] = None,
+    ) -> None:
         """Initialize the workflow.
 
         Args:
@@ -30,13 +37,21 @@ class EthicalAnalysisWorkflow(BaseScript, BaseWorkflow):
             search_engine: Optional search engine (defaults to DeepSeekEngine).
             analysis_engine: Optional analysis engine (defaults to DeepSeekEngine).
             output_handler: Optional output handler.
+
         """
         super().__init__(
-            name="EthicalAnalysisWorkflow", description="Workflow for analyzing companies from an ethical perspective.", config_section="ethical_analysis", requires_db=True, enable_llm=True, )
+            name="EthicalAnalysisWorkflow",
+            description="Workflow for analyzing companies from an ethical perspective.",
+            config_section="ethical_analysis",
+            requires_db=True,
+            enable_llm=True,
+        )
         self.data_dir = Path(data_dir)
         self.search_engine = search_engine or DeepSeekEngine()
         self.analysis_engine = analysis_engine or DeepSeekEngine()
-        self.output_handler = output_handler or ResearchOutputHandler(str(self.data_dir))
+        self.output_handler = output_handler or ResearchOutputHandler(
+            str(self.data_dir)
+        )
         self.engine = self.analysis_engine  # For compatibility with test_init_templates
         self.llm = get_llm_client()
         self.logger = logging.getLogger(__name__)
@@ -45,7 +60,8 @@ class EthicalAnalysisWorkflow(BaseScript, BaseWorkflow):
         # Add templates to analysis engine
         if self.analysis_engine:
             self.analysis_engine.add_template(
-                "ethical_analysis", """Analyze the ethical implications of {company_name}'s business practices based on the following information:
+                "ethical_analysis",
+                """Analyze the ethical implications of {company_name}'s business practices based on the following information:
 
 {search_results}
 
@@ -54,10 +70,12 @@ Please provide:
 2. Potential risks and concerns
 3. Notable positive initiatives
 4. Areas for improvement
-""", )
+""",
+            )
 
             self.analysis_engine.add_template(
-                "risk_analysis", """Assess the risks associated with {company_name} based on:
+                "risk_analysis",
+                """Assess the risks associated with {company_name} based on:
 
 {search_results}
 
@@ -67,11 +85,18 @@ Please identify:
 3. Environmental risks
 4. Social impact risks
 5. Governance risks
-""", )
+""",
+            )
 
         # Initialize statistics
         self.stats = {
-            "companies_processed": 0, "total_searches": 0, "total_results": 0, "total_snippet_words": 0, "total_analyses": 0, "total_analysis_words": 0, }
+            "companies_processed": 0,
+            "total_searches": 0,
+            "total_results": 0,
+            "total_snippet_words": 0,
+            "total_analyses": 0,
+            "total_analysis_words": 0,
+        }
 
     def build_query(self, company_data: Dict[str, str]) -> str:
         """Build a search query for a company.
@@ -81,9 +106,18 @@ Please identify:
 
         Returns:
             Search query string.
+
         """
         query_parts = [
-            str(company_data), "ethical", "ethics", "controversy", "controversies", "violations", "sustainability", "corporate responsibility", ]
+            str(company_data),
+            "ethical",
+            "ethics",
+            "controversy",
+            "controversies",
+            "violations",
+            "sustainability",
+            "corporate responsibility",
+        ]
         return " ".join(query_parts)
 
     @staticmethod
@@ -95,6 +129,7 @@ Please identify:
 
         Returns:
             Number of words
+
         """
         if not text:
             return 0
@@ -143,10 +178,13 @@ Please identify:
 
         Returns:
             A dictionary containing the analysis results, or None if an error occurred.
+
         """
         try:
             # Search for company information
-            search_results = self.search_engine.search(f"{company} ethical issues controversies")
+            search_results = self.search_engine.search(
+                f"{company} ethical issues controversies"
+            )
             if not search_results:
                 return None
 
@@ -157,18 +195,31 @@ Please identify:
                     INSERT INTO research_searches (company_name, query, num_results)
                     VALUES (?, ?, ?)
                     RETURNING id
-                """, [company, f"{company} ethical issues controversies", len(search_results)], )
+                """,
+                    [
+                        company,
+                        f"{company} ethical issues controversies",
+                        len(search_results),
+                    ],
+                )
                 search_id = result.fetchone()[0]
 
                 # Insert search results
                 for result in search_results:
                     conn.execute(
                         """
-                        INSERT INTO research_search_results 
+                        INSERT INTO research_search_results
                         (search_id, title, link, snippet, source)
                         VALUES (?, ?, ?, ?, ?)
-                    """, [
-                            search_id, result.get("title", ""), result.get("link", ""), result.get("snippet", ""), result.get("source", ""), ], )
+                    """,
+                        [
+                            search_id,
+                            result.get("title", ""),
+                            result.get("link", ""),
+                            result.get("snippet", ""),
+                            result.get("source", ""),
+                        ],
+                    )
 
             # Generate analysis using LLM
             prompt = f"""Analyze the ethical profile of {company} based on the following information:
@@ -188,18 +239,26 @@ Please provide:
                 # Insert analysis into database
                 conn.execute(
                     """
-                    INSERT INTO research_analyses 
+                    INSERT INTO research_analyses
                     (company, search_id, content, summary, historical_analysis, ethical_score, risk_level)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
-                """, [
-                        company, search_id, analysis, "", # summary
-                        "", # historical_analysis
-                        0.0, # ethical_score
-                        0, # risk_level
-                    ], )
+                """,
+                    [
+                        company,
+                        search_id,
+                        analysis,
+                        "",  # summary
+                        "",  # historical_analysis
+                        0.0,  # ethical_score
+                        0,  # risk_level
+                    ],
+                )
 
             return {
-                "company": company, "search_results": search_results, "analysis": analysis, "historical": "", # historical
+                "company": company,
+                "search_results": search_results,
+                "analysis": analysis,
+                "historical": "",  # historical
             }
 
         except Exception as e:
@@ -209,7 +268,15 @@ Please provide:
     def execute(self, data_dir: str) -> Dict[str, Any]:
         """Execute the workflow."""
         companies_file = os.path.join(data_dir, "companies.csv")
-        companies=None, "total_searches": 0, "total_results": 0, "total_snippet_words": 0, "total_analyses": 0, "total_analysis_words": 0, }
+        companies = []
+        stats = {
+            "companies_processed": 0,
+            "total_searches": 0,
+            "total_results": 0,
+            "total_snippet_words": 0,
+            "total_analyses": 0,
+            "total_analysis_words": 0,
+        }
 
         try:
             with open(companies_file) as f:
@@ -224,12 +291,6 @@ Please provide:
 
                         # Ensure search_results is a list of dictionaries
                         if not isinstance(search_results, list):
-                            if "companies.csv")
-        companies is None:
-                                "companies.csv")
-        companies = []
-        stats = {
-            "companies_processed": 0
                             search_results = []
 
                         # Update search stats
@@ -237,7 +298,9 @@ Please provide:
                         stats["total_results"] += len(search_results)
                         for result in search_results:
                             if isinstance(result, dict):
-                                stats["total_snippet_words"] += self.word_count(result.get("snippet", ""))
+                                stats["total_snippet_words"] += self.word_count(
+                                    result.get("snippet", "")
+                                )
 
                         with get_connection(for_write=True) as conn:
                             # Insert search into database
@@ -257,7 +320,7 @@ Please provide:
                                     continue
                                 conn.execute(
                                     """
-                                    INSERT INTO research_search_results 
+                                    INSERT INTO research_search_results
                                     (search_id, title, link, snippet, source)
                                     VALUES (?, ?, ?, ?, ?)
                                 """,
@@ -275,10 +338,9 @@ Please provide:
                         if analysis:  # Only process if analysis was successful
                             # Update analysis stats
                             stats["total_analyses"] += 1
-                            stats["total_analysis_words"] += (
-                                self.word_count(analysis.get("analysis", ""))
-                                + self.word_count(analysis.get("historical", ""))
-                            )
+                            stats["total_analysis_words"] += self.word_count(
+                                analysis.get("analysis", "")
+                            ) + self.word_count(analysis.get("historical", ""))
 
                             # Save company data
                             company_data = {
@@ -343,10 +405,19 @@ Please provide:
 
         Raises:
             FileNotFoundError: If the companies file is not found.
+
         """
         data_dir = self.get_config_value("paths.data_dir", "/Users/srvo/dewey/data")
         companies_file = os.path.join(data_dir, "companies.csv")
-        companies=None, "total_searches": 0, "total_results": 0, "total_snippet_words": 0, "total_analyses": 0, "total_analysis_words": 0, }
+        companies = []
+        stats = {
+            "companies_processed": 0,
+            "total_searches": 0,
+            "total_results": 0,
+            "total_snippet_words": 0,
+            "total_analyses": 0,
+            "total_analysis_words": 0,
+        }
 
         try:
             with open(companies_file) as f:
@@ -361,12 +432,6 @@ Please provide:
 
                         # Ensure search_results is a list of dictionaries
                         if not isinstance(search_results, list):
-                            if "companies.csv")
-        companies is None:
-                                "companies.csv")
-        companies = []
-        stats = {
-            "companies_processed": 0
                             search_results = []
 
                         # Update search stats
@@ -374,7 +439,9 @@ Please provide:
                         stats["total_results"] += len(search_results)
                         for result in search_results:
                             if isinstance(result, dict):
-                                stats["total_snippet_words"] += self.word_count(result.get("snippet", ""))
+                                stats["total_snippet_words"] += self.word_count(
+                                    result.get("snippet", "")
+                                )
 
                         with get_connection(for_write=True) as conn:
                             # Insert search into database
@@ -394,7 +461,7 @@ Please provide:
                                     continue
                                 conn.execute(
                                     """
-                                    INSERT INTO research_search_results 
+                                    INSERT INTO research_search_results
                                     (search_id, title, link, snippet, source)
                                     VALUES (?, ?, ?, ?, ?)
                                 """,
@@ -412,10 +479,9 @@ Please provide:
                         if analysis:  # Only process if analysis was successful
                             # Update analysis stats
                             stats["total_analyses"] += 1
-                            stats["total_analysis_words"] += (
-                                self.word_count(analysis.get("analysis", ""))
-                                + self.word_count(analysis.get("historical", ""))
-                            )
+                            stats["total_analysis_words"] += self.word_count(
+                                analysis.get("analysis", "")
+                            ) + self.word_count(analysis.get("historical", ""))
 
                             # Save company data
                             company_data = {

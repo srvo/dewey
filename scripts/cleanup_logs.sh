@@ -12,4 +12,4 @@ mv logs/imap_import.out logs/email_imports/
 # Clean up empty directories
 rmdir logs/batch_upload 2>/dev/null || true
 
-echo "Log cleanup complete!" 
+echo "Log cleanup complete!"

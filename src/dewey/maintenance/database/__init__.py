@@ -5,8 +5,7 @@ from dewey.core.base_script import BaseScript
 
 
 class DatabaseModule(BaseScript):
-    """
-    A module for managing database maintenance tasks within Dewey.
+    """A module for managing database maintenance tasks within Dewey.
 
     This module inherits from BaseScript and provides a standardized
     structure for database maintenance scripts, including configuration
@@ -19,8 +18,7 @@ class DatabaseModule(BaseScript):
         super().__init__(*args, **kwargs)
 
     def run(self) -> None:
-        """
-        Executes the database maintenance tasks.
+        """Executes the database maintenance tasks.
 
         This method contains the primary logic for the database maintenance
         script. It can access configuration values using
@@ -39,8 +37,7 @@ class DatabaseModule(BaseScript):
         self.logger.info("Database maintenance tasks completed.")
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """
-        Retrieves a configuration value associated with the given key.
+        """Retrieves a configuration value associated with the given key.
 
         Args:
             key: The key of the configuration value to retrieve.
@@ -49,5 +46,6 @@ class DatabaseModule(BaseScript):
         Returns:
             The configuration value associated with the key, or the default
             value if the key is not found.
+
         """
         return super().get_config_value(key, default)

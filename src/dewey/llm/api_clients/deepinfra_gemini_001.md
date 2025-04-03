@@ -4,24 +4,24 @@ You can use the official openai python client to run inferences with us
 
     # Assume openai>=1.0.0
     from openai import OpenAI
-    
+
     # Create an OpenAI client with your deepinfra token and endpoint
     openai = OpenAI(
         api_key="9BN9c7pQTDHy1EoKuNv53qe5ngfVlMVM",
         base_url="https://api.deepinfra.com/v1/openai",
     )
-    
+
     chat_completion = openai.chat.completions.create(
         model="google/gemini-2.0-flash-001",
         messages=[{"role": "user", "content": "Hello"}],
     )
-    
+
     print(chat_completion.choices[0].message.content)
     print(chat_completion.usage.prompt_tokens, chat_completion.usage.completion_tokens)
-    
+
     # Hello! It's nice to meet you. Is there something I can help you with, or would you like to chat?
     # 11 25
-    
+
 
 #### Conversations
 
@@ -29,13 +29,13 @@ To create a longer chat-like conversation you just have to add each response mes
 
     # Assume openai>=1.0.0
     from openai import OpenAI
-    
+
     # Create an OpenAI client with your deepinfra token and endpoint
     openai = OpenAI(
         api_key="9BN9c7pQTDHy1EoKuNv53qe5ngfVlMVM",
         base_url="https://api.deepinfra.com/v1/openai",
     )
-    
+
     chat_completion = openai.chat.completions.create(
         model="google/gemini-2.0-flash-001",
         messages=[
@@ -45,42 +45,42 @@ To create a longer chat-like conversation you just have to add each response mes
             {"role": "user", "content": "Tell me more about the second method."},
         ],
     )
-    
+
     print(chat_completion.choices[0].message.content)
     print(chat_completion.usage.prompt_tokens, chat_completion.usage.completion_tokens)
-    
+
     # Sous le Sable! It's an ancient technique that never goes out of style, n'est-ce pas? Literally ...
     # 149 324
-    
+
 
 The longer the conversation gets, the more time it takes the model to generate the response. The number of messages that you can have in a conversation is limited by the context size of a model. Larger models also usually take more time to respond.
 
-  
+
 
 ### Streaming
 
 Streaming any of the chat completions above is supported by adding the `stream=True` option.
 
     from openai import OpenAI
-    
+
     # Create an OpenAI client with your deepinfra token and endpoint
     openai = OpenAI(
         api_key="9BN9c7pQTDHy1EoKuNv53qe5ngfVlMVM",
         base_url="https://api.deepinfra.com/v1/openai",
     )
-    
+
     chat_completion = openai.chat.completions.create(
         model="google/gemini-2.0-flash-001",
         messages=[{"role": "user", "content": "Hello"}],
         stream=True,
     )
-    
+
     for event in chat_completion:
         if event.choices[0].finish_reason:
             print(event.choices[0].finish_reason, event.usage["prompt_tokens"], event.usage["completion_tokens"])
         else:
             print(event.choices[0].delta.content)
-    
+
     # Hello
     # !
     # It
@@ -88,7 +88,7 @@ Streaming any of the chat completions above is supported by adding the `stream=T
     # nice
     # ...
     # 11 25
-    
+
 
 ## Input fields
 
@@ -1304,4 +1304,3 @@ This is the detailed description of the output stream parameters in JSON Schema 
             }
         }
     }
-

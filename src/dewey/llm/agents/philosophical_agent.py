@@ -1,5 +1,4 @@
 """Philosophical agent using smolagents."""
-from typing import Any, Dict, Optional
 
 from smolagents import Tool
 
@@ -38,19 +37,21 @@ class PhilosophicalAgent(BaseScript, DeweyBaseAgent):
 
         Returns:
             A string containing the philosophical discussion.
+
         """
         prompt = f"Engage in a philosophical discussion about: {topic}"
         result = self.run(prompt)
         return result
 
-    def run(self, prompt: str) -> str:
-        """Runs the philosophical discussion agent.
+    def execute(self, prompt: str) -> str:
+        """Executes the philosophical discussion agent.
 
         Args:
             prompt: The prompt for the philosophical discussion.
 
         Returns:
             The result of the philosophical discussion.
+
         """
         self.logger.info(f"Beginning philosophical discussion on topic: {prompt}")
         # TODO: Implement actual philosophical discussion logic here, using self.get_config_value for configuration
@@ -58,3 +59,10 @@ class PhilosophicalAgent(BaseScript, DeweyBaseAgent):
         response = f"Placeholder response for topic: {prompt}"
         self.logger.info(f"Philosophical discussion complete. Result: {response}")
         return response
+
+    def run(self, prompt: str) -> str:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        return self.execute(prompt)

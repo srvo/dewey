@@ -1,4 +1,3 @@
-```python
 import logging
 from pathlib import Path
 from typing import Optional
@@ -19,6 +18,7 @@ def _configure_logger(
         log_file: The path to the log file.
         level: The logging level.
         format_str: The log format string.
+
     """
     formatter = logging.Formatter(format_str)
 
@@ -35,9 +35,9 @@ def _configure_logger(
 
 def setup_logger(
     name: str,
-    log_file: Optional[Path] = None,
-    level: Optional[int] = None,
-    format_str: Optional[str] = None,
+    log_file: Path | None = None,
+    level: int | None = None,
+    format_str: str | None = None,
 ) -> logging.Logger:
     """Sets up a logger with the specified name and configuration.
 
@@ -49,6 +49,7 @@ def setup_logger(
 
     Returns:
         Configured logger instance.
+
     """
     logger = logging.getLogger(name)
 
@@ -76,9 +77,9 @@ def get_logger(name: str) -> logging.Logger:
 
     Returns:
         Logger instance.
+
     """
     logger = logging.getLogger(name)
     if not logger.handlers:
         return setup_logger(name)
     return logger
-```

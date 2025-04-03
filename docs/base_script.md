@@ -27,7 +27,7 @@ class MyScript(BaseScript):
             name="my_script",
             description="My script does something useful"
         )
-    
+
     def run(self):
         # Your script implementation goes here
         self.logger.info("Running my script")
@@ -104,7 +104,7 @@ BaseScript provides a helper method to handle paths consistently:
 def run(self):
     # Get a path relative to project root
     data_path = self.get_path("data/my_dataset.csv")
-    
+
     # Works with absolute paths too
     config_path = self.get_path("/etc/my_config.yaml")
 ```
@@ -168,23 +168,23 @@ class TestMyScript(unittest.TestCase):
     def test_my_script(self, mock_config_path):
         # Set up a test config
         mock_config_path.return_value = "path/to/test_config.yaml"
-        
+
         # If your script uses the database
         with patch('dewey.core.db.connection.get_connection') as mock_get_connection:
             mock_db = MagicMock()
             mock_get_connection.return_value = mock_db
-            
+
             # If your script uses LLM
             with patch('dewey.llm.llm_utils.get_llm_client') as mock_get_llm:
                 mock_llm = MagicMock()
                 mock_get_llm.return_value = mock_llm
-                
+
                 # Create your script instance
                 script = MyScript()
-                
+
                 # Test its functionality
                 script.run()
-                
+
                 # Verify expected behavior
                 mock_db.execute.assert_called_with("SELECT * FROM my_table")
                 mock_llm.generate.assert_called_with("Tell me about the weather")
@@ -226,4 +226,4 @@ class TestMyScript(unittest.TestCase):
 1. Use `--log-level=DEBUG` when running your script for more detailed logs
 2. Check the script initialization parameters to ensure they match your needs
 3. Use proper exception handling in your `run()` method
-4. Verify that required dependencies are installed 
+4. Verify that required dependencies are installed

@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -16,6 +16,7 @@ class CodeGenerator(BaseScript):
 
         Args:
             **kwargs: Keyword arguments passed to the BaseScript constructor.
+
         """
         super().__init__(**kwargs)
 
@@ -27,6 +28,7 @@ class CodeGenerator(BaseScript):
 
         Raises:
             Exception: If there is an error during code generation.
+
         """
         try:
             prompt = self.get_config_value("prompt")
@@ -49,6 +51,7 @@ class CodeGenerator(BaseScript):
 
         Returns:
             The generated code.
+
         """
         # Placeholder for actual LLM code generation
         return f"print('Generated code for: {prompt}')"

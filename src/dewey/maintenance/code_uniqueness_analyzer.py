@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -16,6 +16,7 @@ class CodeUniquenessAnalyzer(BaseScript):
         Args:
             config_path: Path to the configuration file.
             **kwargs: Additional keyword arguments.
+
         """
         super().__init__()
         self.config_path = config_path
@@ -29,6 +30,7 @@ class CodeUniquenessAnalyzer(BaseScript):
 
         Raises:
             Exception: If an error occurs during the analysis.
+
         """
         try:
             # Example of accessing configuration values
@@ -46,5 +48,7 @@ class CodeUniquenessAnalyzer(BaseScript):
 
 if __name__ == "__main__":
     # Example usage:
-    analyzer = CodeUniquenessAnalyzer(config_path="path/to/your/config.yaml")  # Replace with your config path
+    analyzer = CodeUniquenessAnalyzer(
+        config_path="path/to/your/config.yaml"
+    )  # Replace with your config path
     analyzer.run()

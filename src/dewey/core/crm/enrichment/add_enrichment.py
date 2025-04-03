@@ -12,7 +12,6 @@ database operations.
 """
 
 import sqlite3
-from typing import Any, Dict
 
 from dewey.core.base_script import BaseScript
 
@@ -40,6 +39,7 @@ class AddEnrichmentCapabilities(BaseScript):
         ------
             sqlite3.Error: If any database operation fails
             Exception: For any other unexpected errors
+
         """
         conn = None
         try:

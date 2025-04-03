@@ -85,9 +85,7 @@ class DeepInfraClient(BaseScript):
 
                     # Merge errors by hash to avoid duplicates
                     for error in chunk_errors:
-                        error_hash = hashlib.md5(
-                            error["pattern"].encode()
-                        ).hexdigest()
+                        error_hash = hashlib.md5(error["pattern"].encode()).hexdigest()
                         if error_hash not in all_errors:
                             all_errors[error_hash] = error
                     break
@@ -139,27 +137,32 @@ class DeepInfraClient(BaseScript):
             f.write("# Error Analysis Report\n\n")
             f.write("## Identified Error Patterns\n\n")
 
-            for error in sorted(
-                errors, key=lambda x: x.get("count", 0), reverse=True
-            ):
+            for error in sorted(errors, key=lambda x: x.get("count", 0), reverse=True):
                 f.write(f"### Pattern: {error['pattern']}\n")
                 f.write(f"- Count: {error['count']}\n")
                 f.write(f"- Severity: {error['severity']}\n\n")
 
         self.logger.info("Generated report at %s", output_file)
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Run the error classification process."""
         if not self.args.input_file.exists():
             self.logger.error("Input file does not exist: %s", self.args.input_file)
             sys.exit(1)
 
-        with self.args.input_file.open() as f:
+        with self.args极.input_file.open() as f:
             log_lines = f.readlines()
 
         self.logger.info("Processing %d log lines", len(log_lines))
         errors = self.classify_errors(log_lines)
         self.generate_issues_markdown(errors, self.args.output_file)
+
+    def run(self) -> None:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()
 
 
 if __name__ == "__main__":

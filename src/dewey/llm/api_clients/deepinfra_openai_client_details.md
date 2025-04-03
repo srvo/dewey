@@ -17,32 +17,32 @@ You can do HTTP requests. You can also use the official Python and Node.js libra
 For Python you should run
 
     pip install openai
-    
+
 
 For JavaScript/Node.js you should run
 
     npm install openai
-    
+
 
 ### Chat Completions
 
 The Chat Completions API is the easiest to use. You exchange messages and it just works. You can change the model to another LLM and it will continue working.
 
     from openai import OpenAI
-    
+
     openai = OpenAI(
         api_key="$DEEPINFRA_TOKEN",
         base_url="https://api.deepinfra.com/v1/openai",
     )
-    
+
     stream = True # or False
-    
+
     chat_completion = openai.chat.completions.create(
         model="meta-llama/Meta-Llama-3-8B-Instruct",
         messages=[{"role": "user", "content": "Hello"}],
         stream=stream,
     )
-    
+
     if stream:
         for event in chat_completion:
             if event.choices[0].finish_reason:
@@ -54,24 +54,24 @@ The Chat Completions API is the easiest to use. You exchange messages and it jus
     else:
         print(chat_completion.choices[0].message.content)
         print(chat_completion.usage.prompt_tokens, chat_completion.usage.completion_tokens)
-    
+
 
     import OpenAI from "openai";
-    
+
     const openai = new OpenAI({
       apiKey: "$DEEPINFRA_TOKEN",
       baseURL: 'https://api.deepinfra.com/v1/openai',
     });
-    
+
     const stream = false; // or true
-    
+
     async function main() {
       const completion = await openai.chat.completions.create({
         messages: [{ role: "user", content: "Hello" }],
         model: "meta-llama/Meta-Llama-3-8B-Instruct",
         stream: stream,
       });
-    
+
       if (stream) {
         for await (const chunk of completion) {
           if (chunk.choices[0].finish_reason) {
@@ -87,9 +87,9 @@ The Chat Completions API is the easiest to use. You exchange messages and it jus
         console.log(completion.usage.prompt_tokens, completion.usage.completion_tokens);
       }
     }
-    
+
     main();
-    
+
 
     curl "https://api.deepinfra.com/v1/openai/chat/completions" \
       -H "Content-Type: application/json" \
@@ -104,7 +104,7 @@ The Chat Completions API is the easiest to use. You exchange messages and it jus
             }
           ]
         }'
-    
+
 
 pythonjavascriptbash
 
@@ -115,14 +115,14 @@ You can see more complete examples at the documentation page of each model.
 To create a longer chat-like conversation you have to add each response message and each of the user's messages to every request. This way the model will have the context and will be able to provide better answers. You can tweak it even further by providing a system message.
 
     from openai import OpenAI
-    
+
     openai = OpenAI(
         api_key="$DEEPINFRA_TOKEN",
         base_url="https://api.deepinfra.com/v1/openai",
     )
-    
+
     stream = True # or False
-    
+
     chat_completion = openai.chat.completions.create(
         model="meta-llama/Meta-Llama-3-8B-Instruct",
         messages=[
@@ -133,7 +133,7 @@ To create a longer chat-like conversation you have to add each response message 
         ],
         stream=stream,
     )
-    
+
     if stream:
         for event in chat_completion:
             if event.choices[0].finish_reason:
@@ -145,17 +145,17 @@ To create a longer chat-like conversation you have to add each response message 
     else:
         print(chat_completion.choices[0].message.content)
         print(chat_completion.usage.prompt_tokens, chat_completion.usage.completion_tokens)
-    
+
 
     import OpenAI from "openai";
-    
+
     const openai = new OpenAI({
       baseURL: 'https://api.deepinfra.com/v1/openai',
       apiKey: "$DEEPINFRA_TOKEN",
     });
-    
+
     const stream = false; // or true
-    
+
     async function main() {
       const completion = await openai.chat.completions.create({
         messages: [
@@ -167,7 +167,7 @@ To create a longer chat-like conversation you have to add each response message 
         model: "meta-llama/Meta-Llama-3-8B-Instruct",
         stream: stream,
       });
-    
+
       if (stream) {
         for await (const chunk of completion) {
           if (chunk.choices[0].finish_reason) {
@@ -183,9 +183,9 @@ To create a longer chat-like conversation you have to add each response message 
         console.log(completion.usage.prompt_tokens, completion.usage.completion_tokens);
       }
     }
-    
+
     main();
-    
+
 
     curl "https://api.deepinfra.com/v1/openai/chat/completions" \
       -H "Content-Type: application/json" \
@@ -212,7 +212,7 @@ To create a longer chat-like conversation you have to add each response message 
             }
           ]
         }'
-    
+
 
 pythonjavascriptbash
 
@@ -223,21 +223,21 @@ The longer the conversation gets, the more time it takes the model to generate t
 This is an advanced API. You should know how to format the input to make it work. Different models might have a different input format. The example below is for [meta-llama/Meta-Llama-3-8B-Instruct](https://deepinfra.com/meta-llama/Meta-Llama-3-8B-Instruct). You can see the model's input format in the API section on its page.
 
     from openai import OpenAI
-    
+
     openai = OpenAI(
         api_key="$DEEPINFRA_TOKEN",
         base_url="https://api.deepinfra.com/v1/openai",
     )
-    
+
     stream = True # or False
-    
+
     completion = openai.completions.create(
         model='meta-llama/Meta-Llama-3-8B-Instruct',
         prompt='<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n\nHello!<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n',
         stop=['<|eot_id|>'],
         stream=stream,
     )
-    
+
     if stream:
         for event in completion:
             if event.choices[0].finish_reason:
@@ -249,17 +249,17 @@ This is an advanced API. You should know how to format the input to make it work
     else:
         print(completion.choices[0].text)
         print(completion.usage.prompt_tokens, completion.usage.completion_tokens)
-    
+
 
     import OpenAI from "openai";
-    
+
     const openai = new OpenAI({
       baseURL: 'https://api.deepinfra.com/v1/openai',
       apiKey: "$DEEPINFRA_TOKEN",
     });
-    
+
     stream = true // or false
-    
+
     async function main() {
       const completion = await openai.completions.create({
         "model": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -269,7 +269,7 @@ This is an advanced API. You should know how to format the input to make it work
           "<|eot_id|>"
         ]
       });
-    
+
       if (stream) {
         for await (const chunk of completion) {
           if (chunk.choices[0].finish_reason) {
@@ -285,9 +285,9 @@ This is an advanced API. You should know how to format the input to make it work
         console.log(completion.usage.prompt_tokens, completion.usage.completion_tokens);
       }
     }
-    
+
     main();
-    
+
 
     curl "https://api.deepinfra.com/v1/openai/completions" \
       -H "Content-Type: application/json" \
@@ -299,7 +299,7 @@ This is an advanced API. You should know how to format the input to make it work
            "<|eot_id|>"
          ]
        }'
-    
+
 
 pythonjavascriptbash
 
@@ -310,57 +310,57 @@ For every model you can check its input format in the API section on its page.
 DeepInfra supports the OpenAI embeddings API. The following creates an embedding vector representing the input text
 
     from openai import OpenAI
-    
+
     openai = OpenAI(
         api_key="$DEEPINFRA_TOKEN",
         base_url="https://api.deepinfra.com/v1/openai",
     )
-    
+
     input = "The food was delicious and the waiter...", # or an array ["hello", "world"]
-    
+
     embeddings = openai.embeddings.create(
       model="BAAI/bge-large-en-v1.5",
       input=input,
       encoding_format="float"
     )
-    
+
     if isinstance(input, str):
         print(embeddings.data[0].embedding)
     else:
         for i in range(len(input)):
             print(embeddings.data[i].embedding)
-    
+
     print(embeddings.usage.prompt_tokens)
-    
+
 
     import OpenAI from "openai";
-    
+
     const openai = new OpenAI({
       baseURL: 'https://api.deepinfra.com/v1/openai',
       apiKey: "$DEEPINFRA_TOKEN",
     });
-    
+
     const input = "The quick brown fox jumped over the lazy dog" // or an array ["hello", "world"]
-    
+
     async function main() {
       const embedding = await openai.embeddings.create({
         model: "BAAI/bge-large-en-v1.5",
         input: input,
         encoding_format: "float",
       });
-    
+
       // check if input is a string or array
       if (typeof input === "string") {
         console.log(embedding.data[0].embedding);
       } else {
         console.log(embedding.data.map((data) => data.embedding));
       }
-    
+
       console.log(embedding.usage.prompt_tokens);
     }
-    
+
     main();
-    
+
 
     curl "https://api.deepinfra.com/v1/openai/embeddings" \
       -H "Content-Type: application/json" \
@@ -370,7 +370,7 @@ DeepInfra supports the OpenAI embeddings API. The following creates an embedding
         "model": "BAAI/bge-large-en-v1.5",
         "encoding_format": "float"
       }'
-    
+
 
 pythonjavascriptbash
 
@@ -382,12 +382,12 @@ You can use the OpenAI compatible API to generate images. Here's an example usin
     import base64
     from PIL import Image
     from openai import OpenAI
-    
+
     client = OpenAI(
         api_key="$DEEPINFRA_TOKEN",
         base_url="https://api.deepinfra.com/v1/openai"
     )
-    
+
     if __name__ == "__main__":
         response = client.images.generate(
             prompt="A photo of an astronaut riding a horse on Mars.",
@@ -399,30 +399,30 @@ You can use the OpenAI compatible API to generate images. Here's an example usin
         image_bytes = base64.b64decode(b64_json)
         image = Image.open(io.BytesIO(image_bytes))
         image.save("output.png")
-    
+
 
     import * as fs from 'fs';
     import OpenAI from "openai";
-    
+
     const openai = new OpenAI({
       baseURL: 'https://api.deepinfra.com/v1/openai',
       apiKey: "$DEEPINFRA_TOKEN",
     });
-    
+
     async function main() {
       const response = await openai.images.generate({
         prompt: "A photo of an astronaut riding a horse on Mars.",
         size: "1024x1024",
         n: 1,
       });
-    
+
       const b64Json = response.data[0].b64_json;
       const imageBuffer = Buffer.from(b64Json, 'base64');
       fs.writeFileSync('output.png', imageBuffer);
     }
-    
+
     main();
-    
+
 
     curl "https://api.deepinfra.com/v1/openai/images/generations" \
       -H "Content-Type: application/json" \
@@ -432,7 +432,7 @@ You can use the OpenAI compatible API to generate images. Here's an example usin
         "size": "1024x1024",
         "n": 1
       }'
-    
+
 
 pythonjavascriptbash
 
@@ -487,24 +487,24 @@ You can use the official openai python client to run inferences with us
 
     # Assume openai>=1.0.0
     from openai import OpenAI
-    
+
     # Create an OpenAI client with your deepinfra token and endpoint
     openai = OpenAI(
         api_key="o2xZwwhBW4JmF5k0cD1jjBFsjlS8iCcc",
         base_url="https://api.deepinfra.com/v1/openai",
     )
-    
+
     chat_completion = openai.chat.completions.create(
         model="deepseek-ai/DeepSeek-R1",
         messages=[{"role": "user", "content": "Hello"}],
     )
-    
+
     print(chat_completion.choices[0].message.content)
     print(chat_completion.usage.prompt_tokens, chat_completion.usage.completion_tokens)
-    
+
     # Hello! It's nice to meet you. Is there something I can help you with, or would you like to chat?
     # 11 25
-    
+
 
 #### Conversations
 
@@ -512,13 +512,13 @@ To create a longer chat-like conversation you just have to add each response mes
 
     # Assume openai>=1.0.0
     from openai import OpenAI
-    
+
     # Create an OpenAI client with your deepinfra token and endpoint
     openai = OpenAI(
         api_key="o2xZwwhBW4JmF5k0cD1jjBFsjlS8iCcc",
         base_url="https://api.deepinfra.com/v1/openai",
     )
-    
+
     chat_completion = openai.chat.completions.create(
         model="deepseek-ai/DeepSeek-R1",
         messages=[
@@ -528,42 +528,42 @@ To create a longer chat-like conversation you just have to add each response mes
             {"role": "user", "content": "Tell me more about the second method."},
         ],
     )
-    
+
     print(chat_completion.choices[0].message.content)
     print(chat_completion.usage.prompt_tokens, chat_completion.usage.completion_tokens)
-    
+
     # Sous le Sable! It's an ancient technique that never goes out of style, n'est-ce pas? Literally ...
     # 149 324
-    
+
 
 The longer the conversation gets, the more time it takes the model to generate the response. The number of messages that you can have in a conversation is limited by the context size of a model. Larger models also usually take more time to respond.
 
-  
+
 
 ### Streaming
 
 Streaming any of the chat completions above is supported by adding the `stream=True` option.
 
     from openai import OpenAI
-    
+
     # Create an OpenAI client with your deepinfra token and endpoint
     openai = OpenAI(
         api_key="o2xZwwhBW4JmF5k0cD1jjBFsjlS8iCcc",
         base_url="https://api.deepinfra.com/v1/openai",
     )
-    
+
     chat_completion = openai.chat.completions.create(
         model="deepseek-ai/DeepSeek-R1",
         messages=[{"role": "user", "content": "Hello"}],
         stream=True,
     )
-    
+
     for event in chat_completion:
         if event.choices[0].finish_reason:
             print(event.choices[0].finish_reason, event.usage["prompt_tokens"], event.usage["completion_tokens"])
         else:
             print(event.choices[0].delta.content)
-    
+
     # Hello
     # !
     # It
@@ -571,7 +571,7 @@ Streaming any of the chat completions above is supported by adding the `stream=T
     # nice
     # ...
     # 11 25
-    
+
 
 ## Input fields
 
@@ -1581,5 +1581,3 @@ This is the detailed description of the output parameters in JSON Schema format
             }
         }
     }
-
-

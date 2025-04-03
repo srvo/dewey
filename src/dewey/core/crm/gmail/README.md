@@ -144,4 +144,4 @@ When adding new features:
 1. Update the database schema in `simple_import.py` if needed
 2. Add appropriate logging
 3. Update the README.md with documentation
-4. Test thoroughly with small batches before running on your full inbox 
+4. Test thoroughly with small batches before running on your full inbox

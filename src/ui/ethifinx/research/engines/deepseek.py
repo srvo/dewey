@@ -1,14 +1,14 @@
-"""
-DeepSeek Engine
+"""DeepSeek Engine
 
 A research engine implementation using the DeepSeek AI model for analysis.
 """
 
-import os
 import json
 import logging
+import os
+from typing import Any, Dict, Optional
+
 import aiohttp
-from typing import Dict, Any, Optional, List
 
 logger = logging.getLogger(__name__)
 
@@ -16,17 +16,18 @@ logger = logging.getLogger(__name__)
 class DeepSeekEngine:
     """Engine for processing company information using DeepSeek LLM."""
 
-    def __init__(self, api_key: Optional[str] = None):
+    def __init__(self, api_key: str | None = None):
         """Initialize the DeepSeek engine.
 
         Args:
             api_key: The API key for DeepSeek API access.
+
         """
         self.api_key = api_key or os.getenv("DEEPSEEK_API_KEY", "")
         self.api_url = "https://api.deepseek.com/v1/chat/completions"
         self.model = "deepseek-chat"
 
-    async def analyze_company(self, company_data: Dict[str, Any]) -> Dict[str, Any]:
+    async def analyze_company(self, company_data: dict[str, Any]) -> dict[str, Any]:
         """Analyze a company using the DeepSeek engine.
 
         Args:
@@ -34,6 +35,7 @@ class DeepSeekEngine:
 
         Returns:
             Dictionary containing analysis results
+
         """
         try:
             # Extract company information
@@ -42,27 +44,31 @@ class DeepSeekEngine:
             description = company_data.get("description", "")
             sector = company_data.get("sector", "")
             industry = company_data.get("industry", "")
-            
+
             # Build prompt for the LLM
-            prompt = self._build_analysis_prompt(ticker, name, description, sector, industry)
-            
+            prompt = self._build_analysis_prompt(
+                ticker, name, description, sector, industry
+            )
+
             # Get analysis from DeepSeek
             analysis = await self._call_deepseek_api(prompt)
-            
+
             # Process and return the results
             return {
                 "ticker": ticker,
                 "name": name,
                 "analysis": analysis,
-                "success": True
+                "success": True,
             }
         except Exception as e:
-            logger.error(f"Error analyzing company {company_data.get('ticker', 'unknown')}: {str(e)}")
+            logger.error(
+                f"Error analyzing company {company_data.get('ticker', 'unknown')}: {str(e)}"
+            )
             return {
                 "ticker": company_data.get("ticker", "Unknown"),
                 "name": company_data.get("name", "Unknown"),
                 "error": str(e),
-                "success": False
+                "success": False,
             }
 
     def _build_analysis_prompt(
@@ -79,6 +85,7 @@ class DeepSeekEngine:
 
         Returns:
             Formatted prompt string
+
         """
         return f"""
         Please analyze the following company for ethical and financial risks:
@@ -111,7 +118,7 @@ class DeepSeekEngine:
         }}
         """
 
-    async def _call_deepseek_api(self, prompt: str) -> Dict[str, Any]:
+    async def _call_deepseek_api(self, prompt: str) -> dict[str, Any]:
         """Call the DeepSeek API with the given prompt.
 
         Args:
@@ -122,36 +129,42 @@ class DeepSeekEngine:
 
         Raises:
             Exception: If the API call fails
+
         """
         if not self.api_key:
             # For demo/testing purposes, return a mock response
             return self._get_mock_response()
-        
+
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.api_key}"
+            "Authorization": f"Bearer {self.api_key}",
         }
-        
+
         payload = {
             "model": self.model,
             "messages": [
-                {"role": "system", "content": "You are an expert in ethical and financial analysis of companies."},
-                {"role": "user", "content": prompt}
+                {
+                    "role": "system",
+                    "content": "You are an expert in ethical and financial analysis of companies.",
+                },
+                {"role": "user", "content": prompt},
             ],
             "temperature": 0.3,
-            "response_format": {"type": "json_object"}
+            "response_format": {"type": "json_object"},
         }
-        
+
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.post(
-                    self.api_url, 
-                    headers=headers, 
-                    json=payload
+                    self.api_url, headers=headers, json=payload
                 ) as response:
                     if response.status == 200:
                         result = await response.json()
-                        content = result.get("choices", [{}])[0].get("message", {}).get("content", "{}")
+                        content = (
+                            result.get("choices", [{}])[0]
+                            .get("message", {})
+                            .get("content", "{}")
+                        )
                         return json.loads(content)
                     else:
                         error_text = await response.text()
@@ -160,21 +173,26 @@ class DeepSeekEngine:
             raise Exception("Failed to parse API response")
         except Exception as e:
             raise Exception(f"API call failed: {str(e)}")
-    
-    def _get_mock_response(self) -> Dict[str, Any]:
+
+    def _get_mock_response(self) -> dict[str, Any]:
         """Get a mock response for testing when no API key is available.
 
         Returns:
             A mock analysis response
+
         """
         return {
             "tags": {
                 "concern_level": 3,
                 "confidence_score": 0.85,
-                "primary_themes": ["Environmental Impact", "Supply Chain Ethics", "Corporate Governance"]
+                "primary_themes": [
+                    "Environmental Impact",
+                    "Supply Chain Ethics",
+                    "Corporate Governance",
+                ],
             },
             "summary": {
                 "recommendation": "monitor",
-                "summary": "This company has moderate ethical concerns primarily around environmental practices and supply chain management. Financial risk is average for the industry. Recommend monitoring developments in sustainability initiatives and governance changes."
-            }
-        } 
+                "summary": "This company has moderate ethical concerns primarily around environmental practices and supply chain management. Financial risk is average for the industry. Recommend monitoring developments in sustainability initiatives and governance changes.",
+            },
+        }

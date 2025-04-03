@@ -2,43 +2,40 @@ import contextlib
 import logging
 import os
 from datetime import datetime
-from typing import Any, Dict, Iterator
+from typing import Any, Dict
+from collections.abc import Iterator
 
-from sqlalchemy import create_engine, text, event
-from sqlalchemy.orm import sessionmaker, scoped_session
 from apscheduler.schedulers.background import BackgroundScheduler
+from sqlalchemy import create_engine, event, text
+from sqlalchemy.orm import scoped_session, sessionmaker
 
+from dewey.core.config.loader import load_config
 from dewey.core.exceptions import DatabaseConnectionError
 
 logger = logging.getLogger(__name__)
 
+
 class DatabaseConnection:
     """SQLAlchemy-based database connection handler for PostgreSQL."""
-    
-    def __init__(self, config: Dict[str, Any]):
+
+    def __init__(self, config: dict[str, Any]):
         self.config = config
         self.engine = self._create_postgres_engine()
         self.SessionLocal = sessionmaker(
-            autocommit=False, 
-            autoflush=False, 
-            bind=self.engine
+            autocommit=False, autoflush=False, bind=self.engine
         )
         self.Session = scoped_session(self.SessionLocal)
         self.validate_connection()
 
         # Connection Health - Add periodic reconnection:
         self._last_validation = datetime.now()
-        
+
         # Schedule periodic revalidation
         self._scheduler = BackgroundScheduler()
-        self._scheduler.add_job(
-            self._revalidate_connection,
-            'interval',
-            minutes=5
-        )
+        self._scheduler.add_job(self._revalidate_connection, "interval", minutes=5)
         self._scheduler.start()
 
-    def _build_connection_string(self, config: Dict[str, Any]) -> str:
+    def _build_connection_string(self, config: dict[str, Any]) -> str:
         """Enhanced connection string builder with timeout parameters"""
         return (
             f"postgresql+psycopg2://{config['user']}:{config['password']}"
@@ -53,27 +50,27 @@ class DatabaseConnection:
         try:
             # Check for direct database URL in environment
             if "DATABASE_URL" in os.environ:
-                self.logger.debug("Using DATABASE_URL from environment")
+                logger.debug("Using DATABASE_URL from environment")
                 engine = create_engine(
                     os.environ["DATABASE_URL"],
                     pool_size=self.config.get("pool_min", 5),
                     max_overflow=self.config.get("pool_max", 10),
-                    pool_pre_ping=True
+                    pool_pre_ping=True,
                 )
             else:
                 # Build from environment variables with config fallbacks
                 db_config = self.config.get("postgres", {})
                 connection_params = {
-                    'host': os.getenv('POSTGRES_HOST', db_config.get('host')),
-                    'port': os.getenv('POSTGRES_PORT', db_config.get('port', 5432)),
-                    'dbname': os.getenv('POSTGRES_DB', db_config.get('dbname')),
-                    'user': os.getenv('POSTGRES_USER', db_config.get('user')),
-                    'password': os.getenv('POSTGRES_PASSWORD', db_config.get('password')),
-                    'sslmode': os.getenv('POSTGRES_SSLMODE', db_config.get('sslmode', 'prefer'))
+                    "host": db_config.get("host"),
+                    "port": db_config.get("port", 5432),
+                    "dbname": db_config.get("dbname"),
+                    "user": db_config.get("user"),
+                    "password": db_config.get("password"),
+                    "sslmode": db_config.get("sslmode", "prefer"),
                 }
 
                 # Validate required parameters
-                required = ['host', 'dbname', 'user', 'password']
+                required = ["host", "dbname", "user", "password"]
                 missing = [field for field in required if not connection_params[field]]
                 if missing:
                     raise DatabaseConnectionError(
@@ -82,22 +79,24 @@ class DatabaseConnection:
                     )
 
                 connection_str = self._build_connection_string(connection_params)
-            
+
                 # SSL Handling - Add SSL certificate handling
                 ssl_args = {}
                 if connection_params.get("sslmode") == "verify-full":
-                    ssl_args.update({
-                        "sslrootcert": self.config["sslrootcert"],
-                        "sslcert": self.config["sslcert"],
-                        "sslkey": self.config["sslkey"]
-                    })
-            
+                    ssl_args.update(
+                        {
+                            "sslrootcert": db_config["sslrootcert"],
+                            "sslcert": db_config["sslcert"],
+                            "sslkey": db_config["sslkey"],
+                        }
+                    )
+
                 engine = create_engine(
                     connection_str,
                     connect_args=ssl_args,
-                    pool_size=db_config.get('pool_min', 5),
-                    max_overflow=db_config.get('pool_max', 10),
-                    pool_pre_ping=True
+                    pool_size=db_config.get("pool_min", 5),
+                    max_overflow=db_config.get("pool_max", 10),
+                    pool_pre_ping=True,
                 )
 
             # Connection Pooling - Add monitoring:
@@ -108,7 +107,7 @@ class DatabaseConnection:
             @event.listens_for(engine, "checkin")
             def checkin(dbapi_conn, connection_record):
                 logger.debug(f"Returning connection to pool: {id(dbapi_conn)}")
-            
+
             return engine
         except KeyError as e:
             raise DatabaseConnectionError(f"Missing PostgreSQL config key: {e}")
@@ -155,6 +154,23 @@ class DatabaseConnection:
         self._scheduler.shutdown(wait=False)  # Stop the scheduler
         logger.info("PostgreSQL connection closed")
 
-def get_connection(config: Dict[str, Any]) -> DatabaseConnection:
+
+def get_connection(config: dict[str, Any]) -> DatabaseConnection:
     """Get a configured PostgreSQL database connection."""
     return DatabaseConnection(config)
+
+
+# Initialize global db_manager instance
+try:
+    config = load_config().get("database", {})
+    db_manager = DatabaseConnection(config)
+except Exception as e:
+    logger.error(f"Failed to initialize db_manager: {str(e)}")
+    db_manager = None
+
+__all__ = [
+    "DatabaseConnection",
+    "db_manager",
+    "DatabaseConnectionError",
+    "get_connection",
+]

@@ -1,7 +1,7 @@
 """Test configuration for database tests."""
 
 import os
-from typing import Generator
+from collections.abc import Generator
 from unittest.mock import Mock, patch
 
 import pytest
@@ -24,6 +24,7 @@ class TestConfiguration(BaseScript):
 
         Yields:
             None: This function is a generator that yields None.
+
         """
         with patch.dict(
             os.environ,
@@ -43,6 +44,7 @@ class TestConfiguration(BaseScript):
 
         Yields:
             None: This function is a generator that yields None.
+
         """
         # Create test directory if it doesn't exist
         os.makedirs("/tmp/dewey_test", exist_ok=True)
@@ -59,15 +61,25 @@ class TestConfiguration(BaseScript):
 
         Yields:
             Mock: A mock DuckDB connection object.
+
         """
         with patch("duckdb.connect") as mock_connect:
             mock_conn = Mock()
             mock_connect.return_value = mock_conn
             yield mock_conn
 
-    def run(self) -> None:
-        """Placeholder for the run method."""
+    def execute(self) -> None:
+        """Execute the test configuration setup."""
+        self.logger.info("Setting up test configuration...")
+        # Add any test configuration setup logic here
         pass
+
+    def run(self) -> None:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()
 
 
 @pytest.fixture(autouse=True)
@@ -76,6 +88,7 @@ def mock_env_vars() -> Generator[None, None, None]:
 
     Yields:
         None: This fixture yields None.
+
     """
     test_config = TestConfiguration()
     with test_config.mock_env_vars():
@@ -88,6 +101,7 @@ def setup_test_db() -> Generator[None, None, None]:
 
     Yields:
         None: This fixture yields None.
+
     """
     test_config = TestConfiguration()
     with test_config.setup_test_db():
@@ -100,6 +114,7 @@ def mock_duckdb() -> Generator[Mock, None, None]:
 
     Yields:
         Mock: This fixture yields a mock DuckDB connection object.
+
     """
     test_config = TestConfiguration()
     with test_config.mock_duckdb():

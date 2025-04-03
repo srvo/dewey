@@ -40,20 +40,29 @@ def calculate_file_hash(file_content: bytes) -> str:
 class DuplicateChecker(BaseScript):
     """Checks for duplicate ledger files in a directory."""
 
-    def __init__(self, file_system: FileSystemInterface = RealFileSystem(), ledger_dir: str | None = None) -> None:
+    def __init__(
+        self,
+        file_system: FileSystemInterface = RealFileSystem(),
+        ledger_dir: str | None = None,
+    ) -> None:
         """Initializes the DuplicateChecker with the 'bookkeeping' config section."""
         super().__init__(config_section="bookkeeping")
         self.file_system = file_system
-        self.ledger_dir = ledger_dir if ledger_dir is not None else self.get_config_value("ledger_dir", "data/bookkeeping/ledger")
+        self.ledger_dir = (
+            ledger_dir
+            if ledger_dir is not None
+            else self.get_config_value("ledger_dir", "data/bookkeeping/ledger")
+        )
 
-    def find_ledger_files(self) -> Dict[str, List[str]]:
+    def find_ledger_files(self) -> dict[str, list[str]]:
         """Finds all ledger files and calculates their hashes.
 
         Returns:
             A dictionary where keys are file hashes and values are lists of
             filepaths with that hash.
+
         """
-        hashes: Dict[str, List[str]] = {}
+        hashes: dict[str, list[str]] = {}
         for root, _dirnames, filenames in self.file_system.walk(self.ledger_dir):
             for filename in fnmatch.filter(filenames, "*.journal"):
                 filepath = os.path.join(root, filename)
@@ -73,6 +82,7 @@ class DuplicateChecker(BaseScript):
 
         Returns:
             True if duplicate files were found, False otherwise.
+
         """
         hashes = self.find_ledger_files()
         duplicates = {h: paths for h, paths in hashes.items() if len(paths) > 1}
@@ -86,7 +96,7 @@ class DuplicateChecker(BaseScript):
             self.logger.info("No duplicate ledger files found.")
             return False
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Runs the duplicate check and logs the result."""
         if self.check_duplicates():
             self.logger.error("Duplicate ledger files found.")

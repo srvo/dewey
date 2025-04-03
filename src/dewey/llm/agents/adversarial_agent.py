@@ -1,5 +1,6 @@
 """Critical analysis and risk identification agent using smolagents."""
-from typing import Any, Dict, List, Optional
+
+from typing import Any, Dict, Optional
 
 from smolagents import Tool
 
@@ -36,12 +37,13 @@ class AdversarialAgent(BaseScript):
 
         Returns:
             Detailed risk analysis containing potential issues and recommendations.
+
         """
         prompt = f"Critically analyze this proposal: {proposal}"
         result = self.run_llm(prompt)
         return result
 
-    def run(self, input_data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def run(self, input_data: dict[str, Any] | None = None) -> dict[str, Any]:
         """Executes the agent's primary task.
 
         Args:
@@ -49,6 +51,7 @@ class AdversarialAgent(BaseScript):
 
         Returns:
             The result of the agent execution with risk analysis.
+
         """
         self.logger.info("Starting Adversarial Agent analysis...")
 
@@ -71,6 +74,7 @@ class AdversarialAgent(BaseScript):
 
         Returns:
             The LLM's response.
+
         """
         try:
             response = self.llm(prompt)

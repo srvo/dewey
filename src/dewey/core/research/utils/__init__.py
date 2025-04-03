@@ -4,8 +4,7 @@ from dewey.core.base_script import BaseScript
 
 
 class ResearchUtils(BaseScript):
-    """
-    A collection of utility functions for research workflows within Dewey.
+    """A collection of utility functions for research workflows within Dewey.
 
     This class inherits from BaseScript and provides methods for various
     research-related tasks, such as data processing, analysis, and reporting.
@@ -36,8 +35,7 @@ class ResearchUtils(BaseScript):
         self.logger.info("ResearchUtils completed.")
 
     def _example_utility_function(self) -> None:
-        """
-        An example utility function.
+        """An example utility function.
 
         This function demonstrates how to use the logger and other Dewey
         components within a utility function.
@@ -46,9 +44,8 @@ class ResearchUtils(BaseScript):
         # Add your utility logic here
         self.logger.info("Example utility function completed.")
 
-    def get_data(self, data_source: str) -> Optional[Any]:
-        """
-        Retrieves data from the specified data source.
+    def get_data(self, data_source: str) -> Any | None:
+        """Retrieves data from the specified data source.
 
         Args:
             data_source: The name of the data source to retrieve data from.
@@ -56,6 +53,7 @@ class ResearchUtils(BaseScript):
         Returns:
             The data retrieved from the data source, or None if the data source
             is not found or an error occurs.
+
         """
         try:
             # Simulate data retrieval based on config

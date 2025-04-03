@@ -1,18 +1,12 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import (
-    DatabaseConnection,
-    get_connection,
-    get_motherduck_connection,
-)
-from dewey.core.db.utils import create_table, execute_query
+from dewey.core.db.utils import execute_query
 from dewey.llm.llm_utils import generate_text
 
 
 class PriorityManager(BaseScript):
-    """
-    A class for managing priority within Dewey's CRM.
+    """A class for managing priority within Dewey's CRM.
 
     This module inherits from BaseScript and provides a standardized
     structure for priority scripts, including configuration
@@ -20,9 +14,15 @@ class PriorityManager(BaseScript):
     primary logic.
     """
 
-    def __init__(self, config_section: Optional[str] = "priority_manager", requires_db: bool = True, enable_llm: bool = False, *args: Any, **kwargs: Any) -> None:
-        """
-        Initializes the PriorityManager.
+    def __init__(
+        self,
+        config_section: str | None = "priority_manager",
+        requires_db: bool = True,
+        enable_llm: bool = False,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
+        """Initializes the PriorityManager.
 
         Args:
             config_section (Optional[str]): The configuration section to use. Defaults to "priority_manager".
@@ -30,14 +30,20 @@ class PriorityManager(BaseScript):
             enable_llm (bool): Whether the script requires LLM access. Defaults to False.
             *args (Any): Additional positional arguments.
             **kwargs (Any): Additional keyword arguments.
+
         """
-        super().__init__(config_section=config_section, requires_db=requires_db, enable_llm=enable_llm, *args, **kwargs)
+        super().__init__(
+            config_section=config_section,
+            requires_db=requires_db,
+            enable_llm=enable_llm,
+            *args,
+            **kwargs,
+        )
         self.name = "PriorityManager"
         self.description = "Manages priority within Dewey's CRM."
 
     def run(self) -> None:
-        """
-        Executes the primary logic of the Priority Manager.
+        """Executes the primary logic of the Priority Manager.
 
         This method retrieves a priority threshold from the configuration,
         logs the start and completion of the manager, and includes a placeholder

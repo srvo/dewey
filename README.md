@@ -114,7 +114,7 @@ The codebase follows a modular structure:
 
 ```
 /src
-  /core               # Core functionality 
+  /core               # Core functionality
     /accounting       # Accounting-related modules
     /bookkeeping      # Bookkeeping features
     /crm              # Customer relationship management
@@ -124,20 +124,20 @@ The codebase follows a modular structure:
     /engines          # Integration engines
     /migrations       # Migration scripts
     base_script.py    # Base class for all scripts
-  
+
   /llm                # Language model integration
     /agents           # AI agents
     /api_clients      # LLM API clients
     /prompts          # Prompt templates
-  
+
   /ui                 # User interface components
     /screens          # Screen views
     /components       # Reusable UI components
-  
+
   /pipeline           # Data processing pipelines
-  
+
   /utils              # Utility functions and helpers
-  
+
   /tests              # Test modules
 ```
 
@@ -154,7 +154,7 @@ class MyScript(BaseScript):
     def run(self):
         # Your script implementation goes here
         self.logger.info("Running my script")
-        
+
 if __name__ == "__main__":
     script = MyScript(name="MyScript", description="This script does something useful")
     exit_code = script.execute()
@@ -173,7 +173,7 @@ class MyScript(BaseScript):
     def _add_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument('--input', required=True, help='Input file path')
         parser.add_argument('--output', required=True, help='Output file path')
-    
+
     def run(self):
         input_path = self.args.input
         output_path = self.args.output
@@ -196,11 +196,11 @@ class MyScript(BaseScript):
     def setup(self):
         self.logger.info("Setting up resources")
         self.temp_files = []
-    
+
     def run(self):
         self.logger.info("Running main logic")
         # Your implementation here
-    
+
     def cleanup(self):
         self.logger.info("Cleaning up resources")
         for file in self.temp_files:

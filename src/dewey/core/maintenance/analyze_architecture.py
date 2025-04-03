@@ -2,28 +2,22 @@ from typing import Protocol
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection
-from dewey.llm.llm_utils import LLMClient
 
 
 class DatabaseConnectionInterface(Protocol):
-    """
-    Interface for database connections, enabling mocking.
-    """
-    def execute(self, query: str) -> None:
-        ...
+    """Interface for database connections, enabling mocking."""
+
+    def execute(self, query: str) -> None: ...
 
 
 class LLMClientInterface(Protocol):
-    """
-    Interface for LLM clients, enabling mocking.
-    """
-    def generate_text(self, prompt: str) -> str:
-        ...
+    """Interface for LLM clients, enabling mocking."""
+
+    def generate_text(self, prompt: str) -> str: ...
 
 
 class AnalyzeArchitecture(BaseScript):
-    """
-    Analyzes the architecture of the Dewey system.
+    """Analyzes the architecture of the Dewey system.
 
     This script provides functionality to analyze and report on the
     overall architecture, dependencies, and key components of the Dewey system.
@@ -42,30 +36,29 @@ class AnalyzeArchitecture(BaseScript):
         self._llm_client = llm_client
 
     def _get_db_connection(self) -> DatabaseConnectionInterface:
-        """
-        Internal method to get the database connection.
+        """Internal method to get the database connection.
 
         Returns:
             DatabaseConnectionInterface: The database connection object.
+
         """
         if self._db_connection is None:
             return DatabaseConnection(self.config)
         return self._db_connection
 
     def _get_llm_client(self) -> LLMClientInterface:
-        """
-        Internal method to get the LLM client.
+        """Internal method to get the LLM client.
 
         Returns:
             LLMClientInterface: The LLM client object.
+
         """
         if self._llm_client is None:
             return self.llm_client
         return self._llm_client
 
-    def run(self) -> None:
-        """
-        Executes the architecture analysis process.
+    def execute(self) -> None:
+        """Executes the architecture analysis process.
 
         This method orchestrates the analysis of the system architecture,
         collects relevant data, and generates a report.
@@ -78,6 +71,7 @@ class AnalyzeArchitecture(BaseScript):
 
         Raises:
             Exception: If any error occurs during the analysis.
+
         """
         self.logger.info("Starting architecture analysis...")
 
@@ -97,13 +91,22 @@ class AnalyzeArchitecture(BaseScript):
         # Example of using the LLM client
         try:
             llm_client = self._get_llm_client()
-            response = llm_client.generate_text("Explain the Dewey system architecture.")
+            response = llm_client.generate_text(
+                "Explain the Dewey system architecture."
+            )
             self.logger.info(f"LLM response: {response}")
         except Exception as e:
             self.logger.error(f"LLM call failed: {e}")
 
         # Add your architecture analysis logic here
         self.logger.info("Architecture analysis completed.")
+
+    def run(self) -> None:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()
 
 
 if __name__ == "__main__":

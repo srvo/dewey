@@ -101,4 +101,4 @@ python scripts/schedule_db_sync.py --remove
 
 - Full syncs can be time-consuming for large databases
 - Incremental syncs are much faster but rely on updated timestamps
-- The sync metadata is stored in the `dewey_sync_metadata` table in your local database 
+- The sync metadata is stored in the `dewey_sync_metadata` table in your local database

@@ -4,8 +4,7 @@ from dewey.core.base_script import BaseScript
 
 
 class AnalysisTaggingWorkflow(BaseScript):
-    """
-    A workflow for analysis tagging.
+    """A workflow for analysis tagging.
 
     This class inherits from BaseScript and provides methods for
     tagging analysis results.
@@ -13,7 +12,7 @@ class AnalysisTaggingWorkflow(BaseScript):
 
     def __init__(
         self,
-        config_section: Optional[str] = None,
+        config_section: str | None = None,
         requires_db: bool = False,
         enable_llm: bool = False,
         *args: Any,
@@ -27,6 +26,7 @@ class AnalysisTaggingWorkflow(BaseScript):
             enable_llm: Whether this script requires LLM access. Defaults to False.
             *args: Additional positional arguments.
             **kwargs: Additional keyword arguments.
+
         """
         super().__init__(
             config_section=config_section,

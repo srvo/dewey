@@ -2,8 +2,7 @@ from dewey.core.base_script import BaseScript
 
 
 class DropJVTables(BaseScript):
-    """
-    A script to drop JV-related tables from the database.
+    """A script to drop JV-related tables from the database.
 
     This script inherits from BaseScript and provides a standardized
     structure for database maintenance scripts, including configuration
@@ -12,9 +11,7 @@ class DropJVTables(BaseScript):
     """
 
     def run(self) -> None:
-        """
-        Executes the script's primary logic to drop JV tables.
-        """
+        """Executes the script's primary logic to drop JV tables."""
         self.logger.info("Starting the process to drop JV tables.")
 
         # Example of accessing a configuration value
@@ -29,11 +26,11 @@ class DropJVTables(BaseScript):
         self.logger.info("Finished dropping JV tables.")
 
     def drop_table(self, table_name: str) -> None:
-        """
-        Drops a specified table from the database.
+        """Drops a specified table from the database.
 
         Args:
             table_name: The name of the table to drop.
+
         """
         self.logger.info(f"Dropping table: {table_name}")
         # Add actual database dropping code here, using a database connection

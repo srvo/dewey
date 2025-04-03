@@ -6,7 +6,6 @@ Dependencies:
 - pandas for data manipulation
 """
 
-import logging
 import re
 import sqlite3
 from typing import Any, Dict
@@ -23,11 +22,9 @@ class OpportunityDetector(BaseScript):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initializes the OpportunityDetector."""
         super().__init__(*args, config_section="regex_patterns", **kwargs)
-        self.opportunity_patterns: Dict[str, str] = self.get_config_value(
-            "opportunity"
-        )
+        self.opportunity_patterns: dict[str, str] = self.get_config_value("opportunity")
 
-    def extract_opportunities(self, email_text: str) -> Dict[str, bool]:
+    def extract_opportunities(self, email_text: str) -> dict[str, bool]:
         """Extracts opportunities from email text using predefined regex patterns.
 
         Args:
@@ -35,6 +32,7 @@ class OpportunityDetector(BaseScript):
 
         Returns:
             A dictionary indicating the presence of each opportunity type.
+
         """
         opportunities = {}
         for key, pattern_str in self.opportunity_patterns.items():
@@ -50,6 +48,7 @@ class OpportunityDetector(BaseScript):
         Args:
             opportunities_df: DataFrame containing email and opportunity flags.
             conn: Database connection.
+
         """
         for _, row in opportunities_df.iterrows():
             try:
@@ -86,6 +85,7 @@ class OpportunityDetector(BaseScript):
 
         Args:
             conn: Database connection.
+
         """
         query = """
         SELECT

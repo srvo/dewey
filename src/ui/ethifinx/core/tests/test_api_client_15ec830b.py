@@ -1,4 +1,3 @@
-```python
 """Test API client functionality."""
 
 from unittest.mock import Mock, patch
@@ -16,6 +15,7 @@ def test_config() -> Config:
 
     Returns:
         Config: Test configuration object.
+
     """
     return Config(
         API_BASE_URL="https://api.test.com/v1",
@@ -32,6 +32,7 @@ def api_client(test_config: Config) -> APIClient:
 
     Returns:
         APIClient: An instance of the API client.
+
     """
     return APIClient(config=test_config)
 
@@ -43,6 +44,7 @@ def test_fetch_data_success(mock_get: Mock, api_client: APIClient) -> None:
     Args:
         mock_get: Mocked requests.get method.
         api_client: API client instance.
+
     """
     mock_response = Mock()
     mock_response.json.return_value = {"data": "test"}
@@ -65,6 +67,7 @@ def test_fetch_data_failure(mock_get: Mock, api_client: APIClient) -> None:
     Args:
         mock_get: Mocked requests.get method.
         api_client: API client instance.
+
     """
     mock_get.side_effect = Exception("API Error")
 
@@ -79,6 +82,7 @@ def test_fetch_data_with_params(mock_get: Mock, api_client: APIClient) -> None:
     Args:
         mock_get: Mocked requests.get method.
         api_client: API client instance.
+
     """
     mock_response = Mock()
     mock_response.json.return_value = {"data": "test"}
@@ -102,6 +106,7 @@ def test_fetch_data_invalid_response(mock_get: Mock, api_client: APIClient) -> N
     Args:
         mock_get: Mocked requests.get method.
         api_client: API client instance.
+
     """
     mock_response = Mock()
     mock_response.raise_for_status.side_effect = Exception("Invalid response")
@@ -109,4 +114,3 @@ def test_fetch_data_invalid_response(mock_get: Mock, api_client: APIClient) -> N
 
     with pytest.raises(Exception):
         api_client.fetch_data("/test")
-```

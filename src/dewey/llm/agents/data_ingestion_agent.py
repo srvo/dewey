@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -10,12 +10,13 @@ class DataIngestionAgent(BaseScript):
     transforming it, and loading it into a target system.
     """
 
-    def __init__(self, config_section: str = 'data_ingestion', **kwargs: Any) -> None:
+    def __init__(self, config_section: str = "data_ingestion", **kwargs: Any) -> None:
         """Initializes the DataIngestionAgent.
 
         Args:
             config_section (str): The configuration section to use.
             **kwargs (Any): Additional keyword arguments.
+
         """
         super().__init__(config_section=config_section, **kwargs)
 
@@ -28,6 +29,7 @@ class DataIngestionAgent(BaseScript):
 
         Raises:
             Exception: If any error occurs during the data ingestion process.
+
         """
         try:
             self.info("Starting data ingestion process...")

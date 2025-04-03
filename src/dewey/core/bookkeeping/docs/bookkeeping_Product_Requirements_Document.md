@@ -271,4 +271,3 @@ No description available.
 - pathlib library
 
 ## Architectural Decisions
-

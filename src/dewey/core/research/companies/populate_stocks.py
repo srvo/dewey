@@ -4,8 +4,7 @@ from dewey.core.base_script import BaseScript
 
 
 class PopulateStocks(BaseScript):
-    """
-    Populates stock data.
+    """Populates stock data.
 
     This class inherits from BaseScript and provides methods for
     fetching and storing stock information.
@@ -13,14 +12,13 @@ class PopulateStocks(BaseScript):
 
     def __init__(
         self,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        config_section: Optional[str] = None,
+        name: str | None = None,
+        description: str | None = None,
+        config_section: str | None = None,
         requires_db: bool = True,
         enable_llm: bool = False,
     ) -> None:
-        """
-        Initializes the PopulateStocks module.
+        """Initializes the PopulateStocks module.
 
         Args:
             name (Optional[str]): Name of the script (used for logging). Defaults to None.
@@ -28,6 +26,7 @@ class PopulateStocks(BaseScript):
             config_section (Optional[str]): Section in dewey.yaml to load for this script. Defaults to None.
             requires_db (bool): Whether this script requires database access. Defaults to True.
             enable_llm (bool): Whether this script requires LLM access. Defaults to False.
+
         """
         super().__init__(
             name=name,
@@ -38,8 +37,7 @@ class PopulateStocks(BaseScript):
         )
 
     def run(self) -> None:
-        """
-        Executes the stock population process.
+        """Executes the stock population process.
 
         This method fetches the API key from the configuration, logs its usage,
         and then simulates fetching and storing stock data.  It uses the

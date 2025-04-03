@@ -7,18 +7,19 @@ from dewey.core.base_script import BaseScript
 
 class ResearchOutputHandler(BaseScript):
     """Handler for research output.
-    
-    This class handles the output of research tasks, providing methods for 
+
+    This class handles the output of research tasks, providing methods for
     saving and loading research results, as well as writing output to
     specified locations.
     """
 
-    def __init__(self, output_dir: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, output_dir: str | None = None, **kwargs: Any) -> None:
         """Initialize the output handler.
 
         Args:
             output_dir: Directory for output files
             **kwargs: Additional keyword arguments
+
         """
         super().__init__(config_section="research_output", **kwargs)
         self.output_dir = (
@@ -27,38 +28,49 @@ class ResearchOutputHandler(BaseScript):
             else Path(self.get_config_value("output_dir", "output"))
         )
 
-    def run(self) -> None:
-        """Run the research output handler.
-        
-        This method handles core output operations if configured to run 
+    def execute(self) -> None:
+        """Executes the research output handler.
+
+        This method handles core output operations if configured to run
         independently, but most functionality is typically accessed via
         the specific methods.
-        
+
         Raises:
             ValueError: If a required configuration value is missing.
+
         """
         self.logger.info("Running ResearchOutputHandler...")
-        
+
         try:
             output_path = self.get_config_value("output_path")
             if not output_path:
-                self.logger.info("No output_path specified in config, using default operations")
+                self.logger.info(
+                    "No output_path specified in config, using default operations"
+                )
                 return
 
             # Process data as configured
-            output_data = self.get_config_value("output_data", {})
+            output_data = self.get_config_value("output极_data", {})
             self.write_output(output_path, output_data)
         except Exception as e:
             self.logger.exception(f"An error occurred: {e}")
 
+    def run(self) -> None:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()
+
     def save_results(
-        self, results: Dict[str, Any], output_file: Optional[Path] = None
+        self, results: dict[str, Any], output_file: Path | None = None
     ) -> None:
         """Save research results to a file.
 
         Args:
             results: Results to save.
             output_file: Optional output file path.
+
         """
         if output_file is None:
             default_output_file = self.get_config_value(
@@ -77,7 +89,7 @@ class ResearchOutputHandler(BaseScript):
         except Exception as e:
             self.logger.error(f"Error saving results to {output_file}: {e}")
 
-    def load_results(self, input_file: Optional[Path] = None) -> Dict[str, Any]:
+    def load_results(self, input_file: Path | None = None) -> dict[str, Any]:
         """Load research results from a file.
 
         Args:
@@ -85,6 +97,7 @@ class ResearchOutputHandler(BaseScript):
 
         Returns:
             Loaded results.
+
         """
         if input_file is None:
             default_output_file = self.get_config_value(
@@ -105,29 +118,30 @@ class ResearchOutputHandler(BaseScript):
         except Exception as e:
             self.logger.error(f"Error loading results from {input_file}: {e}")
             return {}
-            
-    def write_output(self, output_path: str, data: Dict[str, Any]) -> None:
+
+    def write_output(self, output_path: str, data: dict[str, Any]) -> None:
         """Writes the output data to the specified path.
 
         Args:
             output_path: The path to write the output data.
             data: The data to write.
+
         """
         output_file = Path(output_path)
-        
+
         # Ensure parent directory exists
         output_file.parent.mkdir(parents=True, exist_ok=True)
-        
+
         try:
             # Write data to the file
-            if output_file.suffix.lower() == '.json':
+            if output_file.suffix.lower() == ".json":
                 with open(output_file, "w") as f:
                     json.dump(data, f, indent=2)
             else:
                 # Default to string representation for other file types
                 with open(output_file, "w") as f:
                     f.write(str(data))
-                    
+
             self.logger.info(f"Output written to: {output_path}")
         except Exception as e:
             self.logger.error(f"Failed to write output to {output_path}: {e}")

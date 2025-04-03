@@ -28,4 +28,4 @@ find tests/dewey -type d -exec touch {}/__init__.py \;
 # Remove empty directories
 find tests -type d -empty -delete
 
-echo "Test reorganization complete!" 
+echo "Test reorganization complete!"

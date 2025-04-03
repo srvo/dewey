@@ -6,12 +6,13 @@ from dewey.core.base_script import BaseScript
 class GeminiClient(BaseScript):
     """A client for interacting with the Gemini LLM API."""
 
-    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
+    def __init__(self, config: dict[str, Any], **kwargs: Any) -> None:
         """Initializes the GeminiClient.
 
         Args:
             config: The configuration dictionary.
             **kwargs: Additional keyword arguments.
+
         """
         super().__init__(config=config, **kwargs)
 
@@ -23,10 +24,13 @@ class GeminiClient(BaseScript):
 
         Raises:
             Exception: If there is an error during API interaction.
+
         """
         try:
             api_key = self.get_config_value("gemini_api_key")
-            model_name = self.get_config_value("gemini_model_name", default="default_model")
+            model_name = self.get_config_value(
+                "gemini_model_name", default="default_model"
+            )
 
             self.logger.info(f"Using Gemini model: {model_name}")
             self.logger.info(f"Gemini API Key: {api_key[:4]}...{api_key[-4:]}")
@@ -40,7 +44,7 @@ class GeminiClient(BaseScript):
             self.logger.exception(f"Error interacting with Gemini API: {e}")
             raise
 
-    def _interact_with_gemini(self, api_key: str, model_name: str, prompt: str) -> Dict:
+    def _interact_with_gemini(self, api_key: str, model_name: str, prompt: str) -> dict:
         """Simulates interaction with the Gemini API.
 
         Args:
@@ -50,6 +54,7 @@ class GeminiClient(BaseScript):
 
         Returns:
             A dictionary containing the simulated API response.
+
         """
         # Replace this with actual API interaction logic
         response = {

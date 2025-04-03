@@ -27,7 +27,9 @@ class TestFeedbackProcessor:
 
     @patch("dewey.core.db.connection.get_motherduck_connection")
     @patch("dewey.core.db.connection.get_connection")
-    def test_database_interaction(self, mock_get_conn, mock_get_motherduck, mock_base_script):
+    def test_database_interaction(
+        self, mock_get_conn, mock_get_motherduck, mock_base_script
+    ):
         """Test database interaction."""
         # Arrange
         mock_db_connection = MagicMock()

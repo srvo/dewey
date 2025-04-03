@@ -3,14 +3,12 @@ import os
 import sys
 import time
 from collections import Counter
-from typing import Dict, List, Optional, Tuple
-from pathlib import Path
+from typing import Dict, List, Tuple
 
 import duckdb
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db import get_connection, get_motherduck_connection, DatabaseConnection
-from dewey.llm.litellm_client import LiteLLMClient, Message
+from dewey.core.db import DatabaseConnection
 
 
 class FeedbackProcessor(BaseScript):
@@ -33,39 +31,39 @@ class FeedbackProcessor(BaseScript):
         self.db_file = str(data_dir / "process_feedback.duckdb")
         self.classifier_db = str(data_dir / "email_classifier.duckdb")
         self.llm_client = None
-        
+
         # Check if MotherDuck options are passed via command line
-        if '--use-motherduck' in sys.argv:
+        if "--use-motherduck" in sys.argv:
             self.use_motherduck = True
         else:
             self.use_motherduck = self.get_config_value("use_motherduck", True)
-            
+
         # Check for motherduck_db argument
         motherduck_db = None
         try:
-            if '--motherduck-db' in sys.argv:
-                idx = sys.argv.index('--motherduck-db')
+            if "--motherduck-db" in sys.argv:
+                idx = sys.argv.index("--motherduck-db")
                 if idx + 1 < len(sys.argv):
                     motherduck_db = sys.argv[idx + 1]
         except Exception:
             pass
-            
+
         if motherduck_db:
             self.motherduck_db = motherduck_db
         else:
             self.motherduck_db = self.get_config_value("motherduck_db", "dewey")
 
     def generate_json(self, prompt, api_key=None, llm_client=None):
-        """
-        Generate a structured JSON response from the LLM.
-        
+        """Generate a structured JSON response from the LLM.
+
         Args:
             prompt (str): The prompt to send to the LLM
             api_key (str, optional): API key for LLM service
             llm_client (LiteLLMClient, optional): An existing LLM client instance
-            
+
         Returns:
             dict: The structured JSON response or None if there was an error
+
         """
         try:
             client = None
@@ -74,38 +72,42 @@ class FeedbackProcessor(BaseScript):
             elif api_key:
                 # Initialize the LLM client with the provided API key
                 from dewey.llm.litellm_client import LiteLLMClient, LiteLLMConfig
-                config = LiteLLMConfig(
-                    api_key=api_key,
-                    model="gpt-4-1106-preview"
-                )
+
+                config = LiteLLMConfig(api_key=api_key, model="gpt-4-1106-preview")
                 client = LiteLLMClient(config=config)
             elif self.llm_client:
                 client = self.llm_client
             else:
-                self.logger.warning("No LLM client or API key provided, unable to generate JSON")
+                self.logger.warning(
+                    "No LLM client or API key provided, unable to generate JSON"
+                )
                 return None
-                
+
             from litellm import Message
-            
+
             message = [
-                Message(role="system", content="You are a helpful assistant that responds in JSON format."),
-                Message(role="user", content=prompt)
+                Message(
+                    role="system",
+                    content="You are a helpful assistant that responds in JSON format.",
+                ),
+                Message(role="user", content=prompt),
             ]
-            
+
             response = client.completion(
                 messages=message,
                 model="gpt-4-1106-preview",
-                response_format={"type": "json_object"}
+                response_format={"type": "json_object"},
             )
-            
+
             if response and response.choices and len(response.choices) > 0:
                 content = response.choices[0].message.content
                 import json
+
                 return json.loads(content)
             else:
                 self.logger.warning("No valid response received from LLM")
                 return None
-                
+
         except Exception as e:
             self.logger.error(f"Error generating JSON from LLM: {e}")
             return None
@@ -120,7 +122,7 @@ class FeedbackProcessor(BaseScript):
             else:
                 # For local DB, use the attached database name
                 table_prefix = "classifier_db."
-            
+
             # Check if the email_analyses table exists
             if self.use_motherduck:
                 exists = conn.execute(
@@ -131,7 +133,7 @@ class FeedbackProcessor(BaseScript):
                 exists = conn.execute(
                     "SELECT EXISTS (SELECT 1 FROM classifier_db.sqlite_master WHERE type='table' AND name='email_analyses')"
                 ).fetchone()[0]
-            
+
             # Create the table if it doesn't exist
             if not exists:
                 self.logger.info("Creating email_analyses table")
@@ -146,16 +148,18 @@ class FeedbackProcessor(BaseScript):
                     analysis_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
                 """)
-            
+
             # Add a few test emails if none exist
-            count = conn.execute(f"SELECT COUNT(*) FROM {table_prefix}email_analyses").fetchone()[0]
+            count = conn.execute(
+                f"SELECT COUNT(*) FROM {table_prefix}email_analyses"
+            ).fetchone()[0]
             if count == 0:
                 self.logger.info("No emails found in database, adding some test data")
                 # Add a variety of test emails from different senders and categories
                 conn.execute(f"""
-                INSERT INTO {table_prefix}email_analyses 
+                INSERT INTO {table_prefix}email_analyses
                 (msg_id, thread_id, subject, from_address, priority, snippet, analysis_date)
-                VALUES 
+                VALUES
                 ('work1', 'thread1', 'Project Update: Q2 Roadmap', 'manager@company.com', 3, 'Here is the updated roadmap for Q2. Please review the milestones and provide feedback by Friday.', CURRENT_TIMESTAMP),
                 ('work2', 'thread2', 'Meeting Notes - Product Team', 'team-leader@company.com', 2, 'Attached are the notes from yesterday''s product meeting. Key action items highlighted.', CURRENT_TIMESTAMP),
                 ('work3', 'thread3', 'Urgent: Server Downtime Alert', 'alerts@monitoring.com', 4, 'Our monitoring system has detected high load on production servers. Immediate action required.', CURRENT_TIMESTAMP),
@@ -167,8 +171,10 @@ class FeedbackProcessor(BaseScript):
                 ('work4', 'thread9', 'Code Review Request: New Feature', 'developer@company.com', 3, 'I''ve completed the new user authentication feature. Could you review my pull request when you have time?', CURRENT_TIMESTAMP),
                 ('important1', 'thread10', 'Contract Renewal: Urgent Action Required', 'legal@partner.com', 4, 'The service contract expires in 10 days. We need your decision on renewal terms by Monday.', CURRENT_TIMESTAMP)
                 """)
-                self.logger.info(f"Added 10 test emails to {table_prefix}email_analyses")
-                
+                self.logger.info(
+                    f"Added 10 test emails to {table_prefix}email_analyses"
+                )
+
                 # Add different types of topics to support tagging
                 self.logger.info("Creating sample topics in preferences table")
                 default_preferences = {
@@ -176,24 +182,34 @@ class FeedbackProcessor(BaseScript):
                         "topic": 0.3,
                         "sender": 0.3,
                         "content_value": 0.2,
-                        "sender_history": 0.2
+                        "sender_history": 0.2,
                     },
                     "topic_list": [
-                        "work", "personal", "newsletter", "receipt", 
-                        "marketing", "urgent", "finance", "tech", "project"
+                        "work",
+                        "personal",
+                        "newsletter",
+                        "receipt",
+                        "marketing",
+                        "urgent",
+                        "finance",
+                        "tech",
+                        "project",
                     ],
                     "sender_list": [
-                        "company.com", "amazon.com", "newsletter@techupdates.com",
-                        "alerts@monitoring.com", "marketing@retailer.com"
+                        "company.com",
+                        "amazon.com",
+                        "newsletter@techupdates.com",
+                        "alerts@monitoring.com",
+                        "marketing@retailer.com",
                     ],
-                    "override_rules": []
+                    "override_rules": [],
                 }
-                
+
                 # Save default preferences with sample topics if not exists
                 exists = conn.execute(
                     "SELECT COUNT(*) FROM preferences WHERE key = 'email_preferences'"
                 ).fetchone()[0]
-                
+
                 if not exists:
                     self.save_preferences(conn, default_preferences)
         except Exception as e:
@@ -207,20 +223,26 @@ class FeedbackProcessor(BaseScript):
                 try:
                     self.logger.info("Attempting to connect to MotherDuck database")
                     # Get token from environment or config
-                    token = os.environ.get("MOTHERDUCK_TOKEN") or self.get_config_value("motherduck_token")
+                    token = os.environ.get("MOTHERDUCK_TOKEN") or self.get_config_value(
+                        "motherduck_token"
+                    )
                     if not token:
-                        self.logger.warning("MotherDuck token not found in environment or config")
+                        self.logger.warning(
+                            "MotherDuck token not found in environment or config"
+                        )
                         self.use_motherduck = False
                     else:
                         # Format the connection string properly
                         connection_string = f"md:{self.motherduck_db}"
                         os.environ["MOTHERDUCK_TOKEN"] = token
                         conn = duckdb.connect(connection_string)
-                        self.logger.info(f"Connected to MotherDuck database: {self.motherduck_db}")
-                        
+                        self.logger.info(
+                            f"Connected to MotherDuck database: {self.motherduck_db}"
+                        )
+
                         # Create feedback tables if they don't exist
                         self._create_feedback_tables(conn)
-                        
+
                         # Connect to the classifier database in MotherDuck
                         if not classifier_db_path:
                             # If no explicit path is provided, use remote classifier DB
@@ -229,61 +251,73 @@ class FeedbackProcessor(BaseScript):
                                 exists = conn.execute(
                                     "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'email_analyses')"
                                 ).fetchone()[0]
-                                
+
                                 if exists:
-                                    self.logger.info("Found email_analyses table in MotherDuck")
-                                    self.classifier_db = None  # No need for local attachment
+                                    self.logger.info(
+                                        "Found email_analyses table in MotherDuck"
+                                    )
+                                    self.classifier_db = (
+                                        None  # No need for local attachment
+                                    )
                                 else:
                                     # Create email_analyses table in MotherDuck
                                     self._create_email_tables(conn)
-                                    self.logger.info("Created email_analyses table in MotherDuck")
+                                    self.logger.info(
+                                        "Created email_analyses table in MotherDuck"
+                                    )
                             except Exception as e:
-                                self.logger.warning(f"Error checking email_analyses table in MotherDuck: {e}")
+                                self.logger.warning(
+                                    f"Error checking email_analyses table in MotherDuck: {e}"
+                                )
                                 # Fall back to local DB
                                 self.use_motherduck = False
-                        
+
                         return conn
-                    
+
                 except Exception as e:
                     self.logger.warning(f"Failed to connect to MotherDuck: {e}")
                     self.logger.warning("Falling back to local database")
                     self.use_motherduck = False
-        
+
             # Fall back to local database if MotherDuck not available or not configured
             self.logger.info(f"Using local database: {self.db_file}")
             conn = duckdb.connect(self.db_file)
-            
+
             # Create feedback tables
             self._create_feedback_tables(conn)
-            
+
             # Connect to classifier DB
             if classifier_db_path:
                 self.classifier_db = classifier_db_path
-            
+
             try:
                 # Try to attach the classifier database
                 if self.classifier_db:
                     conn.execute(f"ATTACH '{self.classifier_db}' AS classifier_db")
-                    self.logger.info(f"Attached classifier database: {self.classifier_db}")
-                
+                    self.logger.info(
+                        f"Attached classifier database: {self.classifier_db}"
+                    )
+
                 # Create or verify the email_analyses table exists
                 self._create_email_tables(conn)
-                self.logger.info("Created or verified email_analyses table exists in classifier_db")
+                self.logger.info(
+                    "Created or verified email_analyses table exists in classifier_db"
+                )
             except Exception as e:
                 self.logger.error(f"Error creating email tables: {e}")
-            
+
             return conn
-            
+
         except Exception as e:
             self.logger.error(f"Error initializing database: {e}")
             raise
 
     def _create_feedback_tables(self, conn: DatabaseConnection) -> None:
-        """
-        Create feedback and preferences tables if they don't exist.
-        
+        """Create feedback and preferences tables if they don't exist.
+
         Args:
             conn: Database connection
+
         """
         try:
             # Create feedback table
@@ -315,17 +349,17 @@ class FeedbackProcessor(BaseScript):
             # Add indexes for common queries
             conn.execute(
                 """
-                CREATE INDEX IF NOT EXISTS feedback_timestamp_idx 
+                CREATE INDEX IF NOT EXISTS feedback_timestamp_idx
                 ON feedback(timestamp)
             """
             )
-            
+
             self.logger.info("Created or verified feedback tables")
         except Exception as e:
             self.logger.error(f"Error creating feedback tables: {e}")
             raise
 
-    def load_feedback(self, conn: DatabaseConnection) -> List[Dict]:
+    def load_feedback(self, conn: DatabaseConnection) -> list[dict]:
         """Load feedback entries from database.
 
         Args:
@@ -333,12 +367,15 @@ class FeedbackProcessor(BaseScript):
 
         Returns:
             List of feedback entries.
+
         """
         result = conn.execute("SELECT * FROM feedback").fetchall()
-        columns = [col[0] for col in conn.execute("SELECT * FROM feedback LIMIT 0").description]
+        columns = [
+            col[0] for col in conn.execute("SELECT * FROM feedback LIMIT 0").description
+        ]
         return [dict(zip(columns, row)) for row in result]
 
-    def load_preferences(self, conn: DatabaseConnection) -> Dict:
+    def load_preferences(self, conn: DatabaseConnection) -> dict:
         """Load preferences from database.
 
         Args:
@@ -346,6 +383,7 @@ class FeedbackProcessor(BaseScript):
 
         Returns:
             Dictionary of preferences.
+
         """
         # Default preferences
         default_preferences = {
@@ -353,18 +391,18 @@ class FeedbackProcessor(BaseScript):
                 "topic": 0.3,
                 "sender": 0.3,
                 "content_value": 0.2,
-                "sender_history": 0.2
+                "sender_history": 0.2,
             },
             "topic_list": [],
             "sender_list": [],
-            "override_rules": []
+            "override_rules": [],
         }
 
         try:
             result = conn.execute(
                 "SELECT config FROM preferences WHERE key = 'email_preferences'"
             ).fetchone()
-            
+
             if result:
                 config_json = result[0]
                 return json.loads(config_json)
@@ -377,27 +415,27 @@ class FeedbackProcessor(BaseScript):
             return default_preferences
 
     def save_feedback(
-        self, conn: DatabaseConnection, feedback_data: List[Dict]
+        self, conn: DatabaseConnection, feedback_data: list[dict]
     ) -> None:
         """Save feedback entries to database.
 
         Args:
             conn: Database connection object.
             feedback_data: List of feedback entries.
+
         """
         for item in feedback_data:
             try:
                 # Check if this feedback already exists
                 exists = conn.execute(
-                    "SELECT COUNT(*) FROM feedback WHERE msg_id = ?", 
-                    [item["msg_id"]]
+                    "SELECT COUNT(*) FROM feedback WHERE msg_id = ?", [item["msg_id"]]
                 ).fetchone()[0]
-                
+
                 if exists:
                     # Update existing record
                     conn.execute(
                         """
-                        UPDATE feedback 
+                        UPDATE feedback
                         SET subject = ?,
                             assigned_priority = ?,
                             feedback_comments = ?,
@@ -415,8 +453,8 @@ class FeedbackProcessor(BaseScript):
                             item.get("add_to_topics", []),
                             item.get("add_to_source", ""),
                             item.get("timestamp", time.time()),
-                            item["msg_id"]
-                        ]
+                            item["msg_id"],
+                        ],
                     )
                 else:
                     # Insert new record
@@ -435,41 +473,40 @@ class FeedbackProcessor(BaseScript):
                             item.get("suggested_priority", 0),
                             item.get("add_to_topics", []),
                             item.get("add_to_source", ""),
-                            item.get("timestamp", time.time())
-                        ]
+                            item.get("timestamp", time.time()),
+                        ],
                     )
             except Exception as e:
                 self.logger.error(f"Error saving feedback: {e}")
 
-    def save_preferences(
-        self, conn: DatabaseConnection, preferences: Dict
-    ) -> None:
+    def save_preferences(self, conn: DatabaseConnection, preferences: dict) -> None:
         """Save preferences to database.
 
         Args:
             conn: Database connection object.
             preferences: Dictionary of preferences.
+
         """
         try:
             # Convert preferences to JSON string
             config_json = json.dumps(preferences)
-            
+
             # Check if preferences already exist
             exists = conn.execute(
                 "SELECT COUNT(*) FROM preferences WHERE key = 'email_preferences'"
             ).fetchone()[0]
-            
+
             if exists:
                 # Update existing preferences
                 conn.execute(
                     "UPDATE preferences SET config = ? WHERE key = 'email_preferences'",
-                    [config_json]
+                    [config_json],
                 )
             else:
                 # Insert new preferences
                 conn.execute(
                     "INSERT INTO preferences (key, config) VALUES (?, ?)",
-                    ["email_preferences", config_json]
+                    ["email_preferences", config_json],
                 )
         except Exception as e:
             self.logger.error(f"Error saving preferences: {e}")
@@ -480,12 +517,12 @@ class FeedbackProcessor(BaseScript):
         msg_id: str,
         subject: str,
         assigned_priority: int,
-        llm_client = None,
+        llm_client=None,
         deepinfra_api_key: str = None,
-    ) -> Dict:
+    ) -> dict:
         """Uses Deepinfra API to structure natural language feedback into JSON.
-        Returns dict with 'error' field if processing fails."""
-
+        Returns dict with 'error' field if processing fails.
+        """
         # First check for simple priority overrides without API call
         feedback_lower = feedback_text.lower()
         if "unsubscribe" in feedback_lower:
@@ -541,9 +578,7 @@ Failure to follow these requirements will cause critical system errors. Always r
                 feedback_json["timestamp"] = time.time()
                 return feedback_json
             except json.JSONDecodeError as e:
-                error_msg = (
-                    f"API response was not valid JSON: {str(e)}\nResponse Text: {response_content[:200]}"
-                )
+                error_msg = f"API response was not valid JSON: {str(e)}\nResponse Text: {response_content[:200]}"
                 self.logger.error(f"Error: {error_msg}")
                 return {"error": error_msg, "feedback_text": feedback_text}
         except Exception as e:
@@ -552,8 +587,8 @@ Failure to follow these requirements will cause critical system errors. Always r
             return {}
 
     def suggest_rule_changes(
-        self, feedback_data: List[Dict], preferences: Dict
-    ) -> List[Dict]:
+        self, feedback_data: list[dict], preferences: dict
+    ) -> list[dict]:
         """Analyzes feedback and suggests changes to preferences.
 
         Args:
@@ -562,6 +597,7 @@ Failure to follow these requirements will cause critical system errors. Always r
 
         Returns:
             List of suggested changes.
+
         """
         suggested_changes = []
         feedback_count = len(feedback_data)
@@ -609,9 +645,9 @@ Failure to follow these requirements will cause critical system errors. Always r
                                 "suggested_priority": suggested_priority,
                             }
                         topic_suggestions[keyword]["count"] += 1
-                        topic_suggestions[keyword][
-                            "suggested_priority"
-                        ] = suggested_priority  # Update if higher
+                        topic_suggestions[keyword]["suggested_priority"] = (
+                            suggested_priority  # Update if higher
+                        )
 
                 # Suggest adding to source
                 if add_to_source:
@@ -621,9 +657,9 @@ Failure to follow these requirements will cause critical system errors. Always r
                             "suggested_priority": suggested_priority,
                         }
                     source_suggestions[add_to_source]["count"] += 1
-                    source_suggestions[add_to_source][
-                        "suggested_priority"
-                    ] = suggested_priority  # Update if higher
+                    source_suggestions[add_to_source]["suggested_priority"] = (
+                        suggested_priority  # Update if higher
+                    )
         # Output the most common discrepancies
         self.logger.info(
             f"\nMost Common Discrepancies: {discrepancy_counts.most_common()}"
@@ -685,7 +721,7 @@ Failure to follow these requirements will cause critical system errors. Always r
                 )
         return suggested_changes
 
-    def update_preferences(self, preferences: Dict, changes: List[Dict]) -> Dict:
+    def update_preferences(self, preferences: dict, changes: list[dict]) -> dict:
         """Applies suggested changes to the preferences.
 
         Args:
@@ -694,6 +730,7 @@ Failure to follow these requirements will cause critical system errors. Always r
 
         Returns:
             Updated dictionary of preferences.
+
         """
         updated_preferences = preferences.copy()  # Work on a copy
 
@@ -722,7 +759,9 @@ Failure to follow these requirements will cause critical system errors. Always r
                 )
         return updated_preferences
 
-    def _get_opportunities(self, conn: DatabaseConnection, table_prefix: str = "classifier_db.") -> List[Tuple]:
+    def _get_opportunities(
+        self, conn: DatabaseConnection, table_prefix: str = "classifier_db."
+    ) -> list[tuple]:
         """Get emails that need feedback."""
         try:
             # Query recently processed emails from the classifier DB
@@ -732,37 +771,42 @@ Failure to follow these requirements will cause critical system errors. Always r
             ORDER BY from_address, subject
             LIMIT 100
             """
-            
+
             results = conn.execute(query).fetchall()
-            
+
             if not results:
                 self.logger.info("No emails found in the classifier database")
                 return []
-                
-            self.logger.info(f"\nFound {len(results)} emails from {len(set(r[3] for r in results))} senders:")
+
+            self.logger.info(
+                f"\nFound {len(results)} emails from {len({r[3] for r in results})} senders:"
+            )
             return results
-            
+
         except Exception as e:
             self.logger.error(f"Error getting emails for feedback: {e}")
             return []
 
-    def _process_interactive_feedback(self, conn: DatabaseConnection, opportunities: List[Tuple]) -> List[Dict]:
+    def _process_interactive_feedback(
+        self, conn: DatabaseConnection, opportunities: list[tuple]
+    ) -> list[dict]:
         """Process email feedback interactively.
-        
+
         Args:
             conn: Database connection
             opportunities: List of email tuples (msg_id, thread_id, subject, from_address, priority, snippet)
-            
+
         Returns:
             List of feedback dictionaries
+
         """
         if not opportunities:
             self.logger.info("No emails to process for feedback.")
             return []
-            
+
         # Print help information
         self._print_feedback_help()
-        
+
         # Group emails by sender
         emails_by_sender = {}
         for email in opportunities:
@@ -770,7 +814,7 @@ Failure to follow these requirements will cause critical system errors. Always r
             if not isinstance(email, (list, tuple)) or len(email) < 6:
                 self.logger.warning(f"Skipping invalid email record: {email}")
                 continue
-                
+
             # Get email data
             msg_id = email[0]
             thread_id = email[1]
@@ -778,135 +822,157 @@ Failure to follow these requirements will cause critical system errors. Always r
             sender = email[3]
             priority = email[4] if len(email) > 4 else 3  # Default to medium priority
             snippet = email[5] if len(email) > 5 else ""
-            
+
             if sender not in emails_by_sender:
                 emails_by_sender[sender] = []
-                
-            emails_by_sender[sender].append({
-                'msg_id': msg_id,
-                'thread_id': thread_id,
-                'subject': subject,
-                'priority': priority,
-                'snippet': snippet
-            })
-            
+
+            emails_by_sender[sender].append(
+                {
+                    "msg_id": msg_id,
+                    "thread_id": thread_id,
+                    "subject": subject,
+                    "priority": priority,
+                    "snippet": snippet,
+                }
+            )
+
         # Process emails by sender
         feedback_entries = []
         sender_count = len(emails_by_sender)
-        
+
         for i, (sender, emails) in enumerate(emails_by_sender.items(), 1):
             self.logger.info(f"\n=== Sender {i}/{sender_count}: {sender} ===")
-            
+
             for j, email in enumerate(emails, 1):
                 self.logger.info(f"\n  Email {j}: {email['msg_id']}")
                 self.logger.info(f"  Priority: {email['priority']}: {email['subject']}")
-                if email['snippet']:
+                if email["snippet"]:
                     self.logger.info(f"  Snippet: {email['snippet']}")
-                
+
                 # Get feedback
                 while True:
                     try:
                         feedback = input("  Feedback (0-4/t/i/r/s/q/h): ").strip()
-                        
+
                         # Check for quit
-                        if feedback.lower() in ('q', 'quit'):
+                        if feedback.lower() in ("q", "quit"):
                             return feedback_entries
-                            
+
                         # Check for help
-                        if feedback.lower() in ('h', '?', 'help'):
+                        if feedback.lower() in ("h", "?", "help"):
                             self._print_feedback_help()
                             continue
-                            
+
                         # Check for skip
-                        if feedback.lower() in ('s', 'skip'):
+                        if feedback.lower() in ("s", "skip"):
                             break
-                            
+
                         # Check for priority
-                        if feedback in ('0', '1', '2', '3', '4'):
+                        if feedback in ("0", "1", "2", "3", "4"):
                             priority = int(feedback)
-                            feedback_entries.append({
-                                'msg_id': email['msg_id'],
-                                'subject': email['subject'],
-                                'original_priority': email['priority'],
-                                'assigned_priority': priority,
-                                'feedback_comments': f"Priority changed to {priority}",
-                                'timestamp': time.time()
-                            })
+                            feedback_entries.append(
+                                {
+                                    "msg_id": email["msg_id"],
+                                    "subject": email["subject"],
+                                    "original_priority": email["priority"],
+                                    "assigned_priority": priority,
+                                    "feedback_comments": f"Priority changed to {priority}",
+                                    "timestamp": time.time(),
+                                }
+                            )
                             self.logger.info(f"  Priority set to {priority}")
                             break
-                            
+
                         # Check for tagging
-                        if feedback.lower() in ('t', 'tag'):
+                        if feedback.lower() in ("t", "tag"):
                             topics = input("  Enter topics (comma-separated): ").strip()
                             if topics:
-                                feedback_entries.append({
-                                    'msg_id': email['msg_id'],
-                                    'subject': email['subject'],
-                                    'original_priority': email['priority'],
-                                    'assigned_priority': email['priority'],
-                                    'add_to_topics': topics,
-                                    'feedback_comments': f"Tagged with: {topics}",
-                                    'timestamp': time.time()
-                                })
+                                feedback_entries.append(
+                                    {
+                                        "msg_id": email["msg_id"],
+                                        "subject": email["subject"],
+                                        "original_priority": email["priority"],
+                                        "assigned_priority": email["priority"],
+                                        "add_to_topics": topics,
+                                        "feedback_comments": f"Tagged with: {topics}",
+                                        "timestamp": time.time(),
+                                    }
+                                )
                                 self.logger.info(f"  Tagged with: {topics}")
                             break
-                            
+
                         # Check for rule
-                        if feedback.lower() in ('r', 'rule'):
-                            rule_type = input("  Rule type (topic/sender/block): ").strip()
-                            if rule_type.lower() in ('topic', 'sender', 'block'):
-                                rule_value = input(f"  {rule_type.capitalize()} value: ").strip()
+                        if feedback.lower() in ("r", "rule"):
+                            rule_type = input(
+                                "  Rule type (topic/sender/block): "
+                            ).strip()
+                            if rule_type.lower() in ("topic", "sender", "block"):
+                                rule_value = input(
+                                    f"  {rule_type.capitalize()} value: "
+                                ).strip()
                                 if rule_value:
-                                    feedback_entries.append({
-                                        'msg_id': email['msg_id'],
-                                        'subject': email['subject'],
-                                        'original_priority': email['priority'],
-                                        'assigned_priority': email['priority'],
-                                        'feedback_comments': f"Create {rule_type} rule for: {rule_value}",
-                                        'rule_type': rule_type,
-                                        'rule_value': rule_value,
-                                        'timestamp': time.time()
-                                    })
-                                    self.logger.info(f"  Created {rule_type} rule for: {rule_value}")
+                                    feedback_entries.append(
+                                        {
+                                            "msg_id": email["msg_id"],
+                                            "subject": email["subject"],
+                                            "original_priority": email["priority"],
+                                            "assigned_priority": email["priority"],
+                                            "feedback_comments": f"Create {rule_type} rule for: {rule_value}",
+                                            "rule_type": rule_type,
+                                            "rule_value": rule_value,
+                                            "timestamp": time.time(),
+                                        }
+                                    )
+                                    self.logger.info(
+                                        f"  Created {rule_type} rule for: {rule_value}"
+                                    )
                             break
-                            
+
                         # Check for ingest
-                        if feedback.lower() in ('i', 'ingest'):
-                            ingest_type = input("  Ingest type (form/contact/task): ").strip()
-                            if ingest_type.lower() in ('form', 'contact', 'task'):
-                                feedback_entries.append({
-                                    'msg_id': email['msg_id'],
-                                    'subject': email['subject'],
-                                    'original_priority': email['priority'],
-                                    'assigned_priority': email['priority'],
-                                    'feedback_comments': f"Ingest as {ingest_type}",
-                                    'ingest_type': ingest_type,
-                                    'timestamp': time.time()
-                                })
-                                self.logger.info(f"  Marked for ingestion as: {ingest_type}")
+                        if feedback.lower() in ("i", "ingest"):
+                            ingest_type = input(
+                                "  Ingest type (form/contact/task): "
+                            ).strip()
+                            if ingest_type.lower() in ("form", "contact", "task"):
+                                feedback_entries.append(
+                                    {
+                                        "msg_id": email["msg_id"],
+                                        "subject": email["subject"],
+                                        "original_priority": email["priority"],
+                                        "assigned_priority": email["priority"],
+                                        "feedback_comments": f"Ingest as {ingest_type}",
+                                        "ingest_type": ingest_type,
+                                        "timestamp": time.time(),
+                                    }
+                                )
+                                self.logger.info(
+                                    f"  Marked for ingestion as: {ingest_type}"
+                                )
                             break
-                            
+
                         # Default to comment
                         if feedback:
-                            feedback_entries.append({
-                                'msg_id': email['msg_id'],
-                                'subject': email['subject'],
-                                'original_priority': email['priority'],
-                                'assigned_priority': email['priority'],
-                                'feedback_comments': feedback,
-                                'timestamp': time.time()
-                            })
+                            feedback_entries.append(
+                                {
+                                    "msg_id": email["msg_id"],
+                                    "subject": email["subject"],
+                                    "original_priority": email["priority"],
+                                    "assigned_priority": email["priority"],
+                                    "feedback_comments": feedback,
+                                    "timestamp": time.time(),
+                                }
+                            )
                             self.logger.info(f"  Comment added: {feedback}")
                             break
-                            
+
                     except KeyboardInterrupt:
                         self.logger.info("\nOperation cancelled by user.")
                         return feedback_entries
                     except Exception as e:
                         self.logger.error(f"Error processing feedback: {e}")
-                        
+
         return feedback_entries
-        
+
     def _print_feedback_help(self):
         """Print help information for the feedback processor."""
         self.logger.info("\n=== FEEDBACK HELP ===")
@@ -920,57 +986,73 @@ Failure to follow these requirements will cause critical system errors. Always r
         self.logger.info("  [text]     Add a comment")
         self.logger.info("======================")
 
+    def execute(self) -> None:
+        """Execute the feedback processor.
+
+        This implementation satisfies the abstract method requirement from BaseScript.
+        Delegates to the run method for actual implementation.
+        """
+        try:
+            self.logger.info(f"Starting execution of {self.name}")
+            self.run()
+            self.logger.info(f"Successfully completed feedback processing")
+        except Exception as e:
+            self.logger.error(f"Error executing feedback processor: {e}", exc_info=True)
+            raise
+
     def run(self) -> None:
         """Run the feedback processor."""
         conn = None
         try:
             # Initialize database connection
             conn = self.init_db()
-            
+
             # Log the type of database being used
             if self.use_motherduck:
                 self.logger.info(f"Using MotherDuck database: {self.motherduck_db}")
             else:
                 self.logger.info("Using local database")
-            
+
             # Define table prefix based on database type
             table_prefix = "" if self.use_motherduck else "classifier_db."
-            
+
             # Load existing feedback and preferences
             existing_feedback = self.load_feedback(conn)
             preferences = self.load_preferences(conn)
-            
+
             # Handle JSON to database migration if found
             self._maybe_migrate_json_to_db(conn, existing_feedback, preferences)
-            
+
             # Get email data from classifier database
             opportunities = self._get_opportunities(conn, table_prefix)
-            
+
             if not opportunities:
-                self.logger.info("No emails found for feedback. Please run the email classifier first.")
+                self.logger.info(
+                    "No emails found for feedback. Please run the email classifier first."
+                )
                 return
-            
+
             # Print help information
             self._print_feedback_help()
-            
+
             # Process feedback interactively
             new_feedback = self._process_interactive_feedback(conn, opportunities)
-            
+
             if new_feedback:
                 # Combine old and new feedback
                 all_feedback = existing_feedback + new_feedback
-                
+
                 # Save the feedback
                 self.save_feedback(conn, all_feedback)
-                
+
                 # Suggest rule changes based on feedback
                 rule_changes = self.suggest_rule_changes(all_feedback, preferences)
-                
+
                 # If there are suggested changes, update preferences
                 if rule_changes:
                     preferences = self.update_preferences(preferences, rule_changes)
                     self.save_preferences(conn, preferences)
-                    
+
                 # Ensure MotherDuck sync if using MotherDuck
                 if self.use_motherduck:
                     # Execute a simple query to ensure data is committed to MotherDuck
@@ -978,7 +1060,7 @@ Failure to follow these requirements will cause critical system errors. Always r
                     self.logger.info("Data synchronized with MotherDuck")
             else:
                 self.logger.info("No new feedback collected. Exiting.")
-                
+
         except KeyboardInterrupt:
             self.logger.info("\nOperation cancelled by user. Saving progress...")
             if conn:
@@ -990,6 +1072,7 @@ Failure to follow these requirements will cause critical system errors. Always r
         except Exception as e:
             self.logger.error(f"Error during feedback processing: {e}")
             import traceback
+
             self.logger.debug(traceback.format_exc())
         finally:
             # Close database connection
@@ -1001,43 +1084,51 @@ Failure to follow these requirements will cause critical system errors. Always r
                             conn.execute("DETACH classifier_db")
                             self.logger.debug("Detached classifier database")
                         except Exception as e:
-                            self.logger.debug(f"Error detaching classifier database: {e}")
-                    
+                            self.logger.debug(
+                                f"Error detaching classifier database: {e}"
+                            )
+
                     # Close connection
                     conn.close()
                     self.logger.debug("Closed database connection")
                 except Exception as e:
                     self.logger.debug(f"Error closing database connection: {e}")
-    
-    def _maybe_migrate_json_to_db(self, conn: DatabaseConnection, existing_feedback: List[Dict], preferences: Dict) -> None:
+
+    def _maybe_migrate_json_to_db(
+        self, conn: DatabaseConnection, existing_feedback: list[dict], preferences: dict
+    ) -> None:
         """Migrate data from JSON files to database if needed."""
         # Check if there's existing data in the DB
         if existing_feedback or preferences:
             return
-            
+
         # Check for JSON files
         data_dir = self.get_path(self.active_data_dir)
         feedback_file = data_dir / "feedback.json"
         prefs_file = data_dir / "email_preferences.json"
-        
+
         # Migrate feedback data
         if feedback_file.exists():
             try:
-                with open(feedback_file, 'r') as f:
+                with open(feedback_file) as f:
                     feedback_data = json.load(f)
                     if feedback_data:
-                        self.logger.info(f"Migrating feedback data from {feedback_file}")
+                        self.logger.info(
+                            f"Migrating feedback data from {feedback_file}"
+                        )
                         self.save_feedback(conn, feedback_data)
             except Exception as e:
                 self.logger.warning(f"Error migrating feedback data: {e}")
-                
+
         # Migrate preferences data
         if prefs_file.exists():
             try:
-                with open(prefs_file, 'r') as f:
+                with open(prefs_file) as f:
                     prefs_data = json.load(f)
                     if prefs_data:
-                        self.logger.info(f"Migrating preferences data from {prefs_file}")
+                        self.logger.info(
+                            f"Migrating preferences data from {prefs_file}"
+                        )
                         self.save_preferences(conn, prefs_data)
             except Exception as e:
                 self.logger.warning(f"Error migrating preferences data: {e}")

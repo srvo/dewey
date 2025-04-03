@@ -17,6 +17,7 @@ class CliTickManager(BaseScript):
         Args:
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
+
         """
         super().__init__(*args, config_section="cli_tick_manager", **kwargs)
 

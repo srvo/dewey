@@ -1,12 +1,10 @@
-import logging
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
 
 class AnalyzeTables(BaseScript):
-    """
-    Analyzes database tables.
+    """Analyzes database tables.
 
     This module analyzes the tables in the database and performs
     maintenance tasks as needed.
@@ -17,9 +15,7 @@ class AnalyzeTables(BaseScript):
         super().__init__(*args, **kwargs)
 
     def run(self) -> None:
-        """
-        Executes the table analysis and maintenance process.
-        """
+        """Executes the table analysis and maintenance process."""
         self.logger.info("Starting table analysis...")
 
         # Example of accessing a configuration value
@@ -32,12 +28,11 @@ class AnalyzeTables(BaseScript):
         self.logger.info("Table analysis complete.")
 
     def analyze_tables(self) -> None:
-        """
-        Analyzes each table in the database.
-        """
+        """Analyzes each table in the database."""
         self.logger.info("Analyzing tables...")
         # Add your table analysis logic here
         self.logger.info("Tables analyzed.")
+
 
 if __name__ == "__main__":
     # Example usage (replace with your actual initialization)

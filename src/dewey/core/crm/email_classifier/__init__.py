@@ -7,8 +7,7 @@ from dewey.llm.llm_utils import LLMClient
 
 
 class EmailClassifier(BaseScript):
-    """
-    A module for classifying emails.
+    """A module for classifying emails.
 
     This module inherits from BaseScript and provides a standardized
     structure for email classification scripts, including configuration
@@ -16,9 +15,15 @@ class EmailClassifier(BaseScript):
     primary logic.
     """
 
-    def __init__(self, config_section: Optional[str] = None, requires_db: bool = False, enable_llm: bool = False, *args: Any, **kwargs: Any) -> None:
-        """
-        Initializes the EmailClassifier.
+    def __init__(
+        self,
+        config_section: str | None = None,
+        requires_db: bool = False,
+        enable_llm: bool = False,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
+        """Initializes the EmailClassifier.
 
         Args:
             config_section: The section in the dewey.yaml config file to use for configuration.
@@ -26,12 +31,18 @@ class EmailClassifier(BaseScript):
             enable_llm: Whether this script requires an LLM client.
             *args: Additional positional arguments to pass to the BaseScript constructor.
             **kwargs: Additional keyword arguments to pass to the BaseScript constructor.
+
         """
-        super().__init__(config_section=config_section, requires_db=requires_db, enable_llm=enable_llm, *args, **kwargs)
+        super().__init__(
+            config_section=config_section,
+            requires_db=requires_db,
+            enable_llm=enable_llm,
+            *args,
+            **kwargs,
+        )
 
     def run(self) -> None:
-        """
-        Executes the email classification process.
+        """Executes the email classification process.
 
         This method retrieves the API key from the configuration, logs the start and
         completion of the email classification process, and includes placeholder logic

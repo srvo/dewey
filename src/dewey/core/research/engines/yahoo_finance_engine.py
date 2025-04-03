@@ -2,22 +2,18 @@ from dewey.core.base_script import BaseScript
 
 
 class YahooFinanceEngine(BaseScript):
-    """
-    A class for fetching and processing data from Yahoo Finance.
+    """A class for fetching and processing data from Yahoo Finance.
 
     Inherits from BaseScript to provide standardized access to configuration,
     logging, and other utilities.
     """
 
     def __init__(self) -> None:
-        """
-        Initializes the YahooFinanceEngine.
-        """
+        """Initializes the YahooFinanceEngine."""
         super().__init__(config_section="yahoo_finance")
 
     def run(self) -> None:
-        """
-        Executes the main logic of the Yahoo Finance engine.
+        """Executes the main logic of the Yahoo Finance engine.
 
         Args:
             None
@@ -27,6 +23,7 @@ class YahooFinanceEngine(BaseScript):
 
         Raises:
             None
+
         """
         self.logger.info("Starting Yahoo Finance engine...")
         api_key = self.get_config_value("api_key")

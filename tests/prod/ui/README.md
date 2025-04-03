@@ -78,23 +78,23 @@ UI tests are organized by component/screen, with each file testing a specific UI
 
 All UI tests have been updated to work with the latest Textual API. The following approach was used to fix common issues:
 
-1. **DataTable API Changes**: 
+1. **DataTable API Changes**:
    - Fixed by using `len(datatable.columns)` instead of `column_count`
    - Avoided using column label properties, focusing on column presence instead
 
-2. **Input Value Changes**: 
-   - Directly modified reactive attributes: `screen.filter_text = "value"` 
+2. **Input Value Changes**:
+   - Directly modified reactive attributes: `screen.filter_text = "value"`
    - Called `apply_filters()` manually to update the UI
 
-3. **Switch Toggle Issues**: 
+3. **Switch Toggle Issues**:
    - Directly modified reactive variables: `screen.show_follow_up_only = True`
    - Manually applied filters instead of simulating user input
 
-4. **Table Selection**: 
+4. **Table Selection**:
    - Used direct index modification: `screen.selected_sender_index = 0`
    - Avoided table clicking which can cause OutOfBounds errors
 
-5. **Datetime Handling**: 
+5. **Datetime Handling**:
    - Added a mock datetime formatting function for testing
    - Verified SenderProfile correctly handles datetime objects
 
@@ -113,4 +113,4 @@ This occurs because the database connection in the test environment can't be est
 - Consider adding database mocks for more comprehensive UI testing
 - Add additional test coverage for UI event handlers
 - Update TestApp class to avoid constructor warnings
-- Explore ways to safely close background threads after tests 
+- Explore ways to safely close background threads after tests

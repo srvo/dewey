@@ -2,10 +2,9 @@
 
 import logging
 import sys
+from datetime import datetime, timedelta
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
-from datetime import datetime, timedelta
 
 import colorlog
 
@@ -33,11 +32,11 @@ class LoggingConfigurator(BaseScript):
         self.logger.setLevel(self.get_config_value("level", logging.INFO))
 
         formatter = logging.Formatter(
-            self.get_config_value(
-                "format", "%(asctime)s - %(levelname)s - %(message)s"
-            )
+            self.get_config_value("format", "%(asctime)s - %(levelname)s - %(message)s")
         )
-        self.formatter = formatter  # Store formatter for use in _configure_rotating_handler
+        self.formatter = (
+            formatter  # Store formatter for use in _configure_rotating_handler
+        )
 
         # Console handler
         ch = logging.StreamHandler(sys.stdout)
@@ -82,7 +81,10 @@ class LoggingConfigurator(BaseScript):
         cutoff = now - timedelta(days=retention_days)
 
         for log_file in log_dir.glob("**/*.log"):  # Recursive search
-            if log_file.is_file() and datetime.fromtimestamp(log_file.stat().st_mtime) < cutoff:
+            if (
+                log_file.is_file()
+                and datetime.fromtimestamp(log_file.stat().st_mtime) < cutoff
+            ):
                 try:
                     log_file.unlink()
                     self.logger.info(f"Removed old log file: {log_file}")
@@ -92,17 +94,20 @@ class LoggingConfigurator(BaseScript):
 
 def configure_logging(config: dict) -> None:
     """Configure logging with colored console output and file rotation.
-    
+
     This function provides a simpler interface for setting up logging without
     requiring a BaseScript instance.
-    
+
     Args:
         config: A dictionary containing logging configuration options
+
     """
     logger = logging.getLogger()
     logger.setLevel(config.get("level", logging.INFO))
 
-    formatter = logging.Formatter(config.get("format", "%(asctime)s - %(levelname)s - %(message)s"))
+    formatter = logging.Formatter(
+        config.get("format", "%(asctime)s - %(levelname)s - %(message)s")
+    )
 
     # Console handler
     ch = logging.StreamHandler(sys.stdout)

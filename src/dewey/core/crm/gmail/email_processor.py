@@ -20,7 +20,7 @@ class EmailProcessor(BaseScript):
         """Initializes the EmailProcessor."""
         super().__init__(config_section="crm")
 
-    def process_email(self, email_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def process_email(self, email_data: dict[str, Any]) -> dict[str, Any] | None:
         """Processes a single email message.
 
         Args:
@@ -28,6 +28,7 @@ class EmailProcessor(BaseScript):
 
         Returns:
             A dictionary containing the processed email information, or None if an error occurred.
+
         """
         try:
             # Extract headers
@@ -72,7 +73,7 @@ class EmailProcessor(BaseScript):
             self.logger.error(f"Error processing email: {e}")
             return None
 
-    def _parse_email_addresses(self, header_value: str) -> List[Dict[str, str]]:
+    def _parse_email_addresses(self, header_value: str) -> list[dict[str, str]]:
         """Parses email addresses from header value into structured format.
 
         Args:
@@ -80,6 +81,7 @@ class EmailProcessor(BaseScript):
 
         Returns:
             A list of dictionaries, where each dictionary contains the name and email address.
+
         """
         if not header_value:
             return []
@@ -95,7 +97,7 @@ class EmailProcessor(BaseScript):
                 addresses.append({"name": "", "email": addr})
         return addresses
 
-    def _get_message_body(self, payload: Dict[str, Any]) -> Dict[str, str]:
+    def _get_message_body(self, payload: dict[str, Any]) -> dict[str, str]:
         """Extract and decode message body from Gmail API payload.
 
         Args:
@@ -103,6 +105,7 @@ class EmailProcessor(BaseScript):
 
         Returns:
             A dictionary containing the plain text and HTML body of the message.
+
         """
         body = {"text": "", "html": ""}
 
@@ -125,7 +128,7 @@ class EmailProcessor(BaseScript):
 
         return body
 
-    def _decode_body(self, body: Dict[str, Any]) -> str:
+    def _decode_body(self, body: dict[str, Any]) -> str:
         """Decode base64-encoded email body content.
 
         Args:
@@ -133,6 +136,7 @@ class EmailProcessor(BaseScript):
 
         Returns:
             The decoded body content.
+
         """
         if "data" in body:
             return base64.urlsafe_b64decode(body["data"].encode("ASCII")).decode(
@@ -148,6 +152,7 @@ class EmailProcessor(BaseScript):
 
         Returns:
             A timezone-aware datetime object.
+
         """
         try:
             if date_str:

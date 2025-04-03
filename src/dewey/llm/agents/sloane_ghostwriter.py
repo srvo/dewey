@@ -15,10 +15,11 @@ class SloaneGhostwriter(BaseScript):
 
         Args:
             **kwargs: Keyword arguments passed to the BaseScript constructor.
+
         """
         super().__init__(**kwargs)
 
-    def run(self) -> Dict[str, Any]:
+    def run(self) -> dict[str, Any]:
         """Executes the core logic of the SloaneGhostwriter script.
 
         This method retrieves configuration values, generates text using a
@@ -29,6 +30,7 @@ class SloaneGhostwriter(BaseScript):
 
         Raises:
             Exception: If there is an error during text generation.
+
         """
         try:
             model_name = self.get_config_value("model_name")

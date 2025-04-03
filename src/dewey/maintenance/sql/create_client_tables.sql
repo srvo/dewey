@@ -71,4 +71,4 @@ CREATE INDEX IF NOT EXISTS idx_open_accounts_household ON open_accounts(househol
 COMMENT ON TABLE households IS 'Table containing household data from client portfolio management';
 COMMENT ON TABLE holdings IS 'Table containing all holdings across client portfolios';
 COMMENT ON TABLE contributions IS 'Table tracking contributions to client accounts';
-COMMENT ON TABLE open_accounts IS 'Table containing all open client accounts and their details'; 
+COMMENT ON TABLE open_accounts IS 'Table containing all open client accounts and their details';

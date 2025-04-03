@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
-"""
-Example of using model fallbacks with the LiteLLM client.
+"""Example of using model fallbacks with the LiteLLM client.
 
 This script demonstrates how to configure model fallbacks to improve
 reliability in case a primary model is unavailable or fails.
 """
 
-import os
 import logging
+import os
 from typing import List
 
 from dewey.llm import (
@@ -15,7 +14,6 @@ from dewey.llm import (
     LiteLLMConfig,
     Message,
     create_message,
-    setup_fallback_models,
 )
 
 # Set up logging
@@ -35,9 +33,7 @@ def main():
         return
 
     # Define primary model and fallbacks
-    primary_model = (
-        "gpt-4"  # This could be any model, including one that might fail
-    )
+    primary_model = "gpt-4"  # This could be any model, including one that might fail
     fallback_models = ["gpt-3.5-turbo", "claude-instant-1"]
 
     # Create a client configuration
@@ -52,9 +48,7 @@ def main():
     # Initialize the client
     client = LiteLLMClient(config)
     logger.info(f"Initialized LiteLLM client with model: {config.model}")
-    logger.info(
-        f"Fallback chain: {primary_model} → {' → '.join(fallback_models)}"
-    )
+    logger.info(f"Fallback chain: {primary_model} → {' → '.join(fallback_models)}")
 
     # Create message objects
     system_message = create_message(
@@ -67,7 +61,7 @@ def main():
     )
 
     # Create a list of messages for the conversation
-    messages: List[Message] = [system_message, user_message]
+    messages: list[Message] = [system_message, user_message]
 
     # Generate a completion with fallbacks
     try:

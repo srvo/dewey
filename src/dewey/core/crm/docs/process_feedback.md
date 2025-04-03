@@ -1,8 +1,8 @@
 ## Current Status
-✅ Basic feedback ingestion & storage  
-✅ Priority override rule suggestions  
-✅ Manual feedback entry mode  
-✅ API integration with DeepInfra  
+✅ Basic feedback ingestion & storage
+✅ Priority override rule suggestions
+✅ Manual feedback entry mode
+✅ API integration with DeepInfra
 🔄 JSON validation & error handling
 
 ## Enhancement Checklist
@@ -77,36 +77,36 @@ python process_feedback.py
 ## Core Functions
 
 ### `load_json(file_path: str) -> Union[dict, list]`
-Loads JSON files with error handling  
-**Params**:  
-- `file_path`: Path to JSON file  
-**Returns**: dict/list based on file content  
-**Handles**:  
-- Missing files  
-- Empty files  
-- Invalid JSON  
+Loads JSON files with error handling
+**Params**:
+- `file_path`: Path to JSON file
+**Returns**: dict/list based on file content
+**Handles**:
+- Missing files
+- Empty files
+- Invalid JSON
 
 ### `generate_feedback_json() -> dict`
-Transforms natural language feedback into structured data  
-**Flow**:  
-1. Checks for quick patterns (e.g. "unsubscribe")  
-2. Uses DeepInfra API for complex analysis  
-3. Validates & cleans responses  
+Transforms natural language feedback into structured data
+**Flow**:
+1. Checks for quick patterns (e.g. "unsubscribe")
+2. Uses DeepInfra API for complex analysis
+3. Validates & cleans responses
 **Output**: Standardized feedback record
 
 ### `suggest_rule_changes() -> list`
-Analyzes feedback patterns to propose system improvements  
-**Detects**:  
-- Common priority discrepancies  
-- Frequent keyword associations  
-- Source-based patterns  
+Analyzes feedback patterns to propose system improvements
+**Detects**:
+- Common priority discrepancies
+- Frequent keyword associations
+- Source-based patterns
 **Output**: List of change recommendations
 
 ### `update_preferences() -> dict`
-Safely applies changes to email preferences  
-**Features**:  
-- Prevents duplicate rules  
-- Validate input formats  
+Safely applies changes to email preferences
+**Features**:
+- Prevents duplicate rules
+- Validate input formats
 - Dry-run mode for testing
 
 ## Architecture
@@ -124,6 +124,5 @@ graph TD
 ```
 
 ## Environment Variables
-`DEEPINFRA_API_KEY` - Required for AI processing  
-`DB_URL` - Optional database connection  
-
+`DEEPINFRA_API_KEY` - Required for AI processing
+`DB_URL` - Optional database connection

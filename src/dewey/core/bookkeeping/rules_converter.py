@@ -74,6 +74,7 @@ class RulesConverter(BaseScript):
 
         Returns:
             The cleaned category string.
+
         """
         if category.startswith("expenses:draw:all"):
             return "expenses:draw"
@@ -95,7 +96,7 @@ class RulesConverter(BaseScript):
             return "expenses:travel"
         return category
 
-    def parse_rules_file(self, rules_file: Path) -> Dict[str, Dict[str, Any]]:
+    def parse_rules_file(self, rules_file: Path) -> dict[str, dict[str, Any]]:
         """Parses the old_mercury.rules file and extracts classification patterns.
 
         Args:
@@ -104,15 +105,18 @@ class RulesConverter(BaseScript):
         Returns:
             A dictionary containing classification patterns and their associated
             categories and examples.
+
         """
-        classifications: Dict[str, Dict[str, Any]] = {}
+        classifications: dict[str, dict[str, Any]] = {}
 
         with self.file_system.open(rules_file) as f:
             for line in f:
                 line = line.strip()
 
                 # Skip empty lines and comments that don't start with #
-                if not line or (line.startswith("#") and "based on" not in line.lower()):
+                if not line or (
+                    line.startswith("#") and "based on" not in line.lower()
+                ):
                     continue
 
                 # Check for category headers in comments
@@ -122,10 +126,14 @@ class RulesConverter(BaseScript):
                 # Parse classification rules
                 if line.startswith("if") and "then account2" in line:
                     # Extract pattern and category
-                    pattern_match = re.search(r'if /(.+?)/ then account2 "([^"]+)"', line)
+                    pattern_match = re.search(
+                        r'if /(.+?)/ then account2 "([^"]+)"', line
+                    )
                     if pattern_match:
                         # Escape regex special characters and normalize whitespace
-                        pattern = re.escape(pattern_match.group(1)).replace(r"\ ", "\\s+")
+                        pattern = re.escape(pattern_match.group(1)).replace(
+                            r"\ ", "\\s+"
+                        )
                         category = pattern_match.group(2)
 
                         # Validate regex syntax
@@ -157,13 +165,14 @@ class RulesConverter(BaseScript):
     def analyze_transactions(
         self,
         journal_dir: Path,
-        classifications: Dict[str, Dict[str, Any]],
+        classifications: dict[str, dict[str, Any]],
     ) -> None:
         """Analyzes existing transactions to find examples for each pattern.
 
         Args:
             journal_dir: Path to the directory containing journal files.
             classifications: A dictionary containing classification patterns.
+
         """
         for journal_file in self.file_system.glob(journal_dir, "**/*.journal"):
             with self.file_system.open(journal_file) as f:
@@ -184,7 +193,9 @@ class RulesConverter(BaseScript):
                             if desc not in data["examples"]:
                                 data["examples"].append(desc)
 
-    def generate_rules_data(self, classifications: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
+    def generate_rules_data(
+        self, classifications: dict[str, dict[str, Any]]
+    ) -> dict[str, Any]:
         """Generates a JSON-compatible data structure with classification rules.
 
         Args:
@@ -192,12 +203,16 @@ class RulesConverter(BaseScript):
 
         Returns:
             A dictionary containing the rules in a format suitable for JSON serialization.
+
         """
         # Convert to a more efficient format for the classifier
-        rules: Dict[str, Any] = {
+        rules: dict[str, Any] = {
             "patterns": {},
             "categories": set(),
-            "stats": {"total_patterns": len(classifications), "patterns_with_examples": 0},
+            "stats": {
+                "total_patterns": len(classifications),
+                "patterns_with_examples": 0,
+            },
         }
 
         for pattern, data in classifications.items():
@@ -215,13 +230,16 @@ class RulesConverter(BaseScript):
         return rules
 
     def generate_rules_json(
-        self, classifications: Dict[str, Dict[str, Any]], output_file: Path,
+        self,
+        classifications: dict[str, dict[str, Any]],
+        output_file: Path,
     ) -> None:
         """Generates a JSON file with classification rules.
 
         Args:
             classifications: A dictionary containing classification patterns.
             output_file: Path to the output JSON file.
+
         """
         rules = self.generate_rules_data(classifications)
 
@@ -231,23 +249,20 @@ class RulesConverter(BaseScript):
 
         self.logger.info(f"Generated rules file: {output_file}")
         self.logger.info(f"Total patterns: {rules['stats']['total_patterns']}")
-        self.logger.info(f"Patterns with examples: {rules['stats']['patterns_with_examples']}")
+        self.logger.info(
+            f"Patterns with examples: {rules['stats']['patterns_with_examples']}"
+        )
         self.logger.info(f"Unique categories: {len(rules['categories'])}")
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Orchestrates the rule parsing, analysis, and generation."""
         base_dir = Path(__file__).resolve().parent.parent
         rules_file = base_dir / "old_mercury.rules"
         journal_dir = base_dir / "import" / "mercury" / "journal"
         output_file = base_dir / "import" / "mercury" / "classification_rules.json"
 
-        self.logger.info(f"Parsing rules file: {rules_file}")
         classifications = self.parse_rules_file(rules_file)
-
-        self.logger.info(f"Analyzing transactions in: {journal_dir}")
         self.analyze_transactions(journal_dir, classifications)
-
-        self.logger.info(f"Generating rules file: {output_file}")
         self.generate_rules_json(classifications, output_file)
 
 

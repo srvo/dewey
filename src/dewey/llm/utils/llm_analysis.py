@@ -1,3 +1,5 @@
+"""Utility module for performing analysis using large language models."""
+
 from typing import Any, Dict
 
 from dewey.core.base_script import BaseScript
@@ -10,21 +12,23 @@ class LLMAnalysis(BaseScript):
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        """Initializes the LLMAnalysis script.
+        """Initialize the LLMAnalysis script.
 
         Args:
             **kwargs: Keyword arguments to pass to the BaseScript constructor.
-        """
-        super().__init__(config_section='llm_analysis', **kwargs)
 
-    def run(self) -> Dict[str, Any]:
-        """Executes the LLM analysis.
+        """
+        super().__init__(config_section="llm_analysis", **kwargs)
+
+    def run(self) -> dict[str, Any]:
+        """Execute the LLM analysis.
 
         Returns:
             A dictionary containing the analysis results.
 
         Raises:
             Exception: If an error occurs during the analysis.
+
         """
         try:
             # Access configuration values using self.get_config_value()

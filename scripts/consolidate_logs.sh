@@ -32,4 +32,4 @@ fi
 # Create .keep file to ensure directory is tracked
 touch logs/.keep
 
-echo "Log directory consolidation complete!" 
+echo "Log directory consolidation complete!"

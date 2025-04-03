@@ -4,7 +4,8 @@
 import csv
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, Iterator, Optional
+from typing import Any, Dict, Optional
+from collections.abc import Iterator
 
 from dewey.core.base_script import BaseScript
 from dewey.core.research.engines.base import BaseEngine
@@ -21,9 +22,9 @@ class BaseWorkflow(BaseScript, ABC):
 
     def __init__(
         self,
-        search_engine: Optional[BaseEngine] = None,
-        analysis_engine: Optional[BaseEngine] = None,
-        output_handler: Optional[ResearchOutputHandler] = None,
+        search_engine: BaseEngine | None = None,
+        analysis_engine: BaseEngine | None = None,
+        output_handler: ResearchOutputHandler | None = None,
     ) -> None:
         """Initialize the workflow.
 
@@ -31,13 +32,14 @@ class BaseWorkflow(BaseScript, ABC):
             search_engine: Engine for searching information.
             analysis_engine: Engine for analyzing search results.
             output_handler: Handler for research output.
+
         """
         super().__init__(config_section="research_workflow")
         self.search_engine = search_engine or BaseEngine()
         self.analysis_engine = analysis_engine or BaseEngine()
         self.output_handler = output_handler or ResearchOutputHandler()
 
-    def read_companies(self, file_path: Path) -> Iterator[Dict[str, str]]:
+    def read_companies(self, file_path: Path) -> Iterator[dict[str, str]]:
         """Read companies from CSV file.
 
         Args:
@@ -49,12 +51,12 @@ class BaseWorkflow(BaseScript, ABC):
         Raises:
             FileNotFoundError: If the file is not found.
             Exception: If there is an error reading the file.
+
         """
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
+            with open(file_path, encoding="utf-8") as f:
                 reader = csv.DictReader(f)
-                for row in reader:
-                    yield row
+                yield from reader
         except FileNotFoundError:
             self.logger.error(f"File not found: {file_path}")
             raise
@@ -63,7 +65,7 @@ class BaseWorkflow(BaseScript, ABC):
             raise
 
     @abstractmethod
-    def execute(self, data_dir: Optional[str] = None) -> Dict[str, Any]:
+    def execute(self, data_dir: str | None = None) -> dict[str, Any]:
         """Execute the workflow.
 
         Args:
@@ -71,6 +73,7 @@ class BaseWorkflow(BaseScript, ABC):
 
         Returns:
             Dictionary containing results and statistics.
+
         """
         pass
 

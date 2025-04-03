@@ -1,0 +1,18 @@
+[Unit]
+Description=Dewey Unified Email Processor
+After=network.target
+
+[Service]
+Type=simple
+User=dewey
+WorkingDirectory=/path/to/dewey
+Environment="PYTHONPATH=/path/to/dewey"
+Environment="MOTHERDUCK_TOKEN=your_token_here"
+ExecStart=/path/to/dewey/.venv/bin/python -m src.dewey.core.crm.gmail.run_unified_processor
+Restart=on-failure
+RestartSec=30
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target 

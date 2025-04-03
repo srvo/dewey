@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
 from dewey.core.base_script import BaseScript
 
@@ -15,10 +15,11 @@ class LogicalFallacyAgent(BaseScript):
 
         Args:
             **kwargs: Keyword arguments passed to the BaseScript constructor.
+
         """
         super().__init__(**kwargs)
 
-    def run(self, text: str) -> Dict[str, Any]:
+    def run(self, text: str) -> dict[str, Any]:
         """Executes the logical fallacy detection process.
 
         Args:
@@ -29,6 +30,7 @@ class LogicalFallacyAgent(BaseScript):
 
         Raises:
             Exception: If an error occurs during the analysis.
+
         """
         self.logger.info("Starting logical fallacy analysis.")
 

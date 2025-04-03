@@ -9,7 +9,6 @@ import argparse
 import email
 import imaplib
 import json
-import logging
 import os
 import re
 import sys
@@ -17,9 +16,8 @@ import time
 from datetime import datetime, timedelta
 from email.header import decode_header
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict
 
-import duckdb
 from dateutil import parser as date_parser
 
 # Add the project root to the Python path
@@ -28,9 +26,6 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import get_connection
-from dewey.core.db.utils import create_table_if_not_exists
-from dewey.llm.llm_utils import get_llm_client
 
 
 class IMAPEmailImporter(BaseScript):
@@ -114,6 +109,7 @@ class IMAPEmailImporter(BaseScript):
 
         Returns:
             An argument parser configured with common options.
+
         """
         parser = super().setup_argparse()
         parser.add_argument("--username", required=True, help="Gmail username")
@@ -147,6 +143,7 @@ class IMAPEmailImporter(BaseScript):
 
         Raises:
             Exception: If connection to Gmail fails.
+
         """
         try:
             # Connect to Gmail's IMAP server
@@ -165,6 +162,7 @@ class IMAPEmailImporter(BaseScript):
 
         Returns:
             Decoded header string.
+
         """
         decoded_parts = []
         for part, encoding in decode_header(header):
@@ -180,7 +178,7 @@ class IMAPEmailImporter(BaseScript):
                 decoded_parts.append(str(part))
         return " ".join(decoded_parts)
 
-    def parse_email_message(self, email_data: bytes) -> Dict[str, Any]:
+    def parse_email_message(self, email_data: bytes) -> dict[str, Any]:
         """Parse email message from IMAP.
 
         Args:
@@ -191,6 +189,7 @@ class IMAPEmailImporter(BaseScript):
 
         Raises:
             Exception: If parsing email fails.
+
         """
         try:
             email_message = email.message_from_bytes(email_data)
@@ -270,7 +269,8 @@ class IMAPEmailImporter(BaseScript):
             # Create the email data structure
             email_data = {
                 "msg_id": msg_id.strip("<>"),
-                "thread_id": email_message["references"] or msg_id,  # Use references for threading if available
+                "thread_id": email_message["references"]
+                or msg_id,  # Use references for threading if available
                 "subject": subject,
                 "from_address": from_email,
                 "analysis_date": datetime.now().isoformat(),
@@ -301,7 +301,9 @@ class IMAPEmailImporter(BaseScript):
                             for addr in (email_message["bcc"] or "").split(",")
                             if addr.strip()
                         ],
-                        "received_date": date.isoformat() if "date" in locals() else None,
+                        "received_date": date.isoformat()
+                        if "date" in locals()
+                        else None,
                         "body_text": body["text"],
                         "body_html": body["html"],
                     }
@@ -340,6 +342,7 @@ class IMAPEmailImporter(BaseScript):
 
         Raises:
             Exception: If fetching emails fails.
+
         """
         try:
             # Get existing message IDs from database
@@ -363,9 +366,7 @@ class IMAPEmailImporter(BaseScript):
                     f"Found {len(message_numbers[0].split())} total messages"
                 )
             else:
-                date = (datetime.now() - timedelta(days=days_back)).strftime(
-                    "%d-%b-%Y"
-                )
+                date = (datetime.now() - timedelta(days=days_back)).strftime("%d-%b-%Y")
                 _, message_numbers = imap.search(None, f"SINCE {date}")
                 self.logger.debug(
                     f"Found {len(message_numbers[0].split())} messages since {date}"
@@ -456,7 +457,7 @@ class IMAPEmailImporter(BaseScript):
             self.logger.error(f"Error in fetch_emails: {str(e)}", exc_info=True)
             raise
 
-    def store_email(self, email_data: Dict[str, Any], batch_id: str) -> bool:
+    def store_email(self, email_data: dict[str, Any], batch_id: str) -> bool:
         """Store email in the database.
 
         Args:
@@ -465,6 +466,7 @@ class IMAPEmailImporter(BaseScript):
 
         Returns:
             True if successful.
+
         """
         try:
             # Add batch ID to email data

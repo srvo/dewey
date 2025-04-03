@@ -2,8 +2,7 @@ from dewey.core.base_script import BaseScript
 
 
 class DropOtherTables(BaseScript):
-    """
-    A script to drop all tables except the ones specified in the configuration.
+    """A script to drop all tables except the ones specified in the configuration.
 
     This script inherits from BaseScript and provides a standardized
     structure for database maintenance, including configuration loading,
@@ -11,9 +10,7 @@ class DropOtherTables(BaseScript):
     """
 
     def run(self) -> None:
-        """
-        Executes the script to drop all tables except the specified ones.
-        """
+        """Executes the script to drop all tables except the specified ones."""
         self.logger.info("Starting the process to drop other tables.")
 
         # Example of accessing a configuration value

@@ -1,4 +1,3 @@
-```python
 """Tests for database data processing and conversion."""
 
 from datetime import datetime
@@ -129,7 +128,9 @@ def test_workflow_to_database_conversion(sample_workflow_data: Dict[str, Any]) -
     assert "history" not in result["structured_data"]
 
 
-def test_workflow_to_database_with_history(sample_workflow_data: Dict[str, Any]) -> None:
+def test_workflow_to_database_with_history(
+    sample_workflow_data: Dict[str, Any],
+) -> None:
     """Test conversion with existing data merging."""
     existing_data: Dict[str, Any] = {
         "structured_data": {
@@ -205,4 +206,3 @@ def test_source_type_detection(source_text: str, expected_type: str) -> None:
     processor = DataProcessor()
     result = processor.process({"content": "test", "source": source_text})
     assert result["metadata"]["source_type"] == expected_type
-```

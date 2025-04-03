@@ -15,8 +15,9 @@ class Prompts(BaseScript):
 
         Args:
             **kwargs: Additional keyword arguments.
+
         """
-        super().__init__(config_section='prompts', **kwargs)
+        super().__init__(config_section="prompts", **kwargs)
 
     def run(self) -> None:
         """Executes the core logic of the Prompts script.
@@ -29,6 +30,7 @@ class Prompts(BaseScript):
 
         Raises:
             ValueError: If a required configuration value is missing.
+
         """
         try:
             prompt_template = self.get_config_value("prompt_template")
@@ -45,7 +47,7 @@ class Prompts(BaseScript):
             self.logger.error(f"Missing configuration value: {e}")
             raise ValueError(f"Missing configuration value: {e}")
 
-    def generate_prompt(self, template: str, data: Dict[str, str]) -> str:
+    def generate_prompt(self, template: str, data: dict[str, str]) -> str:
         """Generates a prompt by populating a template with data.
 
         Args:
@@ -57,6 +59,7 @@ class Prompts(BaseScript):
 
         Raises:
             ValueError: If a required key is missing in the data.
+
         """
         try:
             prompt = template.format(**data)

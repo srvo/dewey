@@ -1,5 +1,6 @@
 """RAG agent for semantic search using the smolagents framework."""
-from typing import Any, Dict, List, Optional
+
+from typing import Any, Dict, Optional
 
 from smolagents import Tool
 
@@ -31,8 +32,8 @@ class RAGAgent(BaseScript, DeweyBaseAgent):
         )
 
     def search(
-        self, query: str, content_type: Optional[str] = None, limit: int = 5
-    ) -> Dict[str, Any]:
+        self, query: str, content_type: str | None = None, limit: int = 5
+    ) -> dict[str, Any]:
         """Searches the knowledge base using semantic similarity.
 
         Args:
@@ -42,6 +43,7 @@ class RAGAgent(BaseScript, DeweyBaseAgent):
 
         Returns:
             The search results with relevance scores.
+
         """
         self.logger.info(f"Searching knowledge base for: {query}")
         prompt = f"""
@@ -52,7 +54,7 @@ class RAGAgent(BaseScript, DeweyBaseAgent):
         result = self.run(prompt)
         return result
 
-    def run(self, prompt: str) -> Dict[str, Any]:
+    def run(self, prompt: str) -> dict[str, Any]:
         """Executes the RAG agent with the given prompt.
 
         Args:
@@ -60,6 +62,7 @@ class RAGAgent(BaseScript, DeweyBaseAgent):
 
         Returns:
             The search results.
+
         """
         self.logger.info(f"Executing RAG agent with prompt: {prompt}")
         # TODO: Implement RAG agent logic here, e.g., using self.get_config_value()

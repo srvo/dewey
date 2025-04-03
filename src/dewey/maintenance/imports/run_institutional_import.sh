@@ -37,7 +37,7 @@ python3 import_institutional_prospects.py
 if [ $? -eq 0 ]; then
     echo "Import completed successfully"
     echo "---------------------------------------------"
-    
+
     # Verify the table exists and has data
     echo "Verifying data in DuckDB..."
     python3 -c "
@@ -66,4 +66,4 @@ else
 fi
 
 echo "---------------------------------------------"
-echo "Process complete" 
+echo "Process complete"

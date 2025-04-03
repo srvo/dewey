@@ -1,5 +1,3 @@
-from typing import Any, Dict
-
 from dewey.core.base_script import BaseScript
 
 
@@ -9,16 +7,21 @@ class E2BCodeInterpreter(BaseScript):
     Inherits from BaseScript for standardized configuration and logging.
     """
 
-    def __init__(self, config_section: str = "E2BCodeInterpreter", name: str = "E2BCodeInterpreter") -> None:
+    def __init__(
+        self,
+        config_section: str = "E2BCodeInterpreter",
+        name: str = "E2BCodeInterpreter",
+    ) -> None:
         """Initializes the E2BCodeInterpreter.
 
         Args:
             config_section (str): The configuration section to use.
             name (str): The name of the script.
+
         """
         super().__init__(config_section=config_section, name=name)
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Executes the core logic of the E2B code interpreter.
 
         Retrieves configuration values, initializes necessary components,
@@ -26,6 +29,7 @@ class E2BCodeInterpreter(BaseScript):
 
         Raises:
             Exception: If an error occurs during execution.
+
         """
         try:
             # Example of accessing configuration values
@@ -45,6 +49,13 @@ class E2BCodeInterpreter(BaseScript):
             self.logger.exception(f"An error occurred: {e}")
             raise
 
+    def run(self) -> None:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()
+
     def interpret_code(self, code: str) -> str:
         """Interprets the given code using the E2B code interpreter.
 
@@ -53,6 +64,7 @@ class E2BCodeInterpreter(BaseScript):
 
         Returns:
             str: The result of the code interpretation.
+
         """
         # Placeholder for actual code interpretation logic
         self.logger.info(f"Interpreting code: {code}")

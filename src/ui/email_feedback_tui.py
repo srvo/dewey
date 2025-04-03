@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """TUI for feedback processing using charmbracelet/gum"""
+
 import json
 import os
 import subprocess
@@ -15,7 +16,7 @@ DB_FILE = f"{ACTIVE_DATA_DIR}/process_feedback.duckdb"
 CLASSIFIER_DB = f"{ACTIVE_DATA_DIR}/email_classifier.duckdb"
 
 
-def get_feedback_stats(conn) -> Dict:
+def get_feedback_stats(conn) -> dict:
     """Get statistics about feedback data"""
     stats = conn.execute(
         """
@@ -48,9 +49,7 @@ def display_feedback_table(conn):
     ).fetchall()
 
     if not feedback:
-        subprocess.run(
-            ["gum", "format", "-t", "emoji", "# No feedback found! :cry:"]
-        )
+        subprocess.run(["gum", "format", "-t", "emoji", "# No feedback found! :cry:"])
         return
 
     # Build table data
@@ -189,9 +188,7 @@ def add_feedback_flow(conn):
     )
 
 
-def suggest_rule_changes(
-    feedback: List[Dict], preferences: Dict
-) -> List[Dict]:
+def suggest_rule_changes(feedback: list[dict], preferences: dict) -> list[dict]:
     """Analyzes feedback and suggests changes to preferences."""
     suggested_changes = []
     feedback_count = len(feedback)
@@ -216,10 +213,7 @@ def suggest_rule_changes(
         add_to_source = entry.get("add_to_source")
 
         # Check if there is a discrepancy
-        if (
-            assigned_priority != suggested_priority
-            and suggested_priority is not None
-        ):
+        if assigned_priority != suggested_priority and suggested_priority is not None:
             discrepancy_key = (assigned_priority, suggested_priority)
             discrepancy_counts[discrepancy_key] += 1
 
@@ -232,9 +226,9 @@ def suggest_rule_changes(
                             "suggested_priority": suggested_priority,
                         }
                     topic_suggestions[keyword]["count"] += 1
-                    topic_suggestions[keyword][
-                        "suggested_priority"
-                    ] = suggested_priority
+                    topic_suggestions[keyword]["suggested_priority"] = (
+                        suggested_priority
+                    )
 
             if add_to_source:
                 if add_to_source not in source_suggestions:
@@ -243,9 +237,9 @@ def suggest_rule_changes(
                         "suggested_priority": suggested_priority,
                     }
                 source_suggestions[add_to_source]["count"] += 1
-                source_suggestions[add_to_source][
-                    "suggested_priority"
-                ] = suggested_priority
+                source_suggestions[add_to_source]["suggested_priority"] = (
+                    suggested_priority
+                )
 
     # 3. Suggest new override rules
     for topic, suggestion in topic_suggestions.items():
@@ -291,9 +285,7 @@ def analyze_feedback(conn):
     preferences = conn.execute(
         "SELECT config FROM preferences WHERE key = 'latest'"
     ).fetchone()
-    preferences = (
-        json.loads(preferences[0]) if preferences else {"override_rules": []}
-    )
+    preferences = json.loads(preferences[0]) if preferences else {"override_rules": []}
 
     suggestions = suggest_rule_changes(feedback, preferences)
 
@@ -359,12 +351,10 @@ def main_menu():
 
                 break
             except duckdb.IOException as e:
-                if (
-                    "Could not set lock" in str(e)
-                    and attempt < max_retries - 1
-                ):
-                    msg = f"Database locked, retrying in {retry_delay}s ({
-                        attempt + 1}/{max_retries})"
+                if "Could not set lock" in str(e) and attempt < max_retries - 1:
+                    msg = f"Database locked, retrying in {retry_delay}s ({attempt + 1}/{
+                        max_retries
+                    })"
                     subprocess.run(
                         [
                             "gum",
@@ -387,10 +377,9 @@ def main_menu():
                     "gum",
                     "choose",
                     "--header",
-                    f"Feedback Stats: {
-                        stats['total']} entries | Avg Priority: {
-                        stats['avg_priority']} | Sources: {
-                        stats['unique_sources']}",
+                    f"Feedback Stats: {stats['total']} entries | Avg Priority: {
+                        stats['avg_priority']
+                    } | Sources: {stats['unique_sources']}",
                     "View Feedback",
                     "Add Feedback",
                     "Analyze Patterns",
@@ -412,7 +401,8 @@ def main_menu():
 
     except Exception as e:
         error_msg = f"Database error: {
-            str(e)}\nCheck if another process is using the database files."
+            str(e)
+        }\nCheck if another process is using the database files."
         subprocess.run(
             [
                 "gum",
@@ -427,9 +417,7 @@ def main_menu():
     finally:
         if conn:
             conn.close()
-            subprocess.run(
-                ["gum", "format", "-t", "emoji", "# Session ended :wave:"]
-            )
+            subprocess.run(["gum", "format", "-t", "emoji", "# Session ended :wave:"])
 
 
 if __name__ == "__main__":

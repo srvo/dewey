@@ -4,27 +4,19 @@ import shutil
 from pathlib import Path
 from typing import Any, Dict, List, Protocol, Tuple
 
-from dewey.core.config import logging  # Centralized logging
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
-from dewey.core.db.utils import create_table, upsert_data  # Database utilities
-from dewey.llm.llm_utils import get_llm_client  # LLM utilities
 
 
 class FileSystemInterface(Protocol):
     """Interface for file system operations."""
 
-    def open(self, path: Path, mode: str = "r") -> Any:
-        ...
+    def open(self, path: Path, mode: str = "r") -> Any: ...
 
-    def copy2(self, src: Path, dst: Path) -> None:
-        ...
+    def copy2(self, src: Path, dst: Path) -> None: ...
 
-    def move(self, src: Path, dst: Path) -> None:
-        ...
+    def move(self, src: Path, dst: Path) -> None: ...
 
-    def exists(self, path: Path) -> bool:
-        ...
+    def exists(self, path: Path) -> bool: ...
 
 
 class RealFileSystem:
@@ -46,24 +38,19 @@ class RealFileSystem:
 class RuleLoaderInterface(Protocol):
     """Interface for loading classification rules."""
 
-    def load_rules(self) -> Dict:
-        ...
+    def load_rules(self) -> dict: ...
 
 
 class DatabaseInterface(Protocol):
     """Interface for database operations."""
 
-    def execute(self, query: str) -> list:
-        ...
+    def execute(self, query: str) -> list: ...
 
-    def close(self) -> None:
-        ...
+    def close(self) -> None: ...
 
 
 class JournalProcessor(BaseScript):
-    """
-    Automatically categorizes transactions based on predefined rules.
-    """
+    """Automatically categorizes transactions based on predefined rules."""
 
     def __init__(
         self,
@@ -72,37 +59,46 @@ class JournalProcessor(BaseScript):
         database: DatabaseInterface | None = None,
     ) -> None:
         """Initializes the JournalProcessor."""
-        super().__init__(config_section='bookkeeping')
+        super().__init__(config_section="bookkeeping")
 
         self.file_system: FileSystemInterface = file_system
         self.rule_loader: RuleLoaderInterface | None = rule_loader
         self.database: DatabaseInterface | None = database
 
         # Use self.config for configuration values
-        self.rule_sources: List[Tuple[str, int]] = [
+        self.rule_sources: list[tuple[str, int]] = [
             ("overrides.json", 0),  # Highest priority
-            ("manual_rules.json", 1), ("base_rules.json", 2),  # Lowest priority
+            ("manual_rules.json", 1),
+            ("base_rules.json", 2),  # Lowest priority
         ]
 
         # TODO: Fix search/replace block
 
         # Use self.config for file paths
-        self.classification_file: Path = Path(self.get_config_value("classification_file", str(Path.home() / "books/import/mercury/classification_rules.json")))
-        self.ledger_file: Path = Path(self.get_config_value("ledger_file", str(Path.home() / ".hledger.journal")))
+        self.classification_file: Path = Path(
+            self.get_config_value(
+                "classification_file",
+                str(Path.home() / "books/import/mercury/classification_rules.json"),
+            )
+        )
+        self.ledger_file: Path = Path(
+            self.get_config_value("ledger_file", str(Path.home() / ".hledger.journal"))
+        )
         self.backup_ext: str = self.get_config_value("backup_ext", ".bak")
 
-    def load_classification_rules(self) -> Dict:
+    def load_classification_rules(self) -> dict:
         """Load classification rules from JSON files.
 
         Returns:
             A dictionary containing the classification rules.
+
         """
         self.logger.info("Loading classification rules")
         if self.rule_loader:
             return self.rule_loader.load_rules()
         return {}  # Placeholder
 
-    def process_transactions(self, transactions: List[Dict], rules: Dict) -> List[Dict]:
+    def process_transactions(self, transactions: list[dict], rules: dict) -> list[dict]:
         """Process transactions and categorize them based on rules.
 
         Args:
@@ -111,11 +107,12 @@ class JournalProcessor(BaseScript):
 
         Returns:
             A list of processed transaction dictionaries.
+
         """
         self.logger.info("Processing transactions")
         return transactions  # Placeholder
 
-    def _parse_journal_entry(self, line: str, current_tx: Dict[str, Any]) -> None:
+    def _parse_journal_entry(self, line: str, current_tx: dict[str, Any]) -> None:
         """Helper function to parse a single line of a journal entry."""
         if not current_tx.get("date"):
             # Transaction header line
@@ -132,7 +129,7 @@ class JournalProcessor(BaseScript):
             amount = parts[1].strip() if len(parts) > 1 else ""
             current_tx["postings"].append({"account": account, "amount": amount})
 
-    def parse_journal_entries(self, file_path: Path) -> List[Dict]:
+    def parse_journal_entries(self, file_path: Path) -> list[dict]:
         """Parse hledger journal file into structured transactions.
 
         Args:
@@ -140,14 +137,15 @@ class JournalProcessor(BaseScript):
 
         Returns:
             A list of structured transactions.
+
         """
         self.logger.info(f"Parsing journal file: {file_path}")
 
         with self.file_system.open(file_path) as f:
             content = f.read()
 
-        transactions: List[Dict[str, Any]] = []
-        current_tx: Dict[str, Any] = {"postings": []}
+        transactions: list[dict[str, Any]] = []
+        current_tx: dict[str, Any] = {"postings": []}
 
         for line in content.split("\n"):
             line = line.rstrip()
@@ -165,7 +163,7 @@ class JournalProcessor(BaseScript):
         self.logger.info(f"Found {len(transactions)} transactions")
         return transactions
 
-    def serialize_transactions(self, transactions: List[Dict]) -> str:
+    def serialize_transactions(self, transactions: list[dict]) -> str:
         """Convert structured transactions back to journal format.
 
         Args:
@@ -173,6 +171,7 @@ class JournalProcessor(BaseScript):
 
         Returns:
             A string representation of the transactions in journal format.
+
         """
         journal_lines = []
 
@@ -199,6 +198,7 @@ class JournalProcessor(BaseScript):
 
         Raises:
             Exception: If writing to the journal file fails.
+
         """
         backup_path = file_path.with_suffix(f".{self.backup_ext}")
 
@@ -219,24 +219,18 @@ class JournalProcessor(BaseScript):
                 self.file_system.move(backup_path, file_path)
             raise
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Main processing workflow."""
-        try:
-            # Load configuration
-            rules = self.load_classification_rules()
+        # Load configuration
+        rules = self.load_classification_rules()
 
-            # Process journal entries
-            transactions = self.parse_journal_entries(self.ledger_file)
-            updated_transactions = self.process_transactions(transactions, rules)
-            new_content = self.serialize_transactions(updated_transactions)
+        # Process journal entries
+        transactions = self.parse_journal_entries(self.ledger_file)
+        updated_transactions = self.process_transactions(transactions, rules)
+        new_content = self.serialize_transactions(updated_transactions)
 
-            # Write results
-            self.write_journal_file(new_content, self.ledger_file)
-            self.logger.info("Successfully updated journal entries")
-
-        except Exception as e:
-            self.logger.exception(f"Failed to process journal: {e!s}")
-            raise
+        # Write results
+        self.write_journal_file(new_content, self.ledger_file)
 
 
 def main() -> None:

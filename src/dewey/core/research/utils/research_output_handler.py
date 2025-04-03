@@ -4,26 +4,22 @@ from dewey.core.base_script import BaseScript
 
 
 class ResearchOutputHandler(BaseScript):
-    """
-    Handles research output, saving it to a database or file.
-    """
+    """Handles research output, saving it to a database or file."""
 
-    def __init__(self, config_section: Optional[str] = None) -> None:
-        """
-        Initializes the ResearchOutputHandler.
+    def __init__(self, config_section: str | None = None) -> None:
+        """Initializes the ResearchOutputHandler.
 
         Args:
             config_section (Optional[str]): The configuration section to use.
+
         """
         super().__init__(config_section=config_section, requires_db=True)
         self.output_path = self.get_config_value(
             "research_data.output_path", "data/research/output.txt"
         )
 
-    def run(self) -> None:
-        """
-        Runs the research output handling process.
-        """
+    def execute(self) -> None:
+        """Executes the research output handling process."""
         self.logger.info("Starting research output handling...")
         try:
             # Example usage:
@@ -38,15 +34,22 @@ class ResearchOutputHandler(BaseScript):
                 f"An error occurred during research output handling: {e}", exc_info=True
             )
 
-    def save_output(self, output_data: Dict[str, Any]) -> None:
-        """
-        Saves the research output to a database or file.
+    def run(self) -> None:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()
+
+    def save_output(self, output_data: dict[str, Any]) -> None:
+        """Saves the research output to a database or file.
 
         Args:
             output_data (Dict[str, Any]): The research output data to save.
 
         Raises:
             Exception: If there is an error saving the output.
+
         """
         try:
             # Example: Save to a text file

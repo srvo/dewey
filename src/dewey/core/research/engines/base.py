@@ -18,23 +18,34 @@ class BaseEngine(BaseScript):
 
         Args:
             config_section: The configuration section to use for this engine.
+
         """
-        super().__init__(config_section=config_section, requires_db=False, enable_llm=False)
+        super().__init__(
+            config_section=config_section, requires_db=False, enable_llm=False
+        )
         self.logger.debug(
             f"BaseEngine initialized with config section: {config_section}"
         )
 
     @abstractmethod
-    def run(self) -> None:
-        """Runs the engine.
+    def execute(self) -> None:
+        """Executes the engine's main logic.
 
         This method must be overridden by subclasses to implement the
         engine's specific functionality.
 
         Raises:
             NotImplementedError: If the method is not implemented in a subclass.
+
         """
-        raise NotImplementedError("Subclasses must implement the run method.")
+        raise NotImplementedError("Subclasses must implement the execute method.")
+
+    def run(self) -> None:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
         """Gets a configuration value for this engine.
@@ -45,6 +56,7 @@ class BaseEngine(BaseScript):
 
         Returns:
             The configuration value, or the default value if the key is not found.
+
         """
         return super().get_config_value(key, default)
 
@@ -53,6 +65,7 @@ class BaseEngine(BaseScript):
 
         Args:
             message: The message to log.
+
         """
         self.logger.info(message)
 
@@ -61,6 +74,7 @@ class BaseEngine(BaseScript):
 
         Args:
             message: The message to log.
+
         """
         self.logger.error(message)
 
@@ -69,6 +83,7 @@ class BaseEngine(BaseScript):
 
         Args:
             message: The message to log.
+
         """
         self.logger.debug(message)
 
@@ -77,6 +92,7 @@ class BaseEngine(BaseScript):
 
         Args:
             message: The message to log.
+
         """
         self.logger.warning(message)
 
@@ -85,6 +101,7 @@ class BaseEngine(BaseScript):
 
         Returns:
             An argument parser configured with common options.
+
         """
         parser = super().setup_argparse()
         parser.add_argument(
@@ -98,6 +115,7 @@ class BaseEngine(BaseScript):
 
         Returns:
             Parsed arguments
+
         """
         args = super().parse_args()
 
@@ -105,12 +123,8 @@ class BaseEngine(BaseScript):
         if hasattr(args, "engine_config") and args.engine_config:
             config_path = self.get_path(args.engine_config)
             if not config_path.exists():
-                self.logger.error(
-                    f"Configuration file not found: {config_path}"
-                )
-                raise FileNotFoundError(
-                    f"Configuration file not found: {config_path}"
-                )
+                self.logger.error(f"Configuration file not found: {config_path}")
+                raise FileNotFoundError(f"Configuration file not found: {config_path}")
 
             self.config = self._load_config()  # Reload the entire config
             self.logger.info(f"Loaded configuration from {config_path}")

@@ -2,8 +2,7 @@ from dewey.core.base_script import BaseScript
 
 
 class CompanyResearch(BaseScript):
-    """
-    Base class for company research modules within Dewey.
+    """Base class for company research modules within Dewey.
 
     This class provides a standardized structure for company research scripts,
     including configuration loading, logging, and a `run` method to
@@ -16,8 +15,7 @@ class CompanyResearch(BaseScript):
         requires_db: bool = True,
         enable_llm: bool = True,
     ) -> None:
-        """
-        Initializes the CompanyResearch module.
+        """Initializes the CompanyResearch module.
 
         Args:
             config_section (str): Section in dewey.yaml to load for this script. Defaults to "company_research".
@@ -33,15 +31,15 @@ class CompanyResearch(BaseScript):
         self.name = "CompanyResearch"
         self.description = "Base class for company research scripts."
 
-    def run(self) -> None:
-        """
-        Executes the primary logic of the company research script.
+    def execute(self) -> None:
+        """Executes the primary logic of the company research script.
 
         This method should be overridden by subclasses to implement specific
         research tasks.
 
         Raises:
             Exception: If there is an error during company research.
+
         """
         self.logger.info("Starting company research...")
         try:
@@ -61,11 +59,11 @@ class CompanyResearch(BaseScript):
                     with self.db_conn.cursor() as cursor:
                         cursor.execute("SELECT * FROM companies LIMIT 10;")
                         results = cursor.fetchall()
-                        self.logger.info(f"Example query results: {results}")
+                        self.log极ger.info(f"Example query results: {results}")
                 except Exception as e:
                     self.logger.error(f"Error executing database query: {e}")
             else:
-                self.logger.warning("Database connection is not available.")
+                self.logger极.warning("Database connection is not available.")
 
             # Example of using the LLM client
             if self.llm_client:
@@ -88,6 +86,13 @@ class CompanyResearch(BaseScript):
                 f"An error occurred during company research: {e}", exc_info=True
             )
             raise
+
+    def run(self) -> None:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()
 
 
 if __name__ == "__main__":

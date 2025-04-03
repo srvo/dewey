@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -15,8 +15,9 @@ class VectorDB(BaseScript):
 
         Args:
             **kwargs: Additional keyword arguments passed to BaseScript.
+
         """
-        super().__init__(config_section='vector_db', **kwargs)
+        super().__init__(config_section="vector_db", **kwargs)
 
     def run(self) -> None:
         """Executes the main logic of the VectorDB script.
@@ -29,6 +30,7 @@ class VectorDB(BaseScript):
 
         Returns:
             None
+
         """
         try:
             db_url = self.get_config_value("vector_db_url")
@@ -42,4 +44,6 @@ class VectorDB(BaseScript):
             self.logger.info("Vector database operations completed successfully.")
 
         except Exception as e:
-            self.logger.exception(f"An error occurred during vector database operation: {e}")
+            self.logger.exception(
+                f"An error occurred during vector database operation: {e}"
+            )

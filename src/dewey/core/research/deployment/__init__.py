@@ -4,8 +4,7 @@ from dewey.core.base_script import BaseScript
 
 
 class DeploymentModule(BaseScript):
-    """
-    Base class for deployment modules within Dewey.
+    """Base class for deployment modules within Dewey.
 
     This class provides a standardized structure for deployment scripts,
     including configuration loading, logging, and a `run` method to
@@ -28,6 +27,7 @@ class DeploymentModule(BaseScript):
             enable_llm (bool): Whether this script requires LLM access. Defaults to False.
             *args (Any): Additional positional arguments.
             **kwargs (Any): Additional keyword arguments.
+
         """
         super().__init__(
             config_section=config_section,
@@ -39,9 +39,8 @@ class DeploymentModule(BaseScript):
         self.name = "DeploymentModule"
         self.description = "Base class for deployment modules."
 
-    def run(self) -> None:
-        """
-        Executes the deployment logic.
+    def execute(self) -> None:
+        """Executes the deployment logic.
 
         This method should be overridden by subclasses to implement the
         specific deployment steps.
@@ -54,6 +53,7 @@ class DeploymentModule(BaseScript):
 
         Raises:
             Exception: If an error occurs during deployment.
+
         """
         self.logger.info("Deployment module started.")
         try:
@@ -86,3 +86,10 @@ class DeploymentModule(BaseScript):
             raise
         finally:
             self.logger.info("Deployment module finished.")
+
+    def run(self) -> None:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()

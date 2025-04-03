@@ -183,19 +183,19 @@ if [ "$USE_AIDER" = true ] && [ "$CHECK_ONLY" = false ]; then
     echo -e "${BOLD}STEP 3: Using Aider to fix remaining issues...${NC}"
     # Create a temporary file to capture flake8 output
     FLAKE8_OUTPUT=$(mktemp)
-    
+
     # Run flake8 to capture remaining issues
     if [ "$IS_FILE" = true ]; then
         flake8 "$TARGET_DIR" --max-line-length="$MAX_LINE_LENGTH" > "$FLAKE8_OUTPUT" 2>/dev/null || true
     else
         find "$TARGET_DIR" -name "*.py" -exec flake8 {} --max-line-length="$MAX_LINE_LENGTH" \; > "$FLAKE8_OUTPUT" 2>/dev/null || true
     fi
-    
+
     # If there are remaining issues, run aider to fix them
     if [ -s "$FLAKE8_OUTPUT" ]; then
         ISSUE_COUNT=$(wc -l < "$FLAKE8_OUTPUT")
         echo -e "Found ${ISSUE_COUNT} remaining flake8 issues. Using Aider to fix them..."
-        
+
         # Show a sample of issues if verbose
         if [ "$VERBOSE" = true ]; then
             echo -e "\nSample of remaining issues:"
@@ -204,14 +204,14 @@ if [ "$USE_AIDER" = true ] && [ "$CHECK_ONLY" = false ]; then
                 echo -e "... and $(( ISSUE_COUNT - 5 )) more issues.\n"
             fi
         fi
-        
+
         # Set environment variables for Aider to run non-interactively
         export AIDER_NO_AUTO_COMMIT=1
         export AIDER_CHAT_HISTORY_FILE=/dev/null
         export AIDER_NO_INPUT=1
         export AIDER_QUIET=1
         export AIDER_DISABLE_STREAMING=1
-        
+
         # Prepare aider command with proper arguments
         AIDER_ARGS="--dir \"$TARGET_DIR\" --model \"$MODEL\" --conventions-file \"$CONVENTIONS_FILE\""
         if [ "$VERBOSE" = true ]; then
@@ -223,15 +223,15 @@ if [ "$USE_AIDER" = true ] && [ "$CHECK_ONLY" = false ]; then
         if [ "$CHECK_FOR_URLS" = true ]; then
             AIDER_ARGS="$AIDER_ARGS --check-for-urls"
         fi
-        
+
         # Run aider to fix the remaining issues
         echo -e "Running Aider to fix remaining issues..."
         AIDER_CMD="python3 \"$SCRIPT_DIR/aider_refactor.py\" $AIDER_ARGS"
-        
+
         if [ "$VERBOSE" = true ]; then
             echo "Command: $AIDER_CMD"
         fi
-        
+
         # Use a timeout to avoid hanging
         timeout 300s bash -c "$AIDER_CMD" || {
             echo -e "${RED}Error: Aider process timed out or encountered an error.${NC}"
@@ -241,7 +241,7 @@ if [ "$USE_AIDER" = true ] && [ "$CHECK_ONLY" = false ]; then
     else
         echo -e "${GREEN}No remaining flake8 issues found. Skipping Aider.${NC}"
     fi
-    
+
     # Clean up
     rm -f "$FLAKE8_OUTPUT"
     echo ""
@@ -265,4 +265,4 @@ if [ "$CHECK_ONLY" = true ]; then
     echo -e "To apply the changes, run the script without the --check-only flag."
 fi
 
-echo -e "${BOLD}==============================================${NC}" 
+echo -e "${BOLD}==============================================${NC}"

@@ -1,5 +1,6 @@
 """Strategic optimization and prioritization agent using smolagents."""
-from typing import Any, Dict, List, Optional
+
+from typing import Any, Dict, List
 
 from smolagents import Tool
 
@@ -7,8 +8,7 @@ from dewey.core.base_script import BaseScript
 
 
 class SloanOptimizer(BaseScript):
-    """
-    Agent for optimizing personal productivity and strategic alignment.
+    """Agent for optimizing personal productivity and strategic alignment.
 
     Features:
         - Strategic task prioritization
@@ -44,34 +44,33 @@ class SloanOptimizer(BaseScript):
         )
 
     def run(self, prompt: str) -> Any:
-        """
-        Executes the agent with the given prompt.
+        """Executes the agent with the given prompt.
 
         Args:
             prompt: The prompt to execute.
 
         Returns:
             The result of the agent's execution.
+
         """
         self.logger.info(f"Executing SloanOptimizer with prompt: {prompt}")
         # TODO: Implement agent execution logic here
         return None
 
-    def analyze_current_state(self) -> Dict[str, Any]:
-        """
-        Analyzes current state and provides optimization recommendations.
+    def analyze_current_state(self) -> dict[str, Any]:
+        """Analyzes current state and provides optimization recommendations.
 
         Returns:
             Dict[str, Any]: Current state analysis and recommendations.
+
         """
         prompt = "Analyze current state and provide optimization recommendations"
         return self.run(prompt)
 
     def optimize_tasks(
-        self, tasks: List[Dict[str, Any]], priorities: List[Dict[str, Any]]
-    ) -> List[Dict[str, Any]]:
-        """
-        Optimizes tasks based on strategic priorities.
+        self, tasks: list[dict[str, Any]], priorities: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
+        """Optimizes tasks based on strategic priorities.
 
         Args:
             tasks: List of task dictionaries to optimize.
@@ -79,28 +78,27 @@ class SloanOptimizer(BaseScript):
 
         Returns:
             List[Dict[str, Any]]: Optimized task dictionaries with prioritization metadata.
+
         """
-        prompt = (
-            f"Optimize these tasks based on strategic priorities:\nTasks: {tasks}\nPriorities: {priorities}"
-        )
+        prompt = f"Optimize these tasks based on strategic priorities:\nTasks: {tasks}\nPriorities: {priorities}"
         return self.run(prompt)
 
-    def suggest_breaks(self) -> List[Dict[str, Any]]:
-        """
-        Generates break suggestions based on current work patterns.
+    def suggest_breaks(self) -> list[dict[str, Any]]:
+        """Generates break suggestions based on current work patterns.
 
         Returns:
             List[Dict[str, Any]]: Break suggestions with timing and activity recommendations.
+
         """
         prompt = "Suggest optimal break times and activities"
         return self.run(prompt)
 
-    def check_work_life_balance(self) -> Dict[str, Any]:
-        """
-        Analyzes work-life balance metrics and provides recommendations.
+    def check_work_life_balance(self) -> dict[str, Any]:
+        """Analyzes work-life balance metrics and provides recommendations.
 
         Returns:
             Dict[str, Any]: Work-life balance metrics, analysis, and improvement suggestions.
+
         """
         prompt = "Analyze work-life balance and provide recommendations"
         return self.run(prompt)

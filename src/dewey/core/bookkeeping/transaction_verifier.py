@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import subprocess
 import sys
-from pathlib import Path
 from typing import Any, Dict, List, Optional, Protocol
 
 from prompt_toolkit import prompt
@@ -20,7 +19,7 @@ from dewey.core.bookkeeping.writers.journal_writer_fab1858b import (
 class LLMClientInterface(Protocol):
     """Interface for LLM clients."""
 
-    def classify_text(self, text: str, instructions: str) -> Optional[str]:
+    def classify_text(self, text: str, instructions: str) -> str | None:
         """Classify text using the LLM."""
         ...
 
@@ -30,14 +29,16 @@ class ClassificationVerifier(BaseScript):
 
     def __init__(
         self,
-        classification_engine: Optional[ClassificationEngine] = None,
-        journal_writer: Optional[JournalWriter] = None,
-        llm_client: Optional[LLMClientInterface] = None,
+        classification_engine: ClassificationEngine | None = None,
+        journal_writer: JournalWriter | None = None,
+        llm_client: LLMClientInterface | None = None,
     ) -> None:
         """Initializes the ClassificationVerifier."""
         super().__init__(config_section="bookkeeping")
         self.rules_path = self.get_path(
-            self.get_config_value("rules_path", "import/mercury/classification_rules.json")
+            self.get_config_value(
+                "rules_path", "import/mercury/classification_rules.json"
+            )
         )
         self.journal_path = self.get_path(
             self.get_config_value("journal_path", "~/.hledger.journal")
@@ -48,7 +49,9 @@ class ClassificationVerifier(BaseScript):
         self.llm_client = llm_client or self.llm_client
 
         if not self.rules_path.exists():
-            self.logger.error("Missing classification rules at %s", self.rules_path.resolve())
+            self.logger.error(
+                "Missing classification rules at %s", self.rules_path.resolve()
+            )
             sys.exit(1)
 
         if not self.journal_path.exists():
@@ -59,11 +62,12 @@ class ClassificationVerifier(BaseScript):
             sys.exit(1)
 
     @property
-    def valid_categories(self) -> List[str]:
+    def valid_categories(self) -> list[str]:
         """Get valid classification categories from engine.
 
         Returns:
             list[str]: List of valid classification categories.
+
         """
         return self.engine.categories
 
@@ -75,6 +79,7 @@ class ClassificationVerifier(BaseScript):
 
         Returns:
             str: AI classification suggestion.
+
         """
         try:
             instructions = "Return ONLY the account path as category1:category2"
@@ -87,7 +92,9 @@ class ClassificationVerifier(BaseScript):
             self.logger.exception("AI classification failed: %s", str(e))
             return ""
 
-    def _process_hledger_csv(self, csv_data: str, limit: int = 50) -> List[Dict[str, Any]]:
+    def _process_hledger_csv(
+        self, csv_data: str, limit: int = 50
+    ) -> list[dict[str, Any]]:
         """Process hledger CSV data using DuckDB.
 
         Args:
@@ -96,6 +103,7 @@ class ClassificationVerifier(BaseScript):
 
         Returns:
             List[Dict[str, Any]]: List of transaction dictionaries.
+
         """
         try:
             import duckdb
@@ -134,7 +142,7 @@ class ClassificationVerifier(BaseScript):
             self.logger.exception("DuckDB processing failed: %s", str(e))
             return []
 
-    def get_transaction_samples(self, limit: int = 50) -> List[Dict[str, Any]]:
+    def get_transaction_samples(self, limit: int = 50) -> list[dict[str, Any]]:
         """Get sample transactions using hledger + DuckDB.
 
         Args:
@@ -142,6 +150,7 @@ class ClassificationVerifier(BaseScript):
 
         Returns:
             list[dict]: List of transaction dictionaries.
+
         """
         try:
             # Get CSV data directly from hledger
@@ -169,14 +178,17 @@ class ClassificationVerifier(BaseScript):
         finally:
             pass
 
-    def prompt_for_feedback(self, tx: Dict[str, Any]) -> None:
+    def prompt_for_feedback(self, tx: dict[str, Any]) -> None:
         """Interactive prompt for transaction verification.
 
         Args:
             tx (dict): Transaction dictionary.
+
         """
         if not isinstance(tx, dict):
-            self.logger.error("Invalid transaction format - expected dict, got %s", type(tx))
+            self.logger.error(
+                "Invalid transaction format - expected dict, got %s", type(tx)
+            )
             return
 
         try:
@@ -224,22 +236,20 @@ class ClassificationVerifier(BaseScript):
 
         Args:
             total (int): Total number of transactions processed.
+
         """
         if self.processed_feedback > 0:
             pass
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Interactive verification workflow."""
         samples = self.get_transaction_samples()
 
         if not samples:
-            self.logger.error("No transactions found for verification")
             return
 
         for _idx, tx in enumerate(samples, 1):
             self.prompt_for_feedback(tx)
-
-        self.generate_report(len(samples))
 
 
 if __name__ == "__main__":

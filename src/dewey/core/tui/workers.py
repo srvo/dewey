@@ -1,32 +1,19 @@
-import logging
-from typing import Any
-
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import (
-    DatabaseConnection,
-    get_connection,
-    get_motherduck_connection,
-)
-from dewey.llm.llm_utils import get_llm_client
 
 
 class Workers(BaseScript):
-    """
-    A class for managing worker threads.
+    """A class for managing worker threads.
 
     Inherits from BaseScript and provides methods for starting, stopping,
     and monitoring worker threads.
     """
 
     def __init__(self):
-        """
-        Initializes the Workers class.
-        """
-        super().__init__(config_section='workers')
+        """Initializes the Workers class."""
+        super().__init__(config_section="workers")
 
     def run(self) -> None:
-        """
-        Main method to execute the worker's functionality.
+        """Main method to execute the worker's functionality.
 
         This method contains the core logic of the worker.
 
@@ -38,6 +25,7 @@ class Workers(BaseScript):
 
         Raises:
             Exception: If an error occurs during worker execution.
+
         """
         self.logger.info("Worker started.")
         try:
@@ -70,8 +58,7 @@ class Workers(BaseScript):
             raise
 
     def some_method(self, arg: str) -> None:
-        """
-        Example method demonstrating logging and config access.
+        """Example method demonstrating logging and config access.
 
         Args:
             arg: A string argument.
@@ -81,6 +68,7 @@ class Workers(BaseScript):
 
         Raises:
             None
+
         """
         self.logger.debug(f"Some method called with arg: {arg}")
         some_other_config = self.get_config_value("some_other_config", 123)

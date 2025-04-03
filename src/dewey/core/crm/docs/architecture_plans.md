@@ -18,5 +18,3 @@ goals related to this package:
 [ ] create library to generate automated responses to emails and a system similar to the process_feedback.py script that we have in this directory
 
     create tui to review the responses one at a time, provide feedback/edits, and answer questions from the llm.
-
-

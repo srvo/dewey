@@ -5,9 +5,8 @@ This module provides the main TUI application class.
 """
 
 import argparse
-import sys
 import os
-from typing import Any, Callable, Dict, List, Optional, Union
+import sys
 
 from textual.app import App, ComposeResult
 from textual.binding import Binding
@@ -17,11 +16,9 @@ from textual.screen import Screen
 from textual.widgets import Button, Footer, Header, Label, Static
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
-from dewey.llm.llm_utils import LLMClient, get_llm_client
 
 # Import our custom screens
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
 from src.ui.screens.feedback_manager_screen import FeedbackManagerScreen
 from src.ui.screens.port5_screen import Port5Screen
 
@@ -40,6 +37,7 @@ class ModuleScreen(BaseScript, Screen):
 
         Args:
             title: The title of the module screen.
+
         """
         super().__init__(config_section="tui")
         self.title = title
@@ -50,6 +48,7 @@ class ModuleScreen(BaseScript, Screen):
 
         Yields:
             ComposeResult: The composed widgets.
+
         """
         yield Header(show_clock=True)
         yield Container(
@@ -184,6 +183,7 @@ class MainMenu(Screen):
 
         Yields:
             ComposeResult: The composed widgets.
+
         """
         yield Header(show_clock=True)
         yield Container(
@@ -214,7 +214,9 @@ class MainMenu(Screen):
                 ),
                 Label("[bold]Tools & Utilities[/bold]", id="tools-title"),
                 Horizontal(
-                    Button("Feedback Manager", id="feedback-manager", variant="success"),
+                    Button(
+                        "Feedback Manager", id="feedback-manager", variant="success"
+                    ),
                     Button("Port5 Research", id="port5", variant="success"),
                     id="tools-row",
                 ),
@@ -228,6 +230,7 @@ class MainMenu(Screen):
 
         Args:
             event: The button press event.
+
         """
         button_id = event.button.id
         screen_map = {
@@ -311,8 +314,17 @@ class DeweyTUI(App):
         super().__init__()
         # Load additional CSS files
         self.stylesheet_paths = [
-            os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../src/ui/assets/feedback_manager.tcss")),
-            os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../src/ui/assets/port5.tcss"))
+            os.path.abspath(
+                os.path.join(
+                    os.path.dirname(__file__),
+                    "../../../src/ui/assets/feedback_manager.tcss",
+                )
+            ),
+            os.path.abspath(
+                os.path.join(
+                    os.path.dirname(__file__), "../../../src/ui/assets/port5.tcss"
+                )
+            ),
         ]
 
     def on_mount(self) -> None:
@@ -344,6 +356,7 @@ class TUIApp(BaseScript):
 
         Returns:
             An argument parser configured with common options.
+
         """
         parser = super().setup_argparse()
         # Add TUI-specific arguments here if needed

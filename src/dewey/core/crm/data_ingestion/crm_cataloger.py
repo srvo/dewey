@@ -1,18 +1,12 @@
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import (
-    DatabaseConnection,
-    get_connection,
-    get_motherduck_connection,
-)
 from dewey.core.db.utils import create_table, execute_query
 from dewey.llm.llm_utils import call_llm
 
 
 class CrmCataloger(BaseScript):
-    """
-    A module for cataloging CRM data within Dewey.
+    """A module for cataloging CRM data within Dewey.
 
     This module inherits from BaseScript and provides a standardized
     structure for CRM cataloging scripts, including configuration
@@ -20,25 +14,34 @@ class CrmCataloger(BaseScript):
     primary logic.
     """
 
-    def __init__(self, config_section: Optional[str] = None, *args: Any, **kwargs: Any) -> None:
+    def __init__(
+        self, config_section: str | None = None, *args: Any, **kwargs: Any
+    ) -> None:
         """Initializes the CrmCataloger module.
 
         Args:
             config_section: The section in the dewey.yaml config file to use for configuration.
             *args: Additional positional arguments to pass to the BaseScript constructor.
             **kwargs: Additional keyword arguments to pass to the BaseScript constructor.
+
         """
-        super().__init__(config_section=config_section or "crm_cataloger", *args, **kwargs, requires_db=True, enable_llm=True)
+        super().__init__(
+            config_section=config_section or "crm_cataloger",
+            *args,
+            **kwargs,
+            requires_db=True,
+            enable_llm=True,
+        )
 
     def run(self) -> None:
-        """
-        Executes the CRM cataloging process.
+        """Executes the CRM cataloging process.
 
         This method contains the main logic for cataloging CRM data,
         including fetching data, processing it, and storing the results.
 
         Raises:
             Exception: If there is an error during the CRM cataloging process.
+
         """
         self.logger.info("Starting CRM cataloging process.")
 
@@ -52,7 +55,10 @@ class CrmCataloger(BaseScript):
                 self.logger.info("Database connection is active.")
                 # Example of creating a table (replace with your actual schema)
                 table_name = "crm_catalog"
-                schema = {"id": "INTEGER", "name": "TEXT"}  # Replace with your actual schema
+                schema = {
+                    "id": "INTEGER",
+                    "name": "TEXT",
+                }  # Replace with your actual schema
                 create_table(self.db_conn, table_name, schema)
 
                 # Example of inserting data (replace with your actual data)
@@ -76,5 +82,7 @@ class CrmCataloger(BaseScript):
             self.logger.info("CRM cataloging process completed.")
 
         except Exception as e:
-            self.logger.error(f"Error during CRM cataloging process: {e}", exc_info=True)
+            self.logger.error(
+                f"Error during CRM cataloging process: {e}", exc_info=True
+            )
             raise

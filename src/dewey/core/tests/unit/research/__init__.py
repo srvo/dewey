@@ -1,1 +1,1 @@
-"""Unit tests for the research module.""" 
+"""Unit tests for the research module."""

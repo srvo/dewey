@@ -2,8 +2,7 @@ from dewey.core.base_script import BaseScript
 
 
 class CompanyAnalysisApp(BaseScript):
-    """
-    A script for performing company analysis.
+    """A script for performing company analysis.
 
     This script inherits from BaseScript and implements the run() method
     to perform the core logic of company analysis. It utilizes the Dewey
@@ -12,8 +11,7 @@ class CompanyAnalysisApp(BaseScript):
     """
 
     def __init__(self) -> None:
-        """
-        Initializes the CompanyAnalysisApp.
+        """Initializes the CompanyAnalysisApp.
 
         Calls the superclass constructor with the appropriate configuration
         section and flags for database and LLM requirements.
@@ -27,8 +25,7 @@ class CompanyAnalysisApp(BaseScript):
         )
 
     def run(self) -> None:
-        """
-        Runs the company analysis process.
+        """Runs the company analysis process.
 
         This method contains the core logic of the script, including:
         1. Retrieving company information from the database.
@@ -38,6 +35,7 @@ class CompanyAnalysisApp(BaseScript):
 
         Raises:
             Exception: If any error occurs during the analysis process.
+
         """
         try:
             self.logger.info("Starting company analysis process.")
@@ -80,8 +78,7 @@ class CompanyAnalysisApp(BaseScript):
             raise
 
     def _fetch_financial_data(self, ticker: str) -> dict:
-        """
-        Fetches financial data for a given company ticker.
+        """Fetches financial data for a given company ticker.
 
         Args:
             ticker: The ticker symbol of the company.
@@ -91,6 +88,7 @@ class CompanyAnalysisApp(BaseScript):
 
         Raises:
             Exception: If any error occurs during data fetching.
+
         """
         try:
             self.logger.info(f"Fetching financial data for {ticker}")
@@ -108,8 +106,7 @@ class CompanyAnalysisApp(BaseScript):
             raise
 
     def _analyze_company(self, company_data: dict, financial_data: dict) -> dict:
-        """
-        Analyzes company data and financial data using LLM.
+        """Analyzes company data and financial data using LLM.
 
         Args:
             company_data: A dictionary containing company information.
@@ -120,6 +117,7 @@ class CompanyAnalysisApp(BaseScript):
 
         Raises:
             Exception: If any error occurs during the analysis.
+
         """
         try:
             self.logger.info("Performing company analysis using LLM.")
@@ -137,8 +135,7 @@ class CompanyAnalysisApp(BaseScript):
             raise
 
     def _store_analysis_results(self, ticker: str, analysis_results: dict) -> None:
-        """
-        Stores the analysis results in the database.
+        """Stores the analysis results in the database.
 
         Args:
             ticker: The ticker symbol of the company.
@@ -146,6 +143,7 @@ class CompanyAnalysisApp(BaseScript):
 
         Raises:
             Exception: If any error occurs during data storage.
+
         """
         try:
             self.logger.info(f"Storing analysis results for {ticker} in the database.")

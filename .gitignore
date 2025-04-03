@@ -45,4 +45,18 @@ logs/
 # Keep
 !build/build.xml
 
+# Project specific
+uv.lock
+config/script_checkpoints.yaml
+Project Architecture.excalidraw
+Project.excalidraw
 
+# Credentials and secrets
+.env
+.env.*
+config/credentials/*.json
+*_token.json
+*_credentials.json
+*_secret.*
+secrets/
+*_key.txt

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """Test configuration and fixtures for the Dewey project."""
 
+import importlib.util
 import os
 import sys
-import logging
-import yaml
-import importlib.util
 from pathlib import Path
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import MagicMock
+import yaml
 
 # Add project root to Python path
 project_root = Path("/Users/srvo/dewey")
@@ -37,9 +37,9 @@ config_path = project_root / "config/dewey.yaml"
 if not config_path.exists():
     config_path = project_root / "src/dewey/config/dewey.yaml"
     if not config_path.exists():
-        raise FileNotFoundError(f"Could not find dewey.yaml in expected locations")
+        raise FileNotFoundError("Could not find dewey.yaml in expected locations")
 
-with open(config_path, "r") as f:
+with open(config_path) as f:
     config_data = yaml.safe_load(f)
 
 # Configure logging
@@ -64,7 +64,7 @@ def clean_logging(caplog):
 
 @pytest.fixture
 def base_script():
-    """Fixture providing BaseScript instance for test setup"""
+"""Fixture providing BaseScript instance for test setup."""
 
     class TestScript(BaseScript):
         """Class TestScript."""
@@ -140,3 +140,112 @@ logging:
     del os.environ["DEWEY_DIR"]
     del os.environ["DEWEY_CONFIG_PATH"]
     del os.environ["MOTHERDUCK_API_KEY"]
+
+
+@pytest.fixture
+def mock_credentials():
+"""
+    Mock all API credentials used in the project.
+
+    This fixture provides all the necessary API credentials for testing.
+    Use it when testing components that need to access external services.
+
+    Example:
+        def test_something(mock_credentials):
+            # Test code that uses credentials
+
+"""
+    test_credentials = {
+        # LLM API credentials
+        "OPENAI_API_KEY": "test-openai-key",
+        "ANTHROPIC_API_KEY": "test-anthropic-key",
+        "DEEPINFRA_API_KEY": "test-deepinfra-key",
+        "GEMINI_API_KEY": "test-gemini-key",
+        # Research engine credentials
+        "TAVILY_API_KEY": "test-tavily-key",
+        "BRAVE_API_KEY": "test-brave-key",
+        "FRED_API_KEY": "test-fred-key",
+        "EXA_API_KEY": "test-exa-key",
+        "FMP_API_KEY": "test-fmp-key",
+        "POLYGON_API_KEY": "test-polygon-key",
+        "APITUBE_API_KEY": "test-apitube-key",
+        # OAuth credentials
+        "GMAIL_CLIENT_ID": "test-gmail-client-id",
+        "GMAIL_CLIENT_SECRET": "test-gmail-client-secret",
+        "GMAIL_TOKEN": "test-gmail-token",
+        "GMAIL_REFRESH_TOKEN": "test-gmail-refresh-token",
+        # Database credentials
+        "DB_URL": "localhost",
+        "DB_PORT": "5432",
+        "DB_NAME": "test_db",
+        "DB_USER": "test_user",
+        "DB_PASSWORD": "test_password",
+        # Other API credentials
+        "GITHUB_TOKEN": "test-github-token",
+        "SEC_API_KEY": "test-sec-api-key",
+        "CRM_API_KEY": "test-crm-api-key",
+        "ENRICHMENT_API_KEY": "test-enrichment-api-key",
+    }
+
+    with patch.dict(os.environ, test_credentials):
+        yield test_credentials
+
+
+@pytest.fixture
+def mock_credential_config():
+"""
+    Mock the credential configuration in dewey.yaml.
+
+    This fixture returns a patch to the BaseScript._load_config method
+    to mock credential configuration.
+
+    Example:
+        def test_something(mock_credential_config):
+            # Test code that uses credentials from config
+
+"""
+    mock_config = {
+        "llm": {
+            "providers": {
+                "openai": {
+                    "api_key": "test-openai-key",
+                    "api_base": "https://api.openai.com/v1",
+                },
+                "anthropic": {
+                    "api_key": "test-anthropic-key",
+                    "api_base": "https://api.anthropic.com",
+                },
+                "deepinfra": {
+                    "api_key": "test-deepinfra-key",
+                    "api_base": "https://api.deepinfra.com/v1/openai",
+                },
+            }
+        },
+        "settings": {
+            "gmail_credentials": {
+                "client_id": "test-gmail-client-id",
+                "client_secret": "test-gmail-client-secret",
+                "token": "test-gmail-token",
+                "refresh_token": "test-gmail-refresh-token",
+            },
+            "db_url": "localhost",
+            "db_port": "5432",
+            "db_name": "test_db",
+            "db_user": "test_user",
+            "db_password": "test_password",
+            "github_token": "test-github-token",
+            "sec_api_key": "test-sec-api-key",
+        },
+        "research_engines": {
+            "tavily": {"api_key": "test-tavily-key"},
+            "brave": {"api_key": "test-brave-key"},
+            "fred": {"api_key": "test-fred-key"},
+            "exa": {"api_key": "test-exa-key"},
+            "fmp": {"api_key": "test-fmp-key"},
+            "polygon": {"api_key": "test-polygon-key"},
+            "apitube": {"api_key": "test-apitube-key"},
+        },
+    }
+
+    with patch.object(BaseScript, "_load_config", return_value=mock_config):
+        yield mock_config

@@ -1,24 +1,19 @@
-"""
-Utility functions for working with LiteLLM.
+"""Utility functions for working with LiteLLM.
 
 This module provides helper functions for common operations with LiteLLM
 such as loading and setting API keys, extracting text from responses,
 and managing fallbacks and providers.
 """
 
-import json
 import logging
 import os
 import re
-from importlib import resources
-import yaml
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 import litellm
+import yaml
 from litellm import (
     completion,
-    get_model_info,
 )
 
 from dewey.llm.exceptions import (
@@ -35,12 +30,12 @@ AIDER_CONF_PATH = os.path.expanduser("~/.aider.conf.yml")
 AIDER_MODEL_METADATA_PATH = os.path.expanduser("~/.aider.model.metadata.json")
 
 
-def load_api_keys_from_env() -> Dict[str, str]:
-    """
-    Load API keys from environment variables.
+def load_api_keys_from_env() -> dict[str, str]:
+    """Load API keys from environment variables.
 
     Returns:
         Dictionary mapping provider names to API keys
+
     """
     # Define the environment variable names for different providers
     key_mappings = {
@@ -75,21 +70,21 @@ def load_api_keys_from_env() -> Dict[str, str]:
     return api_keys
 
 
-def load_api_keys_from_aider() -> Dict[str, str]:
-    """
-    Load API keys from Aider configuration files.
+def load_api_keys_from_aider() -> dict[str, str]:
+    """Load API keys from Aider configuration files.
 
     Returns:
         Dictionary mapping provider names to API keys
+
     """
     api_keys = {}
 
     # Try to load from .aider.conf.yml
     try:
         if os.path.exists(AIDER_CONF_PATH):
-            with open(AIDER_CONF_PATH, "r") as f:
+            with open(AIDER_CONF_PATH) as f:
                 aider_conf = yaml.safe_load(f)
-                
+
                 # Extract API keys from api-key field
                 api_key_str = aider_conf.get("api-key", "")
                 if api_key_str:
@@ -99,7 +94,7 @@ def load_api_keys_from_aider() -> Dict[str, str]:
                         if "=" in pair:
                             provider, key = pair.split("=", 1)
                             api_keys[provider.strip()] = key.strip()
-                
+
                 # Extract API keys from set-env field
                 env_vars = aider_conf.get("set-env", [])
                 for env_var in env_vars:
@@ -115,12 +110,12 @@ def load_api_keys_from_aider() -> Dict[str, str]:
     return api_keys
 
 
-def set_api_keys(api_keys: Dict[str, str]) -> None:
-    """
-    Set API keys for various providers.
+def set_api_keys(api_keys: dict[str, str]) -> None:
+    """Set API keys for various providers.
 
     Args:
         api_keys: Dictionary mapping provider names to API keys
+
     """
     for provider, key in api_keys.items():
         try:
@@ -137,36 +132,36 @@ def set_api_keys(api_keys: Dict[str, str]) -> None:
             logger.error(f"Failed to set API key for {provider}: {e}")
 
 
-def load_model_metadata_from_aider() -> Dict[str, Dict[str, Any]]:
-    """
-    Load LLM model metadata from Aider's model metadata file.
+def load_model_metadata_from_aider() -> dict[str, dict[str, Any]]:
+    """Load LLM model metadata from Aider's model metadata file.
 
     Returns:
         Dictionary mapping model names to their metadata
+
     """
     try:
         if os.path.exists(AIDER_MODEL_METADATA_PATH):
-            with open(AIDER_MODEL_METADATA_PATH, "r") as f:
+            with open(AIDER_MODEL_METADATA_PATH) as f:
                 # The file might have trailing commas which JSON doesn't allow
                 content = f.read()
                 # Remove trailing commas
-                content = re.sub(r',\s*}', '}', content)
-                content = re.sub(r',\s*]', ']', content)
-                
+                content = re.sub(r",\s*}", "}", content)
+                content = re.sub(r",\s*]", "]", content)
+
                 # Parse as YAML which is more forgiving than JSON
                 return yaml.safe_load(content)
     except Exception as e:
         logger.warning(f"Error loading model metadata from Aider: {e}")
-    
+
     return {}
 
 
-def get_available_models() -> List[Dict[str, Any]]:
-    """
-    Get a list of available models across all configured providers.
+def get_available_models() -> list[dict[str, Any]]:
+    """Get a list of available models across all configured providers.
 
     Returns:
         List of dictionaries containing model information
+
     """
     try:
         # In older versions of litellm, list_available_models is not available
@@ -194,16 +189,16 @@ def configure_azure_openai(
     api_key: str,
     api_base: str,
     api_version: str,
-    deployment_name: Optional[str] = None,
+    deployment_name: str | None = None,
 ) -> None:
-    """
-    Configure Azure OpenAI settings for LiteLLM.
+    """Configure Azure OpenAI settings for LiteLLM.
 
     Args:
         api_key: Azure OpenAI API key
         api_base: Azure OpenAI API base URL
         api_version: Azure OpenAI API version
         deployment_name: Optional deployment name
+
     """
     try:
         # Set environment variables for Azure OpenAI
@@ -220,15 +215,13 @@ def configure_azure_openai(
         raise LLMAuthenticationError(f"Failed to configure Azure OpenAI: {e}")
 
 
-def setup_fallback_models(
-    primary_model: str, fallback_models: List[str]
-) -> None:
-    """
-    Configure model fallbacks for reliability.
+def setup_fallback_models(primary_model: str, fallback_models: list[str]) -> None:
+    """Configure model fallbacks for reliability.
 
     Args:
         primary_model: The primary model to use
         fallback_models: List of fallback models to try if the primary model fails
+
     """
     try:
         litellm.set_fallbacks(fallbacks=[primary_model] + fallback_models)
@@ -239,9 +232,8 @@ def setup_fallback_models(
         logger.error(f"Failed to set up fallback models: {e}")
 
 
-def get_text_from_response(response: Dict[str, Any]) -> str:
-    """
-    Extract text content from an LLM response.
+def get_text_from_response(response: dict[str, Any]) -> str:
+    """Extract text content from an LLM response.
 
     Args:
         response: LLM response dictionary
@@ -251,6 +243,7 @@ def get_text_from_response(response: Dict[str, Any]) -> str:
 
     Raises:
         LLMResponseError: If text content cannot be extracted
+
     """
     try:
         # Handle different response formats
@@ -281,8 +274,7 @@ def get_text_from_response(response: Dict[str, Any]) -> str:
 
 
 def create_message(role: str, content: str) -> Message:
-    """
-    Create a message object for LLM conversations.
+    """Create a message object for LLM conversations.
 
     Args:
         role: The role of the message sender (system, user, assistant)
@@ -290,15 +282,13 @@ def create_message(role: str, content: str) -> Message:
 
     Returns:
         A Message object
+
     """
     return Message(role=role, content=content)
 
 
-def quick_completion(
-    prompt: str, model: str = "gpt-3.5-turbo", **kwargs
-) -> str:
-    """
-    Get a quick completion for a simple prompt.
+def quick_completion(prompt: str, model: str = "gpt-3.5-turbo", **kwargs) -> str:
+    """Get a quick completion for a simple prompt.
 
     Args:
         prompt: The text prompt to send to the model
@@ -310,6 +300,7 @@ def quick_completion(
 
     Raises:
         LLMResponseError: If the completion fails
+
     """
     try:
         # Create a messages array with a single user message
@@ -326,18 +317,18 @@ def quick_completion(
 
 
 def initialize_client_from_env() -> LiteLLMClient:
-    """
-    Initialize a LiteLLM client using environment variables.
+    """Initialize a LiteLLM client using environment variables.
 
     Returns:
         Configured LiteLLMClient instance
+
     """
     # Load API keys
     api_keys = load_api_keys_from_env()
 
     # Get verbose mode from environment
     verbose = os.environ.get("LITELLM_VERBOSE", "").lower() == "true"
-    
+
     # Initialize the client with verbose flag
     client = LiteLLMClient(verbose=verbose)
 
@@ -351,7 +342,5 @@ def initialize_client_from_env() -> LiteLLMClient:
         if fallbacks and len(fallbacks) > 0:
             setup_fallback_models(client.config.model, fallbacks)
 
-    logger.info(
-        f"Initialized LiteLLM client with model: {client.config.model}"
-    )
+    logger.info(f"Initialized LiteLLM client with model: {client.config.model}")
     return client

@@ -12,6 +12,7 @@ class DocsScript(BaseScript):
         Args:
             config_section (str): The configuration section name.
             **kwargs (Any): Additional keyword arguments.
+
         """
         super().__init__(config_section=config_section, **kwargs)
 
@@ -27,6 +28,7 @@ class DocsScript(BaseScript):
 
         Returns:
             None
+
         """
         try:
             example_config_value = self.get_config_value("example_config")

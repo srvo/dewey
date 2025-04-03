@@ -1,12 +1,10 @@
-import logging
 from typing import Any
 
 from dewey.core.base_script import BaseScript
 
 
 class AnalyzeLocalDbs(BaseScript):
-    """
-    Analyzes local databases.
+    """Analyzes local databases.
 
     This module inherits from BaseScript and provides a standardized
     structure for database analysis scripts, including configuration
@@ -19,9 +17,7 @@ class AnalyzeLocalDbs(BaseScript):
         super().__init__(*args, **kwargs)
 
     def run(self) -> None:
-        """
-        Executes the database analysis logic.
-        """
+        """Executes the database analysis logic."""
         self.logger.info("Starting database analysis...")
 
         # Example of accessing a configuration value
@@ -30,6 +26,7 @@ class AnalyzeLocalDbs(BaseScript):
 
         # Add your database analysis logic here
         self.logger.info("Database analysis completed.")
+
 
 if __name__ == "__main__":
     # This is just an example of how to run the script.

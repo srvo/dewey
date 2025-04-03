@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -14,8 +14,9 @@ class ImageGeneration(BaseScript):
 
         Args:
             **kwargs: Additional keyword arguments passed to BaseScript.
+
         """
-        super().__init__(config_section='image_generation', **kwargs)
+        super().__init__(config_section="image_generation", **kwargs)
 
     def run(self) -> None:
         """Executes the image generation process.
@@ -29,6 +30,7 @@ class ImageGeneration(BaseScript):
 
         Returns:
             None
+
         """
         try:
             api_key = self.get_config_value("image_generation_api_key")
@@ -56,11 +58,14 @@ class ImageGeneration(BaseScript):
 
         Returns:
             None
+
         """
         try:
             # Placeholder for actual image generation logic
             self.logger.info(f"Generating image with prompt: {prompt}")
-            self.logger.info(f"Using API key: {api_key[:4]}...{api_key[-4:]}")  # Masking API key for security
+            self.logger.info(
+                f"Using API key: {api_key[:4]}...{api_key[-4:]}"
+            )  # Masking API key for security
             # Simulate API call
             image_url = "https://example.com/generated_image.png"
             self.logger.info(f"Image generated successfully: {image_url}")

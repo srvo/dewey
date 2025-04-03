@@ -225,7 +225,7 @@ No description available.
 - I
 - M
 - a
--  
+-
 - v
 - q
 - k
@@ -542,7 +542,7 @@ Optimizes for token usage and caching by using targeted JSON outputs.
 - I
 - Categorizes data.
 - a
--  
+-
 - Stores and retrieves tags associated with analysis results.
 - u
 - P
@@ -876,4 +876,3 @@ No description available.
 - xml library
 
 ## Architectural Decisions
-

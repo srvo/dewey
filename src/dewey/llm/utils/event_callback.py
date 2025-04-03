@@ -11,13 +11,14 @@ class EventCallback(BaseScript):
     capabilities.
     """
 
-    def __init__(self, config_section: str, event_data: Dict[str, Any]) -> None:
+    def __init__(self, config_section: str, event_data: dict[str, Any]) -> None:
         """Initializes the EventCallback with configuration and event data.
 
         Args:
             config_section (str): The configuration section for the script.
             event_data (Dict[str, Any]): A dictionary containing data
                 associated with the event.
+
         """
         super().__init__(config_section=config_section)
         self.event_data = event_data
@@ -30,6 +31,7 @@ class EventCallback(BaseScript):
 
         Raises:
             ValueError: If a required configuration value is missing.
+
         """
         try:
             callback_url = self.get_config_value("callback_url")

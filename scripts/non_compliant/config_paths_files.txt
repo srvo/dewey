@@ -1,3 +1,0 @@
-# Files that violate config_paths
-# Generated from test output on Wed Mar 19 13:17:50 2025
-# Total files: 0

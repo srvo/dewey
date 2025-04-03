@@ -2,19 +2,14 @@ from dewey.core.base_script import BaseScript
 
 
 class ListPersonRecords(BaseScript):
-    """
-    Lists person records.
-    """
+    """Lists person records."""
 
     def __init__(self):
-        """
-        Initializes the ListPersonRecords script.
-        """
+        """Initializes the ListPersonRecords script."""
         super().__init__(config_section="crm", requires_db=True)
 
     def run(self) -> None:
-        """
-        Runs the script to list person records.
+        """Runs the script to list person records.
 
         Args:
             None
@@ -24,6 +19,7 @@ class ListPersonRecords(BaseScript):
 
         Raises:
             Exception: If there is an error executing the query.
+
         """
         try:
             self.logger.info("Starting to list person records...")

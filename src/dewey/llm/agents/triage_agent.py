@@ -1,5 +1,6 @@
 """Triage agent for initial analysis and delegation of incoming items using smolagents."""
-from typing import Any, Dict, List, Optional
+
+from typing import Any, Dict, Optional
 
 from smolagents import Tool
 
@@ -7,8 +8,7 @@ from dewey.core.base_script import BaseScript
 
 
 class TriageAgent(BaseScript):
-    """
-    Agent for triaging incoming items and determining appropriate actions.
+    """Agent for triaging incoming items and determining appropriate actions.
 
     Features:
         - Priority assessment
@@ -30,7 +30,7 @@ class TriageAgent(BaseScript):
             ]
         )
 
-    def run(self, prompt: str) -> Dict[str, Any]:
+    def run(self, prompt: str) -> dict[str, Any]:
         """Runs the triage agent with the given prompt.
 
         Args:
@@ -38,10 +38,13 @@ class TriageAgent(BaseScript):
 
         Returns:
             The result of the agent's run.
+
         """
         return self.agent.run(prompt)
 
-    def triage_item(self, content: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def triage_item(
+        self, content: str, context: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """Analyzes an item and determines appropriate actions.
 
         Args:
@@ -50,6 +53,7 @@ class TriageAgent(BaseScript):
 
         Returns:
             Triage results containing priority, classification, and recommended actions.
+
         """
         self.logger.info("Triage item started", content=content, context=context)
         context_str = str(context) if context else "No additional context"

@@ -14,9 +14,7 @@ class DataValidationError(Exception):
 
 
 class LLMInterface(ABC):
-    """
-    An interface for LLM clients.
-    """
+    """An interface for LLM clients."""
 
     @abstractmethod
     def call_llm(self, prompt: str) -> str:
@@ -25,9 +23,7 @@ class LLMInterface(ABC):
 
 
 class DeweyLLM(LLMInterface):
-    """
-    A wrapper around the dewey LLM client to implement the LLMInterface.
-    """
+    """A wrapper around the dewey LLM client to implement the LLMInterface."""
 
     def __init__(self, llm_client: Any):
         self.llm_client = llm_client
@@ -46,8 +42,8 @@ class MercuryDataValidator(BaseScript):
 
     def __init__(
         self,
-        llm_client: Optional[LLMInterface] = None,
-        db_conn: Optional[Any] = None,
+        llm_client: LLMInterface | None = None,
+        db_conn: Any | None = None,
     ) -> None:
         """Initializes the MercuryDataValidator.
 
@@ -55,48 +51,34 @@ class MercuryDataValidator(BaseScript):
         with the 'bookkeeping' configuration section.
         """
         super().__init__(config_section="bookkeeping")
-        self._llm_client = DeweyLLM(self.llm_client) if llm_client is None and self.llm_client else llm_client
+        self._llm_client = (
+            DeweyLLM(self.llm_client)
+            if llm_client is None and self.llm_client
+            else llm_client
+        )
         self._db_conn = db_conn if db_conn is not None else self.db_conn
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Executes the data validation process.
 
         This method retrieves configuration values, performs a database
         query (if a database connection is available), and makes an LLM
-        call (if an LLM client is available).  It logs the progress and
-        results of each operation.
+        call (if an LLM client is available).
         """
-        self.logger.info("MercuryDataValidator is running.")
-
         # Example usage of config
         example_config_value = self.get_config_value("utils.example_config")
-        self.logger.info(f"Example config value: {example_config_value}")
 
         # Example usage of database
         if self._db_conn:
-            try:
-                self.logger.info("Attempting database operation...")
-                query = "SELECT * FROM transactions LIMIT 10"
-                result = self._db_conn.execute(query)
-                self.logger.info(f"Database query result: {result}")
-            except Exception as e:
-                self.logger.error(f"Error during database operation: {e}")
-        else:
-            self.logger.warning("Database connection not initialized.")
+            query = "SELECT * FROM transactions LIMIT 10"
+            result = self._db_conn.execute(query)
 
         # Example usage of LLM
         if self._llm_client:
-            try:
-                self.logger.info("Attempting LLM call...")
-                prompt = "Summarize the following text: Example text."
-                response = self._llm_client.call_llm(prompt)
-                self.logger.info(f"LLM response: {response}")
-            except Exception as e:
-                self.logger.error(f"Error during LLM call: {e}")
-        else:
-            self.logger.warning("LLM client not initialized.")
+            prompt = "Summarize the following text: Example text."
+            response = self._llm_client.call_llm(prompt)
 
-    def normalize_description(self, description: Optional[str]) -> str:
+    def normalize_description(self, description: str | None) -> str:
         """Normalize transaction description.
 
         Removes extra whitespace and normalizes the case of the
@@ -107,6 +89,7 @@ class MercuryDataValidator(BaseScript):
 
         Returns:
             The normalized transaction description string.
+
         """
         if not description:
             return ""
@@ -126,6 +109,7 @@ class MercuryDataValidator(BaseScript):
 
         Raises:
             ValueError: If the date string is invalid.
+
         """
         try:
             date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
@@ -148,6 +132,7 @@ class MercuryDataValidator(BaseScript):
 
         Raises:
             ValueError: If the date is outside the allowed range.
+
         """
         if date_obj.year < 2000 or date_obj > datetime.now().date():
             msg = f"Invalid date {date_obj}"
@@ -168,6 +153,7 @@ class MercuryDataValidator(BaseScript):
 
         Raises:
             ValueError: If the date is invalid or outside the allowed range.
+
         """
         date_obj = self._parse_date(date_str)
         return self._validate_date(date_obj)
@@ -183,10 +169,11 @@ class MercuryDataValidator(BaseScript):
 
         Returns:
             The normalized amount as a float.
+
         """
         return float(amount_str.replace(",", "").strip())
 
-    def validate_row(self, row: Dict[str, str]) -> Dict[str, Any]:
+    def validate_row(self, row: dict[str, str]) -> dict[str, Any]:
         """Validate and normalize a transaction row.
 
         Validates and normalizes the data in a transaction row,
@@ -201,6 +188,7 @@ class MercuryDataValidator(BaseScript):
 
         Raises:
             DataValidationError: If the transaction data is invalid.
+
         """
         try:
             # Clean and validate fields

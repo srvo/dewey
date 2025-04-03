@@ -4,7 +4,8 @@ import json
 import subprocess
 import sys
 from pathlib import Path
-from typing import Callable, Dict, List, Protocol
+from typing import Dict, List, Protocol
+from collections.abc import Callable
 
 from dewey.core.base_script import BaseScript
 
@@ -44,7 +45,7 @@ class AccountValidator(BaseScript):
         super().__init__(config_section="bookkeeping")
         self.fs: FileSystemInterface = fs
 
-    def load_rules(self, rules_file: Path) -> Dict:
+    def load_rules(self, rules_file: Path) -> dict:
         """Load classification rules from a JSON file.
 
         Args:
@@ -55,6 +56,7 @@ class AccountValidator(BaseScript):
 
         Raises:
             Exception: If the rules file cannot be loaded.
+
         """
         try:
             with self.fs.open(rules_file) as f:
@@ -66,7 +68,7 @@ class AccountValidator(BaseScript):
     def validate_accounts(
         self,
         journal_file: Path,
-        rules: Dict,
+        rules: dict,
         run_command: Callable[..., subprocess.CompletedProcess] = subprocess.run,
     ) -> bool:
         """Verify that all accounts in the rules exist in the journal file.
@@ -81,6 +83,7 @@ class AccountValidator(BaseScript):
 
         Raises:
             Exception: If the hledger command fails or account validation fails.
+
         """
         try:
             # Get both declared and used accounts
@@ -93,7 +96,7 @@ class AccountValidator(BaseScript):
             existing_accounts = set(result.stdout.splitlines())
 
             # Check all categories from rules
-            missing: List[str] = [
+            missing: list[str] = [
                 acc for acc in rules["categories"] if acc not in existing_accounts
             ]
 
@@ -116,7 +119,7 @@ class AccountValidator(BaseScript):
             self.logger.exception(f"Account validation failed: {e!s}")
             raise
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Main function to execute the hledger classification process."""
         if len(sys.argv) != 3:
             self.logger.error("Usage: account_validator.py <journal_file> <rules_file>")
@@ -133,11 +136,8 @@ class AccountValidator(BaseScript):
             self.logger.error(f"Rules file not found: {rules_file}")
             sys.exit(1)
 
-        try:
-            rules = self.load_rules(rules_file)
-            if not self.validate_accounts(journal_file, rules):
-                sys.exit(1)
-        except Exception:
+        rules = self.load_rules(rules_file)
+        if not self.validate_accounts(journal_file, rules):
             sys.exit(1)
 
 

@@ -1,6 +1,5 @@
-"""
-Functions for matching transcript files to episode entries in a database.
-"""
+"""Functions for matching transcript files to episode entries in a database."""
+
 import os
 import re
 import sqlite3
@@ -9,7 +8,6 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DBConnection
 from dewey.core.db.utils import execute_query
 
 # Define a type alias for database connection
@@ -72,7 +70,7 @@ class TranscriptMatcher(BaseScript):
         max_matches: int = 5,
         unmatched_limit: int = 5,
         update_db: bool = True,
-    ) -> Tuple[List[Dict[str, Union[str, float]]], List[str]]:
+    ) -> tuple[list[dict[str, str | float]], list[str]]:
         """Matches transcript files to episode entries in a database.
 
         Args:
@@ -101,9 +99,10 @@ class TranscriptMatcher(BaseScript):
             sqlite3.Error: If there is an error executing a database query.
             IOError: If there is an error reading a transcript file.
             UnicodeDecodeError: If there is an error decoding a transcript file.
+
         """
-        matches: List[Dict[str, Union[str, float]]] = []
-        unmatched_files: List[str] = []
+        matches: list[dict[str, str | float]] = []
+        unmatched_files: list[str] = []
 
         try:
             database_path = Path(database_path)
@@ -135,14 +134,14 @@ class TranscriptMatcher(BaseScript):
 
                     file_path = transcript_directory / file_name
                     try:
-                        with open(file_path, "r", encoding=encoding) as transcript_file:
+                        with open(file_path, encoding=encoding) as transcript_file:
                             transcript = transcript_file.read()
-                    except (IOError, UnicodeDecodeError) as e:
+                    except (OSError, UnicodeDecodeError) as e:
                         self.logger.error(f"Error reading {file_name}: {e}")
                         unmatched_files.append(str(file_path))
                         continue
 
-                    best_match: Optional[Dict[str, Union[str, float]]] = None
+                    best_match: dict[str, str | float] | None = None
                     best_score: float = 0.0
 
                     # Find the best match for the current transcript
@@ -154,7 +153,9 @@ class TranscriptMatcher(BaseScript):
                         clean_title_episode = self.clean_title(title)
                         clean_title_file = self.clean_title(file_name)
 
-                        score = self.similarity_score(clean_title_episode, clean_title_file)
+                        score = self.similarity_score(
+                            clean_title_episode, clean_title_file
+                        )
                         if score > best_score:
                             best_score = score
                             best_match = episode
@@ -175,7 +176,9 @@ class TranscriptMatcher(BaseScript):
                             try:
                                 # Update the database with the file path
                                 update_query = f"UPDATE {episode_table_name} SET {file_column} = ? WHERE {title_column} = ?"
-                                cursor.execute(update_query, (str(file_path), best_match["title"]))
+                                cursor.execute(
+                                    update_query, (str(file_path), best_match["title"])
+                                )
                                 con.commit()
                             except sqlite3.Error as e:
                                 self.logger.error(
@@ -204,6 +207,7 @@ class TranscriptMatcher(BaseScript):
 
         Returns:
             The cleaned title.
+
         """
         title = re.sub(r"[^a-zA-Z0-9\s]", "", title)  # Remove special characters
         title = title.lower()  # Convert to lowercase
@@ -218,6 +222,7 @@ class TranscriptMatcher(BaseScript):
 
         Returns:
             The similarity score between the two titles.
+
         """
         return SequenceMatcher(None, title1, title2).ratio()
 

@@ -107,4 +107,4 @@ TextArea {
 Footer {
     background: $surface;
     color: $text;
-} 
+}

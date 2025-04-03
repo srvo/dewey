@@ -6,16 +6,14 @@ from dewey.llm.llm_utils import call_llm
 
 
 class CompanyAnalysisManager(BaseScript):
-    """
-    Manages the analysis of company data, including fetching, processing, and storing information.
-    """
+    """Manages the analysis of company data, including fetching, processing, and storing information."""
 
-    def __init__(self, config_section: Optional[str] = "company_analysis") -> None:
-        """
-        Initializes the CompanyAnalysisManager.
+    def __init__(self, config_section: str | None = "company_analysis") -> None:
+        """Initializes the CompanyAnalysisManager.
 
         Args:
             config_section: The section in the dewey.yaml configuration file to use for this script.
+
         """
         super().__init__(
             name="CompanyAnalysisManager",
@@ -26,9 +24,7 @@ class CompanyAnalysisManager(BaseScript):
         )
 
     def run(self) -> None:
-        """
-        Executes the company analysis process.
-        """
+        """Executes the company analysis process."""
         try:
             self.logger.info("Starting company analysis process.")
             company_ticker = self.get_config_value("company_ticker")
@@ -45,9 +41,8 @@ class CompanyAnalysisManager(BaseScript):
             )
             raise
 
-    def _analyze_company(self, company_ticker: str) -> Dict[str, Any]:
-        """
-        Analyzes a company using LLM and other tools.
+    def _analyze_company(self, company_ticker: str) -> dict[str, Any]:
+        """Analyzes a company using LLM and other tools.
 
         Args:
             company_ticker: The ticker symbol of the company to analyze.
@@ -57,6 +52,7 @@ class CompanyAnalysisManager(BaseScript):
 
         Raises:
             Exception: If there is an error during the analysis process.
+
         """
         try:
             self.logger.info(f"Analyzing company: {company_ticker}")
@@ -77,10 +73,9 @@ class CompanyAnalysisManager(BaseScript):
             raise
 
     def _store_analysis_results(
-        self, company_ticker: str, analysis_results: Dict[str, Any]
+        self, company_ticker: str, analysis_results: dict[str, Any]
     ) -> None:
-        """
-        Stores the analysis results in the database.
+        """Stores the analysis results in the database.
 
         Args:
             company_ticker: The ticker symbol of the company.
@@ -88,6 +83,7 @@ class CompanyAnalysisManager(BaseScript):
 
         Raises:
             Exception: If there is an error storing the analysis results in the database.
+
         """
         try:
             self.logger.info(f"Storing analysis results for: {company_ticker}")

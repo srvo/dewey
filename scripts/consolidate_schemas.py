@@ -17,16 +17,15 @@ class ConsolidateSchemas(BaseScript):
         )
 
     def _are_types_compatible(self, type1: str, type2: str) -> bool:
-        """
-        Check if two SQL types are compatible.
+        """Check if two SQL types are compatible.
 
         Args:
-        -----
+        ----
             type1: First SQL type
             type2: Second SQL type
 
         Returns:
-        --------
+        -------
             True if types are compatible, False otherwise
 
         """
@@ -55,16 +54,15 @@ class ConsolidateSchemas(BaseScript):
     def _are_schemas_compatible(
         self, schema1: dict[str, str], schema2: dict[str, str]
     ) -> bool:
-        """
-        Check if two schemas are compatible.
+        """Check if two schemas are compatible.
 
         Args:
-        -----
+        ----
             schema1: First schema mapping column names to types
             schema2: Second schema mapping column names to types
 
         Returns:
-        --------
+        -------
             True if schemas are compatible, False otherwise
 
         """

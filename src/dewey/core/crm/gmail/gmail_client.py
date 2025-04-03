@@ -1,5 +1,4 @@
 import base64
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from google.oauth2 import service_account
@@ -15,8 +14,8 @@ class GmailClient(BaseScript):
     def __init__(
         self,
         service_account_file: str,
-        user_email: Optional[str] = None,
-        scopes: Optional[List[str]] = None,
+        user_email: str | None = None,
+        scopes: list[str] | None = None,
     ) -> None:
         """Initializes the Gmail client with service account credentials.
 
@@ -24,6 +23,7 @@ class GmailClient(BaseScript):
             service_account_file: Path to the service account JSON file.
             user_email: Optional user email to impersonate (for domain-wide delegation).
             scopes: List of API scopes to request.
+
         """
         super().__init__(config_section="crm")
         self.service_account_file = service_account_file
@@ -34,11 +34,12 @@ class GmailClient(BaseScript):
         self.creds = None
         self.service = None
 
-    def authenticate(self) -> Optional[Any]:
+    def authenticate(self) -> Any | None:
         """Authenticates with Gmail API using a service account.
 
         Returns:
             The Gmail service object if authentication is successful, otherwise None.
+
         """
         try:
             creds = service_account.Credentials.from_service_account_file(
@@ -58,7 +59,7 @@ class GmailClient(BaseScript):
 
     def fetch_emails(
         self, query: str = None, max_results: int = 100, page_token: str = None
-    ) -> Optional[Dict[str, Any]]:
+    ) -> dict[str, Any] | None:
         """Fetches emails from Gmail based on the provided query.
 
         Args:
@@ -68,6 +69,7 @@ class GmailClient(BaseScript):
 
         Returns:
             A dictionary containing the list of emails and the next page token, or None if an error occurred.
+
         """
         try:
             results = (
@@ -86,7 +88,7 @@ class GmailClient(BaseScript):
             self.logger.error(f"An error occurred: {error}")
             return None
 
-    def get_message(self, msg_id: str, format: str = "full") -> Optional[Dict[str, Any]]:
+    def get_message(self, msg_id: str, format: str = "full") -> dict[str, Any] | None:
         """Retrieves a specific email message by ID.
 
         Args:
@@ -95,6 +97,7 @@ class GmailClient(BaseScript):
 
         Returns:
             A dictionary containing the email message, or None if an error occurred.
+
         """
         try:
             message = (
@@ -108,7 +111,7 @@ class GmailClient(BaseScript):
             self.logger.error(f"An error occurred: {error}")
             return None
 
-    def decode_message_body(self, message: Dict[str, Any]) -> str:
+    def decode_message_body(self, message: dict[str, Any]) -> str:
         """Decodes the message body from base64.
 
         Args:
@@ -116,20 +119,21 @@ class GmailClient(BaseScript):
 
         Returns:
             The decoded message body as a string.
+
         """
         try:
             if "data" in message:
-                return base64.urlsafe_b64decode(
-                    message["data"].encode("ASCII")
-                ).decode("utf-8")
+                return base64.urlsafe_b64decode(message["data"].encode("ASCII")).decode(
+                    "utf-8"
+                )
             return ""
         except Exception as e:
             self.logger.error(f"Error decoding message body: {e}")
             return ""
 
-    def run(self) -> None:
-        """Placeholder for the run method required by BaseScript."""
-        self.logger.info("GmailClient run method called (placeholder).")
+    def execute(self) -> None:
+        """Main execution method for GmailClient."""
+        self.logger.info("GmailClient execute method called.")
         # Add your main logic here, e.g., fetching and processing emails.
         # Example:
         # emails = self.fetch_emails(query="from:example@example.com", max_results=10)
@@ -142,3 +146,9 @@ class GmailClient(BaseScript):
         # else:
         #     self.logger.info("No emails found.")
 
+    def run(self) -> None:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()

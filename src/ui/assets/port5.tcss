@@ -135,4 +135,4 @@ Button#status-button {
 /* Makes the text area look more like a read-only display */
 #summary-text {
     background: $surface;
-} 
+}

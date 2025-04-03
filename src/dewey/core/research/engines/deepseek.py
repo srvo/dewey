@@ -12,7 +12,7 @@ class DeepSeekEngine(BaseScript):
     def __init__(self) -> None:
         """Initializes the DeepSeek engine."""
         super().__init__(config_section="deepseek")
-        self.templates: Dict[str, str] = {
+        self.templates: dict[str, str] = {
             "ethical_analysis": """
             Analyze the ethical profile of {company} based on the following search results:
 
@@ -42,15 +42,14 @@ class DeepSeekEngine(BaseScript):
 
         Raises:
             NotImplementedError: The run method must be implemented.
+
         """
         self.logger.info("DeepSeek engine started.")
-        example_config_value = self.get_config_value(
-            "example_config", "default_value"
-        )
+        example_config_value = self.get_config_value("example_config", "default_value")
         self.logger.info(f"Example config value: {example_config_value}")
         raise NotImplementedError("The run method must be implemented")
 
-    def search(self, query: str) -> List[Dict[str, str]]:
+    def search(self, query: str) -> list[dict[str, str]]:
         """Searches for information using DeepSeek.
 
         Args:
@@ -58,6 +57,7 @@ class DeepSeekEngine(BaseScript):
 
         Returns:
             List of search results.
+
         """
         self.logger.info(f"Searching for: {query}")
         # Mock implementation for testing
@@ -73,9 +73,9 @@ class DeepSeekEngine(BaseScript):
     def analyze(
         self,
         content: Any,
-        template: Optional[str] = None,
+        template: str | None = None,
         **kwargs: Any,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Analyzes content using DeepSeek.
 
         Args:
@@ -85,6 +85,7 @@ class DeepSeekEngine(BaseScript):
 
         Returns:
             Analysis results.
+
         """
         self.logger.info(f"Analyzing content with template: {template}")
         prompt = self.templates.get(template)

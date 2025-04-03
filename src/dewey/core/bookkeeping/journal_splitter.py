@@ -10,20 +10,17 @@ from dewey.core.base_script import BaseScript
 class FileSystemInterface(Protocol):
     """Interface for file system operations."""
 
-    def open(self, path: str, mode: str = "r") -> IO:
-        ...
+    def open(self, path: str, mode: str = "r") -> IO: ...
 
-    def mkdir(self, path: str, parents: bool = False, exist_ok: bool = False) -> None:
-        ...
+    def mkdir(
+        self, path: str, parents: bool = False, exist_ok: bool = False
+    ) -> None: ...
 
-    def basename(self, path: str) -> str:
-        ...
+    def basename(self, path: str) -> str: ...
 
-    def join(self, path1: str, path2: str) -> str:
-        ...
+    def join(self, path1: str, path2: str) -> str: ...
 
-    def listdir(self, path: str) -> List[str]:
-        ...
+    def listdir(self, path: str) -> list[str]: ...
 
 
 class RealFileSystem:
@@ -41,25 +38,24 @@ class RealFileSystem:
     def join(self, path1: str, path2: str) -> str:
         return os.path.join(path1, path2)
 
-    def listdir(self, path: str) -> List[str]:
+    def listdir(self, path: str) -> list[str]:
         return os.listdir(path)
 
 
 class ConfigInterface(Protocol):
     """Interface for configuration."""
 
-    def get_config_value(self, key: str) -> str:
-        ...
+    def get_config_value(self, key: str) -> str: ...
 
 
 class JournalSplitter(BaseScript):
-    """
-    Splits a journal file into separate files by year.
-    """
+    """Splits a journal file into separate files by year."""
 
-    def __init__(self, file_system: FileSystemInterface = None, config: ConfigInterface = None) -> None:
+    def __init__(
+        self, file_system: FileSystemInterface = None, config: ConfigInterface = None
+    ) -> None:
         """Initializes the JournalSplitter."""
-        super().__init__(config_section='bookkeeping')
+        super().__init__(config_section="bookkeeping")
         self.file_system: FileSystemInterface = file_system or RealFileSystem()
         self.config: ConfigInterface = config or self  # type: ignore[assignment]
 
@@ -87,6 +83,7 @@ class JournalSplitter(BaseScript):
 
         Returns:
             None
+
         """
         # Create output directory if it doesn't exist
         self.file_system.mkdir(output_dir, parents=True, exist_ok=True)
@@ -96,9 +93,9 @@ class JournalSplitter(BaseScript):
         bank_account = f"assets:checking:mercury{account_num}"
 
         # Initialize files dict to store transactions by year
-        files: Dict[str, IO] = {}
+        files: dict[str, IO] = {}
         current_year: str | None = None
-        current_transaction: List[str] = []
+        current_transaction: list[str] = []
 
         with self.file_system.open(input_file) as f:
             for line in f:
@@ -111,7 +108,9 @@ class JournalSplitter(BaseScript):
                                 output_dir,
                                 f"{self.file_system.basename(input_file).replace('.journal', '')}_{current_year}.journal",
                             )
-                            files[current_year] = self.file_system.open(output_file, "w")
+                            files[current_year] = self.file_system.open(
+                                output_file, "w"
+                            )
                         files[current_year].write("".join(current_transaction))
 
                     # Start new transaction
@@ -137,7 +136,7 @@ class JournalSplitter(BaseScript):
         for f in files.values():
             f.close()
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Process all journal files."""
         input_dir = self.config.get_config_value("bookkeeping.journal_dir")
         output_dir = self.file_system.join(input_dir, "by_year")
@@ -146,9 +145,7 @@ class JournalSplitter(BaseScript):
         for file in self.file_system.listdir(input_dir):
             if file.endswith(".journal") and not file.startswith("."):
                 input_file = self.file_system.join(input_dir, file)
-                self.logger.info(f"Splitting journal file: {input_file}")
                 self.split_journal_by_year(input_file, output_dir)
-                self.logger.info(f"Journal file split: {input_file}")
 
     def get_config_value(self, key: str) -> str:
         """Get a config value."""

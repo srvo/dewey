@@ -1,4 +1,3 @@
-```python
 #!/usr/bin/env python3
 
 """Data import CLI commands."""
@@ -41,6 +40,7 @@ def import_universe(file_path: str) -> None:
 
     Args:
         file_path: Path to the CSV file.
+
     """
     try:
         _ensure_db_initialized()  # Initialize DB and create tables
@@ -60,6 +60,7 @@ def import_portfolio(file_path: str) -> None:
 
     Args:
         file_path: Path to the CSV file.
+
     """
     try:
         _ensure_db_initialized()  # Initialize DB and create tables
@@ -81,6 +82,7 @@ def import_data(file_path: str, format: str) -> None:
     Args:
         file_path: Path to the data file.
         format: Format of the data file (csv, json, or excel).
+
     """
     try:
         data_store = DataStore()
@@ -103,4 +105,3 @@ def import_data(file_path: str, format: str) -> None:
 
 if __name__ == "__main__":
     cli()
-```

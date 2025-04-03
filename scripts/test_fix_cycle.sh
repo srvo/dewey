@@ -260,10 +260,10 @@ fi
 # If we're in generate-then-fix mode, we'll generate tests first
 if [ "$GENERATE_THEN_FIX" = true ] && [ "$FIX_ONLY" = false ]; then
     echo -e "${GREEN}Generating tests for $DIR using aider_refactor_and_test.py...${NC}"
-    
+
     # Build the command
     GEN_CMD="python \"$SCRIPT_DIR/aider_refactor_and_test.py\" --src-dir \"$DIR\" --test-dir \"$TEST_DIR\" --model \"$MODEL_NAME\" $VERBOSE_FLAG $DRY_RUN_FLAG --skip-refactor $NO_TESTABILITY_FLAG --conventions-file \"$CONVENTIONS_FILE\""
-    
+
     # Execute the test generation
     echo -e "${BLUE}Executing: $GEN_CMD${NC}"
     eval $GEN_CMD || {
@@ -276,27 +276,27 @@ fi
 # If it's a directory, handle files individually first
 if [ -d "$DIR" ] && [ "$TESTABLE_ONLY" = false ] && [ "$FIX_ONLY" = false ]; then
     echo -e "${GREEN}Processing directory: $DIR${NC}"
-    
+
     # Find Python files in the directory
     PYTHON_FILES=$(find "$DIR" -name "*.py")
     NUM_FILES=$(echo "$PYTHON_FILES" | wc -l | tr -d ' ')
-    
+
     if [ "$NUM_FILES" -eq 0 ]; then
         echo -e "${YELLOW}No Python files found in $DIR${NC}"
     else
         echo -e "Found $NUM_FILES Python files in $DIR"
-        
+
         # Process each Python file individually first
         for PY_FILE in $PYTHON_FILES; do
             echo -e "${GREEN}Processing file: $PY_FILE${NC}"
-            
+
             # If in testable-only mode, use our improved refactor script to focus on testability
             if [ "$TESTABLE_ONLY" = true ]; then
                 echo -e "${YELLOW}Making $PY_FILE more testable...${NC}"
                 python "$SCRIPT_DIR/aider_refactor_and_test.py" --src-dir "$PY_FILE" --test-dir "$TEST_DIR" --model "$MODEL_NAME" $VERBOSE_FLAG $DRY_RUN_FLAG --skip-refactor $PERSIST_SESSION_FLAG --conventions-file "$CONVENTIONS_FILE" $NO_TESTABILITY_FLAG
                 continue
             fi
-            
+
             # Run flake8 to check for syntax errors first
             python -m flake8 "$PY_FILE" >/dev/null 2>&1 || {
                 echo -e "${YELLOW}Fixing flake8 issues in $PY_FILE${NC}"
@@ -316,11 +316,11 @@ fi
 if [ -d "$TEST_DIR/unit" ]; then
     TEST_MODULE_PATH=$(echo "$DIR" | sed 's|^src/||' | sed 's|/|.|g')
     TEST_PATH="$TEST_DIR/unit/$TEST_MODULE_PATH"
-    
+
     if [ -d "$TEST_PATH" ]; then
         echo -e "${GREEN}Checking for syntax errors in generated test files...${NC}"
         TEST_FILES=$(find "$TEST_PATH" -name "test_*.py")
-        
+
         for TEST_FILE in $TEST_FILES; do
             echo -e "${BLUE}Checking $TEST_FILE...${NC}"
             # Try to compile the test file to check for syntax errors
@@ -352,4 +352,4 @@ else
     echo -e "${RED}❌ FAILURE: Tests are still failing.${NC}"
 fi
 
-exit $RESULT 
+exit $RESULT

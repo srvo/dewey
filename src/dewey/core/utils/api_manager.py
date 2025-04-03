@@ -1,11 +1,8 @@
-import logging
-
 from dewey.core.base_script import BaseScript
 
 
 class ApiManager(BaseScript):
-    """
-    Manages API interactions, providing a base class for API-related scripts.
+    """Manages API interactions, providing a base class for API-related scripts.
 
     This class inherits from BaseScript and provides standardized access to
     configuration and logging.
@@ -13,12 +10,11 @@ class ApiManager(BaseScript):
 
     def __init__(self):
         """Initializes the ApiManager."""
-        super().__init__(config_section='api_manager')
+        super().__init__(config_section="api_manager")
         # Logger is already set up by the BaseScript class
 
     def run(self) -> None:
-        """
-        Executes the main logic of the API manager.
+        """Executes the main logic of the API manager.
 
         This method should be overridden by subclasses to implement specific
         API-related tasks.

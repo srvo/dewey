@@ -1,6 +1,5 @@
 import logging
 import sys
-from typing import Optional
 
 import psycopg2
 
@@ -8,36 +7,35 @@ from dewey.core.base_script import BaseScript
 
 
 class AdminTasks(BaseScript):
-    """
-    A class for performing administrative tasks, such as database
+    """A class for performing administrative tasks, such as database
     maintenance and user management.
     """
 
     def __init__(self):
-        """
-        Initializes the AdminTasks script.
-        """
+        """Initializes the AdminTasks script."""
         super().__init__(config_section="admin", requires_db=True)
         self.logger = logging.getLogger(__name__)  # Get logger instance
-        
+
         # Initialize db_conn to None if not already set by BaseScript
-        if not hasattr(self, 'db_conn'):
+        if not hasattr(self, "db_conn"):
             self.db_conn = None
-            
+
         # Only raise error if not in a test environment
         if self.db_conn is None and not self._is_test_environment():
-            self.logger.error("Database connection is not established during initialization.")
-            raise ValueError("Database connection is not established during initialization.")
-            
+            self.logger.error(
+                "Database connection is not established during initialization."
+            )
+            raise ValueError(
+                "Database connection is not established during initialization."
+            )
+
     def _is_test_environment(self) -> bool:
         """Check if we're running in a test environment"""
         # This is a simple check, could be improved if needed
-        return hasattr(self, '_pytest_is_running') or 'pytest' in sys.modules
+        return hasattr(self, "_pytest_is_running") or "pytest" in sys.modules
 
     def run(self) -> None:
-        """
-        Executes the administrative tasks.
-        """
+        """Executes the administrative tasks."""
         self.logger.info("Starting administrative tasks...")
         try:
             if self.db_conn is None:
@@ -56,15 +54,16 @@ class AdminTasks(BaseScript):
             raise
 
     def perform_database_maintenance(self) -> None:
-        """
-        Performs database maintenance tasks, such as vacuuming and
+        """Performs database maintenance tasks, such as vacuuming and
         analyzing tables.
         """
         try:
             self.logger.info("Performing database maintenance...")
             if self.db_conn is None:
                 if self._is_test_environment():
-                    self.logger.info("Skipping database maintenance in test environment")
+                    self.logger.info(
+                        "Skipping database maintenance in test environment"
+                    )
                     return
                 self.logger.error("Database connection is not established.")
                 raise ValueError("Database connection is not established.")
@@ -76,23 +75,18 @@ class AdminTasks(BaseScript):
             self.db_conn.commit()
             self.logger.info("Database maintenance completed.")
         except psycopg2.Error as e:
-            self.logger.error(
-                f"Database error performing database maintenance: {e}"
-            )
+            self.logger.error(f"Database error performing database maintenance: {e}")
             if self.db_conn:
                 self.db_conn.rollback()  # Rollback in case of error
             raise
         except Exception as e:
-            self.logger.error(
-                f"Unexpected error performing database maintenance: {e}"
-            )
+            self.logger.error(f"Unexpected error performing database maintenance: {e}")
             if self.db_conn:
                 self.db_conn.rollback()  # Rollback in case of error
             raise
 
     def add_user(self, username: str, password: str) -> None:
-        """
-        Adds a new user to the system.
+        """Adds a new user to the system.
 
         Args:
             username (str): The username of the new user.
@@ -100,11 +94,14 @@ class AdminTasks(BaseScript):
 
         Raises:
             ValueError: If the username already exists.
+
         """
         self.logger.info(f"Adding user {username}...")
         if self.db_conn is None:
             if self._is_test_environment():
-                self.logger.info(f"Skipping add_user operation in test environment for {username}")
+                self.logger.info(
+                    f"Skipping add_user operation in test environment for {username}"
+                )
                 return
             self.logger.error("Database connection is not established.")
             raise ValueError("Database connection is not established.")
@@ -158,8 +155,10 @@ class AdminTasks(BaseScript):
                     "INSERT INTO users (username, password) VALUES (%s, %s);",
                     (username, password),
                 )
-                self.logger.info(f"Executing: INSERT INTO users (username, password) VALUES (%s, %s);",
-                    (username, password))
+                self.logger.info(
+                    "Executing: INSERT INTO users (username, password) VALUES (%s, %s);",
+                    (username, password),
+                )
 
             self.db_conn.commit()
             self.logger.info(f"User {username} added successfully.")

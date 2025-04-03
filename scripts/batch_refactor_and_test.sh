@@ -77,12 +77,12 @@ fi
 process_directory() {
     local dir="$1"
     local dir_name=$(basename "$dir")
-    
+
     echo "------------------------------------------------------------"
     echo "Processing directory: $dir_name"
     echo "Started at: $(date)"
     echo "------------------------------------------------------------"
-    
+
     # Build the command with the appropriate flags
     local cmd="python \"$BASE_DIR/scripts/aider_refactor_and_test.py\" \
         --src-dir \"$dir\" \
@@ -91,20 +91,20 @@ process_directory() {
         --model \"$MODEL\" \
         --run-tests \
         $VERBOSE_FLAG"
-        
+
     # Add the no-testability flag if specified
     if [ "$NO_TESTABILITY" = true ]; then
         cmd="$cmd --no-testability"
     fi
-    
+
     # Run the refactor and test script on this directory
     eval $cmd
     local refactor_status=$?
-    
+
     # If we're running the test-fix cycle and the refactor didn't fail catastrophically
     if [ "$RUN_TEST_FIX" = true ] && [ $refactor_status -ne 255 ]; then
         echo "Running test-fix cycle for $dir_name"
-        
+
         # Build the test-fix command
         local fix_cmd="\"$BASE_DIR/scripts/test_fix_cycle.sh\" \
             --dir \"$dir\" \
@@ -113,27 +113,27 @@ process_directory() {
             --model \"$MODEL\" \
             --fix-only \
             $VERBOSE_FLAG"
-            
+
         # Add the no-testability flag if specified
         if [ "$NO_TESTABILITY" = true ]; then
             fix_cmd="$fix_cmd --no-testability"
         fi
-        
+
         # Add max iterations if specified
         if [ ! -z "${MAX_ITERATIONS:-}" ]; then
             fix_cmd="$fix_cmd --max-iterations $MAX_ITERATIONS"
         fi
-        
+
         # Run the test-fix cycle
         eval $fix_cmd
         local fix_status=$?
-        
+
         # Take the worst status between refactor and fix
         if [ $fix_status -ne 0 ]; then
             refactor_status=$fix_status
         fi
     fi
-    
+
     echo ""
     if [ $refactor_status -eq 0 ]; then
         echo "✅ Successfully completed processing of: $dir_name"
@@ -143,7 +143,7 @@ process_directory() {
     echo "Finished at: $(date)"
     echo "------------------------------------------------------------"
     echo ""
-    
+
     return $refactor_status
 }
 
@@ -206,4 +206,4 @@ if [ ${#failed[@]} -gt 0 ]; then
 fi
 
 echo "Process completed at: $(date)"
-echo "============================================================" 
+echo "============================================================"

@@ -17,10 +17,11 @@ class TestWriter(BaseScript):
 
         Args:
             **kwargs: Keyword arguments passed to the BaseScript constructor.
+
         """
         super().__init__(**kwargs)
 
-    def run(self) -> Dict[str, Any]:
+    def run(self) -> dict[str, Any]:
         """Executes the core logic of the test writer.
 
         This method should contain the main functionality of the script,
@@ -31,6 +32,7 @@ class TestWriter(BaseScript):
 
         Raises:
             Exception: If any error occurs during the script execution.
+
         """
         try:
             # Access configuration values

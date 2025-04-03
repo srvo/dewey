@@ -2,23 +2,19 @@ from dewey.core.base_script import BaseScript
 
 
 class Bing(BaseScript):
-    """
-    A class for interacting with the Bing search engine.
-    """
+    """A class for interacting with the Bing search engine."""
 
     def __init__(self, config_section: str = "bing") -> None:
-        """
-        Initializes the Bing search engine class.
+        """Initializes the Bing search engine class.
 
         Args:
             config_section (str): The section in the config file to use for this engine.
+
         """
         super().__init__(config_section=config_section)
 
     def run(self) -> None:
-        """
-        Executes the main logic of the Bing script.
-        """
+        """Executes the main logic of the Bing script."""
         self.logger.info("Bing script started.")
 
         api_key = self.get_config_value("api_key")

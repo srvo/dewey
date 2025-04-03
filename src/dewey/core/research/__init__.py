@@ -16,6 +16,7 @@ class ResearchScript(BaseScript):
         Args:
             config_section (str): Configuration section name.
             **kwargs (Any): Additional keyword arguments.
+
         """
         super().__init__(config_section=config_section, **kwargs)
 
@@ -27,6 +28,7 @@ class ResearchScript(BaseScript):
 
         Raises:
             NotImplementedError: If the method is not implemented in the subclass.
+
         """
         raise NotImplementedError("Subclasses must implement the run method.")
 
@@ -38,6 +40,7 @@ class ResearchScript(BaseScript):
 
         Returns:
             A processed string.
+
         """
         config_value = self.get_config_value("example_config_key")
         self.logger.info(f"Processing data: {input_data} with config: {config_value}")

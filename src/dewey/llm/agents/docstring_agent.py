@@ -1,4 +1,5 @@
 """Code documentation analysis and generation agent using smolagents."""
+
 import ast
 from typing import List, Dict, Any, Optional
 from pathlib import Path
@@ -10,16 +11,9 @@ from dewey.core.base_script import BaseScript
 
 logger = structlog.get_logger(__name__)
 
-    def run(self) -> None:
-        """
-        Run the script.
-        """
-        # TODO: Implement script logic here
-        raise NotImplementedError("The run method must be implemented")
 
 class DocstringAgent(BaseScript, DeweyBaseAgent):
-    """
-    Agent for analyzing and generating code documentation.
+    """Agent for analyzing and generating code documentation.
 
     Features:
         - Docstring analysis and improvement
@@ -32,20 +26,28 @@ class DocstringAgent(BaseScript, DeweyBaseAgent):
     def __init__(self):
         """Initializes the DocstringAgent."""
         super().__init__(task_type="docstring")
-        self.add_tools([
-            Tool.from_function(self.extract_code_context, description="Extracts context from code using AST analysis."),
-            Tool.from_function(self._calculate_complexity, description="Calculates cyclomatic complexity of an AST node.")
-        ])
+        self.add_tools(
+            [
+                Tool.from_function(
+                    self.extract_code_context,
+                    description="Extracts context from code using AST analysis.",
+                ),
+                Tool.from_function(
+                    self._calculate_complexity,
+                    description="Calculates cyclomatic complexity of an AST node.",
+                ),
+            ]
+        )
 
     def extract_code_context(self, code: str) -> List[Dict[str, Any]]:
-        """
-        Extracts context from code using AST analysis.
+        """Extracts context from code using AST analysis.
 
         Args:
             code (str): Source code to analyze.
 
         Returns:
             List[Dict[str, Any]]: A list of code contexts.
+
         """
         contexts = []
         tree = ast.parse(code)
@@ -64,14 +66,14 @@ class DocstringAgent(BaseScript, DeweyBaseAgent):
         return contexts
 
     def _calculate_complexity(self, node: ast.AST) -> int:
-        """
-        Calculates cyclomatic complexity of an AST node.
+        """Calculates cyclomatic complexity of an AST node.
 
         Args:
             node (ast.AST): The AST node to analyze.
 
         Returns:
             int: The cyclomatic complexity.
+
         """
         complexity = 1
 
@@ -84,14 +86,14 @@ class DocstringAgent(BaseScript, DeweyBaseAgent):
         return complexity
 
     def analyze_file(self, file_path: Path) -> Optional[Dict[str, Any]]:
-        """
-        Analyzes a file and improves its documentation.
+        """Analyzes a file and improves its documentation.
 
         Args:
             file_path (Path): The path to the file to analyze.
 
         Returns:
             Optional[Dict[str, Any]]: A dictionary containing the analysis results, or None if an error occurs.
+
         """
         try:
             code = file_path.read_text()
@@ -113,4 +115,3 @@ class DocstringAgent(BaseScript, DeweyBaseAgent):
         except Exception as e:
             self.logger.error(f"Error analyzing file: {e}")
             return None
-

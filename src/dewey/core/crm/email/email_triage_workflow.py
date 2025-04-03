@@ -2,19 +2,16 @@ from dewey.core.base_script import BaseScript
 
 
 class EmailTriageWorkflow(BaseScript):
-    """
-    A workflow for triaging emails, categorizing them, and taking appropriate actions.
-    """
+    """A workflow for triaging emails, categorizing them, and taking appropriate actions."""
 
     def __init__(self):
-        """
-        Initializes the EmailTriageWorkflow.
-        """
-        super().__init__(config_section='email_triage', requires_db=True, enable_llm=True)
+        """Initializes the EmailTriageWorkflow."""
+        super().__init__(
+            config_section="email_triage", requires_db=True, enable_llm=True
+        )
 
-    def run(self) -> None:
-        """
-        Executes the email triage workflow.
+    def execute(self) -> None:
+        """Executes the email triage workflow.
 
         This includes connecting to the database, fetching emails, categorizing them,
         and taking actions based on the categories.
@@ -27,13 +24,14 @@ class EmailTriageWorkflow(BaseScript):
 
         Raises:
             Exception: If any error occurs during the workflow execution.
+
         """
         self.logger.info("Starting email triage workflow...")
 
         try:
             # Example: Accessing configuration values
-            max_emails_to_process = self.get_config_value('max_emails_to_process', 100)
-            self.logger.info(f"Processing up to {max_emails_to_process} emails.")
+            max_emails_to_process = self.get_config_value("max_emails_to_process", 100)
+            self.logger.info(f"Processing up to {max_emails极_to_process} emails.")
 
             # Example: Database operation (replace with actual logic)
             # from dewey.core.db.utils import execute_query  # Example import
@@ -59,5 +57,14 @@ class EmailTriageWorkflow(BaseScript):
             self.logger.info("Email triage workflow completed.")
 
         except Exception as e:
-            self.logger.error(f"An error occurred during email triage workflow: {e}", exc_info=True)
+            self.logger.error(
+                f"An error occurred during email triage workflow: {e}", exc_info=True
+            )
             raise
+
+    def run(self) -> None:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()

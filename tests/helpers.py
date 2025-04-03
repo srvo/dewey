@@ -2,7 +2,8 @@
 """Test helper utilities for the Dewey project."""
 
 import asyncio
-from typing import Any, Callable, TypeVar
+from typing import Any, TypeVar
+from collections.abc import Callable
 
 from textual.pilot import Pilot
 
@@ -21,6 +22,7 @@ async def wait_for_condition(
 
     Raises:
         TimeoutError: If condition is not met within timeout
+
     """
     start_time = asyncio.get_event_loop().time()
     while not condition():
@@ -41,6 +43,7 @@ async def wait_for_worker(
 
     Raises:
         TimeoutError: If worker does not complete within timeout
+
     """
 
     async def check_worker():
@@ -60,6 +63,7 @@ async def simulate_file_upload(
         pilot: Textual pilot instance
         source_path: Path to source file/directory
         target_db: Target database name
+
     """
     # Navigate to upload screen
     await pilot.press("u")
@@ -83,6 +87,7 @@ async def simulate_table_analysis(pilot: Pilot[Any], database: str) -> None:
     Args:
         pilot: Textual pilot instance
         database: Database to analyze
+
     """
     # Navigate to analysis screen
     await pilot.press("a")
@@ -105,6 +110,7 @@ async def simulate_config_save(pilot: Pilot[Any], token: str, default_db: str) -
         pilot: Textual pilot instance
         token: MotherDuck token
         default_db: Default database name
+
     """
     # Navigate to config screen
     await pilot.press("c")

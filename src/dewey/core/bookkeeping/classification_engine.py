@@ -4,10 +4,9 @@ import re
 from datetime import datetime
 from pathlib import Path
 from re import Pattern
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Protocol, Tuple
+from typing import TYPE_CHECKING, Any, Dict, List, Protocol, Tuple
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection
 from dewey.llm import llm_utils
 
 if TYPE_CHECKING:
@@ -36,7 +35,7 @@ class FS(Protocol):
         """Dump data to a file."""
         ...
 
-    def load(self, fp: Any) -> Dict[str, Any]:
+    def load(self, fp: Any) -> dict[str, Any]:
         """Load data from a file."""
         ...
 
@@ -52,7 +51,9 @@ class LLM(Protocol):
 class JournalWriter(Protocol):
     """JournalWriter protocol."""
 
-    def log_classification_decision(self, tx_hash: str, pattern: str, category: str) -> None:
+    def log_classification_decision(
+        self, tx_hash: str, pattern: str, category: str
+    ) -> None:
         """Log a classification decision."""
         ...
 
@@ -74,6 +75,7 @@ class ClassificationEngine(BaseScript):
             ledger_file: Path to the ledger file.
             fs: Filesystem interface.
             llm: LLM interface.
+
         """
         super().__init__(config_section="bookkeeping")
         self.ledger_file = ledger_file
@@ -89,11 +91,10 @@ class ClassificationEngine(BaseScript):
             ("base_rules.json", 2),
         ]  # Lowest priority
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Runs the classification engine."""
         self.logger.info("Starting classification engine...")
         # Add any initialization or setup steps here if needed
-        self.logger.info("Classification engine ready.")
 
     @property
     def categories(self) -> list[str]:
@@ -101,6 +102,7 @@ class ClassificationEngine(BaseScript):
 
         Returns:
             A list of valid classification categories.
+
         """
         return self._valid_categories
 
@@ -112,6 +114,7 @@ class ClassificationEngine(BaseScript):
 
         Returns:
             A dictionary containing the loaded rules.  Returns default rules on failure.
+
         """
         rules_path = self.rules_path
         try:
@@ -153,6 +156,7 @@ class ClassificationEngine(BaseScript):
 
         Raises:
             ClassificationError: If an invalid regex pattern is encountered.
+
         """
         compiled: dict[str, Pattern] = {}
         for pattern in self.rules["patterns"]:
@@ -161,14 +165,17 @@ class ClassificationEngine(BaseScript):
             except re.error as e:
                 self.logger.exception("Invalid regex pattern '%s': %s", pattern, str(e))
                 msg = f"Invalid regex pattern '{pattern}': {e!s}"
-                raise ClassificationError(msg,) from None
+                raise ClassificationError(
+                    msg,
+                ) from None
         return compiled
 
-    def load_classification_rules(self) -> List[Tuple[Pattern, str, int]]:
+    def load_classification_rules(self) -> list[tuple[Pattern, str, int]]:
         """Load and compile classification rules with priority.
 
         Returns:
             A list of compiled rules with their associated category and priority.
+
         """
         self.logger.info("Loading classification rules with priority system")
 
@@ -191,6 +198,7 @@ class ClassificationEngine(BaseScript):
 
         Args:
             output_path: Path to the output file.
+
         """
         self.logger.info("📝 Generating hledger rules file at: %s", output_path)
 
@@ -213,7 +221,8 @@ class ClassificationEngine(BaseScript):
         )
 
         self.logger.debug(
-            "Converting %d patterns to hledger rules", len(self.rules["patterns"]),
+            "Converting %d patterns to hledger rules",
+            len(self.rules["patterns"]),
         )
         for pattern, account in self.rules["patterns"].items():
             if pattern and account:
@@ -232,6 +241,7 @@ class ClassificationEngine(BaseScript):
 
         Args:
             output_path: Path to the output file.
+
         """
         self.logger.info("📝 Generating Paisa template at: %s", output_path)
 
@@ -274,6 +284,7 @@ class ClassificationEngine(BaseScript):
 
         Returns:
             A tuple containing the income account, expense account, and absolute amount.
+
         """
         for pattern, compiled in self.compiled_patterns.items():
             if compiled.search(description):
@@ -300,6 +311,7 @@ class ClassificationEngine(BaseScript):
         Args:
             feedback: User feedback string.
             journal_writer: JournalWriter instance for logging.
+
         """
         try:
             parsed: tuple[str, str] = self._parse_feedback(feedback)
@@ -316,7 +328,9 @@ class ClassificationEngine(BaseScript):
         }
 
         journal_writer.log_classification_decision(
-            tx_hash="feedback_system", pattern=pattern, category=category,
+            tx_hash="feedback_system",
+            pattern=pattern,
+            category=category,
         )
 
         self._save_overrides()
@@ -334,9 +348,11 @@ class ClassificationEngine(BaseScript):
 
         Raises:
             ClassificationError: If the feedback format is invalid.
+
         """
         match: re.Match = re.search(
-            r"(?i)classify\s+[\'\"](.+?)[\'\"].+?as\s+([\w:]+)", feedback,
+            r"(?i)classify\s+[\'\"](.+?)[\'\"].+?as\s+([\w:]+)",
+            feedback,
         )
         if not match:
             msg = f"Invalid feedback format: {feedback}"
@@ -354,6 +370,7 @@ class ClassificationEngine(BaseScript):
 
         Raises:
             ClassificationError: If AI parsing fails.
+
         """
         # from bin.deepinfra_client import classify_errors
         prompt: list[str] = [
@@ -395,6 +412,7 @@ class ClassificationEngine(BaseScript):
 
         Raises:
             ValueError: If category is not in allowed categories.
+
         """
         if category not in self.categories:
             msg = f"Category {category} is not an allowed category."
@@ -405,6 +423,7 @@ class ClassificationEngine(BaseScript):
 
         Returns:
             A list of tuples, where each tuple contains a rule (pattern and data) and its priority.
+
         """
         rules: list[tuple[tuple[str, dict], int]] = []
         rules_dir: Path = Path(__file__).parent.parent / "rules"
@@ -412,11 +431,13 @@ class ClassificationEngine(BaseScript):
         for filename, priority in self.RULE_SOURCES:
             file_path: Path = rules_dir / filename
             try:
-                with open(file_path, "r") as f:
+                with open(file_path) as f:
                     data: dict = json.load(f)
                     for pattern, category_data in data["patterns"].items():
                         rules.append(((pattern, category_data), priority))
-                    self.logger.info(f"Loaded {len(data['patterns'])} rules from {filename}")
+                    self.logger.info(
+                        f"Loaded {len(data['patterns'])} rules from {filename}"
+                    )
             except FileNotFoundError:
                 self.logger.warning(f"Rules file not found: {filename}")
             except json.JSONDecodeError as e:
@@ -437,6 +458,7 @@ class ClassificationEngine(BaseScript):
 
         Returns:
             The formatted category string.
+
         """
         category = category.lower().strip()
         if ":" not in category:
@@ -454,6 +476,7 @@ class ClassificationEngine(BaseScript):
 
         Raises:
             ClassificationError: If the pattern is invalid.
+
         """
         try:
             compiled: Pattern = re.compile(pattern, re.IGNORECASE)
@@ -462,4 +485,3 @@ class ClassificationEngine(BaseScript):
             self.logger.exception(f"Invalid regex pattern '{pattern}': {e!s}")
             msg = f"Invalid regex pattern '{pattern}': {e!s}"
             raise ClassificationError(msg) from None
-

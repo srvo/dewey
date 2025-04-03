@@ -1,12 +1,10 @@
-import logging
 from typing import Any, Optional
 
 from dewey.core.base_script import BaseScript
 
 
 class UploadDb(BaseScript):
-    """
-    A module for uploading databases within Dewey.
+    """A module for uploading databases within Dewey.
 
     This module inherits from BaseScript and provides a standardized
     structure for database uploading scripts, including configuration
@@ -19,8 +17,7 @@ class UploadDb(BaseScript):
         super().__init__(*args, **kwargs)
 
     def run(self) -> None:
-        """
-        Executes the database uploading logic.
+        """Executes the database uploading logic.
 
         This method should be overridden in subclasses to implement the
         specific database uploading functionality.
@@ -28,7 +25,7 @@ class UploadDb(BaseScript):
         self.logger.info("Starting database upload process.")
 
         # Example of accessing a configuration value
-        db_name: Optional[str] = self.get_config_value("database_name")
+        db_name: str | None = self.get_config_value("database_name")
         if db_name:
             self.logger.info(f"Database name from config: {db_name}")
         else:

@@ -1,4 +1,5 @@
 """Wellness monitoring and self-care intervention agent using smolagents."""
+
 from typing import Any, Dict, List, Optional
 
 from smolagents import Tool
@@ -8,8 +9,7 @@ from dewey.llm.agents.base_agent import DeweyBaseAgent
 
 
 class SelfCareAgent(BaseScript, DeweyBaseAgent):
-    """
-    Agent for monitoring user wellness and suggesting self-care interventions.
+    """Agent for monitoring user wellness and suggesting self-care interventions.
 
     Features:
         - Work pattern monitoring
@@ -22,12 +22,20 @@ class SelfCareAgent(BaseScript, DeweyBaseAgent):
     def __init__(self) -> None:
         """Initializes the SelfCareAgent."""
         super().__init__(task_type="wellness_monitoring")
-        self.add_tools([
-            Tool.from_function(self.monitor_and_intervene, description="Monitors work patterns and intervenes if needed."),
-            Tool.from_function(self.suggest_break, description="Suggests a break based on current work patterns.")
-        ])
+        self.add_tools(
+            [
+                Tool.from_function(
+                    self.monitor_and_intervene,
+                    description="Monitors work patterns and intervenes if needed.",
+                ),
+                Tool.from_function(
+                    self.suggest_break,
+                    description="Suggests a break based on current work patterns.",
+                ),
+            ]
+        )
 
-    def run(self, prompt: str) -> Dict[str, Any]:
+    def run(self, prompt: str) -> dict[str, Any]:
         """Runs the agent with the given prompt.
 
         Args:
@@ -35,12 +43,14 @@ class SelfCareAgent(BaseScript, DeweyBaseAgent):
 
         Returns:
             The result of running the agent.
+
         """
         return super().run(prompt)
 
-    def monitor_and_intervene(self, work_patterns: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """
-        Monitors work patterns and intervenes if needed.
+    def monitor_and_intervene(
+        self, work_patterns: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
+        """Monitors work patterns and intervenes if needed.
 
         Args:
             work_patterns: Information about recent work patterns.
@@ -48,9 +58,12 @@ class SelfCareAgent(BaseScript, DeweyBaseAgent):
 
         Returns:
             Assessment and recommendations for self-care.
+
         """
         self.logger.info("Monitoring work patterns and intervening if needed.")
-        patterns_str = str(work_patterns) if work_patterns else "No specific patterns provided"
+        patterns_str = (
+            str(work_patterns) if work_patterns else "No specific patterns provided"
+        )
         prompt = f"""
         Monitor these work patterns and suggest self-care interventions:
         {patterns_str}
@@ -65,9 +78,12 @@ class SelfCareAgent(BaseScript, DeweyBaseAgent):
         result = self.run(prompt)
         return result
 
-    def suggest_break(self, work_duration: int = 0, break_history: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
-        """
-        Suggests a break based on current work patterns.
+    def suggest_break(
+        self,
+        work_duration: int = 0,
+        break_history: list[dict[str, Any]] | None = None,
+    ) -> dict[str, Any]:
+        """Suggests a break based on current work patterns.
 
         Args:
             work_duration: Minutes of continuous work. Defaults to 0.
@@ -76,6 +92,7 @@ class SelfCareAgent(BaseScript, DeweyBaseAgent):
 
         Returns:
             Break recommendation with activity suggestion and duration.
+
         """
         self.logger.info("Suggesting a break based on current work patterns.")
         history_str = str(break_history) if break_history else "No recent breaks"

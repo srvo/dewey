@@ -32,4 +32,4 @@ nohup python -m dewey.core.crm.gmail.simple_import \
     >> "$LOG_FILE" 2>&1 &
 
 # Log the PID
-echo "$(date): Historical Gmail import started with PID $! in background" >> "$LOG_FILE" 
+echo "$(date): Historical Gmail import started with PID $! in background" >> "$LOG_FILE"

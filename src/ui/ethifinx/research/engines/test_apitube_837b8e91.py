@@ -9,6 +9,7 @@ from unittest.mock import MagicMock, patch
 
 import aiohttp
 import pytest
+
 from ethifinx.research.engines.apitube import APITubeEngine
 
 

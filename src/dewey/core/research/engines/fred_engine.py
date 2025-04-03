@@ -3,21 +3,16 @@ from dewey.llm import llm_utils
 
 
 class FredEngine(BaseScript):
-    """
-    A class for the Fred Engine.  Inherits from BaseScript.
-    """
+    """A class for the Fred Engine.  Inherits from BaseScript."""
 
     def __init__(self) -> None:
-        """
-        Initializes the FredEngine class.
-        """
+        """Initializes the FredEngine class."""
         super().__init__(
             config_section="fred_engine", requires_db=True, enable_llm=True
         )
 
     def run(self) -> None:
-        """
-        Executes the main logic of the Fred Engine.
+        """Executes the main logic of the Fred Engine.
 
         Args:
             None
@@ -27,6 +22,7 @@ class FredEngine(BaseScript):
 
         Raises:
             Exception: If there is an error during the Fred Engine execution.
+
         """
         self.logger.info("Starting Fred Engine...")
 

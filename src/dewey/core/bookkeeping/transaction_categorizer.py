@@ -6,7 +6,8 @@ import re
 import shutil
 import sys
 from pathlib import Path
-from typing import Any, Callable, Dict, Protocol
+from typing import Any, Dict, Protocol
+from collections.abc import Callable
 
 from dewey.core.base_script import BaseScript
 
@@ -62,13 +63,17 @@ class RealFileSystem:
 class JournalCategorizer(BaseScript):
     """Categorizes transactions in journal files based on predefined rules."""
 
-    def __init__(self, fs: FileSystemInterface = None, copy_func: Callable[[str, str], None] = None) -> None:
+    def __init__(
+        self,
+        fs: FileSystemInterface = None,
+        copy_func: Callable[[str, str], None] = None,
+    ) -> None:
         """Initializes the JournalCategorizer with bookkeeping config."""
         super().__init__(config_section="bookkeeping")
         self.fs: FileSystemInterface = fs or RealFileSystem()
         self.copy_func = copy_func or shutil.copy2
 
-    def load_classification_rules(self, rules_file: str) -> Dict[str, Any]:
+    def load_classification_rules(self, rules_file: str) -> dict[str, Any]:
         """Load classification rules from JSON file.
 
         Args:
@@ -80,15 +85,14 @@ class JournalCategorizer(BaseScript):
         Raises:
             FileNotFoundError: If the rules file does not exist.
             json.JSONDecodeError: If the rules file is not a valid JSON.
+
         """
         self.logger.info(f"Loading classification rules from {rules_file}")
         try:
             with self.fs.open(rules_file) as f:
                 return json.load(f)
         except FileNotFoundError:
-            self.logger.exception(
-                f"Classification rules file not found: {rules_file}"
-            )
+            self.logger.exception(f"Classification rules file not found: {rules_file}")
             raise
         except json.JSONDecodeError as e:
             self.logger.exception(f"Failed to load classification rules: {str(e)}")
@@ -105,6 +109,7 @@ class JournalCategorizer(BaseScript):
 
         Raises:
             Exception: If the backup creation fails.
+
         """
         backup_path = str(file_path) + ".bak"
         try:
@@ -116,7 +121,7 @@ class JournalCategorizer(BaseScript):
             raise
 
     def classify_transaction(
-        self, transaction: Dict[str, Any], rules: Dict[str, Any]
+        self, transaction: dict[str, Any], rules: dict[str, Any]
     ) -> str:
         """Classify a transaction based on the provided rules.
 
@@ -126,6 +131,7 @@ class JournalCategorizer(BaseScript):
 
         Returns:
             The category to which the transaction belongs.
+
         """
         description = transaction["description"].lower()
         for pattern in rules["patterns"]:
@@ -133,7 +139,7 @@ class JournalCategorizer(BaseScript):
                 return pattern["category"]
         return rules["default_category"]
 
-    def process_journal_file(self, file_path: str, rules: Dict[str, Any]) -> bool:
+    def process_journal_file(self, file_path: str, rules: dict[str, Any]) -> bool:
         """Process a journal file and categorize its transactions.
 
         Args:
@@ -142,6 +148,7 @@ class JournalCategorizer(BaseScript):
 
         Returns:
             True if the processing was successful, False otherwise.
+
         """
         self.logger.info(f"Processing journal file: {file_path}")
 
@@ -188,12 +195,13 @@ class JournalCategorizer(BaseScript):
 
         return True
 
-    def process_by_year_files(self, base_dir: str, rules: Dict[str, Any]) -> None:
+    def process_by_year_files(self, base_dir: str, rules: dict[str, Any]) -> None:
         """Process all journal files within a base directory, organized by year.
 
         Args:
             base_dir: The base directory containing the journal files.
             rules: A dictionary containing the classification rules.
+
         """
         for year_dir in self.fs.listdir(base_dir):
             year_path = self.fs.join(base_dir, year_dir)
@@ -203,34 +211,24 @@ class JournalCategorizer(BaseScript):
                         file_path = self.fs.join(year_path, filename)
                         self.process_journal_file(file_path, rules)
 
-    def run(self) -> int:
+    def execute(self) -> int:
         """Main function to process all journal files.
 
         Returns:
             0 if the process was successful, 1 otherwise.
-        """
-        self.logger.info("Starting transaction categorization")
 
+        """
         base_dir = self.get_config_value("journal_base_dir", ".")
         rules_file = self.get_config_value(
             "classification_rules", "classification_rules.json"
         )
 
-        self.logger.info(f"Using base directory: {base_dir}")
-        self.logger.info(f"Using classification rules file: {rules_file}")
-
         try:
             rules = self.load_classification_rules(rules_file)
-            self.logger.info(
-                f"Processing files with {len(rules['patterns'])} classification patterns"
-            )
             self.process_by_year_files(base_dir, rules)
-        except Exception as e:
-            self.logger.error(f"Categorization failed: {str(e)}", exc_info=True)
+            return 0
+        except Exception:
             return 1
-
-        self.logger.info("Transaction categorization completed successfully")
-        return 0
 
 
 def main() -> int:

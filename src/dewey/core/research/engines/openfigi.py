@@ -2,16 +2,14 @@ from dewey.core.base_script import BaseScript
 
 
 class OpenFigi(BaseScript):
-    """
-    A class for interacting with the OpenFIGI API.
+    """A class for interacting with the OpenFIGI API.
 
     Inherits from BaseScript and provides methods for querying the OpenFIGI
     API to retrieve security data.
     """
 
     def __init__(self) -> None:
-        """
-        Initializes the OpenFigi class.
+        """Initializes the OpenFigi class.
 
         Calls the superclass constructor to initialize the base script
         with the 'openfigi' configuration section.
@@ -19,8 +17,7 @@ class OpenFigi(BaseScript):
         super().__init__(config_section="openfigi")
 
     def run(self) -> None:
-        """
-        Executes the main logic of the OpenFigi script.
+        """Executes the main logic of the OpenFigi script.
 
         Retrieves the API key from the configuration and logs whether it was
         successfully loaded.

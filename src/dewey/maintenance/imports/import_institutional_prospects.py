@@ -2,8 +2,7 @@ from dewey.core.base_script import BaseScript
 
 
 class ImportInstitutionalProspects(BaseScript):
-    """
-    A module for importing institutional prospects into Dewey.
+    """A module for importing institutional prospects into Dewey.
 
     This module inherits from BaseScript and provides a standardized
     structure for import scripts, including configuration loading,
@@ -11,13 +10,13 @@ class ImportInstitutionalProspects(BaseScript):
     """
 
     def run(self) -> None:
-        """
-        Executes the institutional prospects import process.
-        """
+        """Executes the institutional prospects import process."""
         self.logger.info("Starting institutional prospects import.")
 
         # Example of accessing a configuration value
-        file_path = self.get_config_value("institutional_prospects_file", "default_path.csv")
+        file_path = self.get_config_value(
+            "institutional_prospects_file", "default_path.csv"
+        )
         self.logger.info(f"Using file: {file_path}")
 
         # Add your import logic here

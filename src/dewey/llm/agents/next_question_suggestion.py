@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from dewey.core.base_script import BaseScript
 
@@ -9,7 +9,7 @@ class NextQuestionSuggestion(BaseScript):
     Inherits from BaseScript for standardized configuration and logging.
     """
 
-    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
+    def __init__(self, config: dict[str, Any], **kwargs: Any) -> None:
         """Initializes the NextQuestionSuggestion script.
 
         Args:
@@ -19,7 +19,7 @@ class NextQuestionSuggestion(BaseScript):
         """
         super().__init__(config=config, **kwargs)
 
-    def run(self, conversation_history: List[str]) -> str:
+    def run(self, conversation_history: list[str]) -> str:
         """Executes the next question suggestion logic.
 
         Args:
@@ -31,6 +31,7 @@ class NextQuestionSuggestion(BaseScript):
         Raises:
             ValueError: If the prompt template is not found in the configuration.
             Exception: If there is an error during question suggestion.
+
         """
         try:
             prompt_template = self.get_config_value("next_question_prompt")
@@ -60,10 +61,13 @@ class NextQuestionSuggestion(BaseScript):
 
         Raises:
             Exception: If the LLM call fails.
+
         """
         try:
             # Access LLM-related configurations
-            model_name = self.get_config_value("llm_model_name", default="gpt-3.5-turbo")
+            model_name = self.get_config_value(
+                "llm_model_name", default="gpt-3.5-turbo"
+            )
             temperature = self.get_config_value("llm_temperature", default=0.7)
 
             # Here, instead of directly initializing the LLM, we'd ideally use a

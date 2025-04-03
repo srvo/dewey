@@ -4,22 +4,17 @@ from dewey.core.base_script import BaseScript
 
 
 class FMPEngine(BaseScript):
-    """
-    Engine for interacting with the Financial Modeling Prep (FMP) API.
+    """Engine for interacting with the Financial Modeling Prep (FMP) API.
 
     This class provides methods for retrieving financial data from FMP.
     """
 
     def __init__(self) -> None:
-        """
-        Initializes the FMPEngine.
-        """
+        """Initializes the FMPEngine."""
         super().__init__(config_section="fmp_engine")
 
     def run(self) -> None:
-        """
-        Executes the main logic of the FMP engine.
-        """
+        """Executes the main logic of the FMP engine."""
         self.logger.info("Starting FMP Engine...")
         api_key = self.get_config_value("api_key")
         if not api_key:
@@ -29,11 +24,8 @@ class FMPEngine(BaseScript):
         self.logger.info(f"FMP API Key: {api_key}")
         self.logger.info("FMP Engine Finished.")
 
-    def get_data(
-        self, endpoint: str, params: Optional[Dict[str, Any]] = None
-    ) -> Any:
-        """
-        Retrieves data from the specified FMP API endpoint.
+    def get_data(self, endpoint: str, params: dict[str, Any] | None = None) -> Any:
+        """Retrieves data from the specified FMP API endpoint.
 
         Args:
             endpoint: The FMP API endpoint to query.
@@ -41,6 +33,7 @@ class FMPEngine(BaseScript):
 
         Returns:
             The JSON response from the API, or None if an error occurred.
+
         """
         self.logger.info(f"Fetching data from FMP endpoint: {endpoint}")
         # TODO: Implement the actual API call here using requests or a similar library

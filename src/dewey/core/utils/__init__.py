@@ -14,6 +14,7 @@ except ImportError:
     def get_connection(*args, **kwargs):
         pass
 
+
 try:
     from dewey.llm.llm_utils import get_llm_client
 except ImportError:
@@ -23,17 +24,17 @@ except ImportError:
 
 
 class MyUtils(BaseScript):
-    """
-    A comprehensive class for utility functions, including database connections,
+    """A comprehensive class for utility functions, including database connections,
     LLM integrations, and configuration management.
     """
 
-    def __init__(self, config_section: Optional[str] = "utils") -> None:
+    def __init__(self, config_section: str | None = "utils") -> None:
         """Initialize MyUtils with configuration and optional database/LLM.
 
         Args:
             config_section (Optional[str]): Section in dewey.yaml to load for
                 this script. Defaults to "utils".
+
         """
         super().__init__(
             name=self.__class__.__name__,
@@ -45,9 +46,7 @@ class MyUtils(BaseScript):
         self.logger.info(f"Initialized {self.name}")
 
     def run(self) -> None:
-        """
-        Run the utility functions. This is the main entry point for the script.
-        """
+        """Run the utility functions. This is the main entry point for the script."""
         try:
             self.logger.info("Starting utility functions...")
             # Example usage of config, database, and LLM
@@ -94,14 +93,14 @@ class MyUtils(BaseScript):
             self.logger.error(f"An error occurred: {e}", exc_info=True)
 
     def example_utility_function(self, input_data: str) -> str:
-        """
-        An example utility function that processes input data.
+        """An example utility function that processes input data.
 
         Args:
             input_data (str): The input data to process.
 
         Returns:
             str: The processed output data.
+
         """
         self.logger.info(f"Processing input data: {input_data}")
         try:

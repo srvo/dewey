@@ -1,62 +1,82 @@
 # Dewey Tests
 
-This directory contains tests for the Dewey project.
+This directory contains the test suite for the Dewey project. The test structure follows the guidelines specified in [CONVENTIONS.md](../CONVENTIONS.md).
 
 ## Directory Structure
 
-The tests are organized into the following categories:
+```
+tests/
+├── conftest.py          # Global test fixtures and configuration
+├── helpers.py           # Helper functions for tests
+├── unit/                # Unit tests for individual components
+│   ├── core/            # Tests for core functionality
+│   │   ├── db/          # Tests for database components
+│   │   ├── utils/       # Tests for utility functions
+│   │   ├── bookkeeping/ # Tests for bookkeeping components
+│   │   └── ...          # Other core component tests
+│   ├── llm/             # Tests for LLM components
+│   └── ui/              # Tests for UI components
+└── integration/         # Tests for component interactions
+    ├── db/              # Database integration tests
+    ├── llm/             # LLM integration tests
+    ├── ui/              # UI integration tests
+    └── ...              # Other integration tests
+```
 
-- `unit/`: Unit tests for individual components
-  - `core/`: Tests for the core module
-  - `llm/`: Tests for the LLM module
-  - `ui/`: Tests for the UI module
-  - `config/`: Tests for the config module
-  - `utils/`: Tests for the utils module
-- `integration/`: Integration tests that verify how components work together
-- `functional/`: End-to-end functional tests that verify overall system behavior
+## Test Types
 
-Each module's tests mirror the source code organization to make it easy to find tests for specific components.
+### Unit Tests
+
+Unit tests focus on testing individual components in isolation. They should:
+
+- Mock external dependencies (including other components)
+- Test a single function, method, or class
+- Be fast and focused
+- Not require external services or databases
+
+### Integration Tests
+
+Integration tests focus on how components work together. They:
+
+- Test interactions between multiple components
+- May require more complex setup
+- Often mock external services but test real component interactions
+- Verify that components work together correctly
 
 ## Running Tests
 
-To run all tests:
+Tests can be run using:
 
 ```bash
-python -m pytest
+uv run pytest tests/unit               # Run all unit tests
+uv run pytest tests/integration        # Run all integration tests
+uv run pytest tests/unit/core/db       # Run specific test directory
+uv run pytest tests/unit/core/db/test_utils.py::test_function  # Run specific test
 ```
-
-To run a specific test module:
-
-```bash
-python -m pytest tests/unit/core/db
-```
-
-To run tests with coverage:
-
-```bash
-python -m pytest --cov=src/dewey
-```
-
-## Writing Tests
-
-When adding new tests, follow these guidelines:
-
-1. Place tests in the appropriate category (unit, integration, functional)
-2. Mirror the source code structure within that category
-3. Name test files with a `test_` prefix
-4. Name test functions with a `test_` prefix
-5. Include docstrings that describe what the test is verifying
-6. Use fixtures from `conftest.py` when appropriate
 
 ## Test Fixtures
 
-Common test fixtures are defined in `conftest.py` files at various levels:
-- Top-level fixtures in `/tests/conftest.py`
-- Module-specific fixtures in e.g. `/tests/unit/core/conftest.py`
+Common test fixtures are defined in `conftest.py` files:
 
-## Test Coverage
+- Root `conftest.py`: Global fixtures for all tests
+- Directory-specific `conftest.py`: Fixtures for specific test categories
 
-Aim for high test coverage of new code. The project's coverage goals are:
-- Unit tests: 90% or higher
-- Integration tests: Cover all critical paths
-- Functional tests: Cover main user workflows 
+Use fixtures to avoid duplicating setup code and to ensure consistent test environments.
+
+## Test Helpers
+
+The `helpers.py` file contains utility functions for tests. Use these to simplify common testing tasks.
+
+## Best Practices
+
+1. **Mirror the source structure**: Tests should mirror the structure of the code they're testing.
+2. **Use descriptive names**: Test names should clearly indicate what they're testing.
+3. **One assertion per test**: Generally, focus each test on a single behavior.
+4. **Use fixtures**: Leverage pytest fixtures for common setup.
+5. **Mock external dependencies**: Use unittest.mock to isolate components during testing.
+6. **Test edge cases**: Include tests for error conditions and boundary cases.
+7. **Keep tests independent**: Tests should not rely on the results of other tests.
+
+## Legacy Tests
+
+Tests previously in the `prod/` directory have been reorganized into the `unit/` and `integration/` directories according to their function. New tests should be added to the appropriate directory following this structure.

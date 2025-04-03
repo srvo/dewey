@@ -59,27 +59,37 @@ paths:
 
 settings:
   deepinfra_api_url: https://api.deepinfra.com/v1/openai/chat/completions
-  deepinfra_api_key: ${DEEPINFRA_API_KEY:-default_deepinfra_api_key}
-  default_db: motherduck
+  deepinfra_api_key: ${DEEPINFRA_API_KEY}
+  default_db: postgres
   default_llm: deepseek-ai/DeepSeek-V3
   gmail_scopes:
     - https://www.googleapis.com/auth/gmail.readonly
     - https://www.googleapis.com/auth/gmail.modify
     - https://www.googleapis.com/auth/gmail.metadata
     - https://mail.google.com/
+  gmail_credentials:
+    client_id: ${GMAIL_CLIENT_ID}
+    client_secret: ${GMAIL_CLIENT_SECRET}
+    token: ${GMAIL_TOKEN}
+    refresh_token: ${GMAIL_REFRESH_TOKEN}
   prefect_api_base: https://flow.sloane-collective.com/api
   # API endpoints and keys
   github_api_url: https://api.github.com/graphql
-  github_token: ${GITHUB_TOKEN:-default_github_token}
+  github_token: ${GITHUB_TOKEN}
   sec_api_url: https://data.sec.gov/api/xbrl/frames
-  sec_api_key: ${SEC_API_KEY:-default_sec_api_key}
+  sec_api_key: ${SEC_API_KEY}
   # Database settings
   db_url: ${DB_URL}
-  db_port: 5432
-  db_timeout: 30
+  db_port: ${DB_PORT:-5432}
+  db_name: ${DB_NAME:-dewey}
+  db_user: ${DB_USER:-dewey_user}
+  db_password: ${DB_PASSWORD}
+  db_timeout: ${DB_TIMEOUT:-30}
   # Email settings
   smtp_host: smtp.gmail.com
   smtp_port: 587
+  email_username: ${EMAIL_USERNAME}
+  email_password: ${GMAIL_APP_PASSWORD}
   email_timeout: 30
   # Analysis settings
   analysis_batch_size: 100
@@ -87,10 +97,10 @@ settings:
   max_retries: 3
   retry_delay: 5
   # CRM settings
-  crm_api_url: ${CRM_API_URL:-default_crm_api_url}
-  crm_api_key: ${CRM_API_KEY:-default_crm_api_key}
-  enrichment_api_url: ${ENRICHMENT_API_URL:-default_enrichment_api_url}
-  enrichment_api_key: ${ENRICHMENT_API_KEY:-default_enrichment_api_key}
+  crm_api_url: ${CRM_API_URL}
+  crm_api_key: ${CRM_API_KEY}
+  enrichment_api_url: ${ENRICHMENT_API_URL}
+  enrichment_api_key: ${ENRICHMENT_API_KEY}
 
 logging:
   level: INFO
@@ -125,6 +135,21 @@ llm:
       - google/gemini-2.0-pro-vision
       api_base: https://api.deepinfra.com/v1/openai
       timeout: 30.0
+    openai:
+      api_key: ${OPENAI_API_KEY}
+      default_model: gpt-4-turbo
+      fallback_models:
+      - gpt-3.5-turbo
+      api_base: https://api.openai.com/v1
+      timeout: 30.0
+    anthropic:
+      api_key: ${ANTHROPIC_API_KEY}
+      default_model: claude-3-opus
+      fallback_models:
+      - claude-3-sonnet
+      - claude-3-haiku
+      api_base: https://api.anthropic.com
+      timeout: 45.0
   agents:
     communication:
       analysis_model: "gpt-4-turbo"
@@ -139,7 +164,7 @@ agents:
     logging:
       level: INFO
       format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-  
+
   # Agent-specific configurations
   client_advocacy:
     enabled: true
@@ -150,7 +175,7 @@ agents:
         critical: 1h
         high: 4h
         normal: 24h
-  
+
   data_analysis:
     enabled: true
     version: 1.0
@@ -161,7 +186,7 @@ agents:
       naming_conventions:
         table: snake_case
         column: camelCase
-  
+
   agent_creation:
     enabled: true
     version: 1.0
@@ -297,7 +322,7 @@ crm:
         phone: '(?:Phone|Tel|Mobile|Cell)?\s*[:.]?\s*((?:\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})'
         email: '[\w\.-]+@[\w\.-]+\.\w+'
         title: '(?:^|\n)([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s*(?:\||,|\n)'
-        company: '(?:@|at)\s*([A-Z][A-Za-z0-9\s&]+)(?:\s|$|\n)'
+        company: '(?:@|at)\s*([A-Z][A-Za-z0-9&]+)(?:\s|$|\n)'
         linkedin: 'linkedin\.com/in/[\w-]+'
         twitter: 'twitter\.com/[\w-]+'
   enrichment:
@@ -309,3 +334,26 @@ crm:
       company_match: 0.1
       urgent_keywords: 0.2
       opportunity_keywords: 0.2
+
+research_engines:
+  tavily:
+    api_key: ${TAVILY_API_KEY}
+    timeout: 30
+  brave:
+    api_key: ${BRAVE_API_KEY}
+    timeout: 30
+  fred:
+    api_key: ${FRED_API_KEY}
+    timeout: 30
+  exa:
+    api_key: ${EXA_API_KEY}
+    timeout: 30
+  fmp:
+    api_key: ${FMP_API_KEY}
+    timeout: 30
+  polygon:
+    api_key: ${POLYGON_API_KEY}
+    timeout: 30
+  apitube:
+    api_key: ${APITUBE_API_KEY}
+    timeout: 30

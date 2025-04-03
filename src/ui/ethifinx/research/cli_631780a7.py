@@ -1,4 +1,3 @@
-```python
 import asyncio
 import logging
 import os
@@ -27,6 +26,7 @@ def print_analysis_result(result: dict) -> None:
 
     Args:
         result (dict): The analysis result dictionary.
+
     """
     if "error" in result:
         logging.error(f"❌ Error processing {result['ticker']}: {result['error']}")
@@ -53,6 +53,7 @@ def run(limit: int, timeout: int):
     Args:
         limit (int): Number of companies to research.
         timeout (int): Timeout for API calls.
+
     """
     logging.info("Starting research workflow")
 
@@ -87,13 +88,14 @@ def run(limit: int, timeout: int):
 @click.option("--tickers", help="Comma-separated list of tickers to analyze")
 @click.option("--tick-range", help="Tick range to analyze (min-max)")
 @click.option("--limit", type=int, help="Limit number of companies to process")
-def analyze(tickers: Optional[str], tick_range: Optional[str], limit: Optional[int]):
+def analyze(tickers: str | None, tick_range: str | None, limit: int | None):
     """Run analysis tagger on specified companies.
 
     Args:
         tickers (Optional[str]): Comma-separated list of tickers.
         tick_range (Optional[str]): Tick range to analyze (min-max).
         limit (Optional[int]): Limit number of companies to process.
+
     """
 
     async def run_analysis():
@@ -125,4 +127,3 @@ def analyze(tickers: Optional[str], tick_range: Optional[str], limit: Optional[i
 
 if __name__ == "__main__":
     research()
-```

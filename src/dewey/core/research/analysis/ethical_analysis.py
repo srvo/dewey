@@ -29,6 +29,7 @@ class EthicalAnalysisWorkflow(BaseScript):
 
         Args:
             **kwargs: Keyword arguments passed to BaseScript.
+
         """
         super().__init__(config_section="ethical_analysis", **kwargs)
         self.engine = DeepSeekEngine(
@@ -87,8 +88,8 @@ class EthicalAnalysisWorkflow(BaseScript):
         )
 
     async def analyze_company_profile(
-        self, search_results: List[SearchResult]
-    ) -> Dict[str, Any]:
+        self, search_results: list[SearchResult]
+    ) -> dict[str, Any]:
         """Perform comprehensive ethical analysis of a company.
 
         Args:
@@ -96,6 +97,7 @@ class EthicalAnalysisWorkflow(BaseScript):
 
         Returns:
             Complete analysis results with concerns and metrics.
+
         """
         self.logger.info("Starting company profile analysis.")
         analysis_result = await self.engine.analyze(
@@ -104,7 +106,7 @@ class EthicalAnalysisWorkflow(BaseScript):
         self.logger.info("Completed company profile analysis.")
         return analysis_result
 
-    async def assess_risks(self, search_results: List[SearchResult]) -> Dict[str, Any]:
+    async def assess_risks(self, search_results: list[SearchResult]) -> dict[str, Any]:
         """Perform focused risk assessment.
 
         Args:
@@ -112,6 +114,7 @@ class EthicalAnalysisWorkflow(BaseScript):
 
         Returns:
             Risk assessment results with identified risks and metrics.
+
         """
         self.logger.info("Starting risk assessment.")
         risk_assessment_result = await self.engine.analyze(
@@ -123,9 +126,9 @@ class EthicalAnalysisWorkflow(BaseScript):
     async def conduct_deep_research(
         self,
         initial_query: str,
-        follow_up_questions: List[str],
-        context: Optional[Dict[str, Any]] = None,
-    ) -> List[ResearchResult]:
+        follow_up_questions: list[str],
+        context: dict[str, Any] | None = None,
+    ) -> list[ResearchResult]:
         """Conduct in-depth research with follow-up analysis.
 
         Args:
@@ -135,6 +138,7 @@ class EthicalAnalysisWorkflow(BaseScript):
 
         Returns:
             List of research results from each analysis step.
+
         """
         self.logger.info(f"Starting deep research with query: {initial_query}")
         research_results = await self.engine.conduct_research(

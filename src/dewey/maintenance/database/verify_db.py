@@ -1,20 +1,15 @@
-import logging
-from typing import Any
-
 from dewey.core.base_script import BaseScript
 
 
 class VerifyDb(BaseScript):
-    """
-    Verifies the integrity of the database.
+    """Verifies the integrity of the database.
 
     This module checks the database connection and performs basic
     validation to ensure the database is functioning correctly.
     """
 
     def run(self) -> None:
-        """
-        Executes the database verification process.
+        """Executes the database verification process.
 
         This method retrieves database configuration, connects to the
         database, and performs validation checks.
@@ -30,8 +25,7 @@ class VerifyDb(BaseScript):
             self.logger.error("Database verification failed.")
 
     def is_db_valid(self, db_host: str, db_name: str) -> bool:
-        """
-        Checks if the database connection is valid.
+        """Checks if the database connection is valid.
 
         Args:
             db_host: The hostname or IP address of the database server.
@@ -39,6 +33,7 @@ class VerifyDb(BaseScript):
 
         Returns:
             True if the database connection is valid, False otherwise.
+
         """
         # Implement your database validation logic here
         # This is just a placeholder

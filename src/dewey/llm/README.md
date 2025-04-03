@@ -167,4 +167,4 @@ result = client.get_embeddings(text, model="text-embedding-ada-002")
 # Or for multiple texts
 texts = ["First text", "Second text", "Third text"]
 results = client.get_embeddings(texts, model="text-embedding-ada-002")
-``` 
+```

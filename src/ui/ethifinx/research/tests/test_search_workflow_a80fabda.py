@@ -1,6 +1,5 @@
 from dewey.core.base_script import BaseScript
 
-```python
 import unittest
 from typing import Any, Dict, List, Optional
 
@@ -26,9 +25,7 @@ class TestSearchWorkflow(BaseScriptunittest.TestCase):
         self.search_engine.search.return_value = ["result1", "result2"]
         results: List[str] = self.workflow.search("test query")
         self.assertEqual(results, ["result1", "result2"])
-        self.search_engine.search.assert_called_once_with(
-            "test query", filters=None
-        )
+        self.search_engine.search.assert_called_once_with("test query", filters=None)
 
     def test_search_with_analysis(self) -> None:
         """Test search with analysis."""
@@ -38,9 +35,7 @@ class TestSearchWorkflow(BaseScriptunittest.TestCase):
         results: Dict[str, str] = self.workflow.search_and_analyze("test query")
         self.assertEqual(results, {"analysis": "data"})
 
-        self.search_engine.search.assert_called_once_with(
-            "test query", filters=None
-        )
+        self.search_engine.search.assert_called_once_with("test query", filters=None)
         self.analysis_engine.analyze.assert_called_once_with(["result1", "result2"])
 
     def test_empty_search_results(self) -> None:
@@ -64,9 +59,7 @@ class TestSearchWorkflow(BaseScriptunittest.TestCase):
 
         results: List[str] = self.workflow.search("test query", filters=filters)
         self.assertEqual(results, ["filtered_result"])
-        self.search_engine.search.assert_called_once_with(
-            "test query", filters=filters
-        )
+        self.search_engine.search.assert_called_once_with("test query", filters=filters)
 
     def test_batch_search(self) -> None:
         """Test batch search functionality."""
@@ -79,4 +72,3 @@ class TestSearchWorkflow(BaseScriptunittest.TestCase):
         results: Dict[str, List[str]] = self.workflow.batch_search(queries)
         self.assertEqual(results, {"query1": ["result1"], "query2": ["result2"]})
         self.search_engine.batch_search.assert_called_once_with(queries)
-```

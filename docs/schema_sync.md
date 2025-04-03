@@ -92,4 +92,4 @@ The schema updater will parse these definitions and compare them with the databa
 
 The schema updater uses the same configuration as before, reading from:
 - Environment variables (MOTHERDUCK_TOKEN)
-- Configuration file at `/Users/srvo/dewey/config/dewey.yaml` 
+- Configuration file at `/Users/srvo/dewey/config/dewey.yaml`

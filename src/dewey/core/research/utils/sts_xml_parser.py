@@ -5,30 +5,25 @@ from dewey.core.base_script import BaseScript
 
 
 class STSXmlParser(BaseScript):
-    """
-    Parses STS XML files to extract relevant information.
+    """Parses STS XML files to extract relevant information.
 
     This class inherits from BaseScript and utilizes its logging and
     configuration capabilities.
     """
 
     def __init__(self):
-        """
-        Initializes the STSXmlParser with configuration from the 'sts_xml_parser' section.
-        """
+        """Initializes the STSXmlParser with configuration from the 'sts_xml_parser' section."""
         super().__init__(config_section="sts_xml_parser")
 
     def run(self) -> None:
-        """
-        Placeholder for the run method.
+        """Placeholder for the run method.
 
         This method should contain the core logic of the script.
         """
         self.logger.info("STSXmlParser is running.")
 
-    def parse_xml_file(self, xml_file_path: str) -> Optional[ET.Element]:
-        """
-        Parses an XML file and returns the root element.
+    def parse_xml_file(self, xml_file_path: str) -> ET.Element | None:
+        """Parses an XML file and returns the root element.
 
         Args:
             xml_file_path: The path to the XML file.
@@ -39,12 +34,13 @@ class STSXmlParser(BaseScript):
         Raises:
             FileNotFoundError: If the XML file does not exist.
             ET.ParseError: If the XML file is not well-formed.
+
         """
         try:
             self.logger.info(f"Parsing XML file: {xml_file_path}")
             tree = ET.parse(xml_file_path)
             root = tree.getroot()
-            self.logger.debug(f"XML file parsed successfully.")
+            self.logger.debug("XML file parsed successfully.")
             return root
         except FileNotFoundError:
             self.logger.error(f"XML file not found: {xml_file_path}")
@@ -53,11 +49,8 @@ class STSXmlParser(BaseScript):
             self.logger.error(f"Error parsing XML file: {xml_file_path}: {e}")
             raise
 
-    def extract_text_from_element(
-        self, element: ET.Element, xpath: str
-    ) -> Optional[str]:
-        """
-        Extracts text from an XML element using XPath.
+    def extract_text_from_element(self, element: ET.Element, xpath: str) -> str | None:
+        """Extracts text from an XML element using XPath.
 
         Args:
             element: The XML element to extract from.
@@ -65,6 +58,7 @@ class STSXmlParser(BaseScript):
 
         Returns:
             The text content of the element, or None if the element is not found.
+
         """
         try:
             result = element.find(xpath)
@@ -81,9 +75,8 @@ class STSXmlParser(BaseScript):
 
     def extract_all_texts_from_element(
         self, element: ET.Element, xpath: str
-    ) -> List[str]:
-        """
-        Extracts all text elements from an XML element using XPath.
+    ) -> list[str]:
+        """Extracts all text elements from an XML element using XPath.
 
         Args:
             element: The XML element to extract from.
@@ -91,6 +84,7 @@ class STSXmlParser(BaseScript):
 
         Returns:
             A list of text contents of the elements.
+
         """
         texts = []
         try:
@@ -109,9 +103,8 @@ class STSXmlParser(BaseScript):
 
     def get_element_attribute(
         self, element: ET.Element, xpath: str, attribute: str
-    ) -> Optional[str]:
-        """
-        Gets the value of an attribute from an XML element using XPath.
+    ) -> str | None:
+        """Gets the value of an attribute from an XML element using XPath.
 
         Args:
             element: The XML element to extract from.
@@ -120,6 +113,7 @@ class STSXmlParser(BaseScript):
 
         Returns:
             The value of the attribute, or None if the element or attribute is not found.
+
         """
         try:
             result = element.find(xpath)

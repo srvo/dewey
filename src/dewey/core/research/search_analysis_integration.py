@@ -16,10 +16,11 @@ class SearchAnalysisIntegration(BaseScript):
         Args:
             config_section: The configuration section for the script.
             **kwargs: Additional keyword arguments.
+
         """
         super().__init__(config_section=config_section, **kwargs)
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Executes the search analysis integration process.
 
         This method orchestrates the search query, result retrieval, and
@@ -28,6 +29,7 @@ class SearchAnalysisIntegration(BaseScript):
 
         Raises:
             Exception: If any error occurs during the search or analysis process.
+
         """
         try:
             self.logger.info("Starting search analysis integration...")
@@ -49,6 +51,13 @@ class SearchAnalysisIntegration(BaseScript):
             self.logger.exception(f"An error occurred: {e}")
             raise
 
+    def run(self) -> None:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()
+
     def _perform_search(self, query: str) -> Any:
         """Performs the search query and retrieves results.
 
@@ -61,6 +70,7 @@ class SearchAnalysisIntegration(BaseScript):
         Raises:
             NotImplementedError: This method is abstract and must be implemented
                 by a subclass.
+
         """
         self.logger.info(f"Performing search with query: {query}")
         # Replace with actual search logic
@@ -68,7 +78,7 @@ class SearchAnalysisIntegration(BaseScript):
         # Ensure any API keys or secrets are retrieved via self.get_config_value()
         raise NotImplementedError("Search logic not implemented.")
 
-    def _analyze_results(self, results: Any) -> Dict:
+    def _analyze_results(self, results: Any) -> dict:
         """Analyzes the search results.
 
         Args:
@@ -80,6 +90,7 @@ class SearchAnalysisIntegration(BaseScript):
         Raises:
             NotImplementedError: This method is abstract and must be implemented
                 by a subclass.
+
         """
         self.logger.info("Analyzing search results...")
         # Replace with actual analysis logic

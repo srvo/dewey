@@ -79,4 +79,4 @@ CREATE INDEX IF NOT EXISTS idx_client_data_sources_type ON client_data_sources(s
 
 -- Add comments
 COMMENT ON TABLE client_profiles IS 'Consolidated table containing all client information merged from various onboarding sources';
-COMMENT ON TABLE client_data_sources IS 'Reference table tracking the original data sources that populated the client profiles'; 
+COMMENT ON TABLE client_data_sources IS 'Reference table tracking the original data sources that populated the client profiles';

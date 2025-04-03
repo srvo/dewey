@@ -1,5 +1,3 @@
-from typing import Any, Dict
-
 from dewey.core.base_script import BaseScript
 
 
@@ -12,8 +10,9 @@ class RFDocstringAgent(BaseScript):
         Args:
             config_path: Path to the configuration file.
             dry_run: If True, the script will not make any changes.
+
         """
-        super().__init__(config_section='rf_docstring_agent')
+        super().__init__(config_section="rf_docstring_agent")
         self.dry_run = dry_run
 
     def run(self) -> None:
@@ -24,6 +23,7 @@ class RFDocstringAgent(BaseScript):
 
         Returns:
             None
+
         """
         try:
             self.logger.info("Starting docstring refactoring process.")

@@ -39,4 +39,4 @@ if grep -q "Test completed successfully" "$LOG_FILE"; then
 else
     echo -e "\nEnrichment test failed. See output above for details."
     exit 1
-fi 
+fi

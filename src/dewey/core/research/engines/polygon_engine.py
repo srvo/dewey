@@ -5,23 +5,19 @@ from dewey.llm.llm_utils import call_llm
 
 
 class PolygonEngine(BaseScript):
-    """
-    Engine for interacting with the Polygon API.
-    """
+    """Engine for interacting with the Polygon API."""
 
     def __init__(self, config_section: str = "polygon_engine") -> None:
-        """
-        Initializes the PolygonEngine.
+        """Initializes the PolygonEngine.
 
         Args:
             config_section (str): Section in dewey.yaml to load for this engine.
+
         """
         super().__init__(config_section=config_section)
 
     def run(self) -> None:
-        """
-        Executes the main logic of the Polygon engine.
-        """
+        """Executes the main logic of the Polygon engine."""
         self.logger.info("Polygon engine started.")
 
         api_key = self.get_config_value("api_key")
@@ -54,8 +50,7 @@ class PolygonEngine(BaseScript):
                 execute_query(conn, insert_query, list(data.values()))
 
                 self.logger.info(
-                    f"Successfully created table {table_name} and inserted"
-                    " sample data."
+                    f"Successfully created table {table_name} and inserted sample data."
                 )
 
         except Exception as e:
@@ -65,9 +60,7 @@ class PolygonEngine(BaseScript):
         # Example LLM interaction (replace with your actual logic)
         try:
             prompt = "Summarize the current market conditions for AAPL."
-            response = call_llm(
-                prompt
-            )  # Assuming a default LLM client is configured
+            response = call_llm(prompt)  # Assuming a default LLM client is configured
             self.logger.info(f"LLM Response: {response}")
         except Exception as e:
             self.logger.error(f"Error interacting with the LLM: {e}")

@@ -1,17 +1,16 @@
-"""
-Search Flow
+"""Search Flow
 
 Module for retrieving and processing company information for research.
 """
 
 import logging
 import random
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
 
-def get_top_companies(limit: int = 20) -> List[Dict[str, Any]]:
+def get_top_companies(limit: int = 20) -> list[dict[str, Any]]:
     """Get a list of top companies by market cap.
 
     In a real implementation, this would fetch from a database or API.
@@ -21,6 +20,7 @@ def get_top_companies(limit: int = 20) -> List[Dict[str, Any]]:
 
     Returns:
         List of company dictionaries
+
     """
     # Sample list of top companies (mock data)
     companies = [
@@ -32,7 +32,11 @@ def get_top_companies(limit: int = 20) -> List[Dict[str, Any]]:
         {"ticker": "TSLA", "name": "Tesla, Inc.", "market_cap": 796.0},
         {"ticker": "META", "name": "Meta Platforms, Inc.", "market_cap": 1193.0},
         {"ticker": "BRK.A", "name": "Berkshire Hathaway Inc.", "market_cap": 785.0},
-        {"ticker": "UNH", "name": "UnitedHealth Group Incorporated", "market_cap": 453.0},
+        {
+            "ticker": "UNH",
+            "name": "UnitedHealth Group Incorporated",
+            "market_cap": 453.0,
+        },
         {"ticker": "LLY", "name": "Eli Lilly and Company", "market_cap": 555.0},
         {"ticker": "JPM", "name": "JPMorgan Chase & Co.", "market_cap": 488.0},
         {"ticker": "V", "name": "Visa Inc.", "market_cap": 468.0},
@@ -55,13 +59,13 @@ def get_top_companies(limit: int = 20) -> List[Dict[str, Any]]:
         {"ticker": "MCD", "name": "McDonald's Corporation", "market_cap": 192.0},
         {"ticker": "WMT", "name": "Walmart Inc.", "market_cap": 423.0},
     ]
-    
+
     # Sort by market cap and return limited number
     companies.sort(key=lambda x: x.get("market_cap", 0), reverse=True)
     return companies[:limit]
 
 
-def get_company_by_ticker(ticker: str) -> Optional[Dict[str, Any]]:
+def get_company_by_ticker(ticker: str) -> dict[str, Any] | None:
     """Get company information by ticker symbol.
 
     In a real implementation, this would fetch from a database or API.
@@ -71,6 +75,7 @@ def get_company_by_ticker(ticker: str) -> Optional[Dict[str, Any]]:
 
     Returns:
         Company dictionary or None if not found
+
     """
     # Get all companies and find the one with matching ticker
     all_companies = get_top_companies(limit=30)
@@ -80,13 +85,14 @@ def get_company_by_ticker(ticker: str) -> Optional[Dict[str, Any]]:
     return None
 
 
-def get_research_status() -> Dict[str, Any]:
+def get_research_status() -> dict[str, Any]:
     """Get current status of research workflow.
 
     In a real implementation, this would fetch from a database.
 
     Returns:
         Dictionary with research status information
+
     """
     # Mock research status
     total = 30
@@ -94,7 +100,7 @@ def get_research_status() -> Dict[str, Any]:
     failed = random.randint(0, 3)
     in_progress = random.randint(0, 5)
     not_started = total - (completed + failed + in_progress)
-    
+
     return {
         "total": total,
         "completed": completed,
@@ -112,7 +118,7 @@ class ResearchWorkflow:
         """Initialize the research workflow."""
         self.logger = logging.getLogger(__name__)
 
-    async def process_companies(self, limit: int = 10) -> List[Dict[str, Any]]:
+    async def process_companies(self, limit: int = 10) -> list[dict[str, Any]]:
         """Process a batch of top companies.
 
         Args:
@@ -120,27 +126,32 @@ class ResearchWorkflow:
 
         Returns:
             List of processed company results
+
         """
         companies = get_top_companies(limit=limit)
         results = []
-        
+
         for company in companies:
             try:
                 # In a real implementation, this would do actual processing
                 result = await self._mock_process_company(company)
                 results.append(result)
             except Exception as e:
-                self.logger.error(f"Error processing company {company.get('ticker')}: {str(e)}")
-                results.append({
-                    "ticker": company.get("ticker"),
-                    "name": company.get("name"),
-                    "error": str(e),
-                    "success": False
-                })
-        
+                self.logger.error(
+                    f"Error processing company {company.get('ticker')}: {str(e)}"
+                )
+                results.append(
+                    {
+                        "ticker": company.get("ticker"),
+                        "name": company.get("name"),
+                        "error": str(e),
+                        "success": False,
+                    }
+                )
+
         return results
 
-    async def _mock_process_company(self, company: Dict[str, Any]) -> Dict[str, Any]:
+    async def _mock_process_company(self, company: dict[str, Any]) -> dict[str, Any]:
         """Mock processing of a company (for demonstration).
 
         Args:
@@ -148,11 +159,13 @@ class ResearchWorkflow:
 
         Returns:
             Processed result dictionary
+
         """
         # Simulate processing delay
         import asyncio
+
         await asyncio.sleep(0.5)
-        
+
         # Randomly succeed or fail
         if random.random() < 0.9:  # 90% success rate
             return {
@@ -162,9 +175,9 @@ class ResearchWorkflow:
                 "analysis": {
                     "risk_score": random.randint(1, 5),
                     "confidence": round(random.uniform(0.7, 0.98), 2),
-                    "recommendation": random.choice(["avoid", "monitor", "safe"])
+                    "recommendation": random.choice(["avoid", "monitor", "safe"]),
                 },
-                "success": True
+                "success": True,
             }
         else:
-            raise Exception("Failed to process company data") 
+            raise Exception("Failed to process company data")

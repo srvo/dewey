@@ -1,20 +1,12 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 import pandas as pd
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import (
-    DatabaseConnection,
-    get_connection,
-    get_motherduck_connection,
-)
-from dewey.core.db.utils import create_table, execute_query
-from dewey.llm.llm_utils import generate_text
 
 
 class CsvContactIntegration(BaseScript):
-    """
-    A class for integrating contacts from a CSV file into the CRM system.
+    """A class for integrating contacts from a CSV file into the CRM system.
 
     This class inherits from BaseScript and provides methods for
     reading contact data from a CSV file and integrating it into
@@ -22,14 +14,11 @@ class CsvContactIntegration(BaseScript):
     """
 
     def __init__(self) -> None:
-        """
-        Initializes the CsvContactIntegration class.
-        """
+        """Initializes the CsvContactIntegration class."""
         super().__init__(config_section="csv_contact_integration", requires_db=True)
 
     def run(self) -> None:
-        """
-        Runs the CSV contact integration process.
+        """Runs the CSV contact integration process.
 
         This method orchestrates the CSV contact integration process,
         including reading the file path from the configuration,
@@ -44,6 +33,7 @@ class CsvContactIntegration(BaseScript):
         Raises:
             FileNotFoundError: If the specified CSV file does not exist.
             Exception: If any error occurs during the integration process.
+
         """
         self.logger.info("Starting CSV contact integration...")
         try:
@@ -64,8 +54,7 @@ class CsvContactIntegration(BaseScript):
             raise
 
     def process_csv(self, file_path: str) -> None:
-        """
-        Processes the CSV file and integrates contacts into the CRM system.
+        """Processes the CSV file and integrates contacts into the CRM system.
 
         This method reads the CSV file from the specified path, extracts
         contact data, and integrates it into the CRM system.
@@ -78,6 +67,7 @@ class CsvContactIntegration(BaseScript):
 
         Raises:
             Exception: If any error occurs during CSV processing.
+
         """
         self.logger.info(f"Processing CSV file: {file_path}")
         try:
@@ -101,9 +91,8 @@ class CsvContactIntegration(BaseScript):
             self.logger.error(f"An error occurred during CSV processing: {e}")
             raise
 
-    def insert_contact(self, contact_data: Dict[str, Any]) -> None:
-        """
-        Inserts contact data into the CRM system.
+    def insert_contact(self, contact_data: dict[str, Any]) -> None:
+        """Inserts contact data into the CRM system.
 
         This method takes a dictionary of contact data and inserts it
         into the appropriate table in the CRM database.
@@ -116,6 +105,7 @@ class CsvContactIntegration(BaseScript):
 
         Raises:
             Exception: If any error occurs during contact insertion.
+
         """
         try:
             # Validate data

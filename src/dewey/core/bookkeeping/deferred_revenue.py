@@ -1,16 +1,13 @@
 import os
 import re
 import sys
-from abc import ABC, abstractmethod
 from datetime import datetime
-from pathlib import Path
-from typing import List, Match, Protocol
+from typing import List, Protocol
+from re import Match
 
 from dateutil.relativedelta import relativedelta
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
-from dewey.llm import llm_utils
 
 
 class FileSystemInterface(Protocol):
@@ -81,7 +78,7 @@ class AltruistIncomeProcessor(BaseScript):
         self.date_calculation = date_calculation
 
     @staticmethod
-    def _parse_altruist_transactions(journal_content: str) -> List[Match[str]]:
+    def _parse_altruist_transactions(journal_content: str) -> list[Match[str]]:
         """Parses the journal content to find Altruist income transactions.
 
         Args:
@@ -89,6 +86,7 @@ class AltruistIncomeProcessor(BaseScript):
 
         Returns:
             A list of match objects, each representing an Altruist income transaction.
+
         """
         transaction_regex = re.compile(
             r"(\d{4}-\d{2}-\d{2})\s+"  # Date (YYYY-MM-DD)
@@ -98,7 +96,7 @@ class AltruistIncomeProcessor(BaseScript):
         )
         return list(transaction_regex.finditer(journal_content))  # type: ignore
 
-    def _generate_deferred_revenue_transactions(self, match: re.Match) -> List[str]:
+    def _generate_deferred_revenue_transactions(self, match: re.Match) -> list[str]:
         """Generates deferred revenue and fee income transactions for a given Altruist transaction.
 
         Args:
@@ -106,6 +104,7 @@ class AltruistIncomeProcessor(BaseScript):
 
         Returns:
             A list of transaction strings to be added to the journal.
+
         """
         date_str = match.group(1)
         description = match.group(2).strip()
@@ -160,6 +159,7 @@ class AltruistIncomeProcessor(BaseScript):
 
         Raises:
             FileNotFoundError: If the journal file does not exist.
+
         """
         if not self.file_system.exists(journal_file):
             self.logger.error(f"Could not find journal file at: {journal_file}")
@@ -181,14 +181,16 @@ class AltruistIncomeProcessor(BaseScript):
             try:
                 transactions = self._generate_deferred_revenue_transactions(match)
                 output_transactions.extend(transactions)
-            except Exception as e:
+            except Exception:
                 self.logger.exception(
                     "Failed to generate transactions for match: %s", match.group(0)
                 )
                 continue
 
         if output_transactions:
-            output_content = journal_content + "\n" + "\n".join(output_transactions) + "\n"
+            output_content = (
+                journal_content + "\n" + "\n".join(output_transactions) + "\n"
+            )
             self.logger.info(
                 "Successfully processed %d Altruist transactions in %s",
                 len(matches),
@@ -201,14 +203,14 @@ class AltruistIncomeProcessor(BaseScript):
         return output_content
 
     def _run(self, journal_file: str) -> str:
-        """
-        Core logic of the Altruist income processing.
+        """Core logic of the Altruist income processing.
 
         Args:
             journal_file: The path to the journal file.
 
         Returns:
             The updated content of the journal file with the new transactions.
+
         """
         try:
             output_content = self.process_altruist_income(journal_file)
@@ -220,29 +222,21 @@ class AltruistIncomeProcessor(BaseScript):
             self.logger.exception("An unexpected error occurred: %s", str(e))
             raise
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Runs the Altruist income processing."""
         if len(sys.argv) != 2:
             self.logger.error("Usage: python script.py <journal_file>")
             sys.exit(1)
 
         journal_file = os.path.abspath(sys.argv[1])
+        output_content = self._run(journal_file)
 
-        try:
-            output_content = self._run(journal_file)
+        backup_file = journal_file + ".bak"
+        with open(journal_file) as src, open(backup_file, "w") as dst:
+            dst.write(src.read())
 
-            backup_file = journal_file + ".bak"
-            with open(journal_file) as src, open(backup_file, "w") as dst:
-                dst.write(src.read())
-
-            with open(journal_file, "w") as f:
-                f.write(output_content)
-            self.logger.info("Journal file updated successfully: %s", journal_file)
-
-        except FileNotFoundError:
-            sys.exit(1)
-        except Exception:
-            sys.exit(1)
+        with open(journal_file, "w") as f:
+            f.write(output_content)
 
 
 if __name__ == "__main__":

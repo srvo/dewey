@@ -1,11 +1,8 @@
-from typing import Any
-
 from dewey.core.base_script import BaseScript
 
 
 class RunEnrichment(BaseScript):
-    """
-    A module for running enrichment tasks within Dewey's CRM.
+    """A module for running enrichment tasks within Dewey's CRM.
 
     This module inherits from BaseScript and provides a standardized
     structure for enrichment scripts, including configuration
@@ -18,19 +15,19 @@ class RunEnrichment(BaseScript):
         name: str = "RunEnrichment",
         description: str = "Runs enrichment tasks.",
     ) -> None:
-        """
-        Initializes the RunEnrichment module.
+        """Initializes the RunEnrichment module.
 
         Args:
             name: The name of the module.
             description: A description of the module.
-        """
-        super().__init__(name=name, description=description, config_section="enrichment")
 
-    def run(self) -> None:
         """
-        Executes the primary logic of the enrichment script.
-        """
+        super().__init__(
+            name=name, description=description, config_section="enrichment"
+        )
+
+    def execute(self) -> None:
+        """Executes the primary logic of the enrichment script."""
         self.logger.info("Starting enrichment process...")
 
         # Access configuration values using self.get_config_value()
@@ -45,3 +42,10 @@ class RunEnrichment(BaseScript):
             )
 
         self.logger.info("Enrichment process completed.")
+
+    def run(self) -> None:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()

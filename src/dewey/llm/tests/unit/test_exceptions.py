@@ -1,7 +1,6 @@
 """Unit tests for the LLM exceptions module."""
 
-import pytest
-
+from dewey.core.exceptions import BaseException
 from dewey.llm.exceptions import (
     InvalidPromptError,
     LLMAuthenticationError,
@@ -11,7 +10,6 @@ from dewey.llm.exceptions import (
     LLMResponseError,
     LLMTimeoutError,
 )
-from dewey.core.exceptions import BaseException
 
 
 class TestExceptions:
@@ -21,7 +19,7 @@ class TestExceptions:
         """Test that all exceptions inherit from appropriate base classes."""
         # All should inherit from BaseException
         assert issubclass(LLMError, BaseException)
-        
+
         # All custom exceptions should inherit from LLMError
         assert issubclass(InvalidPromptError, LLMError)
         assert issubclass(LLMConnectionError, LLMError)
@@ -33,7 +31,7 @@ class TestExceptions:
     def test_exception_instantiation(self) -> None:
         """Test that exceptions can be instantiated with messages."""
         test_msg = "Test error message"
-        
+
         # Create instances with messages
         invalid_prompt = InvalidPromptError(test_msg)
         auth_error = LLMAuthenticationError(test_msg)
@@ -41,11 +39,11 @@ class TestExceptions:
         rate_limit = LLMRateLimitError(test_msg)
         response_error = LLMResponseError(test_msg)
         timeout = LLMTimeoutError(test_msg)
-        
+
         # Verify messages are preserved
         assert str(invalid_prompt) == test_msg
         assert str(auth_error) == test_msg
         assert str(conn_error) == test_msg
         assert str(rate_limit) == test_msg
         assert str(response_error) == test_msg
-        assert str(timeout) == test_msg 
+        assert str(timeout) == test_msg

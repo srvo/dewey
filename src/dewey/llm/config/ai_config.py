@@ -6,12 +6,13 @@ from dewey.core.base_script import BaseScript
 class AIConfig(BaseScript):
     """A class to manage AI configurations, inheriting from BaseScript."""
 
-    def __init__(self, script_name: str, config: Dict[str, Any]) -> None:
+    def __init__(self, script_name: str, config: dict[str, Any]) -> None:
         """Initializes the AIConfig script.
 
         Args:
             script_name: The name of the script.
             config: The configuration dictionary.
+
         """
         super().__init__(script_name=script_name, config_section="ai_config")
         self.config_data = config  # Store the config data
@@ -24,6 +25,7 @@ class AIConfig(BaseScript):
 
         Raises:
             ValueError: If a required configuration value is missing or invalid.
+
         """
         try:
             # Example of accessing a configuration value

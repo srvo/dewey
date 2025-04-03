@@ -1,6 +1,5 @@
 from dewey.core.base_script import BaseScript
 
-```python
 import asyncio
 from typing import Dict, Any
 
@@ -14,7 +13,7 @@ class APIAnalyzer:
         """Initializes the APIAnalyzer with an APIDocEngine."""
         self.engine = APIDocEngine()
 
-    async def analyze_api(self, api_name: str) -> Dict[str, Any]:
+    async def analyze_api(self, api_name: str) -> dict[str, Any]:
         """Analyzes a specific API's documentation and capabilities.
 
         Args:
@@ -22,19 +21,21 @@ class APIAnalyzer:
 
         Returns:
             A dictionary containing the analysis results.
+
         """
         await self.engine.fetch_all_documentation()
         return await self.engine.get_commercial_usage_status(api_name)
 
-    async def analyze_all_apis(self) -> Dict[str, Dict[str, Any]]:
+    async def analyze_all_apis(self) -> dict[str, dict[str, Any]]:
         """Analyzes all configured APIs.
 
         Returns:
             A dictionary where keys are API names and values are dictionaries
             containing data types, commercial usage status, and tier information.
+
         """
         await self.engine.fetch_all_documentation()
-        results: Dict[str, Dict[str, Any]] = {}
+        results: dict[str, dict[str, Any]] = {}
 
         for api_name in self.engine.api_configs:
             status = await self.engine.get_commercial_usage_status(api_name)
@@ -47,11 +48,12 @@ class APIAnalyzer:
         return results
 
 
-async def print_api_analysis_results(results: Dict[str, Dict[str, Any]]) -> None:
+async def print_api_analysis_results(results: dict[str, dict[str, Any]]) -> None:
     """Prints the analysis results for each API.
 
     Args:
         results: A dictionary containing the analysis results for each API.
+
     """
     for api_name, status in results.items():
         print(f"\n=== {api_name} ===")
@@ -82,4 +84,3 @@ async def main() -> None:
 
 if __name__ == "__main__":
     asyncio.run(main())
-```

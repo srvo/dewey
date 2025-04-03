@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
-"""
-    Script to analyze tables in both local DuckDB and MotherDuck databases.
-    Provides information about table structure, row counts, and data samples.
+"""Script to analyze tables in both local DuckDB and MotherDuck databases.
+Provides information about table structure, row counts, and data samples.
 """
 
 import json

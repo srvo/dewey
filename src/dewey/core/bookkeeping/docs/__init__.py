@@ -4,20 +4,15 @@ from dewey.core.base_script import BaseScript
 
 
 class DocumentationTask(Protocol):
-    """
-    An interface for defining documentation tasks.
-    """
+    """An interface for defining documentation tasks."""
 
     def execute(self) -> None:
-        """
-        Executes the documentation task.
-        """
+        """Executes the documentation task."""
         raise NotImplementedError
 
 
 class DocsModule(BaseScript):
-    """
-    A module for managing documentation tasks within Dewey.
+    """A module for managing documentation tasks within Dewey.
 
     This module inherits from BaseScript and provides a standardized
     structure for documentation-related scripts, including configuration
@@ -25,9 +20,13 @@ class DocsModule(BaseScript):
     primary logic.
     """
 
-    def __init__(self, name: str, description: str = "Documentation Module", documentation_task: Optional[DocumentationTask] = None):
-        """
-        Initializes the DocsModule.
+    def __init__(
+        self,
+        name: str,
+        description: str = "Documentation Module",
+        documentation_task: DocumentationTask | None = None,
+    ):
+        """Initializes the DocsModule.
 
         Args:
             name (str): The name of the module.
@@ -35,13 +34,13 @@ class DocsModule(BaseScript):
                 Defaults to "Documentation Module".
             documentation_task (DocumentationTask, optional): The documentation task to execute.
                 Defaults to None.
+
         """
         super().__init__(name=name, description=description, config_section="docs")
         self._documentation_task = documentation_task
 
-    def run(self) -> None:
-        """
-        Executes the primary logic of the documentation module.
+    def execute(self) -> None:
+        """Executes the primary logic of the documentation module.
 
         This method should be overridden in subclasses to implement
         specific documentation tasks.
@@ -54,6 +53,7 @@ class DocsModule(BaseScript):
 
         Raises:
             Exception: If something goes wrong during the documentation task.
+
         """
         self.logger.info("Running the Docs module...")
         try:
@@ -66,10 +66,15 @@ class DocsModule(BaseScript):
             )
             raise
 
+    def run(self) -> None:
+        """Legacy method that calls execute() for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()
+
     def _execute_documentation_task(self) -> None:
-        """
-        Executes the documentation task.
-        """
+        """Executes the documentation task."""
         if self._documentation_task:
             self._documentation_task.execute()
         else:
@@ -83,8 +88,7 @@ class DocsModule(BaseScript):
             pass
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """
-        Retrieves a configuration value associated with the given key.
+        """Retrieves a configuration value associated with the given key.
 
         Args:
             key (str): The key of the configuration value to retrieve.
@@ -94,5 +98,6 @@ class DocsModule(BaseScript):
         Returns:
             Any: The configuration value associated with the key, or the
                 default value if the key is not found.
+
         """
         return super().get_config_value(key, default)

@@ -1,6 +1,5 @@
 """Common fixtures for bookkeeping module tests."""
 
-import json
 from typing import Dict
 from unittest.mock import MagicMock, patch
 
@@ -10,7 +9,9 @@ import pytest
 @pytest.fixture
 def mock_base_script():
     """Fixture to mock BaseScript initialization."""
-    with patch("dewey.core.base_script.BaseScript.__init__", return_value=None) as mock_init:
+    with patch(
+        "dewey.core.base_script.BaseScript.__init__", return_value=None
+    ) as mock_init:
         yield mock_init
 
 
@@ -24,12 +25,12 @@ def mock_logger():
 @pytest.fixture
 def mock_config():
     """Fixture to provide a mock configuration."""
-    config: Dict[str, Dict[str, str]] = {
+    config: dict[str, dict[str, str]] = {
         "bookkeeping": {
             "ledger_dir": "data/bookkeeping/ledger",
             "start_year": "2022",
             "journal_base_dir": "data/bookkeeping/journals",
-            "classification_rules": "data/bookkeeping/rules/classification_rules.json"
+            "classification_rules": "data/bookkeeping/rules/classification_rules.json",
         }
     }
     yield config
@@ -50,20 +51,20 @@ def sample_transaction_data():
             "date": "2023-01-01",
             "description": "Client payment",
             "amount": 1000,
-            "account": "Income:Payment"
+            "account": "Income:Payment",
         },
         {
             "date": "2023-01-05",
             "description": "Grocery shopping",
             "amount": -50,
-            "account": "Expenses:Groceries"
+            "account": "Expenses:Groceries",
         },
         {
             "date": "2023-01-10",
             "description": "Coffee shop",
             "amount": -5,
-            "account": "Expenses:Uncategorized"
-        }
+            "account": "Expenses:Uncategorized",
+        },
     ]
 
 
@@ -74,9 +75,9 @@ def sample_classification_rules():
         "patterns": [
             {"regex": "payment", "category": "Income:Payment"},
             {"regex": "grocery", "category": "Expenses:Groceries"},
-            {"regex": "coffee", "category": "Expenses:Food:Coffee"}
+            {"regex": "coffee", "category": "Expenses:Food:Coffee"},
         ],
-        "default_category": "Expenses:Uncategorized"
+        "default_category": "Expenses:Uncategorized",
     }
 
 
@@ -88,7 +89,7 @@ def sample_account_rules():
             "Assets:Checking",
             "Income:Salary",
             "Expenses:Food",
-            "Expenses:Utilities"
+            "Expenses:Utilities",
         ]
     }
 
@@ -101,4 +102,4 @@ def sample_journal_content():
     assets:checking:mercury8542    = $9,500.00
     assets:checking:mercury9281    = $4,500.00
     equity:opening balances
-""" 
+"""

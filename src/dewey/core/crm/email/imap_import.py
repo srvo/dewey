@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from email.header import decode_header
 from email.message import Message
-from typing import Any, Dict, Optional, Set, List, Tuple
+from typing import Any, Dict, List, Optional, Set
 
 import duckdb
 from dotenv import load_dotenv
@@ -33,7 +33,7 @@ class EmailHeaderEncoder(json.JSONEncoder):
             return "Non-serializable data"
 
 
-def safe_json_dumps(data: Any, encoder: Optional[json.JSONEncoder] = None) -> str:
+def safe_json_dumps(data: Any, encoder: json.JSONEncoder | None = None) -> str:
     """JSON dumping with multiple fallback strategies.
 
     Args:
@@ -42,6 +42,7 @@ def safe_json_dumps(data: Any, encoder: Optional[json.JSONEncoder] = None) -> st
 
     Returns:
         JSON string representation of data
+
     """
     try:
         return json.dumps(data, cls=encoder or EmailHeaderEncoder)
@@ -127,19 +128,18 @@ class UnifiedIMAPImporter(BaseScript):
 
         # Create index statements - broken into multiple lines for readability
         idx_thread_id = (
-            "CREATE INDEX IF NOT EXISTS idx_emails_thread_id " "ON emails(thread_id)"
+            "CREATE INDEX IF NOT EXISTS idx_emails_thread_id ON emails(thread_id)"
         )
         idx_from_addr = (
-            "CREATE INDEX IF NOT EXISTS idx_emails_from_address "
-            "ON emails(from_address)"
+            "CREATE INDEX IF NOT EXISTS idx_emails_from_address ON emails(from_address)"
         )
         idx_internal_date = (
             "CREATE INDEX IF NOT EXISTS idx_emails_internal_date "
             "ON emails(internal_date)"
         )
-        idx_status = "CREATE INDEX IF NOT EXISTS idx_emails_status " "ON emails(status)"
+        idx_status = "CREATE INDEX IF NOT EXISTS idx_emails_status ON emails(status)"
         idx_batch_id = (
-            "CREATE INDEX IF NOT EXISTS idx_emails_batch_id " "ON emails(batch_id)"
+            "CREATE INDEX IF NOT EXISTS idx_emails_batch_id ON emails(batch_id)"
         )
         idx_import_ts = (
             "CREATE INDEX IF NOT EXISTS idx_emails_import_timestamp "
@@ -215,7 +215,9 @@ class UnifiedIMAPImporter(BaseScript):
             # Create indexes
             for index_sql in self.email_indexes:
                 self.db_conn.execute(index_sql)
-            self.logger.info("Initialized SQLite database with email schema and indexes")
+            self.logger.info(
+                "Initialized SQLite database with email schema and indexes"
+            )
 
     def _init_motherduck(self) -> None:
         """Initialize MotherDuck database connection."""
@@ -239,6 +241,7 @@ class UnifiedIMAPImporter(BaseScript):
 
         Returns:
             IMAP connection
+
         """
         config = {
             "host": "imap.gmail.com",
@@ -257,6 +260,7 @@ class UnifiedIMAPImporter(BaseScript):
 
         Returns:
             IMAP connection object
+
         """
         max_retries = 3
         retry_delay = 5
@@ -316,6 +320,7 @@ class UnifiedIMAPImporter(BaseScript):
 
         Returns:
             Decoded header string
+
         """
         if not header:
             return ""
@@ -334,7 +339,7 @@ class UnifiedIMAPImporter(BaseScript):
                 decoded_parts.append(str(part))
         return " ".join(decoded_parts)
 
-    def _decode_payload(self, payload: bytes, charset: Optional[str] = None) -> str:
+    def _decode_payload(self, payload: bytes, charset: str | None = None) -> str:
         """Decode email payload bytes to string.
 
         Args:
@@ -343,6 +348,7 @@ class UnifiedIMAPImporter(BaseScript):
 
         Returns:
             Decoded string
+
         """
         if not payload:
             return ""
@@ -362,7 +368,7 @@ class UnifiedIMAPImporter(BaseScript):
                 except UnicodeDecodeError:
                     return payload.decode("ascii", errors="replace")
 
-    def _get_message_structure(self, msg: Message) -> Dict[str, Any]:
+    def _get_message_structure(self, msg: Message) -> dict[str, Any]:
         """Extract the structure of an email message for analysis.
 
         Args:
@@ -370,6 +376,7 @@ class UnifiedIMAPImporter(BaseScript):
 
         Returns:
             Dictionary with message structure information
+
         """
         if msg.is_multipart():
             parts = []
@@ -399,7 +406,7 @@ class UnifiedIMAPImporter(BaseScript):
                 "size": (len(msg.as_bytes()) if hasattr(msg, "as_bytes") else 0),
             }
 
-    def _parse_email_message(self, email_data: bytes) -> Dict[str, Any]:
+    def _parse_email_message(self, email_data: bytes) -> dict[str, Any]:
         """Parse email message data into a structured dictionary.
 
         Args:
@@ -407,6 +414,7 @@ class UnifiedIMAPImporter(BaseScript):
 
         Returns:
             Dictionary containing parsed email data
+
         """
         # Parse the email message
         msg = email.message_from_bytes(email_data)
@@ -514,10 +522,7 @@ class UnifiedIMAPImporter(BaseScript):
         internal_date = int(date_obj.timestamp() * 1000) if date_obj else None
 
         # Store message parts as JSON for compatibility
-        message_parts = {
-            "text": body_text,
-            "html": body_html
-        }
+        message_parts = {"text": body_text, "html": body_html}
 
         # Return structured email data matching MotherDuck schema
         return {
@@ -548,8 +553,8 @@ class UnifiedIMAPImporter(BaseScript):
         max_emails: int = 100,
         batch_size: int = 10,
         historical: bool = False,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
         num_workers: int = 4,  # Number of worker threads
     ) -> None:
         """Fetch emails from Gmail using IMAP with parallel processing.
@@ -563,6 +568,7 @@ class UnifiedIMAPImporter(BaseScript):
             start_date: Optional start date in format YYYY-MM-DD
             end_date: Optional end date in format YYYY-MM-DD
             num_workers: Number of worker threads for parallel processing
+
         """
         try:
             # Get existing message IDs from database
@@ -709,7 +715,7 @@ class UnifiedIMAPImporter(BaseScript):
             self.logger.error("Error in fetch_emails: %s", str(e))
             raise
 
-    def _create_imap_connections(self, num_connections: int) -> List[imaplib.IMAP4_SSL]:
+    def _create_imap_connections(self, num_connections: int) -> list[imaplib.IMAP4_SSL]:
         """Create multiple IMAP connections for parallel processing.
 
         Args:
@@ -717,17 +723,18 @@ class UnifiedIMAPImporter(BaseScript):
 
         Returns:
             List of IMAP connections
+
         """
         connections = []
         config = self._get_imap_config()
 
         for i in range(num_connections):
             try:
-                self.logger.debug(f"Creating IMAP connection {i+1}/{num_connections}")
+                self.logger.debug(f"Creating IMAP connection {i + 1}/{num_connections}")
                 conn = self._connect_imap(config)
                 connections.append(conn)
             except Exception as e:
-                self.logger.error(f"Failed to create IMAP connection {i+1}: {e}")
+                self.logger.error(f"Failed to create IMAP connection {i + 1}: {e}")
 
         if not connections:
             raise ValueError("Failed to create any IMAP connections")
@@ -757,7 +764,7 @@ class UnifiedIMAPImporter(BaseScript):
         self,
         imap: imaplib.IMAP4_SSL,
         msg_num: int,
-        existing_ids: Set[str],
+        existing_ids: set[str],
         batch_id: str,
     ) -> bool:
         """Process a single email message in a worker thread.
@@ -770,6 +777,7 @@ class UnifiedIMAPImporter(BaseScript):
 
         Returns:
             True if email was processed successfully
+
         """
         try:
             # First fetch Gmail-specific IDs
@@ -851,7 +859,7 @@ class UnifiedIMAPImporter(BaseScript):
             )
             return False
 
-    def _store_email(self, email_data: Dict[str, Any], batch_id: str) -> bool:
+    def _store_email(self, email_data: dict[str, Any], batch_id: str) -> bool:
         """Store email in the database.
 
         Args:
@@ -860,6 +868,7 @@ class UnifiedIMAPImporter(BaseScript):
 
         Returns:
             True if successful
+
         """
         try:
             # Add batch ID to email data
@@ -894,11 +903,12 @@ class UnifiedIMAPImporter(BaseScript):
             self.logger.error("Error storing email: %s", e)
             return False
 
-    def _get_existing_ids(self) -> Set[str]:
+    def _get_existing_ids(self) -> set[str]:
         """Get existing message IDs from database.
 
         Returns:
             Set of existing message IDs
+
         """
         existing_ids = set()
         try:

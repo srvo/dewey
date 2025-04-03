@@ -2,29 +2,19 @@ import argparse
 import sys
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import (
-    DatabaseConnection,
-    get_connection,
-    get_motherduck_connection,
-)
 from dewey.core.db.utils import build_insert_query, create_table, execute_query
 from dewey.llm.llm_utils import call_llm
 
 
 class PortCLI(BaseScript):
-    """
-    A command-line interface for interacting with the Port API.
-    """
+    """A command-line interface for interacting with the Port API."""
 
     def __init__(self) -> None:
-        """
-        Initializes the PortCLI script.
-        """
+        """Initializes the PortCLI script."""
         super().__init__(config_section="port_cli", requires_db=True, enable_llm=True)
 
     def run(self) -> None:
-        """
-        Executes the PortCLI script.
+        """Executes the PortCLI script.
 
         This method parses command-line arguments, connects to the database,
         fetches data, calls the LLM, and inserts the results into the database.
@@ -54,11 +44,11 @@ class PortCLI(BaseScript):
             sys.exit(1)
 
     def setup_argparse(self) -> argparse.ArgumentParser:
-        """
-        Set up command line arguments.
+        """Set up command line arguments.
 
         Returns:
             An argument parser configured with common options.
+
         """
         parser = super().setup_argparse()
         # Add any specific arguments for this script here

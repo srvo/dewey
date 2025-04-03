@@ -10,13 +10,14 @@ class ModelConfig(BaseScript):
     and other utilities.
     """
 
-    def __init__(self, config: Dict[str, Any], dry_run: bool = False) -> None:
+    def __init__(self, config: dict[str, Any], dry_run: bool = False) -> None:
         """Initializes the ModelConfig script.
 
         Args:
             config (Dict[str, Any]): The configuration dictionary.
             dry_run (bool, optional): If True, the script will not perform any
                 actual operations. Defaults to False.
+
         """
         super().__init__(config=config, dry_run=dry_run)
 
@@ -32,12 +33,15 @@ class ModelConfig(BaseScript):
 
         Returns:
             None
+
         """
         try:
             model_name = self.get_config_value("model_name")
             model_version = self.get_config_value("model_version")
 
-            self.logger.info(f"Configuring model: {model_name}, version: {model_version}")
+            self.logger.info(
+                f"Configuring model: {model_name}, version: {model_version}"
+            )
 
             # Example of accessing a nested configuration
             llm_params = self.get_config_value("llm_params", default={})

@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
-from dewey.core.base_script import BaseScript
-import re
 import argparse
+import re
+
+from dewey.core.base_script import BaseScript
+
 
 class CleanupTables(BaseScript):
     """Script to clean up unnecessary tables while preserving consolidated data."""
@@ -11,7 +13,7 @@ class CleanupTables(BaseScript):
         """Function __init__."""
         super().__init__(
             name="cleanup_tables",
-            description="Clean up unnecessary tables while preserving consolidated data"
+            description="Clean up unnecessary tables while preserving consolidated data",
         )
 
     def setup_argparse(self) -> argparse.ArgumentParser:
@@ -20,31 +22,35 @@ class CleanupTables(BaseScript):
         parser.add_argument(
             "--dry-run",
             action="store_true",
-            help="Preview tables that would be deleted without actually deleting them"
+            help="Preview tables that would be deleted without actually deleting them",
         )
         return parser
 
     def should_delete_table(self, table_name: str) -> bool:
-        """Determine if a table should be deleted based on patterns.
-        
+    """
+        Determine if a table should be deleted based on patterns.
+
         Args:
+        -----
             table_name: Name of the table to check
-            
+
         Returns:
+        --------
             True if the table should be deleted, False otherwise
-        """
+
+    """
         # Never delete consolidated tables
-        if table_name.endswith('_consolidated'):
+        if table_name.endswith("_consolidated"):
             return False
 
         # Patterns for tables to delete
         patterns = [
-            r'^other_\d+$',  # Numbered tables
-            r'^other_.*_(code|metadata|sections|links)$',  # Documentation sections
-            r'^other_test_',  # Test tables
-            r'^other_data_test_',  # Data test tables
-            r'^other_example_',  # Example tables
-            r'^other_.*_table_\d+_\d+$',  # Generated documentation tables
+            r"^other_\d+$",  # Numbered tables
+            r"^other_.*_(code|metadata|sections|links)$",  # Documentation sections
+            r"^other_test_",  # Test tables
+            r"^other_data_test_",  # Data test tables
+            r"^other_example_",  # Example tables
+            r"^other_.*_table_\d+_\d+$",  # Generated documentation tables
         ]
 
         return any(re.match(pattern, table_name) for pattern in patterns)
@@ -58,7 +64,9 @@ class CleanupTables(BaseScript):
         self.logger.info(f"Found {len(tables)} total tables")
 
         # Identify tables to delete
-        tables_to_delete = [table for table in tables if self.should_delete_table(table)]
+        tables_to_delete = [
+            table for table in tables if self.should_delete_table(table)
+        ]
         self.logger.info(f"Identified {len(tables_to_delete)} tables to delete")
 
         if self.args.dry_run:
@@ -79,9 +87,14 @@ class CleanupTables(BaseScript):
                 self.logger.error(f"Error deleting table {table}: {str(e)}")
                 error_count += 1
 
-        self.logger.info(f"Cleanup complete. Successfully deleted {deleted_count} tables.")
+        self.logger.info(
+            f"Cleanup complete. Successfully deleted {deleted_count} tables."
+        )
         if error_count > 0:
-            self.logger.warning(f"Encountered errors while deleting {error_count} tables.")
+            self.logger.warning(
+                f"Encountered errors while deleting {error_count} tables."
+            )
+
 
 if __name__ == "__main__":
-    CleanupTables().main() 
+    CleanupTables().main()

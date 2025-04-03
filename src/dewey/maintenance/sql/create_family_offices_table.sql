@@ -34,4 +34,4 @@ CREATE INDEX IF NOT EXISTS idx_family_offices_name ON family_offices(firm_name);
 CREATE INDEX IF NOT EXISTS idx_family_offices_mf_sf ON family_offices(mf_sf);
 
 -- Comment to explain the table's purpose
-COMMENT ON TABLE family_offices IS 'Table containing Family Office data, sourced from "List for Sloane.xlsx - FOD V5.csv"'; 
+COMMENT ON TABLE family_offices IS 'Table containing Family Office data, sourced from "List for Sloane.xlsx - FOD V5.csv"';

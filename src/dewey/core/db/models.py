@@ -1,10 +1,6 @@
 import sqlalchemy as sa
-from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column
-from sqlalchemy.orm import relationship
-from datetime import datetime, date, time
-from typing import Optional, List, Dict, Any
-
+from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
 

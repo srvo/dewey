@@ -4,14 +4,11 @@
 import json
 import shutil
 import tempfile
-from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Protocol
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection
-from dewey.core.db.connection import get_connection as get_local_connection
 from dewey.core.db.connection import (
     get_motherduck_connection as get_motherduck_connection,
 )
@@ -22,48 +19,37 @@ from .models import Service
 class ServiceManagerInterface(Protocol):
     """Interface for Service Managers."""
 
-    def run_command(self, command: str) -> None:
-        ...
+    def run_command(self, command: str) -> None: ...
 
 
 class FileSystemInterface(Protocol):
     """Interface for file system operations."""
 
-    def exists(self, path: Path) -> bool:
-        ...
+    def exists(self, path: Path) -> bool: ...
 
-    def mkdir(self, path: Path, parents: bool = False, exist_ok: bool = False) -> None:
-        ...
+    def mkdir(
+        self, path: Path, parents: bool = False, exist_ok: bool = False
+    ) -> None: ...
 
-    def copytree(self, src: Path, dst: Path, dirs_exist_ok: bool = False) -> None:
-        ...
+    def copytree(self, src: Path, dst: Path, dirs_exist_ok: bool = False) -> None: ...
 
-    def copy2(self, src: Path, dst: Path) -> None:
-        ...
+    def copy2(self, src: Path, dst: Path) -> None: ...
 
-    def unpack_archive(self, filename: str, extract_dir: str) -> None:
-        ...
+    def unpack_archive(self, filename: str, extract_dir: str) -> None: ...
 
-    def make_archive(self, base_name: str, format: str, root_dir: str) -> str:
-        ...
+    def make_archive(self, base_name: str, format: str, root_dir: str) -> str: ...
 
-    def rmtree(self, path: Path) -> None:
-        ...
+    def rmtree(self, path: Path) -> None: ...
 
-    def write_text(self, path: Path, data: str) -> None:
-        ...
+    def write_text(self, path: Path, data: str) -> None: ...
 
-    def read_text(self, path: Path) -> str:
-        ...
+    def read_text(self, path: Path) -> str: ...
 
-    def iterdir(self, path: Path):
-        ...
+    def iterdir(self, path: Path): ...
 
-    def is_file(self, path: Path) -> bool:
-        ...
+    def is_file(self, path: Path) -> bool: ...
 
-    def is_dir(self, path: Path) -> bool:
-        ...
+    def is_dir(self, path: Path) -> bool: ...
 
 
 class RealFileSystem:
@@ -131,9 +117,7 @@ class ServiceDeployment(BaseScript):
         self.workspace_dir = (
             Path(self.get_config_value("paths.project_root")) / "workspace"
         )
-        self.config_dir = (
-            Path(self.get_config_value("paths.project_root")) / "config"
-        )
+        self.config_dir = Path(self.get_config_value("paths.project_root")) / "config"
         self.backups_dir = self.workspace_dir / "backups"
         fs.mkdir(self.backups_dir, parents=True, exist_ok=True)
         self.fs = fs
@@ -145,6 +129,7 @@ class ServiceDeployment(BaseScript):
 
         Args:
             service_manager: ServiceManager instance.
+
         """
         # self.service_manager = service_manager # No longer needed
 
@@ -158,6 +143,7 @@ class ServiceDeployment(BaseScript):
 
         Raises:
             RuntimeError: If directories cannot be created.
+
         """
         try:
             # Create parent directories first
@@ -171,7 +157,7 @@ class ServiceDeployment(BaseScript):
             self.logger.error(f"Failed to create service directories: {e}")
             raise RuntimeError(f"Failed to create service directories: {e}")
 
-    def deploy_service(self, service: Service, config: Dict[str, Any]) -> None:
+    def deploy_service(self, service: Service, config: dict[str, Any]) -> None:
         """Deploy or update a service.
 
         Args:
@@ -180,6 +166,7 @@ class ServiceDeployment(BaseScript):
 
         Raises:
             RuntimeError: If deployment steps fail.
+
         """
         try:
             self._ensure_service_dirs(service)
@@ -190,7 +177,7 @@ class ServiceDeployment(BaseScript):
             self.logger.exception("Deployment failed")
             raise RuntimeError(f"Deployment failed: {str(e)}") from e
 
-    def _generate_compose_config(self, config: Dict[str, Any]) -> Dict[str, Any]:
+    def _generate_compose_config(self, config: dict[str, Any]) -> dict[str, Any]:
         """Generate docker-compose configuration.
 
         Args:
@@ -201,6 +188,7 @@ class ServiceDeployment(BaseScript):
 
         Raises:
             KeyError: If a service is missing the 'image' field.
+
         """
         compose_config = {"version": "3", "services": {}}
 
@@ -232,12 +220,13 @@ class ServiceDeployment(BaseScript):
 
         return compose_config
 
-    def _write_compose_config(self, service: Service, config: Dict[str, Any]) -> None:
+    def _write_compose_config(self, service: Service, config: dict[str, Any]) -> None:
         """Write docker-compose configuration to file.
 
         Args:
             service: Service to write config for.
             config: Docker Compose configuration.
+
         """
         compose_file = service.config_path / "docker-compose.yml"
         self.fs.write_text(compose_file, self.json.dumps(config, indent=2))
@@ -258,6 +247,7 @@ class ServiceDeployment(BaseScript):
 
         Raises:
             RuntimeError: If archive creation fails.
+
         """
         try:
             # Ensure backups directory exists
@@ -291,6 +281,7 @@ class ServiceDeployment(BaseScript):
 
         Raises:
             RuntimeError: If backup fails.
+
         """
         try:
             with tempfile.TemporaryDirectory() as temp_dir:
@@ -312,6 +303,7 @@ class ServiceDeployment(BaseScript):
         Raises:
             RuntimeError: If restore fails.
             FileNotFoundError: If backup file doesn't exist.
+
         """
         if not self.fs.exists(backup_path):
             self.logger.error(f"Backup file not found: {backup_path}")
@@ -337,6 +329,7 @@ class ServiceDeployment(BaseScript):
 
         Args:
             service: The service to start.
+
         """
         self.service_manager.run_command(f"cd {service.path} && docker-compose up -d")
 
@@ -345,6 +338,7 @@ class ServiceDeployment(BaseScript):
 
         Args:
             service: The service to stop.
+
         """
         self.service_manager.run_command(f"cd {service.path} && docker-compose down")
 
@@ -357,6 +351,7 @@ class ServiceDeployment(BaseScript):
 
         Raises:
             RuntimeError: If backup fails.
+
         """
         try:
             # Create config backup directory
@@ -379,6 +374,7 @@ class ServiceDeployment(BaseScript):
 
         Raises:
             RuntimeError: If backup fails.
+
         """
         try:
             # Create data backup directory
@@ -411,7 +407,9 @@ class ServiceDeployment(BaseScript):
                     # Copy volume contents
                     source_path = mount["Source"]
                     if self.fs.exists(Path(source_path)):
-                        self.fs.copytree(Path(source_path), volume_path, dirs_exist_ok=True)
+                        self.fs.copytree(
+                            Path(source_path), volume_path, dirs_exist_ok=True
+                        )
         except Exception as e:
             self.logger.exception(f"Failed to backup data volumes: {str(e)}")
             raise RuntimeError(f"Failed to backup data volumes: {str(e)}") from e
@@ -425,6 +423,7 @@ class ServiceDeployment(BaseScript):
 
         Raises:
             RuntimeError: If restore fails.
+
         """
         try:
             config_backup = backup_dir / "config"
@@ -439,7 +438,9 @@ class ServiceDeployment(BaseScript):
                         self.fs.copy2(item_path, service.config_path)
                     else:
                         self.fs.copytree(
-                            item_path, service.config_path / item_path.name, dirs_exist_ok=True
+                            item_path,
+                            service.config_path / item_path.name,
+                            dirs_exist_ok=True,
                         )
         except Exception as e:
             self.logger.exception(f"Failed to restore config: {str(e)}")
@@ -454,6 +455,7 @@ class ServiceDeployment(BaseScript):
 
         Raises:
             RuntimeError: If restore fails.
+
         """
         try:
             data_backup = backup_dir / "data"
@@ -494,6 +496,7 @@ class ServiceDeployment(BaseScript):
 
         Args:
             service: Service to sync configuration for.
+
         """
         self.service_manager.run_command(f"mkdir -p {service.path}")
 
@@ -504,4 +507,3 @@ class ServiceDeployment(BaseScript):
             self.service_manager.run_command(
                 f"cat > {remote_path} << 'EOL'\n{compose_content}\nEOL",
             )
-

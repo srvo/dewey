@@ -6,12 +6,13 @@ from dewey.core.base_script import BaseScript
 class ToolFactory(BaseScript):
     """A class for creating and managing tools, adhering to Dewey conventions."""
 
-    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
+    def __init__(self, config: dict[str, Any], **kwargs: Any) -> None:
         """Initializes the ToolFactory with configuration and optional keyword arguments.
 
         Args:
             config: A dictionary containing configuration parameters.
             **kwargs: Additional keyword arguments.
+
         """
         super().__init__(config=config, **kwargs)
 
@@ -26,6 +27,7 @@ class ToolFactory(BaseScript):
 
         Returns:
             None
+
         """
         try:
             self.logger.info("Starting Tool Factory...")

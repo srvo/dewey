@@ -13,6 +13,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
+    "apscheduler>=3.10.0", # Added for background task scheduling
     # Core Dependencies
     "python-dotenv>=1.0.0",
     "pyyaml>=6.0.0",
@@ -136,5 +137,10 @@ exclude = [
 ]
 
 [tool.ruff.lint]
-select = ["E", "F", "I"]
-ignore = ["E203"]
+select = ["E", "F", "I", "D"]
+ignore = ["E203", "D203", "D213"]
+
+[tool.ruff.format]
+# Enable code formatting in docstrings
+docstring-code-format = true
+quote-style = "double"

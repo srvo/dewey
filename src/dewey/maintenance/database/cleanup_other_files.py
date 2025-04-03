@@ -1,12 +1,10 @@
-import logging
 from typing import Any
 
 from dewey.core.base_script import BaseScript
 
 
 class CleanupOtherFiles(BaseScript):
-    """
-    A script for cleaning up other files in the database.
+    """A script for cleaning up other files in the database.
 
     This script inherits from BaseScript and provides a standardized
     structure for database cleanup, including configuration loading,
@@ -14,9 +12,7 @@ class CleanupOtherFiles(BaseScript):
     """
 
     def run(self) -> None:
-        """
-        Executes the database cleanup process.
-        """
+        """Executes the database cleanup process."""
         self.logger.info("Starting database cleanup process.")
 
         # Example of accessing a configuration value
@@ -25,6 +21,7 @@ class CleanupOtherFiles(BaseScript):
 
         # Add your database cleanup logic here
         self.logger.info("Database cleanup process completed.")
+
 
 if __name__ == "__main__":
     cleanup_script = CleanupOtherFiles()

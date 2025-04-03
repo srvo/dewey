@@ -54,4 +54,4 @@ When adding new tests:
 1. Follow the existing patterns for mocking dependencies
 2. Use the fixtures in `conftest.py` where appropriate
 3. Ensure tests are isolated and do not depend on external state
-4. Add appropriate assertions to verify expected behavior 
+4. Add appropriate assertions to verify expected behavior

@@ -1,17 +1,31 @@
 """Schema management module.
 
 This module handles database schema creation, migrations, and versioning
-for both local and MotherDuck databases.
+for PostgreSQL databases.
 """
 
 import logging
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from .connection import db_manager
 from dewey.core.exceptions import DatabaseConnectionError
 
 logger = logging.getLogger(__name__)
+
+# List of all tables that should exist in the database
+TABLES = [
+    "emails",
+    "email_analyses",
+    "company_context",
+    "documents",
+    "tasks",
+    "ai_feedback",
+    "schema_versions",
+    "change_log",
+    "sync_status",
+    "sync_conflicts",
+]
 
 # Schema version tracking table (PostgreSQL compatible)
 SCHEMA_VERSION_TABLE = """
@@ -175,35 +189,155 @@ CREATE TABLE IF NOT EXISTS ai_feedback (
 )
 """
 
-# Schema version tracking table (PostgreSQL compatible)
-SCHEMA_VERSION_TABLE = """
-CREATE TABLE IF NOT EXISTS schema_versions (
-    id SERIAL PRIMARY KEY,
-    version INTEGER NOT NULL,
-    applied_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    description TEXT,
-    checksum VARCHAR(64),
-    status TEXT DEFAULT 'pending',
-    error_message TEXT
-)
-"""
-        
+
+def initialize_schema():
+    """Initialize the database schema by creating all required tables.
+
+    This will ensure all tables defined in the schema are created if they don't exist.
+    """
+    try:
+        # First create schema version tracking table
+        db_manager.execute_query(SCHEMA_VERSION_TABLE)
+        logger.info("Schema version table initialized")
+
+        # Create change tracking tables
+        db_manager.execute_query(CHANGE_LOG_TABLE)
+        db_manager.execute_query(SYNC_STATUS_TABLE)
+        db_manager.execute_query(SYNC_CONFLICTS_TABLE)
+        logger.info("Change tracking tables initialized")
+
+        # Create core tables
+        db_manager.execute_query(EMAILS_TABLE)
+        db_manager.execute_query(EMAIL_ANALYSES_TABLE)
+        db_manager.execute_query(COMPANY_CONTEXT_TABLE)
+        db_manager.execute_query(DOCUMENTS_TABLE)
+        db_manager.execute_query(TASKS_TABLE)
+        db_manager.execute_query(AI_FEEDBACK_TABLE)
+        logger.info("Core tables initialized")
+
+        # If no version record exists, insert initial version
+        current_version = get_current_version()
+        if current_version == 0:
+            db_manager.execute_query(
+                """
+                INSERT INTO schema_versions (version, description, status)
+                VALUES (1, 'Initial schema creation', 'applied')
+                """
+            )
+            logger.info("Set initial schema version to 1")
+
+        return True
+    except Exception as e:
+        logger.error(f"Failed to initialize schema: {e}")
+        return False
+
+
+def get_current_version() -> int:
+    """Get the current schema version from the database.
+
+    Returns:
+        int: The current schema version, or 0 if no version exists
+
+    """
+    try:
+        result = db_manager.execute_query(
+            """
+            SELECT MAX(version) FROM schema_versions
+            WHERE status = 'applied'
+            """
+        )
+        if result and result[0][0] is not None:
+            return result[0][0]
+        return 0
+    except Exception as e:
+        logger.error(f"Failed to get current schema version: {e}")
+        return 0
+
+
+def apply_migration(version: int, description: str, sql_statements: list[str]) -> bool:
+    """Apply a database migration.
+
+    Args:
+        version: The version number to migrate to
+        description: Description of the migration
+        sql_statements: List of SQL statements to execute
+
+    Returns:
+        bool: True if migration was successful, False otherwise
+
+    """
+    current_version = get_current_version()
+    if version <= current_version:
+        logger.warning(
+            f"Migration to version {version} skipped (current: {current_version})"
+        )
+        return False
+
+    # Record migration attempt
+    try:
+        db_manager.execute_query(
+            """
+            INSERT INTO schema_versions (version, description, status)
+            VALUES (%s, %s, %s)
+            """,
+            (version, description, "pending"),
+        )
+
+        # Execute each SQL statement
+        for statement in sql_statements:
+            db_manager.execute_query(statement)
+
+        # Update migration status
+        db_manager.execute_query(
+            """
+            UPDATE schema_versions
+            SET status = 'applied', applied_at = CURRENT_TIMESTAMP
+            WHERE version = %s
+            """,
+            (version,),
+        )
+
+        logger.info(f"Successfully applied migration to version {version}")
+        return True
+    except Exception as e:
+        # Record error
+        db_manager.execute_query(
+            """
+            UPDATE schema_versions
+            SET status = 'failed', error_message = %s
+            WHERE version = %s
+            """,
+            (str(e), version),
+        )
+        logger.error(f"Failed to apply migration to version {version}: {e}")
+        return False
+
+
 def verify_schema_consistency():
     """Verify schema consistency using PostgreSQL information schema."""
     try:
         # Get table list from PostgreSQL
         result = db_manager.execute_query("""
-            SELECT table_name 
-            FROM information_schema.tables 
+            SELECT table_name
+            FROM information_schema.tables
             WHERE table_schema = 'public'
         """)
         postgres_tables = {row[0] for row in result} if result else set()
 
         # Compare against expected tables
-        expected_tables = {'emails', 'email_analyses', 'company_context', 'documents', 
-                          'tasks', 'ai_feedback', 'schema_versions', 'change_log',
-                          'sync_status', 'sync_conflicts'}
-        
+        expected_tables = {
+            "emails",
+            "email_analyses",
+            "company_context",
+            "documents",
+            "tasks",
+            "ai_feedback",
+            "schema_versions",
+            "change_log",
+            "sync_status",
+            "sync_conflicts",
+        }
+
         missing_tables = expected_tables - postgres_tables
         if missing_tables:
             raise DatabaseConnectionError(
@@ -219,17 +353,26 @@ def verify_schema_consistency():
                 WHERE table_name = '{table_name}'
                 ORDER BY ordinal_position
             """)
-            
+
             # Compare with expected schema (would need schema definition)
             # This is simplified - would need actual schema definition to compare
             if not columns:
                 raise DatabaseConnectionError(
                     f"Table {table_name} exists but has no columns"
                 )
-                
+
         logger.info("Schema consistency verified")
         return True
-        
+
     except Exception as e:
         logger.error(f"Schema consistency check failed: {e}")
         return False
+
+
+__all__ = [
+    "TABLES",
+    "initialize_schema",
+    "get_current_version",
+    "apply_migration",
+    "verify_schema_consistency",
+]
