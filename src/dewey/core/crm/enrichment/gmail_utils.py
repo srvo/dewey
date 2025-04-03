@@ -2,9 +2,10 @@
 
 import base64
 import json
+import logging
 import os
 from pathlib import Path
-from typing import Dict, Any, Optional, Tuple
+from typing import Any
 
 import google.auth
 from google.auth.transport.requests import Request
@@ -13,7 +14,6 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.discovery_cache.base import Cache
-import logging
 
 
 # Disable file cache warning
@@ -31,9 +31,11 @@ class GmailAPIClient:
     """Client for interacting with Gmail API."""
 
     def __init__(self, config=None):
-        """Initialize the Gmail API client.
+        """
+        Initialize the Gmail API client.
 
         Args:
+        ----
             config: Configuration object or dictionary with Gmail API settings
 
         """
@@ -54,7 +56,7 @@ class GmailAPIClient:
             ],
         )
         self.oauth_token_uri = self.config.get(
-            "settings.oauth_token_uri", "https://oauth2.googleapis.com/token"
+            "settings.oauth_token_uri", "https://oauth2.googleapis.com/token",
         )
 
         # Lazy-loaded service
@@ -67,13 +69,16 @@ class GmailAPIClient:
             self._service = self.build_gmail_service()
         return self._service
 
-    def build_gmail_service(self, user_email: Optional[str] = None):
-        """Build the Gmail API service.
+    def build_gmail_service(self, user_email: str | None = None):
+        """
+        Build the Gmail API service.
 
         Args:
+        ----
             user_email: Email address to impersonate (for domain-wide delegation)
 
         Returns:
+        -------
             Gmail API service
 
         """
@@ -84,7 +89,7 @@ class GmailAPIClient:
             if os.path.exists(self.token_path):
                 self.logger.info(f"Using token from {self.token_path}")
                 credentials = Credentials.from_authorized_user_file(
-                    self.token_path, self.scopes
+                    self.token_path, self.scopes,
                 )
 
             # If no valid credentials, and we have a credentials file
@@ -97,7 +102,7 @@ class GmailAPIClient:
 
                     # Load the raw JSON to inspect its format
                     try:
-                        with open(self.credentials_path, "r") as f:
+                        with open(self.credentials_path) as f:
                             creds_data = json.load(f)
 
                         # Check if it's a token file (has 'access_token' field)
@@ -130,11 +135,11 @@ class GmailAPIClient:
                             and creds_data["type"] == "service_account"
                         ):
                             self.logger.info(
-                                "Using service account from credentials file"
+                                "Using service account from credentials file",
                             )
                             credentials = (
                                 service_account.Credentials.from_service_account_info(
-                                    creds_data, scopes=self.scopes
+                                    creds_data, scopes=self.scopes,
                                 )
                             )
 
@@ -145,12 +150,12 @@ class GmailAPIClient:
                         # Check if it's an OAuth client credentials file
                         elif "installed" in creds_data or "web" in creds_data:
                             self.logger.info(
-                                "Using OAuth client credentials from credentials file"
+                                "Using OAuth client credentials from credentials file",
                             )
 
                             # Create a flow from the credentials file
                             flow = InstalledAppFlow.from_client_secrets_file(
-                                self.credentials_path, self.scopes
+                                self.credentials_path, self.scopes,
                             )
 
                             # Run the OAuth flow to get credentials
@@ -164,11 +169,11 @@ class GmailAPIClient:
 
                         else:
                             self.logger.warning(
-                                "Unknown credentials format, falling back to application default credentials"
+                                "Unknown credentials format, falling back to application default credentials",
                             )
                             credentials, _ = google.auth.default(
                                 scopes=self.scopes
-                                + ["https://www.googleapis.com/auth/cloud-platform"]
+                                + ["https://www.googleapis.com/auth/cloud-platform"],
                             )
 
                     except Exception as e:
@@ -176,17 +181,17 @@ class GmailAPIClient:
                         self.logger.info("Using application default credentials")
                         credentials, _ = google.auth.default(
                             scopes=self.scopes
-                            + ["https://www.googleapis.com/auth/cloud-platform"]
+                            + ["https://www.googleapis.com/auth/cloud-platform"],
                         )
                 else:
                     self.logger.warning(
-                        f"Credentials file not found at {self.credentials_path}"
+                        f"Credentials file not found at {self.credentials_path}",
                     )
                     self.logger.info("Using application default credentials")
                     # Use application default credentials from gcloud CLI
                     credentials, _ = google.auth.default(
                         scopes=self.scopes
-                        + ["https://www.googleapis.com/auth/cloud-platform"]
+                        + ["https://www.googleapis.com/auth/cloud-platform"],
                     )
 
             # Build the service with memory cache
@@ -195,16 +200,17 @@ class GmailAPIClient:
             self.logger.error(f"Failed to build Gmail service: {e}")
             raise
 
-    def fetch_message(
-        self, msg_id: str, user_id: str = "me"
-    ) -> Optional[Dict[str, Any]]:
-        """Fetch a single email message from Gmail API.
+    def fetch_message(self, msg_id: str, user_id: str = "me") -> dict[str, Any] | None:
+        """
+        Fetch a single email message from Gmail API.
 
         Args:
+        ----
             msg_id: ID of message to fetch
             user_id: User's email address. The special value "me" can be used for the authenticated user.
 
         Returns:
+        -------
             A dict containing the email data, or None if the fetch failed
 
         """
@@ -221,13 +227,16 @@ class GmailAPIClient:
             self.logger.error(f"Error fetching message {msg_id}: {e}")
             return None
 
-    def extract_body(self, message: Dict[str, Any]) -> Tuple[str, str]:
-        """Extract the email body from a Gmail message.
+    def extract_body(self, message: dict[str, Any]) -> tuple[str, str]:
+        """
+        Extract the email body from a Gmail message.
 
         Args:
+        ----
             message: Gmail message object
 
         Returns:
+        -------
             Tuple of (plain_text, html)
 
         """

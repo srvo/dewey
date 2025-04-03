@@ -50,8 +50,9 @@ class ConfigInterface(Protocol):
 
 class JournalSplitter(BaseScript):
     """Splits a journal file into separate files by year."""
+
     def __init__(
-        self, file_system: FileSystemInterface = None, config: ConfigInterface = None
+        self, file_system: FileSystemInterface = None, config: ConfigInterface = None,
     ) -> None:
         """Initializes the JournalSplitter."""
         super().__init__(config_section="bookkeeping")
@@ -74,7 +75,8 @@ class JournalSplitter(BaseScript):
             return None
 
     def split_journal_by_year(self, input_file: str, output_dir: str) -> None:
-        """Split a journal file into separate files by year.
+        """
+        Split a journal file into separate files by year.
 
         Args:
         ----

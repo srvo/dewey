@@ -1,9 +1,9 @@
 import shutil
 from collections import defaultdict
+from collections.abc import Callable
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Protocol, Tuple
-from collections.abc import Callable
+from typing import Any, Protocol
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection
@@ -65,8 +65,8 @@ class JournalWriter(BaseScript):
         self.config_source = config_source or self
         self.output_dir: Path = Path(
             self.config_source.get_config_value(
-                "journal_dir", "data/bookkeeping/journals"
-            )
+                "journal_dir", "data/bookkeeping/journals",
+            ),
         )
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.processed_hashes_file: Path = self.output_dir / ".processed_hashes"
@@ -77,22 +77,25 @@ class JournalWriter(BaseScript):
         self.llm_client: LLMClient | None = None
 
     def execute(self) -> None:
-        """Runs the journal writer script.
+        """
+        Runs the journal writer script.
 
         This method contains the core logic for writing journal entries.
         """
         # Example usage of config and database:
         example_config_value = self.config_source.get_config_value(
-            "utils.example_config", "default_value"
+            "utils.example_config", "default_value",
         )
 
         if self.db_conn:
             result = self.db_conn.execute("SELECT 1")
 
     def _load_processed_hashes(self) -> set[str]:
-        """Load previously processed transaction hashes.
+        """
+        Load previously processed transaction hashes.
 
-        Returns:
+        Returns
+        -------
             A set of processed transaction hashes.
 
         """
@@ -106,15 +109,17 @@ class JournalWriter(BaseScript):
             return set()
 
     def _save_processed_hashes(self, seen_hashes: set[str]) -> None:
-        """Persist processed hashes between runs.
+        """
+        Persist processed hashes between runs.
 
         Args:
+        ----
             seen_hashes: Set of processed transaction hashes to save.
 
         """
         try:
             self.io_service.write_text(
-                self.processed_hashes_file, "\n".join(seen_hashes)
+                self.processed_hashes_file, "\n".join(seen_hashes),
             )
         except Exception as e:
             self.logger.exception(f"Failed to save processed hashes: {e!s}")
@@ -125,9 +130,11 @@ class JournalWriter(BaseScript):
         entries: list[str],
         now_func: Callable[[], datetime] = datetime.now,
     ) -> None:
-        """Write file with versioned backup if it exists.
+        """
+        Write file with versioned backup if it exists.
 
         Args:
+        ----
             filename: Path to the file to write.
             entries: List of journal entries to write.
             now_func: Function to get the current datetime (for testing).
@@ -152,13 +159,16 @@ class JournalWriter(BaseScript):
         entries: dict[str, list[str]],
         get_account_id: Callable[[], str] | None = None,
     ) -> dict[tuple[str, str], list[str]]:
-        """Organize entries by account ID and year.
+        """
+        Organize entries by account ID and year.
 
         Args:
+        ----
             entries: Dictionary of journal entries, keyed by year.
             get_account_id: Function to retrieve the account ID.
 
         Returns:
+        -------
             A dictionary of grouped entries, keyed by (account_id, year).
 
         """
@@ -172,9 +182,11 @@ class JournalWriter(BaseScript):
         return grouped
 
     def write_entries(self, entries: dict[str, list[str]]) -> None:
-        """Write journal entries to appropriate files.
+        """
+        Write journal entries to appropriate files.
 
         Args:
+        ----
             entries: Dictionary of journal entries, keyed by year.
 
         """
@@ -190,14 +202,13 @@ class JournalWriter(BaseScript):
         self._save_processed_hashes(self.seen_hashes)
 
     def log_classification_decision(
-        self,
-        tx_hash: str,
-        pattern: str,
-        category: str,
+        self, tx_hash: str, pattern: str, category: str,
     ) -> None:
-        """Record classification decisions for quality tracking.
+        """
+        Record classification decisions for quality tracking.
 
         Args:
+        ----
             tx_hash: The transaction hash.
             pattern: The pattern that matched.
             category: The category the transaction was classified into.
@@ -213,9 +224,11 @@ class JournalWriter(BaseScript):
         )
 
     def get_classification_report(self) -> dict[str, Any]:
-        """Generate classification quality metrics.
+        """
+        Generate classification quality metrics.
 
-        Returns:
+        Returns
+        -------
             A dictionary containing classification quality metrics.
 
         """

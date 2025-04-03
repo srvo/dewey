@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Simple Gmail Email Import Script
+"""
+Simple Gmail Email Import Script
 ===============================
 
 This script imports emails from Gmail using gcloud CLI authentication.
@@ -11,7 +12,7 @@ import os
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import duckdb
 import google.auth
@@ -53,10 +54,10 @@ class GmailImporter(BaseScript):
         )
         self.credentials_dir = Path(self.get_config_value("paths.credentials_dir"))
         self.credentials_path = self.credentials_dir / self.get_config_value(
-            "settings.gmail_credentials_file"
+            "settings.gmail_credentials_file",
         )
         self.token_path = self.credentials_dir / self.get_config_value(
-            "settings.gmail_token_file"
+            "settings.gmail_token_file",
         )
         self.scopes = self.get_config_value("settings.gmail_scopes") or [
             "https://www.googleapis.com/auth/gmail.readonly",
@@ -68,14 +69,17 @@ class GmailImporter(BaseScript):
         )
 
     def _create_emails_table(self, conn: duckdb.DuckDBPyConnection) -> None:
-        """Creates the emails table in the database if it doesn't exist.
+        """
+        Creates the emails table in the database if it doesn't exist.
 
         Args:
+        ----
             conn: DuckDB connection object.
 
         """
         try:
-            conn.execute("""
+            conn.execute(
+                """
             CREATE TABLE IF NOT EXISTS emails (
                 msg_id VARCHAR PRIMARY KEY,
                 thread_id VARCHAR,
@@ -106,7 +110,8 @@ class GmailImporter(BaseScript):
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-            """)
+            """,
+            )
             self.logger.info("Verified emails table exists with correct schema")
 
             # Create indexes if they don't exist
@@ -127,12 +132,15 @@ class GmailImporter(BaseScript):
             raise
 
     def build_gmail_service(self, user_email: str | None = None):
-        """Build the Gmail API service.
+        """
+        Build the Gmail API service.
 
         Args:
+        ----
             user_email: Email address to impersonate (for domain-wide delegation)
 
         Returns:
+        -------
             Gmail API service
 
         """
@@ -143,7 +151,7 @@ class GmailImporter(BaseScript):
             if os.path.exists(self.token_path):
                 self.logger.info(f"Using token from {self.token_path}")
                 credentials = Credentials.from_authorized_user_file(
-                    self.token_path, self.scopes
+                    self.token_path, self.scopes,
                 )
 
             # If no valid credentials, and we have a credentials file
@@ -160,7 +168,7 @@ class GmailImporter(BaseScript):
                             creds_data = json.load(f)
 
                         self.logger.info(
-                            f"Credentials file format: {list(creds_data.keys())}"
+                            f"Credentials file format: {list(creds_data.keys())}",
                         )
 
                         # Check if it's a token file (has 'access_token' field)
@@ -193,11 +201,11 @@ class GmailImporter(BaseScript):
                             and creds_data["type"] == "service_account"
                         ):
                             self.logger.info(
-                                "Using service account from credentials file"
+                                "Using service account from credentials file",
                             )
                             credentials = (
                                 service_account.Credentials.from_service_account_info(
-                                    creds_data, scopes=self.scopes
+                                    creds_data, scopes=self.scopes,
                                 )
                             )
 
@@ -208,12 +216,12 @@ class GmailImporter(BaseScript):
                         # Check if it's an OAuth client credentials file
                         elif "installed" in creds_data or "web" in creds_data:
                             self.logger.info(
-                                "Using OAuth client credentials from credentials file"
+                                "Using OAuth client credentials from credentials file",
                             )
 
                             # Create a flow from the credentials file
                             flow = InstalledAppFlow.from_client_secrets_file(
-                                self.credentials_path, self.scopes
+                                self.credentials_path, self.scopes,
                             )
 
                             # Run the OAuth flow to get credentials
@@ -227,11 +235,11 @@ class GmailImporter(BaseScript):
 
                         else:
                             self.logger.warning(
-                                "Unknown credentials format, falling back to application default credentials"
+                                "Unknown credentials format, falling back to application default credentials",
                             )
                             credentials, _ = google.auth.default(
                                 scopes=self.scopes
-                                + ["https://www.googleapis.com/auth/cloud-platform"]
+                                + ["https://www.googleapis.com/auth/cloud-platform"],
                             )
 
                     except Exception as e:
@@ -239,17 +247,17 @@ class GmailImporter(BaseScript):
                         self.logger.info("Using application default credentials")
                         credentials, _ = google.auth.default(
                             scopes=self.scopes
-                            + ["https://www.googleapis.com/auth/cloud-platform"]
+                            + ["https://www.googleapis.com/auth/cloud-platform"],
                         )
                 else:
                     self.logger.warning(
-                        f"Credentials file not found at {self.credentials_path}"
+                        f"Credentials file not found at {self.credentials_path}",
                     )
                     self.logger.info("Using application default credentials")
                     # Use application default credentials from gcloud CLI
                     credentials, _ = google.auth.default(
                         scopes=self.scopes
-                        + ["https://www.googleapis.com/auth/cloud-platform"]
+                        + ["https://www.googleapis.com/auth/cloud-platform"],
                     )
 
             # Build the service with memory cache
@@ -268,9 +276,11 @@ class GmailImporter(BaseScript):
         historical=False,
         include_sent=True,
     ):
-        """Fetch emails from Gmail API that don't exist in MotherDuck.
+        """
+        Fetch emails from Gmail API that don't exist in MotherDuck.
 
         Args:
+        ----
             service: Gmail API service
             conn: Existing database connection
             days_back: Number of days to look back (ignored if historical=True)
@@ -280,6 +290,7 @@ class GmailImporter(BaseScript):
             include_sent: If True, include sent emails
 
         Returns:
+        -------
             List of email IDs
 
         """
@@ -294,7 +305,7 @@ class GmailImporter(BaseScript):
                 end_date_str = end_date.strftime("%Y/%m/%d")
 
                 self.logger.info(
-                    f"Importing emails from {start_date_str} to {end_date_str}"
+                    f"Importing emails from {start_date_str} to {end_date_str}",
                 )
             else:
                 self.logger.info("Importing all historical emails")
@@ -306,19 +317,23 @@ class GmailImporter(BaseScript):
 
             # Get existing email IDs from MotherDuck
             try:
-                count_result = conn.execute("""
+                count_result = conn.execute(
+                    """
                     SELECT COUNT(*) FROM emails
-                """).fetchone()
+                """,
+                ).fetchone()
                 existing_count = count_result[0] if count_result else 0
 
                 existing_ids = {
                     row[0]
-                    for row in conn.execute("""
+                    for row in conn.execute(
+                        """
                     SELECT msg_id FROM emails
-                """).fetchall()
+                """,
+                    ).fetchall()
                 }
                 self.logger.info(
-                    f"Found {existing_count} existing emails in MotherDuck ({len(existing_ids)} IDs loaded)"
+                    f"Found {existing_count} existing emails in MotherDuck ({len(existing_ids)} IDs loaded)",
                 )
             except Exception as e:
                 self.logger.error(f"Error getting existing emails: {e}")
@@ -361,7 +376,7 @@ class GmailImporter(BaseScript):
                         total_fetched += len(messages)
 
                         self.logger.info(
-                            f"Fetched {len(messages)} messages, {len(new_messages)} new, total new: {len(all_messages)}"
+                            f"Fetched {len(messages)} messages, {len(new_messages)} new, total new: {len(all_messages)}",
                         )
 
                         # Check if we've reached the max
@@ -390,7 +405,7 @@ class GmailImporter(BaseScript):
                                 import re
 
                                 retry_time_match = re.search(
-                                    r"Retry after ([^Z]+Z)", error_msg
+                                    r"Retry after ([^Z]+Z)", error_msg,
                                 )
 
                                 if retry_time_match:
@@ -398,7 +413,7 @@ class GmailImporter(BaseScript):
                                         from dateutil import parser
 
                                         retry_time = parser.parse(
-                                            retry_time_match.group(1)
+                                            retry_time_match.group(1),
                                         )
                                         now = datetime.now(retry_time.tzinfo)
                                         delay = max(
@@ -407,14 +422,14 @@ class GmailImporter(BaseScript):
                                         )
                                     except Exception as parse_error:
                                         self.logger.warning(
-                                            f"Failed to parse retry time: {parse_error}"
+                                            f"Failed to parse retry time: {parse_error}",
                                         )
                                         delay = base_delay * (2 ** (retry_count - 1))
                                 else:
                                     delay = base_delay * (2 ** (retry_count - 1))
 
                                 self.logger.info(
-                                    f"Rate limit exceeded. Waiting {delay:.2f} seconds before retry {retry_count}/{max_retries}..."
+                                    f"Rate limit exceeded. Waiting {delay:.2f} seconds before retry {retry_count}/{max_retries}...",
                                 )
                                 time.sleep(delay)
                                 continue
@@ -427,7 +442,7 @@ class GmailImporter(BaseScript):
 
                 if retry_count == max_retries:
                     self.logger.warning(
-                        f"Max retries ({max_retries}) reached. Moving on with collected messages."
+                        f"Max retries ({max_retries}) reached. Moving on with collected messages.",
                     )
                     break
 
@@ -443,14 +458,17 @@ class GmailImporter(BaseScript):
             return []
 
     def fetch_email(self, service, msg_id, user_id="me"):
-        """Fetch a single email message from Gmail API.
+        """
+        Fetch a single email message from Gmail API.
 
         Args:
+        ----
             service: Gmail API service instance
             msg_id: ID of message to fetch
             user_id: User's email address. The special value "me" can be used to indicate the authenticated user.
 
         Returns:
+        -------
             A dict containing the email data, or None if the fetch failed
 
         """
@@ -468,12 +486,15 @@ class GmailImporter(BaseScript):
             return None
 
     def parse_email(self, message: dict) -> dict[str, Any]:
-        """Parse a Gmail message into a structured dictionary.
+        """
+        Parse a Gmail message into a structured dictionary.
 
         Args:
+        ----
             message: Gmail message object
 
         Returns:
+        -------
             Structured email data
 
         """
@@ -505,12 +526,15 @@ class GmailImporter(BaseScript):
         return email_data
 
     def extract_body(self, payload: dict) -> dict[str, str]:
-        """Extract the email body from the payload.
+        """
+        Extract the email body from the payload.
 
         Args:
+        ----
             payload: Gmail message payload
 
         Returns:
+        -------
             Dictionary with 'text' and 'html' versions of the body
 
         """
@@ -547,12 +571,15 @@ class GmailImporter(BaseScript):
         return result
 
     def extract_attachments(self, payload: dict) -> list[dict[str, Any]]:
-        """Extract attachments from the payload.
+        """
+        Extract attachments from the payload.
 
         Args:
+        ----
             payload: Gmail message payload
 
         Returns:
+        -------
             List of attachment metadata
 
         """
@@ -562,14 +589,14 @@ class GmailImporter(BaseScript):
             return attachments
 
         # Check if this part is an attachment
-        if "filename" in payload and payload["filename"]:
+        if payload.get("filename"):
             attachments.append(
                 {
                     "filename": payload["filename"],
                     "mimeType": payload.get("mimeType", ""),
                     "size": payload.get("body", {}).get("size", 0),
                     "attachmentId": payload.get("body", {}).get("attachmentId", ""),
-                }
+                },
             )
 
         # Check for multipart
@@ -580,14 +607,17 @@ class GmailImporter(BaseScript):
         return attachments
 
     def store_emails_batch(self, conn, email_batch, batch_id: str):
-        """Store a batch of emails with improved error handling and batching.
+        """
+        Store a batch of emails with improved error handling and batching.
 
         Args:
+        ----
             conn: DuckDB connection
             email_batch: List of email data dictionaries
             batch_id: Unique identifier for this batch
 
         Returns:
+        -------
             tuple: (success_count, error_count)
 
         """
@@ -623,7 +653,7 @@ class GmailImporter(BaseScript):
 
                     self.logger.info(
                         f"Processed sub-batch {i // sub_batch_size + 1}, "
-                        f"Success: {success_count}, Errors: {error_count}"
+                        f"Success: {success_count}, Errors: {error_count}",
                     )
 
                 # Final commit
@@ -637,26 +667,29 @@ class GmailImporter(BaseScript):
                 if retry_count < max_retries:
                     wait_time = retry_count * 5  # Exponential backoff
                     self.logger.warning(
-                        f"Batch failed, retrying in {wait_time} seconds... ({retry_count}/{max_retries})"
+                        f"Batch failed, retrying in {wait_time} seconds... ({retry_count}/{max_retries})",
                     )
                     time.sleep(wait_time)
                 else:
                     self.logger.error(
-                        f"Failed to process batch after {max_retries} attempts"
+                        f"Failed to process batch after {max_retries} attempts",
                     )
                     raise
 
         return success_count, error_count
 
     def store_email(self, conn, email_data, batch_id: str):
-        """Store a single email with improved error handling.
+        """
+        Store a single email with improved error handling.
 
         Args:
+        ----
             conn: DuckDB connection
             email_data: Dictionary containing email data
             batch_id: Unique identifier for this import batch
 
         Returns:
+        -------
             bool: True if email was stored successfully
 
         """
@@ -672,7 +705,7 @@ class GmailImporter(BaseScript):
             if isinstance(email_data, str):
                 try:
                     self.logger.info(
-                        f"Attempting to parse string email data: {email_data[:100]}..."
+                        f"Attempting to parse string email data: {email_data[:100]}...",
                     )
                     email_data = json.loads(email_data)
                 except json.JSONDecodeError as e:
@@ -711,7 +744,7 @@ class GmailImporter(BaseScript):
 
             # Check if email already exists
             result = conn.execute(
-                "SELECT msg_id FROM emails WHERE msg_id = ?", [msg_id]
+                "SELECT msg_id FROM emails WHERE msg_id = ?", [msg_id],
             ).fetchone()
 
             if result:
@@ -720,7 +753,7 @@ class GmailImporter(BaseScript):
 
             # Extract body and attachments
             body = self.extract_body(
-                payload
+                payload,
             )  # Now returns a dict with 'text' and 'html'
             attachments = self.extract_attachments(payload)
 
@@ -730,7 +763,7 @@ class GmailImporter(BaseScript):
             except ValueError as e:
                 self.logger.warning(f"Failed to parse date for email {msg_id}: {e}")
                 received_date = datetime.fromtimestamp(
-                    int(email_data.get("internalDate", "0")) / 1000
+                    int(email_data.get("internalDate", "0")) / 1000,
                 )
 
             # Prepare data for insertion
@@ -768,7 +801,7 @@ class GmailImporter(BaseScript):
                         "received_date": received_date.isoformat(),
                         "body_text": body["text"],
                         "body_html": body["html"],
-                    }
+                    },
                 ),
                 "priority": 0,  # Will be set by enrichment
                 "label_ids": json.dumps(email_data.get("labelIds", [])),
@@ -802,17 +835,20 @@ class GmailImporter(BaseScript):
 
         except Exception as e:
             self.logger.error(
-                f"Error storing email {email_data.get('id', 'unknown')}: {e}"
+                f"Error storing email {email_data.get('id', 'unknown')}: {e}",
             )
             return False
 
     def parse_email_date(self, date_str):
-        """Parse email date string to datetime object.
+        """
+        Parse email date string to datetime object.
 
         Args:
+        ----
             date_str: Date string from email header
 
         Returns:
+        -------
             datetime object
 
         """
@@ -836,7 +872,7 @@ class GmailImporter(BaseScript):
                     part
                     for part in date_str.split(" ")
                     if not (part.startswith("(") and part.endswith(")"))
-                ]
+                ],
             )
             return date_parser.parse(cleaned_date_str)
         except Exception as e:
@@ -886,10 +922,10 @@ class GmailImporter(BaseScript):
             # Store emails in batch
             if email_batch:
                 success_count, error_count = self.store_emails_batch(
-                    self.db_conn, email_batch, batch_id
+                    self.db_conn, email_batch, batch_id,
                 )
                 self.logger.info(
-                    f"Successfully stored {success_count} emails, {error_count} errors."
+                    f"Successfully stored {success_count} emails, {error_count} errors.",
                 )
             else:
                 self.logger.info("No new emails to store.")
@@ -903,7 +939,7 @@ class GmailImporter(BaseScript):
 def run(self) -> None:
     """Legacy method that calls execute() for backward compatibility."""
     self.logger.warning(
-        "Using deprecated run() method. Update to use execute() instead."
+        "Using deprecated run() method. Update to use execute() instead.",
     )
     self.execute()
 

@@ -3,7 +3,7 @@
 import json
 import re
 from pathlib import Path
-from typing import Any, Dict, Protocol
+from typing import Any, Protocol
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection
@@ -67,12 +67,15 @@ class RulesConverter(BaseScript):
 
     @staticmethod
     def clean_category(category: str) -> str:
-        """Cleans and standardizes the category string.
+        """
+        Cleans and standardizes the category string.
 
         Args:
+        ----
             category: The category string to clean.
 
         Returns:
+        -------
             The cleaned category string.
 
         """
@@ -97,12 +100,15 @@ class RulesConverter(BaseScript):
         return category
 
     def parse_rules_file(self, rules_file: Path) -> dict[str, dict[str, Any]]:
-        """Parses the old_mercury.rules file and extracts classification patterns.
+        """
+        Parses the old_mercury.rules file and extracts classification patterns.
 
         Args:
+        ----
             rules_file: Path to the rules file.
 
         Returns:
+        -------
             A dictionary containing classification patterns and their associated
             categories and examples.
 
@@ -127,12 +133,12 @@ class RulesConverter(BaseScript):
                 if line.startswith("if") and "then account2" in line:
                     # Extract pattern and category
                     pattern_match = re.search(
-                        r'if /(.+?)/ then account2 "([^"]+)"', line
+                        r'if /(.+?)/ then account2 "([^"]+)"', line,
                     )
                     if pattern_match:
                         # Escape regex special characters and normalize whitespace
                         pattern = re.escape(pattern_match.group(1)).replace(
-                            r"\ ", "\\s+"
+                            r"\ ", "\\s+",
                         )
                         category = pattern_match.group(2)
 
@@ -163,13 +169,13 @@ class RulesConverter(BaseScript):
         return classifications
 
     def analyze_transactions(
-        self,
-        journal_dir: Path,
-        classifications: dict[str, dict[str, Any]],
+        self, journal_dir: Path, classifications: dict[str, dict[str, Any]],
     ) -> None:
-        """Analyzes existing transactions to find examples for each pattern.
+        """
+        Analyzes existing transactions to find examples for each pattern.
 
         Args:
+        ----
             journal_dir: Path to the directory containing journal files.
             classifications: A dictionary containing classification patterns.
 
@@ -194,14 +200,17 @@ class RulesConverter(BaseScript):
                                 data["examples"].append(desc)
 
     def generate_rules_data(
-        self, classifications: dict[str, dict[str, Any]]
+        self, classifications: dict[str, dict[str, Any]],
     ) -> dict[str, Any]:
-        """Generates a JSON-compatible data structure with classification rules.
+        """
+        Generates a JSON-compatible data structure with classification rules.
 
         Args:
+        ----
             classifications: A dictionary containing classification patterns.
 
         Returns:
+        -------
             A dictionary containing the rules in a format suitable for JSON serialization.
 
         """
@@ -230,13 +239,13 @@ class RulesConverter(BaseScript):
         return rules
 
     def generate_rules_json(
-        self,
-        classifications: dict[str, dict[str, Any]],
-        output_file: Path,
+        self, classifications: dict[str, dict[str, Any]], output_file: Path,
     ) -> None:
-        """Generates a JSON file with classification rules.
+        """
+        Generates a JSON file with classification rules.
 
         Args:
+        ----
             classifications: A dictionary containing classification patterns.
             output_file: Path to the output JSON file.
 
@@ -250,7 +259,7 @@ class RulesConverter(BaseScript):
         self.logger.info(f"Generated rules file: {output_file}")
         self.logger.info(f"Total patterns: {rules['stats']['total_patterns']}")
         self.logger.info(
-            f"Patterns with examples: {rules['stats']['patterns_with_examples']}"
+            f"Patterns with examples: {rules['stats']['patterns_with_examples']}",
         )
         self.logger.info(f"Unique categories: {len(rules['categories'])}")
 

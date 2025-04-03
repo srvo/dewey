@@ -1,7 +1,7 @@
 import sys
 from datetime import date, datetime
 from pathlib import Path
-from typing import Any, Dict, Protocol, Tuple
+from typing import Any, Protocol
 
 from dateutil.relativedelta import relativedelta
 
@@ -31,7 +31,8 @@ class RealFileSystem:
 
 
 class JournalEntryGenerator(BaseScript):
-    """Generates journal entries for the Mormair_E650 asset, including
+    """
+    Generates journal entries for the Mormair_E650 asset, including
     acquisition, depreciation, lease income, revenue sharing, and hosting fees.
     """
 
@@ -53,9 +54,11 @@ class JournalEntryGenerator(BaseScript):
         self.fs: FileSystemInterface = fs
 
     def validate_assumptions(self) -> None:
-        """Validates key assumptions with user input.
+        """
+        Validates key assumptions with user input.
 
-        Raises:
+        Raises
+        ------
             SystemExit: If the user does not confirm an assumption.
 
         """
@@ -74,12 +77,15 @@ class JournalEntryGenerator(BaseScript):
             sys.exit(1)
 
     def create_acquisition_entry(self, acquisition_date: date) -> str:
-        """Create the acquisition journal entry.
+        """
+        Create the acquisition journal entry.
 
         Args:
+        ----
             acquisition_date: The date of the asset acquisition.
 
         Returns:
+        -------
             The formatted acquisition journal entry string.
 
         """
@@ -92,12 +98,14 @@ class JournalEntryGenerator(BaseScript):
 """
 
     def append_acquisition_entry(
-        self, complete_ledger_file: str, acquisition_entry: str
+        self, complete_ledger_file: str, acquisition_entry: str,
     ) -> None:
-        """Append the acquisition entry to the complete ledger file if it doesn't
+        """
+        Append the acquisition entry to the complete ledger file if it doesn't
         already exist.
 
         Args:
+        ----
             complete_ledger_file: Path to the complete ledger file.
             acquisition_entry: The acquisition journal entry string.
 
@@ -109,7 +117,7 @@ class JournalEntryGenerator(BaseScript):
                     acquisition_entry_exists = True
         except FileNotFoundError:
             self.logger.warning(f"File not found: {complete_ledger_file}")
-            pass  # Handle missing file gracefully
+            # Handle missing file gracefully
         except Exception as e:
             self.logger.error(f"Error reading file: {e}")
             return
@@ -122,10 +130,12 @@ class JournalEntryGenerator(BaseScript):
                 self.logger.error(f"Error writing to file: {e}")
 
     def initialize_forecast_ledger(self, forecast_ledger_file: str) -> None:
-        """Initializes the forecast ledger file with account declarations if it
+        """
+        Initializes the forecast ledger file with account declarations if it
         doesn't exist.
 
         Args:
+        ----
             forecast_ledger_file: Path to the forecast ledger file.
 
         """
@@ -149,12 +159,15 @@ account Expenses:Hosting:Mormair_E650
             raise
 
     def create_depreciation_entry(self, current_date: datetime) -> str:
-        """Create a depreciation journal entry for a given date.
+        """
+        Create a depreciation journal entry for a given date.
 
         Args:
+        ----
             current_date: The date for which to create the depreciation entry.
 
         Returns:
+        -------
             The formatted depreciation journal entry string.
 
         """
@@ -175,18 +188,19 @@ account Expenses:Hosting:Mormair_E650
         return revenue_share
 
     def create_revenue_entries(
-        self,
-        current_date: datetime,
-        generator: dict[str, Any],
+        self, current_date: datetime, generator: dict[str, Any],
     ) -> tuple[str, str, str]:
-        """Creates revenue-related journal entries (lease income, revenue share,
+        """
+        Creates revenue-related journal entries (lease income, revenue share,
         hosting fee).
 
         Args:
+        ----
             current_date: The date for which to create the entries.
             generator: A dictionary containing revenue recovery information.
 
         Returns:
+        -------
             A tuple containing the lease income, revenue share payment, and
             hosting fee payment entries.
 
@@ -235,13 +249,13 @@ account Expenses:Hosting:Mormair_E650
             raise
 
     def generate_journal_entries(
-        self,
-        complete_ledger_file: str,
-        forecast_ledger_file: str,
+        self, complete_ledger_file: str, forecast_ledger_file: str,
     ) -> None:
-        """Generates journal entries and appends them to the journal files.
+        """
+        Generates journal entries and appends them to the journal files.
 
         Args:
+        ----
             complete_ledger_file: Path to the complete ledger file.
             forecast_ledger_file: Path to the forecast ledger file.
 
@@ -271,31 +285,28 @@ account Expenses:Hosting:Mormair_E650
 
                 self.write_journal_entry(forecast_ledger_file, lease_income_entry)
                 self.write_journal_entry(
-                    forecast_ledger_file, revenue_share_payment_entry
+                    forecast_ledger_file, revenue_share_payment_entry,
                 )
                 self.write_journal_entry(
-                    forecast_ledger_file, hosting_fee_payment_entry
+                    forecast_ledger_file, hosting_fee_payment_entry,
                 )
 
             current_date += relativedelta(months=1)
             current_date = current_date.replace(day=1) + relativedelta(
-                months=1, days=-1
+                months=1, days=-1,
             )
 
     def execute(self) -> None:
         """Runs the journal entry generation process."""
         complete_ledger_file = self.get_config_value(
-            "bookkeeping.complete_ledger_file", ""
+            "bookkeeping.complete_ledger_file", "",
         )
         forecast_ledger_file = self.get_config_value(
-            "bookkeeping.forecast_ledger_file", ""
+            "bookkeeping.forecast_ledger_file", "",
         )
 
         self.validate_assumptions()
-        self.generate_journal_entries(
-            complete_ledger_file,
-            forecast_ledger_file,
-        )
+        self.generate_journal_entries(complete_ledger_file, forecast_ledger_file)
 
 
 if __name__ == "__main__":
@@ -303,8 +314,7 @@ if __name__ == "__main__":
     parser = generator.setup_argparse()
     parser.description = "Generate journal entries for Mormair_E650 asset"
     parser.add_argument(
-        "complete_ledger_file",
-        help="Path to the complete_ledger.journal file",
+        "complete_ledger_file", help="Path to the complete_ledger.journal file",
     )
     parser.add_argument("forecast_ledger_file", help="Path to the forecast.ledger file")
     args = parser.parse_args()
