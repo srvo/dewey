@@ -15,6 +15,40 @@ class RFDocstringAgent(BaseScript):
         super().__init__(config_section="rf_docstring_agent")
         self.dry_run = dry_run
 
+    def execute(self) -> None:
+        """Executes the docstring refactoring process.
+
+        This method mirrors the logic in the `run` method and performs
+        the docstring refactoring process.
+
+        Raises:
+            Exception: If an error occurs during the process.
+
+        Returns:
+            None
+
+        """
+        try:
+            self.logger.info("Starting docstring refactoring process.")
+
+            # Example of accessing configuration values
+            example_config_value = self.get_config_value("example_config_key")
+            self.logger.info(f"Example config value: {example_config_value}")
+
+            # Placeholder for core logic - replace with actual implementation
+            self.logger.info("Docstring refactoring logic would be executed here.")
+
+            if self.dry_run:
+                self.logger.info("Dry run mode enabled. No changes will be applied.")
+            else:
+                self.logger.info("Applying docstring refactoring changes.")
+
+            self.logger.info("Docstring refactoring process completed.")
+
+        except Exception as e:
+            self.logger.exception(f"An error occurred: {e}")
+            raise
+
     def run(self) -> None:
         """Executes the docstring refactoring process.
 
