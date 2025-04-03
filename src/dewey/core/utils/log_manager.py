@@ -162,6 +162,19 @@ class LogManager(BaseScript):
 
         return args
 
+    def execute(self) -> None:
+        """Executes the LogManager script.
+
+        This method calls the run method and handles any exceptions.
+        """
+        try:
+            self.logger.info("Starting LogManager execution.")
+            self.run()
+            self.logger.info("LogManager execution completed successfully.")
+        except Exception as e:
+            self.logger.error(f"Error during LogManager execution: {e}", exc_info=True)
+            raise
+
 
 if __name__ == "__main__":
     log_manager = LogManager()
