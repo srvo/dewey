@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -14,6 +14,7 @@ class SloaneGhostwriter(BaseScript):
         """Initializes the SloaneGhostwriter script.
 
         Args:
+        ----
             **kwargs: Keyword arguments passed to the BaseScript constructor.
 
         """
@@ -25,10 +26,12 @@ class SloaneGhostwriter(BaseScript):
         This method retrieves configuration values, generates text using a
         language model, and returns the generated text.
 
-        Returns:
+        Returns
+        -------
             Dict[str, Any]: A dictionary containing the generated text.
 
-        Raises:
+        Raises
+        ------
             Exception: If there is an error during text generation.
 
         """

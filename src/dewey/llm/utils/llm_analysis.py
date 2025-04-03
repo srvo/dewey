@@ -1,6 +1,6 @@
 """Utility module for performing analysis using large language models."""
 
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -15,6 +15,7 @@ class LLMAnalysis(BaseScript):
         """Initialize the LLMAnalysis script.
 
         Args:
+        ----
             **kwargs: Keyword arguments to pass to the BaseScript constructor.
 
         """
@@ -23,10 +24,12 @@ class LLMAnalysis(BaseScript):
     def execute(self) -> dict[str, Any]:
         """Execute the LLM analysis.
 
-        Returns:
+        Returns
+        -------
             A dictionary containing the analysis results.
 
-        Raises:
+        Raises
+        ------
             Exception: If an error occurs during the analysis.
 
         """
