@@ -1,3 +1,4 @@
+"""Module for managing documentation tasks within Dewey."""
 from typing import Any, Protocol
 
 from dewey.core.base_script import BaseScript
