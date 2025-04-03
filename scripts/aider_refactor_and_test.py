@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""
-    Enhanced script for refactoring code and generating tests using Aider.
+"""Enhanced script for refactoring code and generating tests using Aider.
 
-    This script provides a comprehensive workflow to:
-    1. Refactor a given directory of Python files to match Dewey conventions
-    2. Generate comprehensive unit tests for the refactored files
+This script provides a comprehensive workflow to:
+1. Refactor a given directory of Python files to match Dewey conventions
+2. Generate comprehensive unit tests for the refactored files
 """
 
 import argparse
@@ -37,18 +36,17 @@ logger = logging.getLogger("aider_refactor_and_test")
 
 
 def read_file(file_path: Path) -> str:
-    """
-    Read a file and return its contents.
+    """Read a file and return its contents.
 
     Args:
-    -----
+    ----
         file_path: Path to the file to read
 
     Returns:
-    --------
+    -------
         The content of the file or empty string if file doesn't exist
 
-"""
+    """
     try:
         with open(file_path) as f:
             return f.read()
@@ -58,54 +56,50 @@ def read_file(file_path: Path) -> str:
 
 
 def read_conventions() -> str:
-    """
-    Read the conventions.md file for context.
+    """Read the conventions.md file for context.
 
-    Returns:
-    --------
+    Returns
+    -------
         The content of the conventions.md file
 
-"""
+    """
     return read_file(CONVENTIONS_FILE)
 
 
 def read_config() -> str:
-    """
-    Read the dewey.yaml config file for context.
+    """Read the dewey.yaml config file for context.
 
-    Returns:
-    --------
+    Returns
+    -------
         The content of the config file
 
-"""
+    """
     return read_file(CONFIG_FILE)
 
 
 def read_base_script() -> str:
-    """
-    Read the base_script.py file for context.
+    """Read the base_script.py file for context.
 
-    Returns:
-    --------
+    Returns
+    -------
         The content of the base_script.py file
 
-"""
+    """
     return read_file(BASE_SCRIPT_FILE)
 
 
 def find_python_files(path: Path) -> list[Path]:
-    """
-    Find all Python files in the directory or return the given file if it's a Python file.
+    """Find all Python files in the directory or return the given file if it's a Python file.
 
     Args:
-    -----
+    ----
         path: Path to a directory or a Python file
 
     Returns:
-    --------
+    -------
         List of paths to Python files
 
-"""
+    """
     if path.is_file() and path.suffix == ".py":
         return [path]
     elif path.is_dir():
@@ -114,18 +108,17 @@ def find_python_files(path: Path) -> list[Path]:
 
 
 def find_test_files(path: Path) -> list[Path]:
-    """
-    Find all test files in the directory.
+    """Find all test files in the directory.
 
     Args:
-    -----
+    ----
         path: Path to a directory
 
     Returns:
-    --------
+    -------
         List of paths to test files
 
-"""
+    """
     if path.is_dir():
         return list(path.glob("**/test_*.py"))
     return []
@@ -134,20 +127,19 @@ def find_test_files(path: Path) -> list[Path]:
 def build_refactor_prompt(
     conventions_content: str, config_content: str, base_script_content: str
 ) -> str:
-    """
-    Build the refactor prompt with all context.
+    """Build the refactor prompt with all context.
 
     Args:
-    -----
+    ----
         conventions_content: The content of the conventions.md file
         config_content: The content of the dewey.yaml file
         base_script_content: The content of the base_script.py file
 
     Returns:
-    --------
+    -------
         The complete refactor prompt with context
 
-"""
+    """
     return f"""
 Refactor this script to properly implement Dewey conventions:
 1. Inherit from BaseScript with appropriate __init__ parameters
@@ -184,11 +176,10 @@ def build_test_prompt(
     config_content: str,
     base_script_content: str,
 ) -> str:
-    """
-    Build the test generation prompt with all context.
+    """Build the test generation prompt with all context.
 
     Args:
-    -----
+    ----
         source_file_path: Path to the source file being tested
         source_content: Content of the source file
         conventions_content: The content of the conventions.md file
@@ -196,10 +187,10 @@ def build_test_prompt(
         base_script_content: The content of the base_script.py file
 
     Returns:
-    --------
+    -------
         The complete test generation prompt with context
 
-"""
+    """
     # Make sure the source_file_path is absolute
     source_file_path = source_file_path.resolve()
 
@@ -318,11 +309,10 @@ def process_files_for_refactoring(
     base_script_content: str,
     dry_run: bool = False,
 ) -> None:
-    """
-    Process Python files for refactoring.
+    """Process Python files for refactoring.
 
     Args:
-    -----
+    ----
         source_files: List of paths to Python files to refactor
         model_name: Name of the model to use
         conventions_content: Content of the conventions.md file
@@ -330,7 +320,7 @@ def process_files_for_refactoring(
         base_script_content: Content of the base_script.py file
         dry_run: If True, don't actually modify the files
 
-"""
+    """
     refactor_prompt = build_refactor_prompt(
         conventions_content, config_content, base_script_content
     )
@@ -361,20 +351,19 @@ def process_files_for_refactoring(
 def run_generated_tests(
     test_dir: Path, source_files: list[Path], verbose: bool = False
 ) -> bool:
-    """
-    Run the generated tests using pytest.
+    """Run the generated tests using pytest.
 
     Args:
-    -----
+    ----
         test_dir: Directory containing test files
         source_files: List of source files that were tested
         verbose: Whether to show verbose output
 
     Returns:
-    --------
+    -------
         True if all tests passed, False otherwise
 
-"""
+    """
     logger.info("Running generated tests...")
 
     # Create list of test files based on source files
@@ -438,11 +427,10 @@ def generate_tests_for_files(
     dry_run: bool = False,
     make_testable: bool = True,  # New parameter to allow modifying source files
 ) -> None:
-    """
-    Generate tests for each source file.
+    """Generate tests for each source file.
 
     Args:
-    -----
+    ----
         source_files: List of paths to source Python files
         test_dir: Directory where tests should be stored
         model_name: Name of the model to use
@@ -452,7 +440,7 @@ def generate_tests_for_files(
         dry_run: If True, don't actually generate tests
         make_testable: If True, modify source files to make them more testable
 
-"""
+    """
     for source_file in source_files:
         try:
             # Make sure the source file is absolute

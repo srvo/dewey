@@ -13,4 +13,4 @@ data/tmp/
 # Test output files
 *.csv.tmp
 test_output/
-*.tmp.* 
+*.tmp.*

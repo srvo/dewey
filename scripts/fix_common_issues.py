@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-Fix Common Issues - Script to automatically fix common flake8 issues that black doesn't handle.
-"""
+"""Fix Common Issues - Script to automatically fix common flake8 issues that black doesn't handle."""
 
 import ast
 import logging
@@ -189,8 +187,7 @@ def fix_bare_except(content: str) -> str:
 
 
 def fix_missing_docstrings(content: str) -> str:
-    """
-    Add basic docstrings to functions and classes that are missing them.
+    """Add basic docstrings to functions and classes that are missing them.
     Note: This is a simple implementation and won't handle all cases perfectly.
     """
     try:

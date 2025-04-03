@@ -77,6 +77,7 @@ class GmailModule(BaseScript):
 
         Returns:
             A list of emails.
+
         """
         # Replace with actual Gmail API calls
         # This is a placeholder
@@ -87,6 +88,7 @@ class GmailModule(BaseScript):
 
         Args:
             emails: A list of emails to process.
+
         """
         # Replace with actual email processing logic
         # This is a placeholder

@@ -134,7 +134,9 @@ def extract_issues(output):
 def update_todo_file(issues):
     """Update TODO.md with pre-commit issues."""
     if not issues:
-        print("No issues to add to TODO.md")
+        print("No new issues detected by pre-commit.")
+        # Optionally clear the existing section if no issues are found
+        # clear_precommit_issues_section()
         return
 
     todo_path = "TODO.md"
@@ -142,48 +144,71 @@ def update_todo_file(issues):
     # Create if it doesn't exist
     if not os.path.exists(todo_path):
         with open(todo_path, "w") as f:
-            f.write("# Dewey Project - TODO List\n\n")
+            f.write("# Dewey Project - TODO List\\n\\n")
 
     # Read the current content
     with open(todo_path, "r") as f:
         content = f.read()
 
-    # Define the section header
+    # Define the section header and find its start
     section_header = "## Pre-commit Issues"
+    start_index = content.find(section_header)
+
+    # Prepare the new content for the section
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    section_with_timestamp = f"{section_header} (Last updated: {timestamp})"
+    section_header_with_timestamp = f"{section_header} (Last updated: {timestamp})"
+    new_section_content = "\\n".join(issues)
+    new_full_section = f"{section_header_with_timestamp}\\n\\n{new_section_content}\\n"
 
-    # Check if the section already exists
-    if section_header in content:
-        # Replace the existing section
-        pattern = re.compile(
-            f"{re.escape(section_header)}.*?(?=^##|$)", re.MULTILINE | re.DOTALL
+    if start_index != -1:
+        # Find the end of the section (next ## header or EOF)
+        end_index_match = re.search(
+            r"^## ", content[start_index + len(section_header) :], re.MULTILINE
         )
-        new_section = f"{section_with_timestamp}\n\n" + "\n".join(issues) + "\n\n"
-        new_content = pattern.sub(new_section, content)
+
+        if end_index_match:
+            end_index = start_index + len(section_header) + end_index_match.start()
+            # Replace the existing section content
+            # Ensure proper spacing if the section wasn't empty
+            leading_content = content[:start_index]
+            trailing_content = content[end_index:]
+            new_content = f"{leading_content}{new_full_section}\\n{trailing_content}"  # Add extra newline for separation
+        else:
+            # Section is at the end of the file
+            new_content = content[:start_index] + new_full_section
     else:
-        # Append the new section at the end
-        new_section = f"\n\n{section_with_timestamp}\n\n" + "\n".join(issues) + "\n\n"
-        new_content = content + new_section
+        # Section doesn't exist, append it
+        new_content = content.rstrip() + "\\n\\n" + new_full_section
 
-    # Write to a temporary file first (safer)
-    with tempfile.NamedTemporaryFile(mode="w", delete=False) as temp_file:
-        temp_file.write(new_content)
-        temp_path = temp_file.name
+    # Ensure the final content ends with exactly one newline
+    new_content = new_content.rstrip() + "\n"
 
-    # Replace the original file
-    shutil.move(temp_path, todo_path)
+    # Atomically write the updated content
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w", delete=False, dir=os.path.dirname(todo_path)
+        ) as temp_file:
+            temp_file.write(new_content)
+            temp_path = temp_file.name
+        # Replace the original file
+        shutil.move(temp_path, todo_path)
+        print(
+            f"Updated '{section_header}' section in {todo_path} with {len(issues)} issues."
+        )
+    except Exception as e:
+        print(f"Error writing to {todo_path}: {e}")
+        # Clean up temp file if move failed
+        if "temp_path" in locals() and os.path.exists(temp_path):
+            os.remove(temp_path)
 
-    print(f"Updated {todo_path} with {len(issues)} pre-commit issues")
-
-    # Output for users in terminal
-    print("\nPre-commit found issues that need to be fixed:")
+    # Output for users in terminal (unchanged)
+    print("\\nPre-commit found issues that need to be fixed:")
     for issue in issues:
         print(f"  {issue}")
     print(
-        f"\nThese issues have been added to {todo_path} in the '{section_header}' section."
+        f"\\nThese issues have been added to {todo_path} in the '{section_header}' section."
     )
-    print("Fix them and then re-run your commit.")
+    print("Run './scripts/quick_fix.py -a' to attempt automatic fixes.")
 
 
 def main():

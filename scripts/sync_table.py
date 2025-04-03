@@ -1,10 +1,9 @@
 #!/usr/bin/env python
-"""
-    Sync a single table from MotherDuck to local DuckDB.
-    This script provides a simple way to copy one table at a time.
+"""Sync a single table from MotherDuck to local DuckDB.
+This script provides a simple way to copy one table at a time.
 
-    Usage:
-    python sync_table.py <table_name>
+Usage:
+python sync_table.py <table_name>
 """
 
 import os
@@ -75,7 +74,7 @@ def sync_table(table_name):
                 columns.append(col_name)
                 create_stmt_parts.append(f'"{col_name}" {col_type}')
 
-            create_stmt = f'CREATE TABLE {table_name} ({", ".join(create_stmt_parts)})'
+            create_stmt = f"CREATE TABLE {table_name} ({', '.join(create_stmt_parts)})"
 
             # Export from MotherDuck to CSV
             csv_path = os.path.join(temp_dir, f"{table_name}.csv")

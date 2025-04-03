@@ -64,7 +64,9 @@ class LogicalFallacyAgent(BaseScript):
 
         try:
             # 1. Retrieve text to analyze (replace with actual implementation)
-            text_to_analyze = "This policy must be correct because everyone supports it."
+            text_to_analyze = (
+                "This policy must be correct because everyone supports it."
+            )
 
             # 2. Analyze text for logical fallacies (using the run method)
             analysis_results = self.run(text_to_analyze)
@@ -75,7 +77,9 @@ class LogicalFallacyAgent(BaseScript):
             self.logger.info("Logical fallacy detection workflow completed.")
 
         except Exception as e:
-            self.logger.exception(f"Error during logical fallacy detection workflow: {e}")
+            self.logger.exception(
+                f"Error during logical fallacy detection workflow: {e}"
+            )
             raise
 
 

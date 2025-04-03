@@ -34,7 +34,7 @@ API Reference
 .. toctree::
    :maxdepth: 2
    :caption: Code Documentation
-   
+
    modules
 
 Development Guidelines

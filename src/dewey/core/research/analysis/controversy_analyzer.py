@@ -255,9 +255,13 @@ class ControversyAnalyzer(BaseScript):
 
     def execute(self) -> None:
         """Execute the controversy analysis."""
-        parser = argparse.ArgumentParser(description="Analyze controversies for an entity")
+        parser = argparse.ArgumentParser(
+            description="Analyze controversies for an entity"
+        )
         parser.add_argument("entity", help="Name of the entity to analyze")
-        parser.add_argument("--lookback-days", type=int, help="Number of days to look back")
+        parser.add_argument(
+            "--lookback-days", type=int, help="Number of days to look back"
+        )
 
         args = parser.parse_args()
         entity = args.entity

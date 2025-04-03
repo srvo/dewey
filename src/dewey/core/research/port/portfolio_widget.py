@@ -6,7 +6,9 @@ class PortfolioWidget(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the PortfolioWidget script."""
-        super().__init__(config_section="portfolio_widget", requires_db=True, enable_llm=True)
+        super().__init__(
+            config_section="portfolio_widget", requires_db=True, enable_llm=True
+        )
 
     def run(self) -> None:
         """Executes the portfolio widget script.
