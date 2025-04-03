@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>dewey package &#8212; Dewey (TUI) 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=01f34227"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="dewey.core package" href="dewey.core.html" />
+    <link rel="prev" title="dewey" href="modules.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="dewey-package">
+<h1>dewey package<a class="headerlink" href="#dewey-package" title="Link to this heading">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dewey.core.html">dewey.core package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dewey.core.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.automation.html">dewey.core.automation package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.automation.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.automation.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.automation.html#module-dewey.core.automation.feedback_processor">dewey.core.automation.feedback_processor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.automation.html#module-dewey.core.automation.models">dewey.core.automation.models module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.automation.html#dewey-core-automation-service-deployment-module">dewey.core.automation.service_deployment module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.automation.html#module-dewey.core.automation">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.bookkeeping.html">dewey.core.bookkeeping package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.bookkeeping.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.bookkeeping.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.bookkeeping.html#module-dewey.core.bookkeeping.account_validator">dewey.core.bookkeeping.account_validator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.bookkeeping.html#module-dewey.core.bookkeeping.auto_categorize">dewey.core.bookkeeping.auto_categorize module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.bookkeeping.html#dewey-core-bookkeeping-classification-engine-module">dewey.core.bookkeeping.classification_engine module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.bookkeeping.html#module-dewey.core.bookkeeping.deferred_revenue">dewey.core.bookkeeping.deferred_revenue module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.bookkeeping.html#module-dewey.core.bookkeeping.duplicate_checker">dewey.core.bookkeeping.duplicate_checker module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.bookkeeping.html#module-dewey.core.bookkeeping.forecast_generator">dewey.core.bookkeeping.forecast_generator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.bookkeeping.html#module-dewey.core.bookkeeping.hledger_utils">dewey.core.bookkeeping.hledger_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.bookkeeping.html#module-dewey.core.bookkeeping.journal_fixer">dewey.core.bookkeeping.journal_fixer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.bookkeeping.html#module-dewey.core.bookkeeping.journal_splitter">dewey.core.bookkeeping.journal_splitter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.bookkeeping.html#dewey-core-bookkeeping-journal-writer-module">dewey.core.bookkeeping.journal_writer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.bookkeeping.html#module-dewey.core.bookkeeping.ledger_checker">dewey.core.bookkeeping.ledger_checker module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.bookkeeping.html#dewey-core-bookkeeping-mercury-data-validator-module">dewey.core.bookkeeping.mercury_data_validator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.bookkeeping.html#dewey-core-bookkeeping-mercury-importer-module">dewey.core.bookkeeping.mercury_importer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.bookkeeping.html#dewey-core-bookkeeping-rules-converter-module">dewey.core.bookkeeping.rules_converter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.bookkeeping.html#module-dewey.core.bookkeeping.transaction_categorizer">dewey.core.bookkeeping.transaction_categorizer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.bookkeeping.html#dewey-core-bookkeeping-transaction-verifier-module">dewey.core.bookkeeping.transaction_verifier module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.bookkeeping.html#module-dewey.core.bookkeeping">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.config.html">dewey.core.config package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.config.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.config.html#module-dewey.core.config.loader">dewey.core.config.loader module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.config.html#module-dewey.core.config">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.crm.html">dewey.core.crm package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.crm.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.crm.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.crm.html#module-dewey.core.crm.conftest">dewey.core.crm.conftest module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.crm.html#module-dewey.core.crm.contact_consolidation">dewey.core.crm.contact_consolidation module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.crm.html#module-dewey.core.crm.csv_contact_integration">dewey.core.crm.csv_contact_integration module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.crm.html#dewey-core-crm-test-utils-module">dewey.core.crm.test_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.crm.html#module-dewey.core.crm.workflow_runner">dewey.core.crm.workflow_runner module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.crm.html#module-dewey.core.crm">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.db.html">dewey.core.db package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.db.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.db.html#module-dewey.core.db.backup">dewey.core.db.backup module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.db.html#dewey-core-db-cli-5138952c-module">dewey.core.db.cli_5138952c module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.db.html#dewey-core-db-cli-duckdb-sync-module">dewey.core.db.cli_duckdb_sync module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.db.html#module-dewey.core.db.config">dewey.core.db.config module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.db.html#module-dewey.core.db.connection">dewey.core.db.connection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.db.html#dewey-core-db-data-handler-module">dewey.core.db.data_handler module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.db.html#module-dewey.core.db.db_maintenance">dewey.core.db.db_maintenance module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.db.html#module-dewey.core.db.models">dewey.core.db.models module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.db.html#module-dewey.core.db.monitor">dewey.core.db.monitor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.db.html#module-dewey.core.db.operations">dewey.core.db.operations module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.db.html#module-dewey.core.db.schema">dewey.core.db.schema module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.db.html#module-dewey.core.db.schema_updater">dewey.core.db.schema_updater module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.db.html#module-dewey.core.db.sync">dewey.core.db.sync module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.db.html#module-dewey.core.db.utils">dewey.core.db.utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.db.html#module-dewey.core.db">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.engines.html">dewey.core.engines package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.engines.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.engines.html#module-dewey.core.engines.sheets">dewey.core.engines.sheets module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.engines.html#module-dewey.core.engines.sync">dewey.core.engines.sync module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.engines.html#module-dewey.core.engines">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.maintenance.html">dewey.core.maintenance package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.maintenance.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.maintenance.html#module-dewey.core.maintenance.analyze_architecture">dewey.core.maintenance.analyze_architecture module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.maintenance.html#module-dewey.core.maintenance.document_directory">dewey.core.maintenance.document_directory module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.maintenance.html#module-dewey.core.maintenance.precommit_analyzer">dewey.core.maintenance.precommit_analyzer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.maintenance.html#module-dewey.core.maintenance">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.migrations.html">dewey.core.migrations package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.migrations.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.migrations.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.migrations.html#module-dewey.core.migrations.migration_manager">dewey.core.migrations.migration_manager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.migrations.html#module-dewey.core.migrations">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.research.html">dewey.core.research package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.research.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.research.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.research.html#module-dewey.core.research.base_workflow">dewey.core.research.base_workflow module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.research.html#module-dewey.core.research.company_research_integration">dewey.core.research.company_research_integration module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.research.html#module-dewey.core.research.ethifinx_exceptions">dewey.core.research.ethifinx_exceptions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.research.html#dewey-core-research-ethifinx-server-module">dewey.core.research.ethifinx_server module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.research.html#module-dewey.core.research.json_research_integration">dewey.core.research.json_research_integration module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.research.html#module-dewey.core.research.research_output_handler">dewey.core.research.research_output_handler module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.research.html#module-dewey.core.research.search_analysis_integration">dewey.core.research.search_analysis_integration module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.research.html#module-dewey.core.research">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.sync.html">dewey.core.sync package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.sync.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.sync.html#dewey-core-sync-sheets-module">dewey.core.sync.sheets module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.sync.html#module-dewey.core.sync">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.tui.html">dewey.core.tui package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.tui.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.tui.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.tui.html#dewey-core-tui-app-module">dewey.core.tui.app module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.tui.html#module-dewey.core.tui.screens">dewey.core.tui.screens module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.tui.html#module-dewey.core.tui.workers">dewey.core.tui.workers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.tui.html#module-dewey.core.tui">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.utils.html">dewey.core.utils package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.utils.html#module-dewey.core.utils.admin">dewey.core.utils.admin module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.utils.html#dewey-core-utils-api-client-e0b78def-module">dewey.core.utils.api_client_e0b78def module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.utils.html#module-dewey.core.utils.api_manager">dewey.core.utils.api_manager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.utils.html#module-dewey.core.utils.ascii_art_generator">dewey.core.utils.ascii_art_generator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.utils.html#module-dewey.core.utils.base_utils">dewey.core.utils.base_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.utils.html#module-dewey.core.utils.duplicate_checker">dewey.core.utils.duplicate_checker module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.utils.html#module-dewey.core.utils.ethifinx_utils">dewey.core.utils.ethifinx_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.utils.html#module-dewey.core.utils.format_and_lint">dewey.core.utils.format_and_lint module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.utils.html#module-dewey.core.utils.log_manager">dewey.core.utils.log_manager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.utils.html#dewey-core-utils-logger-utils-de8f2a1c-module">dewey.core.utils.logger_utils_de8f2a1c module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.utils.html#module-dewey.core.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dewey.core.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dewey.core.html#module-dewey.core.base_script">dewey.core.base_script module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript"><code class="docutils literal notranslate"><span class="pre">BaseScript</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript.name"><code class="docutils literal notranslate"><span class="pre">BaseScript.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript.description"><code class="docutils literal notranslate"><span class="pre">BaseScript.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript.logger"><code class="docutils literal notranslate"><span class="pre">BaseScript.logger</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript.config"><code class="docutils literal notranslate"><span class="pre">BaseScript.config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript.db_conn"><code class="docutils literal notranslate"><span class="pre">BaseScript.db_conn</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript.llm_client"><code class="docutils literal notranslate"><span class="pre">BaseScript.llm_client</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript.__init__"><code class="docutils literal notranslate"><span class="pre">BaseScript.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript.setup_argparse"><code class="docutils literal notranslate"><span class="pre">BaseScript.setup_argparse()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript.parse_args"><code class="docutils literal notranslate"><span class="pre">BaseScript.parse_args()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript.execute"><code class="docutils literal notranslate"><span class="pre">BaseScript.execute()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript.run"><code class="docutils literal notranslate"><span class="pre">BaseScript.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript.get_path"><code class="docutils literal notranslate"><span class="pre">BaseScript.get_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript.get_config_value"><code class="docutils literal notranslate"><span class="pre">BaseScript.get_config_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript.get_credential"><code class="docutils literal notranslate"><span class="pre">BaseScript.get_credential()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript.db_connection"><code class="docutils literal notranslate"><span class="pre">BaseScript.db_connection()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript.db_session_scope"><code class="docutils literal notranslate"><span class="pre">BaseScript.db_session_scope()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dewey.core.html#module-dewey.core.csv_ingestion">dewey.core.csv_ingestion module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.html#dewey.core.csv_ingestion.CsvIngestion"><code class="docutils literal notranslate"><span class="pre">CsvIngestion</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.html#dewey.core.csv_ingestion.CsvIngestion.__init__"><code class="docutils literal notranslate"><span class="pre">CsvIngestion.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.html#dewey.core.csv_ingestion.CsvIngestion.run"><code class="docutils literal notranslate"><span class="pre">CsvIngestion.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.core.html#dewey.core.csv_ingestion.CsvIngestion.execute"><code class="docutils literal notranslate"><span class="pre">CsvIngestion.execute()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dewey.core.html#module-dewey.core.exceptions">dewey.core.exceptions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.html#dewey.core.exceptions.BaseException"><code class="docutils literal notranslate"><span class="pre">BaseException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.html#dewey.core.exceptions.ConfigurationError"><code class="docutils literal notranslate"><span class="pre">ConfigurationError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.html#dewey.core.exceptions.LoggingError"><code class="docutils literal notranslate"><span class="pre">LoggingError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.html#dewey.core.exceptions.DatabaseConnectionError"><code class="docutils literal notranslate"><span class="pre">DatabaseConnectionError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.html#dewey.core.exceptions.DatabaseQueryError"><code class="docutils literal notranslate"><span class="pre">DatabaseQueryError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.html#dewey.core.exceptions.LLMError"><code class="docutils literal notranslate"><span class="pre">LLMError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.core.html#dewey.core.exceptions.APIError"><code class="docutils literal notranslate"><span class="pre">APIError</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dewey.core.html#module-dewey.core">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dewey.llm.html">dewey.llm package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dewey.llm.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.agents.html">dewey.llm.agents package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.adversarial_agent">dewey.llm.agents.adversarial_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.agent_creator_agent">dewey.llm.agents.agent_creator_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.base_agent">dewey.llm.agents.base_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.chat">dewey.llm.agents.chat module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.client_advocate_agent">dewey.llm.agents.client_advocate_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.code_generator">dewey.llm.agents.code_generator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.communication_analyzer">dewey.llm.agents.communication_analyzer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.contact_agents">dewey.llm.agents.contact_agents module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.data_ingestion_agent">dewey.llm.agents.data_ingestion_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.docstring_agent">dewey.llm.agents.docstring_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.e2b_code_interpreter">dewey.llm.agents.e2b_code_interpreter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.exception_handler">dewey.llm.agents.exception_handler module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.logical_fallacy_agent">dewey.llm.agents.logical_fallacy_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.next_question_suggestion">dewey.llm.agents.next_question_suggestion module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.philosophical_agent">dewey.llm.agents.philosophical_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.pro_chat">dewey.llm.agents.pro_chat module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.rag_agent">dewey.llm.agents.rag_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.self_care_agent">dewey.llm.agents.self_care_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.sloane_ghostwriter">dewey.llm.agents.sloane_ghostwriter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.sloane_optimizer">dewey.llm.agents.sloane_optimizer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.tagging_engine">dewey.llm.agents.tagging_engine module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.transcript_analysis_agent">dewey.llm.agents.transcript_analysis_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents.triage_agent">dewey.llm.agents.triage_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.agents.html#module-dewey.llm.agents">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.api_clients.html">dewey.llm.api_clients package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.api_clients.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.api_clients.html#module-dewey.llm.api_clients.brave_search_engine">dewey.llm.api_clients.brave_search_engine module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.api_clients.html#module-dewey.llm.api_clients.deepinfra">dewey.llm.api_clients.deepinfra module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.api_clients.html#module-dewey.llm.api_clients.deepinfra_client">dewey.llm.api_clients.deepinfra_client module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.api_clients.html#module-dewey.llm.api_clients.gemini">dewey.llm.api_clients.gemini module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.api_clients.html#module-dewey.llm.api_clients.image_generation">dewey.llm.api_clients.image_generation module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.api_clients.html#module-dewey.llm.api_clients.openrouter">dewey.llm.api_clients.openrouter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.api_clients.html#module-dewey.llm.api_clients">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.docs.html">dewey.llm.docs package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.docs.html#module-dewey.llm.docs">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.models.html">dewey.llm.models package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.models.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.models.html#module-dewey.llm.models.config">dewey.llm.models.config module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.models.html#module-dewey.llm.models">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.prompts.html">dewey.llm.prompts package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.prompts.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.prompts.html#module-dewey.llm.prompts.prompts">dewey.llm.prompts.prompts module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.prompts.html#module-dewey.llm.prompts">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.tests.html">dewey.llm.tests package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.tests.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.tests.html#module-dewey.llm.tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.tools.html">dewey.llm.tools package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.tools.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.tools.html#module-dewey.llm.tools.tool_factory">dewey.llm.tools.tool_factory module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.tools.html#module-dewey.llm.tools.tool_launcher">dewey.llm.tools.tool_launcher module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.tools.html#module-dewey.llm.tools">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.utils.html">dewey.llm.utils package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.utils.html#module-dewey.llm.utils.event_callback">dewey.llm.utils.event_callback module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.utils.html#module-dewey.llm.utils.llm_analysis">dewey.llm.utils.llm_analysis module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.utils.html#module-dewey.llm.utils.llm_utils">dewey.llm.utils.llm_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.utils.html#module-dewey.llm.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dewey.llm.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dewey.llm.html#module-dewey.llm.exceptions">dewey.llm.exceptions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.exceptions.InvalidPromptError"><code class="docutils literal notranslate"><span class="pre">InvalidPromptError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.exceptions.LLMConnectionError"><code class="docutils literal notranslate"><span class="pre">LLMConnectionError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.exceptions.LLMResponseError"><code class="docutils literal notranslate"><span class="pre">LLMResponseError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.exceptions.LLMTimeoutError"><code class="docutils literal notranslate"><span class="pre">LLMTimeoutError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.exceptions.LLMRateLimitError"><code class="docutils literal notranslate"><span class="pre">LLMRateLimitError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.exceptions.LLMAuthenticationError"><code class="docutils literal notranslate"><span class="pre">LLMAuthenticationError</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dewey.llm.html#module-dewey.llm.litellm_client">dewey.llm.litellm_client module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.Message"><code class="docutils literal notranslate"><span class="pre">Message</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.Message.role"><code class="docutils literal notranslate"><span class="pre">Message.role</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.Message.content"><code class="docutils literal notranslate"><span class="pre">Message.content</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.Message.name"><code class="docutils literal notranslate"><span class="pre">Message.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.Message.__init__"><code class="docutils literal notranslate"><span class="pre">Message.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMConfig"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMConfig.model"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMConfig.api_key"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.api_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMConfig.organization_id"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.organization_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMConfig.base_url"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.base_url</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMConfig.timeout"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.timeout</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMConfig.max_retries"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.max_retries</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMConfig.fallback_models"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.fallback_models</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMConfig.proxy"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.proxy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMConfig.cache"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.cache</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMConfig.cache_folder"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.cache_folder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMConfig.verbose"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.verbose</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMConfig.metadata"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.metadata</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMConfig.litellm_provider"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.litellm_provider</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMConfig.__init__"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMClient"><code class="docutils literal notranslate"><span class="pre">LiteLLMClient</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMClient.__init__"><code class="docutils literal notranslate"><span class="pre">LiteLLMClient.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMClient.generate_completion"><code class="docutils literal notranslate"><span class="pre">LiteLLMClient.generate_completion()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMClient.generate_embedding"><code class="docutils literal notranslate"><span class="pre">LiteLLMClient.generate_embedding()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMClient.get_model_details"><code class="docutils literal notranslate"><span class="pre">LiteLLMClient.get_model_details()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dewey.llm.html#module-dewey.llm.litellm_utils">dewey.llm.litellm_utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_utils.load_api_keys_from_env"><code class="docutils literal notranslate"><span class="pre">load_api_keys_from_env()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_utils.load_api_keys_from_aider"><code class="docutils literal notranslate"><span class="pre">load_api_keys_from_aider()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_utils.set_api_keys"><code class="docutils literal notranslate"><span class="pre">set_api_keys()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_utils.load_model_metadata_from_aider"><code class="docutils literal notranslate"><span class="pre">load_model_metadata_from_aider()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_utils.get_available_models"><code class="docutils literal notranslate"><span class="pre">get_available_models()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_utils.configure_azure_openai"><code class="docutils literal notranslate"><span class="pre">configure_azure_openai()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_utils.setup_fallback_models"><code class="docutils literal notranslate"><span class="pre">setup_fallback_models()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_utils.get_text_from_response"><code class="docutils literal notranslate"><span class="pre">get_text_from_response()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_utils.create_message"><code class="docutils literal notranslate"><span class="pre">create_message()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_utils.quick_completion"><code class="docutils literal notranslate"><span class="pre">quick_completion()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_utils.initialize_client_from_env"><code class="docutils literal notranslate"><span class="pre">initialize_client_from_env()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dewey.llm.html#module-dewey.llm">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.LiteLLMClient"><code class="docutils literal notranslate"><span class="pre">LiteLLMClient</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.LiteLLMClient.__init__"><code class="docutils literal notranslate"><span class="pre">LiteLLMClient.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.LiteLLMClient.generate_completion"><code class="docutils literal notranslate"><span class="pre">LiteLLMClient.generate_completion()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.LiteLLMClient.generate_embedding"><code class="docutils literal notranslate"><span class="pre">LiteLLMClient.generate_embedding()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.LiteLLMClient.get_model_details"><code class="docutils literal notranslate"><span class="pre">LiteLLMClient.get_model_details()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.LiteLLMConfig"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.LiteLLMConfig.__init__"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.LiteLLMConfig.api_key"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.api_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.LiteLLMConfig.base_url"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.base_url</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.LiteLLMConfig.cache"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.cache</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.LiteLLMConfig.cache_folder"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.cache_folder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.LiteLLMConfig.litellm_provider"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.litellm_provider</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.LiteLLMConfig.max_retries"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.max_retries</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.LiteLLMConfig.model"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.LiteLLMConfig.organization_id"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.organization_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.LiteLLMConfig.proxy"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.proxy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.LiteLLMConfig.timeout"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.timeout</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.LiteLLMConfig.verbose"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.verbose</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.LiteLLMConfig.fallback_models"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.fallback_models</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.LiteLLMConfig.metadata"><code class="docutils literal notranslate"><span class="pre">LiteLLMConfig.metadata</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.Message"><code class="docutils literal notranslate"><span class="pre">Message</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.Message.__init__"><code class="docutils literal notranslate"><span class="pre">Message.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.Message.name"><code class="docutils literal notranslate"><span class="pre">Message.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.Message.role"><code class="docutils literal notranslate"><span class="pre">Message.role</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.Message.content"><code class="docutils literal notranslate"><span class="pre">Message.content</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.create_message"><code class="docutils literal notranslate"><span class="pre">create_message()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.get_available_models"><code class="docutils literal notranslate"><span class="pre">get_available_models()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.get_text_from_response"><code class="docutils literal notranslate"><span class="pre">get_text_from_response()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.initialize_client_from_env"><code class="docutils literal notranslate"><span class="pre">initialize_client_from_env()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.load_api_keys_from_env"><code class="docutils literal notranslate"><span class="pre">load_api_keys_from_env()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.quick_completion"><code class="docutils literal notranslate"><span class="pre">quick_completion()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.set_api_keys"><code class="docutils literal notranslate"><span class="pre">set_api_keys()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.InvalidPromptError"><code class="docutils literal notranslate"><span class="pre">InvalidPromptError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.LLMAuthenticationError"><code class="docutils literal notranslate"><span class="pre">LLMAuthenticationError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.LLMConnectionError"><code class="docutils literal notranslate"><span class="pre">LLMConnectionError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.LLMError"><code class="docutils literal notranslate"><span class="pre">LLMError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.LLMRateLimitError"><code class="docutils literal notranslate"><span class="pre">LLMRateLimitError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.LLMResponseError"><code class="docutils literal notranslate"><span class="pre">LLMResponseError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.LLMTimeoutError"><code class="docutils literal notranslate"><span class="pre">LLMTimeoutError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.llm.html#dewey.llm.LLMConfigManager"><code class="docutils literal notranslate"><span class="pre">LLMConfigManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.LLMConfigManager.get_agent_config"><code class="docutils literal notranslate"><span class="pre">LLMConfigManager.get_agent_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.llm.html#dewey.llm.LLMConfigManager.get_model_config"><code class="docutils literal notranslate"><span class="pre">LLMConfigManager.get_model_config()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dewey.utils.html">dewey.utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dewey.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dewey.utils.html#module-dewey.utils.database">dewey.utils.database module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dewey.utils.html#dewey.utils.database.execute_query"><code class="docutils literal notranslate"><span class="pre">execute_query()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.utils.html#dewey.utils.database.fetch_one"><code class="docutils literal notranslate"><span class="pre">fetch_one()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.utils.html#dewey.utils.database.fetch_all"><code class="docutils literal notranslate"><span class="pre">fetch_all()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.utils.html#dewey.utils.database.create_table_if_not_exists"><code class="docutils literal notranslate"><span class="pre">create_table_if_not_exists()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.utils.html#dewey.utils.database.table_exists"><code class="docutils literal notranslate"><span class="pre">table_exists()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.utils.html#dewey.utils.database.insert_row"><code class="docutils literal notranslate"><span class="pre">insert_row()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.utils.html#dewey.utils.database.update_row"><code class="docutils literal notranslate"><span class="pre">update_row()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dewey.utils.html#module-dewey.utils.logging">dewey.utils.logging module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dewey.utils.html#dewey.utils.logging.load_config"><code class="docutils literal notranslate"><span class="pre">load_config()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.utils.html#dewey.utils.logging.setup_logging"><code class="docutils literal notranslate"><span class="pre">setup_logging()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.utils.html#dewey.utils.logging.get_logger"><code class="docutils literal notranslate"><span class="pre">get_logger()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dewey.utils.html#dewey.utils.logging.configure_logging"><code class="docutils literal notranslate"><span class="pre">configure_logging()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dewey.utils.html#module-dewey.utils.vector_db">dewey.utils.vector_db module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dewey.utils.html#dewey.utils.vector_db.VectorDB"><code class="docutils literal notranslate"><span class="pre">VectorDB</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.utils.html#dewey.utils.vector_db.VectorDB.__init__"><code class="docutils literal notranslate"><span class="pre">VectorDB.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.utils.html#dewey.utils.vector_db.VectorDB.run"><code class="docutils literal notranslate"><span class="pre">VectorDB.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dewey.utils.html#module-dewey.utils">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dewey.utils.html#dewey.utils.Utils"><code class="docutils literal notranslate"><span class="pre">Utils</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dewey.utils.html#dewey.utils.Utils.__init__"><code class="docutils literal notranslate"><span class="pre">Utils.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dewey.utils.html#dewey.utils.Utils.run"><code class="docutils literal notranslate"><span class="pre">Utils.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="module-dewey">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-dewey" title="Link to this heading">¶</a></h2>
+<p>Dewey - A Python package for managing research, analysis, and client interactions.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.DeweyManager">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.</span></span><span class="sig-name descname"><span class="pre">DeweyManager</span></span><a class="reference internal" href="_modules/dewey.html#DeweyManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.DeweyManager" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Manages research, analysis, and client interactions.</p>
+<p>Inherits from BaseScript for standardized configuration, logging,
+and utilities.</p>
+<p>Initializes the DeweyManager.</p>
+<p>Calls the superclass constructor to set up configuration and logging.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.DeweyManager.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey.html#DeweyManager.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.DeweyManager.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the DeweyManager.</p>
+<p>Calls the superclass constructor to set up configuration and logging.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.DeweyManager.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey.html#DeweyManager.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.DeweyManager.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the main logic of the DeweyManager.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Dewey (TUI)</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">dewey</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">dewey package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">dewey</a><ul>
+      <li>Previous: <a href="modules.html" title="previous chapter">dewey</a></li>
+      <li>Next: <a href="dewey.core.html" title="next chapter">dewey.core package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Sloane Ortel.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/dewey.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

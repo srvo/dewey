@@ -708,41 +708,44 @@ def mark_issue_fixed(issue_line: str) -> None:
 
 def preprocess_syntax_errors(file_path: str, error_msg: str) -> bool:
     """Attempt to fix severe syntax errors before running Aider.
-    
+
     Handles common syntax errors like missing indented blocks
     that prevent the file from being parsed.
-    
+
     Args:
         file_path: Path to the file to fix
         error_msg: Error message with details about the syntax error
-        
+
     Returns:
         True if preprocessing was successful, False otherwise
+
     """
     if not "expected an indented block" in error_msg.lower():
         # Only handle indentation errors for now
         return False
-        
+
     try:
         # Extract the line number from the error message
         line_match = re.search(r"on line (\d+)", error_msg)
         if not line_match:
             if VERBOSE_MODE:
-                print(colorize("Could not extract line number from error message", "1;33"))
+                print(
+                    colorize("Could not extract line number from error message", "1;33")
+                )
             return False
-            
+
         line_num = int(line_match.group(1))
-        
+
         # Read the file
-        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
             lines = f.readlines()
-            
+
         # Check if the file has enough lines
         if line_num >= len(lines):
             if VERBOSE_MODE:
                 print(colorize(f"Line number {line_num} is out of range", "1;33"))
             return False
-            
+
         # Add a simple placeholder indented block if needed
         if line_num < len(lines) and not lines[line_num].strip():
             # There's already an empty line, let's add basic indentation
@@ -750,14 +753,14 @@ def preprocess_syntax_errors(file_path: str, error_msg: str) -> bool:
         else:
             # Insert a new indented pass statement
             lines.insert(line_num, "    pass  # Placeholder added by quick_fix.py\n")
-            
+
         # Write the file back
-        with open(file_path, 'w', encoding='utf-8') as f:
+        with open(file_path, "w", encoding="utf-8") as f:
             f.writelines(lines)
-            
+
         print(colorize(f"✅ Added placeholder indentation at line {line_num}", "1;32"))
         return True
-        
+
     except Exception as e:
         print(colorize(f"Error preprocessing syntax errors: {e}", "1;31"))
         return False
@@ -765,12 +768,13 @@ def preprocess_syntax_errors(file_path: str, error_msg: str) -> bool:
 
 def postprocess_with_ruff(file_path: str) -> bool:
     """Apply ruff formatting to a file after Aider has run.
-    
+
     Args:
         file_path: Path to the file to format
-        
+
     Returns:
         True if formatting was successful, False otherwise
+
     """
     try:
         # Check if ruff is installed
@@ -779,14 +783,16 @@ def postprocess_with_ruff(file_path: str) -> bool:
             ruff_available = True
         except subprocess.CalledProcessError:
             ruff_available = False
-            
+
         if not ruff_available:
             print(colorize("\nRuff formatter not found in your PATH.", "1;33"))
-            
+
             # Offer to install ruff
-            install_prompt = "Would you like to install ruff for better code formatting? (y/n): "
+            install_prompt = (
+                "Would you like to install ruff for better code formatting? (y/n): "
+            )
             if INTERACTIVE_MODE:
-                if input(colorize(install_prompt, "1;33")).lower() == 'y':
+                if input(colorize(install_prompt, "1;33")).lower() == "y":
                     print(colorize("Installing ruff...", "1;34"))
                     try:
                         # Try to install using pip
@@ -800,18 +806,21 @@ def postprocess_with_ruff(file_path: str) -> bool:
                     print(colorize("Skipping ruff formatting step.", "1;33"))
                     return False
             else:
-                print(colorize("Run with --interactive to install ruff, or install manually with: pip install ruff", "1;33"))
+                print(
+                    colorize(
+                        "Run with --interactive to install ruff, or install manually with: pip install ruff",
+                        "1;33",
+                    )
+                )
                 return False
-                
+
         print(colorize(f"Running ruff formatter on {file_path}...", "1;34"))
-        
+
         # Try to run ruff format on the file
         result = subprocess.run(
-            ["ruff", "format", file_path], 
-            capture_output=True, 
-            text=True
+            ["ruff", "format", file_path], capture_output=True, text=True
         )
-        
+
         if result.returncode == 0:
             print(colorize("✅ Ruff formatting successful", "1;32"))
             return True
@@ -822,15 +831,15 @@ def postprocess_with_ruff(file_path: str) -> bool:
                     print(result.stdout)
                 if result.stderr:
                     print(result.stderr)
-            
+
             # Try running ruff with the --unsafe-fixes option for more aggressive fixes
             print(colorize("Trying ruff with unsafe fixes...", "1;33"))
             result = subprocess.run(
                 ["ruff", "check", "--fix", "--unsafe-fixes", file_path],
                 capture_output=True,
-                text=True
+                text=True,
             )
-            
+
             if result.returncode == 0:
                 print(colorize("✅ Ruff fixes with unsafe mode successful", "1;32"))
                 return True
@@ -842,7 +851,7 @@ def postprocess_with_ruff(file_path: str) -> bool:
                     if result.stderr:
                         print(result.stderr)
                 return False
-    
+
     except Exception as e:
         print(colorize(f"Error running ruff formatter: {e}", "1;31"))
         return False
@@ -890,13 +899,13 @@ def run_aider(
             # Specific guidance for indentation errors
             line_match = re.search(r"on line (\d+)", error_msg)
             line_num = int(line_match.group(1)) if line_match else "unknown"
-            
+
             prompt = f"""Fix the indentation error in this file at line {line_num}.
-            
+
 The file has a syntax error where Python expects an indented block (e.g. after a function definition, if statement, for loop, etc.) but none was provided.
 
 YOUR TASK:
-1. Identify the line that requires an indented block (likely line {line_num-1})
+1. Identify the line that requires an indented block (likely line {line_num - 1})
 2. Provide an appropriate indented block that matches the context
 3. Make sure your solution maintains all existing functionality
 4. Ensure proper indentation (4 spaces per level)
@@ -1017,14 +1026,16 @@ Apply the smallest change needed to fix the syntax while preserving all function
 
         if result.returncode == 0 and file_modified:
             print(colorize("\nAider successfully edited the file!", "1;32"))
-            
+
             # Apply ruff formatting as a post-processing step
             postprocess_with_ruff(file_path)
         else:
             print(colorize("\nAider ran but might not have modified the file.", "1;33"))
-            
+
             # If Aider didn't modify the file, try preprocessing and formatting directly
-            if not file_modified and ("Expected an indented block" in error_msg or "Syntax error" in error_msg):
+            if not file_modified and (
+                "Expected an indented block" in error_msg or "Syntax error" in error_msg
+            ):
                 print(colorize("Trying direct formatting approach...", "1;33"))
                 if postprocess_with_ruff(file_path):
                     print(colorize("Direct formatting approach successful!", "1;32"))

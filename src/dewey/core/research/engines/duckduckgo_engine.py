@@ -19,6 +19,7 @@ class DuckDuckGoEngine(BaseScript):
         Returns:
             A list of dictionaries, where each dictionary represents a search result.
             Each dictionary contains the keys 'title', 'href', and 'body'.
+
         """
         self.logger.info(f"Executing DuckDuckGo search for query: {query}")
         try:

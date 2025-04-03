@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>dewey.core.utils package &#8212; Dewey (TUI) 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=01f34227"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="dewey.llm package" href="dewey.llm.html" />
+    <link rel="prev" title="dewey.core.tui.screens package" href="dewey.core.tui.screens.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="dewey-core-utils-package">
+<h1>dewey.core.utils package<a class="headerlink" href="#dewey-core-utils-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-dewey.core.utils.admin">
+<span id="dewey-core-utils-admin-module"></span><h2>dewey.core.utils.admin module<a class="headerlink" href="#module-dewey.core.utils.admin" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.utils.admin.AdminTasks">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.utils.admin.</span></span><span class="sig-name descname"><span class="pre">AdminTasks</span></span><a class="reference internal" href="_modules/dewey/core/utils/admin.html#AdminTasks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.admin.AdminTasks" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A class for performing administrative tasks, such as database
+maintenance and user management.</p>
+<p>Initializes the AdminTasks script.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.admin.AdminTasks.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/admin.html#AdminTasks.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.admin.AdminTasks.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the AdminTasks script.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.admin.AdminTasks.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/admin.html#AdminTasks.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.admin.AdminTasks.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the administrative tasks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.admin.AdminTasks.perform_database_maintenance">
+<span class="sig-name descname"><span class="pre">perform_database_maintenance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/admin.html#AdminTasks.perform_database_maintenance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.admin.AdminTasks.perform_database_maintenance" title="Link to this definition">¶</a></dt>
+<dd><p>Performs database maintenance tasks, such as vacuuming and
+analyzing tables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.admin.AdminTasks.add_user">
+<span class="sig-name descname"><span class="pre">add_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/admin.html#AdminTasks.add_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.admin.AdminTasks.add_user" title="Link to this definition">¶</a></dt>
+<dd><p>Adds a new user to the system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>username</strong> (<em>str</em>) – The username of the new user.</p></li>
+<li><p><strong>password</strong> (<em>str</em>) – The password of the new user.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the username already exists.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="dewey-core-utils-api-client-e0b78def-module">
+<h2>dewey.core.utils.api_client_e0b78def module<a class="headerlink" href="#dewey-core-utils-api-client-e0b78def-module" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-dewey.core.utils.api_manager">
+<span id="dewey-core-utils-api-manager-module"></span><h2>dewey.core.utils.api_manager module<a class="headerlink" href="#module-dewey.core.utils.api_manager" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.utils.api_manager.ApiManager">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.utils.api_manager.</span></span><span class="sig-name descname"><span class="pre">ApiManager</span></span><a class="reference internal" href="_modules/dewey/core/utils/api_manager.html#ApiManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.api_manager.ApiManager" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Manages API interactions, providing a base class for API-related scripts.</p>
+<p>This class inherits from BaseScript and provides standardized access to
+configuration and logging.</p>
+<p>Initializes the ApiManager.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.api_manager.ApiManager.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/api_manager.html#ApiManager.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.api_manager.ApiManager.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the ApiManager.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.api_manager.ApiManager.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/api_manager.html#ApiManager.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.api_manager.ApiManager.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the main logic of the API manager.</p>
+<p>This method should be overridden by subclasses to implement specific
+API-related tasks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.api_manager.ApiManager.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/api_manager.html#ApiManager.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.api_manager.ApiManager.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the main logic of the API manager.</p>
+<p>This method logs the start and finish of the API manager’s execution.
+Subclasses should override this method to implement specific
+API-related tasks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.utils.ascii_art_generator">
+<span id="dewey-core-utils-ascii-art-generator-module"></span><h2>dewey.core.utils.ascii_art_generator module<a class="headerlink" href="#module-dewey.core.utils.ascii_art_generator" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-dewey.core.utils.base_utils">
+<span id="dewey-core-utils-base-utils-module"></span><h2>dewey.core.utils.base_utils module<a class="headerlink" href="#module-dewey.core.utils.base_utils" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.utils.base_utils.Utils">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.utils.base_utils.</span></span><span class="sig-name descname"><span class="pre">Utils</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Utils'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/base_utils.html#Utils"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.base_utils.Utils" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A utility script demonstrating Dewey conventions.</p>
+<p>Initializes the Utils script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – The name of the script.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.base_utils.Utils.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Utils'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/base_utils.html#Utils.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.base_utils.Utils.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the Utils script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – The name of the script.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.base_utils.Utils.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/base_utils.html#Utils.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.base_utils.Utils.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the core logic of the Utils script.</p>
+<p>This example demonstrates accessing configuration values and using the logger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If an error occurs during execution.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.utils.duplicate_checker">
+<span id="dewey-core-utils-duplicate-checker-module"></span><h2>dewey.core.utils.duplicate_checker module<a class="headerlink" href="#module-dewey.core.utils.duplicate_checker" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.utils.duplicate_checker.DuplicateChecker">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.utils.duplicate_checker.</span></span><span class="sig-name descname"><span class="pre">DuplicateChecker</span></span><a class="reference internal" href="_modules/dewey/core/utils/duplicate_checker.html#DuplicateChecker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.duplicate_checker.DuplicateChecker" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A class for checking and handling duplicate entries.</p>
+<p>This class inherits from BaseScript and provides methods for
+identifying and managing duplicate data.</p>
+<p>Initializes the DuplicateChecker.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dewey.core.utils.duplicate_checker.DuplicateChecker.PROJECT_ROOT">
+<span class="sig-name descname"><span class="pre">PROJECT_ROOT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PosixPath('/Users/srvo/dewey/src')</span></em><a class="headerlink" href="#dewey.core.utils.duplicate_checker.DuplicateChecker.PROJECT_ROOT" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dewey.core.utils.duplicate_checker.DuplicateChecker.CONFIG_PATH">
+<span class="sig-name descname"><span class="pre">CONFIG_PATH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PosixPath('/Users/srvo/dewey/config/dewey.yaml')</span></em><a class="headerlink" href="#dewey.core.utils.duplicate_checker.DuplicateChecker.CONFIG_PATH" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.duplicate_checker.DuplicateChecker.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/duplicate_checker.html#DuplicateChecker.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.duplicate_checker.DuplicateChecker.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the DuplicateChecker.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dewey.core.utils.duplicate_checker.DuplicateChecker.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">DuplicateChecker</span> <span class="pre">(WARNING)&gt;</span></em><a class="headerlink" href="#dewey.core.utils.duplicate_checker.DuplicateChecker.logger" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.duplicate_checker.DuplicateChecker.check_duplicates">
+<span class="sig-name descname"><span class="pre">check_duplicates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/duplicate_checker.html#DuplicateChecker.check_duplicates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.duplicate_checker.DuplicateChecker.check_duplicates" title="Link to this definition">¶</a></dt>
+<dd><p>Placeholder for the actual duplicate checking logic.
+This method should be overridden in a subclass or extended.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>List</em><em>[</em><em>Any</em><em>]</em>) – The list of data to check for duplicates.</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – The similarity threshold.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of duplicate items.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.duplicate_checker.DuplicateChecker.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/duplicate_checker.html#DuplicateChecker.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.duplicate_checker.DuplicateChecker.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the duplicate checking process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>Any</em><em>]</em><em>]</em>) – The data to check. If None, it defaults to an example list.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If an error occurs during the duplicate checking process.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.duplicate_checker.DuplicateChecker.get_path">
+<span class="sig-name descname"><span class="pre">get_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/duplicate_checker.html#DuplicateChecker.get_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.duplicate_checker.DuplicateChecker.get_path" title="Link to this definition">¶</a></dt>
+<dd><p>Get a path relative to the project root.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Path relative to project root or absolute path</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Resolved Path object</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Path</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.duplicate_checker.DuplicateChecker.parse_args">
+<span class="sig-name descname"><span class="pre">parse_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/duplicate_checker.html#DuplicateChecker.parse_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.duplicate_checker.DuplicateChecker.parse_args" title="Link to this definition">¶</a></dt>
+<dd><p>Parse command line arguments.</p>
+<p>Customized version that handles DB and LLM args properly for testing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Parsed arguments</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.duplicate_checker.DuplicateChecker.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/duplicate_checker.html#DuplicateChecker.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.duplicate_checker.DuplicateChecker.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Execute the DuplicateChecker.
+This method is called when the DuplicateChecker is run as a script.
+It handles command-line arguments, runs the script, and cleans up.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.utils.ethifinx_utils">
+<span id="dewey-core-utils-ethifinx-utils-module"></span><h2>dewey.core.utils.ethifinx_utils module<a class="headerlink" href="#module-dewey.core.utils.ethifinx_utils" title="Link to this heading">¶</a></h2>
+<p>Utility functions for Ethifinx research platform.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="dewey.core.utils.ethifinx_utils.is_port_in_use">
+<span class="sig-prename descclassname"><span class="pre">dewey.core.utils.ethifinx_utils.</span></span><span class="sig-name descname"><span class="pre">is_port_in_use</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/ethifinx_utils.html#is_port_in_use"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.ethifinx_utils.is_port_in_use" title="Link to this definition">¶</a></dt>
+<dd><p>Check if a port is already in use.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>port</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dewey.core.utils.ethifinx_utils.wait_for_server">
+<span class="sig-prename descclassname"><span class="pre">dewey.core.utils.ethifinx_utils.</span></span><span class="sig-name descname"><span class="pre">wait_for_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/ethifinx_utils.html#wait_for_server"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.ethifinx_utils.wait_for_server" title="Link to this definition">¶</a></dt>
+<dd><p>Wait for a server to start on the given port.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>port</strong> (<em>int</em>)</p></li>
+<li><p><strong>timeout</strong> (<em>float</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dewey.core.utils.ethifinx_utils.temp_server">
+<span class="sig-prename descclassname"><span class="pre">dewey.core.utils.ethifinx_utils.</span></span><span class="sig-name descname"><span class="pre">temp_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_cmd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_cmd</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/ethifinx_utils.html#temp_server"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.ethifinx_utils.temp_server" title="Link to this definition">¶</a></dt>
+<dd><p>Context manager for temporary servers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>port</strong> (<em>int</em>)</p></li>
+<li><p><strong>start_cmd</strong> (<em>callable</em>)</p></li>
+<li><p><strong>stop_cmd</strong> (<em>callable</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.utils.format_and_lint">
+<span id="dewey-core-utils-format-and-lint-module"></span><h2>dewey.core.utils.format_and_lint module<a class="headerlink" href="#module-dewey.core.utils.format_and_lint" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.utils.format_and_lint.FormatAndLint">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.utils.format_and_lint.</span></span><span class="sig-name descname"><span class="pre">FormatAndLint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'format_and_lint'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/format_and_lint.html#FormatAndLint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.format_and_lint.FormatAndLint" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A class for formatting and linting code.</p>
+<p>This class inherits from BaseScript and provides methods for
+formatting and linting code.</p>
+<p>Initializes the FormatAndLint class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_section</strong> (<em>str</em>) – The configuration section to use.</p></li>
+<li><p><strong>logger</strong> (<em>Logger</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.format_and_lint.FormatAndLint.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'format_and_lint'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/format_and_lint.html#FormatAndLint.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.format_and_lint.FormatAndLint.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the FormatAndLint class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_section</strong> (<em>str</em>) – The configuration section to use.</p></li>
+<li><p><strong>logger</strong> (<em>Logger</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.format_and_lint.FormatAndLint.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/format_and_lint.html#FormatAndLint.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.format_and_lint.FormatAndLint.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the formatting and linting process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.format_and_lint.FormatAndLint.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/format_and_lint.html#FormatAndLint.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.format_and_lint.FormatAndLint.run" title="Link to this definition">¶</a></dt>
+<dd><p>Legacy method that calls execute() for backward compatibility.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.utils.log_manager">
+<span id="dewey-core-utils-log-manager-module"></span><h2>dewey.core.utils.log_manager module<a class="headerlink" href="#module-dewey.core.utils.log_manager" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="dewey.core.utils.log_manager.get_llm_client">
+<span class="sig-prename descclassname"><span class="pre">dewey.core.utils.log_manager.</span></span><span class="sig-name descname"><span class="pre">get_llm_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/log_manager.html#get_llm_client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.log_manager.get_llm_client" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.utils.log_manager.LogManager">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.utils.log_manager.</span></span><span class="sig-name descname"><span class="pre">LogManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log_manager'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/log_manager.html#LogManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.log_manager.LogManager" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Manages logging configuration, rotation, and analysis.</p>
+<p>Inherits from BaseScript to provide standardized access to configuration,
+logging, and other utilities.</p>
+<p>Initializes the LogManager.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_section</strong> (<em>str</em>) – The configuration section to use for this script.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.log_manager.LogManager.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log_manager'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/log_manager.html#LogManager.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.log_manager.LogManager.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the LogManager.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_section</strong> (<em>str</em>) – The configuration section to use for this script.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.log_manager.LogManager.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/log_manager.html#LogManager.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.log_manager.LogManager.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the main logic of the LogManager.</p>
+<p>This method is intended to be overridden by subclasses to implement
+specific logging management tasks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.log_manager.LogManager.get_log_level">
+<span class="sig-name descname"><span class="pre">get_log_level</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/log_manager.html#LogManager.get_log_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.log_manager.LogManager.get_log_level" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves the log level from the configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The log level as a string (e.g., “INFO”, “DEBUG”).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.log_manager.LogManager.get_log_file_path">
+<span class="sig-name descname"><span class="pre">get_log_file_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/log_manager.html#LogManager.get_log_file_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.log_manager.LogManager.get_log_file_path" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves the log file path from the configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The log file path as a string.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.log_manager.LogManager.some_other_function">
+<span class="sig-name descname"><span class="pre">some_other_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/log_manager.html#LogManager.some_other_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.log_manager.LogManager.some_other_function" title="Link to this definition">¶</a></dt>
+<dd><p>Example function demonstrating config and logging.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>arg</strong> (<em>Any</em>) – An example argument.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.log_manager.LogManager.get_path">
+<span class="sig-name descname"><span class="pre">get_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/log_manager.html#LogManager.get_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.log_manager.LogManager.get_path" title="Link to this definition">¶</a></dt>
+<dd><p>Get a path relative to the project root.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Path relative to project root or absolute path</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Resolved Path object</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Path</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.log_manager.LogManager.parse_args">
+<span class="sig-name descname"><span class="pre">parse_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils/log_manager.html#LogManager.parse_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.log_manager.LogManager.parse_args" title="Link to this definition">¶</a></dt>
+<dd><p>Parse command line arguments.</p>
+<p>Customized version that handles DB and LLM args properly for testing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Parsed arguments</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="dewey-core-utils-logger-utils-de8f2a1c-module">
+<h2>dewey.core.utils.logger_utils_de8f2a1c module<a class="headerlink" href="#dewey-core-utils-logger-utils-de8f2a1c-module" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-dewey.core.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-dewey.core.utils" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.utils.MyUtils">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.utils.</span></span><span class="sig-name descname"><span class="pre">MyUtils</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'utils'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils.html#MyUtils"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.MyUtils" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A comprehensive class for utility functions, including database connections,
+LLM integrations, and configuration management.</p>
+<p>Initialize MyUtils with configuration and optional database/LLM.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_section</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Section in dewey.yaml to load for
+this script. Defaults to “utils”.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.MyUtils.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'utils'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils.html#MyUtils.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.MyUtils.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initialize MyUtils with configuration and optional database/LLM.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_section</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Section in dewey.yaml to load for
+this script. Defaults to “utils”.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.MyUtils.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils.html#MyUtils.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.MyUtils.run" title="Link to this definition">¶</a></dt>
+<dd><p>Run the utility functions. This is the main entry point for the script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.utils.MyUtils.example_utility_function">
+<span class="sig-name descname"><span class="pre">example_utility_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/utils.html#MyUtils.example_utility_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.utils.MyUtils.example_utility_function" title="Link to this definition">¶</a></dt>
+<dd><p>An example utility function that processes input data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_data</strong> (<em>str</em>) – The input data to process.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The processed output data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Dewey (TUI)</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">dewey</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="dewey.html">dewey package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">dewey</a><ul>
+  <li><a href="dewey.html">dewey package</a><ul>
+  <li><a href="dewey.core.html">dewey.core package</a><ul>
+      <li>Previous: <a href="dewey.core.tui.screens.html" title="previous chapter">dewey.core.tui.screens package</a></li>
+      <li>Next: <a href="dewey.llm.html" title="next chapter">dewey.llm package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Sloane Ortel.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/dewey.core.utils.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -118,13 +118,19 @@ class ClientAdvocateAgent(BaseScript):
             analysis_result = self.analyze_client(profile=client_profile)
             self.logger.info(f"Client analysis result: {analysis_result}")
 
-            tasks = [{"description": "Prepare quarterly report", "deadline": "2024-01-01"}]
+            tasks = [
+                {"description": "Prepare quarterly report", "deadline": "2024-01-01"}
+            ]
             client_priorities = {"urgency": "high", "importance": "high"}
-            prioritized_tasks = self.prioritize_tasks(tasks=tasks, client_priorities=client_priorities)
+            prioritized_tasks = self.prioritize_tasks(
+                tasks=tasks, client_priorities=client_priorities
+            )
             self.logger.info(f"Prioritized tasks: {prioritized_tasks}")
 
             self.logger.info("Successfully completed ClientAdvocateAgent")
 
         except Exception as e:
-            self.logger.error(f"Error executing ClientAdvocateAgent: {e}", exc_info=True)
+            self.logger.error(
+                f"Error executing ClientAdvocateAgent: {e}", exc_info=True
+            )
             raise

@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dewey.core.db.utils &#8212; Dewey (TUI) 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for dewey.core.db.utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Database utilities module.</span>
+
+<span class="sd">This module provides utility functions for database operations.</span>
+<span class="sd">Used to break circular dependencies between modules.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="c1"># Don&#39;t import db_manager directly to avoid circular imports</span>
+<span class="c1"># It will be set via set_db_manager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.connection</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseConnectionError</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># Will be initialized when db_manager is available</span>
+<span class="n">db_manager</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="set_db_manager">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.set_db_manager">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_db_manager</span><span class="p">(</span><span class="n">manager</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the database manager reference.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        manager: Database manager instance</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">db_manager</span>
+    <span class="n">db_manager</span> <span class="o">=</span> <span class="n">manager</span></div>
+
+
+
+<div class="viewcode-block" id="record_sync_status">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.record_sync_status">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">record_sync_status</span><span class="p">(</span><span class="n">status</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">details</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Record synchronization status in the database.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        status: Status of the sync (e.g., &#39;success&#39;, &#39;failed&#39;)</span>
+<span class="sd">        message: Descriptive message about the sync</span>
+<span class="sd">        details: Additional details as a dictionary</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">db_manager</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">DatabaseConnectionError</span><span class="p">(</span><span class="s2">&quot;Database manager not initialized&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">db_manager</span><span class="o">.</span><span class="n">execute_query</span><span class="p">(</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            INSERT INTO sync_status (status, message, details)</span>
+<span class="sd">            VALUES (?, ?, ?)</span>
+<span class="sd">            &quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">status</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">details</span><span class="p">)</span> <span class="k">if</span> <span class="n">details</span> <span class="k">else</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to record sync status: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">DatabaseConnectionError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to record sync status: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="generate_id">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.generate_id">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_id</span><span class="p">(</span><span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a unique ID for database records.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        prefix: Optional prefix for the ID</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Unique ID string</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="format_timestamp">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.format_timestamp">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_timestamp</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Format a timestamp for database storage.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dt: Datetime to format, defaults to current time</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Formatted timestamp string</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dt</span><span class="p">:</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">dt</span><span class="o">.</span><span class="n">tzinfo</span><span class="p">:</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="parse_timestamp">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.parse_timestamp">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_timestamp</span><span class="p">(</span><span class="n">timestamp</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a timestamp from database format.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        timestamp: Timestamp string to parse</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Parsed datetime object</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="sanitize_string">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.sanitize_string">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sanitize_string</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sanitize a string for safe database use.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: String to sanitize</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Sanitized string</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="c1"># Remove null bytes and other problematic characters</span>
+    <span class="n">sanitized</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x00</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">sanitized</span> <span class="o">=</span> <span class="n">sanitized</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+    <span class="n">sanitized</span> <span class="o">=</span> <span class="n">sanitized</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+    <span class="n">sanitized</span> <span class="o">=</span> <span class="n">sanitized</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">sanitized</span> <span class="o">=</span> <span class="n">sanitized</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sanitized</span></div>
+
+
+
+<div class="viewcode-block" id="format_json">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.format_json">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_json</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Format a value as JSON for database storage.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to format</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        JSON string</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;null&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="parse_json">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.parse_json">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_json</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a JSON value from database storage.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: JSON string to parse</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Parsed value</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;null&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="format_list">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.format_list">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_list</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Format a list for database storage.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        values: List of values to format</span>
+<span class="sd">        separator: Separator character</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Formatted string</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">separator</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="parse_list">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.parse_list">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_list</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a list from database storage.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: String to parse</span>
+<span class="sd">        separator: Separator character</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of values</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">separator</span><span class="p">)]</span></div>
+
+
+
+<div class="viewcode-block" id="format_bool">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.format_bool">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_bool</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Format a boolean for database storage.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Boolean to format</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Integer (0 or 1)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="mi">0</span></div>
+
+
+
+<div class="viewcode-block" id="parse_bool">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.parse_bool">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_bool</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a boolean from database storage.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to parse</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Boolean value</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="format_enum">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.format_enum">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_enum</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">valid_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Format an enum value for database storage.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to format</span>
+<span class="sd">        valid_values: List of valid enum values</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Formatted string</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_values</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid enum value: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span></div>
+
+
+
+<div class="viewcode-block" id="parse_enum">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.parse_enum">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_enum</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">valid_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse an enum value from database storage.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Value to parse</span>
+<span class="sd">        valid_values: List of valid enum values</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Parsed enum value</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_values</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid enum value: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span></div>
+
+
+
+<div class="viewcode-block" id="format_money">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.format_money">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_money</span><span class="p">(</span><span class="n">amount</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Format a money amount for database storage (in cents).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        amount: Amount to format</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Amount in cents as integer</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="parse_money">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.parse_money">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_money</span><span class="p">(</span><span class="n">cents</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a money amount from database storage.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cents: Amount in cents</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Amount as float</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">cents</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span></div>
+
+
+
+<div class="viewcode-block" id="build_where_clause">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.build_where_clause">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_where_clause</span><span class="p">(</span><span class="n">conditions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a WHERE clause from conditions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        conditions: Dictionary of column names and values</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple of (where_clause, parameters)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">conditions</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="p">[]</span>
+
+    <span class="n">clauses</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">conditions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">clauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2"> IS NULL&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">placeholders</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;?&quot;</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">val</span><span class="p">])</span>
+            <span class="n">clauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2"> IN (</span><span class="si">{</span><span class="n">placeholders</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">clauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2"> = ?&quot;</span><span class="p">)</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">&quot;WHERE &quot;</span> <span class="o">+</span> <span class="s2">&quot; AND &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">clauses</span><span class="p">),</span> <span class="n">params</span></div>
+
+
+
+<div class="viewcode-block" id="build_order_clause">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.build_order_clause">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_order_clause</span><span class="p">(</span><span class="n">order_by</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build an ORDER BY clause.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        order_by: Column(s) to order by (prefix with - for descending)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ORDER BY clause</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">order_by</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">order_by</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;DESC&quot;</span> <span class="ow">in</span> <span class="n">order_by</span> <span class="ow">or</span> <span class="s2">&quot;ASC&quot;</span> <span class="ow">in</span> <span class="n">order_by</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;ORDER BY </span><span class="si">{</span><span class="n">order_by</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;ORDER BY </span><span class="si">{</span><span class="n">order_by</span><span class="si">}</span><span class="s2"> ASC&quot;</span>
+
+    <span class="n">clauses</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">order_by</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;DESC&quot;</span> <span class="ow">in</span> <span class="n">col</span> <span class="ow">or</span> <span class="s2">&quot;ASC&quot;</span> <span class="ow">in</span> <span class="n">col</span><span class="p">:</span>
+            <span class="n">clauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">col</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">):</span>
+            <span class="n">clauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s2"> DESC&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">clauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2"> ASC&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">&quot;ORDER BY &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">clauses</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_limit_clause">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.build_limit_clause">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_limit_clause</span><span class="p">(</span><span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a LIMIT/OFFSET clause.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        limit: Maximum number of records</span>
+<span class="sd">        offset: Number of records to skip</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        LIMIT/OFFSET clause</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">limit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">clause</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;LIMIT </span><span class="si">{</span><span class="n">limit</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">offset</span><span class="p">:</span>
+        <span class="n">clause</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; OFFSET </span><span class="si">{</span><span class="n">offset</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">return</span> <span class="n">clause</span></div>
+
+
+
+<div class="viewcode-block" id="build_select_query">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.build_select_query">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_select_query</span><span class="p">(</span>
+    <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">conditions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">order_by</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a SELECT query.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table_name: Name of the table to query</span>
+<span class="sd">        columns: List of columns to select</span>
+<span class="sd">        conditions: Dictionary of conditions</span>
+<span class="sd">        order_by: Column(s) to order by</span>
+<span class="sd">        limit: Maximum number of records</span>
+<span class="sd">        offset: Number of records to skip</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple of (query, parameters)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Build column list</span>
+    <span class="n">col_list</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">columns</span> <span class="k">else</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+
+    <span class="c1"># Build clauses</span>
+    <span class="n">where_clause</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">build_where_clause</span><span class="p">(</span><span class="n">conditions</span> <span class="ow">or</span> <span class="p">{})</span>
+    <span class="n">order_clause</span> <span class="o">=</span> <span class="n">build_order_clause</span><span class="p">(</span><span class="n">order_by</span><span class="p">)</span>
+    <span class="n">limit_clause</span> <span class="o">=</span> <span class="n">build_limit_clause</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+
+    <span class="c1"># Combine query</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;SELECT </span><span class="si">{</span><span class="n">col_list</span><span class="si">}</span><span class="s2"> FROM </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">where_clause</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">where_clause</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">order_clause</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">order_clause</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">limit_clause</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">limit_clause</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">return</span> <span class="n">query</span><span class="p">,</span> <span class="n">params</span></div>
+
+
+
+<div class="viewcode-block" id="build_insert_query">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.build_insert_query">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_insert_query</span><span class="p">(</span><span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build an INSERT query.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table_name: Name of the table to insert into</span>
+<span class="sd">        data: Dictionary of column names and values</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple of (query, parameters)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">placeholders</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;?&quot;</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">])</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;INSERT INTO </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span><span class="si">}</span><span class="s2">) VALUES (</span><span class="si">{</span><span class="n">placeholders</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="k">return</span> <span class="n">query</span><span class="p">,</span> <span class="n">values</span></div>
+
+
+
+<div class="viewcode-block" id="build_update_query">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.build_update_query">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_update_query</span><span class="p">(</span>
+    <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">conditions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build an UPDATE query.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table_name: Name of the table to update</span>
+<span class="sd">        data: Dictionary of column names and values to update</span>
+<span class="sd">        conditions: Dictionary of conditions</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple of (query, parameters)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Build SET clause</span>
+    <span class="n">set_items</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2"> = ?&quot;</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+    <span class="n">set_clause</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">set_items</span><span class="p">)</span>
+    <span class="n">set_params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="c1"># Build WHERE clause</span>
+    <span class="n">where_clause</span><span class="p">,</span> <span class="n">where_params</span> <span class="o">=</span> <span class="n">build_where_clause</span><span class="p">(</span><span class="n">conditions</span><span class="p">)</span>
+
+    <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;UPDATE </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> SET </span><span class="si">{</span><span class="n">set_clause</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">where_clause</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">where_clause</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">return</span> <span class="n">query</span><span class="p">,</span> <span class="n">set_params</span> <span class="o">+</span> <span class="n">where_params</span></div>
+
+
+
+<div class="viewcode-block" id="build_delete_query">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.build_delete_query">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_delete_query</span><span class="p">(</span>
+    <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">conditions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a DELETE query.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table_name: Name of the table to delete from</span>
+<span class="sd">        conditions: Dictionary of conditions</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple of (query, parameters)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">where_clause</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">build_where_clause</span><span class="p">(</span><span class="n">conditions</span><span class="p">)</span>
+
+    <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;DELETE FROM </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">where_clause</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">where_clause</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">return</span> <span class="n">query</span><span class="p">,</span> <span class="n">params</span></div>
+
+
+
+<div class="viewcode-block" id="execute_batch">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.execute_batch">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">execute_batch</span><span class="p">(</span>
+    <span class="n">queries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]],</span> <span class="n">local_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute multiple queries in a transaction.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        queries: List of (query, parameters) tuples</span>
+<span class="sd">        local_only: Whether to only execute on local database</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Start transaction</span>
+        <span class="n">db_manager</span><span class="o">.</span><span class="n">execute_query</span><span class="p">(</span>
+            <span class="s2">&quot;BEGIN TRANSACTION&quot;</span><span class="p">,</span> <span class="n">for_write</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">local_only</span><span class="o">=</span><span class="n">local_only</span>
+        <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Execute queries</span>
+            <span class="k">for</span> <span class="n">query</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">queries</span><span class="p">:</span>
+                <span class="n">db_manager</span><span class="o">.</span><span class="n">execute_query</span><span class="p">(</span>
+                    <span class="n">query</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">for_write</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">local_only</span><span class="o">=</span><span class="n">local_only</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Commit transaction</span>
+            <span class="n">db_manager</span><span class="o">.</span><span class="n">execute_query</span><span class="p">(</span><span class="s2">&quot;COMMIT&quot;</span><span class="p">,</span> <span class="n">for_write</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">local_only</span><span class="o">=</span><span class="n">local_only</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># Rollback transaction</span>
+            <span class="n">db_manager</span><span class="o">.</span><span class="n">execute_query</span><span class="p">(</span><span class="s2">&quot;ROLLBACK&quot;</span><span class="p">,</span> <span class="n">for_write</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">local_only</span><span class="o">=</span><span class="n">local_only</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Failed to execute batch: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">DatabaseConnectionError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="table_exists">
+<a class="viewcode-back" href="../../../../dewey.core.db.html#dewey.core.db.utils.table_exists">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">table_exists</span><span class="p">(</span><span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a table exists in the database.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table_name: Name of the table to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if the table exists, False otherwise</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">db_manager</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">DatabaseConnectionError</span><span class="p">(</span><span class="s2">&quot;Database manager not initialized&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">db_manager</span><span class="o">.</span><span class="n">execute_query</span><span class="p">(</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            SELECT COUNT(*) FROM information_schema.tables</span>
+<span class="sd">            WHERE table_schema = &#39;public&#39; AND table_name = ?</span>
+<span class="sd">            &quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">table_name</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">result</span> <span class="ow">and</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to check if table exists: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;set_db_manager&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;record_sync_status&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;generate_id&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;format_timestamp&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;parse_timestamp&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sanitize_string&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;format_json&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;parse_json&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;format_list&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;parse_list&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;format_bool&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;parse_bool&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;format_enum&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;parse_enum&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;format_money&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;parse_money&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;build_where_clause&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;build_order_clause&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;build_limit_clause&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;build_select_query&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;build_insert_query&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;build_update_query&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;build_delete_query&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;execute_batch&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;table_exists&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">Dewey (TUI)</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  <li><a href="../../../dewey.html">dewey</a><ul>
+  <li><a href="../db.html">dewey.core.db</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Sloane Ortel.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,16 @@
+# Test-specific files to ignore
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+logs/*.log
+data/tmp/
+.hypothesis/
+
+# Test output files
+*.csv.tmp
+test_output/
+*.tmp.* 

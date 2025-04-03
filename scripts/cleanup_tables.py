@@ -27,15 +27,14 @@ class CleanupTables(BaseScript):
         return parser
 
     def should_delete_table(self, table_name: str) -> bool:
-        """
-        Determine if a table should be deleted based on patterns.
+        """Determine if a table should be deleted based on patterns.
 
         Args:
-        -----
+        ----
             table_name: Name of the table to check
 
         Returns:
-        --------
+        -------
             True if the table should be deleted, False otherwise
 
         """

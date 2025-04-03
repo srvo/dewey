@@ -54,6 +54,7 @@ class DataIngestionAgent(BaseScript):
 
         Raises:
             Exception: If any error occurs during the data ingestion process.
+
         """
         try:
             self.logger.info("Starting data ingestion process...")

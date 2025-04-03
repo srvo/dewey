@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dewey.core.bookkeeping.auto_categorize &#8212; Dewey (TUI) 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for dewey.core.bookkeeping.auto_categorize</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dewey.core.base_script</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseScript</span>
+
+
+<div class="viewcode-block" id="FileSystemInterface">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.FileSystemInterface">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FileSystemInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interface for file system operations.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FileSystemInterface.open">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.FileSystemInterface.open">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span> <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="FileSystemInterface.copy2">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.FileSystemInterface.copy2">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">dst</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="FileSystemInterface.move">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.FileSystemInterface.move">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">dst</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="FileSystemInterface.exists">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.FileSystemInterface.exists">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RealFileSystem">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.RealFileSystem">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RealFileSystem</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Real file system operations.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RealFileSystem.open">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.RealFileSystem.open">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RealFileSystem.copy2">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.RealFileSystem.copy2">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">dst</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RealFileSystem.move">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.RealFileSystem.move">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">dst</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RealFileSystem.exists">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.RealFileSystem.exists">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RuleLoaderInterface">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.RuleLoaderInterface">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RuleLoaderInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interface for loading classification rules.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RuleLoaderInterface.load_rules">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.RuleLoaderInterface.load_rules">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_rules</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span> <span class="o">...</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DatabaseInterface">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.DatabaseInterface">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatabaseInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interface for database operations.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DatabaseInterface.execute">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.DatabaseInterface.execute">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span> <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="DatabaseInterface.close">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.DatabaseInterface.close">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="JournalProcessor">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.JournalProcessor">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">JournalProcessor</span><span class="p">(</span><span class="n">BaseScript</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Automatically categorizes transactions based on predefined rules.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="JournalProcessor.__init__">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.JournalProcessor.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">file_system</span><span class="p">:</span> <span class="n">FileSystemInterface</span> <span class="o">=</span> <span class="n">RealFileSystem</span><span class="p">(),</span>
+        <span class="n">rule_loader</span><span class="p">:</span> <span class="n">RuleLoaderInterface</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">database</span><span class="p">:</span> <span class="n">DatabaseInterface</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the JournalProcessor.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_section</span><span class="o">=</span><span class="s2">&quot;bookkeeping&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_system</span><span class="p">:</span> <span class="n">FileSystemInterface</span> <span class="o">=</span> <span class="n">file_system</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rule_loader</span><span class="p">:</span> <span class="n">RuleLoaderInterface</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">rule_loader</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">:</span> <span class="n">DatabaseInterface</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">database</span>
+
+        <span class="c1"># Use self.config for configuration values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rule_sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s2">&quot;overrides.json&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># Highest priority</span>
+            <span class="p">(</span><span class="s2">&quot;manual_rules.json&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;base_rules.json&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>  <span class="c1"># Lowest priority</span>
+        <span class="p">]</span>
+
+        <span class="c1"># TODO: Fix search/replace block</span>
+
+        <span class="c1"># Use self.config for file paths</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classification_file</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span>
+                <span class="s2">&quot;classification_file&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;books/import/mercury/classification_rules.json&quot;</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ledger_file</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;ledger_file&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;.hledger.journal&quot;</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backup_ext</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;backup_ext&quot;</span><span class="p">,</span> <span class="s2">&quot;.bak&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="JournalProcessor.load_classification_rules">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.JournalProcessor.load_classification_rules">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_classification_rules</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load classification rules from JSON files.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dictionary containing the classification rules.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading classification rules&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rule_loader</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rule_loader</span><span class="o">.</span><span class="n">load_rules</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{}</span>  <span class="c1"># Placeholder</span></div>
+
+
+<div class="viewcode-block" id="JournalProcessor.process_transactions">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.JournalProcessor.process_transactions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_transactions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transactions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">rules</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process transactions and categorize them based on rules.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            transactions: A list of transaction dictionaries.</span>
+<span class="sd">            rules: A dictionary containing the classification rules.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of processed transaction dictionaries.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Processing transactions&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">transactions</span>  <span class="c1"># Placeholder</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_journal_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">current_tx</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper function to parse a single line of a journal entry.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">current_tx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;date&quot;</span><span class="p">):</span>
+            <span class="c1"># Transaction header line</span>
+            <span class="n">date_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(\d</span><span class="si">{4}</span><span class="s2">-\d</span><span class="si">{2}</span><span class="s2">-\d</span><span class="si">{2}</span><span class="s2">)(\s+.*?)$&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">date_match</span><span class="p">:</span>
+                <span class="n">current_tx</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">date_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">current_tx</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">date_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Parse posting lines</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;    &quot;</span><span class="p">):</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\s{2,}&quot;</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">account</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">amount</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">current_tx</span><span class="p">[</span><span class="s2">&quot;postings&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;account&quot;</span><span class="p">:</span> <span class="n">account</span><span class="p">,</span> <span class="s2">&quot;amount&quot;</span><span class="p">:</span> <span class="n">amount</span><span class="p">})</span>
+
+<div class="viewcode-block" id="JournalProcessor.parse_journal_entries">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.JournalProcessor.parse_journal_entries">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_journal_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse hledger journal file into structured transactions.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_path: The path to the hledger journal file.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of structured transactions.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parsing journal file: </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_system</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+        <span class="n">transactions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">current_tx</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;postings&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">current_tx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;postings&quot;</span><span class="p">):</span>
+                    <span class="n">transactions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_tx</span><span class="p">)</span>
+                    <span class="n">current_tx</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;postings&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+                <span class="k">continue</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parse_journal_entry</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">current_tx</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">current_tx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;postings&quot;</span><span class="p">):</span>
+            <span class="n">transactions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_tx</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">transactions</span><span class="p">)</span><span class="si">}</span><span class="s2"> transactions&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">transactions</span></div>
+
+
+<div class="viewcode-block" id="JournalProcessor.serialize_transactions">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.JournalProcessor.serialize_transactions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serialize_transactions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transactions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert structured transactions back to journal format.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            transactions: A list of structured transactions.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A string representation of the transactions in journal format.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">journal_lines</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">tx</span> <span class="ow">in</span> <span class="n">transactions</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tx</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">tx</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">journal_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">posting</span> <span class="ow">in</span> <span class="n">tx</span><span class="p">[</span><span class="s2">&quot;postings&quot;</span><span class="p">]:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">posting</span><span class="p">[</span><span class="s1">&#39;account&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">if</span> <span class="n">posting</span><span class="p">[</span><span class="s2">&quot;amount&quot;</span><span class="p">]:</span>
+                    <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">posting</span><span class="p">[</span><span class="s1">&#39;amount&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">journal_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+            <span class="n">journal_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>  <span class="c1"># Empty line between transactions</span>
+
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">journal_lines</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="JournalProcessor.write_journal_file">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.JournalProcessor.write_journal_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_journal_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write updated journal file with backup.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            content: The content to write to the journal file.</span>
+<span class="sd">            file_path: The path to the journal file.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If writing to the journal file fails.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">backup_path</span> <span class="o">=</span> <span class="n">file_path</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">backup_ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Create backup</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating backup at </span><span class="si">{</span><span class="n">backup_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_system</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">backup_path</span><span class="p">)</span>
+
+            <span class="c1"># Write new content</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Writing updated journal to </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_system</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to write journal file: </span><span class="si">{</span><span class="n">e</span><span class="si">!s}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_system</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">backup_path</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Restoring from backup&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">file_system</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">backup_path</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+
+<div class="viewcode-block" id="JournalProcessor.execute">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.JournalProcessor.execute">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Main processing workflow.&quot;&quot;&quot;</span>
+        <span class="c1"># Load configuration</span>
+        <span class="n">rules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_classification_rules</span><span class="p">()</span>
+
+        <span class="c1"># Process journal entries</span>
+        <span class="n">transactions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_journal_entries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ledger_file</span><span class="p">)</span>
+        <span class="n">updated_transactions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_transactions</span><span class="p">(</span><span class="n">transactions</span><span class="p">,</span> <span class="n">rules</span><span class="p">)</span>
+        <span class="n">new_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_transactions</span><span class="p">(</span><span class="n">updated_transactions</span><span class="p">)</span>
+
+        <span class="c1"># Write results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_journal_file</span><span class="p">(</span><span class="n">new_content</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ledger_file</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.auto_categorize.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Main entrypoint to run the journal processor.&quot;&quot;&quot;</span>
+    <span class="n">processor</span> <span class="o">=</span> <span class="n">JournalProcessor</span><span class="p">()</span>
+    <span class="n">processor</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">Dewey (TUI)</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  <li><a href="../../../dewey.html">dewey</a><ul>
+  <li><a href="../bookkeeping.html">dewey.core.bookkeeping</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Sloane Ortel.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

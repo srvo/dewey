@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>dewey.core.crm.gmail package &#8212; Dewey (TUI) 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=01f34227"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="dewey.core.crm.labeler package" href="dewey.core.crm.labeler.html" />
+    <link rel="prev" title="dewey.core.crm.events package" href="dewey.core.crm.events.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="dewey-core-crm-gmail-package">
+<h1>dewey.core.crm.gmail package<a class="headerlink" href="#dewey-core-crm-gmail-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-dewey.core.crm.gmail.email_processor">
+<span id="dewey-core-crm-gmail-email-processor-module"></span><h2>dewey.core.crm.gmail.email_processor module<a class="headerlink" href="#module-dewey.core.crm.gmail.email_processor" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.email_processor.EmailProcessor">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.gmail.email_processor.</span></span><span class="sig-name descname"><span class="pre">EmailProcessor</span></span><a class="reference internal" href="_modules/dewey/core/crm/gmail/email_processor.html#EmailProcessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.email_processor.EmailProcessor" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Processes email messages and extracts relevant information.</p>
+<p>Initializes the EmailProcessor.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.email_processor.EmailProcessor.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/email_processor.html#EmailProcessor.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.email_processor.EmailProcessor.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the EmailProcessor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.email_processor.EmailProcessor.process_email">
+<span class="sig-name descname"><span class="pre">process_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/email_processor.html#EmailProcessor.process_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.email_processor.EmailProcessor.process_email" title="Link to this definition">¶</a></dt>
+<dd><p>Processes a single email message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>email_data</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – A dictionary containing the email message data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing the processed email information, or None if an error occurred.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, <em>Any</em>] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.email_processor.EmailProcessor.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/email_processor.html#EmailProcessor.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.email_processor.EmailProcessor.run" title="Link to this definition">¶</a></dt>
+<dd><p>Placeholder for the run method required by BaseScript.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.crm.gmail.email_service">
+<span id="dewey-core-crm-gmail-email-service-module"></span><h2>dewey.core.crm.gmail.email_service module<a class="headerlink" href="#module-dewey.core.crm.gmail.email_service" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.email_service.EmailService">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.gmail.email_service.</span></span><span class="sig-name descname"><span class="pre">EmailService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gmail_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email_processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'crm'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/email_service.html#EmailService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.email_service.EmailService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Manages the email fetching and processing service.</p>
+<p>Inherits from BaseScript for standardized configuration, logging,
+and lifecycle management.</p>
+<p>Initializes the EmailService with dependencies and configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gmail_client</strong> – An instance of the GmailClient class.</p></li>
+<li><p><strong>email_processor</strong> – An instance of the EmailProcessor class.</p></li>
+<li><p><strong>config_section</strong> (<em>str</em>) – The configuration section to use for this service.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.email_service.EmailService.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gmail_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email_processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'crm'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/email_service.html#EmailService.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.email_service.EmailService.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the EmailService with dependencies and configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gmail_client</strong> – An instance of the GmailClient class.</p></li>
+<li><p><strong>email_processor</strong> – An instance of the EmailProcessor class.</p></li>
+<li><p><strong>config_section</strong> (<em>str</em>) – The configuration section to use for this service.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.email_service.EmailService.handle_signal">
+<span class="sig-name descname"><span class="pre">handle_signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/email_service.html#EmailService.handle_signal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.email_service.EmailService.handle_signal" title="Link to this definition">¶</a></dt>
+<dd><p>Handles shutdown signals gracefully.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>signum</strong> (<em>int</em>) – The signal number.</p></li>
+<li><p><strong>frame</strong> – The frame object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.email_service.EmailService.fetch_cycle">
+<span class="sig-name descname"><span class="pre">fetch_cycle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/email_service.html#EmailService.fetch_cycle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.email_service.EmailService.fetch_cycle" title="Link to this definition">¶</a></dt>
+<dd><p>Executes a single email fetch and process cycle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.email_service.EmailService.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/email_service.html#EmailService.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.email_service.EmailService.run" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the email service in a continuous loop.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.email_service.EmailService.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/email_service.html#EmailService.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.email_service.EmailService.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the email service in a continuous loop.</p>
+<p>This method is the main entry point for running the email service.
+It initializes the service, enters a continuous loop to fetch and
+process emails, and handles graceful shutdown.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.crm.gmail.email_sync">
+<span id="dewey-core-crm-gmail-email-sync-module"></span><h2>dewey.core.crm.gmail.email_sync module<a class="headerlink" href="#module-dewey.core.crm.gmail.email_sync" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.email_sync.EmailSync">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.gmail.email_sync.</span></span><span class="sig-name descname"><span class="pre">EmailSync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/email_sync.html#EmailSync"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.email_sync.EmailSync" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A module for synchronizing emails from Gmail.</p>
+<p>This module inherits from BaseScript and provides a standardized
+structure for email synchronization scripts, including configuration
+loading, logging, and a <cite>run</cite> method to execute the script’s
+primary logic.</p>
+<p>Initializes the EmailSync module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_section</strong> (<em>str</em><em> | </em><em>None</em>) – Section in dewey.yaml to load for this script. Defaults to None.</p></li>
+<li><p><strong>*args</strong> (<em>Any</em>) – Additional positional arguments.</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.email_sync.EmailSync.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/email_sync.html#EmailSync.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.email_sync.EmailSync.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the EmailSync module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_section</strong> (<em>str</em><em> | </em><em>None</em>) – Section in dewey.yaml to load for this script. Defaults to None.</p></li>
+<li><p><strong>*args</strong> (<em>Any</em>) – Additional positional arguments.</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.email_sync.EmailSync.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/email_sync.html#EmailSync.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.email_sync.EmailSync.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the email synchronization process.</p>
+<p>This method retrieves the Gmail API key from the configuration,
+logs the start and completion of the synchronization process,
+and includes the core logic for synchronizing emails.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="dewey-core-crm-gmail-fetch-all-emails-module">
+<h2>dewey.core.crm.gmail.fetch_all_emails module<a class="headerlink" href="#dewey-core-crm-gmail-fetch-all-emails-module" title="Link to this heading">¶</a></h2>
+</section>
+<section id="dewey-core-crm-gmail-gmail-api-test-module">
+<h2>dewey.core.crm.gmail.gmail_api_test module<a class="headerlink" href="#dewey-core-crm-gmail-gmail-api-test-module" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-dewey.core.crm.gmail.gmail_client">
+<span id="dewey-core-crm-gmail-gmail-client-module"></span><h2>dewey.core.crm.gmail.gmail_client module<a class="headerlink" href="#module-dewey.core.crm.gmail.gmail_client" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.gmail_client.GmailClient">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.gmail.gmail_client.</span></span><span class="sig-name descname"><span class="pre">GmailClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_account_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_email</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scopes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/gmail_client.html#GmailClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.gmail_client.GmailClient" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Handles Gmail API authentication and interactions.</p>
+<p>Initializes the Gmail client with service account credentials.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>service_account_file</strong> (<em>str</em>) – Path to the service account JSON file.</p></li>
+<li><p><strong>user_email</strong> (<em>str</em><em> | </em><em>None</em>) – Optional user email to impersonate (for domain-wide delegation).</p></li>
+<li><p><strong>scopes</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>) – List of API scopes to request.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.gmail_client.GmailClient.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_account_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_email</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scopes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/gmail_client.html#GmailClient.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.gmail_client.GmailClient.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the Gmail client with service account credentials.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>service_account_file</strong> (<em>str</em>) – Path to the service account JSON file.</p></li>
+<li><p><strong>user_email</strong> (<em>str</em><em> | </em><em>None</em>) – Optional user email to impersonate (for domain-wide delegation).</p></li>
+<li><p><strong>scopes</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>) – List of API scopes to request.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.gmail_client.GmailClient.authenticate">
+<span class="sig-name descname"><span class="pre">authenticate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/gmail_client.html#GmailClient.authenticate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.gmail_client.GmailClient.authenticate" title="Link to this definition">¶</a></dt>
+<dd><p>Authenticates with Gmail API using a service account.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The Gmail service object if authentication is successful, otherwise None.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.gmail_client.GmailClient.fetch_emails">
+<span class="sig-name descname"><span class="pre">fetch_emails</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/gmail_client.html#GmailClient.fetch_emails"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.gmail_client.GmailClient.fetch_emails" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches emails from Gmail based on the provided query.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> (<em>str</em>) – Gmail search query (e.g., “from:user&#64;example.com”).</p></li>
+<li><p><strong>max_results</strong> (<em>int</em>) – Maximum number of emails to return per page.</p></li>
+<li><p><strong>page_token</strong> (<em>str</em>) – Token for retrieving the next page of results.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing the list of emails and the next page token, or None if an error occurred.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, <em>Any</em>] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.gmail_client.GmailClient.get_message">
+<span class="sig-name descname"><span class="pre">get_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/gmail_client.html#GmailClient.get_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.gmail_client.GmailClient.get_message" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves a specific email message by ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg_id</strong> (<em>str</em>) – The ID of the email message to retrieve.</p></li>
+<li><p><strong>format</strong> (<em>str</em>) – The format of the message to retrieve (e.g., ‘full’, ‘metadata’, ‘raw’).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing the email message, or None if an error occurred.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, <em>Any</em>] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.gmail_client.GmailClient.decode_message_body">
+<span class="sig-name descname"><span class="pre">decode_message_body</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/gmail_client.html#GmailClient.decode_message_body"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.gmail_client.GmailClient.decode_message_body" title="Link to this definition">¶</a></dt>
+<dd><p>Decodes the message body from base64.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – The email message dictionary.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The decoded message body as a string.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.gmail_client.GmailClient.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/gmail_client.html#GmailClient.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.gmail_client.GmailClient.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Main execution method for GmailClient.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.gmail_client.GmailClient.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/gmail_client.html#GmailClient.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.gmail_client.GmailClient.run" title="Link to this definition">¶</a></dt>
+<dd><p>Legacy method that calls execute() for backward compatibility.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.crm.gmail.gmail_service">
+<span id="dewey-core-crm-gmail-gmail-service-module"></span><h2>dewey.core.crm.gmail.gmail_service module<a class="headerlink" href="#module-dewey.core.crm.gmail.gmail_service" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.gmail_service.GmailService">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.gmail.gmail_service.</span></span><span class="sig-name descname"><span class="pre">GmailService</span></span><a class="reference internal" href="_modules/dewey/core/crm/gmail/gmail_service.html#GmailService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.gmail_service.GmailService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A service class for interacting with the Gmail API.</p>
+<p>This class handles authentication, email retrieval, and other Gmail-related
+operations.</p>
+<p>Initializes the GmailService with necessary configurations and credentials.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.gmail_service.GmailService.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/gmail_service.html#GmailService.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.gmail_service.GmailService.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the GmailService with necessary configurations and credentials.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.gmail_service.GmailService.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/gmail_service.html#GmailService.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.gmail_service.GmailService.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the main logic of the Gmail service.</p>
+<p>This method should be implemented to perform specific tasks, such as
+fetching emails, processing them, and storing the results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>NotImplementedError</strong> – If the run method is not implemented in a subclass.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.crm.gmail.gmail_sync">
+<span id="dewey-core-crm-gmail-gmail-sync-module"></span><h2>dewey.core.crm.gmail.gmail_sync module<a class="headerlink" href="#module-dewey.core.crm.gmail.gmail_sync" title="Link to this heading">¶</a></h2>
+<p>Gmail synchronization module for integrating Gmail with DuckDB/MotherDuck.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.gmail_sync.GmailSync">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.gmail.gmail_sync.</span></span><span class="sig-name descname"><span class="pre">GmailSync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gmail_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'md:dewey'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/gmail_sync.html#GmailSync"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.gmail_sync.GmailSync" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Gmail synchronization handler with MotherDuck integration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db_path</strong> (<em>str</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.gmail_sync.GmailSync.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gmail_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'md:dewey'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/gmail_sync.html#GmailSync.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.gmail_sync.GmailSync.__init__" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db_path</strong> (<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.gmail_sync.GmailSync.close_connection">
+<span class="sig-name descname"><span class="pre">close_connection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/gmail_sync.html#GmailSync.close_connection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.gmail_sync.GmailSync.close_connection" title="Link to this definition">¶</a></dt>
+<dd><p>Explicitly close the database connection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.gmail_sync.GmailSync.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/gmail_sync.html#GmailSync.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.gmail_sync.GmailSync.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Implement abstract method required by parent class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.gmail_sync.GmailSync.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/gmail_sync.html#GmailSync.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.gmail_sync.GmailSync.run" title="Link to this definition">¶</a></dt>
+<dd><p>Synchronize data with increased default max_results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initial</strong> (<em>bool</em>)</p></li>
+<li><p><strong>query</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>max_results</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.crm.gmail.gmail_sync_manager">
+<span id="dewey-core-crm-gmail-gmail-sync-manager-module"></span><h2>dewey.core.crm.gmail.gmail_sync_manager module<a class="headerlink" href="#module-dewey.core.crm.gmail.gmail_sync_manager" title="Link to this heading">¶</a></h2>
+</section>
+<section id="dewey-core-crm-gmail-gmail-utils-module">
+<h2>dewey.core.crm.gmail.gmail_utils module<a class="headerlink" href="#dewey-core-crm-gmail-gmail-utils-module" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-dewey.core.crm.gmail.imap_import">
+<span id="dewey-core-crm-gmail-imap-import-module"></span><h2>dewey.core.crm.gmail.imap_import module<a class="headerlink" href="#module-dewey.core.crm.gmail.imap_import" title="Link to this heading">¶</a></h2>
+<p>IMAP Email Import Script.</p>
+<p>This script imports emails using IMAP, which is more reliable for bulk imports
+than the Gmail API.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.imap_import.IMAPEmailImporter">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.gmail.imap_import.</span></span><span class="sig-name descname"><span class="pre">IMAPEmailImporter</span></span><a class="reference internal" href="_modules/dewey/core/crm/gmail/imap_import.html#IMAPEmailImporter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.imap_import.IMAPEmailImporter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Imports emails from Gmail using IMAP and stores them in a database.</p>
+<p>Initializes the IMAP email importer.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.imap_import.IMAPEmailImporter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/imap_import.html#IMAPEmailImporter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.imap_import.IMAPEmailImporter.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the IMAP email importer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.imap_import.IMAPEmailImporter.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/imap_import.html#IMAPEmailImporter.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.imap_import.IMAPEmailImporter.run" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the IMAP email import process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.imap_import.IMAPEmailImporter.setup_argparse">
+<span class="sig-name descname"><span class="pre">setup_argparse</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/imap_import.html#IMAPEmailImporter.setup_argparse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.imap_import.IMAPEmailImporter.setup_argparse" title="Link to this definition">¶</a></dt>
+<dd><p>Set up command line arguments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An argument parser configured with common options.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>ArgumentParser</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.imap_import.IMAPEmailImporter.connect_to_gmail">
+<span class="sig-name descname"><span class="pre">connect_to_gmail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/imap_import.html#IMAPEmailImporter.connect_to_gmail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.imap_import.IMAPEmailImporter.connect_to_gmail" title="Link to this definition">¶</a></dt>
+<dd><p>Connect to Gmail using IMAP.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>username</strong> (<em>str</em>) – Gmail username.</p></li>
+<li><p><strong>password</strong> (<em>str</em>) – App-specific password.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>IMAP connection.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If connection to Gmail fails.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>IMAP4_SSL</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.imap_import.IMAPEmailImporter.decode_email_header">
+<span class="sig-name descname"><span class="pre">decode_email_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/imap_import.html#IMAPEmailImporter.decode_email_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.imap_import.IMAPEmailImporter.decode_email_header" title="Link to this definition">¶</a></dt>
+<dd><p>Decode email header properly handling various encodings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>header</strong> (<em>str</em>) – Raw email header.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Decoded header string.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.imap_import.IMAPEmailImporter.parse_email_message">
+<span class="sig-name descname"><span class="pre">parse_email_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/imap_import.html#IMAPEmailImporter.parse_email_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.imap_import.IMAPEmailImporter.parse_email_message" title="Link to this definition">¶</a></dt>
+<dd><p>Parse email message from IMAP.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>email_data</strong> (<em>bytes</em>) – Raw email data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Parsed email data dictionary.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If parsing email fails.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict[str, <em>Any</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.imap_import.IMAPEmailImporter.fetch_emails">
+<span class="sig-name descname"><span class="pre">fetch_emails</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">days_back</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_emails</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">historical</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/imap_import.html#IMAPEmailImporter.fetch_emails"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.imap_import.IMAPEmailImporter.fetch_emails" title="Link to this definition">¶</a></dt>
+<dd><p>Fetch emails from Gmail using IMAP.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>imap</strong> (<em>IMAP4_SSL</em>) – IMAP connection.</p></li>
+<li><p><strong>days_back</strong> (<em>int</em>) – Number of days back to fetch.</p></li>
+<li><p><strong>max_emails</strong> (<em>int</em>) – Maximum number of emails to fetch.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – Number of emails to process in each batch.</p></li>
+<li><p><strong>historical</strong> (<em>bool</em>) – Whether to fetch all emails or just recent ones.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – If fetching emails fails.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.imap_import.IMAPEmailImporter.store_email">
+<span class="sig-name descname"><span class="pre">store_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/imap_import.html#IMAPEmailImporter.store_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.imap_import.IMAPEmailImporter.store_email" title="Link to this definition">¶</a></dt>
+<dd><p>Store email in the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>email_data</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – Parsed email data.</p></li>
+<li><p><strong>batch_id</strong> (<em>str</em>) – Batch identifier.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if successful.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.imap_import.IMAPEmailImporter.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/imap_import.html#IMAPEmailImporter.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.imap_import.IMAPEmailImporter.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Execute the IMAP email import process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.imap_import.main">
+<span class="sig-prename descclassname"><span class="pre">dewey.core.crm.gmail.imap_import.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/imap_import.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.imap_import.main" title="Link to this definition">¶</a></dt>
+<dd><p>Main entry point for the script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.crm.gmail.models">
+<span id="dewey-core-crm-gmail-models-module"></span><h2>dewey.core.crm.gmail.models module<a class="headerlink" href="#module-dewey.core.crm.gmail.models" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.models.GmailModel">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.gmail.models.</span></span><span class="sig-name descname"><span class="pre">GmailModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/models.html#GmailModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.models.GmailModel" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A model for interacting with Gmail within Dewey.</p>
+<p>This class inherits from BaseScript and provides a standardized
+structure for Gmail-related scripts, including configuration
+loading, logging, and a <cite>run</cite> method to execute the script’s
+primary logic.</p>
+<p>Initializes the GmailModel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> (<em>Any</em>) – Variable length argument list.</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Arbitrary keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.models.GmailModel.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/models.html#GmailModel.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.models.GmailModel.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the GmailModel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> (<em>Any</em>) – Variable length argument list.</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Arbitrary keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.models.GmailModel.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/models.html#GmailModel.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.models.GmailModel.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the primary logic of the Gmail model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.models.GmailModel.some_method">
+<span class="sig-name descname"><span class="pre">some_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/models.html#GmailModel.some_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.models.GmailModel.some_method" title="Link to this definition">¶</a></dt>
+<dd><p>An example method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg1</strong> (<em>str</em>) – A string argument.</p></li>
+<li><p><strong>arg2</strong> (<em>int</em>) – An integer argument.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A string result.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.models.GmailModel.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/models.html#GmailModel.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.models.GmailModel.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes and interacts with the Gmail API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="dewey-core-crm-gmail-run-gmail-sync-module">
+<h2>dewey.core.crm.gmail.run_gmail_sync module<a class="headerlink" href="#dewey-core-crm-gmail-run-gmail-sync-module" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-dewey.core.crm.gmail.run_unified_processor">
+<span id="dewey-core-crm-gmail-run-unified-processor-module"></span><h2>dewey.core.crm.gmail.run_unified_processor module<a class="headerlink" href="#module-dewey.core.crm.gmail.run_unified_processor" title="Link to this heading">¶</a></h2>
+<p>Run the Unified Email Processor.
+This script launches the UnifiedEmailProcessor which handles Gmail synchronization,
+email analysis, and contact extraction.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.run_unified_processor.setup_logging">
+<span class="sig-prename descclassname"><span class="pre">dewey.core.crm.gmail.run_unified_processor.</span></span><span class="sig-name descname"><span class="pre">setup_logging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/run_unified_processor.html#setup_logging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.run_unified_processor.setup_logging" title="Link to this definition">¶</a></dt>
+<dd><p>Set up logging to both console and file.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.run_unified_processor.run_processor">
+<span class="sig-prename descclassname"><span class="pre">dewey.core.crm.gmail.run_unified_processor.</span></span><span class="sig-name descname"><span class="pre">run_processor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_emails</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/run_unified_processor.html#run_processor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.run_unified_processor.run_processor" title="Link to this definition">¶</a></dt>
+<dd><p>Run the UnifiedEmailProcessor with the specified parameters.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.run_unified_processor.main">
+<span class="sig-prename descclassname"><span class="pre">dewey.core.crm.gmail.run_unified_processor.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/run_unified_processor.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.run_unified_processor.main" title="Link to this definition">¶</a></dt>
+<dd><p>Main entry point for the script.</p>
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.crm.gmail.setup_auth">
+<span id="dewey-core-crm-gmail-setup-auth-module"></span><h2>dewey.core.crm.gmail.setup_auth module<a class="headerlink" href="#module-dewey.core.crm.gmail.setup_auth" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.setup_auth.SetupAuth">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.gmail.setup_auth.</span></span><span class="sig-name descname"><span class="pre">SetupAuth</span></span><a class="reference internal" href="_modules/dewey/core/crm/gmail/setup_auth.html#SetupAuth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.setup_auth.SetupAuth" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Sets up authentication for Gmail.</p>
+<p>This script handles the authentication process required to access Gmail
+services. It leverages the BaseScript class for configuration, logging,
+and error handling.</p>
+<p>Initializes the SetupAuth script.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.setup_auth.SetupAuth.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/setup_auth.html#SetupAuth.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.setup_auth.SetupAuth.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the SetupAuth script.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.setup_auth.SetupAuth.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/setup_auth.html#SetupAuth.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.setup_auth.SetupAuth.run" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the Gmail authentication setup.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="dewey-core-crm-gmail-simple-import-module">
+<h2>dewey.core.crm.gmail.simple_import module<a class="headerlink" href="#dewey-core-crm-gmail-simple-import-module" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-dewey.core.crm.gmail.sync_emails">
+<span id="dewey-core-crm-gmail-sync-emails-module"></span><h2>dewey.core.crm.gmail.sync_emails module<a class="headerlink" href="#module-dewey.core.crm.gmail.sync_emails" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.sync_emails.SyncEmails">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.gmail.sync_emails.</span></span><span class="sig-name descname"><span class="pre">SyncEmails</span></span><a class="reference internal" href="_modules/dewey/core/crm/gmail/sync_emails.html#SyncEmails"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.sync_emails.SyncEmails" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Synchronizes emails from Gmail.</p>
+<p>This script fetches emails from Gmail and stores them in the database.</p>
+<p>Initializes the SyncEmails script.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.sync_emails.SyncEmails.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/sync_emails.html#SyncEmails.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.sync_emails.SyncEmails.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the SyncEmails script.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.sync_emails.SyncEmails.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/sync_emails.html#SyncEmails.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.sync_emails.SyncEmails.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the email synchronization process.</p>
+<p>Fetches emails from Gmail and stores them in the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If any error occurs during the synchronization process.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.sync_emails.SyncEmails.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/sync_emails.html#SyncEmails.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.sync_emails.SyncEmails.run" title="Link to this definition">¶</a></dt>
+<dd><p>Legacy method that calls execute() for backward compatibility.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="dewey-core-crm-gmail-unified-email-processor-module">
+<h2>dewey.core.crm.gmail.unified_email_processor module<a class="headerlink" href="#dewey-core-crm-gmail-unified-email-processor-module" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-dewey.core.crm.gmail.view_email">
+<span id="dewey-core-crm-gmail-view-email-module"></span><h2>dewey.core.crm.gmail.view_email module<a class="headerlink" href="#module-dewey.core.crm.gmail.view_email" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.view_email.ViewEmail">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.gmail.view_email.</span></span><span class="sig-name descname"><span class="pre">ViewEmail</span></span><a class="reference internal" href="_modules/dewey/core/crm/gmail/view_email.html#ViewEmail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.view_email.ViewEmail" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A class to view emails.</p>
+<p>Initializes the ViewEmail class.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.view_email.ViewEmail.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/view_email.html#ViewEmail.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.view_email.ViewEmail.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the ViewEmail class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.view_email.ViewEmail.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/view_email.html#ViewEmail.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.view_email.ViewEmail.run" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the email viewing process.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.view_email.ViewEmail.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail/view_email.html#ViewEmail.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.view_email.ViewEmail.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the email viewing process.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.crm.gmail">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-dewey.core.crm.gmail" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.GmailModule">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.gmail.</span></span><span class="sig-name descname"><span class="pre">GmailModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail.html#GmailModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.GmailModule" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A module for managing Gmail-related tasks within Dewey.</p>
+<p>This module inherits from BaseScript and provides a standardized
+structure for Gmail processing scripts, including configuration
+loading, logging, and a <cite>run</cite> method to execute the script’s
+primary logic.</p>
+<p>Initializes the GmailModule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> (<em>Any</em>) – Variable length argument list.</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Arbitrary keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.GmailModule.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail.html#GmailModule.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.GmailModule.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the GmailModule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> (<em>Any</em>) – Variable length argument list.</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Arbitrary keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.GmailModule.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail.html#GmailModule.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.GmailModule.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the primary logic of the Gmail module.</p>
+<p>This method should be overridden in subclasses to implement
+specific Gmail-related tasks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.gmail.GmailModule.get_config_value">
+<span class="sig-name descname"><span class="pre">get_config_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/gmail.html#GmailModule.get_config_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.gmail.GmailModule.get_config_value" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves a configuration value associated with the given key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – The key of the configuration value to retrieve.</p></li>
+<li><p><strong>default</strong> (<em>Any</em>) – The default value to return if the key is not found.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The configuration value associated with the key, or the default
+value if the key is not found.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Dewey (TUI)</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">dewey</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="dewey.html">dewey package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">dewey</a><ul>
+  <li><a href="dewey.html">dewey package</a><ul>
+  <li><a href="dewey.core.html">dewey.core package</a><ul>
+  <li><a href="dewey.core.crm.html">dewey.core.crm package</a><ul>
+      <li>Previous: <a href="dewey.core.crm.events.html" title="previous chapter">dewey.core.crm.events package</a></li>
+      <li>Next: <a href="dewey.core.crm.labeler.html" title="next chapter">dewey.core.crm.labeler package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Sloane Ortel.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/dewey.core.crm.gmail.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

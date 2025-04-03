@@ -36,11 +36,10 @@ class DropSmallTablesScript(BaseScript):
         return parser
 
     def get_table_counts(self) -> list[tuple[str, int]]:
-        """
-        Get all tables and their row counts.
+        """Get all tables and their row counts.
 
-        Returns:
-        --------
+        Returns
+        -------
             List of (table_name, row_count) tuples
 
         """
@@ -61,13 +60,12 @@ class DropSmallTablesScript(BaseScript):
         return sorted(results, key=lambda x: x[1])
 
     def drop_tables(self, tables: list[str], dry_run: bool = True) -> None:
-        """
-            Drop the specified tables.
+        """Drop the specified tables.
 
-            Args:
-            -----
-                tables: List of table names to drop
-                dry_run: If True, only show what would be dropped
+        Args:
+        ----
+            tables: List of table names to drop
+            dry_run: If True, only show what would be dropped
 
         """
         for table in tables:
@@ -83,11 +81,10 @@ class DropSmallTablesScript(BaseScript):
     def save_results(
         self, dropped_tables: list[tuple[str, int]], output_path: Path
     ) -> None:
-        """
-        Save the list of dropped tables.
+        """Save the list of dropped tables.
 
         Args:
-        -----
+        ----
             dropped_tables: List of (table_name, row_count) tuples
             output_path: Path to save results
 

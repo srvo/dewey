@@ -166,4 +166,4 @@ class SyncScript(BaseScript):
             self.logger.error(
                 f"Failed to load data into destination: {e}", exc_info=True
             )
-            raise 
+            raise

@@ -292,4 +292,6 @@ class EventManager(BaseScript):
         events that were processed.
         """
         self.save()
-        self.logger.info(f"Request {self.request_id}: Processed {len(self._events)} events.")
+        self.logger.info(
+            f"Request {self.request_id}: Processed {len(self._events)} events."
+        )

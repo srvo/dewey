@@ -49,6 +49,7 @@ class SearxNG(BaseScript):
         Raises:
             httpx.RequestError: If the request to the SearxNG API fails.
             Exception: If there is an error during the search execution.
+
         """
         self.logger.info("Starting SearxNG search execution")
         try:

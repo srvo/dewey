@@ -1,8 +1,7 @@
 from typing import Any
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.utils import execute_query
-from dewey.llm.llm_utils import generate_text
+from dewey.llm.litellm_utils import quick_completion
 
 
 class TickReport(BaseScript):
@@ -40,21 +39,22 @@ class TickReport(BaseScript):
         try:
             # Access configuration values
             api_key = self.get_config_value("api_key")
-            self.logger.debug(f"API Key: {api_key}")
+            self.logger.debug(f"API Key retrieved (use depends on actual logic)")
 
             # Example database operation (replace with your actual logic)
             # Assuming you have a table named 'ticks'
             query = "SELECT * FROM ticks LIMIT 10;"
             if self.db_conn:
-                results = execute_query(self.db_conn, query)
+                cursor = self.db_conn.execute(query)
+                results = cursor.fetchall()
                 self.logger.info(f"Retrieved {len(results)} ticks from the database.")
             else:
                 self.logger.warning("No database connection available.")
 
             # Example LLM call (replace with your actual logic)
-            prompt = "Summarize the latest tick data."
+            prompt = "Summarize the latest tick data based on: " + str(results)
             if self.llm_client:
-                summary = generate_text(self.llm_client, prompt)
+                summary = quick_completion(prompt, llm_client=self.llm_client)
                 self.logger.info(f"LLM Summary: {summary}")
             else:
                 self.logger.warning("No LLM client available.")
@@ -67,3 +67,6 @@ class TickReport(BaseScript):
                 f"Error during tick report generation: {e}", exc_info=True
             )
             raise
+
+    def execute(self) -> None:
+        self.run()

@@ -34,11 +34,15 @@ class CodeGenerator(BaseScript):
             prompt = self.get_config_value("prompt")
             model = self.get_config_value("model", "gpt-3.5-turbo")
 
-            self.logger.info(f"Generating code for prompt: {prompt} using model: {model}")
+            self.logger.info(
+                f"Generating code for prompt: {prompt} using model: {model}"
+            )
 
             if not self.llm_client:
                 self.logger.error("LLM client is not initialized.")
-                raise ValueError("LLM client is not initialized.  Set enable_llm=True when initializing the script.")
+                raise ValueError(
+                    "LLM client is not initialized.  Set enable_llm=True when initializing the script."
+                )
 
             # Generate code using the LLM client
             response = self.llm_client.generate_text(

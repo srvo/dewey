@@ -85,6 +85,7 @@ class TriageAgent(BaseScript):
 
         Returns:
             The result of the agent's run.
+
         """
         self.logger.info(f"Executing triage agent with prompt: {prompt}")
         result = self.run(prompt)

@@ -5,30 +5,43 @@ Handles error classification requests through the DeepInfra API with
 improved error handling, retries, and chunking for large files.
 """
 
-import hashlib
-import sys
+import logging
+import os
+import requests
 import time
 from pathlib import Path
-from typing import Any
-
-import requests
+from typing import Any, Dict, Optional
 
 from dewey.core.base_script import BaseScript
-from dewey.utils import get_logger
 
 MAX_RETRIES = 3
-RETRY_DELAY = 1.5
+RETRY_DELAY = 2  # seconds
 CHUNK_SIZE = 1000  # Lines per processing chunk
 MAX_TOKENS = 2000  # Conservative token limit for API
+
+# logger = get_logger(__name__) # Removed global logger instance
 
 
 class DeepInfraClient(BaseScript):
     """DeepInfra API client for error classification."""
 
-    def __init__(self):
+    def __init__(
+        self, api_key: Optional[str] = None, base_url: str = "https://api.deepinfra.com"
+    ) -> None:
         """Initialize the DeepInfra client."""
         super().__init__(name="deepinfra_client")
-        self.logger = get_logger(__name__)
+        self.logger.debug("Deep Infra client initialized")
+
+        self.api_key = api_key or os.getenv("DEEPINFRA_API_KEY")
+        if not self.api_key:
+            raise ValueError(
+                "Deep Infra API key not provided or found in environment variables."
+            )
+        self.base_url = base_url
+        self.headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
 
     def setup_argparse(self):
         """Set up command line arguments."""
@@ -150,7 +163,7 @@ class DeepInfraClient(BaseScript):
             self.logger.error("Input file does not exist: %s", self.args.input_file)
             sys.exit(1)
 
-        with self.args极.input_file.open() as f:
+        with self.args.input_file.open() as f:
             log_lines = f.readlines()
 
         self.logger.info("Processing %d log lines", len(log_lines))

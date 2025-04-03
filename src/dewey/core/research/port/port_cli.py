@@ -41,7 +41,9 @@ class PortCLI(BaseScript):
                 # Use quick_completion and self.llm_client
                 prompt = "Summarize the following data:"
                 data = {"key1": "value1", "key2": "value2"}
-                response = quick_completion(prompt + str(data), llm_client=self.llm_client)
+                response = quick_completion(
+                    prompt + str(data), llm_client=self.llm_client
+                )
 
                 # Insert data into the database using build_insert_query and db_conn.execute
                 # Assume build_insert_query returns (query_string, values_tuple)

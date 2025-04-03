@@ -96,4 +96,4 @@ When adding new scripts to this directory:
 2. Inherit from `BaseScript` where appropriate
 3. Document the script in this README.md
 4. Add appropriate error handling and logging
-5. Make sure the script is executable (add shebang line and executable permissions for shell scripts) 
+5. Make sure the script is executable (add shebang line and executable permissions for shell scripts)

@@ -59,7 +59,9 @@ class SloanOptimizer(BaseScript):
 
     def execute(self) -> None:
         """Executes the Sloan Optimizer agent with a default prompt."""
-        default_prompt = "What are the most important things I should be working on right now?"
+        default_prompt = (
+            "What are the most important things I should be working on right now?"
+        )
         self.run(default_prompt)
 
     def analyze_current_state(self) -> dict[str, Any]:

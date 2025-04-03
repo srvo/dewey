@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dewey.llm.agents.self_care_agent &#8212; Dewey (TUI) 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for dewey.llm.agents.self_care_agent</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Wellness monitoring and self-care intervention agent using smolagents.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">smolagents</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tool</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dewey.core.base_script</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseScript</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dewey.llm.agents.base_agent</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseAgent</span>
+
+
+<div class="viewcode-block" id="SelfCareAgent">
+<a class="viewcode-back" href="../../../../dewey.llm.agents.html#dewey.llm.agents.self_care_agent.SelfCareAgent">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SelfCareAgent</span><span class="p">(</span><span class="n">BaseAgent</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Agent for monitoring user wellness and suggesting self-care interventions.</span>
+
+<span class="sd">    Features:</span>
+<span class="sd">        - Work pattern monitoring</span>
+<span class="sd">        - Break timing recommendations</span>
+<span class="sd">        - Wellness activity suggestions</span>
+<span class="sd">        - Stress indicator detection</span>
+<span class="sd">        - Productivity optimization</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SelfCareAgent.__init__">
+<a class="viewcode-back" href="../../../../dewey.llm.agents.html#dewey.llm.agents.self_care_agent.SelfCareAgent.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the SelfCareAgent.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">task_type</span><span class="o">=</span><span class="s2">&quot;wellness_monitoring&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_tools</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">Tool</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">monitor_and_intervene</span><span class="p">,</span>
+                    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Monitors work patterns and intervenes if needed.&quot;</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="n">Tool</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">suggest_break</span><span class="p">,</span>
+                    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Suggests a break based on current work patterns.&quot;</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SelfCareAgent.execute">
+<a class="viewcode-back" href="../../../../dewey.llm.agents.html#dewey.llm.agents.self_care_agent.SelfCareAgent.execute">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Executes the agent with the given prompt.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prompt: The prompt to run the agent with.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The result of running the agent.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Executing SelfCareAgent with prompt: </span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SelfCareAgent completed with result: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="SelfCareAgent.run">
+<a class="viewcode-back" href="../../../../dewey.llm.agents.html#dewey.llm.agents.self_care_agent.SelfCareAgent.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Runs the agent with the given prompt.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prompt: The prompt to run the agent with.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The result of running the agent.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SelfCareAgent.monitor_and_intervene">
+<a class="viewcode-back" href="../../../../dewey.llm.agents.html#dewey.llm.agents.self_care_agent.SelfCareAgent.monitor_and_intervene">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">monitor_and_intervene</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">work_patterns</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Monitors work patterns and intervenes if needed.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            work_patterns: Information about recent work patterns.</span>
+<span class="sd">                Defaults to None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Assessment and recommendations for self-care.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Monitoring work patterns and intervening if needed.&quot;</span><span class="p">)</span>
+        <span class="n">patterns_str</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">work_patterns</span><span class="p">)</span> <span class="k">if</span> <span class="n">work_patterns</span> <span class="k">else</span> <span class="s2">&quot;No specific patterns provided&quot;</span>
+        <span class="p">)</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        Monitor these work patterns and suggest self-care interventions:</span>
+<span class="s2">        </span><span class="si">{</span><span class="n">patterns_str</span><span class="si">}</span>
+
+<span class="s2">        Provide:</span>
+<span class="s2">        1. Pattern assessment</span>
+<span class="s2">        2. Potential wellness concerns</span>
+<span class="s2">        3. Self-care recommendations</span>
+<span class="s2">        4. Break timing suggestions</span>
+<span class="s2">        5. Productivity optimization tips</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="SelfCareAgent.suggest_break">
+<a class="viewcode-back" href="../../../../dewey.llm.agents.html#dewey.llm.agents.self_care_agent.SelfCareAgent.suggest_break">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">suggest_break</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">work_duration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">break_history</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Suggests a break based on current work patterns.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            work_duration: Minutes of continuous work. Defaults to 0.</span>
+<span class="sd">            break_history: Recent break history.</span>
+<span class="sd">                Defaults to None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Break recommendation with activity suggestion and duration.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Suggesting a break based on current work patterns.&quot;</span><span class="p">)</span>
+        <span class="n">history_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">break_history</span><span class="p">)</span> <span class="k">if</span> <span class="n">break_history</span> <span class="k">else</span> <span class="s2">&quot;No recent breaks&quot;</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        Suggest an optimal break based on:</span>
+<span class="s2">        - Work duration: </span><span class="si">{</span><span class="n">work_duration</span><span class="si">}</span><span class="s2"> minutes</span>
+<span class="s2">        - Break history: </span><span class="si">{</span><span class="n">history_str</span><span class="si">}</span>
+
+<span class="s2">        Provide:</span>
+<span class="s2">        1. Recommended break duration</span>
+<span class="s2">        2. Suggested break activities</span>
+<span class="s2">        3. Optimal timing</span>
+<span class="s2">        4. Expected benefits</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">Dewey (TUI)</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">dewey</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  <li><a href="../../../dewey.html">dewey</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Sloane Ortel.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

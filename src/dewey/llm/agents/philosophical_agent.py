@@ -3,10 +3,10 @@
 from smolagents import Tool
 
 from dewey.core.base_script import BaseScript
-from dewey.llm.agents.base_agent import DeweyBaseAgent
+from dewey.llm.agents.base_agent import BaseAgent
 
 
-class PhilosophicalAgent(BaseScript, DeweyBaseAgent):
+class PhilosophicalAgent(BaseAgent):
     """Agent for philosophical discussions using advanced AI models.
 
     Features:

@@ -277,7 +277,9 @@ class EmailEnrichmentService(BaseScript):
         """
         try:
             # Query for emails that have not been enriched (example query)
-            emails = Email.objects.filter(plain_body__isnull=True)[:10]  # Limit to 10 emails for processing
+            emails = Email.objects.filter(plain_body__isnull=True)[
+                :10
+            ]  # Limit to 10 emails for processing
 
             self.logger.info(f"Found {len(emails)} emails to enrich.")
 

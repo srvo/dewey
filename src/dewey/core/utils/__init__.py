@@ -5,21 +5,13 @@ import yaml
 from dotenv import load_dotenv
 
 from dewey.core.base_script import BaseScript
-from dewey.llm.llm_utils import call_llm
+from dewey.llm.litellm_utils import quick_completion, initialize_client_from_env
 
 try:
     from dewey.core.db.connection import get_connection
 except ImportError:
     # Mock function for testing when actual module is not available
     def get_connection(*args, **kwargs):
-        pass
-
-
-try:
-    from dewey.llm.llm_utils import get_llm_client
-except ImportError:
-    # Mock function for testing when actual module is not available
-    def get_llm_client(*args, **kwargs):
         pass
 
 
@@ -80,7 +72,7 @@ class MyUtils(BaseScript):
                 self.logger.info("Making example LLM call...")
                 try:
                     prompt = "Write a short poem about utility functions."
-                    response = call_llm(prompt, llm_client=self.llm_client)
+                    response = quick_completion(prompt, llm_client=self.llm_client)
                     self.logger.info(f"LLM response: {response}")
                 except Exception as e:
                     self.logger.error(f"Error calling LLM: {e}")

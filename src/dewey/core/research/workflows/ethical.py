@@ -11,7 +11,6 @@ from typing import Any, Dict, Optional, Union
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import get_connection
-from dewey.llm.llm_utils import get_llm_client
 from ..base_workflow import BaseWorkflow
 from ..engines import BaseEngine
 from ...engines.deepseek import DeepSeekEngine
@@ -53,7 +52,6 @@ class EthicalAnalysisWorkflow(BaseScript, BaseWorkflow):
             str(self.data_dir)
         )
         self.engine = self.analysis_engine  # For compatibility with test_init_templates
-        self.llm = get_llm_client()
         self.logger = logging.getLogger(__name__)
         self.setup_database()
 

@@ -219,16 +219,16 @@ The `db` section must contain PostgreSQL connection parameters:
 - **Docstrings** (Google-style):
   ```python
   """Short description.
-  
+
   Longer description if needed.
-  
+
   Args:
       param1: Description
       param2: Description
-  
+
   Returns:
       Description of return value
-  
+
   Raises:
       ValueError: When something bad happens
   """
@@ -276,18 +276,18 @@ class MyCustomScript(BaseScript):
     def run(self):
         """Main execution logic."""
         self.logger.info("Starting script...")
-        
+
         # SQLAlchemy session example:
         # with self.db_session_scope() as session:
         #     results = session.query(MyModel).all()
         #     self.logger.info(f"Found {len(results)} items")
-            
+
         # Direct connection example:
         # with self.db_connection() as conn:
         #     with conn.cursor() as cursor:
         #         cursor.execute("SELECT COUNT(*) FROM table")
         #         count = cursor.fetchone()[0]
-        
+
         self.logger.info("Script completed")
 ```
 

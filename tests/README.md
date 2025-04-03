@@ -1,27 +1,75 @@
-# Dewey Tests
+# Dewey Test Organization
 
-This directory contains the test suite for the Dewey project. The test structure follows the guidelines specified in [CONVENTIONS.md](../CONVENTIONS.md).
+This directory contains tests for the Dewey application. Tests are organized into two main categories:
 
-## Directory Structure
+## Test Categories
 
+### Unit Tests (`tests/unit/`)
+Unit tests verify that individual components work correctly in isolation. These tests:
+- Focus on a single function, class, or module
+- Mock all external dependencies
+- Run quickly without external resources
+- Should be run frequently during development
+
+Subdirectories:
+- `db/`: Database component unit tests
+- `llm/`: Language model component unit tests
+- `ui/`: User interface component unit tests
+- `bookkeeping/`: Bookkeeping functionality unit tests
+
+### Integration Tests (`tests/integration/`)
+Integration tests verify that multiple components work correctly together. These tests:
+- Test interactions between components
+- May require external resources (databases, APIs, etc.)
+- Run more slowly than unit tests
+- Should be run before deployments
+
+Subdirectories:
+- `db/`: Database integration tests (may require a real database)
+- `llm/`: Language model integration tests (may call real LLM APIs)
+- `ui/`: User interface integration tests
+
+## Running Tests
+
+Use pytest via uv to run tests following project conventions:
+
+```bash
+# Run all tests
+uv run pytest
+
+# Run all unit tests
+uv run pytest tests/unit
+
+# Run all integration tests
+uv run pytest tests/integration
+
+# Run specific test category
+uv run pytest tests/unit/db
+uv run pytest tests/unit/llm
+uv run pytest tests/unit/ui
+uv run pytest tests/unit/bookkeeping
+
+# Run integration tests by category
+uv run pytest tests/integration/db
+uv run pytest tests/integration/llm
+uv run pytest tests/integration/ui
+
+# Run tests with specific markers
+uv run pytest -m unit
+uv run pytest -m "unit and db"
+uv run pytest -m "integration and not slow"
+
+# Run a specific test file
+uv run pytest tests/unit/db/test_operations.py
+
+# Run a specific test function
+uv run pytest tests/unit/db/test_operations.py::test_function_name
 ```
-tests/
-├── conftest.py          # Global test fixtures and configuration
-├── helpers.py           # Helper functions for tests
-├── unit/                # Unit tests for individual components
-│   ├── core/            # Tests for core functionality
-│   │   ├── db/          # Tests for database components
-│   │   ├── utils/       # Tests for utility functions
-│   │   ├── bookkeeping/ # Tests for bookkeeping components
-│   │   └── ...          # Other core component tests
-│   ├── llm/             # Tests for LLM components
-│   └── ui/              # Tests for UI components
-└── integration/         # Tests for component interactions
-    ├── db/              # Database integration tests
-    ├── llm/             # LLM integration tests
-    ├── ui/              # UI integration tests
-    └── ...              # Other integration tests
-```
+
+## Test Fixtures
+
+Common test fixtures are defined in `tests/conftest.py` and are available to all tests.
+Component-specific fixtures may be defined in `conftest.py` files within the component directories.
 
 ## Test Types
 
@@ -42,30 +90,6 @@ Integration tests focus on how components work together. They:
 - May require more complex setup
 - Often mock external services but test real component interactions
 - Verify that components work together correctly
-
-## Running Tests
-
-Tests can be run using:
-
-```bash
-uv run pytest tests/unit               # Run all unit tests
-uv run pytest tests/integration        # Run all integration tests
-uv run pytest tests/unit/core/db       # Run specific test directory
-uv run pytest tests/unit/core/db/test_utils.py::test_function  # Run specific test
-```
-
-## Test Fixtures
-
-Common test fixtures are defined in `conftest.py` files:
-
-- Root `conftest.py`: Global fixtures for all tests
-- Directory-specific `conftest.py`: Fixtures for specific test categories
-
-Use fixtures to avoid duplicating setup code and to ensure consistent test environments.
-
-## Test Helpers
-
-The `helpers.py` file contains utility functions for tests. Use these to simplify common testing tasks.
 
 ## Best Practices
 

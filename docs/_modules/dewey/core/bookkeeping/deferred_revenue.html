@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dewey.core.bookkeeping.deferred_revenue &#8212; Dewey (TUI) 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for dewey.core.bookkeeping.deferred_revenue</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Protocol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">re</span><span class="w"> </span><span class="kn">import</span> <span class="n">Match</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dateutil.relativedelta</span><span class="w"> </span><span class="kn">import</span> <span class="n">relativedelta</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dewey.core.base_script</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseScript</span>
+
+
+<div class="viewcode-block" id="FileSystemInterface">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.deferred_revenue.FileSystemInterface">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FileSystemInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interface for file system operations.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FileSystemInterface.exists">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.deferred_revenue.FileSystemInterface.exists">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if a path exists.&quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="FileSystemInterface.open">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.deferred_revenue.FileSystemInterface.open">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Open a file.&quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RealFileSystem">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.deferred_revenue.RealFileSystem">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RealFileSystem</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Real file system operations.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RealFileSystem.exists">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.deferred_revenue.RealFileSystem.exists">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if a path exists.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RealFileSystem.open">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.deferred_revenue.RealFileSystem.open">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Open a file.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DateCalculationInterface">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.deferred_revenue.DateCalculationInterface">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DateCalculationInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interface for date calculation operations.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DateCalculationInterface.parse_date">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.deferred_revenue.DateCalculationInterface.parse_date">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse a date string into a datetime object.&quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="DateCalculationInterface.add_months">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.deferred_revenue.DateCalculationInterface.add_months">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_months</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_object</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">months</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add months to a datetime object.&quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RealDateCalculation">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.deferred_revenue.RealDateCalculation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RealDateCalculation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Real date calculation operations.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RealDateCalculation.parse_date">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.deferred_revenue.RealDateCalculation.parse_date">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse a date string into a datetime object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_string</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RealDateCalculation.add_months">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.deferred_revenue.RealDateCalculation.add_months">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_months</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_object</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">months</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add months to a datetime object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">date_object</span> <span class="o">+</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">months</span><span class="o">=</span><span class="n">months</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AltruistIncomeProcessor">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.deferred_revenue.AltruistIncomeProcessor">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AltruistIncomeProcessor</span><span class="p">(</span><span class="n">BaseScript</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Processes Altruist income for deferred revenue recognition.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AltruistIncomeProcessor.__init__">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.deferred_revenue.AltruistIncomeProcessor.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">file_system</span><span class="p">:</span> <span class="n">FileSystemInterface</span> <span class="o">=</span> <span class="n">RealFileSystem</span><span class="p">(),</span>
+        <span class="n">date_calculation</span><span class="p">:</span> <span class="n">DateCalculationInterface</span> <span class="o">=</span> <span class="n">RealDateCalculation</span><span class="p">(),</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the AltruistIncomeProcessor.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Altruist Income Processor&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Processes Altruist income for deferred revenue recognition.&quot;</span><span class="p">,</span>
+            <span class="n">config_section</span><span class="o">=</span><span class="s2">&quot;bookkeeping&quot;</span><span class="p">,</span>
+            <span class="n">requires_db</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">enable_llm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_system</span> <span class="o">=</span> <span class="n">file_system</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">date_calculation</span> <span class="o">=</span> <span class="n">date_calculation</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_altruist_transactions</span><span class="p">(</span><span class="n">journal_content</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Match</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parses the journal content to find Altruist income transactions.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            journal_content: The content of the journal file as a string.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of match objects, each representing an Altruist income transaction.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">transaction_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+            <span class="sa">r</span><span class="s2">&quot;(\d</span><span class="si">{4}</span><span class="s2">-\d</span><span class="si">{2}</span><span class="s2">-\d</span><span class="si">{2}</span><span class="s2">)\s+&quot;</span>  <span class="c1"># Date (YYYY-MM-DD)</span>
+            <span class="sa">r</span><span class="s2">&quot;(.*?altruist.*?)\n&quot;</span>  <span class="c1"># Description with altruist (case insensitive)</span>
+            <span class="sa">r</span><span class="s2">&quot;\s+Income:[^\s]+\s+([0-9.-]+)&quot;</span><span class="p">,</span>  <span class="c1"># Income posting with amount</span>
+            <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">transaction_regex</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">journal_content</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_deferred_revenue_transactions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">match</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">Match</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates deferred revenue and fee income transactions for a given Altruist transaction.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            match: A match object representing an Altruist income transaction.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of transaction strings to be added to the journal.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">date_str</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">amount</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+        <span class="n">date_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_calculation</span><span class="o">.</span><span class="n">parse_date</span><span class="p">(</span><span class="n">date_str</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">one_month_revenue</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">amount</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">transactions</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Create initial fee income transaction</span>
+        <span class="n">fee_income_transaction</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="si">{</span><span class="n">date_str</span><span class="si">}</span><span class="s2"> * Fee income from Altruist</span>
+<span class="s2">    ; Original transaction: </span><span class="si">{</span><span class="n">description</span><span class="si">}</span>
+<span class="s2">    income:fees    </span><span class="si">{</span><span class="n">one_month_revenue</span><span class="si">}</span>
+<span class="s2">    assets:deferred_revenue   </span><span class="si">{</span><span class="o">-</span><span class="n">one_month_revenue</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
+        <span class="n">transactions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fee_income_transaction</span><span class="p">)</span>
+
+        <span class="c1"># Create deferred revenue entry</span>
+        <span class="n">deferred_revenue_transaction</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="si">{</span><span class="n">date_str</span><span class="si">}</span><span class="s2"> * Deferred revenue from Altruist</span>
+<span class="s2">    ; Original transaction: </span><span class="si">{</span><span class="n">description</span><span class="si">}</span>
+<span class="s2">    assets:bank                      </span><span class="si">{</span><span class="o">-</span><span class="n">amount</span><span class="si">}</span>
+<span class="s2">    assets:deferred_revenue         </span><span class="si">{</span><span class="n">amount</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
+        <span class="n">transactions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">deferred_revenue_transaction</span><span class="p">)</span>
+
+        <span class="c1"># Generate fee income entries for the next two months</span>
+        <span class="k">for</span> <span class="n">month</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
+            <span class="n">next_month</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_calculation</span><span class="o">.</span><span class="n">add_months</span><span class="p">(</span><span class="n">date_obj</span><span class="p">,</span> <span class="n">month</span><span class="p">)</span>
+            <span class="n">next_month_str</span> <span class="o">=</span> <span class="n">next_month</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">fee_income_transaction</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="si">{</span><span class="n">next_month_str</span><span class="si">}</span><span class="s2"> * Fee income from Altruist</span>
+<span class="s2">    ; Original transaction: </span><span class="si">{</span><span class="n">description</span><span class="si">}</span>
+<span class="s2">    assets:deferred_revenue   </span><span class="si">{</span><span class="o">-</span><span class="n">one_month_revenue</span><span class="si">}</span>
+<span class="s2">    income:fees    </span><span class="si">{</span><span class="n">one_month_revenue</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
+            <span class="n">transactions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fee_income_transaction</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">transactions</span>
+
+<div class="viewcode-block" id="AltruistIncomeProcessor.process_altruist_income">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.deferred_revenue.AltruistIncomeProcessor.process_altruist_income">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_altruist_income</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">journal_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Processes the journal file to recognize altruist income.</span>
+
+<span class="sd">        Recognizes altruist income at the beginning of each quarter,</span>
+<span class="sd">        recognizes one month&#39;s worth of revenue as fee income, and creates deferred revenue entries</span>
+<span class="sd">        for the balance. Generates additional fee income entries at the beginning of each month</span>
+<span class="sd">        in the quarter.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            journal_file: The path to the journal file.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The updated content of the journal file with the new transactions.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            FileNotFoundError: If the journal file does not exist.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_system</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">journal_file</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find journal file at: </span><span class="si">{</span><span class="n">journal_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not find journal file at: </span><span class="si">{</span><span class="n">journal_file</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_system</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">journal_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">journal_content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+        <span class="n">matches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_altruist_transactions</span><span class="p">(</span><span class="n">journal_content</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">matches</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No Altruist transactions found in </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">journal_file</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">journal_content</span>
+
+        <span class="n">output_transactions</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">transactions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_deferred_revenue_transactions</span><span class="p">(</span><span class="n">match</span><span class="p">)</span>
+                <span class="n">output_transactions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">transactions</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
+                    <span class="s2">&quot;Failed to generate transactions for match: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="n">output_transactions</span><span class="p">:</span>
+            <span class="n">output_content</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">journal_content</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_transactions</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Successfully processed </span><span class="si">%d</span><span class="s2"> Altruist transactions in </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">),</span>
+                <span class="n">journal_file</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output_content</span> <span class="o">=</span> <span class="n">journal_content</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No new transactions added to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">journal_file</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">output_content</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">journal_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Core logic of the Altruist income processing.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            journal_file: The path to the journal file.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The updated content of the journal file with the new transactions.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">output_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_altruist_income</span><span class="p">(</span><span class="n">journal_file</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">output_content</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Journal file not found: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">journal_file</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;An unexpected error occurred: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">raise</span>
+
+<div class="viewcode-block" id="AltruistIncomeProcessor.execute">
+<a class="viewcode-back" href="../../../../dewey.core.bookkeeping.html#dewey.core.bookkeeping.deferred_revenue.AltruistIncomeProcessor.execute">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Runs the Altruist income processing.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Usage: python script.py &lt;journal_file&gt;&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">journal_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">output_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">journal_file</span><span class="p">)</span>
+
+        <span class="n">backup_file</span> <span class="o">=</span> <span class="n">journal_file</span> <span class="o">+</span> <span class="s2">&quot;.bak&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">journal_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">backup_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+            <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">journal_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output_content</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">processor</span> <span class="o">=</span> <span class="n">AltruistIncomeProcessor</span><span class="p">()</span>
+    <span class="n">processor</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">Dewey (TUI)</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  <li><a href="../../../dewey.html">dewey</a><ul>
+  <li><a href="../bookkeeping.html">dewey.core.bookkeeping</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Sloane Ortel.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

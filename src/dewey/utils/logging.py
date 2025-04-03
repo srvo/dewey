@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 import yaml
+
 try:
     import colorlog
 except ImportError:
@@ -114,21 +115,22 @@ def get_logger(name: str, log_dir: str | None = None) -> logging.Logger:
 
 
 def _create_rotating_handler(
-    log_file: Path, 
-    maxBytes: int = 10 * 1024 * 1024, 
+    log_file: Path,
+    maxBytes: int = 10 * 1024 * 1024,
     backupCount: int = 5,
-    formatter: logging.Formatter = None
+    formatter: logging.Formatter = None,
 ) -> RotatingFileHandler:
     """Create a rotating file handler with specified parameters.
-    
+
     Args:
         log_file: Path to the log file
         maxBytes: Maximum size of log file before rotating (default: 10MB)
         backupCount: Number of backup files to keep (default: 5)
         formatter: Formatter to use for log messages
-        
+
     Returns:
         Configured RotatingFileHandler
+
     """
     handler = RotatingFileHandler(
         log_file,
@@ -136,20 +138,23 @@ def _create_rotating_handler(
         backupCount=backupCount,
         encoding="utf-8",
     )
-    
+
     if formatter:
         handler.setFormatter(formatter)
-        
+
     return handler
 
 
-def _cleanup_old_logs(log_dir: Path, retention_days: int, logger: logging.Logger) -> None:
+def _cleanup_old_logs(
+    log_dir: Path, retention_days: int, logger: logging.Logger
+) -> None:
     """Delete log files older than retention_days.
-    
+
     Args:
         log_dir: Directory containing log files
         retention_days: Number of days to keep log files
         logger: Logger instance for reporting cleanup actions
+
     """
     now = datetime.now()
     cutoff = now - timedelta(days=retention_days)
@@ -174,6 +179,7 @@ def configure_logging(config: dict) -> None:
 
     Args:
         config: A dictionary containing logging configuration options
+
     """
     logger = logging.getLogger()
     logger.setLevel(config.get("level", logging.INFO))

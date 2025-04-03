@@ -249,3 +249,15 @@ def mock_credential_config():
 
     with patch.object(BaseScript, "_load_config", return_value=mock_config):
         yield mock_config
+
+
+@pytest.fixture
+def test_data_dir():
+    """Return the path to the test data directory."""
+    return os.path.join(os.path.dirname(__file__), "data")
+
+
+@pytest.fixture
+def temp_dir(tmp_path):
+    """Return a temporary directory that is cleaned up after the test."""
+    return tmp_path

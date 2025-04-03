@@ -57,6 +57,14 @@ dependencies = [
     "black>=25.1.0",
     "pre-commit",
     "alembic",
+    # Documentation
+    "sphinx>=7.0.0",
+    "sphinx-autobuild",
+    "myst-parser",
+    "sphinxemoji",
+    "sphinx-version-warning",
+    "sphinxext-opengraph",
+    "sphinx-last-updated-by-git",
     # Utilities
     "joblib",
     "duckduckgo-search",

@@ -26,7 +26,7 @@ class ImportInstitutionalProspects(BaseScript):
         file_path = Path(file_path_str)
 
         try:
-            with open(file_path, mode="r", encoding="utf-8") as csvfile:
+            with open(file_path, encoding="utf-8") as csvfile:
                 reader = csv.DictReader(csvfile)
                 if reader.fieldnames:
                     self.logger.info(f"CSV Headers: {reader.fieldnames}")

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dewey.llm.tests.unit.api_clients.test_deepinfra &#8212; Dewey (TUI) 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for dewey.llm.tests.unit.api_clients.test_deepinfra</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Unit tests for the DeepInfra API client.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">unittest.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">MagicMock</span><span class="p">,</span> <span class="n">patch</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dewey.llm.api_clients.deepinfra</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeepInfraClient</span>
+
+
+<div class="viewcode-block" id="TestDeepInfraClient">
+<a class="viewcode-back" href="../../../../../../dewey.llm.tests.unit.api_clients.html#dewey.llm.tests.unit.api_clients.test_deepinfra.TestDeepInfraClient">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestDeepInfraClient</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tests for the DeepInfraClient class.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestDeepInfraClient.mock_client">
+<a class="viewcode-back" href="../../../../../../dewey.llm.tests.unit.api_clients.html#dewey.llm.tests.unit.api_clients.test_deepinfra.TestDeepInfraClient.mock_client">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mock_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DeepInfraClient</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a DeepInfraClient with mocked BaseScript initialization.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s2">&quot;dewey.core.base_script.BaseScript.__init__&quot;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <span class="n">client</span> <span class="o">=</span> <span class="n">DeepInfraClient</span><span class="p">(</span><span class="n">config_section</span><span class="o">=</span><span class="s2">&quot;test_deepinfra&quot;</span><span class="p">)</span>
+            <span class="n">client</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+            <span class="n">client</span><span class="o">.</span><span class="n">get_config_value</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+            <span class="n">client</span><span class="o">.</span><span class="n">get_config_value</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;deepinfra_api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;test-api-key&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;deepinfra_model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;llama2-70b&quot;</span><span class="p">,</span>
+            <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+            <span class="n">client</span><span class="o">.</span><span class="n">_simulate_api_call</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span>
+                <span class="n">return_value</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="s2">&quot;This is a test response&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;usage&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;prompt_tokens&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                        <span class="s2">&quot;completion_tokens&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+                        <span class="s2">&quot;total_tokens&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">client</span></div>
+
+
+<div class="viewcode-block" id="TestDeepInfraClient.test_initialization">
+<a class="viewcode-back" href="../../../../../../dewey.llm.tests.unit.api_clients.html#dewey.llm.tests.unit.api_clients.test_deepinfra.TestDeepInfraClient.test_initialization">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test client initialization.&quot;&quot;&quot;</span>
+        <span class="c1"># Arrange &amp; Act</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span>
+            <span class="s2">&quot;dewey.core.base_script.BaseScript.__init__&quot;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">mock_init</span><span class="p">:</span>
+            <span class="n">client</span> <span class="o">=</span> <span class="n">DeepInfraClient</span><span class="p">(</span><span class="n">config_section</span><span class="o">=</span><span class="s2">&quot;test_deepinfra&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Assert</span>
+            <span class="n">mock_init</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="n">config_section</span><span class="o">=</span><span class="s2">&quot;test_deepinfra&quot;</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">DeepInfraClient</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestDeepInfraClient.test_run_method">
+<a class="viewcode-back" href="../../../../../../dewey.llm.tests.unit.api_clients.html#dewey.llm.tests.unit.api_clients.test_deepinfra.TestDeepInfraClient.test_run_method">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_run_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_client</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test the run method execution.&quot;&quot;&quot;</span>
+        <span class="c1"># Act</span>
+        <span class="n">mock_client</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+        <span class="c1"># Assert</span>
+        <span class="n">mock_client</span><span class="o">.</span><span class="n">get_config_value</span><span class="o">.</span><span class="n">assert_any_call</span><span class="p">(</span><span class="s2">&quot;deepinfra_api_key&quot;</span><span class="p">)</span>
+        <span class="n">mock_client</span><span class="o">.</span><span class="n">get_config_value</span><span class="o">.</span><span class="n">assert_any_call</span><span class="p">(</span>
+            <span class="s2">&quot;deepinfra_model_name&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;default_model&quot;</span>
+        <span class="p">)</span>
+        <span class="n">mock_client</span><span class="o">.</span><span class="n">_simulate_api_call</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span>
+            <span class="s2">&quot;llama2-70b&quot;</span><span class="p">,</span> <span class="s2">&quot;test-api-key&quot;</span>
+        <span class="p">)</span>
+        <span class="n">mock_client</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">assert_called</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TestDeepInfraClient.test_simulate_api_call">
+<a class="viewcode-back" href="../../../../../../dewey.llm.tests.unit.api_clients.html#dewey.llm.tests.unit.api_clients.test_deepinfra.TestDeepInfraClient.test_simulate_api_call">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_simulate_api_call</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test the _simulate_api_call method.&quot;&quot;&quot;</span>
+        <span class="c1"># Arrange</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s2">&quot;dewey.core.base_script.BaseScript.__init__&quot;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <span class="n">client</span> <span class="o">=</span> <span class="n">DeepInfraClient</span><span class="p">()</span>
+            <span class="n">client</span><span class="o">.</span><span class="n">_simulate_api_call</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">model</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="n">model</span><span class="p">,</span>
+                <span class="s2">&quot;response&quot;</span><span class="p">:</span> <span class="s2">&quot;Test response&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;api_key_used&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
+            <span class="p">}</span>
+
+            <span class="c1"># Act</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">_simulate_api_call</span><span class="p">(</span><span class="s2">&quot;test-model&quot;</span><span class="p">,</span> <span class="s2">&quot;test-key&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Assert</span>
+            <span class="k">assert</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test-model&quot;</span>
+            <span class="k">assert</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;api_key_used&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test-key&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestDeepInfraClient.test_error_handling">
+<a class="viewcode-back" href="../../../../../../dewey.llm.tests.unit.api_clients.html#dewey.llm.tests.unit.api_clients.test_deepinfra.TestDeepInfraClient.test_error_handling">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_error_handling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_client</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test error handling in the run method.&quot;&quot;&quot;</span>
+        <span class="c1"># Arrange</span>
+        <span class="n">mock_client</span><span class="o">.</span><span class="n">get_config_value</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Test error&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Act/Assert</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">mock_client</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+        <span class="k">assert</span> <span class="s2">&quot;Test error&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">mock_client</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="o">.</span><span class="n">assert_called</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../../../index.html">Dewey (TUI)</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../../../index.html">Module code</a><ul>
+  <li><a href="../../../../../dewey.html">dewey</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Sloane Ortel.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

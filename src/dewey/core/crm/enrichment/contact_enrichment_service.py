@@ -49,6 +49,7 @@ class ContactEnrichmentService(BaseScript):
 
         Returns:
             None
+
         """
         self.logger.info("Starting contact enrichment process.")
 

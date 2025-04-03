@@ -1,8 +1,8 @@
 from typing import Any, Dict, Optional
+import json
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.utils import create_table, execute_query
-from dewey.llm.llm_utils import call_llm
+from dewey.llm.litellm_utils import quick_completion
 
 
 class CompanyAnalysisManager(BaseScript):
@@ -57,7 +57,7 @@ class CompanyAnalysisManager(BaseScript):
         try:
             self.logger.info(f"Analyzing company: {company_ticker}")
             prompt = f"Analyze the company with ticker {company_ticker}."
-            llm_response = call_llm(prompt, llm_client=self.llm_client)
+            llm_response = quick_completion(prompt, llm_client=self.llm_client)
 
             if not llm_response:
                 raise ValueError("LLM analysis failed to return a response.")
@@ -75,32 +75,30 @@ class CompanyAnalysisManager(BaseScript):
     def _store_analysis_results(
         self, company_ticker: str, analysis_results: dict[str, Any]
     ) -> None:
-        """Stores the analysis results in the database.
+        """Stores the analysis results in the database."""
+        if not self.db_conn:
+            self.logger.error("Database connection not available for storing results.")
+            return
 
-        Args:
-            company_ticker: The ticker symbol of the company.
-            analysis_results: A dictionary containing the analysis results.
-
-        Raises:
-            Exception: If there is an error storing the analysis results in the database.
-
-        """
         try:
             self.logger.info(f"Storing analysis results for: {company_ticker}")
             table_name = "company_analysis_results"
-            schema = {
-                "company_ticker": "TEXT",
-                "analysis_data": "JSON",
-            }
-
-            create_table(self.db_conn, table_name, schema)
+            create_table_sql = f"""
+            CREATE TABLE IF NOT EXISTS {table_name} (
+                company_ticker TEXT PRIMARY KEY,
+                analysis_data TEXT,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
+            """
+            self.db_conn.execute(create_table_sql)
 
             insert_query = f"""
-                INSERT INTO {table_name} (company_ticker, analysis_data)
+                INSERT OR REPLACE INTO {table_name} (company_ticker, analysis_data)
                 VALUES (?, ?)
             """
-            values = (company_ticker, str(analysis_results))
-            execute_query(self.db_conn, insert_query, values)
+            values = (company_ticker, json.dumps(analysis_results))
+            self.db_conn.execute(insert_query, values)
+            self.db_conn.commit()
 
             self.logger.info(
                 f"Analysis results stored successfully for: {company_ticker}"
@@ -111,7 +109,6 @@ class CompanyAnalysisManager(BaseScript):
                 f"Error storing analysis results for {company_ticker}: {e}",
                 exc_info=True,
             )
-            raise
 
 
 if __name__ == "__main__":

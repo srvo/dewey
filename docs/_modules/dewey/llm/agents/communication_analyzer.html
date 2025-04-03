@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dewey.llm.agents.communication_analyzer &#8212; Dewey (TUI) 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for dewey.llm.agents.communication_analyzer</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;LLM agent for analyzing client communications from the database.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.exc</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLAlchemyError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">joinedload</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dewey.core.base_script</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseScript</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dewey.core.db.connection</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_connection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dewey.core.db.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClientCommunicationsIndex</span><span class="p">,</span> <span class="n">ClientProfiles</span><span class="p">,</span> <span class="n">Emails</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dewey.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseConnectionError</span><span class="p">,</span> <span class="n">LLMError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dewey.llm.litellm_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">LiteLLMClient</span><span class="p">,</span> <span class="n">Message</span>
+
+
+<div class="viewcode-block" id="CommunicationAnalysis">
+<a class="viewcode-back" href="../../../../dewey.llm.agents.html#dewey.llm.agents.communication_analyzer.CommunicationAnalysis">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CommunicationAnalysis</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Structured output format for communication analysis.&quot;&quot;&quot;</span>
+
+    <span class="n">summary</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">key_topics</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">sentiment</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">action_items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">urgency</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">client_concerns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">communication_trends</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="CommunicationAnalyzerAgent">
+<a class="viewcode-back" href="../../../../dewey.llm.agents.html#dewey.llm.agents.communication_analyzer.CommunicationAnalyzerAgent">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CommunicationAnalyzerAgent</span><span class="p">(</span><span class="n">BaseScript</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;LLM agent for analyzing client email communications.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CommunicationAnalyzerAgent.__init__">
+<a class="viewcode-back" href="../../../../dewey.llm.agents.html#dewey.llm.agents.communication_analyzer.CommunicationAnalyzerAgent.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;communication_analyzer&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Analyzes client communications using LLMs&quot;</span><span class="p">,</span>
+            <span class="n">config_section</span><span class="o">=</span><span class="s2">&quot;llm.agents.communication&quot;</span><span class="p">,</span>
+            <span class="n">enable_llm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">llm_client</span> <span class="o">=</span> <span class="n">LiteLLMClient</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysis_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;analysis_model&quot;</span><span class="p">,</span> <span class="s2">&quot;gpt-4-turbo&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CommunicationAnalyzerAgent.retrieve_communications">
+<a class="viewcode-back" href="../../../../dewey.llm.agents.html#dewey.llm.agents.communication_analyzer.CommunicationAnalyzerAgent.retrieve_communications">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">retrieve_communications</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client_identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve communications for a client.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            client_identifier: Email address or client_profile_id</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of communication dictionaries with subject, content, and dates</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">db_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;database&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">db_conn</span> <span class="o">=</span> <span class="n">get_connection</span><span class="p">(</span><span class="n">db_config</span><span class="p">)</span>
+            <span class="n">session</span> <span class="o">=</span> <span class="n">db_conn</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Try to find by email first</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ClientCommunicationsIndex</span><span class="p">)</span>
+                    <span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Emails</span><span class="p">)</span>
+                    <span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ClientProfiles</span><span class="p">)</span>
+                    <span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                        <span class="p">(</span><span class="n">ClientCommunicationsIndex</span><span class="o">.</span><span class="n">client_email</span> <span class="o">==</span> <span class="n">client_identifier</span><span class="p">)</span>
+                        <span class="o">|</span> <span class="p">(</span><span class="n">ClientProfiles</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">client_identifier</span><span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="o">.</span><span class="n">options</span><span class="p">(</span><span class="n">joinedload</span><span class="p">(</span><span class="n">ClientCommunicationsIndex</span><span class="o">.</span><span class="n">email_analysis</span><span class="p">))</span>
+                <span class="p">)</span>
+
+                <span class="n">communications</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">communications</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;No communications found for </span><span class="si">{</span><span class="n">client_identifier</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="k">return</span> <span class="p">[]</span>
+
+                <span class="k">return</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;subject&quot;</span><span class="p">:</span> <span class="n">comm</span><span class="o">.</span><span class="n">Emails</span><span class="o">.</span><span class="n">subject</span><span class="p">,</span>
+                        <span class="s2">&quot;snippet&quot;</span><span class="p">:</span> <span class="n">comm</span><span class="o">.</span><span class="n">Emails</span><span class="o">.</span><span class="n">snippet</span><span class="p">,</span>
+                        <span class="s2">&quot;sent_date&quot;</span><span class="p">:</span> <span class="n">comm</span><span class="o">.</span><span class="n">Emails</span><span class="o">.</span><span class="n">analysis_date</span><span class="p">,</span>
+                        <span class="s2">&quot;direction&quot;</span><span class="p">:</span> <span class="s2">&quot;inbound&quot;</span> <span class="k">if</span> <span class="n">comm</span><span class="o">.</span><span class="n">client_email</span> <span class="k">else</span> <span class="s2">&quot;outbound&quot;</span><span class="p">,</span>
+                    <span class="p">}</span>
+                    <span class="k">for</span> <span class="n">comm</span> <span class="ow">in</span> <span class="n">communications</span>
+                <span class="p">]</span>
+
+            <span class="k">except</span> <span class="n">SQLAlchemyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Database error retrieving communications: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">DatabaseConnectionError</span><span class="p">(</span><span class="s2">&quot;Failed to retrieve communications&quot;</span><span class="p">)</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="n">db_conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to initialize database connection: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+
+<div class="viewcode-block" id="CommunicationAnalyzerAgent.format_communications_prompt">
+<a class="viewcode-back" href="../../../../dewey.llm.agents.html#dewey.llm.agents.communication_analyzer.CommunicationAnalyzerAgent.format_communications_prompt">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format_communications_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">communications</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Message</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format communications for LLM analysis.&quot;&quot;&quot;</span>
+        <span class="n">system_prompt</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;You are a financial communications analyst. Analyze client emails and:</span>
+<span class="s2">1. Summarize key discussion points</span>
+<span class="s2">2. Identify sentiment (positive, neutral, negative)</span>
+<span class="s2">3. Extract action items</span>
+<span class="s2">4. Assess urgency (low, medium, high)</span>
+<span class="s2">5. Note client concerns</span>
+<span class="s2">6. Identify communication trends</span>
+
+<span class="s2">Return JSON format with: summary, key_topics, sentiment, action_items, urgency, client_concerns, communication_trends&quot;&quot;&quot;</span>
+
+        <span class="n">comms_text</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Subject: </span><span class="si">{</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;subject&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Date: </span><span class="si">{</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;sent_date&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Direction: </span><span class="si">{</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;direction&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Content: </span><span class="si">{</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;snippet&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">communications</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">Message</span><span class="p">(</span><span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">system_prompt</span><span class="p">),</span>
+            <span class="n">Message</span><span class="p">(</span>
+                <span class="n">role</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Analyze these communications:</span><span class="se">\n</span><span class="si">{</span><span class="n">comms_text</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">),</span>
+        <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CommunicationAnalyzerAgent.analyze_communications">
+<a class="viewcode-back" href="../../../../dewey.llm.agents.html#dewey.llm.agents.communication_analyzer.CommunicationAnalyzerAgent.analyze_communications">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">analyze_communications</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client_identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CommunicationAnalysis</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Analyze client communications using LLM.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Retrieve communications</span>
+            <span class="n">comms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_communications</span><span class="p">(</span><span class="n">client_identifier</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">comms</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">CommunicationAnalysis</span><span class="p">(</span>
+                    <span class="n">summary</span><span class="o">=</span><span class="s2">&quot;No communications found&quot;</span><span class="p">,</span>
+                    <span class="n">key_topics</span><span class="o">=</span><span class="p">[],</span>
+                    <span class="n">sentiment</span><span class="o">=</span><span class="s2">&quot;neutral&quot;</span><span class="p">,</span>
+                    <span class="n">action_items</span><span class="o">=</span><span class="p">[],</span>
+                    <span class="n">urgency</span><span class="o">=</span><span class="s2">&quot;low&quot;</span><span class="p">,</span>
+                    <span class="n">client_concerns</span><span class="o">=</span><span class="p">[],</span>
+                    <span class="n">communication_trends</span><span class="o">=</span><span class="p">[],</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Format and send to LLM</span>
+            <span class="n">messages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_communications_prompt</span><span class="p">(</span><span class="n">comms</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">llm_client</span><span class="o">.</span><span class="n">generate_completion</span><span class="p">(</span>
+                <span class="n">messages</span><span class="o">=</span><span class="n">messages</span><span class="p">,</span>
+                <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis_model</span><span class="p">,</span>
+                <span class="n">temperature</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+                <span class="n">response_format</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;json_object&quot;</span><span class="p">},</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Parse and validate response</span>
+            <span class="k">return</span> <span class="n">CommunicationAnalysis</span><span class="o">.</span><span class="n">parse_raw</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">LLMError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LLM analysis failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Analysis failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+
+<div class="viewcode-block" id="CommunicationAnalyzerAgent.execute">
+<a class="viewcode-back" href="../../../../dewey.llm.agents.html#dewey.llm.agents.communication_analyzer.CommunicationAnalyzerAgent.execute">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;BaseScript entry point for CLI usage.&quot;&quot;&quot;</span>
+        <span class="n">parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setup_argparse</span><span class="p">()</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;client_identifier&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Client email or ID&quot;</span><span class="p">)</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+        <span class="n">analysis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analyze_communications</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">client_identifier</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Analysis results:</span><span class="se">\n</span><span class="si">{</span><span class="n">analysis</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">CommunicationAnalyzerAgent</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">Dewey (TUI)</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  <li><a href="../../../dewey.html">dewey</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Sloane Ortel.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

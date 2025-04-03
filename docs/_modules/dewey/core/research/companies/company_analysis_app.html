@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dewey.core.research.companies.company_analysis_app &#8212; Dewey (TUI) 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for dewey.core.research.companies.company_analysis_app</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dewey.core.base_script</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseScript</span>
+
+
+<div class="viewcode-block" id="CompanyAnalysisApp">
+<a class="viewcode-back" href="../../../../../dewey.core.research.companies.html#dewey.core.research.companies.company_analysis_app.CompanyAnalysisApp">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CompanyAnalysisApp</span><span class="p">(</span><span class="n">BaseScript</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A script for performing company analysis.</span>
+
+<span class="sd">    This script inherits from BaseScript and implements the run() method</span>
+<span class="sd">    to perform the core logic of company analysis. It utilizes the Dewey</span>
+<span class="sd">    project&#39;s conventions for configuration, logging, database access, and</span>
+<span class="sd">    LLM integration.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CompanyAnalysisApp.__init__">
+<a class="viewcode-back" href="../../../../../dewey.core.research.companies.html#dewey.core.research.companies.company_analysis_app.CompanyAnalysisApp.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the CompanyAnalysisApp.</span>
+
+<span class="sd">        Calls the superclass constructor with the appropriate configuration</span>
+<span class="sd">        section and flags for database and LLM requirements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;CompanyAnalysisApp&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Performs company analysis using various data sources and LLM techniques.&quot;</span><span class="p">,</span>
+            <span class="n">config_section</span><span class="o">=</span><span class="s2">&quot;company_analysis&quot;</span><span class="p">,</span>
+            <span class="n">requires_db</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">enable_llm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CompanyAnalysisApp.run">
+<a class="viewcode-back" href="../../../../../dewey.core.research.companies.html#dewey.core.research.companies.company_analysis_app.CompanyAnalysisApp.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Runs the company analysis process.</span>
+
+<span class="sd">        This method contains the core logic of the script, including:</span>
+<span class="sd">        1. Retrieving company information from the database.</span>
+<span class="sd">        2. Fetching financial data from external sources.</span>
+<span class="sd">        3. Performing sentiment analysis using LLM.</span>
+<span class="sd">        4. Storing the analysis results in the database.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If any error occurs during the analysis process.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting company analysis process.&quot;</span><span class="p">)</span>
+
+            <span class="c1"># 1. Retrieve company information from the database.</span>
+            <span class="n">company_ticker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;company_ticker&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">company_ticker</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Company ticker not found in configuration.&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Analyzing company with ticker: </span><span class="si">{</span><span class="n">company_ticker</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Example database query (replace with your actual query)</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;SELECT * FROM company_context WHERE ticker = &#39;</span><span class="si">{</span><span class="n">company_ticker</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+                <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+                <span class="n">company_data</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">company_data</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;No data found for company ticker: </span><span class="si">{</span><span class="n">company_ticker</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="n">company_data</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Provide an empty dictionary to avoid errors</span>
+
+            <span class="c1"># 2. Fetch financial data from external sources.</span>
+            <span class="c1"># Replace with your actual data fetching logic</span>
+            <span class="n">financial_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_financial_data</span><span class="p">(</span><span class="n">company_ticker</span><span class="p">)</span>
+
+            <span class="c1"># 3. Perform sentiment analysis using LLM.</span>
+            <span class="c1"># Replace with your actual sentiment analysis logic</span>
+            <span class="n">analysis_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analyze_company</span><span class="p">(</span><span class="n">company_data</span><span class="p">,</span> <span class="n">financial_data</span><span class="p">)</span>
+
+            <span class="c1"># 4. Store the analysis results in the database.</span>
+            <span class="c1"># Replace with your actual database insertion logic</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_store_analysis_results</span><span class="p">(</span><span class="n">company_ticker</span><span class="p">,</span> <span class="n">analysis_results</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Company analysis process completed successfully.&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error during company analysis: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fetch_financial_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticker</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fetches financial data for a given company ticker.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ticker: The ticker symbol of the company.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dictionary containing the financial data.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If any error occurs during data fetching.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fetching financial data for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="c1"># Replace with your actual data fetching logic</span>
+            <span class="c1"># Example: Use an API client to fetch data</span>
+            <span class="c1"># api_client = FinancialApiClient(api_key=self.get_config_value(&quot;financial_api_key&quot;))</span>
+            <span class="c1"># financial_data = api_client.get_financial_data(ticker)</span>
+            <span class="n">financial_data</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Placeholder for actual data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Successfully fetched financial data for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">financial_data</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Error fetching financial data for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="k">raise</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_analyze_company</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">company_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">financial_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Analyzes company data and financial data using LLM.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            company_data: A dictionary containing company information.</span>
+<span class="sd">            financial_data: A dictionary containing financial data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dictionary containing the analysis results.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If any error occurs during the analysis.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Performing company analysis using LLM.&quot;</span><span class="p">)</span>
+            <span class="c1"># Replace with your actual LLM-based analysis logic</span>
+            <span class="c1"># Example: Use LLM to perform sentiment analysis on news articles</span>
+            <span class="c1"># prompt = f&quot;Analyze the sentiment of these news articles about {company_data[&#39;name&#39;]}: {news_articles}&quot;</span>
+            <span class="c1"># analysis_results = self.llm_client.generate_text(prompt)</span>
+            <span class="n">analysis_results</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Placeholder for actual analysis results</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Company analysis using LLM completed successfully.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">analysis_results</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Error during company analysis using LLM: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="k">raise</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_store_analysis_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticker</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">analysis_results</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stores the analysis results in the database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ticker: The ticker symbol of the company.</span>
+<span class="sd">            analysis_results: A dictionary containing the analysis results.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If any error occurs during data storage.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Storing analysis results for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2"> in the database.&quot;</span><span class="p">)</span>
+            <span class="c1"># Replace with your actual database insertion logic</span>
+            <span class="c1"># Example: Insert the analysis results into a table</span>
+            <span class="c1"># query = f&quot;INSERT INTO analysis_results (ticker, results) VALUES (&#39;{ticker}&#39;, &#39;{analysis_results}&#39;)&quot;</span>
+            <span class="c1"># self.db_conn.execute(query)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Successfully stored analysis results for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2"> in the database.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Error storing analysis results for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="k">raise</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">CompanyAnalysisApp</span><span class="p">()</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../../index.html">Dewey (TUI)</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../../index.html">Module code</a><ul>
+  <li><a href="../../../../dewey.html">dewey</a><ul>
+  <li><a href="../../research.html">dewey.core.research</a><ul>
+  <li><a href="../companies.html">dewey.core.research.companies</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Sloane Ortel.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

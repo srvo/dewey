@@ -1,8 +1,7 @@
 #!/usr/bin/env python
-"""
-    Validate the reorganized test structure by running tests in different directories.
+"""Validate the reorganized test structure by running tests in different directories.
 
-    This script runs pytest on the reorganized test directories and reports any issues.
+This script runs pytest on the reorganized test directories and reports any issues.
 """
 
 import os
@@ -22,24 +21,22 @@ class TestValidator(BaseScript):
         self.success = True
 
     def execute(self) -> int:
-        """
-        Execute the test validation script.
+        """Execute the test validation script.
 
         This method is required by the BaseScript abstract class.
 
-        Returns:
-        --------
+        Returns
+        -------
             int: Exit code (0 for success, 1 for failure)
 
         """
         return self.run()
 
     def run(self) -> int:
-        """
-        Run the test validation.
+        """Run the test validation.
 
-        Returns:
-        --------
+        Returns
+        -------
             int: Exit code (0 for success, 1 for failure)
 
         """
@@ -68,11 +65,10 @@ class TestValidator(BaseScript):
             return 1
 
     def _run_tests(self, test_dir: str) -> None:
-        """
-        Run pytest on a specific directory.
+        """Run pytest on a specific directory.
 
         Args:
-        -----
+        ----
             test_dir: The directory to run tests in.
 
         """

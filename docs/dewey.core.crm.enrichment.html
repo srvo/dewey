@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>dewey.core.crm.enrichment package &#8212; Dewey (TUI) 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=01f34227"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="dewey.core.crm.events package" href="dewey.core.crm.events.html" />
+    <link rel="prev" title="dewey.core.crm.email_classifier.prompts package" href="dewey.core.crm.email_classifier.prompts.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="dewey-core-crm-enrichment-package">
+<h1>dewey.core.crm.enrichment package<a class="headerlink" href="#dewey-core-crm-enrichment-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-dewey.core.crm.enrichment.add_enrichment">
+<span id="dewey-core-crm-enrichment-add-enrichment-module"></span><h2>dewey.core.crm.enrichment.add_enrichment module<a class="headerlink" href="#module-dewey.core.crm.enrichment.add_enrichment" title="Link to this heading">¶</a></h2>
+<p>Add enrichment capabilities to existing database while preserving sync functionality.</p>
+<p>This module provides functionality to enhance the existing database with data enrichment
+capabilities. It adds new tables and columns to support:
+- Contact enrichment tracking
+- Task management for enrichment processes
+- Source tracking for enriched data
+- Confidence scoring and status tracking</p>
+<p>The changes are designed to be non-destructive and maintain compatibility with existing
+database operations.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.add_enrichment.AddEnrichmentCapabilities">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.enrichment.add_enrichment.</span></span><span class="sig-name descname"><span class="pre">AddEnrichmentCapabilities</span></span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/add_enrichment.html#AddEnrichmentCapabilities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.add_enrichment.AddEnrichmentCapabilities" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Adds enrichment capabilities to the existing database.</p>
+<p>Initializes the AddEnrichmentCapabilities script.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.add_enrichment.AddEnrichmentCapabilities.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/add_enrichment.html#AddEnrichmentCapabilities.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.add_enrichment.AddEnrichmentCapabilities.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the AddEnrichmentCapabilities script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.add_enrichment.AddEnrichmentCapabilities.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/add_enrichment.html#AddEnrichmentCapabilities.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.add_enrichment.AddEnrichmentCapabilities.run" title="Link to this definition">¶</a></dt>
+<dd><p>Adds enrichment capabilities while preserving existing functionality.</p>
+<p>This function performs the following operations:
+1. Adds new columns to the contacts table for enrichment tracking
+2. Creates a new enrichment_tasks table for managing enrichment processes
+3. Creates a new enrichment_sources table for tracking data provenance
+4. Adds necessary indexes for efficient querying</p>
+<p>The function uses a transaction to ensure atomicity - either all changes are applied
+or none are if an error occurs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sqlite3.Error</strong> – If any database operation fails:</p></li>
+<li><p><strong>Exception</strong> – For any other unexpected errors:</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.crm.enrichment.contact_enrichment">
+<span id="dewey-core-crm-enrichment-contact-enrichment-module"></span><h2>dewey.core.crm.enrichment.contact_enrichment module<a class="headerlink" href="#module-dewey.core.crm.enrichment.contact_enrichment" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.enrichment.contact_enrichment.</span></span><span class="sig-name descname"><span class="pre">ContactEnrichment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/contact_enrichment.html#ContactEnrichment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Contact Enrichment System with Task Tracking and Multiple Data Sources.</p>
+<p>This module provides comprehensive contact enrichment capabilities by:
+- Extracting contact information from email signatures and content
+- Managing enrichment tasks with status tracking
+- Storing enrichment results with confidence scoring
+- Integrating with multiple data sources
+- Providing detailed logging and error handling</p>
+<p>The system is designed to be:
+- Scalable: Processes emails in batches with configurable size
+- Reliable: Implements task tracking and retry mechanisms
+- Extensible: Supports adding new data sources and extraction patterns
+- Auditable: Maintains detailed logs and task history</p>
+<p>Initializes the ContactEnrichment module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<em>Any</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/contact_enrichment.html#ContactEnrichment.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the ContactEnrichment module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<em>Any</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/contact_enrichment.html#ContactEnrichment.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.run" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the contact enrichment process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>batch_size</strong> (<em>int</em><em> | </em><em>None</em>) – Number of emails to process in this batch. If None, uses default from config.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/contact_enrichment.html#ContactEnrichment.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the contact enrichment process with proper database handling.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.create_enrichment_task">
+<span class="sig-name descname"><span class="pre">create_enrichment_task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/contact_enrichment.html#ContactEnrichment.create_enrichment_task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.create_enrichment_task" title="Link to this definition">¶</a></dt>
+<dd><p>Create a new enrichment task in the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conn</strong> – Database connection object.</p></li>
+<li><p><strong>entity_type</strong> (<em>str</em>) – Type of entity being enriched (e.g., ‘email’, ‘contact’).</p></li>
+<li><p><strong>entity_id</strong> (<em>str</em>) – Unique identifier for the entity.</p></li>
+<li><p><strong>task_type</strong> (<em>str</em>) – Type of enrichment task (e.g., ‘contact_info’).</p></li>
+<li><p><strong>metadata</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>) – Optional dictionary of task metadata.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Unique task ID (UUID).</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If database operation fails.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<dl class="simple">
+<dt>task_id = self.create_enrichment_task(</dt><dd><p>conn,
+entity_type=”email”,
+entity_id=”12345”,
+task_type=”contact_info”,
+metadata={“source”: “email_signature”}</p>
+</dd>
+</dl>
+<p>)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.update_task_status">
+<span class="sig-name descname"><span class="pre">update_task_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/contact_enrichment.html#ContactEnrichment.update_task_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.update_task_status" title="Link to this definition">¶</a></dt>
+<dd><p>Update the status and details of an enrichment task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conn</strong> – Database connection object.</p></li>
+<li><p><strong>task_id</strong> (<em>str</em>) – Unique identifier of the task to update.</p></li>
+<li><p><strong>status</strong> (<em>str</em>) – New status for the task (e.g., ‘completed’, ‘failed’).</p></li>
+<li><p><strong>result</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>) – Optional dictionary of task results.</p></li>
+<li><p><strong>error</strong> (<em>str</em><em> | </em><em>None</em>) – Optional error message if task failed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – If database operation fails.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Increments the attempt counter on each update.</p></li>
+<li><p>Updates timestamps for last attempt and modification.</p></li>
+<li><p>Maintains both success results and error messages.</p></li>
+</ul>
+<p class="rubric">Example</p>
+<dl class="simple">
+<dt>self.update_task_status(</dt><dd><p>conn,
+task_id=”12345”,
+status=”completed”,
+result={“name”: “John Doe”, “company”: “ACME Inc”},
+error=None</p>
+</dd>
+</dl>
+<p>)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.store_enrichment_source">
+<span class="sig-name descname"><span class="pre">store_enrichment_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">confidence</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/contact_enrichment.html#ContactEnrichment.store_enrichment_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.store_enrichment_source" title="Link to this definition">¶</a></dt>
+<dd><p>Store enrichment data from a specific source with version control.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conn</strong> – Database connection object.</p></li>
+<li><p><strong>source_type</strong> (<em>str</em>) – Type of enrichment source (e.g., ‘email_signature’).</p></li>
+<li><p><strong>entity_type</strong> (<em>str</em>) – Type of entity being enriched (e.g., ‘contact’).</p></li>
+<li><p><strong>entity_id</strong> (<em>str</em>) – Unique identifier for the entity.</p></li>
+<li><p><strong>data</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – Dictionary of enrichment data.</p></li>
+<li><p><strong>confidence</strong> (<em>float</em>) – Confidence score (0.0 to 1.0) for the data quality.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Unique source ID (UUID).</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If database operation fails.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Implements version control by marking previous sources as invalid.</p></li>
+<li><p>Maintains a complete history of enrichment sources.</p></li>
+<li><p>Supports multiple sources for the same entity.</p></li>
+</ul>
+<p class="rubric">Example</p>
+<dl class="simple">
+<dt>source_id = self.store_enrichment_source(</dt><dd><p>conn,
+source_type=”email_signature”,
+entity_type=”contact”,
+entity_id=”12345”,
+data={“name”: “John Doe”, “company”: “ACME Inc”},
+confidence=0.85</p>
+</dd>
+</dl>
+<p>)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.extract_contact_info">
+<span class="sig-name descname"><span class="pre">extract_contact_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/contact_enrichment.html#ContactEnrichment.extract_contact_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.extract_contact_info" title="Link to this definition">¶</a></dt>
+<dd><p>Extract contact information from email message text using regex patterns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message_text</strong> (<em>str</em>) – Raw text content of the email message.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><dl class="simple">
+<dt>name: Full name</dt><dd><ul>
+<li><p>job_title: Job title</p></li>
+<li><p>company: Company name</p></li>
+<li><p>phone: Phone number</p></li>
+<li><p>linkedin_url: LinkedIn profile URL</p></li>
+<li><p>confidence: Confidence score (0.0 to 1.0)</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Returns None if insufficient information is found.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary containing extracted contact information with keys</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Uses predefined regex patterns to extract information.</p></li>
+<li><p>Calculates confidence score based on number of fields found.</p></li>
+<li><p>Requires at least 2 valid fields to return results.</p></li>
+<li><p>Handles various text formats and edge cases.</p></li>
+</ul>
+<p class="rubric">Example</p>
+<p>info = self.extract_contact_info(“John DoenCEO at ACME IncnPhone: 555-1234”)
+# Returns: {
+#     “name”: “John Doe”,
+#     “job_title”: “CEO”,
+#     “company”: “ACME Inc”,
+#     “phone”: “555-1234”,
+#     “linkedin_url”: None,
+#     “confidence”: 0.75
+# }</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.process_email_for_enrichment">
+<span class="sig-name descname"><span class="pre">process_email_for_enrichment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/contact_enrichment.html#ContactEnrichment.process_email_for_enrichment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.process_email_for_enrichment" title="Link to this definition">¶</a></dt>
+<dd><p>Process a single email for contact enrichment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conn</strong> – Database connection object.</p></li>
+<li><p><strong>email_id</strong> (<em>str</em>) – Unique identifier of the email to process.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if enrichment was successful, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Retrieves email content from database.</p></li>
+<li><p>Creates enrichment task for tracking.</p></li>
+<li><p>Extracts contact information from email body.</p></li>
+<li><p>Updates contact record with new information.</p></li>
+<li><p>Maintains task status and error handling.</p></li>
+</ul>
+<dl class="simple">
+<dt>Workflow:</dt><dd><ol class="arabic simple">
+<li><p>Retrieve email content from database.</p></li>
+<li><p>Create enrichment task.</p></li>
+<li><p>Extract contact information.</p></li>
+<li><p>Store enrichment source.</p></li>
+<li><p>Update contact record.</p></li>
+<li><p>Update task status.</p></li>
+</ol>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>success = self.process_email_for_enrichment(conn, “email_12345”)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.enrich_contacts">
+<span class="sig-name descname"><span class="pre">enrich_contacts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/contact_enrichment.html#ContactEnrichment.enrich_contacts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.enrich_contacts" title="Link to this definition">¶</a></dt>
+<dd><p>Process a batch of emails for contact enrichment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>batch_size</strong> (<em>int</em><em> | </em><em>None</em>) – Number of emails to process in this batch. If None, uses default from config.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Processes emails in batches for better performance and resource management.</p></li>
+<li><p>Only processes emails that haven’t been enriched before.</p></li>
+<li><p>Tracks success rate and provides detailed logging.</p></li>
+<li><p>Uses database transactions for atomic operations.</p></li>
+</ul>
+<dl class="simple">
+<dt>Workflow:</dt><dd><ol class="arabic simple">
+<li><p>Get batch of unprocessed emails.</p></li>
+<li><p>Process each email individually.</p></li>
+<li><p>Track success/failure statistics.</p></li>
+<li><p>Log results and handle errors.</p></li>
+</ol>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>self.enrich_contacts(batch_size=100)  # Process 100 emails</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.crm.enrichment.contact_enrichment_service">
+<span id="dewey-core-crm-enrichment-contact-enrichment-service-module"></span><h2>dewey.core.crm.enrichment.contact_enrichment_service module<a class="headerlink" href="#module-dewey.core.crm.enrichment.contact_enrichment_service" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.contact_enrichment_service.ContactEnrichmentService">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.enrichment.contact_enrichment_service.</span></span><span class="sig-name descname"><span class="pre">ContactEnrichmentService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/contact_enrichment_service.html#ContactEnrichmentService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.contact_enrichment_service.ContactEnrichmentService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A service for enriching contact information.</p>
+<p>This class provides methods for fetching additional information
+about a contact from external sources.</p>
+<p>Initializes the ContactEnrichmentService.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> – Variable length argument list.</p></li>
+<li><p><strong>**kwargs</strong> – Arbitrary keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.contact_enrichment_service.ContactEnrichmentService.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/contact_enrichment_service.html#ContactEnrichmentService.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.contact_enrichment_service.ContactEnrichmentService.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the ContactEnrichmentService.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> – Variable length argument list.</p></li>
+<li><p><strong>**kwargs</strong> – Arbitrary keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.contact_enrichment_service.ContactEnrichmentService.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/contact_enrichment_service.html#ContactEnrichmentService.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.contact_enrichment_service.ContactEnrichmentService.run" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the contact enrichment process.</p>
+<p>Fetches the enrichment API key from the configuration, logs its usage,
+and then logs the completion of the process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If the enrichment API key is not found in the configuration.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.contact_enrichment_service.ContactEnrichmentService.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/contact_enrichment_service.html#ContactEnrichmentService.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.contact_enrichment_service.ContactEnrichmentService.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the contact enrichment process.</p>
+<p>Fetches the enrichment API key from the configuration, logs its usage,
+and then logs the completion of the process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.crm.enrichment.email_enrichment">
+<span id="dewey-core-crm-enrichment-email-enrichment-module"></span><h2>dewey.core.crm.enrichment.email_enrichment module<a class="headerlink" href="#module-dewey.core.crm.enrichment.email_enrichment" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.email_enrichment.EmailEnrichment">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.enrichment.email_enrichment.</span></span><span class="sig-name descname"><span class="pre">EmailEnrichment</span></span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/email_enrichment.html#EmailEnrichment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.email_enrichment.EmailEnrichment" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Enriches email data with additional metadata.</p>
+<p>This class provides methods to enrich email data with:
+- Message priority scores
+- Contact information extracted from email content
+- Business opportunity detection
+- Full message bodies (plain text and HTML)</p>
+<p>Initializes the EmailEnrichment script.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.email_enrichment.EmailEnrichment.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/email_enrichment.html#EmailEnrichment.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.email_enrichment.EmailEnrichment.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the EmailEnrichment script.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.email_enrichment.EmailEnrichment.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/email_enrichment.html#EmailEnrichment.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.email_enrichment.EmailEnrichment.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Execute the email enrichment process with proper error handling.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.email_enrichment.EmailEnrichment.enrich_email">
+<span class="sig-name descname"><span class="pre">enrich_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/email_enrichment.html#EmailEnrichment.enrich_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.email_enrichment.EmailEnrichment.enrich_email" title="Link to this definition">¶</a></dt>
+<dd><p>Enrich a single email with additional metadata and analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>email_id</strong> (<em>str</em>) – The email ID to enrich</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if enrichment was successful, False otherwise</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.email_enrichment.ConnectionManager">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.enrichment.email_enrichment.</span></span><span class="sig-name descname"><span class="pre">ConnectionManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enrichment</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/email_enrichment.html#ConnectionManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.email_enrichment.ConnectionManager" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Context manager for database connections.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.email_enrichment.ConnectionManager.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enrichment</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/email_enrichment.html#ConnectionManager.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.email_enrichment.ConnectionManager.__init__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="dewey-core-crm-enrichment-email-enrichment-service-module">
+<h2>dewey.core.crm.enrichment.email_enrichment_service module<a class="headerlink" href="#dewey-core-crm-enrichment-email-enrichment-service-module" title="Link to this heading">¶</a></h2>
+</section>
+<section id="dewey-core-crm-enrichment-gmail-utils-module">
+<h2>dewey.core.crm.enrichment.gmail_utils module<a class="headerlink" href="#dewey-core-crm-enrichment-gmail-utils-module" title="Link to this heading">¶</a></h2>
+</section>
+<section id="dewey-core-crm-enrichment-opportunity-detection-module">
+<h2>dewey.core.crm.enrichment.opportunity_detection module<a class="headerlink" href="#dewey-core-crm-enrichment-opportunity-detection-module" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-dewey.core.crm.enrichment.opportunity_detection_service">
+<span id="dewey-core-crm-enrichment-opportunity-detection-service-module"></span><h2>dewey.core.crm.enrichment.opportunity_detection_service module<a class="headerlink" href="#module-dewey.core.crm.enrichment.opportunity_detection_service" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.opportunity_detection_service.OpportunityDetectionService">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.enrichment.opportunity_detection_service.</span></span><span class="sig-name descname"><span class="pre">OpportunityDetectionService</span></span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/opportunity_detection_service.html#OpportunityDetectionService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.opportunity_detection_service.OpportunityDetectionService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Detects opportunities from a given text.</p>
+<p>Initializes the OpportunityDetectionService.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.opportunity_detection_service.OpportunityDetectionService.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/opportunity_detection_service.html#OpportunityDetectionService.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.opportunity_detection_service.OpportunityDetectionService.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the OpportunityDetectionService.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.opportunity_detection_service.OpportunityDetectionService.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/opportunity_detection_service.html#OpportunityDetectionService.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.opportunity_detection_service.OpportunityDetectionService.run" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the opportunity detection service.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.opportunity_detection_service.OpportunityDetectionService.detect_opportunities">
+<span class="sig-name descname"><span class="pre">detect_opportunities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/opportunity_detection_service.html#OpportunityDetectionService.detect_opportunities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.opportunity_detection_service.OpportunityDetectionService.detect_opportunities" title="Link to this definition">¶</a></dt>
+<dd><p>Detects opportunities in the given text based on regex patterns
+defined in the configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – The text to analyze.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of detected opportunity types.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.opportunity_detection_service.OpportunityDetectionService.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/opportunity_detection_service.html#OpportunityDetectionService.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.opportunity_detection_service.OpportunityDetectionService.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the opportunity detection process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.crm.enrichment.prioritization">
+<span id="dewey-core-crm-enrichment-prioritization-module"></span><h2>dewey.core.crm.enrichment.prioritization module<a class="headerlink" href="#module-dewey.core.crm.enrichment.prioritization" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.prioritization.Prioritization">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.enrichment.prioritization.</span></span><span class="sig-name descname"><span class="pre">Prioritization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/prioritization.html#Prioritization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.prioritization.Prioritization" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A module for handling prioritization tasks within Dewey’s CRM enrichment process.</p>
+<p>This module inherits from BaseScript and provides a standardized
+structure for prioritization scripts, including configuration
+loading, logging, and a <cite>run</cite> method to execute the script’s
+primary logic.</p>
+<p>Initializes the Prioritization module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> (<em>Any</em>) – Variable length argument list.</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Arbitrary keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.prioritization.Prioritization.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/prioritization.html#Prioritization.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.prioritization.Prioritization.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the Prioritization module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> (<em>Any</em>) – Variable length argument list.</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Arbitrary keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.prioritization.Prioritization.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/prioritization.html#Prioritization.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.prioritization.Prioritization.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the primary logic of the prioritization script.</p>
+<p>This method should be implemented to perform the actual
+prioritization tasks, utilizing configuration values and
+logging as needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If something goes wrong during prioritization.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.prioritization.Prioritization.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/prioritization.html#Prioritization.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.prioritization.Prioritization.run" title="Link to this definition">¶</a></dt>
+<dd><p>Legacy method that calls execute() for backward compatibility.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.prioritization.Prioritization.get_config_value">
+<span class="sig-name descname"><span class="pre">get_config_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/prioritization.html#Prioritization.get_config_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.prioritization.Prioritization.get_config_value" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves a configuration value associated with the given key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – The key of the configuration value to retrieve.</p></li>
+<li><p><strong>default</strong> (<em>Any</em>) – The default value to return if the key is not found.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The configuration value associated with the key, or the default
+value if the key is not found.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.crm.enrichment.run_enrichment">
+<span id="dewey-core-crm-enrichment-run-enrichment-module"></span><h2>dewey.core.crm.enrichment.run_enrichment module<a class="headerlink" href="#module-dewey.core.crm.enrichment.run_enrichment" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.run_enrichment.RunEnrichment">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.enrichment.run_enrichment.</span></span><span class="sig-name descname"><span class="pre">RunEnrichment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RunEnrichment'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Runs</span> <span class="pre">enrichment</span> <span class="pre">tasks.'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/run_enrichment.html#RunEnrichment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.run_enrichment.RunEnrichment" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A module for running enrichment tasks within Dewey’s CRM.</p>
+<p>This module inherits from BaseScript and provides a standardized
+structure for enrichment scripts, including configuration
+loading, logging, and a <cite>run</cite> method to execute the script’s
+primary logic.</p>
+<p>Initializes the RunEnrichment module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – The name of the module.</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – A description of the module.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.run_enrichment.RunEnrichment.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RunEnrichment'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Runs</span> <span class="pre">enrichment</span> <span class="pre">tasks.'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/run_enrichment.html#RunEnrichment.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.run_enrichment.RunEnrichment.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the RunEnrichment module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – The name of the module.</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – A description of the module.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.run_enrichment.RunEnrichment.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/run_enrichment.html#RunEnrichment.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.run_enrichment.RunEnrichment.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the primary logic of the enrichment script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.run_enrichment.RunEnrichment.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/run_enrichment.html#RunEnrichment.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.run_enrichment.RunEnrichment.run" title="Link to this definition">¶</a></dt>
+<dd><p>Legacy method that calls execute() for backward compatibility.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.crm.enrichment.simple_test">
+<span id="dewey-core-crm-enrichment-simple-test-module"></span><h2>dewey.core.crm.enrichment.simple_test module<a class="headerlink" href="#module-dewey.core.crm.enrichment.simple_test" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.simple_test.SimpleTest">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.enrichment.simple_test.</span></span><span class="sig-name descname"><span class="pre">SimpleTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/simple_test.html#SimpleTest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.simple_test.SimpleTest" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A simple test module for Dewey.</p>
+<p>This module demonstrates the basic structure of a Dewey script,
+including configuration loading, logging, and a <cite>run</cite> method to
+execute the script’s primary logic.</p>
+<p>Initializes the SimpleTest module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> – Variable length argument list.</p></li>
+<li><p><strong>**kwargs</strong> – Arbitrary keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.simple_test.SimpleTest.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/simple_test.html#SimpleTest.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.simple_test.SimpleTest.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the SimpleTest module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> – Variable length argument list.</p></li>
+<li><p><strong>**kwargs</strong> – Arbitrary keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.simple_test.SimpleTest.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/simple_test.html#SimpleTest.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.simple_test.SimpleTest.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the main logic of the SimpleTest module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.simple_test.SimpleTest.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/simple_test.html#SimpleTest.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.simple_test.SimpleTest.run" title="Link to this definition">¶</a></dt>
+<dd><p>Legacy method that calls execute() for backward compatibility.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.crm.enrichment.test_enrichment">
+<span id="dewey-core-crm-enrichment-test-enrichment-module"></span><h2>dewey.core.crm.enrichment.test_enrichment module<a class="headerlink" href="#module-dewey.core.crm.enrichment.test_enrichment" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.test_enrichment.TestEnrichment">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.enrichment.test_enrichment.</span></span><span class="sig-name descname"><span class="pre">TestEnrichment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/test_enrichment.html#TestEnrichment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.test_enrichment.TestEnrichment" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A module for testing enrichment processes within Dewey’s CRM.</p>
+<p>This module inherits from BaseScript and provides a standardized
+structure for testing enrichment scripts, including configuration
+loading, logging, and a <cite>run</cite> method to execute the script’s
+primary logic.</p>
+<p>Initializes the TestEnrichment module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> (<em>Any</em>) – Variable length argument list.</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Arbitrary keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.test_enrichment.TestEnrichment.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/test_enrichment.html#TestEnrichment.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.test_enrichment.TestEnrichment.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the TestEnrichment module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> (<em>Any</em>) – Variable length argument list.</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Arbitrary keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.test_enrichment.TestEnrichment.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/test_enrichment.html#TestEnrichment.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.test_enrichment.TestEnrichment.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the test enrichment process.</p>
+<p>This method retrieves an example configuration value and logs
+messages to indicate the start and completion of the test
+enrichment process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If there is an error during the enrichment process.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.test_enrichment.TestEnrichment.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment/test_enrichment.html#TestEnrichment.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.test_enrichment.TestEnrichment.run" title="Link to this definition">¶</a></dt>
+<dd><p>Legacy method that calls execute() for backward compatibility.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.core.crm.enrichment">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-dewey.core.crm.enrichment" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.EnrichmentModule">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.crm.enrichment.</span></span><span class="sig-name descname"><span class="pre">EnrichmentModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CRM</span> <span class="pre">Enrichment</span> <span class="pre">Module'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment.html#EnrichmentModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.EnrichmentModule" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A module for managing enrichment tasks within Dewey’s CRM.</p>
+<p>This module inherits from BaseScript and provides a standardized
+structure for enrichment scripts, including configuration
+loading, logging, and a <cite>run</cite> method to execute the script’s
+primary logic.</p>
+<p>Initializes the EnrichmentModule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – The name of the module.</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – A brief description of the module.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.EnrichmentModule.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CRM</span> <span class="pre">Enrichment</span> <span class="pre">Module'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment.html#EnrichmentModule.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.EnrichmentModule.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the EnrichmentModule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – The name of the module.</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – A brief description of the module.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.EnrichmentModule.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment.html#EnrichmentModule.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.EnrichmentModule.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the primary logic of the enrichment module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.crm.enrichment.EnrichmentModule.get_config_value">
+<span class="sig-name descname"><span class="pre">get_config_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/crm/enrichment.html#EnrichmentModule.get_config_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.crm.enrichment.EnrichmentModule.get_config_value" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves a configuration value associated with the given key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – The key of the configuration value to retrieve.</p></li>
+<li><p><strong>default</strong> (<em>Any</em>) – The default value to return if the key is not found.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The configuration value associated with the key, or the default value
+if the key is not found.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Dewey (TUI)</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">dewey</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="dewey.html">dewey package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">dewey</a><ul>
+  <li><a href="dewey.html">dewey package</a><ul>
+  <li><a href="dewey.core.html">dewey.core package</a><ul>
+  <li><a href="dewey.core.crm.html">dewey.core.crm package</a><ul>
+      <li>Previous: <a href="dewey.core.crm.email_classifier.prompts.html" title="previous chapter">dewey.core.crm.email_classifier.prompts package</a></li>
+      <li>Next: <a href="dewey.core.crm.events.html" title="next chapter">dewey.core.crm.events package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Sloane Ortel.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/dewey.core.crm.enrichment.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

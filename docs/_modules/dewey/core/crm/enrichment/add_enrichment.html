@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dewey.core.crm.enrichment.add_enrichment &#8212; Dewey (TUI) 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for dewey.core.crm.enrichment.add_enrichment</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Add enrichment capabilities to existing database while preserving sync functionality.</span>
+
+<span class="sd">This module provides functionality to enhance the existing database with data enrichment</span>
+<span class="sd">capabilities. It adds new tables and columns to support:</span>
+<span class="sd">- Contact enrichment tracking</span>
+<span class="sd">- Task management for enrichment processes</span>
+<span class="sd">- Source tracking for enriched data</span>
+<span class="sd">- Confidence scoring and status tracking</span>
+
+<span class="sd">The changes are designed to be non-destructive and maintain compatibility with existing</span>
+<span class="sd">database operations.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dewey.core.base_script</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseScript</span>
+
+
+<div class="viewcode-block" id="AddEnrichmentCapabilities">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.enrichment.html#dewey.core.crm.enrichment.add_enrichment.AddEnrichmentCapabilities">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AddEnrichmentCapabilities</span><span class="p">(</span><span class="n">BaseScript</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds enrichment capabilities to the existing database.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AddEnrichmentCapabilities.__init__">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.enrichment.html#dewey.core.crm.enrichment.add_enrichment.AddEnrichmentCapabilities.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the AddEnrichmentCapabilities script.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_section</span><span class="o">=</span><span class="s2">&quot;crm&quot;</span><span class="p">,</span> <span class="n">requires_db</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AddEnrichmentCapabilities.run">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.enrichment.html#dewey.core.crm.enrichment.add_enrichment.AddEnrichmentCapabilities.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds enrichment capabilities while preserving existing functionality.</span>
+
+<span class="sd">        This function performs the following operations:</span>
+<span class="sd">        1. Adds new columns to the contacts table for enrichment tracking</span>
+<span class="sd">        2. Creates a new enrichment_tasks table for managing enrichment processes</span>
+<span class="sd">        3. Creates a new enrichment_sources table for tracking data provenance</span>
+<span class="sd">        4. Adds necessary indexes for efficient querying</span>
+
+<span class="sd">        The function uses a transaction to ensure atomicity - either all changes are applied</span>
+<span class="sd">        or none are if an error occurs.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">            sqlite3.Error: If any database operation fails</span>
+<span class="sd">            Exception: For any other unexpected errors</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Connecting to production database&quot;</span><span class="p">)</span>
+            <span class="n">db_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;db_path&quot;</span><span class="p">,</span> <span class="s2">&quot;email_data.db&quot;</span><span class="p">)</span>
+            <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+            <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+            <span class="c1"># Add enrichment fields to contacts table</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Adding enrichment fields to contacts table&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Add status column to track enrichment progress</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            ALTER TABLE contacts ADD COLUMN enrichment_status TEXT DEFAULT &#39;pending&#39;;</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># Status values:</span>
+            <span class="c1"># - &#39;pending&#39;: No enrichment attempted yet</span>
+            <span class="c1"># - &#39;processing&#39;: Enrichment in progress</span>
+            <span class="c1"># - &#39;completed&#39;: Successful enrichment</span>
+            <span class="c1"># - &#39;failed&#39;: Enrichment attempt failed</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            ALTER TABLE contacts ADD COLUMN last_enriched TIMESTAMP;</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># Tracks when the contact was last enriched</span>
+            <span class="c1"># Useful for determining if re-enrichment is needed</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            ALTER TABLE contacts ADD COLUMN enrichment_source TEXT;</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># Tracks the primary source of enrichment data</span>
+            <span class="c1"># Examples: &#39;clearbit&#39;, &#39;linkedin&#39;, &#39;email_signature&#39;</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            ALTER TABLE contacts ADD COLUMN confidence_score REAL DEFAULT 0.0;</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># Confidence score (0.0-1.0) indicating reliability of enriched data</span>
+            <span class="c1"># Helps prioritize manual review of low-confidence enrichments</span>
+
+            <span class="c1"># Create enrichment tasks table</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating enrichment tasks table&quot;</span><span class="p">)</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            CREATE TABLE IF NOT EXISTS enrichment_tasks (</span>
+<span class="sd">                id TEXT PRIMARY KEY,          -- Unique task identifier</span>
+<span class="sd">                entity_type TEXT,             -- Type of entity being enriched (contact, email, opportunity)</span>
+<span class="sd">                entity_id TEXT,               -- ID of the entity being enriched</span>
+<span class="sd">                task_type TEXT,               -- Type of enrichment task (contact_info, social_media, company_info)</span>
+<span class="sd">                status TEXT DEFAULT &#39;pending&#39;, -- Current task status</span>
+<span class="sd">                attempts INTEGER DEFAULT 0,   -- Number of attempts made</span>
+<span class="sd">                last_attempt TIMESTAMP,       -- Timestamp of last attempt</span>
+<span class="sd">                result JSON,                  -- Structured result data from enrichment</span>
+<span class="sd">                error_message TEXT,           -- Error message if task failed</span>
+<span class="sd">                metadata JSON,                -- Additional metadata for the task</span>
+<span class="sd">                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,</span>
+<span class="sd">                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP</span>
+<span class="sd">            );</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># Task status lifecycle:</span>
+            <span class="c1"># pending -&gt; processing -&gt; (completed|failed)</span>
+            <span class="c1"># Failed tasks can be retried, incrementing attempts counter</span>
+
+            <span class="c1"># Create enrichment sources table</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating enrichment sources table&quot;</span><span class="p">)</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            CREATE TABLE IF NOT EXISTS enrichment_sources (</span>
+<span class="sd">                id TEXT PRIMARY KEY,          -- Unique source identifier</span>
+<span class="sd">                source_type TEXT,             -- Type of source (email_signature, linkedin, clearbit, etc.)</span>
+<span class="sd">                entity_type TEXT,             -- Type of entity (contact, company)</span>
+<span class="sd">                entity_id TEXT,               -- ID of the enriched entity</span>
+<span class="sd">                data JSON,                    -- Raw data from the source</span>
+<span class="sd">                confidence REAL,              -- Confidence in this source&#39;s accuracy</span>
+<span class="sd">                valid_from TIMESTAMP,         -- When this data became valid</span>
+<span class="sd">                valid_to TIMESTAMP,           -- When this data expires</span>
+<span class="sd">                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP</span>
+<span class="sd">            );</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># This table tracks provenance of enrichment data</span>
+            <span class="c1"># Allows tracking multiple sources for the same entity</span>
+            <span class="c1"># Useful for data reconciliation and versioning</span>
+
+            <span class="c1"># Add necessary indexes for performance optimization</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating indexes for enrichment tables&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Index for querying tasks by entity</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            CREATE INDEX IF NOT EXISTS idx_enrichment_tasks_entity</span>
+<span class="sd">            ON enrichment_tasks(entity_type, entity_id);</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># Optimizes queries like:</span>
+            <span class="c1"># - Get all tasks for a specific contact</span>
+            <span class="c1"># - Get all tasks for a specific email</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            CREATE INDEX IF NOT EXISTS idx_enrichment_tasks_status</span>
+<span class="sd">            ON enrichment_tasks(status);</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># Optimizes queries like:</span>
+            <span class="c1"># - Get all pending tasks</span>
+            <span class="c1"># - Get all failed tasks needing retry</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            CREATE INDEX IF NOT EXISTS idx_enrichment_sources_entity</span>
+<span class="sd">            ON enrichment_sources(entity_type, entity_id);</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># Optimizes queries like:</span>
+            <span class="c1"># - Get all sources for a specific contact</span>
+            <span class="c1"># - Get all sources for a specific company</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            CREATE INDEX IF NOT EXISTS idx_contacts_enrichment</span>
+<span class="sd">            ON contacts(enrichment_status);</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># Optimizes queries like:</span>
+            <span class="c1"># - Get all contacts needing enrichment</span>
+            <span class="c1"># - Get all contacts with failed enrichment</span>
+
+            <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Successfully added enrichment capabilities&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error adding enrichment capabilities: </span><span class="si">{</span><span class="n">e</span><span class="si">!s}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">conn</span><span class="p">:</span>
+                <span class="n">conn</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+            <span class="k">raise</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">conn</span><span class="p">:</span>
+                <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</div>
+
+
+        <span class="c1"># TODO: Refactor to use centralized database connection and error handling</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Main entry point for the enrichment capabilities migration script.</span>
+
+<span class="sd">    When run as a script, this will:</span>
+<span class="sd">    1. Initialize logging</span>
+<span class="sd">    2. Execute the database migration</span>
+<span class="sd">    3. Log success/failure status</span>
+
+<span class="sd">    Example usage:</span>
+<span class="sd">        python scripts/add_enrichment.py</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">script</span> <span class="o">=</span> <span class="n">AddEnrichmentCapabilities</span><span class="p">()</span>
+    <span class="n">script</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../../index.html">Dewey (TUI)</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../modules.html">dewey</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../../index.html">Module code</a><ul>
+  <li><a href="../../../../dewey.html">dewey</a><ul>
+  <li><a href="../../crm.html">dewey.core.crm</a><ul>
+  <li><a href="../enrichment.html">dewey.core.crm.enrichment</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Sloane Ortel.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

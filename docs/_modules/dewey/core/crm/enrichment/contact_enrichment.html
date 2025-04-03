@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dewey.core.crm.enrichment.contact_enrichment &#8212; Dewey (TUI) 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for dewey.core.crm.enrichment.contact_enrichment</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">duckdb</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dewey.core.base_script</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseScript</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dewey.core.db.connection</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_connection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dewey.utils.database</span><span class="w"> </span><span class="kn">import</span> <span class="n">execute_query</span><span class="p">,</span> <span class="n">fetch_all</span><span class="p">,</span> <span class="n">fetch_one</span>
+
+
+<div class="viewcode-block" id="ContactEnrichment">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.enrichment.html#dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ContactEnrichment</span><span class="p">(</span><span class="n">BaseScript</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Contact Enrichment System with Task Tracking and Multiple Data Sources.</span>
+
+<span class="sd">    This module provides comprehensive contact enrichment capabilities by:</span>
+<span class="sd">    - Extracting contact information from email signatures and content</span>
+<span class="sd">    - Managing enrichment tasks with status tracking</span>
+<span class="sd">    - Storing enrichment results with confidence scoring</span>
+<span class="sd">    - Integrating with multiple data sources</span>
+<span class="sd">    - Providing detailed logging and error handling</span>
+
+<span class="sd">    The system is designed to be:</span>
+<span class="sd">    - Scalable: Processes emails in batches with configurable size</span>
+<span class="sd">    - Reliable: Implements task tracking and retry mechanisms</span>
+<span class="sd">    - Extensible: Supports adding new data sources and extraction patterns</span>
+<span class="sd">    - Auditable: Maintains detailed logs and task history</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ContactEnrichment.__init__">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.enrichment.html#dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the ContactEnrichment module.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_section</span><span class="o">=</span><span class="s2">&quot;crm&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># Load regex patterns from config or use defaults</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">patterns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;regex_patterns&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;contact_info&quot;</span><span class="p">,</span> <span class="p">{}</span>
+        <span class="p">)</span>
+        <span class="c1"># Default batch size if not specified in config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enrichment_batch_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span>
+            <span class="s2">&quot;settings.analysis_batch_size&quot;</span><span class="p">,</span> <span class="mi">50</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ContactEnrichment.run">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.enrichment.html#dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Runs the contact enrichment process.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            batch_size: Number of emails to process in this batch. If None, uses default from config.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enrich_contacts</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ContactEnrichment.execute">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.enrichment.html#dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.execute">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Executes the contact enrichment process with proper database handling.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting execution of ContactEnrichment&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Get database connection</span>
+            <span class="k">with</span> <span class="n">get_connection</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+                <span class="c1"># Setup necessary database structures</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_setup_database_tables</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+
+                <span class="c1"># Process a batch of emails for enrichment</span>
+                <span class="n">batch_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;settings.analysis_batch_size&quot;</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enrich_contacts</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;ContactEnrichment execution completed successfully&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in ContactEnrichment execution: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_database_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">duckdb</span><span class="o">.</span><span class="n">DuckDBPyConnection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up required database tables for contact enrichment.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            conn: Database connection object</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Create enrichment_tasks table</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            CREATE TABLE IF NOT EXISTS enrichment_tasks (</span>
+<span class="s2">                task_id VARCHAR PRIMARY KEY,</span>
+<span class="s2">                task_type VARCHAR,</span>
+<span class="s2">                source_type VARCHAR,</span>
+<span class="s2">                source_id VARCHAR,</span>
+<span class="s2">                target_type VARCHAR,</span>
+<span class="s2">                target_id VARCHAR,</span>
+<span class="s2">                status VARCHAR,</span>
+<span class="s2">                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,</span>
+<span class="s2">                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,</span>
+<span class="s2">                completed_at TIMESTAMP,</span>
+<span class="s2">                result JSON,</span>
+<span class="s2">                error TEXT</span>
+<span class="s2">            )</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Create enrichment_sources table</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            CREATE TABLE IF NOT EXISTS enrichment_sources (</span>
+<span class="s2">                source_id VARCHAR PRIMARY KEY,</span>
+<span class="s2">                source_type VARCHAR,</span>
+<span class="s2">                target_type VARCHAR,</span>
+<span class="s2">                target_id VARCHAR,</span>
+<span class="s2">                data JSON,</span>
+<span class="s2">                confidence FLOAT,</span>
+<span class="s2">                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP</span>
+<span class="s2">            )</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Create contacts table if it doesn&#39;t exist</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            CREATE TABLE IF NOT EXISTS contacts (</span>
+<span class="s2">                email VARCHAR PRIMARY KEY,</span>
+<span class="s2">                name VARCHAR,</span>
+<span class="s2">                first_name VARCHAR,</span>
+<span class="s2">                last_name VARCHAR,</span>
+<span class="s2">                job_title VARCHAR,</span>
+<span class="s2">                company VARCHAR,</span>
+<span class="s2">                phone VARCHAR,</span>
+<span class="s2">                address VARCHAR,</span>
+<span class="s2">                linkedin_url VARCHAR,</span>
+<span class="s2">                twitter_url VARCHAR,</span>
+<span class="s2">                website VARCHAR,</span>
+<span class="s2">                notes TEXT,</span>
+<span class="s2">                enrichment_status VARCHAR DEFAULT &#39;pending&#39;,</span>
+<span class="s2">                last_enriched TIMESTAMP,</span>
+<span class="s2">                enrichment_source VARCHAR,</span>
+<span class="s2">                confidence_score FLOAT DEFAULT 0.0,</span>
+<span class="s2">                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,</span>
+<span class="s2">                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP</span>
+<span class="s2">            )</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Database tables created or verified successfully&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error setting up database tables: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
+
+<div class="viewcode-block" id="ContactEnrichment.create_enrichment_task">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.enrichment.html#dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.create_enrichment_task">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_enrichment_task</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">conn</span><span class="p">,</span>
+        <span class="n">entity_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">entity_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">task_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new enrichment task in the database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            conn: Database connection object.</span>
+<span class="sd">            entity_type: Type of entity being enriched (e.g., &#39;email&#39;, &#39;contact&#39;).</span>
+<span class="sd">            entity_id: Unique identifier for the entity.</span>
+<span class="sd">            task_type: Type of enrichment task (e.g., &#39;contact_info&#39;).</span>
+<span class="sd">            metadata: Optional dictionary of task metadata.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Unique task ID (UUID).</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If database operation fails.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            task_id = self.create_enrichment_task(</span>
+<span class="sd">                conn,</span>
+<span class="sd">                entity_type=&quot;email&quot;,</span>
+<span class="sd">                entity_id=&quot;12345&quot;,</span>
+<span class="sd">                task_type=&quot;contact_info&quot;,</span>
+<span class="sd">                metadata={&quot;source&quot;: &quot;email_signature&quot;}</span>
+<span class="sd">            )</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">task_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;[TASK] Creating new </span><span class="si">{</span><span class="n">task_type</span><span class="si">}</span><span class="s2"> task for </span><span class="si">{</span><span class="n">entity_type</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[TASK] Task metadata: </span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">metadata</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="p">{})</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Insert new task record with initial status &#39;pending&#39;</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                INSERT INTO enrichment_tasks (</span>
+<span class="s2">                    id, entity_type, entity_id, task_type, status, metadata</span>
+<span class="s2">                ) VALUES (?, ?, ?, ?, &#39;pending&#39;, ?)</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">task_id</span><span class="p">,</span>
+                <span class="n">entity_type</span><span class="p">,</span>
+                <span class="n">entity_id</span><span class="p">,</span>
+                <span class="n">task_type</span><span class="p">,</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">metadata</span> <span class="ow">or</span> <span class="p">{}),</span>
+            <span class="p">)</span>
+            <span class="n">execute_query</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[TASK] Created task </span><span class="si">{</span><span class="n">task_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">task_id</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[TASK] Failed to create task: </span><span class="si">{</span><span class="n">e</span><span class="si">!s}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+
+<div class="viewcode-block" id="ContactEnrichment.update_task_status">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.enrichment.html#dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.update_task_status">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_task_status</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">conn</span><span class="p">,</span>
+        <span class="n">task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">status</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">error</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the status and details of an enrichment task.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            conn: Database connection object.</span>
+<span class="sd">            task_id: Unique identifier of the task to update.</span>
+<span class="sd">            status: New status for the task (e.g., &#39;completed&#39;, &#39;failed&#39;).</span>
+<span class="sd">            result: Optional dictionary of task results.</span>
+<span class="sd">            error: Optional error message if task failed.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If database operation fails.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            - Increments the attempt counter on each update.</span>
+<span class="sd">            - Updates timestamps for last attempt and modification.</span>
+<span class="sd">            - Maintains both success results and error messages.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            self.update_task_status(</span>
+<span class="sd">                conn,</span>
+<span class="sd">                task_id=&quot;12345&quot;,</span>
+<span class="sd">                status=&quot;completed&quot;,</span>
+<span class="sd">                result={&quot;name&quot;: &quot;John Doe&quot;, &quot;company&quot;: &quot;ACME Inc&quot;},</span>
+<span class="sd">                error=None</span>
+<span class="sd">            )</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[TASK] Updating task </span><span class="si">{</span><span class="n">task_id</span><span class="si">}</span><span class="s2"> to status: </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[TASK] Task result: </span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">error</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[TASK] Task error: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Update task record with new status and results</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                UPDATE enrichment_tasks</span>
+<span class="s2">                SET status = ?,</span>
+<span class="s2">                    attempts = attempts + 1,</span>
+<span class="s2">                    last_attempt = CURRENT_TIMESTAMP,</span>
+<span class="s2">                    result = ?,</span>
+<span class="s2">                    error_message = ?,</span>
+<span class="s2">                    updated_at = CURRENT_TIMESTAMP</span>
+<span class="s2">                WHERE id = ?</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span> <span class="ow">or</span> <span class="p">{}),</span> <span class="n">error</span><span class="p">,</span> <span class="n">task_id</span><span class="p">)</span>
+            <span class="n">row_count</span> <span class="o">=</span> <span class="n">execute_query</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">row_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[TASK] Task </span><span class="si">{</span><span class="n">task_id</span><span class="si">}</span><span class="s2"> not found for status update&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[TASK] Successfully updated task </span><span class="si">{</span><span class="n">task_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;[TASK] Failed to update task status: </span><span class="si">{</span><span class="n">e</span><span class="si">!s}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="k">raise</span></div>
+
+
+<div class="viewcode-block" id="ContactEnrichment.store_enrichment_source">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.enrichment.html#dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.store_enrichment_source">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">store_enrichment_source</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">conn</span><span class="p">,</span>
+        <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">entity_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">entity_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">confidence</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store enrichment data from a specific source with version control.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            conn: Database connection object.</span>
+<span class="sd">            source_type: Type of enrichment source (e.g., &#39;email_signature&#39;).</span>
+<span class="sd">            entity_type: Type of entity being enriched (e.g., &#39;contact&#39;).</span>
+<span class="sd">            entity_id: Unique identifier for the entity.</span>
+<span class="sd">            data: Dictionary of enrichment data.</span>
+<span class="sd">            confidence: Confidence score (0.0 to 1.0) for the data quality.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Unique source ID (UUID).</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If database operation fails.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            - Implements version control by marking previous sources as invalid.</span>
+<span class="sd">            - Maintains a complete history of enrichment sources.</span>
+<span class="sd">            - Supports multiple sources for the same entity.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            source_id = self.store_enrichment_source(</span>
+<span class="sd">                conn,</span>
+<span class="sd">                source_type=&quot;email_signature&quot;,</span>
+<span class="sd">                entity_type=&quot;contact&quot;,</span>
+<span class="sd">                entity_id=&quot;12345&quot;,</span>
+<span class="sd">                data={&quot;name&quot;: &quot;John Doe&quot;, &quot;company&quot;: &quot;ACME Inc&quot;},</span>
+<span class="sd">                confidence=0.85</span>
+<span class="sd">            )</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">source_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;[SOURCE] Storing </span><span class="si">{</span><span class="n">source_type</span><span class="si">}</span><span class="s2"> data for </span><span class="si">{</span><span class="n">entity_type</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;[SOURCE] Data: </span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">, Confidence: </span><span class="si">{</span><span class="n">confidence</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Mark previous source as invalid by setting valid_to timestamp</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                UPDATE enrichment_sources</span>
+<span class="s2">                SET valid_to = CURRENT_TIMESTAMP</span>
+<span class="s2">                WHERE entity_type = ? AND entity_id = ? AND source_type = ? AND valid_to IS NULL</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">(</span><span class="n">entity_type</span><span class="p">,</span> <span class="n">entity_id</span><span class="p">,</span> <span class="n">source_type</span><span class="p">)</span>
+            <span class="n">row_count</span> <span class="o">=</span> <span class="n">execute_query</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">row_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;[SOURCE] Marked </span><span class="si">{</span><span class="n">row_count</span><span class="si">}</span><span class="s2"> previous sources as invalid&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Insert new source with current timestamp</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                INSERT INTO enrichment_sources (</span>
+<span class="s2">                    id, source_type, entity_type, entity_id,</span>
+<span class="s2">                    data, confidence, valid_from</span>
+<span class="s2">                ) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">source_id</span><span class="p">,</span>
+                <span class="n">source_type</span><span class="p">,</span>
+                <span class="n">entity_type</span><span class="p">,</span>
+                <span class="n">entity_id</span><span class="p">,</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">),</span>
+                <span class="n">confidence</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">execute_query</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[SOURCE] Successfully stored source </span><span class="si">{</span><span class="n">source_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">source_id</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[SOURCE] Failed to store source: </span><span class="si">{</span><span class="n">e</span><span class="si">!s}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+
+<div class="viewcode-block" id="ContactEnrichment.extract_contact_info">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.enrichment.html#dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.extract_contact_info">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_contact_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Extract contact information from email message text using regex patterns.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            message_text: Raw text content of the email message.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dictionary containing extracted contact information with keys:</span>
+<span class="sd">                - name: Full name</span>
+<span class="sd">                - job_title: Job title</span>
+<span class="sd">                - company: Company name</span>
+<span class="sd">                - phone: Phone number</span>
+<span class="sd">                - linkedin_url: LinkedIn profile URL</span>
+<span class="sd">                - confidence: Confidence score (0.0 to 1.0)</span>
+<span class="sd">            Returns None if insufficient information is found.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            - Uses predefined regex patterns to extract information.</span>
+<span class="sd">            - Calculates confidence score based on number of fields found.</span>
+<span class="sd">            - Requires at least 2 valid fields to return results.</span>
+<span class="sd">            - Handles various text formats and edge cases.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            info = self.extract_contact_info(&quot;John Doe\nCEO at ACME Inc\nPhone: 555-1234&quot;)</span>
+<span class="sd">            # Returns: {</span>
+<span class="sd">            #     &quot;name&quot;: &quot;John Doe&quot;,</span>
+<span class="sd">            #     &quot;job_title&quot;: &quot;CEO&quot;,</span>
+<span class="sd">            #     &quot;company&quot;: &quot;ACME Inc&quot;,</span>
+<span class="sd">            #     &quot;phone&quot;: &quot;555-1234&quot;,</span>
+<span class="sd">            #     &quot;linkedin_url&quot;: None,</span>
+<span class="sd">            #     &quot;confidence&quot;: 0.75</span>
+<span class="sd">            # }</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">message_text</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;[EXTRACT] Empty message text provided&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[EXTRACT] Processing message of length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">message_text</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Initialize result dictionary with default values</span>
+        <span class="n">info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;job_title&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;company&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;phone&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;linkedin_url&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;confidence&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Apply each regex pattern to extract information</span>
+            <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">pattern_str</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">patterns</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">pattern_str</span><span class="p">)</span>
+                <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">message_text</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                    <span class="c1"># Extract value from the first matching group</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">info</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[EXTRACT] Found </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[EXTRACT] No match for </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Calculate confidence score based on number of fields found</span>
+            <span class="n">found_fields</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">info</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">info</span><span class="p">[</span><span class="s2">&quot;confidence&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">found_fields</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="p">)</span>  <span class="c1"># -1 for confidence field</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;[EXTRACT] Extraction completed with confidence </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;confidence&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[EXTRACT] Extracted info: </span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">info</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Return results only if we found at least 2 valid fields</span>
+            <span class="k">if</span> <span class="n">found_fields</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">info</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;[EXTRACT] Insufficient fields found (need at least 2)&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;[EXTRACT] Error extracting contact info: </span><span class="si">{</span><span class="n">e</span><span class="si">!s}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="ContactEnrichment.process_email_for_enrichment">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.enrichment.html#dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.process_email_for_enrichment">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_email_for_enrichment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">email_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process a single email for contact enrichment.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            conn: Database connection object.</span>
+<span class="sd">            email_id: Unique identifier of the email to process.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if enrichment was successful, False otherwise.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            - Retrieves email content from database.</span>
+<span class="sd">            - Creates enrichment task for tracking.</span>
+<span class="sd">            - Extracts contact information from email body.</span>
+<span class="sd">            - Updates contact record with new information.</span>
+<span class="sd">            - Maintains task status and error handling.</span>
+
+<span class="sd">        Workflow:</span>
+<span class="sd">            1. Retrieve email content from database.</span>
+<span class="sd">            2. Create enrichment task.</span>
+<span class="sd">            3. Extract contact information.</span>
+<span class="sd">            4. Store enrichment source.</span>
+<span class="sd">            5. Update contact record.</span>
+<span class="sd">            6. Update task status.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            success = self.process_email_for_enrichment(conn, &quot;email_12345&quot;)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[PROCESS] Starting enrichment for email </span><span class="si">{</span><span class="n">email_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Retrieve email content from database</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                SELECT id, from_email, from_name, plain_body, html_body</span>
+<span class="s2">                FROM raw_emails WHERE id = ?</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">(</span><span class="n">email_id</span><span class="p">,)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">fetch_one</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[PROCESS] Email </span><span class="si">{</span><span class="n">email_id</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="n">email_id</span><span class="p">,</span> <span class="n">from_email</span><span class="p">,</span> <span class="n">from_name</span><span class="p">,</span> <span class="n">plain_body</span><span class="p">,</span> <span class="n">html_body</span> <span class="o">=</span> <span class="n">result</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;[PROCESS] Processing email from </span><span class="si">{</span><span class="n">from_email</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">from_name</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Create enrichment task for tracking</span>
+            <span class="n">task_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_enrichment_task</span><span class="p">(</span>
+                <span class="n">conn</span><span class="p">,</span>
+                <span class="s2">&quot;email&quot;</span><span class="p">,</span>
+                <span class="n">email_id</span><span class="p">,</span>
+                <span class="s2">&quot;contact_info&quot;</span><span class="p">,</span>
+                <span class="p">{</span><span class="s2">&quot;from_email&quot;</span><span class="p">:</span> <span class="n">from_email</span><span class="p">},</span>
+            <span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Extract contact information from plain text body</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;[PROCESS] Attempting contact info extraction&quot;</span><span class="p">)</span>
+                <span class="n">contact_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_contact_info</span><span class="p">(</span><span class="n">plain_body</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">contact_info</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="s2">&quot;[PROCESS] Contact info found, storing enrichment source&quot;</span>
+                    <span class="p">)</span>
+                    <span class="c1"># Store extracted information as enrichment source</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">store_enrichment_source</span><span class="p">(</span>
+                        <span class="n">conn</span><span class="p">,</span>
+                        <span class="s2">&quot;email_signature&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;contact&quot;</span><span class="p">,</span>
+                        <span class="n">from_email</span><span class="p">,</span>
+                        <span class="n">contact_info</span><span class="p">,</span>
+                        <span class="n">contact_info</span><span class="p">[</span><span class="s2">&quot;confidence&quot;</span><span class="p">],</span>
+                    <span class="p">)</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;[PROCESS] Updating contact record&quot;</span><span class="p">)</span>
+                    <span class="c1"># Update contact record with new information</span>
+                    <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                        UPDATE contacts</span>
+<span class="s2">                        SET name = COALESCE(?, name),</span>
+<span class="s2">                            job_title = COALESCE(?, job_title),</span>
+<span class="s2">                            company = COALESCE(?, company),</span>
+<span class="s2">                            phone = COALESCE(?, phone),</span>
+<span class="s2">                            linkedin_url = COALESCE(?, linkedin_url),</span>
+<span class="s2">                            enrichment_status = &#39;enriched&#39;,</span>
+<span class="s2">                            last_enriched = CURRENT_TIMESTAMP,</span>
+<span class="s2">                            enrichment_source = &#39;email_signature&#39;,</span>
+<span class="s2">                            confidence_score = ?,</span>
+<span class="s2">                            updated_at = CURRENT_TIMESTAMP</span>
+<span class="s2">                        WHERE email = ?</span>
+<span class="s2">                        &quot;&quot;&quot;</span>
+                    <span class="n">params</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">contact_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">),</span>
+                        <span class="n">contact_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;job_title&quot;</span><span class="p">),</span>
+                        <span class="n">contact_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;company&quot;</span><span class="p">),</span>
+                        <span class="n">contact_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;phone&quot;</span><span class="p">),</span>
+                        <span class="n">contact_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;linkedin_url&quot;</span><span class="p">),</span>
+                        <span class="n">contact_info</span><span class="p">[</span><span class="s2">&quot;confidence&quot;</span><span class="p">],</span>
+                        <span class="n">from_email</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">row_count</span> <span class="o">=</span> <span class="n">execute_query</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">row_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;[PROCESS] No contact record found for </span><span class="si">{</span><span class="n">from_email</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;[PROCESS] Updated contact record for </span><span class="si">{</span><span class="n">from_email</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+
+                    <span class="c1"># Update task status to completed</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">update_task_status</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">task_id</span><span class="p">,</span> <span class="s2">&quot;completed&quot;</span><span class="p">,</span> <span class="n">contact_info</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;[PROCESS] No contact info found in email&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update_task_status</span><span class="p">(</span>
+                    <span class="n">conn</span><span class="p">,</span>
+                    <span class="n">task_id</span><span class="p">,</span>
+                    <span class="s2">&quot;skipped&quot;</span><span class="p">,</span>
+                    <span class="p">{</span><span class="s2">&quot;reason&quot;</span><span class="p">:</span> <span class="s2">&quot;No contact info found&quot;</span><span class="p">},</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;[PROCESS] Error processing email </span><span class="si">{</span><span class="n">email_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">!s}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update_task_status</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">task_id</span><span class="p">,</span> <span class="s2">&quot;failed&quot;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;[PROCESS] Fatal error processing email </span><span class="si">{</span><span class="n">email_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">!s}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="ContactEnrichment.enrich_contacts">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.enrichment.html#dewey.core.crm.enrichment.contact_enrichment.ContactEnrichment.enrich_contacts">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">enrich_contacts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process a batch of emails for contact enrichment.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            batch_size: Number of emails to process in this batch. If None, uses default from config.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            - Processes emails in batches for better performance and resource management.</span>
+<span class="sd">            - Only processes emails that haven&#39;t been enriched before.</span>
+<span class="sd">            - Tracks success rate and provides detailed logging.</span>
+<span class="sd">            - Uses database transactions for atomic operations.</span>
+
+<span class="sd">        Workflow:</span>
+<span class="sd">            1. Get batch of unprocessed emails.</span>
+<span class="sd">            2. Process each email individually.</span>
+<span class="sd">            3. Track success/failure statistics.</span>
+<span class="sd">            4. Log results and handle errors.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            self.enrich_contacts(batch_size=100)  # Process 100 emails</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">enrichment_batch_size</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;[BATCH] Starting contact enrichment batch (size=</span><span class="si">{</span><span class="n">batch_size</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">get_connection</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+                <span class="c1"># Get batch of unprocessed emails</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;[BATCH] Querying for unprocessed emails&quot;</span><span class="p">)</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    SELECT e.id</span>
+<span class="s2">                    FROM raw_emails e</span>
+<span class="s2">                    LEFT JOIN enrichment_tasks t ON</span>
+<span class="s2">                        t.entity_type = &#39;email&#39; AND</span>
+<span class="s2">                        t.entity_id = e.id AND</span>
+<span class="s2">                        t.task_type = &#39;contact_info&#39;</span>
+<span class="s2">                    WHERE t.id IS NULL</span>
+<span class="s2">                    LIMIT ?</span>
+<span class="s2">                    &quot;&quot;&quot;</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="p">(</span><span class="n">batch_size</span><span class="p">,)</span>
+                <span class="n">email_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">fetch_all</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">params</span><span class="p">)]</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">email_ids</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;[BATCH] No new emails to process&quot;</span><span class="p">)</span>
+                    <span class="k">return</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[BATCH] Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">email_ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> emails to process&quot;</span><span class="p">)</span>
+
+                <span class="c1"># Process each email in the batch</span>
+                <span class="n">success_count</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">email_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">email_ids</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[BATCH] Processing email </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">email_ids</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_email_for_enrichment</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">email_id</span><span class="p">):</span>
+                        <span class="n">success_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="c1"># Log batch completion statistics</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;[BATCH] Enrichment completed. Processed </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">email_ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> emails, </span><span class="si">{</span><span class="n">success_count</span><span class="si">}</span><span class="s2"> successful&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;[BATCH] Fatal error in enrichment batch: </span><span class="si">{</span><span class="n">e</span><span class="si">!s}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">raise</span></div>
+</div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">enrichment</span> <span class="o">=</span> <span class="n">ContactEnrichment</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ContactEnrichmentScript&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Enriches contact information from emails.&quot;</span><span class="p">,</span>
+        <span class="n">config_section</span><span class="o">=</span><span class="s2">&quot;crm&quot;</span><span class="p">,</span>
+        <span class="n">requires_db</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">enrichment</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../../index.html">Dewey (TUI)</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../modules.html">dewey</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../../index.html">Module code</a><ul>
+  <li><a href="../../../../dewey.html">dewey</a><ul>
+  <li><a href="../../crm.html">dewey.core.crm</a><ul>
+  <li><a href="../enrichment.html">dewey.core.crm.enrichment</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Sloane Ortel.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

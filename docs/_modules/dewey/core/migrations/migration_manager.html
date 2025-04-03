@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dewey.core.migrations.migration_manager &#8212; Dewey (TUI) 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for dewey.core.migrations.migration_manager</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Database migration manager for Dewey.</span>
+
+<span class="sd">This module provides tools for managing database migrations, including:</span>
+<span class="sd">- Tracking applied migrations</span>
+<span class="sd">- Running migrations in order</span>
+<span class="sd">- Handling rollbacks</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">duckdb</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dewey.core.base_script</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseScript</span>
+
+
+<div class="viewcode-block" id="MigrationManager">
+<a class="viewcode-back" href="../../../../dewey.core.migrations.html#dewey.core.migrations.migration_manager.MigrationManager">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MigrationManager</span><span class="p">(</span><span class="n">BaseScript</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manages database migrations for Dewey.</span>
+
+<span class="sd">    This class handles tracking, applying, and rolling back database migrations.</span>
+<span class="sd">    It ensures migrations are applied in the correct order and only once.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">MIGRATIONS_TABLE</span> <span class="o">=</span> <span class="s2">&quot;migrations&quot;</span>
+
+<div class="viewcode-block" id="MigrationManager.__init__">
+<a class="viewcode-back" href="../../../../dewey.core.migrations.html#dewey.core.migrations.migration_manager.MigrationManager.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the migration manager.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            config: Configuration dictionary</span>
+<span class="sd">            **kwargs: Additional keyword arguments</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">migrations_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span>
+                <span class="s2">&quot;migrations_directory&quot;</span><span class="p">,</span>
+                <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;migration_files&quot;</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="MigrationManager.run">
+<a class="viewcode-back" href="../../../../dewey.core.migrations.html#dewey.core.migrations.migration_manager.MigrationManager.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run the migration manager to apply pending migrations.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_migrations_table</span><span class="p">()</span>
+            <span class="n">pending_migrations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pending_migrations</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">pending_migrations</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No pending migrations to apply.&quot;</span><span class="p">)</span>
+                <span class="k">return</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pending_migrations</span><span class="p">)</span><span class="si">}</span><span class="s2"> pending migrations.&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">migration_file</span><span class="p">,</span> <span class="n">migration_module</span> <span class="ow">in</span> <span class="n">pending_migrations</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_apply_migration</span><span class="p">(</span><span class="n">migration_file</span><span class="p">,</span> <span class="n">migration_module</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;All migrations applied successfully.&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error during migration: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="MigrationManager.execute">
+<a class="viewcode-back" href="../../../../dewey.core.migrations.html#dewey.core.migrations.migration_manager.MigrationManager.execute">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the migration manager to apply pending migrations.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_migrations_table</span><span class="p">()</span>
+            <span class="n">pending_migrations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pending_migrations</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">pending_migrations</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No pending migrations to apply.&quot;</span><span class="p">)</span>
+                <span class="k">return</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pending_migrations</span><span class="p">)</span><span class="si">}</span><span class="s2"> pending migrations.&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">migration_file</span><span class="p">,</span> <span class="n">migration_module</span> <span class="ow">in</span> <span class="n">pending_migrations</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_apply_migration</span><span class="p">(</span><span class="n">migration_file</span><span class="p">,</span> <span class="n">migration_module</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;All migrations applied successfully.&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error during migration: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">duckdb</span><span class="o">.</span><span class="n">DuckDBPyConnection</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a database connection.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A DuckDB connection</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Get connection string from config</span>
+            <span class="n">db_conn_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span>
+                <span class="s2">&quot;database_connection&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;dewey.duckdb&quot;</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Check if it&#39;s a MotherDuck connection</span>
+            <span class="k">if</span> <span class="n">db_conn_string</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;md:&quot;</span><span class="p">):</span>
+                <span class="c1"># Get MotherDuck token</span>
+                <span class="n">token</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MOTHERDUCK_TOKEN&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
+                    <span class="n">token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;motherduck_token&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">token</span><span class="p">:</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MOTHERDUCK_TOKEN&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">token</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connecting to database: </span><span class="si">{</span><span class="n">db_conn_string</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">duckdb</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_conn_string</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ensure_migrations_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ensure the migrations tracking table exists.&quot;&quot;&quot;</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_connection</span><span class="p">()</span>
+
+        <span class="c1"># Create migrations table if it doesn&#39;t exist</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        CREATE TABLE IF NOT EXISTS </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">MIGRATIONS_TABLE</span><span class="si">}</span><span class="s2"> (</span>
+<span class="s2">            id SERIAL PRIMARY KEY,</span>
+<span class="s2">            migration_name VARCHAR NOT NULL,</span>
+<span class="s2">            applied_at TIMESTAMP NOT NULL,</span>
+<span class="s2">            success BOOLEAN NOT NULL,</span>
+<span class="s2">            details TEXT</span>
+<span class="s2">        )</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ensured migrations table &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">MIGRATIONS_TABLE</span><span class="si">}</span><span class="s2">&#39; exists.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_applied_migrations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of already applied migrations.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of migration filenames that have already been applied</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_connection</span><span class="p">()</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        SELECT migration_name FROM </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">MIGRATIONS_TABLE</span><span class="si">}</span>
+<span class="s2">        WHERE success = TRUE</span>
+<span class="s2">        ORDER BY applied_at</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_available_migrations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of available migration files.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of available migration filenames</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">migration_files</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Ensure the migrations directory exists</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">migrations_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">migrations_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created migrations directory: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">migrations_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Find all Python migration files</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">migrations_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.py&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">):</span>
+                <span class="n">migration_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="c1"># Sort by filename (which should include timestamps)</span>
+        <span class="n">migration_files</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">migration_files</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_pending_migrations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of pending migrations.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of (filename, module) tuples for migrations that need to be applied</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">applied_migrations</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_applied_migrations</span><span class="p">())</span>
+        <span class="n">available_migrations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_available_migrations</span><span class="p">()</span>
+
+        <span class="n">pending_migrations</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">migration_file</span> <span class="ow">in</span> <span class="n">available_migrations</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">migration_file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">applied_migrations</span><span class="p">:</span>
+                <span class="c1"># Import the migration module</span>
+                <span class="n">module_name</span> <span class="o">=</span> <span class="n">migration_file</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>  <span class="c1"># Remove .py extension</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">module_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;dewey.core.migrations.migration_files.</span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">migration_module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module_path</span><span class="p">)</span>
+                    <span class="n">pending_migrations</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">migration_file</span><span class="p">,</span> <span class="n">migration_module</span><span class="p">))</span>
+                <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Failed to import migration </span><span class="si">{</span><span class="n">migration_file</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="k">continue</span>
+
+        <span class="k">return</span> <span class="n">pending_migrations</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_migration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">migration_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">migration_module</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply a single migration.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            migration_file: The filename of the migration</span>
+<span class="sd">            migration_module: The imported migration module</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_connection</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Applying migration: </span><span class="si">{</span><span class="n">migration_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">details</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Check if the migration has the required functions</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">migration_module</span><span class="p">,</span> <span class="s2">&quot;migrate&quot;</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Migration </span><span class="si">{</span><span class="n">migration_file</span><span class="si">}</span><span class="s2"> missing required &#39;migrate&#39; function&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Apply the migration</span>
+            <span class="n">migration_module</span><span class="o">.</span><span class="n">migrate</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+
+            <span class="c1"># Mark as successful</span>
+            <span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">details</span> <span class="o">=</span> <span class="s2">&quot;Migration applied successfully&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Successfully applied migration: </span><span class="si">{</span><span class="n">migration_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">details</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to apply migration </span><span class="si">{</span><span class="n">migration_file</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Attempt rollback if available</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">migration_module</span><span class="p">,</span> <span class="s2">&quot;rollback&quot;</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Attempting to rollback migration: </span><span class="si">{</span><span class="n">migration_file</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">migration_module</span><span class="o">.</span><span class="n">rollback</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+                    <span class="n">details</span> <span class="o">+=</span> <span class="s2">&quot;; Rollback successful&quot;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rollback successful for: </span><span class="si">{</span><span class="n">migration_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">rollback_error</span><span class="p">:</span>
+                    <span class="n">details</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;; Rollback failed: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">rollback_error</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Rollback failed for </span><span class="si">{</span><span class="n">migration_file</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">rollback_error</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">success</span><span class="p">:</span>
+                <span class="k">raise</span>
+
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="c1"># Record the migration attempt</span>
+            <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            INSERT INTO </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">MIGRATIONS_TABLE</span><span class="si">}</span><span class="s2"> (migration_name, applied_at, success, details)</span>
+<span class="s2">            VALUES (?, ?, ?, ?)</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">migration_file</span><span class="p">,</span> <span class="n">now</span><span class="p">,</span> <span class="n">success</span><span class="p">,</span> <span class="n">details</span><span class="p">],</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="MigrationManager.create_migration">
+<a class="viewcode-back" href="../../../../dewey.core.migrations.html#dewey.core.migrations.migration_manager.MigrationManager.create_migration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_migration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new migration file with a timestamp.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name: A descriptive name for the migration</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The path to the created migration file</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Ensure the migrations directory exists</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">migrations_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">migrations_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Create a timestamp for the migration</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H%M%S&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Clean the name (remove spaces, lowercase, etc.)</span>
+        <span class="n">clean_name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Create the migration filename</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">clean_name</span><span class="si">}</span><span class="s2">.py&quot;</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">migrations_dir</span> <span class="o">/</span> <span class="n">filename</span>
+
+        <span class="c1"># Create the migration file from template</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;\&quot;\&quot;\&quot;</span>
+<span class="sd">Migration: {name}</span>
+<span class="sd">Created: {timestamp}</span>
+<span class="sd">\&quot;\&quot;\&quot;</span>
+
+<span class="sd">def migrate(conn):</span>
+<span class="sd">    \&quot;\&quot;\&quot;Apply the migration.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        conn: A DuckDB connection</span>
+<span class="sd">    \&quot;\&quot;\&quot;</span>
+<span class="sd">    # Implement the migration here</span>
+<span class="sd">    conn.execute(\&quot;\&quot;\&quot;</span>
+<span class="sd">    -- Your SQL here</span>
+<span class="sd">    \&quot;\&quot;\&quot;)</span>
+
+<span class="sd">def rollback(conn):</span>
+<span class="sd">    \&quot;\&quot;\&quot;Rollback the migration.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        conn: A DuckDB connection</span>
+<span class="sd">    \&quot;\&quot;\&quot;</span>
+<span class="sd">    # Implement the rollback here</span>
+<span class="sd">    conn.execute(\&quot;\&quot;\&quot;</span>
+<span class="sd">    -- Your rollback SQL here</span>
+<span class="sd">    \&quot;\&quot;\&quot;)</span>
+<span class="sd">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created new migration file: </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Example usage</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Manage database migrations&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--create&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Create a new migration with the given name&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--config&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to config file&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;config/dewey.yaml&quot;</span>
+    <span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="c1"># Load config</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+
+    <span class="c1"># Initialize migration manager</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">MigrationManager</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">create</span><span class="p">:</span>
+        <span class="n">migration_file</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">create_migration</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">create</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created migration: </span><span class="si">{</span><span class="n">migration_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Run pending migrations</span>
+        <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">Dewey (TUI)</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">dewey</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  <li><a href="../../../dewey.html">dewey</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Sloane Ortel.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

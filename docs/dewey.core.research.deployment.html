@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>dewey.core.research.deployment package &#8212; Dewey (TUI) 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=01f34227"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="dewey.core.research.docs package" href="dewey.core.research.docs.html" />
+    <link rel="prev" title="dewey.core.research.companies package" href="dewey.core.research.companies.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="dewey-core-research-deployment-package">
+<h1>dewey.core.research.deployment package<a class="headerlink" href="#dewey-core-research-deployment-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="dewey-core-research-deployment-company-analysis-deployment-module">
+<h2>dewey.core.research.deployment.company_analysis_deployment module<a class="headerlink" href="#dewey-core-research-deployment-company-analysis-deployment-module" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-dewey.core.research.deployment">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-dewey.core.research.deployment" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.core.research.deployment.DeploymentModule">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.core.research.deployment.</span></span><span class="sig-name descname"><span class="pre">DeploymentModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deployment'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">requires_db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_llm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/research/deployment.html#DeploymentModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.research.deployment.DeploymentModule" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Base class for deployment modules within Dewey.</p>
+<p>This class provides a standardized structure for deployment scripts,
+including configuration loading, logging, and a <cite>run</cite> method to
+execute the script’s primary logic.</p>
+<p>Initializes the DeploymentModule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_section</strong> (<em>str</em>) – Section in dewey.yaml to load for this script. Defaults to “deployment”.</p></li>
+<li><p><strong>requires_db</strong> (<em>bool</em>) – Whether this script requires database access. Defaults to False.</p></li>
+<li><p><strong>enable_llm</strong> (<em>bool</em>) – Whether this script requires LLM access. Defaults to False.</p></li>
+<li><p><strong>*args</strong> (<em>Any</em>) – Additional positional arguments.</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.research.deployment.DeploymentModule.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deployment'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">requires_db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_llm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/research/deployment.html#DeploymentModule.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.research.deployment.DeploymentModule.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the DeploymentModule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_section</strong> (<em>str</em>) – Section in dewey.yaml to load for this script. Defaults to “deployment”.</p></li>
+<li><p><strong>requires_db</strong> (<em>bool</em>) – Whether this script requires database access. Defaults to False.</p></li>
+<li><p><strong>enable_llm</strong> (<em>bool</em>) – Whether this script requires LLM access. Defaults to False.</p></li>
+<li><p><strong>*args</strong> (<em>Any</em>) – Additional positional arguments.</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.research.deployment.DeploymentModule.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/research/deployment.html#DeploymentModule.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.research.deployment.DeploymentModule.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the deployment logic.</p>
+<p>This method should be overridden by subclasses to implement the
+specific deployment steps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If an error occurs during deployment.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.core.research.deployment.DeploymentModule.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/core/research/deployment.html#DeploymentModule.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.core.research.deployment.DeploymentModule.run" title="Link to this definition">¶</a></dt>
+<dd><p>Legacy method that calls execute() for backward compatibility.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Dewey (TUI)</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">dewey</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="dewey.html">dewey package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">dewey</a><ul>
+  <li><a href="dewey.html">dewey package</a><ul>
+  <li><a href="dewey.core.html">dewey.core package</a><ul>
+  <li><a href="dewey.core.research.html">dewey.core.research package</a><ul>
+      <li>Previous: <a href="dewey.core.research.companies.html" title="previous chapter">dewey.core.research.companies package</a></li>
+      <li>Next: <a href="dewey.core.research.docs.html" title="next chapter">dewey.core.research.docs package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Sloane Ortel.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/dewey.core.research.deployment.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

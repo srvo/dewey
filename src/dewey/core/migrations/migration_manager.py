@@ -28,7 +28,7 @@ class MigrationManager(BaseScript):
 
     MIGRATIONS_TABLE = "migrations"
 
-    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
+    def __init__(self, config: dict[str, Any], **kwargs: Any) -> None:
         """Initialize the migration manager.
 
         Args:
@@ -137,7 +137,7 @@ class MigrationManager(BaseScript):
 
         self.logger.info(f"Ensured migrations table '{self.MIGRATIONS_TABLE}' exists.")
 
-    def _get_applied_migrations(self) -> List[str]:
+    def _get_applied_migrations(self) -> list[str]:
         """Get a list of already applied migrations.
 
         Returns:
@@ -154,7 +154,7 @@ class MigrationManager(BaseScript):
 
         return [row[0] for row in result]
 
-    def _get_available_migrations(self) -> List[str]:
+    def _get_available_migrations(self) -> list[str]:
         """Get a list of available migration files.
 
         Returns:
@@ -177,7 +177,7 @@ class MigrationManager(BaseScript):
         migration_files.sort()
         return migration_files
 
-    def _get_pending_migrations(self) -> List[Tuple[str, Any]]:
+    def _get_pending_migrations(self) -> list[tuple[str, Any]]:
         """Get a list of pending migrations.
 
         Returns:
@@ -342,7 +342,7 @@ if __name__ == "__main__":
     # Load config
     config = {}
     if os.path.exists(args.config):
-        with open(args.config, "r") as f:
+        with open(args.config) as f:
             config = yaml.safe_load(f) or {}
 
     # Initialize migration manager

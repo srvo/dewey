@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>dewey.llm.agents package &#8212; Dewey (TUI) 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=01f34227"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="dewey.llm.api_clients package" href="dewey.llm.api_clients.html" />
+    <link rel="prev" title="dewey.llm package" href="dewey.llm.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="dewey-llm-agents-package">
+<h1>dewey.llm.agents package<a class="headerlink" href="#dewey-llm-agents-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-dewey.llm.agents.adversarial_agent">
+<span id="dewey-llm-agents-adversarial-agent-module"></span><h2>dewey.llm.agents.adversarial_agent module<a class="headerlink" href="#module-dewey.llm.agents.adversarial_agent" title="Link to this heading">¶</a></h2>
+<p>Critical analysis and risk identification agent using smolagents.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.adversarial_agent.AdversarialAgent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.adversarial_agent.</span></span><span class="sig-name descname"><span class="pre">AdversarialAgent</span></span><a class="reference internal" href="_modules/dewey/llm/agents/adversarial_agent.html#AdversarialAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.adversarial_agent.AdversarialAgent" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Agent for critical analysis and devil’s advocacy.</p>
+<dl class="simple">
+<dt>Features:</dt><dd><ul class="simple">
+<li><p>Risk identification</p></li>
+<li><p>Critical evaluation</p></li>
+<li><p>Assumption testing</p></li>
+<li><p>Counterargument generation</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initializes the AdversarialAgent with risk analysis tools.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.adversarial_agent.AdversarialAgent.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/adversarial_agent.html#AdversarialAgent.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.adversarial_agent.AdversarialAgent.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the AdversarialAgent with risk analysis tools.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.adversarial_agent.AdversarialAgent.analyze_risks">
+<span class="sig-name descname"><span class="pre">analyze_risks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proposal</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/adversarial_agent.html#AdversarialAgent.analyze_risks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.adversarial_agent.AdversarialAgent.analyze_risks" title="Link to this definition">¶</a></dt>
+<dd><p>Analyzes potential risks and issues in a proposal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>proposal</strong> (<em>str</em>) – The text of the proposal to analyze.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Detailed risk analysis containing potential issues and recommendations.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.adversarial_agent.AdversarialAgent.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/adversarial_agent.html#AdversarialAgent.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.adversarial_agent.AdversarialAgent.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the agent’s primary task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_data</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>) – Input data for the agent. Defaults to None.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the agent execution with risk analysis.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, <em>Any</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.adversarial_agent.AdversarialAgent.run_llm">
+<span class="sig-name descname"><span class="pre">run_llm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/adversarial_agent.html#AdversarialAgent.run_llm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.adversarial_agent.AdversarialAgent.run_llm" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the LLM with the given prompt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prompt</strong> (<em>str</em>) – The prompt to send to the LLM.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The LLM’s response.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.agent_creator_agent">
+<span id="dewey-llm-agents-agent-creator-agent-module"></span><h2>dewey.llm.agents.agent_creator_agent module<a class="headerlink" href="#module-dewey.llm.agents.agent_creator_agent" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-dewey.llm.agents.base_agent">
+<span id="dewey-llm-agents-base-agent-module"></span><h2>dewey.llm.agents.base_agent module<a class="headerlink" href="#module-dewey.llm.agents.base_agent" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.base_agent.BaseAgent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.base_agent.</span></span><span class="sig-name descname"><span class="pre">BaseAgent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">requires_db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_llm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_rate_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/base_agent.html#BaseAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.base_agent.BaseAgent" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Base class for all agents.</p>
+<p>This class provides a foundation for building agents within the Dewey
+project, offering standardized configuration, logging, and database/LLM
+integration.</p>
+<p>Initializes the BaseAgent script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em><em> | </em><em>None</em>) – Name of the agent (used for logging)</p></li>
+<li><p><strong>description</strong> (<em>str</em><em> | </em><em>None</em>) – Description of the agent</p></li>
+<li><p><strong>config_section</strong> (<em>str</em><em> | </em><em>None</em>) – Section in dewey.yaml to load for this agent</p></li>
+<li><p><strong>requires_db</strong> (<em>bool</em>) – Whether this agent requires database access</p></li>
+<li><p><strong>enable_llm</strong> (<em>bool</em>) – Whether this agent requires LLM access</p></li>
+<li><p><strong>disable_rate_limit</strong> (<em>bool</em>) – Whether to disable LLM rate limiting</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Keyword arguments passed to the BaseScript constructor.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.base_agent.BaseAgent.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">requires_db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_llm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_rate_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/base_agent.html#BaseAgent.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.base_agent.BaseAgent.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the BaseAgent script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em><em> | </em><em>None</em>) – Name of the agent (used for logging)</p></li>
+<li><p><strong>description</strong> (<em>str</em><em> | </em><em>None</em>) – Description of the agent</p></li>
+<li><p><strong>config_section</strong> (<em>str</em><em> | </em><em>None</em>) – Section in dewey.yaml to load for this agent</p></li>
+<li><p><strong>requires_db</strong> (<em>bool</em>) – Whether this agent requires database access</p></li>
+<li><p><strong>enable_llm</strong> (<em>bool</em>) – Whether this agent requires LLM access</p></li>
+<li><p><strong>disable_rate_limit</strong> (<em>bool</em>) – Whether to disable LLM rate limiting</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Keyword arguments passed to the BaseScript constructor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.base_agent.BaseAgent.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/base_agent.html#BaseAgent.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.base_agent.BaseAgent.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the agent’s primary logic.</p>
+<p>This method should be overridden by subclasses to implement
+the specific behavior of the agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.base_agent.BaseAgent.get_variable_names">
+<span class="sig-name descname"><span class="pre">get_variable_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/base_agent.html#BaseAgent.get_variable_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.base_agent.BaseAgent.get_variable_names" title="Link to this definition">¶</a></dt>
+<dd><p>Extract variable names from a Jinja2 template.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>template</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>set[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.base_agent.BaseAgent.populate_template">
+<span class="sig-name descname"><span class="pre">populate_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/base_agent.html#BaseAgent.populate_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.base_agent.BaseAgent.populate_template" title="Link to this definition">¶</a></dt>
+<dd><p>Populate a Jinja2 template with variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>template</strong> (<em>str</em>)</p></li>
+<li><p><strong>variables</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.base_agent.BaseAgent.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/base_agent.html#BaseAgent.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.base_agent.BaseAgent.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Execute the agent.</p>
+<p>This method handles the common setup and execution flow:
+1. Parse arguments
+2. Set up logging and configuration
+3. Run the agent
+4. Handle exceptions
+5. Clean up resources</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.base_agent.BaseAgent.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/base_agent.html#BaseAgent.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.base_agent.BaseAgent.to_dict" title="Link to this definition">¶</a></dt>
+<dd><p>Convert the agent to a dictionary representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary representation of the agent.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><cite>dict</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.chat">
+<span id="dewey-llm-agents-chat-module"></span><h2>dewey.llm.agents.chat module<a class="headerlink" href="#module-dewey.llm.agents.chat" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.chat.ChatAgent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.chat.</span></span><span class="sig-name descname"><span class="pre">ChatAgent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/chat.html#ChatAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.chat.ChatAgent" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A chat agent that interacts with the user.</p>
+<p>This class inherits from BaseScript and implements the Dewey conventions
+for logging, configuration, and script execution.</p>
+<p>Initializes the ChatAgent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> (<em>Any</em>) – Keyword arguments passed to the BaseScript constructor.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.chat.ChatAgent.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/chat.html#ChatAgent.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.chat.ChatAgent.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the ChatAgent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> (<em>Any</em>) – Keyword arguments passed to the BaseScript constructor.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.chat.ChatAgent.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/chat.html#ChatAgent.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.chat.ChatAgent.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the core logic of the chat agent.</p>
+<p>This method retrieves configuration values, interacts with the user,
+and logs the interaction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If there is an error during the chat interaction.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.chat.ChatAgent.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/chat.html#ChatAgent.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.chat.ChatAgent.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the core logic of the chat agent.</p>
+<p>This method calls the execute method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.client_advocate_agent">
+<span id="dewey-llm-agents-client-advocate-agent-module"></span><h2>dewey.llm.agents.client_advocate_agent module<a class="headerlink" href="#module-dewey.llm.agents.client_advocate_agent" title="Link to this heading">¶</a></h2>
+<p>Client relationship and task prioritization agent using smolagents.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.client_advocate_agent.ClientAdvocateAgent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.client_advocate_agent.</span></span><span class="sig-name descname"><span class="pre">ClientAdvocateAgent</span></span><a class="reference internal" href="_modules/dewey/llm/agents/client_advocate_agent.html#ClientAdvocateAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.client_advocate_agent.ClientAdvocateAgent" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Agent for managing client relationships and prioritizing client work.</p>
+<dl class="simple">
+<dt>Features:</dt><dd><ul class="simple">
+<li><p>Client relationship analysis</p></li>
+<li><p>Task prioritization</p></li>
+<li><p>Communication guidance</p></li>
+<li><p>Opportunity identification</p></li>
+<li><p>Risk assessment</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initializes the ClientAdvocateAgent.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.client_advocate_agent.ClientAdvocateAgent.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/client_advocate_agent.html#ClientAdvocateAgent.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.client_advocate_agent.ClientAdvocateAgent.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the ClientAdvocateAgent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.client_advocate_agent.ClientAdvocateAgent.analyze_client">
+<span class="sig-name descname"><span class="pre">analyze_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/client_advocate_agent.html#ClientAdvocateAgent.analyze_client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.client_advocate_agent.ClientAdvocateAgent.analyze_client" title="Link to this definition">¶</a></dt>
+<dd><p>Analyzes client relationship and generates insights.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>profile</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – The client profile containing relationship history,
+preferences, and business details.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Relationship insights and recommendations for engagement.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.client_advocate_agent.ClientAdvocateAgent.prioritize_tasks">
+<span class="sig-name descname"><span class="pre">prioritize_tasks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tasks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_priorities</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/client_advocate_agent.html#ClientAdvocateAgent.prioritize_tasks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.client_advocate_agent.ClientAdvocateAgent.prioritize_tasks" title="Link to this definition">¶</a></dt>
+<dd><p>Prioritizes tasks based on client importance and deadlines.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tasks</strong> (<em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – List of tasks to prioritize.</p></li>
+<li><p><strong>client_priorities</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – Information about client priorities and importance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Prioritized tasks with reasoning.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[Dict[str, Any]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.client_advocate_agent.ClientAdvocateAgent.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/client_advocate_agent.html#ClientAdvocateAgent.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.client_advocate_agent.ClientAdvocateAgent.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the agent’s core logic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prompt</strong> (<em>str</em>) – The prompt to pass to the agent.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the agent’s execution.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.client_advocate_agent.ClientAdvocateAgent.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/client_advocate_agent.html#ClientAdvocateAgent.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.client_advocate_agent.ClientAdvocateAgent.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the client advocate agent’s main logic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.code_generator">
+<span id="dewey-llm-agents-code-generator-module"></span><h2>dewey.llm.agents.code_generator module<a class="headerlink" href="#module-dewey.llm.agents.code_generator" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.code_generator.CodeGenerator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.code_generator.</span></span><span class="sig-name descname"><span class="pre">CodeGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/code_generator.html#CodeGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.code_generator.CodeGenerator" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A script for generating code based on a given prompt.</p>
+<p>This class inherits from BaseScript and implements the run() method
+to execute the code generation logic. It uses the script’s logger for
+logging and retrieves configuration values using self.get_config_value().</p>
+<p>Initializes the CodeGenerator script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> (<em>Any</em>) – Keyword arguments passed to the BaseScript constructor.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.code_generator.CodeGenerator.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/code_generator.html#CodeGenerator.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.code_generator.CodeGenerator.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the CodeGenerator script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> (<em>Any</em>) – Keyword arguments passed to the BaseScript constructor.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.code_generator.CodeGenerator.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/code_generator.html#CodeGenerator.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.code_generator.CodeGenerator.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the code generation process.</p>
+<p>Retrieves the prompt from the configuration, generates code using
+the LLM, and logs the generated code.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If there is an error during code generation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.communication_analyzer">
+<span id="dewey-llm-agents-communication-analyzer-module"></span><h2>dewey.llm.agents.communication_analyzer module<a class="headerlink" href="#module-dewey.llm.agents.communication_analyzer" title="Link to this heading">¶</a></h2>
+<p>LLM agent for analyzing client communications from the database.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.communication_analyzer.CommunicationAnalysis">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.communication_analyzer.</span></span><span class="sig-name descname"><span class="pre">CommunicationAnalysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">summary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_topics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sentiment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_items</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">urgency</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_concerns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">communication_trends</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/communication_analyzer.html#CommunicationAnalysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.communication_analyzer.CommunicationAnalysis" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Structured output format for communication analysis.</p>
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises [<cite>ValidationError</cite>][pydantic_core.ValidationError] if the input data cannot be
+validated to form a valid model.</p>
+<p><cite>self</cite> is explicitly positional-only to allow <cite>self</cite> as a field name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>summary</strong> (<em>str</em>)</p></li>
+<li><p><strong>key_topics</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>sentiment</strong> (<em>str</em>)</p></li>
+<li><p><strong>action_items</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>urgency</strong> (<em>str</em>)</p></li>
+<li><p><strong>client_concerns</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>communication_trends</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dewey.llm.agents.communication_analyzer.CommunicationAnalysis.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#dewey.llm.agents.communication_analyzer.CommunicationAnalysis.summary" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dewey.llm.agents.communication_analyzer.CommunicationAnalysis.key_topics">
+<span class="sig-name descname"><span class="pre">key_topics</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#dewey.llm.agents.communication_analyzer.CommunicationAnalysis.key_topics" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dewey.llm.agents.communication_analyzer.CommunicationAnalysis.sentiment">
+<span class="sig-name descname"><span class="pre">sentiment</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#dewey.llm.agents.communication_analyzer.CommunicationAnalysis.sentiment" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dewey.llm.agents.communication_analyzer.CommunicationAnalysis.action_items">
+<span class="sig-name descname"><span class="pre">action_items</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#dewey.llm.agents.communication_analyzer.CommunicationAnalysis.action_items" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dewey.llm.agents.communication_analyzer.CommunicationAnalysis.urgency">
+<span class="sig-name descname"><span class="pre">urgency</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#dewey.llm.agents.communication_analyzer.CommunicationAnalysis.urgency" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dewey.llm.agents.communication_analyzer.CommunicationAnalysis.client_concerns">
+<span class="sig-name descname"><span class="pre">client_concerns</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#dewey.llm.agents.communication_analyzer.CommunicationAnalysis.client_concerns" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dewey.llm.agents.communication_analyzer.CommunicationAnalysis.communication_trends">
+<span class="sig-name descname"><span class="pre">communication_trends</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#dewey.llm.agents.communication_analyzer.CommunicationAnalysis.communication_trends" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dewey.llm.agents.communication_analyzer.CommunicationAnalysis.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#dewey.llm.agents.communication_analyzer.CommunicationAnalysis.model_config" title="Link to this definition">¶</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.communication_analyzer.CommunicationAnalyzerAgent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.communication_analyzer.</span></span><span class="sig-name descname"><span class="pre">CommunicationAnalyzerAgent</span></span><a class="reference internal" href="_modules/dewey/llm/agents/communication_analyzer.html#CommunicationAnalyzerAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.communication_analyzer.CommunicationAnalyzerAgent" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>LLM agent for analyzing client email communications.</p>
+<p>Initialize base script functionality.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – Name of the script (used for logging)</p></li>
+<li><p><strong>description</strong> – Description of the script</p></li>
+<li><p><strong>config_section</strong> – Section in dewey.yaml to load for this script</p></li>
+<li><p><strong>requires_db</strong> – Whether this script requires database access</p></li>
+<li><p><strong>enable_llm</strong> – Whether this script requires LLM access</p></li>
+<li><p><strong>project_root</strong> – Optional override for project root path</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.communication_analyzer.CommunicationAnalyzerAgent.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/communication_analyzer.html#CommunicationAnalyzerAgent.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.communication_analyzer.CommunicationAnalyzerAgent.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initialize base script functionality.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – Name of the script (used for logging)</p></li>
+<li><p><strong>description</strong> – Description of the script</p></li>
+<li><p><strong>config_section</strong> – Section in dewey.yaml to load for this script</p></li>
+<li><p><strong>requires_db</strong> – Whether this script requires database access</p></li>
+<li><p><strong>enable_llm</strong> – Whether this script requires LLM access</p></li>
+<li><p><strong>project_root</strong> – Optional override for project root path</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.communication_analyzer.CommunicationAnalyzerAgent.retrieve_communications">
+<span class="sig-name descname"><span class="pre">retrieve_communications</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_identifier</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/communication_analyzer.html#CommunicationAnalyzerAgent.retrieve_communications"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.communication_analyzer.CommunicationAnalyzerAgent.retrieve_communications" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieve communications for a client.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>client_identifier</strong> (<em>str</em>) – Email address or client_profile_id</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of communication dictionaries with subject, content, and dates</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.communication_analyzer.CommunicationAnalyzerAgent.format_communications_prompt">
+<span class="sig-name descname"><span class="pre">format_communications_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">communications</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/communication_analyzer.html#CommunicationAnalyzerAgent.format_communications_prompt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.communication_analyzer.CommunicationAnalyzerAgent.format_communications_prompt" title="Link to this definition">¶</a></dt>
+<dd><p>Format communications for LLM analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>communications</strong> (<em>list</em><em>[</em><em>dict</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[<a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.Message" title="dewey.llm.litellm_client.Message"><em>Message</em></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.communication_analyzer.CommunicationAnalyzerAgent.analyze_communications">
+<span class="sig-name descname"><span class="pre">analyze_communications</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_identifier</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/communication_analyzer.html#CommunicationAnalyzerAgent.analyze_communications"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.communication_analyzer.CommunicationAnalyzerAgent.analyze_communications" title="Link to this definition">¶</a></dt>
+<dd><p>Analyze client communications using LLM.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>client_identifier</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#dewey.llm.agents.communication_analyzer.CommunicationAnalysis" title="dewey.llm.agents.communication_analyzer.CommunicationAnalysis"><em>CommunicationAnalysis</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.communication_analyzer.CommunicationAnalyzerAgent.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/communication_analyzer.html#CommunicationAnalyzerAgent.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.communication_analyzer.CommunicationAnalyzerAgent.execute" title="Link to this definition">¶</a></dt>
+<dd><p>BaseScript entry point for CLI usage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.contact_agents">
+<span id="dewey-llm-agents-contact-agents-module"></span><h2>dewey.llm.agents.contact_agents module<a class="headerlink" href="#module-dewey.llm.agents.contact_agents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.contact_agents.ContactAgent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.contact_agents.</span></span><span class="sig-name descname"><span class="pre">ContactAgent</span></span><a class="reference internal" href="_modules/dewey/llm/agents/contact_agents.html#ContactAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.contact_agents.ContactAgent" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A class for managing contact-related tasks using LLMs.</p>
+<p>Initializes the ContactAgent, inheriting from BaseScript.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.contact_agents.ContactAgent.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/contact_agents.html#ContactAgent.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.contact_agents.ContactAgent.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the ContactAgent, inheriting from BaseScript.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.contact_agents.ContactAgent.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/contact_agents.html#ContactAgent.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.contact_agents.ContactAgent.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the main logic of the ContactAgent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.data_ingestion_agent">
+<span id="dewey-llm-agents-data-ingestion-agent-module"></span><h2>dewey.llm.agents.data_ingestion_agent module<a class="headerlink" href="#module-dewey.llm.agents.data_ingestion_agent" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.data_ingestion_agent.DataIngestionAgent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.data_ingestion_agent.</span></span><span class="sig-name descname"><span class="pre">DataIngestionAgent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data_ingestion'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/data_ingestion_agent.html#DataIngestionAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.data_ingestion_agent.DataIngestionAgent" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A Dewey script for data ingestion tasks.</p>
+<p>This agent handles the process of ingesting data from various sources,
+transforming it, and loading it into a target system.</p>
+<p>Initializes the DataIngestionAgent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_section</strong> (<em>str</em>) – The configuration section to use.</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.data_ingestion_agent.DataIngestionAgent.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data_ingestion'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/data_ingestion_agent.html#DataIngestionAgent.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.data_ingestion_agent.DataIngestionAgent.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the DataIngestionAgent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_section</strong> (<em>str</em>) – The configuration section to use.</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.data_ingestion_agent.DataIngestionAgent.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/data_ingestion_agent.html#DataIngestionAgent.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.data_ingestion_agent.DataIngestionAgent.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the data ingestion process.</p>
+<p>This method orchestrates the data ingestion workflow, including
+extracting data from sources, transforming it according to defined rules,
+and loading it into the designated target system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If any error occurs during the data ingestion process.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.docstring_agent">
+<span id="dewey-llm-agents-docstring-agent-module"></span><h2>dewey.llm.agents.docstring_agent module<a class="headerlink" href="#module-dewey.llm.agents.docstring_agent" title="Link to this heading">¶</a></h2>
+<p>Code documentation analysis and generation agent using smolagents.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.docstring_agent.DocstringAgent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.docstring_agent.</span></span><span class="sig-name descname"><span class="pre">DocstringAgent</span></span><a class="reference internal" href="_modules/dewey/llm/agents/docstring_agent.html#DocstringAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.docstring_agent.DocstringAgent" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#dewey.llm.agents.base_agent.BaseAgent" title="dewey.llm.agents.base_agent.BaseAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAgent</span></code></a></p>
+<p>Agent for analyzing and generating code documentation.</p>
+<dl class="simple">
+<dt>Features:</dt><dd><ul class="simple">
+<li><p>Docstring analysis and improvement</p></li>
+<li><p>Style compliance checking</p></li>
+<li><p>Context-aware documentation</p></li>
+<li><p>Dependency documentation</p></li>
+<li><p>Complexity analysis</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initializes the DocstringAgent.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.docstring_agent.DocstringAgent.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/docstring_agent.html#DocstringAgent.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.docstring_agent.DocstringAgent.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the DocstringAgent.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.docstring_agent.DocstringAgent.extract_code_context">
+<span class="sig-name descname"><span class="pre">extract_code_context</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/docstring_agent.html#DocstringAgent.extract_code_context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.docstring_agent.DocstringAgent.extract_code_context" title="Link to this definition">¶</a></dt>
+<dd><p>Extracts context from code using AST analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>code</strong> (<em>str</em>) – Source code to analyze.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of code contexts.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[Dict[str, Any]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.docstring_agent.DocstringAgent.analyze_file">
+<span class="sig-name descname"><span class="pre">analyze_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/docstring_agent.html#DocstringAgent.analyze_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.docstring_agent.DocstringAgent.analyze_file" title="Link to this definition">¶</a></dt>
+<dd><p>Analyzes a file and improves its documentation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>Path</em>) – The path to the file to analyze.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing the analysis results, or None if an error occurs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[Dict[str, Any]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.e2b_code_interpreter">
+<span id="dewey-llm-agents-e2b-code-interpreter-module"></span><h2>dewey.llm.agents.e2b_code_interpreter module<a class="headerlink" href="#module-dewey.llm.agents.e2b_code_interpreter" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.e2b_code_interpreter.E2BCodeInterpreter">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.e2b_code_interpreter.</span></span><span class="sig-name descname"><span class="pre">E2BCodeInterpreter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'E2BCodeInterpreter'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'E2BCodeInterpreter'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/e2b_code_interpreter.html#E2BCodeInterpreter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.e2b_code_interpreter.E2BCodeInterpreter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A class for interacting with the E2B code interpreter.</p>
+<p>Inherits from BaseScript for standardized configuration and logging.</p>
+<p>Initializes the E2BCodeInterpreter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_section</strong> (<em>str</em>) – The configuration section to use.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the script.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.e2b_code_interpreter.E2BCodeInterpreter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'E2BCodeInterpreter'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'E2BCodeInterpreter'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/e2b_code_interpreter.html#E2BCodeInterpreter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.e2b_code_interpreter.E2BCodeInterpreter.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the E2BCodeInterpreter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_section</strong> (<em>str</em>) – The configuration section to use.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the script.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.e2b_code_interpreter.E2BCodeInterpreter.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/e2b_code_interpreter.html#E2BCodeInterpreter.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.e2b_code_interpreter.E2BCodeInterpreter.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the core logic of the E2B code interpreter.</p>
+<p>Retrieves configuration values, initializes necessary components,
+and performs the main operations of the code interpreter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If an error occurs during execution.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.e2b_code_interpreter.E2BCodeInterpreter.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/e2b_code_interpreter.html#E2BCodeInterpreter.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.e2b_code_interpreter.E2BCodeInterpreter.run" title="Link to this definition">¶</a></dt>
+<dd><p>Legacy method that calls execute() for backward compatibility.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.e2b_code_interpreter.E2BCodeInterpreter.interpret_code">
+<span class="sig-name descname"><span class="pre">interpret_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/e2b_code_interpreter.html#E2BCodeInterpreter.interpret_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.e2b_code_interpreter.E2BCodeInterpreter.interpret_code" title="Link to this definition">¶</a></dt>
+<dd><p>Interprets the given code using the E2B code interpreter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>code</strong> (<em>str</em>) – The code to interpret.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the code interpretation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.exception_handler">
+<span id="dewey-llm-agents-exception-handler-module"></span><h2>dewey.llm.agents.exception_handler module<a class="headerlink" href="#module-dewey.llm.agents.exception_handler" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.exception_handler.ExceptionsScript">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.exception_handler.</span></span><span class="sig-name descname"><span class="pre">ExceptionsScript</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/exception_handler.html#ExceptionsScript"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.exception_handler.ExceptionsScript" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A script to handle exceptions using LLMs.</p>
+<p>This script inherits from BaseScript and implements the run() method
+to execute the core logic. It uses the self.logger for logging,
+self.get_config_value() to access configuration values, and avoids
+direct database/LLM initialization.</p>
+<p>Initializes the ExceptionsScript.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> (<em>Any</em>) – Keyword arguments passed to the BaseScript constructor.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.exception_handler.ExceptionsScript.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/exception_handler.html#ExceptionsScript.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.exception_handler.ExceptionsScript.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the ExceptionsScript.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> (<em>Any</em>) – Keyword arguments passed to the BaseScript constructor.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.exception_handler.ExceptionsScript.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/exception_handler.html#ExceptionsScript.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.exception_handler.ExceptionsScript.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the core logic of the ExceptionsScript.</p>
+<p>This method retrieves configuration values, processes data, and
+handles exceptions using LLMs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing the results of the script execution.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If an error occurs during script execution.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.logical_fallacy_agent">
+<span id="dewey-llm-agents-logical-fallacy-agent-module"></span><h2>dewey.llm.agents.logical_fallacy_agent module<a class="headerlink" href="#module-dewey.llm.agents.logical_fallacy_agent" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.logical_fallacy_agent.LogicalFallacyAgent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.logical_fallacy_agent.</span></span><span class="sig-name descname"><span class="pre">LogicalFallacyAgent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/logical_fallacy_agent.html#LogicalFallacyAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.logical_fallacy_agent.LogicalFallacyAgent" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A Dewey script for identifying logical fallacies in text.</p>
+<p>This agent leverages the Dewey framework for configuration,
+logging, and interaction with external resources.</p>
+<p>Initializes the LogicalFallacyAgent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> (<em>Any</em>) – Keyword arguments passed to the BaseScript constructor.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.logical_fallacy_agent.LogicalFallacyAgent.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/logical_fallacy_agent.html#LogicalFallacyAgent.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.logical_fallacy_agent.LogicalFallacyAgent.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the LogicalFallacyAgent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> (<em>Any</em>) – Keyword arguments passed to the BaseScript constructor.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.logical_fallacy_agent.LogicalFallacyAgent.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/logical_fallacy_agent.html#LogicalFallacyAgent.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.logical_fallacy_agent.LogicalFallacyAgent.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the logical fallacy detection process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – The input text to analyze for logical fallacies.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing the analysis results.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If an error occurs during the analysis.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict[str, <em>Any</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.next_question_suggestion">
+<span id="dewey-llm-agents-next-question-suggestion-module"></span><h2>dewey.llm.agents.next_question_suggestion module<a class="headerlink" href="#module-dewey.llm.agents.next_question_suggestion" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.next_question_suggestion.NextQuestionSuggestion">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.next_question_suggestion.</span></span><span class="sig-name descname"><span class="pre">NextQuestionSuggestion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/next_question_suggestion.html#NextQuestionSuggestion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.next_question_suggestion.NextQuestionSuggestion" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Suggests the next question to ask based on the current conversation.</p>
+<p>Inherits from BaseScript for standardized configuration and logging.</p>
+<p>Initializes the NextQuestionSuggestion script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – The configuration dictionary.</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.next_question_suggestion.NextQuestionSuggestion.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/next_question_suggestion.html#NextQuestionSuggestion.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.next_question_suggestion.NextQuestionSuggestion.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the NextQuestionSuggestion script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – The configuration dictionary.</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.next_question_suggestion.NextQuestionSuggestion.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conversation_history</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/next_question_suggestion.html#NextQuestionSuggestion.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.next_question_suggestion.NextQuestionSuggestion.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the next question suggestion logic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>conversation_history</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – The history of the conversation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The suggested next question.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the prompt template is not found in the configuration.</p></li>
+<li><p><strong>Exception</strong> – If there is an error during question suggestion.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.next_question_suggestion.NextQuestionSuggestion.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/next_question_suggestion.html#NextQuestionSuggestion.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.next_question_suggestion.NextQuestionSuggestion.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the next question suggestion logic.</p>
+<p>This method retrieves the conversation history from the configuration,
+calls the run method to get the next question suggestion, and logs the suggestion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.philosophical_agent">
+<span id="dewey-llm-agents-philosophical-agent-module"></span><h2>dewey.llm.agents.philosophical_agent module<a class="headerlink" href="#module-dewey.llm.agents.philosophical_agent" title="Link to this heading">¶</a></h2>
+<p>Philosophical agent using smolagents.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.philosophical_agent.PhilosophicalAgent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.philosophical_agent.</span></span><span class="sig-name descname"><span class="pre">PhilosophicalAgent</span></span><a class="reference internal" href="_modules/dewey/llm/agents/philosophical_agent.html#PhilosophicalAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.philosophical_agent.PhilosophicalAgent" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#dewey.llm.agents.base_agent.BaseAgent" title="dewey.llm.agents.base_agent.BaseAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAgent</span></code></a></p>
+<p>Agent for philosophical discussions using advanced AI models.</p>
+<dl class="simple">
+<dt>Features:</dt><dd><ul class="simple">
+<li><p>Deep philosophical analysis</p></li>
+<li><p>Conceptual clarification</p></li>
+<li><p>Argument evaluation</p></li>
+<li><p>Historical philosophical context</p></li>
+<li><p>Cross-cultural philosophical perspectives</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initializes the PhilosophicalAgent.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.philosophical_agent.PhilosophicalAgent.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/philosophical_agent.html#PhilosophicalAgent.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.philosophical_agent.PhilosophicalAgent.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the PhilosophicalAgent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.philosophical_agent.PhilosophicalAgent.discuss_philosophy">
+<span class="sig-name descname"><span class="pre">discuss_philosophy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">topic</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/philosophical_agent.html#PhilosophicalAgent.discuss_philosophy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.philosophical_agent.PhilosophicalAgent.discuss_philosophy" title="Link to this definition">¶</a></dt>
+<dd><p>Engages in philosophical discussions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>topic</strong> (<em>str</em>) – The topic to discuss.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A string containing the philosophical discussion.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.philosophical_agent.PhilosophicalAgent.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/philosophical_agent.html#PhilosophicalAgent.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.philosophical_agent.PhilosophicalAgent.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the philosophical discussion agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prompt</strong> (<em>str</em>) – The prompt for the philosophical discussion.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the philosophical discussion.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.philosophical_agent.PhilosophicalAgent.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/philosophical_agent.html#PhilosophicalAgent.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.philosophical_agent.PhilosophicalAgent.run" title="Link to this definition">¶</a></dt>
+<dd><p>Legacy method that calls execute() for backward compatibility.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prompt</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.pro_chat">
+<span id="dewey-llm-agents-pro-chat-module"></span><h2>dewey.llm.agents.pro_chat module<a class="headerlink" href="#module-dewey.llm.agents.pro_chat" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.pro_chat.ProChat">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.pro_chat.</span></span><span class="sig-name descname"><span class="pre">ProChat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pro_chat'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/pro_chat.html#ProChat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.pro_chat.ProChat" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A class for professional chat interactions, inheriting from BaseScript.</p>
+<p>Initializes the ProChat agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_section</strong> (<em>str</em>) – Configuration section name. Defaults to ‘pro_chat’.</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.pro_chat.ProChat.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pro_chat'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/pro_chat.html#ProChat.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.pro_chat.ProChat.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the ProChat agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_section</strong> (<em>str</em>) – Configuration section name. Defaults to ‘pro_chat’.</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.pro_chat.ProChat.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/pro_chat.html#ProChat.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.pro_chat.ProChat.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the core logic of the ProChat agent.</p>
+<p>This method retrieves configuration values, initializes necessary components,
+and performs the main operations of the chat agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If there is an error during the execution.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.rag_agent">
+<span id="dewey-llm-agents-rag-agent-module"></span><h2>dewey.llm.agents.rag_agent module<a class="headerlink" href="#module-dewey.llm.agents.rag_agent" title="Link to this heading">¶</a></h2>
+<p>RAG agent for semantic search using the smolagents framework.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.rag_agent.RAGAgent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.rag_agent.</span></span><span class="sig-name descname"><span class="pre">RAGAgent</span></span><a class="reference internal" href="_modules/dewey/llm/agents/rag_agent.html#RAGAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.rag_agent.RAGAgent" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#dewey.llm.agents.base_agent.BaseAgent" title="dewey.llm.agents.base_agent.BaseAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAgent</span></code></a></p>
+<p>RAG agent for semantic search and knowledge retrieval.</p>
+<dl class="simple">
+<dt>Features:</dt><dd><ul class="simple">
+<li><p>Semantic search capabilities</p></li>
+<li><p>Content type filtering</p></li>
+<li><p>Relevance scoring</p></li>
+<li><p>Knowledge base integration</p></li>
+<li><p>Query refinement</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initializes the RAGAgent with search capabilities.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.rag_agent.RAGAgent.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/rag_agent.html#RAGAgent.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.rag_agent.RAGAgent.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the RAGAgent with search capabilities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.rag_agent.RAGAgent.search">
+<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/rag_agent.html#RAGAgent.search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.rag_agent.RAGAgent.search" title="Link to this definition">¶</a></dt>
+<dd><p>Searches the knowledge base using semantic similarity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> (<em>str</em>) – The search query.</p></li>
+<li><p><strong>content_type</strong> (<em>str</em><em> | </em><em>None</em>) – Content type filter. Defaults to None.</p></li>
+<li><p><strong>limit</strong> (<em>int</em>) – Maximum number of results. Defaults to 5.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The search results with relevance scores.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, <em>Any</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.rag_agent.RAGAgent.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/rag_agent.html#RAGAgent.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.rag_agent.RAGAgent.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the RAG agent with the given prompt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prompt</strong> (<em>str</em>) – The prompt to use for the RAG agent.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The search results.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, <em>Any</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.self_care_agent">
+<span id="dewey-llm-agents-self-care-agent-module"></span><h2>dewey.llm.agents.self_care_agent module<a class="headerlink" href="#module-dewey.llm.agents.self_care_agent" title="Link to this heading">¶</a></h2>
+<p>Wellness monitoring and self-care intervention agent using smolagents.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.self_care_agent.SelfCareAgent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.self_care_agent.</span></span><span class="sig-name descname"><span class="pre">SelfCareAgent</span></span><a class="reference internal" href="_modules/dewey/llm/agents/self_care_agent.html#SelfCareAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.self_care_agent.SelfCareAgent" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#dewey.llm.agents.base_agent.BaseAgent" title="dewey.llm.agents.base_agent.BaseAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAgent</span></code></a></p>
+<p>Agent for monitoring user wellness and suggesting self-care interventions.</p>
+<dl class="simple">
+<dt>Features:</dt><dd><ul class="simple">
+<li><p>Work pattern monitoring</p></li>
+<li><p>Break timing recommendations</p></li>
+<li><p>Wellness activity suggestions</p></li>
+<li><p>Stress indicator detection</p></li>
+<li><p>Productivity optimization</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initializes the SelfCareAgent.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.self_care_agent.SelfCareAgent.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/self_care_agent.html#SelfCareAgent.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.self_care_agent.SelfCareAgent.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the SelfCareAgent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.self_care_agent.SelfCareAgent.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/self_care_agent.html#SelfCareAgent.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.self_care_agent.SelfCareAgent.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the agent with the given prompt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prompt</strong> (<em>str</em>) – The prompt to run the agent with.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of running the agent.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, <em>Any</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.self_care_agent.SelfCareAgent.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/self_care_agent.html#SelfCareAgent.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.self_care_agent.SelfCareAgent.run" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the agent with the given prompt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prompt</strong> (<em>str</em>) – The prompt to run the agent with.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of running the agent.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, <em>Any</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.self_care_agent.SelfCareAgent.monitor_and_intervene">
+<span class="sig-name descname"><span class="pre">monitor_and_intervene</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">work_patterns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/self_care_agent.html#SelfCareAgent.monitor_and_intervene"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.self_care_agent.SelfCareAgent.monitor_and_intervene" title="Link to this definition">¶</a></dt>
+<dd><p>Monitors work patterns and intervenes if needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>work_patterns</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>) – Information about recent work patterns.
+Defaults to None.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Assessment and recommendations for self-care.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, <em>Any</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.self_care_agent.SelfCareAgent.suggest_break">
+<span class="sig-name descname"><span class="pre">suggest_break</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">work_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">break_history</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/self_care_agent.html#SelfCareAgent.suggest_break"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.self_care_agent.SelfCareAgent.suggest_break" title="Link to this definition">¶</a></dt>
+<dd><p>Suggests a break based on current work patterns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>work_duration</strong> (<em>int</em>) – Minutes of continuous work. Defaults to 0.</p></li>
+<li><p><strong>break_history</strong> (<em>list</em><em>[</em><em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>] </em><em>| </em><em>None</em>) – Recent break history.
+Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Break recommendation with activity suggestion and duration.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, <em>Any</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.sloane_ghostwriter">
+<span id="dewey-llm-agents-sloane-ghostwriter-module"></span><h2>dewey.llm.agents.sloane_ghostwriter module<a class="headerlink" href="#module-dewey.llm.agents.sloane_ghostwriter" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.sloane_ghostwriter.SloaneGhostwriter">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.sloane_ghostwriter.</span></span><span class="sig-name descname"><span class="pre">SloaneGhostwriter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/sloane_ghostwriter.html#SloaneGhostwriter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.sloane_ghostwriter.SloaneGhostwriter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A script for generating text using a language model.</p>
+<p>This class inherits from BaseScript and implements the Dewey conventions
+for logging, configuration, and script execution.</p>
+<p>Initializes the SloaneGhostwriter script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> (<em>Any</em>) – Keyword arguments passed to the BaseScript constructor.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.sloane_ghostwriter.SloaneGhostwriter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/sloane_ghostwriter.html#SloaneGhostwriter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.sloane_ghostwriter.SloaneGhostwriter.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the SloaneGhostwriter script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> (<em>Any</em>) – Keyword arguments passed to the BaseScript constructor.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.sloane_ghostwriter.SloaneGhostwriter.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/sloane_ghostwriter.html#SloaneGhostwriter.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.sloane_ghostwriter.SloaneGhostwriter.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the core logic of the SloaneGhostwriter script.</p>
+<p>This method retrieves configuration values, generates text using a
+language model, and returns the generated text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing the generated text.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If there is an error during text generation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.sloane_ghostwriter.SloaneGhostwriter.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/sloane_ghostwriter.html#SloaneGhostwriter.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.sloane_ghostwriter.SloaneGhostwriter.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the SloaneGhostwriter script.</p>
+<p>This method calls the run method and logs any exceptions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.sloane_optimizer">
+<span id="dewey-llm-agents-sloane-optimizer-module"></span><h2>dewey.llm.agents.sloane_optimizer module<a class="headerlink" href="#module-dewey.llm.agents.sloane_optimizer" title="Link to this heading">¶</a></h2>
+<p>Strategic optimization and prioritization agent using smolagents.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.sloane_optimizer.SloanOptimizer">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.sloane_optimizer.</span></span><span class="sig-name descname"><span class="pre">SloanOptimizer</span></span><a class="reference internal" href="_modules/dewey/llm/agents/sloane_optimizer.html#SloanOptimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.sloane_optimizer.SloanOptimizer" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Agent for optimizing personal productivity and strategic alignment.</p>
+<dl class="simple">
+<dt>Features:</dt><dd><ul class="simple">
+<li><p>Strategic task prioritization</p></li>
+<li><p>Work pattern optimization</p></li>
+<li><p>Break scheduling</p></li>
+<li><p>Work-life balance analysis</p></li>
+<li><p>Resource allocation guidance</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initializes the SloanOptimizer with optimization tools.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.sloane_optimizer.SloanOptimizer.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/sloane_optimizer.html#SloanOptimizer.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.sloane_optimizer.SloanOptimizer.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the SloanOptimizer with optimization tools.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.sloane_optimizer.SloanOptimizer.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/sloane_optimizer.html#SloanOptimizer.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.sloane_optimizer.SloanOptimizer.run" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the agent with the given prompt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prompt</strong> (<em>str</em>) – The prompt to execute.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the agent’s execution.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Any</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.sloane_optimizer.SloanOptimizer.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/sloane_optimizer.html#SloanOptimizer.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.sloane_optimizer.SloanOptimizer.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the Sloan Optimizer agent with a default prompt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.sloane_optimizer.SloanOptimizer.analyze_current_state">
+<span class="sig-name descname"><span class="pre">analyze_current_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/sloane_optimizer.html#SloanOptimizer.analyze_current_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.sloane_optimizer.SloanOptimizer.analyze_current_state" title="Link to this definition">¶</a></dt>
+<dd><p>Analyzes current state and provides optimization recommendations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current state analysis and recommendations.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.sloane_optimizer.SloanOptimizer.optimize_tasks">
+<span class="sig-name descname"><span class="pre">optimize_tasks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tasks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">priorities</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/sloane_optimizer.html#SloanOptimizer.optimize_tasks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.sloane_optimizer.SloanOptimizer.optimize_tasks" title="Link to this definition">¶</a></dt>
+<dd><p>Optimizes tasks based on strategic priorities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tasks</strong> (<em>list</em><em>[</em><em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – List of task dictionaries to optimize.</p></li>
+<li><p><strong>priorities</strong> (<em>list</em><em>[</em><em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – List of priority dictionaries to apply.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optimized task dictionaries with prioritization metadata.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[Dict[str, Any]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.sloane_optimizer.SloanOptimizer.suggest_breaks">
+<span class="sig-name descname"><span class="pre">suggest_breaks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/sloane_optimizer.html#SloanOptimizer.suggest_breaks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.sloane_optimizer.SloanOptimizer.suggest_breaks" title="Link to this definition">¶</a></dt>
+<dd><p>Generates break suggestions based on current work patterns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Break suggestions with timing and activity recommendations.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[Dict[str, Any]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.sloane_optimizer.SloanOptimizer.check_work_life_balance">
+<span class="sig-name descname"><span class="pre">check_work_life_balance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/sloane_optimizer.html#SloanOptimizer.check_work_life_balance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.sloane_optimizer.SloanOptimizer.check_work_life_balance" title="Link to this definition">¶</a></dt>
+<dd><p>Analyzes work-life balance metrics and provides recommendations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Work-life balance metrics, analysis, and improvement suggestions.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.tagging_engine">
+<span id="dewey-llm-agents-tagging-engine-module"></span><h2>dewey.llm.agents.tagging_engine module<a class="headerlink" href="#module-dewey.llm.agents.tagging_engine" title="Link to this heading">¶</a></h2>
+<p>Module for tagging data using large language models.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.tagging_engine.TaggingEngine">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.tagging_engine.</span></span><span class="sig-name descname"><span class="pre">TaggingEngine</span></span><a class="reference internal" href="_modules/dewey/llm/agents/tagging_engine.html#TaggingEngine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.tagging_engine.TaggingEngine" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>A class for tagging data using LLMs.</p>
+<p>Inherits from BaseScript for standardized configuration, logging,
+and other utilities.</p>
+<p>Initialize the TaggingEngine.</p>
+<p>Calls the BaseScript constructor with the ‘tagging_engine’
+configuration section.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.tagging_engine.TaggingEngine.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/tagging_engine.html#TaggingEngine.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.tagging_engine.TaggingEngine.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initialize the TaggingEngine.</p>
+<p>Calls the BaseScript constructor with the ‘tagging_engine’
+configuration section.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.tagging_engine.TaggingEngine.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/tagging_engine.html#TaggingEngine.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.tagging_engine.TaggingEngine.run" title="Link to this definition">¶</a></dt>
+<dd><p>Execute the main logic of the tagging engine.</p>
+<p>This method should be overridden to implement the specific
+tagging functionality.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.transcript_analysis_agent">
+<span id="dewey-llm-agents-transcript-analysis-agent-module"></span><h2>dewey.llm.agents.transcript_analysis_agent module<a class="headerlink" href="#module-dewey.llm.agents.transcript_analysis_agent" title="Link to this heading">¶</a></h2>
+<p>Transcript analysis agent for extracting action items and insights from meetings.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.transcript_analysis_agent.TranscriptAnalysisAgent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.transcript_analysis_agent.</span></span><span class="sig-name descname"><span class="pre">TranscriptAnalysisAgent</span></span><a class="reference internal" href="_modules/dewey/llm/agents/transcript_analysis_agent.html#TranscriptAnalysisAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.transcript_analysis_agent.TranscriptAnalysisAgent" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Agent for analyzing meeting transcripts to extract action items and content.</p>
+<dl class="simple">
+<dt>Features:</dt><dd><ul class="simple">
+<li><p>Action item extraction</p></li>
+<li><p>Topic identification</p></li>
+<li><p>Decision tracking</p></li>
+<li><p>Speaker contribution analysis</p></li>
+<li><p>Follow-up recommendations</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initializes the TranscriptAnalysisAgent.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.transcript_analysis_agent.TranscriptAnalysisAgent.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/transcript_analysis_agent.html#TranscriptAnalysisAgent.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.transcript_analysis_agent.TranscriptAnalysisAgent.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the TranscriptAnalysisAgent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.transcript_analysis_agent.TranscriptAnalysisAgent.analyze_transcript">
+<span class="sig-name descname"><span class="pre">analyze_transcript</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transcript</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/transcript_analysis_agent.html#TranscriptAnalysisAgent.analyze_transcript"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.transcript_analysis_agent.TranscriptAnalysisAgent.analyze_transcript" title="Link to this definition">¶</a></dt>
+<dd><p>Analyzes a meeting transcript to extract actionable insights.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>transcript</strong> (<em>str</em>) – The meeting transcript.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The analysis results including action items, topics, decisions, and follow-ups.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, <em>Any</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.transcript_analysis_agent.TranscriptAnalysisAgent.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/transcript_analysis_agent.html#TranscriptAnalysisAgent.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.transcript_analysis_agent.TranscriptAnalysisAgent.run" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the transcript analysis agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prompt</strong> (<em>str</em>) – The prompt for analysis.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing the analysis results.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, <em>Any</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.transcript_analysis_agent.TranscriptAnalysisAgent.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/transcript_analysis_agent.html#TranscriptAnalysisAgent.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.transcript_analysis_agent.TranscriptAnalysisAgent.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the transcript analysis agent.</p>
+<p>This method is the main entry point for the script. It calls the run method
+with a predefined prompt and logs the results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents.triage_agent">
+<span id="dewey-llm-agents-triage-agent-module"></span><h2>dewey.llm.agents.triage_agent module<a class="headerlink" href="#module-dewey.llm.agents.triage_agent" title="Link to this heading">¶</a></h2>
+<p>Triage agent for initial analysis and delegation of incoming items using smolagents.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.agents.triage_agent.TriageAgent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.agents.triage_agent.</span></span><span class="sig-name descname"><span class="pre">TriageAgent</span></span><a class="reference internal" href="_modules/dewey/llm/agents/triage_agent.html#TriageAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.triage_agent.TriageAgent" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dewey.core.html#dewey.core.base_script.BaseScript" title="dewey.core.base_script.BaseScript"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseScript</span></code></a></p>
+<p>Agent for triaging incoming items and determining appropriate actions.</p>
+<dl class="simple">
+<dt>Features:</dt><dd><ul class="simple">
+<li><p>Priority assessment</p></li>
+<li><p>Content classification</p></li>
+<li><p>Action recommendation</p></li>
+<li><p>Delegation suggestions</p></li>
+<li><p>Response time estimation</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initializes the TriageAgent.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.triage_agent.TriageAgent.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/triage_agent.html#TriageAgent.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.triage_agent.TriageAgent.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the TriageAgent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.triage_agent.TriageAgent.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/triage_agent.html#TriageAgent.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.triage_agent.TriageAgent.run" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the triage agent with the given prompt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prompt</strong> (<em>str</em>) – The prompt to use for triaging.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the agent’s run.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, <em>Any</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.triage_agent.TriageAgent.triage_item">
+<span class="sig-name descname"><span class="pre">triage_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/triage_agent.html#TriageAgent.triage_item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.triage_agent.TriageAgent.triage_item" title="Link to this definition">¶</a></dt>
+<dd><p>Analyzes an item and determines appropriate actions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>content</strong> (<em>str</em>) – The content to analyze.</p></li>
+<li><p><strong>context</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>) – Optional context for the analysis. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Triage results containing priority, classification, and recommended actions.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, <em>Any</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.agents.triage_agent.TriageAgent.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/agents/triage_agent.html#TriageAgent.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.agents.triage_agent.TriageAgent.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Executes the triage agent with the given prompt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prompt</strong> (<em>str</em>) – The prompt to use for triaging.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the agent’s run.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, <em>Any</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.agents">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-dewey.llm.agents" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Dewey (TUI)</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">dewey</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="dewey.html">dewey package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">dewey</a><ul>
+  <li><a href="dewey.html">dewey package</a><ul>
+  <li><a href="dewey.llm.html">dewey.llm package</a><ul>
+      <li>Previous: <a href="dewey.llm.html" title="previous chapter">dewey.llm package</a></li>
+      <li>Next: <a href="dewey.llm.api_clients.html" title="next chapter">dewey.llm.api_clients package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Sloane Ortel.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/dewey.llm.agents.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

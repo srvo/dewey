@@ -36,6 +36,7 @@ try:
     HAS_REPOMIX = True
 except ImportError:
     logger.info(
+    pass  # Placeholder added by quick_fix.py
         "Repomix not available; repository context will be limited. Consider installing with 'pip install repomix'"
     )
     HAS_REPOMIX = False

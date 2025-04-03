@@ -183,6 +183,7 @@ class DBSyncer:
                     else:
                         logger.warning("Could not determine locking process")
                 except:
+    pass  # Placeholder added by quick_fix.py
                     logger.warning("Could not check file locks (lsof not available)")
         except Exception as e:
             logger.warning(f"Error checking lock info: {e}")

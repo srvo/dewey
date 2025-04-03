@@ -6,13 +6,12 @@ from pathlib import Path
 import structlog
 from smolagents import Tool
 
-from .base_agent import DeweyBaseAgent
-from dewey.core.base_script import BaseScript
+from .base_agent import BaseAgent
 
 logger = structlog.get_logger(__name__)
 
 
-class DocstringAgent(BaseScript, DeweyBaseAgent):
+class DocstringAgent(BaseAgent):
     """Agent for analyzing and generating code documentation.
 
     Features:

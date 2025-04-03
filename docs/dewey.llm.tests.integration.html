@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>dewey.llm.tests.integration package &#8212; Dewey (TUI) 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=01f34227"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="dewey-llm-tests-integration-package">
+<h1>dewey.llm.tests.integration package<a class="headerlink" href="#dewey-llm-tests-integration-package" title="Link to this heading">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dewey.llm.tests.integration.agents.html">dewey.llm.tests.integration.agents package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dewey.llm.tests.integration.agents.html#module-dewey.llm.tests.integration.agents">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dewey.llm.tests.integration.api_clients.html">dewey.llm.tests.integration.api_clients package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dewey.llm.tests.integration.api_clients.html#module-dewey.llm.tests.integration.api_clients">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dewey.llm.tests.integration.tools.html">dewey.llm.tests.integration.tools package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dewey.llm.tests.integration.tools.html#module-dewey.llm.tests.integration.tools">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-dewey.llm.tests.integration.test_litellm_integration">
+<span id="dewey-llm-tests-integration-test-litellm-integration-module"></span><h2>dewey.llm.tests.integration.test_litellm_integration module<a class="headerlink" href="#module-dewey.llm.tests.integration.test_litellm_integration" title="Link to this heading">¶</a></h2>
+<p>Integration tests for LiteLLM functionality.</p>
+<p>Note: These tests require actual API keys to run.
+To skip these tests when API keys are not available, use the
+SKIP_INTEGRATION_TESTS environment variable.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="dewey.llm.tests.integration.test_litellm_integration.api_keys">
+<span class="sig-prename descclassname"><span class="pre">dewey.llm.tests.integration.test_litellm_integration.</span></span><span class="sig-name descname"><span class="pre">api_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/tests/integration/test_litellm_integration.html#api_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.tests.integration.test_litellm_integration.api_keys" title="Link to this definition">¶</a></dt>
+<dd><p>Load API keys from environment variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dewey.llm.tests.integration.test_litellm_integration.setup_litellm">
+<span class="sig-prename descclassname"><span class="pre">dewey.llm.tests.integration.test_litellm_integration.</span></span><span class="sig-name descname"><span class="pre">setup_litellm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/tests/integration/test_litellm_integration.html#setup_litellm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.tests.integration.test_litellm_integration.setup_litellm" title="Link to this definition">¶</a></dt>
+<dd><p>Set up LiteLLM with API keys.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dewey.llm.tests.integration.test_litellm_integration.TestLiteLLMIntegration">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dewey.llm.tests.integration.test_litellm_integration.</span></span><span class="sig-name descname"><span class="pre">TestLiteLLMIntegration</span></span><a class="reference internal" href="_modules/dewey/llm/tests/integration/test_litellm_integration.html#TestLiteLLMIntegration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.tests.integration.test_litellm_integration.TestLiteLLMIntegration" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Integration tests for LiteLLM.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.tests.integration.test_litellm_integration.TestLiteLLMIntegration.openai_client">
+<span class="sig-name descname"><span class="pre">openai_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">setup_litellm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/tests/integration/test_litellm_integration.html#TestLiteLLMIntegration.openai_client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.tests.integration.test_litellm_integration.TestLiteLLMIntegration.openai_client" title="Link to this definition">¶</a></dt>
+<dd><p>Create a LiteLLMClient configured for OpenAI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMClient" title="dewey.llm.litellm_client.LiteLLMClient"><em>LiteLLMClient</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.tests.integration.test_litellm_integration.TestLiteLLMIntegration.test_openai_completion">
+<span class="sig-name descname"><span class="pre">test_openai_completion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">openai_client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/tests/integration/test_litellm_integration.html#TestLiteLLMIntegration.test_openai_completion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.tests.integration.test_litellm_integration.TestLiteLLMIntegration.test_openai_completion" title="Link to this definition">¶</a></dt>
+<dd><p>Test a basic completion with OpenAI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.tests.integration.test_litellm_integration.TestLiteLLMIntegration.anthropic_client">
+<span class="sig-name descname"><span class="pre">anthropic_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">setup_litellm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/tests/integration/test_litellm_integration.html#TestLiteLLMIntegration.anthropic_client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.tests.integration.test_litellm_integration.TestLiteLLMIntegration.anthropic_client" title="Link to this definition">¶</a></dt>
+<dd><p>Create a LiteLLMClient configured for Anthropic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="dewey.llm.html#dewey.llm.litellm_client.LiteLLMClient" title="dewey.llm.litellm_client.LiteLLMClient"><em>LiteLLMClient</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dewey.llm.tests.integration.test_litellm_integration.TestLiteLLMIntegration.test_anthropic_completion">
+<span class="sig-name descname"><span class="pre">test_anthropic_completion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">anthropic_client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dewey/llm/tests/integration/test_litellm_integration.html#TestLiteLLMIntegration.test_anthropic_completion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dewey.llm.tests.integration.test_litellm_integration.TestLiteLLMIntegration.test_anthropic_completion" title="Link to this definition">¶</a></dt>
+<dd><p>Test a basic completion with Anthropic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dewey.llm.tests.integration">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-dewey.llm.tests.integration" title="Link to this heading">¶</a></h2>
+<p>Integration tests for the LLM module.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Dewey (TUI)</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Sloane Ortel.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/dewey.llm.tests.integration.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

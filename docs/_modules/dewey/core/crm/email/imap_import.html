@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dewey.core.crm.email.imap_import &#8212; Dewey (TUI) 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for dewey.core.crm.email.imap_import</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">email</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">imaplib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadPoolExecutor</span><span class="p">,</span> <span class="n">as_completed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">email.header</span><span class="w"> </span><span class="kn">import</span> <span class="n">decode_header</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">email.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Message</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">duckdb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dotenv</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dotenv</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dewey.core.base_script</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseScript</span>
+
+<span class="c1"># Load environment variables from .env file</span>
+<span class="n">load_dotenv</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="EmailHeaderEncoder">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.email.html#dewey.core.crm.email.imap_import.EmailHeaderEncoder">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EmailHeaderEncoder</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom JSON encoder following project data handling conventions.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="EmailHeaderEncoder.default">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.email.html#dewey.core.crm.email.imap_import.EmailHeaderEncoder.default">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert non-serializable objects to strings.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">&quot;__str__&quot;</span><span class="p">):</span>
+                <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Non-serializable data&quot;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="safe_json_dumps">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.email.html#dewey.core.crm.email.imap_import.safe_json_dumps">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">safe_json_dumps</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">encoder</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;JSON dumping with multiple fallback strategies.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: The data to serialize</span>
+<span class="sd">        encoder: Optional JSON encoder to use</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        JSON string representation of data</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">encoder</span> <span class="ow">or</span> <span class="n">EmailHeaderEncoder</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Try cleaning common non-serializable types</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">cleaned</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">cleaned</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">encoder</span> <span class="ow">or</span> <span class="n">EmailHeaderEncoder</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">fallback_error</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;JSON serialization failed: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;fallback_error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">fallback_error</span><span class="p">),</span>
+                <span class="p">}</span>
+            <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="UnifiedIMAPImporter">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.email.html#dewey.core.crm.email.imap_import.UnifiedIMAPImporter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnifiedIMAPImporter</span><span class="p">(</span><span class="n">BaseScript</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unified IMAP importer supporting both database and MotherDuck.&quot;&quot;&quot;</span>
+
+    <span class="n">SQL_RESERVED</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;from&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;where&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;select&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;insert&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;update&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;delete&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;order&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;having&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;limit&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="UnifiedIMAPImporter.__init__">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.email.html#dewey.core.crm.email.imap_import.UnifiedIMAPImporter.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the IMAP email importer.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;IMAPEmailImporter&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Import emails from IMAP to database or MotherDuck&quot;</span><span class="p">,</span>
+            <span class="n">config_section</span><span class="o">=</span><span class="s2">&quot;imap_import&quot;</span><span class="p">,</span>
+            <span class="n">requires_db</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">enable_llm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">motherduck_mode</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_schema_and_indexes</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_schema_and_indexes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Combine schema definitions from both sources.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">email_schema</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        CREATE TABLE IF NOT EXISTS emails (</span>
+<span class="s2">            msg_id VARCHAR PRIMARY KEY,</span>
+<span class="s2">            thread_id VARCHAR,</span>
+<span class="s2">            subject VARCHAR,</span>
+<span class="s2">            from_address VARCHAR,</span>
+<span class="s2">            analysis_date TIMESTAMP,</span>
+<span class="s2">            raw_analysis JSON,</span>
+<span class="s2">            automation_score FLOAT,</span>
+<span class="s2">            content_value FLOAT,</span>
+<span class="s2">            human_interaction FLOAT,</span>
+<span class="s2">            time_value FLOAT,</span>
+<span class="s2">            business_impact FLOAT,</span>
+<span class="s2">            uncertainty_score FLOAT,</span>
+<span class="s2">            metadata JSON,</span>
+<span class="s2">            priority INTEGER,</span>
+<span class="s2">            label_ids JSON,</span>
+<span class="s2">            snippet TEXT,</span>
+<span class="s2">            internal_date BIGINT,</span>
+<span class="s2">            size_estimate INTEGER,</span>
+<span class="s2">            message_parts JSON,</span>
+<span class="s2">            draft_id VARCHAR,</span>
+<span class="s2">            draft_message JSON,</span>
+<span class="s2">            attachments JSON,</span>
+<span class="s2">            status VARCHAR DEFAULT &#39;new&#39;,</span>
+<span class="s2">            error_message VARCHAR,</span>
+<span class="s2">            batch_id VARCHAR,</span>
+<span class="s2">            import_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,</span>
+<span class="s2">            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,</span>
+<span class="s2">            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP</span>
+<span class="s2">        )</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Create index statements - broken into multiple lines for readability</span>
+        <span class="n">idx_thread_id</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_emails_thread_id ON emails(thread_id)&quot;</span>
+        <span class="p">)</span>
+        <span class="n">idx_from_addr</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_emails_from_address ON emails(from_address)&quot;</span>
+        <span class="p">)</span>
+        <span class="n">idx_internal_date</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_emails_internal_date &quot;</span>
+            <span class="s2">&quot;ON emails(internal_date)&quot;</span>
+        <span class="p">)</span>
+        <span class="n">idx_status</span> <span class="o">=</span> <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_emails_status ON emails(status)&quot;</span>
+        <span class="n">idx_batch_id</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_emails_batch_id ON emails(batch_id)&quot;</span>
+        <span class="p">)</span>
+        <span class="n">idx_import_ts</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_emails_import_timestamp &quot;</span>
+            <span class="s2">&quot;ON emails(import_timestamp)&quot;</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">email_indexes</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">idx_thread_id</span><span class="p">,</span>
+            <span class="n">idx_from_addr</span><span class="p">,</span>
+            <span class="n">idx_internal_date</span><span class="p">,</span>
+            <span class="n">idx_status</span><span class="p">,</span>
+            <span class="n">idx_batch_id</span><span class="p">,</span>
+            <span class="n">idx_import_ts</span><span class="p">,</span>
+        <span class="p">]</span>
+
+<div class="viewcode-block" id="UnifiedIMAPImporter.setup_argparse">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.email.html#dewey.core.crm.email.imap_import.UnifiedIMAPImporter.setup_argparse">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_argparse</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up command line arguments.&quot;&quot;&quot;</span>
+        <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setup_argparse</span><span class="p">()</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;--motherduck&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Use MotherDuck database&quot;</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;--username&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;sloane@ethicic.com&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Gmail username (default: sloane@ethicic.com)&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;--password&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;App password (uses GMAIL_APP_PASSWORD from .env by default)&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;--days&quot;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Days back to search for emails&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;--max&quot;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Maximum emails to import&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;--batch-size&quot;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Batch size for processing&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;--historical&quot;</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Import all historical emails&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--start-date&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Start date (YYYY-MM-DD)&quot;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--end-date&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;End date (YYYY-MM-DD)&quot;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;--workers&quot;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of worker threads for parallel processing&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">parser</span></div>
+
+
+<div class="viewcode-block" id="UnifiedIMAPImporter.init_database">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.email.html#dewey.core.crm.email.imap_import.UnifiedIMAPImporter.init_database">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_database</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize database connection and schema.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">motherduck_mode</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_init_motherduck</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Initialize database connection using the base_script method</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_db_connection</span><span class="p">()</span>
+            <span class="c1"># Create the emails table</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">email_schema</span><span class="p">)</span>
+            <span class="c1"># Create indexes</span>
+            <span class="k">for</span> <span class="n">index_sql</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">email_indexes</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">db_conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">index_sql</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Initialized SQLite database with email schema and indexes&quot;</span>
+            <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_motherduck</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize MotherDuck database connection.&quot;&quot;&quot;</span>
+        <span class="n">motherduck_token</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MOTHERDUCK_TOKEN&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">motherduck_token</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;MOTHERDUCK_TOKEN environment variable required&quot;</span><span class="p">)</span>
+
+        <span class="n">conn_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;md:dewey?motherduck_token=</span><span class="si">{</span><span class="n">motherduck_token</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_conn</span> <span class="o">=</span> <span class="n">duckdb</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">conn_string</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">email_schema</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">index_sql</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">email_indexes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">index_sql</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Initialized MotherDuck database connection&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="UnifiedIMAPImporter.connect_to_gmail">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.email.html#dewey.core.crm.email.imap_import.UnifiedIMAPImporter.connect_to_gmail">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect_to_gmail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">imaplib</span><span class="o">.</span><span class="n">IMAP4_SSL</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Connect to Gmail using IMAP.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            username: Gmail username</span>
+<span class="sd">            password: App-specific password</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            IMAP connection</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="s2">&quot;imap.gmail.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="mi">993</span><span class="p">,</span>
+            <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
+            <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">password</span><span class="p">,</span>
+            <span class="s2">&quot;mailbox&quot;</span><span class="p">:</span> <span class="s1">&#39;&quot;[Gmail]/All Mail&quot;&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connect_imap</span><span class="p">(</span><span class="n">config</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_connect_imap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">imaplib</span><span class="o">.</span><span class="n">IMAP4_SSL</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Connect to IMAP server using configured credentials.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            config: Dictionary with connection parameters</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            IMAP connection object</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">max_retries</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">retry_delay</span> <span class="o">=</span> <span class="mi">5</span>
+
+        <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retries</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Connecting to IMAP server </span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2"> (attempt </span><span class="si">%d</span><span class="s2">/</span><span class="si">%d</span><span class="s2">)&quot;</span><span class="p">,</span>
+                    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;host&quot;</span><span class="p">],</span>
+                    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;port&quot;</span><span class="p">],</span>
+                    <span class="n">attempt</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="n">max_retries</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="c1"># Set socket timeout to prevent hanging</span>
+                <span class="n">socket_timeout</span> <span class="o">=</span> <span class="mi">60</span>  <span class="c1"># 60 seconds timeout</span>
+                <span class="n">imap</span> <span class="o">=</span> <span class="n">imaplib</span><span class="o">.</span><span class="n">IMAP4_SSL</span><span class="p">(</span>
+                    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;host&quot;</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;port&quot;</span><span class="p">],</span> <span class="n">timeout</span><span class="o">=</span><span class="n">socket_timeout</span>
+                <span class="p">)</span>
+                <span class="n">imap</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;password&quot;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Successfully logged in as </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Set a shorter timeout for operations</span>
+                <span class="n">imap</span><span class="o">.</span><span class="n">socket</span><span class="p">()</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="n">socket_timeout</span><span class="p">)</span>
+
+                <span class="c1"># Select the mailbox</span>
+                <span class="n">imap</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;mailbox&quot;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Selected mailbox: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;mailbox&quot;</span><span class="p">])</span>
+
+                <span class="k">return</span> <span class="n">imap</span>
+            <span class="k">except</span> <span class="p">(</span>
+                <span class="n">imaplib</span><span class="o">.</span><span class="n">IMAP4</span><span class="o">.</span><span class="n">abort</span><span class="p">,</span>
+                <span class="ne">ConnectionResetError</span><span class="p">,</span>
+                <span class="ne">TimeoutError</span><span class="p">,</span>
+                <span class="ne">OSError</span><span class="p">,</span>
+            <span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="s2">&quot;IMAP connection failed on attempt </span><span class="si">%d</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">attempt</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">e</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">attempt</span> <span class="o">&lt;</span> <span class="n">max_retries</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Retrying in </span><span class="si">%d</span><span class="s2"> seconds...&quot;</span><span class="p">,</span> <span class="n">retry_delay</span><span class="p">)</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">retry_delay</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Max retries reached, giving up.&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Unexpected IMAP error: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+                <span class="k">raise</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_decode_email_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Decode email header properly handling various encodings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            header: Raw email header</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Decoded header string</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">header</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="n">decoded_parts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">part</span><span class="p">,</span> <span class="n">encoding</span> <span class="ow">in</span> <span class="n">decode_header</span><span class="p">(</span><span class="n">header</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">encoding</span><span class="p">:</span>
+                        <span class="n">decoded_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">decoded_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># Replacing bare except with Exception</span>
+                    <span class="n">decoded_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="s2">&quot;ignore&quot;</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">decoded_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">part</span><span class="p">))</span>
+        <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">decoded_parts</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_decode_payload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">charset</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Decode email payload bytes to string.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            payload: The binary payload data</span>
+<span class="sd">            charset: Character set to use for decoding</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Decoded string</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">payload</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">charset</span><span class="p">:</span>
+            <span class="n">charset</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span>  <span class="c1"># Default to UTF-8</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">payload</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">charset</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">UnicodeDecodeError</span><span class="p">,</span> <span class="ne">LookupError</span><span class="p">):</span>
+            <span class="c1"># If the specified charset fails, try some fallbacks</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">payload</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">UnicodeDecodeError</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">payload</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">UnicodeDecodeError</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">payload</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_message_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Message</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract the structure of an email message for analysis.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            msg: The email message object</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dictionary with message structure information</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">is_multipart</span><span class="p">():</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">part</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">get_payload</span><span class="p">()):</span>
+                <span class="n">part_info</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;part_index&quot;</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span>
+                    <span class="s2">&quot;content_type&quot;</span><span class="p">:</span> <span class="n">part</span><span class="o">.</span><span class="n">get_content_type</span><span class="p">(),</span>
+                    <span class="s2">&quot;charset&quot;</span><span class="p">:</span> <span class="n">part</span><span class="o">.</span><span class="n">get_content_charset</span><span class="p">(),</span>
+                    <span class="s2">&quot;content_disposition&quot;</span><span class="p">:</span> <span class="n">part</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Content-Disposition&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                    <span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="n">part</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(),</span>
+                    <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">as_bytes</span><span class="p">())</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="s2">&quot;as_bytes&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span><span class="p">),</span>
+                <span class="p">}</span>
+
+                <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">is_multipart</span><span class="p">():</span>
+                    <span class="n">part_info</span><span class="p">[</span><span class="s2">&quot;subparts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_message_structure</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+
+                <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part_info</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;multipart&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;parts&quot;</span><span class="p">:</span> <span class="n">parts</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;multipart&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">&quot;content_type&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_content_type</span><span class="p">(),</span>
+                <span class="s2">&quot;charset&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_content_charset</span><span class="p">(),</span>
+                <span class="s2">&quot;content_disposition&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Content-Disposition&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(),</span>
+                <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">as_bytes</span><span class="p">())</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s2">&quot;as_bytes&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_email_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email_data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse email message data into a structured dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            email_data: Raw email data</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dictionary containing parsed email data</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Parse the email message</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">message_from_bytes</span><span class="p">(</span><span class="n">email_data</span><span class="p">)</span>
+
+        <span class="c1"># Get basic headers</span>
+        <span class="n">subject</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode_email_header</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;Subject&quot;</span><span class="p">])</span>
+        <span class="n">from_addr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode_email_header</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;From&quot;</span><span class="p">])</span>
+        <span class="n">to_addr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode_email_header</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;To&quot;</span><span class="p">])</span>
+        <span class="n">date_str</span> <span class="o">=</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Try to parse the date</span>
+        <span class="n">date_obj</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">date_str</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">date_tuple</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">parsedate_tz</span><span class="p">(</span><span class="n">date_str</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">date_tuple</span><span class="p">:</span>
+                    <span class="n">timestamp</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">mktime_tz</span><span class="p">(</span><span class="n">date_tuple</span><span class="p">)</span>
+                    <span class="n">date_obj</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="c1"># Get message ID</span>
+        <span class="n">message_id</span> <span class="o">=</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;Message-ID&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Extract email body (both text and HTML)</span>
+        <span class="n">body_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">body_html</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">attachments</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">is_multipart</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">msg</span><span class="o">.</span><span class="n">walk</span><span class="p">():</span>
+                <span class="n">content_type</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">get_content_type</span><span class="p">()</span>
+                <span class="n">content_disposition</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Content-Disposition&quot;</span><span class="p">))</span>
+
+                <span class="c1"># Skip any multipart/* parts</span>
+                <span class="k">if</span> <span class="n">content_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;multipart&quot;</span><span class="p">):</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># Handle attachments</span>
+                <span class="k">if</span> <span class="s2">&quot;attachment&quot;</span> <span class="ow">in</span> <span class="n">content_disposition</span><span class="p">:</span>
+                    <span class="n">filename</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">get_filename</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
+                        <span class="c1"># Get attachment data</span>
+                        <span class="n">payload</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">get_payload</span><span class="p">(</span><span class="n">decode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                        <span class="n">attachments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="n">filename</span><span class="p">,</span>
+                                <span class="s2">&quot;content_type&quot;</span><span class="p">:</span> <span class="n">content_type</span><span class="p">,</span>
+                                <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span> <span class="k">if</span> <span class="n">payload</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+                            <span class="p">}</span>
+                        <span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># Try to get the payload</span>
+                <span class="n">payload</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">get_payload</span><span class="p">(</span><span class="n">decode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">payload</span><span class="p">:</span>
+                    <span class="n">charset</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">get_content_charset</span><span class="p">()</span>
+                    <span class="n">payload_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode_payload</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">charset</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">content_type</span> <span class="o">==</span> <span class="s2">&quot;text/plain&quot;</span><span class="p">:</span>
+                        <span class="n">body_text</span> <span class="o">+=</span> <span class="n">payload_str</span>
+                    <span class="k">elif</span> <span class="n">content_type</span> <span class="o">==</span> <span class="s2">&quot;text/html&quot;</span><span class="p">:</span>
+                        <span class="n">body_html</span> <span class="o">+=</span> <span class="n">payload_str</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Not multipart - get the payload directly</span>
+            <span class="n">payload</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_payload</span><span class="p">(</span><span class="n">decode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">payload</span><span class="p">:</span>
+                <span class="n">charset</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_content_charset</span><span class="p">()</span>
+                <span class="n">payload_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode_payload</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">charset</span><span class="p">)</span>
+                <span class="n">content_type</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_content_type</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">content_type</span> <span class="o">==</span> <span class="s2">&quot;text/plain&quot;</span><span class="p">:</span>
+                    <span class="n">body_text</span> <span class="o">=</span> <span class="n">payload_str</span>
+                <span class="k">elif</span> <span class="n">content_type</span> <span class="o">==</span> <span class="s2">&quot;text/html&quot;</span><span class="p">:</span>
+                    <span class="n">body_html</span> <span class="o">=</span> <span class="n">payload_str</span>
+
+        <span class="c1"># Get all headers for raw analysis</span>
+        <span class="n">all_headers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">msg</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">all_headers</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="c1"># Define from_name with a helper function to improve readability</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">extract_name</span><span class="p">(</span><span class="n">addr</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">addr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&lt;&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="s2">&quot;&lt;&quot;</span> <span class="ow">in</span> <span class="n">addr</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># Process list of addresses with a helper function</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">extract_addresses</span><span class="p">(</span><span class="n">header_value</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">header_value</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[]</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">addr</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">addr</span> <span class="ow">in</span> <span class="n">header_value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">addr</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+
+        <span class="c1"># Prepare metadata (store to_addresses, cc_addresses, bcc_addresses here)</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;from_name&quot;</span><span class="p">:</span> <span class="n">extract_name</span><span class="p">(</span><span class="n">from_addr</span><span class="p">),</span>
+            <span class="s2">&quot;to_addresses&quot;</span><span class="p">:</span> <span class="n">extract_addresses</span><span class="p">(</span><span class="n">to_addr</span><span class="p">),</span>
+            <span class="s2">&quot;cc_addresses&quot;</span><span class="p">:</span> <span class="n">extract_addresses</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;Cc&quot;</span><span class="p">]),</span>
+            <span class="s2">&quot;bcc_addresses&quot;</span><span class="p">:</span> <span class="n">extract_addresses</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;Bcc&quot;</span><span class="p">]),</span>
+            <span class="s2">&quot;received_date&quot;</span><span class="p">:</span> <span class="n">date_obj</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span> <span class="k">if</span> <span class="n">date_obj</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;body_text&quot;</span><span class="p">:</span> <span class="n">body_text</span><span class="p">,</span>
+            <span class="s2">&quot;body_html&quot;</span><span class="p">:</span> <span class="n">body_html</span><span class="p">,</span>
+            <span class="s2">&quot;message_id&quot;</span><span class="p">:</span> <span class="n">message_id</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Calculate internal_date as Unix timestamp if available</span>
+        <span class="n">internal_date</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">date_obj</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span> <span class="k">if</span> <span class="n">date_obj</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="c1"># Store message parts as JSON for compatibility</span>
+        <span class="n">message_parts</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">body_text</span><span class="p">,</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span> <span class="n">body_html</span><span class="p">}</span>
+
+        <span class="c1"># Return structured email data matching MotherDuck schema</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;msg_id&quot;</span><span class="p">:</span> <span class="n">message_id</span><span class="p">,</span>  <span class="c1"># Will be replaced with Gmail ID</span>
+            <span class="s2">&quot;thread_id&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># Will be replaced with Gmail thread ID</span>
+            <span class="s2">&quot;subject&quot;</span><span class="p">:</span> <span class="n">subject</span><span class="p">,</span>
+            <span class="s2">&quot;from_address&quot;</span><span class="p">:</span> <span class="n">from_addr</span><span class="p">,</span>
+            <span class="s2">&quot;analysis_date&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+            <span class="s2">&quot;raw_analysis&quot;</span><span class="p">:</span> <span class="n">safe_json_dumps</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="n">all_headers</span><span class="p">,</span>
+                    <span class="s2">&quot;structure&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_message_structure</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span>
+                <span class="p">}</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">safe_json_dumps</span><span class="p">(</span><span class="n">metadata</span><span class="p">),</span>
+            <span class="s2">&quot;snippet&quot;</span><span class="p">:</span> <span class="n">body_text</span><span class="p">[:</span><span class="mi">500</span><span class="p">]</span> <span class="k">if</span> <span class="n">body_text</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;internal_date&quot;</span><span class="p">:</span> <span class="n">internal_date</span><span class="p">,</span>
+            <span class="s2">&quot;size_estimate&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">email_data</span><span class="p">),</span>
+            <span class="s2">&quot;message_parts&quot;</span><span class="p">:</span> <span class="n">safe_json_dumps</span><span class="p">(</span><span class="n">message_parts</span><span class="p">),</span>
+            <span class="s2">&quot;attachments&quot;</span><span class="p">:</span> <span class="n">safe_json_dumps</span><span class="p">(</span><span class="n">attachments</span><span class="p">),</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;new&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fetch_emails</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">imap</span><span class="p">:</span> <span class="n">imaplib</span><span class="o">.</span><span class="n">IMAP4_SSL</span><span class="p">,</span>
+        <span class="n">days_back</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
+        <span class="n">max_emails</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">historical</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">start_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">end_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>  <span class="c1"># Number of worker threads</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fetch emails from Gmail using IMAP with parallel processing.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            imap: IMAP connection</span>
+<span class="sd">            days_back: Number of days back to fetch</span>
+<span class="sd">            max_emails: Maximum number of emails to fetch</span>
+<span class="sd">            batch_size: Number of emails to process in each batch</span>
+<span class="sd">            historical: Whether to fetch all emails or just recent ones</span>
+<span class="sd">            start_date: Optional start date in format YYYY-MM-DD</span>
+<span class="sd">            end_date: Optional end date in format YYYY-MM-DD</span>
+<span class="sd">            num_workers: Number of worker threads for parallel processing</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Get existing message IDs from database</span>
+            <span class="n">existing_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_existing_ids</span><span class="p">()</span>
+
+            <span class="c1"># Search for emails based on parameters</span>
+            <span class="k">if</span> <span class="n">historical</span><span class="p">:</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">message_numbers</span> <span class="o">=</span> <span class="n">imap</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;ALL&quot;</span><span class="p">)</span>
+                <span class="n">num_msgs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">message_numbers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Found </span><span class="si">%d</span><span class="s2"> total messages&quot;</span><span class="p">,</span> <span class="n">num_msgs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">start_date</span> <span class="ow">and</span> <span class="n">end_date</span><span class="p">:</span>
+                <span class="c1"># Format dates as DD-MMM-YYYY for IMAP</span>
+                <span class="n">start_fmt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
+                    <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">-%b-%Y&quot;</span>
+                <span class="p">)</span>
+
+                <span class="n">end_fmt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">end_date</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">-%b-%Y&quot;</span><span class="p">)</span>
+
+                <span class="n">search_criteria</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;(SINCE </span><span class="si">{</span><span class="n">start_fmt</span><span class="si">}</span><span class="s2"> BEFORE </span><span class="si">{</span><span class="n">end_fmt</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Searching with criteria: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">search_criteria</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="n">_</span><span class="p">,</span> <span class="n">message_numbers</span> <span class="o">=</span> <span class="n">imap</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">search_criteria</span><span class="p">)</span>
+                <span class="n">num_msgs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">message_numbers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="s2">&quot;Found </span><span class="si">%d</span><span class="s2"> messages between </span><span class="si">%s</span><span class="s2"> and </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">num_msgs</span><span class="p">,</span>
+                    <span class="n">start_fmt</span><span class="p">,</span>
+                    <span class="n">end_fmt</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">date_fmt</span> <span class="o">=</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">days_back</span><span class="p">))</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
+                    <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">-%b-%Y&quot;</span>
+                <span class="p">)</span>
+
+                <span class="n">_</span><span class="p">,</span> <span class="n">message_numbers</span> <span class="o">=</span> <span class="n">imap</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;SINCE </span><span class="si">{</span><span class="n">date_fmt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">num_msgs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">message_numbers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="s2">&quot;Found </span><span class="si">%d</span><span class="s2"> messages since </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">num_msgs</span><span class="p">,</span>
+                    <span class="n">date_fmt</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="n">message_numbers</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">message_numbers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+
+            <span class="c1"># Reverse the list to process newest emails first</span>
+            <span class="n">message_numbers</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+
+            <span class="n">total_processed</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">batch_id</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H%M%S&quot;</span><span class="p">)</span>
+
+            <span class="n">processed_count</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">message_numbers</span><span class="p">),</span> <span class="n">max_emails</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Processing </span><span class="si">%d</span><span class="s2"> emails in batches of </span><span class="si">%d</span><span class="s2"> with </span><span class="si">%d</span><span class="s2"> worker threads&quot;</span><span class="p">,</span>
+                <span class="n">processed_count</span><span class="p">,</span>
+                <span class="n">batch_size</span><span class="p">,</span>
+                <span class="n">num_workers</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Process in batches using multiple threads</span>
+            <span class="n">max_to_process</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">message_numbers</span><span class="p">),</span> <span class="n">max_emails</span><span class="p">)</span>
+
+            <span class="c1"># Create multiple IMAP connections for the worker threads</span>
+            <span class="n">imap_connections</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_imap_connections</span><span class="p">(</span><span class="n">num_workers</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_to_process</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+                <span class="n">batch</span> <span class="o">=</span> <span class="n">message_numbers</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">]</span>
+                <span class="n">batch_num</span> <span class="o">=</span> <span class="n">i</span> <span class="o">//</span> <span class="n">batch_size</span> <span class="o">+</span> <span class="mi">1</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="s2">&quot;Processing batch </span><span class="si">%d</span><span class="s2"> of </span><span class="si">%d</span><span class="s2"> messages&quot;</span><span class="p">,</span>
+                    <span class="n">batch_num</span><span class="p">,</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">),</span>
+                <span class="p">)</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="c1"># Process each batch with parallel workers</span>
+                    <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+                        <span class="c1"># Create tasks for each message in the batch</span>
+                        <span class="n">futures</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">msg_num</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+                            <span class="c1"># Distribute connections among workers</span>
+                            <span class="n">conn_idx</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">imap_connections</span><span class="p">)</span>
+                            <span class="n">conn</span> <span class="o">=</span> <span class="n">imap_connections</span><span class="p">[</span><span class="n">conn_idx</span><span class="p">]</span>
+
+                            <span class="n">futures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">_process_single_email</span><span class="p">,</span>
+                                    <span class="n">conn</span><span class="p">,</span>
+                                    <span class="n">msg_num</span><span class="p">,</span>
+                                    <span class="n">existing_ids</span><span class="p">,</span>
+                                    <span class="n">batch_id</span><span class="p">,</span>
+                                <span class="p">)</span>
+                            <span class="p">)</span>
+
+                        <span class="c1"># Process results as they complete</span>
+                        <span class="k">for</span> <span class="n">future</span> <span class="ow">in</span> <span class="n">as_completed</span><span class="p">(</span><span class="n">futures</span><span class="p">):</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">result</span> <span class="o">=</span> <span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+                                <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+                                    <span class="n">total_processed</span> <span class="o">+=</span> <span class="mi">1</span>
+                                    <span class="k">if</span> <span class="n">total_processed</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                                            <span class="s2">&quot;Progress: </span><span class="si">%d</span><span class="s2">/</span><span class="si">%d</span><span class="s2"> emails processed&quot;</span><span class="p">,</span>
+                                            <span class="n">total_processed</span><span class="p">,</span>
+                                            <span class="n">max_to_process</span><span class="p">,</span>
+                                        <span class="p">)</span>
+                            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Worker thread error: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="s2">&quot;Completed batch </span><span class="si">%d</span><span class="s2">. Total processed: </span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="n">batch_num</span><span class="p">,</span>
+                        <span class="n">total_processed</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Batch processing error: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">total_processed</span> <span class="o">&gt;=</span> <span class="n">max_emails</span><span class="p">:</span>
+                    <span class="k">break</span>
+
+                <span class="c1"># Small delay between batches</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># Close the extra IMAP connections</span>
+            <span class="k">for</span> <span class="n">conn</span> <span class="ow">in</span> <span class="n">imap_connections</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                    <span class="n">conn</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Import completed. Total emails processed: </span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">total_processed</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Error in fetch_emails: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">raise</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_imap_connections</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_connections</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">imaplib</span><span class="o">.</span><span class="n">IMAP4_SSL</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create multiple IMAP connections for parallel processing.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            num_connections: Number of connections to create</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of IMAP connections</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">connections</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_imap_config</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_connections</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating IMAP connection </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">num_connections</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connect_imap</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+                <span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to create IMAP connection </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">connections</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Failed to create any IMAP connections&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">connections</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_imap_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get IMAP configuration from environment variables or args.&quot;&quot;&quot;</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">username</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">password</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;GMAIL_APP_PASSWORD&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">password</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Gmail password required in GMAIL_APP_PASSWORD &quot;</span>
+                <span class="s2">&quot;environment variable or --password&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="s2">&quot;imap.gmail.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="mi">993</span><span class="p">,</span>
+            <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
+            <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">password</span><span class="p">,</span>
+            <span class="s2">&quot;mailbox&quot;</span><span class="p">:</span> <span class="s1">&#39;&quot;[Gmail]/All Mail&quot;&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_single_email</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">imap</span><span class="p">:</span> <span class="n">imaplib</span><span class="o">.</span><span class="n">IMAP4_SSL</span><span class="p">,</span>
+        <span class="n">msg_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">existing_ids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">batch_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process a single email message in a worker thread.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            imap: IMAP connection to use</span>
+<span class="sd">            msg_num: Message number to process</span>
+<span class="sd">            existing_ids: Set of existing message IDs</span>
+<span class="sd">            batch_id: Current batch ID</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if email was processed successfully</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># First fetch Gmail-specific IDs</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;Fetching Gmail IDs for message </span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">msg_num</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">msg_data</span> <span class="o">=</span> <span class="n">imap</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">msg_num</span><span class="p">),</span> <span class="s2">&quot;(X-GM-MSGID X-GM-THRID)&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">msg_data</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">msg_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="s2">&quot;No Gmail ID data for message </span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">msg_num</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="c1"># Parse Gmail IDs from response</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">msg_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">bytes</span><span class="p">)</span>
+                <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg_data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Extract Gmail IDs using regex</span>
+            <span class="n">msgid_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
+                <span class="sa">r</span><span class="s2">&quot;X-GM-MSGID\s+(\d+)&quot;</span><span class="p">,</span>
+                <span class="n">response</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">thrid_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
+                <span class="sa">r</span><span class="s2">&quot;X-GM-THRID\s+(\d+)&quot;</span><span class="p">,</span>
+                <span class="n">response</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">msgid_match</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">thrid_match</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="s2">&quot;Failed to extract Gmail IDs: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">response</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="n">gmail_msgid</span> <span class="o">=</span> <span class="n">msgid_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">gmail_thrid</span> <span class="o">=</span> <span class="n">thrid_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># Skip if message already exists</span>
+            <span class="k">if</span> <span class="n">gmail_msgid</span> <span class="ow">in</span> <span class="n">existing_ids</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="s2">&quot;Message </span><span class="si">%s</span><span class="s2"> already exists, skipping&quot;</span><span class="p">,</span>
+                    <span class="n">gmail_msgid</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="c1"># Now fetch the full message</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;Fetching full message </span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">msg_num</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">msg_data</span> <span class="o">=</span> <span class="n">imap</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">msg_num</span><span class="p">),</span> <span class="s2">&quot;(RFC822)&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">msg_data</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">msg_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="s2">&quot;No message data for </span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">msg_num</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="c1"># Extract and store message data</span>
+            <span class="n">raw_data</span> <span class="o">=</span> <span class="n">msg_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">email_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_email_message</span><span class="p">(</span><span class="n">raw_data</span><span class="p">)</span>
+            <span class="n">email_data</span><span class="p">[</span><span class="s2">&quot;msg_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gmail_msgid</span>
+            <span class="n">email_data</span><span class="p">[</span><span class="s2">&quot;thread_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gmail_thrid</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store_email</span><span class="p">(</span><span class="n">email_data</span><span class="p">,</span> <span class="n">batch_id</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Error processing message </span><span class="si">%d</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">msg_num</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_store_email</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">batch_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store email in the database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            email_data: Parsed email data</span>
+<span class="sd">            batch_id: Batch identifier</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if successful</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Add batch ID to email data</span>
+            <span class="n">email_data</span><span class="p">[</span><span class="s2">&quot;batch_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch_id</span>
+
+            <span class="c1"># SQL reserved keywords that need escaping</span>
+            <span class="n">escaped_columns</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">escaped_values</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># Prepare columns with proper escaping</span>
+            <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">email_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">SQL_RESERVED</span><span class="p">:</span>
+                    <span class="n">escaped_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">escaped_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+                <span class="n">escaped_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+            <span class="n">columns</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">escaped_columns</span><span class="p">)</span>
+            <span class="n">placeholders</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;?&quot;</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">email_data</span><span class="p">])</span>
+
+            <span class="c1"># Insert into database</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                INSERT INTO emails (</span><span class="si">{</span><span class="n">columns</span><span class="si">}</span><span class="s2">)</span>
+<span class="s2">                VALUES (</span><span class="si">{</span><span class="n">placeholders</span><span class="si">}</span><span class="s2">)</span>
+<span class="s2">            &quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">escaped_values</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Stored email </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">email_data</span><span class="p">[</span><span class="s2">&quot;msg_id&quot;</span><span class="p">])</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Error storing email: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_existing_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get existing message IDs from database.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Set of existing message IDs</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">existing_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;SELECT msg_id FROM emails&quot;</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+            <span class="n">existing_ids</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Found </span><span class="si">%d</span><span class="s2"> existing messages in database&quot;</span><span class="p">,</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">existing_ids</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Error getting existing message IDs: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">existing_ids</span>
+
+<div class="viewcode-block" id="UnifiedIMAPImporter.run">
+<a class="viewcode-back" href="../../../../../dewey.core.crm.email.html#dewey.core.crm.email.imap_import.UnifiedIMAPImporter.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Main execution method.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>  <span class="c1"># Store args for use in other methods</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">motherduck_mode</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">motherduck</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init_database</span><span class="p">()</span>
+
+            <span class="c1"># Configure number of workers based on args</span>
+            <span class="n">num_workers</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">workers</span>
+
+            <span class="n">imap_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_imap_config</span><span class="p">()</span>
+
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connect_imap</span><span class="p">(</span><span class="n">imap_config</span><span class="p">)</span> <span class="k">as</span> <span class="n">imap</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_emails</span><span class="p">(</span>
+                    <span class="n">imap</span><span class="p">,</span>
+                    <span class="n">days_back</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">days</span><span class="p">,</span>
+                    <span class="n">max_emails</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">max</span><span class="p">,</span>
+                    <span class="n">batch_size</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                    <span class="n">historical</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">historical</span><span class="p">,</span>
+                    <span class="n">start_date</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">start_date</span><span class="p">,</span>
+                    <span class="n">end_date</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
+                    <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;IMAP sync completed successfully&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;IMAP sync failed: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">raise</span></div>
+</div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">UnifiedIMAPImporter</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../../index.html">Dewey (TUI)</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../modules.html">dewey</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../../index.html">Module code</a><ul>
+  <li><a href="../../../../dewey.html">dewey</a><ul>
+  <li><a href="../../crm.html">dewey.core.crm</a><ul>
+  <li><a href="../email.html">dewey.core.crm.email</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Sloane Ortel.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

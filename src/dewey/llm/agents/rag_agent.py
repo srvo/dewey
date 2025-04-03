@@ -5,10 +5,10 @@ from typing import Any, Dict, Optional
 from smolagents import Tool
 
 from dewey.core.base_script import BaseScript
-from dewey.llm.agents.base_agent import DeweyBaseAgent
+from dewey.llm.agents.base_agent import BaseAgent
 
 
-class RAGAgent(BaseScript, DeweyBaseAgent):
+class RAGAgent(BaseAgent):
     """RAG agent for semantic search and knowledge retrieval.
 
     Features:

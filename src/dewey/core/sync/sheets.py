@@ -1,6 +1,7 @@
 from dewey.core.base_script import BaseScript
 import gspread
 
+
 class Sheets(BaseScript):
     """Synchronizes data with Google Sheets.
 
@@ -31,7 +32,9 @@ class Sheets(BaseScript):
         sheet_id = self.get_config_value("sheet_id")
         try:
             # Authenticate with Google Sheets API
-            gc = gspread.service_account(filename=self.get_config_value("credentials_path"))
+            gc = gspread.service_account(
+                filename=self.get_config_value("credentials_path")
+            )
             # Open the Google Sheet
             sheet = gc.open_by_key(sheet_id).sheet1
             # Get all values from the sheet
@@ -40,10 +43,14 @@ class Sheets(BaseScript):
             num_cols = len(data[0]) if data else 0
 
             self.logger.info(f"Successfully read data from Google Sheet '{sheet_id}'.")
-            self.logger.info(f"Number of rows: {num_rows}, Number of columns: {num_cols}")
+            self.logger.info(
+                f"Number of rows: {num_rows}, Number of columns: {num_cols}"
+            )
 
         except Exception as e:
-            self.logger.error(f"Error during Google Sheets synchronization: {e}", exc_info=True)
+            self.logger.error(
+                f"Error during Google Sheets synchronization: {e}", exc_info=True
+            )
             raise
         finally:
             self.logger.info("Google Sheets data synchronization completed.")

@@ -78,12 +78,7 @@ class GmailModel(BaseScript):
             service = build("gmail", "v1", credentials=creds)
 
             # Call the Gmail API
-            results = (
-                service.users()
-                .labels()
-                .list(userId="me")
-                .execute()
-            )
+            results = service.users().labels().list(userId="me").execute()
             labels = results.get("labels", [])
 
             if not labels:
