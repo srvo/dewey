@@ -1,12 +1,12 @@
 """Module for managing documentation tasks within Dewey's automation scripts."""
+
 from typing import Any, Protocol
 
 from dewey.core.script import BaseScript
 
 
 class LoggerInterface(Protocol):
-    """An interface for logging functionality.
-    """
+    """An interface for logging functionality."""
 
     def info(self, message: str) -> None: ...
 
@@ -26,7 +26,8 @@ class DocsModule(BaseScript):
         config: dict[str, Any] | None = None,
         logger: LoggerInterface | None = None,
     ) -> None:
-        """Initializes the DocsModule with optional configuration.
+        """
+        Initializes the DocsModule with optional configuration.
 
         Args:
         ----
@@ -40,7 +41,8 @@ class DocsModule(BaseScript):
         self._logger: LoggerInterface = logger if logger is not None else self.logger
 
     def execute(self) -> None:
-        """Executes the primary logic of the documentation module.
+        """
+        Executes the primary logic of the documentation module.
 
         This method should be overridden in subclasses to implement
         specific documentation tasks.
@@ -51,12 +53,13 @@ class DocsModule(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self._logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """Retrieves a configuration value associated with the given key.
+        """
+        Retrieves a configuration value associated with the given key.
 
         Args:
         ----

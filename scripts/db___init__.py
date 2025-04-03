@@ -18,7 +18,8 @@ class DatabaseModule(BaseScript):
         super().__init__(*args, **kwargs)
 
     def run(self) -> None:
-        """Executes the database maintenance tasks.
+        """
+        Executes the database maintenance tasks.
 
         This method contains the primary logic for the database maintenance
         script. It can access configuration values using
@@ -37,7 +38,8 @@ class DatabaseModule(BaseScript):
         self.logger.info("Database maintenance tasks completed.")
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """Retrieves a configuration value associated with the given key.
+        """
+        Retrieves a configuration value associated with the given key.
 
         Args:
         ----

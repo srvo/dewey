@@ -15,7 +15,8 @@ class BaseEngine(BaseScript):
     """
 
     def __init__(self, config_section: str = "base_engine") -> None:
-        """Initializes the BaseEngine.
+        """
+        Initializes the BaseEngine.
 
         Args:
         ----
@@ -26,13 +27,13 @@ class BaseEngine(BaseScript):
             config_section=config_section, requires_db=False, enable_llm=False,
         )
         self.logger.debug(
-            "BaseEngine initialized with config section: %s",
-            config_section,
+            "BaseEngine initialized with config section: %s", config_section,
         )
 
     @abstractmethod
     def execute(self) -> None:
-        """Executes the engine's main logic.
+        """
+        Executes the engine's main logic.
 
         This method must be overridden by subclasses to implement the
         engine's specific functionality.
@@ -52,7 +53,8 @@ class BaseEngine(BaseScript):
         self.execute()
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """Gets a configuration value for this engine.
+        """
+        Gets a configuration value for this engine.
 
         Args:
         ----
@@ -67,7 +69,8 @@ class BaseEngine(BaseScript):
         return super().get_config_value(key, default)
 
     def info(self, message: str) -> None:
-        """Logs an info message using the engine's logger.
+        """
+        Logs an info message using the engine's logger.
 
         Args:
         ----
@@ -77,7 +80,8 @@ class BaseEngine(BaseScript):
         self.logger.info(message)
 
     def error(self, message: str) -> None:
-        """Logs an error message using the engine's logger.
+        """
+        Logs an error message using the engine's logger.
 
         Args:
         ----
@@ -87,7 +91,8 @@ class BaseEngine(BaseScript):
         self.logger.error(message)
 
     def debug(self, message: str) -> None:
-        """Logs a debug message using the engine's logger.
+        """
+        Logs a debug message using the engine's logger.
 
         Args:
         ----
@@ -97,7 +102,8 @@ class BaseEngine(BaseScript):
         self.logger.debug(message)
 
     def warning(self, message: str) -> None:
-        """Logs a warning message using the engine's logger.
+        """
+        Logs a warning message using the engine's logger.
 
         Args:
         ----
@@ -107,7 +113,8 @@ class BaseEngine(BaseScript):
         self.logger.warning(message)
 
     def setup_argparse(self) -> argparse.ArgumentParser:
-        """Set up command line arguments.
+        """
+        Set up command line arguments.
 
         Returns
         -------
@@ -122,7 +129,8 @@ class BaseEngine(BaseScript):
         return parser
 
     def parse_args(self) -> argparse.Namespace:
-        """Parse command line arguments.
+        """
+        Parse command line arguments.
 
         Returns
         -------
@@ -137,7 +145,7 @@ class BaseEngine(BaseScript):
             if not config_path.exists():
                 self.logger.error("Configuration file not found: %s", config_path)
                 raise FileNotFoundError(
-                    "Configuration file not found: %s" % config_path
+                    "Configuration file not found: %s" % config_path,
                 )
 
             self.config = self._load_config()  # Reload the entire config
