@@ -141,6 +141,6 @@ class BaseEngine(BaseScript):
                 )
 
             self.config = self._load_config()  # Reload the entire config
-            self.logger.info("Loaded configuration from %s", config_path, )
+            self.logger.info("Loaded configuration from %s", config_path)
 
         return args
