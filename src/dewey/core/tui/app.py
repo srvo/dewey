@@ -339,6 +339,10 @@ class DeweyTUI(App):
         """Handle app mount event."""
         self.push_screen("main")
 
+    def execute(self) -> None:
+        """Execute the TUI application."""
+        self.run()
+
 
 class TUIApp(BaseScript):
     """TUI Application class that integrates with BaseScript."""
