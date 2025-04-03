@@ -35,7 +35,7 @@ class DocsModule(BaseScript):
 
         # Example of accessing configuration values
         example_config_value = self.get_config_value("example_setting", "default_value")
-        self.logger.info("Example configuration value: %s", example_config_value)
+        self.logger.info("Example configuration value: %s", str(example_config_value))
 
         # Add your documentation management logic here
         self.info("CRM Docs Module completed.")

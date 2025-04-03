@@ -55,7 +55,7 @@ class Prioritization(BaseScript):
             some_config_value = self.get_config_value(
                 "some_config_key", "default_value",
             )
-            self.logger.debug("Some config value: %s", some_config_value)
+            self.logger.debug("Some config value: %s", str(some_config_value))
 
             # Add your prioritization logic here
             self.info("Prioritization process completed.")

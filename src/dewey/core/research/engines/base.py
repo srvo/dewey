@@ -77,7 +77,7 @@ class BaseEngine(BaseScript):
             message: The message to log.
 
         """
-        self.logger.info(message)
+        self.logger.info("%s", message)
 
     def error(self, message: str) -> None:
         """
