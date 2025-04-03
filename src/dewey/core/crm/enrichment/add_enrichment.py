@@ -184,6 +184,10 @@ class AddEnrichmentCapabilities(BaseScript):
 
         # TODO: Refactor to use centralized database connection and error handling
 
+    def execute(self) -> None:
+        """Execute the enrichment capabilities addition."""
+        self.run()
+
 
 if __name__ == "__main__":
     """Main entry point for the enrichment capabilities migration script.
