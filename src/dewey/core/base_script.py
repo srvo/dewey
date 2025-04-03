@@ -30,10 +30,11 @@ CONFIG_PATH = PROJECT_ROOT / "config" / "dewey.yaml"
 
 
 class BaseScript(ABC):
-    """Base class for all Dewey scripts.
+    """
+    Base class for all Dewey scripts.
 
-    This class provides standardized access to configuration, logging,
-    database connections, and LLM integrations.
+    This class provides standardized access to configuration,
+    logging, database connections, and LLM integrations.
 
     Attributes
     ----------

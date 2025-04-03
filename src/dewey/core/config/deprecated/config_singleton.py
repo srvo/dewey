@@ -9,7 +9,8 @@ from dewey.core.exceptions import ConfigurationError
 
 class Config:
     """
-    Centralized configuration manager for Dewey project.
+    Centralized configuration manager
+    for Dewey project.
     """
 
     _instance = None
