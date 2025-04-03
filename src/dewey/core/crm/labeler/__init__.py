@@ -116,3 +116,17 @@ class LabelerModule(BaseScript):
         except Exception as e:
             self.logger.error("Error during label processing: %s", e, exc_info=True)
             raise
+```
+
+src/dewey/core/research/engines/base.py
+```python
+<<<<<<< SEARCH
+            config_path = self.get_path(args.engine_config)
+            if not config_path.exists():
+                self.logger.error("Configuration file not found: %s", config_path)
+                raise FileNotFoundError(
+                    "Configuration file not found: %s" % config_path,
+                )
+
+            self.config = self._load_config()  # Reload the entire config
+            self.logger.info("Loaded configuration from %s", config_path)
