@@ -1,17 +1,11 @@
-import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import (
-    DatabaseConnection,
-    get_connection,
-    get_motherduck_connection,
-)
-from dewey.llm.llm_utils import get_llm_client
 
 
 class EventsModule(BaseScript):
-    """A module for managing event-related tasks within Dewey's CRM.
+    """
+    A module for managing event-related tasks within Dewey's CRM.
 
     This module inherits from BaseScript and provides a standardized
     structure for event processing scripts, including configuration
@@ -27,9 +21,11 @@ class EventsModule(BaseScript):
         requires_db: bool = True,
         enable_llm: bool = False,
     ) -> None:
-        """Initializes the EventsModule.
+        """
+        Initializes the EventsModule.
 
         Args:
+        ----
             name: The name of the module. Defaults to "EventsModule".
             description: A description of the module. Defaults to "Manages CRM events.".
             config_section: The configuration section to use. Defaults to "events".
@@ -46,7 +42,8 @@ class EventsModule(BaseScript):
         )
 
     def execute(self) -> None:
-        """Executes the primary logic of the EventsModule.
+        """
+        Executes the primary logic of the EventsModule.
 
         This method retrieves configuration values, connects to the database,
         and performs event processing tasks.
@@ -83,7 +80,8 @@ class EventsModule(BaseScript):
             self.logger.debug("LLM client is not enabled.")
 
     def run(self) -> None:
-        """Executes the primary logic of the EventsModule.
+        """
+        Executes the primary logic of the EventsModule.
 
         This method retrieves configuration values, connects to the database,
         and performs event processing tasks.
@@ -91,13 +89,16 @@ class EventsModule(BaseScript):
         super().run()
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """Retrieves a configuration value by key.
+        """
+        Retrieves a configuration value by key.
 
         Args:
+        ----
             key: The key of the configuration value to retrieve.
             default: The default value to return if the key is not found.
 
         Returns:
+        -------
             The configuration value, or the default value if the key is not found.
 
         """

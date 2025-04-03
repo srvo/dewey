@@ -1,4 +1,5 @@
 """Module for managing documentation tasks within Dewey."""
+
 from typing import Any, Protocol
 
 from dewey.core.base_script import BaseScript
@@ -27,7 +28,8 @@ class DocsModule(BaseScript):
         description: str = "Documentation Module",
         documentation_task: DocumentationTask | None = None,
     ):
-        """Initializes the DocsModule.
+        """
+        Initializes the DocsModule.
 
         Args:
         ----
@@ -42,7 +44,8 @@ class DocsModule(BaseScript):
         self._documentation_task = documentation_task
 
     def execute(self) -> None:
-        """Executes the primary logic of the documentation module.
+        """
+        Executes the primary logic of the documentation module.
 
         This method should be overridden in subclasses to implement
         specific documentation tasks.
@@ -92,7 +95,8 @@ class DocsModule(BaseScript):
             # Add your documentation logic here
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """Retrieves a configuration value associated with the given key.
+        """
+        Retrieves a configuration value associated with the given key.
 
         Args:
         ----

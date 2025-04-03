@@ -1,12 +1,11 @@
-import logging
 from typing import Any
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
 
 
 class DataIngestionModule(BaseScript):
-    """A module for managing data ingestion tasks within Dewey's CRM.
+    """
+    A module for managing data ingestion tasks within Dewey's CRM.
 
     This module inherits from BaseScript and provides a standardized
     structure for data ingestion scripts, including configuration
@@ -15,9 +14,11 @@ class DataIngestionModule(BaseScript):
     """
 
     def __init__(self, name: str, description: str = "Data Ingestion Module") -> None:
-        """Initializes the DataIngestionModule.
+        """
+        Initializes the DataIngestionModule.
 
         Args:
+        ----
             name: The name of the module.
             description: A description of the module.
                 Defaults to "Data Ingestion Module".
@@ -26,7 +27,8 @@ class DataIngestionModule(BaseScript):
         super().__init__(name, description, config_section="crm")
 
     def execute(self) -> None:
-        """Executes the data ingestion process.
+        """
+        Executes the data ingestion process.
 
         This method retrieves configuration values, connects to the database,
         and performs data ingestion tasks. It also logs the progress and
@@ -64,19 +66,22 @@ class DataIngestionModule(BaseScript):
     def run(self) -> None:
         """Executes the primary logic of the data ingestion module."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """Retrieves a configuration value associated with the given key.
+        """
+        Retrieves a configuration value associated with the given key.
 
         Args:
+        ----
             key: The key of the configuration value to retrieve.
             default: A default value to return if the key
                 is not found in the configuration. Defaults to None.
 
         Returns:
+        -------
             The configuration value associated with the key, or the
             default value if the key is not found.
 
