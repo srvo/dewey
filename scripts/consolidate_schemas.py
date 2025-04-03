@@ -17,7 +17,7 @@ class ConsolidateSchemas(BaseScript):
         )
 
     def _are_types_compatible(self, type1: str, type2: str) -> bool:
-    """
+        """
         Check if two SQL types are compatible.
 
         Args:
@@ -29,7 +29,8 @@ class ConsolidateSchemas(BaseScript):
         --------
             True if types are compatible, False otherwise
 
-    """
+        """
+        pass
         # Normalize types to uppercase
         type1 = type1.upper()
         type2 = type2.upper()
