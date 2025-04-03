@@ -76,3 +76,17 @@ class TriageAgent(BaseScript):
         result = self.run(prompt)
         self.logger.info("Triage item completed", result=result)
         return result
+
+    def execute(self, prompt: str) -> dict[str, Any]:
+        """Executes the triage agent with the given prompt.
+
+        Args:
+            prompt: The prompt to use for triaging.
+
+        Returns:
+            The result of the agent's run.
+        """
+        self.logger.info(f"Executing triage agent with prompt: {prompt}")
+        result = self.run(prompt)
+        self.logger.info(f"Triage agent completed. Result: {result}")
+        return result
