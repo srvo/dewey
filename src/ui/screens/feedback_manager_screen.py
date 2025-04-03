@@ -1,4 +1,5 @@
-"""Feedback Manager Screen for the TUI application.
+"""
+Feedback Manager Screen for the TUI application.
 
 This module provides a screen for managing feedback from users.
 """
@@ -11,7 +12,6 @@ import os
 import sys
 import threading
 import traceback
-from typing import Optional
 
 from textual import on, work
 from textual.app import ComposeResult
@@ -275,13 +275,13 @@ class FeedbackManagerScreen(Screen):
             with Horizontal(id="content-container"):
                 with Vertical(id="feedback-list-container"):
                     yield Static(
-                        "Unique Senders", id="feedback-header", classes="section-header"
+                        "Unique Senders", id="feedback-header", classes="section-header",
                     )
                     yield DataTable(id="senders-table")
 
                 with Vertical(id="details-container"):
                     yield Static(
-                        "Sender Details", id="details-header", classes="section-header"
+                        "Sender Details", id="details-header", classes="section-header",
                     )
                     with Vertical(id="feedback-details"):
                         yield Static("", id="contact-name")
@@ -346,7 +346,7 @@ class FeedbackManagerScreen(Screen):
 
             # Show error to user
             try:
-                self.notify(f"Error in app startup: {str(e)}", severity="error")
+                self.notify(f"Error in app startup: {e!s}", severity="error")
             except Exception:
                 pass
 
@@ -355,7 +355,7 @@ class FeedbackManagerScreen(Screen):
         # Setup the senders table
         senders_table = self.query_one("#senders-table", DataTable)
         senders_table.add_columns(
-            "Email", "Name", "Count", "Last Contact", "Domain", "Follow-up"
+            "Email", "Name", "Count", "Last Contact", "Domain", "Follow-up",
         )
         senders_table.cursor_type = "row"
 
@@ -448,7 +448,7 @@ class FeedbackManagerScreen(Screen):
     def update_sender_details(self) -> None:
         """Update the sender details view based on selected sender."""
         if self.selected_sender_index < 0 or self.selected_sender_index >= len(
-            self.filtered_senders
+            self.filtered_senders,
         ):
             self.clear_sender_details()
             return
@@ -466,13 +466,13 @@ class FeedbackManagerScreen(Screen):
         )
 
         self.query_one("#contact-name", Static).update(
-            f"Sender: {sender.name} <{sender.email}>"
+            f"Sender: {sender.name} <{sender.email}>",
         )
         self.query_one("#message-count", Static).update(
-            f"Messages: {sender.message_count} | First Contact: {first_date_display} | Last Contact: {date_display}"
+            f"Messages: {sender.message_count} | First Contact: {first_date_display} | Last Contact: {date_display}",
         )
         self.query_one("#last-contact-date", Static).update(
-            f"Domain: {sender.domain} | Tags: {', '.join(sender.tags)} | Client: {'Yes' if sender.is_client else 'No'}"
+            f"Domain: {sender.domain} | Tags: {', '.join(sender.tags)} | Client: {'Yes' if sender.is_client else 'No'}",
         )
 
         self.query_one("#annotation-text", TextArea).value = sender.annotation or ""
@@ -585,7 +585,7 @@ class FeedbackManagerScreen(Screen):
                 # Use contextlib to ensure proper connection management
                 with self._get_db_connection(db_config) as conn:
                     self.update_progress(
-                        10, "Connected to database, checking tables..."
+                        10, "Connected to database, checking tables...",
                     )
 
                     # Check if any of our target tables exist
@@ -594,7 +594,7 @@ class FeedbackManagerScreen(Screen):
                     has_clients = table_exists(conn, "master_clients")
 
                     logger.debug(
-                        f"Table detection: emails={has_emails}, email_analyses={has_email_analyses}, clients={has_clients}"
+                        f"Table detection: emails={has_emails}, email_analyses={has_email_analyses}, clients={has_clients}",
                     )
 
                     client_data = {}
@@ -610,7 +610,7 @@ class FeedbackManagerScreen(Screen):
                         if client_results and len(client_results) > 0:
                             col_names = [col[0] for col in client_results.description]
                             client_data = self._process_client_results(
-                                client_results, col_names
+                                client_results, col_names,
                             )
                             logger.debug(f"Loaded {len(client_data)} client records")
 
@@ -632,7 +632,7 @@ class FeedbackManagerScreen(Screen):
                         if results and len(results) > 0:
                             col_names = [col[0] for col in results.description]
                             logger.debug(
-                                f"Retrieved email data with columns: {col_names}"
+                                f"Retrieved email data with columns: {col_names}",
                             )
                             email_data = self._process_email_results(results, col_names)
                             logger.debug(f"Processed {len(email_data)} email records")
@@ -655,11 +655,11 @@ class FeedbackManagerScreen(Screen):
                         if results and len(results) > 0:
                             col_names = [col[0] for col in results.description]
                             logger.debug(
-                                f"Retrieved email analyses data with columns: {col_names}"
+                                f"Retrieved email analyses data with columns: {col_names}",
                             )
                             email_data = self._process_email_results(results, col_names)
                             logger.debug(
-                                f"Processed {len(email_data)} email analysis records"
+                                f"Processed {len(email_data)} email analysis records",
                             )
 
                 # Process the loaded data
@@ -680,13 +680,13 @@ class FeedbackManagerScreen(Screen):
                                 item.is_client = True
                                 item.client_info = client_data[domain]
                                 logger.debug(
-                                    f"Matched email {item.sender_email} with client domain {domain}"
+                                    f"Matched email {item.sender_email} with client domain {domain}",
                                 )
 
                     self.update_progress(90, "Finalizing data...")
                     self._process_loaded_data()
                     logger.debug(
-                        f"Successfully loaded and processed {len(self.feedback_items)} feedback items"
+                        f"Successfully loaded and processed {len(self.feedback_items)} feedback items",
                     )
                 else:
                     # Create mock data for testing if no real data was found
@@ -699,7 +699,7 @@ class FeedbackManagerScreen(Screen):
                 self._finish_loading()
 
             except Exception as e:
-                error_message = f"Error loading feedback data: {str(e)}"
+                error_message = f"Error loading feedback data: {e!s}"
                 logger.error(error_message)
                 logger.debug(traceback.format_exc())
                 self.update_progress(100, "Error loading data")
@@ -714,12 +714,15 @@ class FeedbackManagerScreen(Screen):
         thread.start()
 
     def _get_db_connection(self, db_config):
-        """Context manager for database connections.
+        """
+        Context manager for database connections.
 
         Args:
+        ----
             db_config: Database configuration dictionary
 
         Returns:
+        -------
             A context manager that yields a database connection
 
         """
@@ -739,7 +742,7 @@ class FeedbackManagerScreen(Screen):
                 conn = duckdb.connect(db_path)
                 yield conn
             except Exception as e:
-                logger.error(f"Database connection error: {str(e)}")
+                logger.error(f"Database connection error: {e!s}")
                 raise
             finally:
                 if conn is not None:
@@ -747,18 +750,21 @@ class FeedbackManagerScreen(Screen):
                     try:
                         conn.close()
                     except Exception as e:
-                        logger.error(f"Error closing connection: {str(e)}")
+                        logger.error(f"Error closing connection: {e!s}")
 
         return connection_context()
 
     def _process_email_results(self, results, col_names):
-        """Process results from email tables into FeedbackItem objects.
+        """
+        Process results from email tables into FeedbackItem objects.
 
         Args:
+        ----
             results: Query results from the database
             col_names: Column names for the results
 
         Returns:
+        -------
             List of FeedbackItem objects
 
         """
@@ -894,7 +900,7 @@ class FeedbackManagerScreen(Screen):
                 logger.debug(traceback.format_exc())
 
         logger.debug(
-            f"Successfully processed {len(processed_items)} items from results"
+            f"Successfully processed {len(processed_items)} items from results",
         )
         return processed_items
 
@@ -946,7 +952,7 @@ class FeedbackManagerScreen(Screen):
             # Create or update sender profile
             if item.sender not in sender_map:
                 sender_map[item.sender] = SenderProfile(
-                    email=item.sender, name=item.contact_name, is_client=item.is_client
+                    email=item.sender, name=item.contact_name, is_client=item.is_client,
                 )
 
             profile = sender_map[item.sender]
@@ -979,13 +985,13 @@ class FeedbackManagerScreen(Screen):
         try:
             self.query_one("#status-text", Static).update(self.status_text)
         except Exception as e:
-            logger.debug(f"Could not update status text: {str(e)}")
+            logger.debug(f"Could not update status text: {e!s}")
 
         # Populate the table with filtered data
         try:
             self._populate_senders_table()
         except Exception as e:
-            logger.debug(f"Could not populate senders table: {str(e)}")
+            logger.debug(f"Could not populate senders table: {e!s}")
 
         # Select the first sender if available
         if self.filtered_senders:
@@ -995,7 +1001,7 @@ class FeedbackManagerScreen(Screen):
                 self.selected_sender_index = 0
                 self.update_sender_details()
             except Exception as e:
-                logger.debug(f"Could not select first sender: {str(e)}")
+                logger.debug(f"Could not select first sender: {e!s}")
 
         # Hide loading indicator if it exists
         try:
@@ -1149,7 +1155,7 @@ class FeedbackManagerScreen(Screen):
                     date=item["date"],
                     starred=item["starred"],
                     is_client=item["is_client"],
-                )
+                ),
             )
 
         # Update status to indicate this is mock data
@@ -1167,18 +1173,18 @@ class FeedbackManagerScreen(Screen):
                     break
 
             self.query_one("#status-text", Static).update(
-                "Sender profile updated successfully"
+                "Sender profile updated successfully",
             )
             self.apply_filters()  # Refresh the filtered list
         except Exception as e:
             self.query_one("#status-text", Static).update(
-                f"Error saving sender profile: {str(e)}"
+                f"Error saving sender profile: {e!s}",
             )
 
     def get_selected_sender(self) -> SenderProfile | None:
         """Get the currently selected sender profile."""
         if self.selected_sender_index < 0 or self.selected_sender_index >= len(
-            self.filtered_senders
+            self.filtered_senders,
         ):
             return None
         return self.filtered_senders[self.selected_sender_index]
@@ -1268,18 +1274,21 @@ class FeedbackManagerScreen(Screen):
         self.status_text = message
 
     def _process_client_results(self, results, col_names):
-        """Process client results from the master_clients table.
+        """
+        Process client results from the master_clients table.
 
         Args:
+        ----
             results: Query results from the database
             col_names: Column names for the results
 
         Returns:
+        -------
             Dict mapping domain names to client information
 
         """
         logger.debug(
-            f"Processing {len(results)} client records with columns: {col_names}"
+            f"Processing {len(results)} client records with columns: {col_names}",
         )
 
         # Create lookup for column indices

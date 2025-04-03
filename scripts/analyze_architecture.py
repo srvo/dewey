@@ -17,7 +17,8 @@ class LLMClientInterface(Protocol):
 
 
 class AnalyzeArchitecture(BaseScript):
-    """Analyzes the architecture of the Dewey system.
+    """
+    Analyzes the architecture of the Dewey system.
 
     This script provides functionality to analyze and report on the
     overall architecture, dependencies, and key components of the Dewey system.
@@ -30,15 +31,17 @@ class AnalyzeArchitecture(BaseScript):
     ) -> None:
         """Initializes the AnalyzeArchitecture script."""
         super().__init__(
-            config_section="analyze_architecture", requires_db=True, enable_llm=True
+            config_section="analyze_architecture", requires_db=True, enable_llm=True,
         )
         self._db_connection = db_connection
         self._llm_client = llm_client
 
     def _get_db_connection(self) -> DatabaseConnectionInterface:
-        """Internal method to get the database connection.
+        """
+        Internal method to get the database connection.
 
-        Returns:
+        Returns
+        -------
             DatabaseConnectionInterface: The database connection object.
 
         """
@@ -47,9 +50,11 @@ class AnalyzeArchitecture(BaseScript):
         return self._db_connection
 
     def _get_llm_client(self) -> LLMClientInterface:
-        """Internal method to get the LLM client.
+        """
+        Internal method to get the LLM client.
 
-        Returns:
+        Returns
+        -------
             LLMClientInterface: The LLM client object.
 
         """
@@ -58,18 +63,22 @@ class AnalyzeArchitecture(BaseScript):
         return self._llm_client
 
     def execute(self) -> None:
-        """Executes the architecture analysis process.
+        """
+        Executes the architecture analysis process.
 
         This method orchestrates the analysis of the system architecture,
         collects relevant data, and generates a report.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If any error occurs during the analysis.
 
         """
@@ -92,7 +101,7 @@ class AnalyzeArchitecture(BaseScript):
         try:
             llm_client = self._get_llm_client()
             response = llm_client.generate_text(
-                "Explain the Dewey system architecture."
+                "Explain the Dewey system architecture.",
             )
             self.logger.info(f"LLM response: {response}")
         except Exception as e:
@@ -104,7 +113,7 @@ class AnalyzeArchitecture(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 
