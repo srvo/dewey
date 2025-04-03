@@ -124,6 +124,17 @@ class OpportunityDetector(BaseScript):
 
         self.logger.info("Completed opportunity detection.")
 
+    def execute(self) -> None:
+        """Executes the opportunity detection process."""
+        self.logger.info("Starting opportunity detection.")
+        try:
+            with get_db_connection() as conn:
+                self.detect_opportunities(conn)
+            self.logger.info("Opportunity detection completed successfully.")
+        except Exception as e:
+            self.logger.error(f"Error during opportunity detection: {e}")
+            raise
+
     def run(self) -> None:
         """Runs the opportunity detection process."""
         self.logger.info("Starting opportunity detection.")
