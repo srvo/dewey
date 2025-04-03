@@ -93,7 +93,7 @@ def main():
     except KeyboardInterrupt:
         print("\n⏹️ Process interrupted by user. Shutting down gracefully...")
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print("❌ Error: %s", e)
         import traceback
 
         traceback.print_exc()

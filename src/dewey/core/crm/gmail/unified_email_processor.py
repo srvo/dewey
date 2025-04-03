@@ -69,7 +69,7 @@ class UnifiedEmailProcessor(BaseScript):
                 "Database tables set up successfully during initialization",
             )
         except Exception as e:
-            self.logger.error(f"Error setting up database tables: {e}", exc_info=True)
+            self.logger.error("Error setting up database tables: %s", e, exc_info=True)
             # We'll continue execution and try again later if needed
 
         # Setup signal handlers
@@ -109,7 +109,7 @@ class UnifiedEmailProcessor(BaseScript):
             try:
                 self.sync_new_emails()
             except Exception as e:
-                self.logger.error(f"❌ Error syncing new emails: {e}", exc_info=True)
+                self.logger.error("❌ Error syncing new emails: %s", e, exc_info=True)
                 # Continue with processing existing emails
 
             # 2. Then process any unprocessed emails in the database
@@ -117,7 +117,7 @@ class UnifiedEmailProcessor(BaseScript):
                 self.process_unprocessed_emails()
             except Exception as e:
                 self.logger.error(
-                    f"❌ Error processing unprocessed emails: {e}", exc_info=True,
+                    "❌ Error processing unprocessed emails: %s", e, exc_info=True,
                 )
 
             self.logger.info("✅ Email processing cycle completed successfully")
@@ -131,7 +131,7 @@ class UnifiedEmailProcessor(BaseScript):
                 except:
                     pass
         except Exception as e:
-            self.logger.error(f"❌ Error in processing cycle: {e}", exc_info=True)
+            self.logger.error("❌ Error in processing cycle: %s", e, exc_info=True)
             raise
 
     def setup_gmail_client(self):
@@ -176,7 +176,7 @@ class UnifiedEmailProcessor(BaseScript):
 
             self.logger.info("✅ Gmail client initialized successfully with MotherDuck")
         except Exception as e:
-            self.logger.error(f"❌ Error initializing Gmail client: {e}")
+            self.logger.error("❌ Error initializing Gmail client: %s", e)
             raise
 
     def sync_new_emails(self):
@@ -272,7 +272,7 @@ class UnifiedEmailProcessor(BaseScript):
 
                 batch_count = len(new_emails)
                 batch_start_time = time.time()
-                self.logger.info(f"📧 Processing batch of {batch_count} emails")
+                self.logger.info("📧 Processing batch of %s emails", batch_count)
 
                 # Process the batch
                 batch_success = 0
@@ -299,7 +299,7 @@ class UnifiedEmailProcessor(BaseScript):
 
                     except Exception as e:
                         self.logger.error(
-                            "❌ Error processing email %s: %s", email_id, e, exc_info=True,
+                            "❌ Error processing email %s: %s", email_id, str(e), exc_info=True,
                         )
                         batch_error += 1
 
@@ -380,10 +380,9 @@ class UnifiedEmailProcessor(BaseScript):
         success_count = processed_count - error_count
 
         self.logger.info(
-            f"🏁 Processing complete: {success_count}/{processed_count} emails processed successfully "
-            "in {:.1f} seconds ({:.1f}/s)".format(
-                total_time, processed_count / total_time
-            ),
+            "🏁 Processing complete: %s/%s emails processed successfully "
+            "in {:.1f} seconds ({:.1f}/s)",
+            success_count, processed_count, total_time, processed_count / total_time
         )
 
     def _setup_database_tables(self):
@@ -1540,7 +1539,7 @@ class UnifiedEmailProcessor(BaseScript):
             self.logger.error("Error enriching contact from email: %s", e, exc_info=True)
 
     def _calculate_priority_score(
-        self, contact_info: dict[str, Any], body: str,
+        self, contact_info: dict[str, Any], body: str
     ) -> float:
         """Calculate priority score based on contact and email content."""
         # Get priority weights from config

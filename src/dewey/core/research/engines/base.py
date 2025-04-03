@@ -25,9 +25,7 @@ class BaseEngine(BaseScript):
         super().__init__(
             config_section=config_section, requires_db=False, enable_llm=False,
         )
-        self.logger.debug(
-            "BaseEngine initialized with config section: %s", config_section
-        )
+        self.logger.debug("BaseEngine initialized with config section: %s", config_section)
 
     @abstractmethod
     def execute(self) -> None:
