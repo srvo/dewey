@@ -499,15 +499,15 @@ def fix_file_with_aider(
             )  # Return True only if we fixed at least one issue
         if verbose:
             logger.info(
-                f"Aider successfully fixed all {len(issues)} issues in {file_path}",
+                "Aider successfully fixed all %s issues in %s", len(issues), file_path
             )
         return True
     except TimeoutError:
-        logger.exception(f"Timed out processing {file_path}")
+        logger.exception("Timed out processing %s", file_path)
         signal.alarm(0)  # Turn off alarm
         return False
     except Exception as e:
-        logger.exception(f"Error using Aider to fix {file_path}: {e}")
+        logger.exception("Error using Aider to fix %s: %s", file_path, e)
         # Turn off alarm if it was set
         signal.alarm(0)
         return False
