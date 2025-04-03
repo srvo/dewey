@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 
 def setup_cron_job(schedule="0 3 * * *", copy_first=True, incremental=True, user=None):
-"""
+    """
     Set up a cron job to run the database sync script.
 
     Args:
@@ -42,7 +42,7 @@ def setup_cron_job(schedule="0 3 * * *", copy_first=True, incremental=True, user
     --------
         True if successful, False otherwise
 
-"""
+    """
     try:
         # Get absolute paths
         sync_script = script_dir / "direct_db_sync.py"
@@ -90,14 +90,14 @@ def setup_cron_job(schedule="0 3 * * *", copy_first=True, incremental=True, user
 
 
 def test_sync_script():
-"""
+    """
     Test if the sync script runs correctly.
 
     Returns:
     --------
         True if successful, False otherwise
 
-"""
+    """
     try:
         sync_script = script_dir / "direct_db_sync.py"
 
