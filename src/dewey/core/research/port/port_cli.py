@@ -13,7 +13,7 @@ class PortCLI(BaseScript):
         """Initializes the PortCLI script."""
         super().__init__(config_section="port_cli", requires_db=True, enable_llm=True)
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Executes the PortCLI script.
 
         This method parses command-line arguments, connects to the database,
@@ -35,25 +35,33 @@ class PortCLI(BaseScript):
             );
             """
             # Use db_conn.execute
-            self.db_conn.execute(create_table_sql)
+            with self.db_connection() as conn:
+                conn.execute(create_table_sql)
 
-            # Use quick_completion and self.llm_client
-            prompt = "Summarize the following data:"
-            data = {"key1": "value1", "key2": "value2"}
-            response = quick_completion(prompt + str(data), llm_client=self.llm_client)
+                # Use quick_completion and self.llm_client
+                prompt = "Summarize the following data:"
+                data = {"key1": "value1", "key2": "value2"}
+                response = quick_completion(prompt + str(data), llm_client=self.llm_client)
 
-            # Insert data into the database using build_insert_query and db_conn.execute
-            # Assume build_insert_query returns (query_string, values_tuple)
-            insert_data = {"id": 1, "result": response}
-            insert_query, values = build_insert_query(table_name, insert_data)
-            self.db_conn.execute(insert_query, values)
-            self.db_conn.commit()
+                # Insert data into the database using build_insert_query and db_conn.execute
+                # Assume build_insert_query returns (query_string, values_tuple)
+                insert_data = {"id": 1, "result": response}
+                insert_query, values = build_insert_query(table_name, insert_data)
+                conn.execute(insert_query, values)
+                conn.commit()
 
             self.logger.info("PortCLI script executed successfully.")
 
         except Exception as e:
             self.logger.error(f"An error occurred: {e}", exc_info=True)
             sys.exit(1)
+
+    def run(self) -> None:
+        """Legacy method for backward compatibility."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()
 
     def setup_argparse(self) -> argparse.ArgumentParser:
         """Set up command line arguments.
