@@ -33,6 +33,15 @@ class EnrichmentModule(BaseScript):
         # Add your enrichment logic here
         self.logger.info("Enrichment process completed.")
 
+    def execute(self) -> None:
+        """Executes the primary logic of the enrichment module."""
+        self.logger.info("Starting enrichment process...")
+        # Example of accessing a configuration value
+        example_config_value = self.get_config_value("example_config", "default_value")
+        self.logger.info(f"Example config value: {example_config_value}")
+        # Add your enrichment logic here
+        self.logger.info("Enrichment process completed.")
+
     def get_config_value(self, key: str, default: Any = None) -> Any:
         """Retrieves a configuration value associated with the given key.
 
