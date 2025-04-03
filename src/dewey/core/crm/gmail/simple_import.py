@@ -422,14 +422,14 @@ class GmailImporter(BaseScript):
                                         )
                                     except Exception as parse_error:
                                         self.logger.warning(
-                                            f"Failed to parse retry time: {parse_error}",
+                                            "Failed to parse retry time: %s", parse_error,
                                         )
                                         delay = base_delay * (2 ** (retry_count - 1))
                                 else:
                                     delay = base_delay * (2 ** (retry_count - 1))
 
                                 self.logger.info(
-                                    "Rate limit exceeded. Waiting %.2f seconds before retry %d/%d...", delay, retry_count, max_retries,
+                                    "Rate limit exceeded. Waiting %.2f seconds before retry %d/%d...", delay, retry_count, max_retries
                                 )
                                 time.sleep(delay)
                                 continue
@@ -442,7 +442,7 @@ class GmailImporter(BaseScript):
 
                 if retry_count == max_retries:
                     self.logger.warning(
-                        "Max retries (%d) reached. Moving on with collected messages.", max_retries,
+                        "Max retries (%d) reached. Moving on with collected messages.", max_retries
                     )
                     break
 
