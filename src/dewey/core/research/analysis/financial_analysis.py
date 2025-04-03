@@ -328,6 +328,10 @@ class FinancialAnalysis(BaseScript):
             self.logger.exception(f"Error during analysis: {e!s}")
             raise
 
+    def execute(self) -> None:
+        """Executes the financial analysis process."""
+        self.run()
+
 
 def main() -> None:
     """Main entry point for the financial analysis script."""
