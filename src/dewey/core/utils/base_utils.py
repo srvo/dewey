@@ -32,3 +32,15 @@ class Utils(BaseScript):
 
         except Exception as e:
             self.logger.exception(f"An error occurred during execution: {e}")
+
+    def execute(self) -> None:
+        """Executes the utility script's main logic.
+
+        This method demonstrates accessing a configuration value and logging a message.
+        """
+        try:
+            example_config_value: Any = self.get_config_value("example_config_key")
+            self.logger.info(f"Example config value in execute: {example_config_value}")
+            self.logger.info("Utils execute method executed successfully.")
+        except Exception as e:
+            self.logger.exception(f"An error occurred during execution: {e}")
