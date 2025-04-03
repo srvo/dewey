@@ -25,3 +25,9 @@ class GmailService(BaseScript):
         self.logger.info("Gmail service started.")
         # Implement your Gmail service logic here
         self.logger.info("Gmail service completed.")
+
+    def execute(self) -> None:
+        """Fetches emails from Gmail."""
+        self.logger.info("Fetching emails from Gmail...")
+        # Add Gmail API interaction logic here
+        self.logger.info("Emails fetched from Gmail.")
