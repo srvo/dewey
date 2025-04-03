@@ -1,4 +1,5 @@
 """Module for managing documentation tasks within Dewey's CRM."""
+
 """
 Dewey CRM Docs Module.
 

@@ -1,4 +1,5 @@
 """Module for managing documentation tasks within Dewey's automation scripts."""
+
 """
 Dewey Automation Docs Module.
 
