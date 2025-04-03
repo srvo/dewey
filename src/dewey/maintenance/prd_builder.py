@@ -32,17 +32,6 @@ class PrdBuilder(BaseScript):
 
         """
         self.logger.info("Starting PRD building process...")
-
-        # Accessing configuration value
-        template_path = self.get_config_value("prd_template_path")
-        self.logger.info(f"Using PRD template: {template_path}")
-
-        # Execute PRD building steps
-        try:
-            self.build_prd()
-        except NotImplementedError as e:
-            self.logger.error(f"PRD building failed: {e}")
-
         self.logger.info("PRD building process completed.")
 
     def build_prd(self) -> None:
