@@ -7,10 +7,10 @@ from dewey.core.base_script import BaseScript
 
 class BaseEngine(BaseScript):
     """Base class for all engines.
+
     This class provides a foundation for building engines within
     the Dewey project, offering standardized configuration,
-    logging, and database/LLM integration.
-    """
+    logging, and database/LLM integration."""
 
     def __init__(self, config_section: str = "base_engine") -> None:
         """Initializes the BaseEngine.
