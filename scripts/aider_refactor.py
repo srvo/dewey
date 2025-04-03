@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""
-Aider Refactor Script - Uses Aider to fix flake8 issues in Python files.
-"""
+"""Aider Refactor Script - Uses Aider to fix flake8 issues in Python files."""
 
 import argparse
+import contextlib
 import logging
 import os
 import re
@@ -12,7 +11,7 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
-from typing import List, Optional
+from typing import Never
 
 # Try to import aider modules conditionally to handle cases where it's not installed
 try:
@@ -23,10 +22,6 @@ try:
     AIDER_AVAILABLE = True
 except ImportError:
     AIDER_AVAILABLE = False
-    print(
-        "Error: aider not installed. Install with: pip install aider-chat",
-        file=sys.stderr,
-    )
     sys.exit(1)
 
 # Set up logging
@@ -43,10 +38,11 @@ GLOBAL_CHAT_HISTORY_FILE = None
 
 
 # Configure a signal handler for timeouts
-def signal_handler(signum, frame):
+def signal_handler(signum, frame) -> Never:
     """Handle timeout signal."""
     logger.error("Timeout reached")
-    raise TimeoutError("Timeout reached")
+    msg = "Timeout reached"
+    raise TimeoutError(msg)
 
 
 # Register signal handlers
@@ -57,7 +53,7 @@ signal.signal(signal.SIGTERM, signal_handler)
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        description="Use Aider to refactor code and generate tests"
+        description="Use Aider to refactor code and generate tests",
     )
     parser.add_argument("--dir", required=True, help="Directory or file to process")
     parser.add_argument("--model", default="gpt-4-turbo", help="Model to use")
@@ -71,11 +67,11 @@ def parse_args() -> argparse.Namespace:
         help="Timeout in seconds for processing each file",
     )
     parser.add_argument(
-        "--check-for-urls", action="store_true", help="Check for URLs in prompts"
+        "--check-for-urls", action="store_true", help="Check for URLs in prompts",
     )
     parser.add_argument("--custom-prompt", help="Custom prompt for Aider")
     parser.add_argument(
-        "--persist-session", action="store_true", help="Use a persistent Aider session"
+        "--persist-session", action="store_true", help="Use a persistent Aider session",
     )
     parser.add_argument(
         "--session-dir",
@@ -89,13 +85,13 @@ def find_python_files(path: Path) -> list[Path]:
     """Find all Python files in a directory or return a single file."""
     if path.is_file() and path.suffix == ".py":
         return [path]
-    elif path.is_dir():
+    if path.is_dir():
         try:
             python_files = list(path.glob("**/*.py"))
             logger.info(f"Found {len(python_files)} Python files in {path}")
             return python_files
         except Exception as e:
-            logger.error(f"Error finding Python files: {e}")
+            logger.exception(f"Error finding Python files: {e}")
             return []
     else:
         logger.error(f"Error: {path} is not a Python file or directory")
@@ -112,17 +108,17 @@ def get_flake8_issues(file_path: Path, max_line_length: int = 88) -> list[str]:
             "--format=%(path)s:%(row)d:%(col)d: %(code)s %(text)s",
         ]
         result = subprocess.run(
-            cmd, capture_output=True, text=True, check=False, timeout=30
+            cmd, capture_output=True, text=True, check=False, timeout=30,
         )
         issues = result.stdout.strip().split("\n") if result.stdout else []
         if issues == [""]:
             issues = []
         return issues
     except subprocess.TimeoutExpired:
-        logger.error(f"Timed out running flake8 on {file_path}")
+        logger.exception(f"Timed out running flake8 on {file_path}")
         return []
     except Exception as e:
-        logger.error(f"Error running flake8 on {file_path}: {e}")
+        logger.exception(f"Error running flake8 on {file_path}: {e}")
         return []
 
 
@@ -167,7 +163,7 @@ def initialize_persistent_session(args):
             initial_files.append(str(python_files[0]))
 
         logger.info(
-            f"Initializing persistent Aider session with {len(initial_files)} files"
+            f"Initializing persistent Aider session with {len(initial_files)} files",
         )
         GLOBAL_CODER = Coder.create(
             main_model=model,
@@ -177,7 +173,7 @@ def initialize_persistent_session(args):
         )
         return GLOBAL_CODER
     except Exception as e:
-        logger.error(f"Error creating persistent Aider session: {e}")
+        logger.exception(f"Error creating persistent Aider session: {e}")
         GLOBAL_CODER = None
         return None
 
@@ -248,7 +244,7 @@ def fix_file_with_aider(
             return False
 
         logger.warning(
-            f"Skipping directory {file_path} - need a custom prompt to process directories"
+            f"Skipping directory {file_path} - need a custom prompt to process directories",
         )
         return False
 
@@ -297,7 +293,7 @@ def fix_file_with_aider(
     # Add conventions if available and not using a custom prompt
     if conventions_file and os.path.exists(conventions_file) and not custom_prompt:
         try:
-            with open(conventions_file) as f:
+            with open(conventions_file, encoding="utf-8") as f:
                 conventions = f.read()
             prompt += (
                 f"\n\nFollow these conventions when fixing the code:\n\n{conventions}"
@@ -317,23 +313,20 @@ def fix_file_with_aider(
             # In a real run, this might fail, so we shouldn't assume success
             if verbose:
                 logger.warning(
-                    "[DRY RUN] Note: Syntax errors may require multiple attempts to fix completely"
+                    "[DRY RUN] Note: Syntax errors may require multiple attempts to fix completely",
                 )
             # Return True in dry-run mode for conftest files with syntax errors
             # to indicate that an attempt would be made
             return True
-        elif custom_prompt:
+        if custom_prompt:
             # For custom prompts, we would attempt to fix but can't guarantee success
             logger.info(
-                f"[DRY RUN] Would attempt to fix issues in {file_path} with custom prompt"
+                f"[DRY RUN] Would attempt to fix issues in {file_path} with custom prompt",
             )
             # Return True to indicate we would attempt the fix, not that it would succeed
             return True
-        else:
-            logger.info(
-                f"[DRY RUN] Would fix {len(issues)} flake8 issues in {file_path}"
-            )
-            return len(issues) > 0  # Return True only if there are actual issues to fix
+        logger.info(f"[DRY RUN] Would fix {len(issues)} flake8 issues in {file_path}")
+        return len(issues) > 0  # Return True only if there are actual issues to fix
 
     # Set alarm for timeout
     signal.alarm(timeout)
@@ -354,7 +347,7 @@ def fix_file_with_aider(
             # Make sure we have environment variables properly set for non-interactive mode
             os.environ["AIDER_NO_AUTO_COMMIT"] = "1"
             os.environ["AIDER_CHAT_HISTORY_FILE"] = os.environ.get(
-                "AIDER_CHAT_HISTORY_FILE", null_device
+                "AIDER_CHAT_HISTORY_FILE", null_device,
             )
             os.environ["AIDER_NO_INPUT"] = "1"
             os.environ["AIDER_QUIET"] = "1"
@@ -392,25 +385,24 @@ def fix_file_with_aider(
                         # Try different ways to check if the file is in the repo map
                         # Method 1: Check if repo_map.files exists
                         if (
-                            hasattr(coder.repo_map, "files")
-                            and file_str not in coder.repo_map.files
-                        ):
-                            has_file = False
-                        # Method 2: Check if the file is in repo_map.get_all_files()
-                        elif (
-                            hasattr(coder.repo_map, "get_all_files")
-                            and file_str not in coder.repo_map.get_all_files()
-                        ):
-                            has_file = False
-                        # Method 3: Check if the file is directly in repo_map's keys
-                        elif hasattr(coder.repo_map, "keys") and file_str not in list(
-                            coder.repo_map.keys()
-                        ):
-                            has_file = False
-                        # Method 4: Check if repo_map is a dictionary with the file as a key
-                        elif (
-                            isinstance(coder.repo_map, dict)
-                            and file_str not in coder.repo_map
+                            (
+                                hasattr(coder.repo_map, "files")
+                                and file_str not in coder.repo_map.files
+                            )
+                            or (
+                                hasattr(coder.repo_map, "get_all_files")
+                                and file_str not in coder.repo_map.get_all_files()
+                            )
+                            or (
+                                (
+                                    hasattr(coder.repo_map, "keys")
+                                    and file_str not in list(coder.repo_map.keys())
+                                )
+                                or (
+                                    isinstance(coder.repo_map, dict)
+                                    and file_str not in coder.repo_map
+                                )
+                            )
                         ):
                             has_file = False
                         else:
@@ -425,22 +417,21 @@ def fix_file_with_aider(
                     # For WholeFileCoder or other coders without add_files
                     # We need to create a new coder instance each time
                     logger.info(
-                        f"Current coder doesn't support add_files, using direct file content for {file_path}"
+                        f"Current coder doesn't support add_files, using direct file content for {file_path}",
                     )
 
                     # If we're using WholeFileCoder, it typically works with file content directly
                     # We don't need to add files, as it will process the current file content
                     if not hasattr(coder, "repo_map"):
                         logger.info(
-                            f"Coder doesn't have a repo_map, assuming WholeFileCoder for {file_path}"
+                            f"Coder doesn't have a repo_map, assuming WholeFileCoder for {file_path}",
                         )
                         # WholeFileCoder works differently - it already has the file loaded
-                        pass
                     else:
                         # We have a coder with repo_map but no add_files, which is unexpected
                         # Log this unusual situation
                         logger.warning(
-                            f"Unexpected coder type - has repo_map but no add_files method for {file_path}"
+                            f"Unexpected coder type - has repo_map but no add_files method for {file_path}",
                         )
 
                         # If the file isn't in the coder's context yet, we'll need to recreate it
@@ -464,7 +455,7 @@ def fix_file_with_aider(
                 # Attempt to recreate the coder for just this file as fallback
                 try:
                     logger.info(
-                        f"Falling back to creating a new coder instance for {file_path}"
+                        f"Falling back to creating a new coder instance for {file_path}",
                     )
                     null_device = tempfile.mktemp()
                     model = Model(model_name)
@@ -477,7 +468,7 @@ def fix_file_with_aider(
                     )
                     persist_session = False  # Disable persistence for this run
                 except Exception as create_error:
-                    logger.error(f"Failed to create fallback coder: {create_error}")
+                    logger.exception(f"Failed to create fallback coder: {create_error}")
                     raise
 
         # Run Aider to fix the issues
@@ -497,40 +488,37 @@ def fix_file_with_aider(
         if remaining_issues:
             if verbose:
                 logger.info(
-                    f"Aider fixed {len(issues) - len(remaining_issues)} issues, but {len(remaining_issues)} remain"
+                    f"Aider fixed {len(issues) - len(remaining_issues)} issues, but {len(remaining_issues)} remain",
                 )
                 for issue in remaining_issues[:3]:
                     logger.info(f"  {issue}")
                 if len(remaining_issues) > 3:
                     logger.info(f"  ... and {len(remaining_issues) - 3} more")
             return len(remaining_issues) < len(
-                issues
+                issues,
             )  # Return True only if we fixed at least one issue
-        else:
-            if verbose:
-                logger.info(
-                    f"Aider successfully fixed all {len(issues)} issues in {file_path}"
-                )
-            return True
+        if verbose:
+            logger.info(
+                f"Aider successfully fixed all {len(issues)} issues in {file_path}",
+            )
+        return True
     except TimeoutError:
-        logger.error(f"Timed out processing {file_path}")
+        logger.exception(f"Timed out processing {file_path}")
         signal.alarm(0)  # Turn off alarm
         return False
     except Exception as e:
-        logger.error(f"Error using Aider to fix {file_path}: {e}")
+        logger.exception(f"Error using Aider to fix {file_path}: {e}")
         # Turn off alarm if it was set
         signal.alarm(0)
         return False
     finally:
         # Clean up temp file if we created one
         if not persist_session and "null_device" in locals():
-            try:
+            with contextlib.suppress(Exception):
                 os.remove(null_device)
-            except Exception:
-                pass
 
 
-def main():
+def main() -> None:
     """Execute main functions to run the script."""
     args = parse_args()
     path = Path(args.dir)
@@ -571,10 +559,10 @@ def main():
                         enhanced_prompt += f"### {file_path}\n{summary}\n\n"
                         file_summaries.append({"path": file_path, "summary": summary})
                     except Exception as e:
-                        logger.error(f"Error summarizing file {file_path}: {e}")
+                        logger.exception(f"Error summarizing file {file_path}: {e}")
 
             logger.info(
-                f"Enhanced prompt with summaries of {len(file_summaries)} files"
+                f"Enhanced prompt with summaries of {len(file_summaries)} files",
             )
 
             # Set the enhanced prompt
@@ -583,7 +571,7 @@ def main():
             logger.info("Repomix not available; using custom prompt as is")
             custom_prompt = args.custom_prompt
         except Exception as e:
-            logger.error(f"Error generating repository context: {e}")
+            logger.exception(f"Error generating repository context: {e}")
             custom_prompt = args.custom_prompt
     else:
         custom_prompt = args.custom_prompt
@@ -603,7 +591,7 @@ def main():
             # We don't process directories directly, only individual files
             if file_path.is_dir():
                 logger.warning(
-                    f"Skipping directory {file_path} - only processing individual files"
+                    f"Skipping directory {file_path} - only processing individual files",
                 )
                 continue
 
@@ -623,7 +611,7 @@ def main():
             else:
                 failed += 1
         except Exception as e:
-            logger.error(f"Unexpected error processing {file_path}: {e}")
+            logger.exception(f"Unexpected error processing {file_path}: {e}")
             failed += 1
 
     # Print summary
@@ -639,5 +627,5 @@ if __name__ == "__main__":
         logger.warning("Process interrupted by user")
         sys.exit(1)
     except Exception as e:
-        logger.error(f"Unexpected error: {e}")
+        logger.exception(f"Unexpected error: {e}")
         sys.exit(1)
