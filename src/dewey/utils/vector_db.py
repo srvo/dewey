@@ -19,7 +19,7 @@ class VectorDB(BaseScript):
         """
         super().__init__(config_section="vector_db", **kwargs)
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Executes the main logic of the VectorDB script.
 
         Retrieves configuration values, initializes the database and LLM,
@@ -47,3 +47,11 @@ class VectorDB(BaseScript):
             self.logger.exception(
                 f"An error occurred during vector database operation: {e}"
             )
+
+    def run(self) -> None:
+        """Legacy method for backward compatibility.
+
+        New scripts should implement execute() instead of run().
+        This method will be deprecated in a future version.
+        """
+        super().run()
