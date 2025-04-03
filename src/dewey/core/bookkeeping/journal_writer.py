@@ -83,9 +83,10 @@ class JournalWriter(BaseScript):
         This method contains the core logic for writing journal entries.
         """
         # Example usage of config and database:
-        example_config_value = self.config_source.get_config_value(
-            "utils.example_config", "default_value"
-        )
+        if self.config_source:
+            example_config_value = self.config_source.get_config_value(
+                "utils.example_config", "default_value"
+            )
 
         if self.db_conn:
             result = self.db_conn.execute("SELECT 1")
