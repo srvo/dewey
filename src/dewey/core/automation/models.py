@@ -50,6 +50,7 @@ class Script(BaseScript):
 
         Raises:
             NotImplementedError: If the run method is not implemented.
+
         """
         self.run()
 
