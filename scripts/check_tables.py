@@ -14,7 +14,8 @@ from dotenv import load_dotenv
 
 
 def format_table_info(table_name, row_count, schema, sample_row=None):
-"""Format table information in a consistent way."""
+    """Format table information in a consistent way."""
+    pass
     info = {
         "table_name": table_name,
         "row_count": row_count,
