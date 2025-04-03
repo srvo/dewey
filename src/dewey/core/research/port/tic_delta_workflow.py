@@ -49,6 +49,14 @@ class TicDeltaWorkflow(BaseScript):
             )
             raise
 
+    def execute(self):
+        """Executes the tick data processing and delta analysis workflow."""
+        try:
+            self.run()
+        except Exception as e:
+            self.logger.error(f"Error executing TicDeltaWorkflow: {e}", exc_info=True)
+            raise
+
 
 if __name__ == "__main__":
     workflow = TicDeltaWorkflow()
