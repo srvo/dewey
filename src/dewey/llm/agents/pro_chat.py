@@ -16,7 +16,7 @@ class ProChat(BaseScript):
         """
         super().__init__(config_section=config_section, **kwargs)
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Executes the core logic of the ProChat agent.
 
         This method retrieves configuration values, initializes necessary components,
@@ -51,4 +51,4 @@ if __name__ == "__main__":
     # Example usage (replace with actual configuration)
     config: dict[str, Any] = {"model_name": "gpt-4", "temperature": 0.8}
     agent = ProChat()
-    agent.run()
+    agent.execute()
