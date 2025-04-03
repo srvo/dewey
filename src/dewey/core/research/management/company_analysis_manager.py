@@ -110,6 +110,10 @@ class CompanyAnalysisManager(BaseScript):
                 exc_info=True,
             )
 
+    def execute(self) -> None:
+        """Execute the company analysis process."""
+        self.run()
+
 
 if __name__ == "__main__":
     manager = CompanyAnalysisManager()
