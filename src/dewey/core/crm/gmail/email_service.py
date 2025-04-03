@@ -92,3 +92,26 @@ class EmailService(BaseScript):
             self.logger.error(f"Fatal error in email service: {e}", exc_info=True)
         finally:
             self.logger.info("Email service shutting down")
+
+    def execute(self) -> None:
+        """Executes the email service in a continuous loop.
+
+        This method is the main entry point for running the email service.
+        It initializes the service, enters a continuous loop to fetch and
+        process emails, and handles graceful shutdown.
+        """
+        self.running = True
+        self.logger.info("Email service started")
+
+        try:
+            while self.running:
+                current_time = datetime.now()
+                if self.last_run is None or (current_time - self.last_run) >= timedelta(
+                    seconds=self.fetch_interval
+                ):
+                    self.fetch_cycle()
+                time.sleep(self.check_interval)
+        except Exception as e:
+            self.logger.error(f"Fatal error in email service: {e}", exc_info=True)
+        finally:
+            self.logger.info("Email service shutting down")
