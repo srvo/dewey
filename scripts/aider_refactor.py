@@ -260,11 +260,11 @@ def fix_file_with_aider(
             return True
 
         if verbose:
-            logger.info(f"Found {len(issues)} flake8 issues in {file_path}:")
+            logger.info("Found %s flake8 issues in %s:", len(issues), file_path)
             for issue in issues[:5]:
-                logger.info(f"  {issue}")
+                logger.info("  %s", issue)
             if len(issues) > 5:
-                logger.info(f"  ... and {len(issues) - 5} more")
+                logger.info("  ... and %s more", len(issues) - 5)
 
         # Create a prompt for Aider
         prompt = "Fix the following flake8 issues in this file:\n\n"
