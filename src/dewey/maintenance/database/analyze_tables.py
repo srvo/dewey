@@ -14,7 +14,7 @@ class AnalyzeTables(BaseScript):
         """Initializes the AnalyzeTables module."""
         super().__init__(*args, **kwargs)
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Executes the table analysis and maintenance process."""
         self.logger.info("Starting table analysis...")
 
@@ -37,4 +37,4 @@ class AnalyzeTables(BaseScript):
 if __name__ == "__main__":
     # Example usage (replace with your actual initialization)
     script = AnalyzeTables()
-    script.run()
+    script.execute()
