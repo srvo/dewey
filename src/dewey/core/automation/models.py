@@ -43,6 +43,16 @@ class Script(BaseScript):
         """
         raise NotImplementedError("The run method must be implemented")
 
+    def execute(self) -> None:
+        """Execute the script.
+
+        This method calls the run method, which should be implemented by subclasses.
+
+        Raises:
+            NotImplementedError: If the run method is not implemented.
+        """
+        self.run()
+
 
 class Service(BaseScript):
     """Represents a service that can be deployed and managed."""
