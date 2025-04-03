@@ -28,6 +28,10 @@ class DbMaintenance(BaseScript):
             enable_llm=True,
         )
 
+    def execute(self) -> None:
+        """Execute the database maintenance operations."""
+        self.run()
+
     def run(self) -> None:
         """Run the database maintenance operations.
 
