@@ -111,6 +111,13 @@ class AutomationModule(BaseScript):
 
         self.logger.info("Automation module finished.")
 
+    def execute(self) -> None:
+        """Execute the automation module.
+
+        This method calls the run method to execute the main logic of the module.
+        """
+        self.run()
+
 
 if __name__ == "__main__":
     # Example usage:
