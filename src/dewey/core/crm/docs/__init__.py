@@ -42,9 +42,7 @@ class DocsModule(BaseScript):
 
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
-        self.warning(
-            "Using deprecated run() method. Update to use execute() instead.",
-        )
+        self.warning("Using deprecated run() method. Update to use execute() instead.")
         self.execute()
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
