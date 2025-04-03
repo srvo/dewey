@@ -61,3 +61,10 @@ class DashboardGenerator(BaseScript):
         self.logger.info("Placeholder: Generating dashboard...")
         # Replace with actual dashboard generation logic
         pass
+
+    def execute(self) -> None:
+        """Executes the dashboard generation script.
+
+        This method calls the run method to perform the dashboard generation.
+        """
+        self.run()
