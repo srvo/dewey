@@ -10,6 +10,7 @@ class CRMInterface(BaseScript):
     """User interface for CRM interactions."""
 
     def __init__(self) -> None:
+        super().__init__(requires_db=True)
         self.console = Console()
 
     def display_contacts(self, contacts: list[CRMContact]) -> None:
@@ -29,3 +30,13 @@ class CRMInterface(BaseScript):
             )
 
         self.console.print(table)
+
+    def execute(self) -> None:
+        """Fetch and display CRM contacts."""
+        try:
+            with self.db_session_scope() as session:
+                contacts = session.query(CRMContact).all()
+            self.display_contacts(contacts)
+        except Exception as e:
+            self.logger.error(f"Error fetching CRM contacts: {e}")
+            self.console.print(f"Error: {e}", style="red")
