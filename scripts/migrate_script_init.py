@@ -216,6 +216,10 @@ class ScriptInitMigrator(BaseScript):
         if self.dry_run:
             self.logger.info("\nThis was a dry run. No files were modified.")
 
+    def execute(self) -> None:
+        """Execute the script migration process."""
+        self.run()
+
 
 def main():
     """Main entry point."""
