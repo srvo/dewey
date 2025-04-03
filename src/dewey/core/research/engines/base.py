@@ -148,7 +148,7 @@ class BaseEngine(BaseScript):
             if not config_path.exists():
                 self.logger.error("Configuration file not found: %s", config_path)
                 raise FileNotFoundError(
-                    "Configuration file not found: %s" % config_path,
+                    "Configuration file not found: %s" % config_path
                 )
 
             self.config = self._load_config()

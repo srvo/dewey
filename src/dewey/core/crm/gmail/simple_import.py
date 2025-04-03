@@ -720,12 +720,12 @@ class GmailImporter(BaseScript):
             if isinstance(email_data, str):
                 try:
                     self.logger.info(
-                        "Attempting to parse string email data: %s...", email_data[:100],
+                        "Attempting to parse string email data: %s...", email_data[:100]
                     )
                     email_data = json.loads(email_data)
                 except json.JSONDecodeError as e:
                     self.logger.error(
-                        "Failed to parse email_data string as JSON: %s", str(e),
+                        "Failed to parse email_data string as JSON: %s", str(e)
                     )
                     return False
 
@@ -742,7 +742,7 @@ class GmailImporter(BaseScript):
             # Extract headers
             payload = email_data.get("payload")
             if not isinstance(payload, dict):
-                self.logger.error(f"Invalid payload type: {type(payload)}")
+                self.logger.error("Invalid payload type: %s", type(payload))
                 return False
 
             headers = {
