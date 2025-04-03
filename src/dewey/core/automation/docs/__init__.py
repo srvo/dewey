@@ -1,4 +1,4 @@
-1from typing import Any, Dict, Optional, Protocol
+from typing import Any, Dict, Optional, Protocol
 
 from dewey.core.script import BaseScript
 
@@ -34,13 +34,14 @@ class DocsModule(BaseScript):
         """
         super().__init__(config)
         self._logger: LoggerInterface = logger if logger is not None else self.logger
-    pass  # Placeholder added by quick_fix.py
+
     def execute(self) -> None:
         """Executes the primary logic of the documentation module.
 
         This method should be overridden in subclasses to implement
         specific documentation tasks.
         """
+        pass
         self._logger.info("Running the Docs module...")
         # Add your documentation logic here
 
