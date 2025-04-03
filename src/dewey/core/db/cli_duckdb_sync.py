@@ -94,6 +94,59 @@ class SyncDuckDBScript(BaseScript):
 
         return parser.parse_args()
 
+    def execute(self) -> None:
+        """Execute the sync script.
+
+        This method replaces the legacy run() method. It configures logging,
+        initializes the sync instance, parses table lists, and performs the
+        sync operation based on the specified direction and monitoring mode.
+        """
+        # Configure logging level
+        if self.args.verbose:
+            import logging
+
+            self.logger.setLevel(logging.DEBUG)
+            self.logger.debug("Verbose logging enabled")
+
+        # Initialize sync instance
+        self.logger.info(
+            f"Initializing sync between local DB {self.args.local_db} and MotherDuck DB {self.args.md_db}"
+        )
+
+        try:
+            self.sync = get_duckdb_sync(
+                local_db_path=self.args.local_db,
+                motherduck_db=self.args.md_db,
+                motherduck_token=self.args.token,
+                auto_sync=False,  # Disable auto-sync for manual control
+            )
+
+            # Parse table lists
+            tables_to_sync = (
+                self._parse_table_list(self.args.tables) if self.args.tables else None
+            )
+            tables_to_exclude = (
+                self._parse_table_list(self.args.exclude) if self.args.exclude else []
+            )
+
+            # Perform sync based on direction
+            if self.args.monitor:
+                self._run_monitor_mode(tables_to_sync, tables_to_exclude)
+            else:
+                success = self._run_sync(
+                    self.args.direction, tables_to_sync, tables_to_exclude
+                )
+                if not success:
+                    self.logger.error("Sync failed")
+                    sys.exit(1)
+
+        except Exception as e:
+            self.logger.error(f"Error during sync: {e}")
+            sys.exit(1)
+        finally:
+            if self.sync:
+                self.sync.close()
+
     def run(self) -> None:
         """Run the sync script."""
         # Configure logging level
