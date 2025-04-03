@@ -41,7 +41,8 @@ GLOBAL_CHAT_HISTORY_FILE = None
 def signal_handler(signum, frame) -> Never:
     """Handle timeout signal."""
     logger.error("Timeout reached")
-    raise TimeoutError("Timeout reached")
+    msg = "Timeout reached"
+    raise TimeoutError(msg)
 
 
 # Register signal handlers
@@ -103,7 +104,7 @@ def get_flake8_issues(file_path: Path, max_line_length: int = 88) -> list[str]:
         cmd = [
             "flake8",
             str(file_path),
-            "--max-line-length={}".format(max_line_length),
+            f"--max-line-length={max_line_length}",
             "--format=%(path)s:%(row)d:%(col)d: %(code)s %(text)s",
         ]
         result = subprocess.run(
