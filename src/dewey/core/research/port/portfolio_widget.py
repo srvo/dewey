@@ -6,7 +6,7 @@ class PortfolioWidget(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the PortfolioWidget script."""
-        super().__init__(config_section="portfolio_widget")
+        super().__init__(config_section="portfolio_widget", requires_db=True, enable_llm=True)
 
     def run(self) -> None:
         """Executes the portfolio widget script.
@@ -25,7 +25,10 @@ class PortfolioWidget(BaseScript):
             try:
                 # Example query (replace with your actual query)
                 query = "SELECT * FROM portfolio_data"
-                result = self.db_conn.execute(query)
+                with self.db_connection() as conn:
+                    with conn.cursor() as cursor:
+                        cursor.execute(query)
+                        result = cursor.fetchall()
                 self.logger.info(f"Portfolio data retrieved: {result}")
             except Exception as e:
                 self.logger.error(f"Error retrieving portfolio data: {e}")
@@ -40,6 +43,10 @@ class PortfolioWidget(BaseScript):
                 self.logger.error(f"Error generating portfolio summary: {e}")
 
         self.logger.info("Portfolio Widget completed.")
+
+    def execute(self) -> None:
+        """Executes the portfolio widget script."""
+        self.run()
 
 
 if __name__ == "__main__":
