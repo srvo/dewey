@@ -35,7 +35,7 @@ class TranscriptsModule(BaseScript):
         # Add your main script logic here
         example_config_value = self.get_config_value("example_config")
         if example_config_value:
-            self.logger.info(f"Example config value: {example_config_value}")
+            self.logger.info("Example config value: %s", example_config_value)
         else:
             self.logger.warning("Example config value not found.")
 

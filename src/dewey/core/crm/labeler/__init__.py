@@ -44,7 +44,7 @@ class LabelerModule(BaseScript):
             some_config_value = self.get_config_value(
                 "some_config_key", "default_value",
             )
-            self.logger.debug(f"Some config value: {some_config_value}")
+            self.logger.debug("Some config value: %s", some_config_value)
 
             # Example of using database connection
             if self.db_conn:
@@ -53,7 +53,7 @@ class LabelerModule(BaseScript):
                 # with self.db_conn.cursor() as cursor:
                 #     cursor.execute("SELECT 1")
                 #     result = cursor.fetchone()
-                #     self.logger.debug(f"Database query result: {result}")
+                #     self.logger.debug("Database query result: %s", result)
             else:
                 self.logger.warning("No database connection available.")
 
@@ -62,7 +62,7 @@ class LabelerModule(BaseScript):
                 self.logger.info("LLM client is available.")
                 # Example LLM call (replace with your actual prompt)
                 # response = self.llm_client.generate(prompt="Tell me a joke.")
-                # self.logger.debug(f"LLM response: {response}")
+                # self.logger.debug("LLM response: %s", response)
             else:
                 self.logger.warning("No LLM client available.")
 
@@ -70,7 +70,7 @@ class LabelerModule(BaseScript):
             self.logger.info("Labeler module finished.")
 
         except Exception as e:
-            self.logger.error(f"Error in labeler module: {e}", exc_info=True)
+            self.logger.error("Error in labeler module: %s", e, exc_info=True)
             raise
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
