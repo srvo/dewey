@@ -50,3 +50,30 @@ class CsvIngestion(BaseScript):
         except Exception as e:
             self.logger.exception(f"An error occurred during CSV ingestion: {e}")
             raise
+
+    def execute(self) -> None:
+        """Executes the CSV ingestion process.
+
+        This method retrieves configuration values, processes the CSV data,
+        and performs necessary actions.
+        """
+        try:
+            # Retrieve configuration values using self.get_config_value()
+            csv_file_path = self.get_config_value("csv_file_path")
+
+            # Example of using logger
+            self.logger.info(f"Starting CSV ingestion from: {csv_file_path}")
+
+            # Add your CSV processing logic here
+            # For example:
+            with open(csv_file_path) as file:
+                # Process each line of the CSV file
+                for line in file:
+                    self.logger.debug(f"Processing line: {line.strip()}")
+                    # Perform further operations with the data
+
+            self.logger.info("CSV ingestion completed successfully.")
+
+        except Exception as e:
+            self.logger.exception(f"An error occurred during CSV ingestion: {e}")
+            raise
