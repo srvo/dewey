@@ -493,6 +493,10 @@ class IMAPEmailImporter(BaseScript):
             self.logger.error(f"Error storing email: {e}")
             return False
 
+    def execute(self) -> None:
+        """Execute the IMAP email import process."""
+        self.run()
+
 
 def main() -> None:
     """Main entry point for the script."""
