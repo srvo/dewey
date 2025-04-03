@@ -5,9 +5,11 @@ class RFDocstringAgent(BaseScript):
     """Refactors docstrings in a codebase."""
 
     def __init__(self, config_path: str, dry_run: bool = False) -> None:
-        """Initializes the RFDocstringAgent.
+        """
+        Initializes the RFDocstringAgent.
 
         Args:
+        ----
             config_path: Path to the configuration file.
             dry_run: If True, the script will not make any changes.
 
@@ -16,12 +18,15 @@ class RFDocstringAgent(BaseScript):
         self.dry_run = dry_run
 
     def run(self) -> None:
-        """Executes the docstring refactoring process.
+        """
+        Executes the docstring refactoring process.
 
-        Raises:
+        Raises
+        ------
             Exception: If an error occurs during the process.
 
-        Returns:
+        Returns
+        -------
             None
 
         """
