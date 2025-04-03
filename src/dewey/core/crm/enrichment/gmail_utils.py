@@ -185,7 +185,7 @@ class GmailAPIClient:
                         )
                 else:
                     self.logger.warning(
-                        f"Credentials file not found at {self.credentials_path}",
+                        "Credentials file not found at %s", self.credentials_path,
                     )
                     self.logger.info("Using application default credentials")
                     # Use application default credentials from gcloud CLI

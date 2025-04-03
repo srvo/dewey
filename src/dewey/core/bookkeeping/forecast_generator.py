@@ -65,7 +65,7 @@ class JournalEntryGenerator(BaseScript):
         try:
             for i, assumption in enumerate(self.ASSUMPTIONS, 1):
                 while True:
-                    response = input(f"{i}. {assumption} (y/n): ").strip().lower()
+                    response = input("{}. {} (y/n): ".format(i, assumption)).strip().lower()
                     if response == "y":
                         break
                     if response == "n":
