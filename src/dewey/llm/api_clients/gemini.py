@@ -63,3 +63,11 @@ class GeminiClient(BaseScript):
             "response": "This is a simulated response from the Gemini API.",
         }
         return response
+
+    def execute(self) -> None:
+        """Executes the Gemini client's primary logic.
+
+        This method calls the run method, which handles the core interaction
+        with the Gemini API.
+        """
+        self.run()
