@@ -63,7 +63,7 @@ class DataIngestionModule(BaseScript):
                 response = self.llm_client.generate_text("Tell me a joke.")
                 self.logger.info(f"LLM response: {response}")
             else:
-                self.logger.warning("LLM client not initialized. Skipping LLM usage.")
+                self.logger.warning("LLM client not initialized.  Skipping LLM usage.")
         except Exception as e:
             self.logger.error(f"LLM error: {e}")
 
