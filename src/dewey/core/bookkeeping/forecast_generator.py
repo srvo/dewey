@@ -89,13 +89,13 @@ class JournalEntryGenerator(BaseScript):
             The formatted acquisition journal entry string.
 
         """
-        return f"""\
-{acquisition_date.strftime("%Y-%m-%d")} Acquired Mormair_E650 via barter
+        return """
+{acquisition_date} Acquired Mormair_E650 via barter
     Assets:PPE:Mormair_E650             £2500.00
     Assets:Cash                            £-25.00
     Income:Consulting:Services          £-2475.00
 
-"""
+""".format(acquisition_date=acquisition_date.strftime("%Y-%m-%d"))
 
     def append_acquisition_entry(
         self, complete_ledger_file: str, acquisition_entry: str,
@@ -172,10 +172,10 @@ account Expenses:Hosting:Mormair_E650
 
         """
         return (
-            f"{current_date.strftime('%Y-%m-%d')} Depreciation - Mormair_E650\n"
+            "{current_date} Depreciation - Mormair_E650\n"
             "    Expenses:Depreciation:Mormair_E650     £6.94\n"
             "    Assets:AccumulatedDepr:Mormair_E650   £-6.94\n\n"
-        )
+        ).format(current_date=current_date.strftime('%Y-%m-%d'))
 
     def calculate_revenue_share(self, recovered: float) -> float:
         """Calculates the revenue share based on the recovered amount."""
@@ -214,24 +214,24 @@ account Expenses:Hosting:Mormair_E650
         generator["recovered"] = min(generator["recovered"], 359975)
 
         lease_income_entry = (
-            f"{current_date.strftime('%Y-%m-%d')} Lease income - Mormair_E650\n"
-            f"    Assets:Cash                          £{gross_revenue - revenue_share_amount - hosting_fee:.2f}\n"
-            f"    Income:Lease:Mormair_E650          £-{gross_revenue:.2f}\n\n"
-        )
+            "{current_date} Lease income - Mormair_E650\n"
+            "    Assets:Cash                          £{cash:.2f}\n"
+            "    Income:Lease:Mormair_E650          £-{gross_revenue:.2f}\n\n"
+        ).format(current_date=current_date.strftime('%Y-%m-%d'), cash=gross_revenue - revenue_share_amount - hosting_fee, gross_revenue=gross_revenue)
 
         revenue_share_payment_entry = (
-            f"{current_date.strftime('%Y-%m-%d')} Revenue share payment - "
-            f"Mormair_E650\n"
-            f"    Expenses:RevenueShare:Mormair_E650  £{revenue_share_amount:.2f}\n"
-            f"    Assets:Cash                           £-{revenue_share_amount:.2f}\n\n"
-        )
+            "{current_date} Revenue share payment - "
+            "Mormair_E650\n"
+            "    Expenses:RevenueShare:Mormair_E650  £{revenue_share_amount:.2f}\n"
+            "    Assets:Cash                           £-{revenue_share_amount:.2f}\n\n"
+        ).format(current_date=current_date.strftime('%Y-%m-%d'), revenue_share_amount=revenue_share_amount)
 
         hosting_fee_payment_entry = (
-            f"{current_date.strftime('%Y-%m-%d')} Hosting fee payment - "
-            f"Mormair_E650\n"
-            f"    Expenses:Hosting:Mormair_E650        £{hosting_fee:.2f}\n"
-            f"    Assets:Cash                           £-{hosting_fee:.2f}\n\n"
-        )
+            "{current_date} Hosting fee payment - "
+            "Mormair_E650\n"
+            "    Expenses:Hosting:Mormair_E650        £{hosting_fee:.2f}\n"
+            "    Assets:Cash                           £-{hosting_fee:.2f}\n\n"
+        ).format(current_date=current_date.strftime('%Y-%m-%d'), hosting_fee=hosting_fee)
 
         return (
             lease_income_entry,
