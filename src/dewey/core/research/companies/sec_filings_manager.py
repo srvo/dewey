@@ -26,3 +26,9 @@ class SecFilingsManager(BaseScript):
         example_config_value = self.get_config_value("example_config")
         self.logger.info(f"Example config value: {example_config_value}")
         self.logger.info("Finished SEC filings management process.")
+
+    def execute(self) -> None:
+        """Executes the SEC filings management process."""
+        self.logger.info("Starting SEC filings management process.")
+        # Add SEC filings management logic here
+        self.logger.info("Finished SEC filings management process.")
