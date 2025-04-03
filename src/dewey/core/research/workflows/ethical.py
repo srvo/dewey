@@ -263,142 +263,20 @@ Please provide:
             self.logger.error(f"Error analyzing company {company}: {str(e)}")
             return None
 
-    def execute(self, data_dir: str) -> Dict[str, Any]:
-        """Execute the workflow.
+    def execute(self) -> None:
+        """Execute the ethical analysis workflow.
 
-        Args:
-            data_dir: The directory containing the companies.csv file.
-
-        Returns:
-            A dictionary containing the statistics and results of the analysis.
-
-        Raises:
-            FileNotFoundError: If the companies file is not found.
-
+        This method orchestrates the ethical analysis process, including
+        reading company data, performing searches, analyzing results, and
+        saving the output.
         """
-        companies_file = os.path.join(data_dir, "companies.csv")
-        companies = []
-        stats = {
-            "companies_processed": 0,
-            "total_searches": 0,
-            "total_results": 0,
-            "total_snippet_words": 0,
-            "total_analyses": 0,
-            "total_analysis_words": 0,
-        }
-
+        data_dir = str(self.data_dir)
         try:
-            with open(companies_file) as f:
-                reader = csv.DictReader(f)
-                for row in reader:
-                    company_name = row.get("Company", "Unknown")
-                    self.logger.info(f"Processing company: {company_name}")
-                    try:
-                        # Build and execute search query
-                        query = self.build_query(row)
-                        search_results = self.search_engine.search(query)
-
-                        # Ensure search_results is a list of dictionaries
-                        if not isinstance(search_results, list):
-                            search_results = []
-
-                        # Update search stats
-                        stats["total_searches"] += 1
-                        stats["total_results"] += len(search_results)
-                        for result in search_results:
-                            if isinstance(result, dict):
-                                stats["total_snippet_words"] += self.word_count(
-                                    result.get("snippet", "")
-                                )
-
-                        with get_connection(for_write=True) as conn:
-                            # Insert search into database
-                            result = conn.execute(
-                                """
-                                INSERT INTO research_searches (company_name, query, num_results)
-                                VALUES (?, ?, ?)
-                                RETURNING id
-                            """,
-                                [company_name, query, len(search_results)],
-                            )
-                            search_id = result.fetchone()[0]
-
-                            # Insert search results
-                            for result in search_results:
-                                if not isinstance(result, dict):
-                                    continue
-                                conn.execute(
-                                    """
-                                    INSERT INTO research_search_results
-                                    (search_id, title, link, snippet, source)
-                                    VALUES (?, ?, ?, ?, ?)
-                                """,
-                                    [
-                                        search_id,
-                                        result.get("title", ""),
-                                        result.get("link", ""),
-                                        result.get("snippet", ""),
-                                        result.get("source", ""),
-                                    ],
-                                )
-
-                        # Analyze results
-                        analysis = self.analyze_company_profile(company_name)
-                        if analysis:  # Only process if analysis was successful
-                            # Update analysis stats
-                            stats["total_analyses"] += 1
-                            stats["total_analysis_words"] += self.word_count(
-                                analysis.get("analysis", "")
-                            ) + self.word_count(analysis.get("historical", ""))
-
-                            # Save company data
-                            company_data = {
-                                "company_name": company_name,
-                                "metadata": row,
-                                "analysis": {
-                                    "summary": analysis.get("summary", ""),
-                                    "content": analysis.get("analysis", ""),
-                                    "historical": analysis.get("historical", ""),
-                                    "evidence": {
-                                        "sources": [
-                                            {
-                                                "title": r.get("title", ""),
-                                                "link": r.get("link", ""),
-                                                "snippet": r.get("snippet", ""),
-                                                "source": r.get("source", ""),
-                                            }
-                                            for r in search_results
-                                            if isinstance(r, dict)
-                                        ]
-                                    },
-                                },
-                            }
-                            companies.append(company_data)
-
-                        stats["companies_processed"] += 1
-
-                    except Exception as e:
-                        self.logger.error(f"Error processing company: {str(e)}")
-                        # Still increment companies_processed for error recovery test
-                        stats["companies_processed"] += 1
-                        continue
-
-            # Save results to output file
-            output_data = {
-                "meta": {
-                    "version": "1.0",
-                    "timestamp": datetime.now().isoformat(),
-                    "stats": stats,
-                },
-                "companies": companies,
-            }
-            self.output_handler.save_results(output_data, "analysis_results.json")
-
-            return {
-                "stats": stats,
-                "results": companies,
-            }
-
+            results = self.execute(data_dir)  # Call the existing execute method
+            self.logger.info(f"Ethical analysis workflow completed. Results: {results}")
+        except FileNotFoundError as e:
+            self.logger.error(f"Companies file not found: {e}")
+            raise
         except Exception as e:
-            self.logger.error(f"Error reading companies file: {str(e)}")
+            self.logger.error(f"Error during ethical analysis workflow: {e}")
             raise
