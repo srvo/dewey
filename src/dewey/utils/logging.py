@@ -170,9 +170,9 @@ def _cleanup_old_logs(
         ):
             try:
                 log_file.unlink()
-                logger.info(f"Removed old log file: {log_file}")
+                logger.info("Removed old log file: %s", log_file)
             except Exception as e:
-                logger.error(f"Error removing {log_file}: {e}")
+                logger.error("Error removing %s: %s", log_file, e)
 
 
 def configure_logging(config: dict) -> None:

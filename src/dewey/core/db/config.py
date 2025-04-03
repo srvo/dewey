@@ -106,7 +106,7 @@ def validate_config() -> bool:
                 pass  # Decide if directory creation is needed for PG
         except (OSError, PermissionError) as e:
             logger.warning(
-                f"Could not create directories: {e}. This is expected in test environments or if backup dir is unused.",
+                "Could not create directories: %s. This is expected in test environments or if backup dir is unused.", e
             )
 
     # Check pool configuration
@@ -208,10 +208,10 @@ def initialize_environment() -> bool:
                 for dir_path in dirs_to_create:
                     if not os.path.exists(dir_path):
                         os.makedirs(dir_path)
-                        logger.info(f"Created directory: {dir_path}")
+                        logger.info("Created directory: %s", dir_path)
             except (OSError, PermissionError) as e:
                 logger.warning(
-                    f"Could not create directories: {e}. This is expected in test environments.",
+                    "Could not create directories: %s. This is expected in test environments.", e
                 )
 
         # Remove DuckDB specific environment settings
@@ -223,7 +223,7 @@ def initialize_environment() -> bool:
         return True
 
     except (ValueError, Exception) as e:  # Catch validation errors too
-        logger.error(f"Failed to initialize environment: {e}")
+        logger.error("Failed to initialize environment: %s", e)
         return False
 
 

@@ -61,11 +61,11 @@ class GmailModule(BaseScript):
             # Placeholder for Gmail API interaction
             # Replace with actual Gmail API calls
             max_results = self.get_config_value("crm.gmail.max_results_per_sync", 100)
-            self.logger.info(f"Fetching up to {max_results} emails from Gmail.")
+            self.logger.info("Fetching up to %s emails from Gmail.", max_results)
             # Simulate fetching emails
             emails = self._fetch_emails(max_results)
             num_emails = len(emails)
-            self.logger.info(f"Fetched {num_emails} emails from Gmail.")
+            self.logger.info("Fetched %s emails from Gmail.", num_emails)
 
             # Process emails (replace with actual processing logic)
             self._process_emails(emails)
@@ -101,4 +101,4 @@ class GmailModule(BaseScript):
         # Replace with actual email processing logic
         # This is a placeholder
         for email in emails:
-            self.logger.info(f"Processing email: {email}")
+            self.logger.info("Processing email: %s", email)

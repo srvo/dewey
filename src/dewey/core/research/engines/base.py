@@ -24,7 +24,7 @@ class BaseEngine(BaseScript):
             config_section=config_section, requires_db=False, enable_llm=False,
         )
         self.logger.debug(
-            f"BaseEngine initialized with config section: {config_section}",
+            "BaseEngine initialized with config section: %s", config_section
         )
 
     @abstractmethod
