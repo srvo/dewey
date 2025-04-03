@@ -5,8 +5,7 @@ from dewey.core.base_script import BaseScript
 
 
 class GmailModule(BaseScript):
-    """
-    A module for managing Gmail-related tasks within Dewey.
+    """A module for managing Gmail-related tasks within Dewey.
     """
 
     """
