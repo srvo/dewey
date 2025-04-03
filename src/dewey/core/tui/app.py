@@ -17,10 +17,9 @@ from textual.widgets import Button, Footer, Header, Label, Static
 
 from dewey.core.base_script import BaseScript
 
-# Import our custom screens
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
-from src.ui.screens.feedback_manager_screen import FeedbackManagerScreen
-from src.ui.screens.port5_screen import Port5Screen
+# Use relative imports
+from ....ui.screens.feedback_manager_screen import FeedbackManagerScreen
+from ....ui.screens.port5_screen import Port5Screen
 
 
 class ModuleScreen(BaseScript, Screen):
