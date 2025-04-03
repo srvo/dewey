@@ -13,3 +13,9 @@ class DocumentProcessor(BaseScript):
         self.logger.info("Starting document processing workflow.")
         # Implement document processing logic here
         self.logger.info("Document processing workflow completed.")
+
+    def execute(self):
+        """Executes the document processing workflow."""
+        self.logger.info("Starting document processing workflow.")
+        self.run()
+        self.logger.info("Document processing workflow completed.")
