@@ -28,4 +28,3 @@ Dewey Script Catalog - Textual UI Application.
 - textual library
 
 ## Architectural Decisions
-

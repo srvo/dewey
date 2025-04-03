@@ -11,6 +11,7 @@ class Utils(BaseScript):
 
         Args:
             name: The name of the script.
+
         """
         super().__init__(config_section="utils", name=name)
 
@@ -21,6 +22,7 @@ class Utils(BaseScript):
 
         Raises:
             Exception: If an error occurs during execution.
+
         """
         try:
             example_config_value: Any = self.get_config_value("example_config_key")

@@ -9,14 +9,16 @@ import libcst as cst
 import libcst.matchers as m
 from libcst.metadata import MetadataWrapper
 
+
 def find_python_files(directory: Path) -> Set[Path]:
     """Find all Python files in the directory."""
     python_files = set()
     for root, _, files in os.walk(directory):
         for file in files:
-            if file.endswith('.py'):
+            if file.endswith(".py"):
                 python_files.add(Path(root) / file)
     return python_files
+
 
 def analyze_file(file_path: Path) -> bool:
     """Analyze a Python file to determine if it needs BaseScript updates."""
@@ -40,7 +42,7 @@ def analyze_file(file_path: Path) -> bool:
         class_finder = ClassFinder()
         wrapper.visit(class_finder)
         has_base_script_inheritance = any(
-            'BaseScript' in str(bases) for _, bases in class_finder.classes
+            "BaseScript" in str(bases) for _, bases in class_finder.classes
         )
 
         # Check for direct logging usage
@@ -57,15 +59,16 @@ def analyze_file(file_path: Path) -> bool:
 
         # File needs update if any of these conditions are true
         return (
-            not has_base_script_import or
-            not has_base_script_inheritance or
-            has_direct_logging or
-            has_direct_path
+            not has_base_script_import
+            or not has_base_script_inheritance
+            or has_direct_logging
+            or has_direct_path
         )
 
     except Exception as e:
         print(f"Error analyzing {file_path}: {e}")
         return True  # Include file if we can't analyze it
+
 
 class ClassFinder(cst.CSTVisitor):
     """Find classes and their inheritance."""
@@ -78,6 +81,7 @@ class ClassFinder(cst.CSTVisitor):
         """Function visit_ClassDef."""
         self.classes.append((node.name.value, node.bases))
 
+
 class LoggingFinder(cst.CSTVisitor):
     """Find direct logging usage."""
 
@@ -88,8 +92,15 @@ class LoggingFinder(cst.CSTVisitor):
     def visit_Call(self, node: cst.Call) -> None:
         """Function visit_Call."""
         if isinstance(node.func, cst.Attribute):
-            if node.func.attr.value in ['debug', 'info', 'warning', 'error', 'critical']:
+            if node.func.attr.value in [
+                "debug",
+                "info",
+                "warning",
+                "error",
+                "critical",
+            ]:
                 self.logging_statements.append(node)
+
 
 class PathFinder(cst.CSTVisitor):
     """Find direct path usage."""
@@ -102,13 +113,14 @@ class PathFinder(cst.CSTVisitor):
         """Function visit_Call."""
         if isinstance(node.func, (cst.Name, cst.Attribute)):
             func_name = str(node.func)
-            if any(name in func_name for name in ['os.path', 'Path', 'pathlib']):
+            if any(name in func_name for name in ["os.path", "Path", "pathlib"]):
                 self.path_usages.append(node)
+
 
 def main():
     """Execute main functions to find non-compliant files."""
     # Get the src directory
-    src_dir = Path('src')
+    src_dir = Path("src")
     if not src_dir.exists():
         print("Error: src directory not found")
         return
@@ -125,13 +137,14 @@ def main():
             print(f"Non-compliant: {file_path}")
 
     # Write results to output file
-    output_file = Path('output_dir') / 'base_script.txt'
-    with open(output_file, 'w') as f:
+    output_file = Path("output_dir") / "base_script.txt"
+    with open(output_file, "w") as f:
         for file_path in non_compliant_files:
             f.write(f"{file_path}\n")
 
     print(f"\nFound {len(non_compliant_files)} non-compliant files")
     print(f"Results written to {output_file}")
+
 
 if __name__ == "__main__":
     main()

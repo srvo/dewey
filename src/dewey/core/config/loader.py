@@ -1,5 +1,4 @@
-"""
-Configuration loading functionality for Dewey project.
+"""Configuration loading functionality for Dewey project.
 Separated to avoid circular imports between config and db modules.
 """
 
@@ -41,4 +40,4 @@ def _expand_env_vars(config: Any) -> Any:
     elif isinstance(config, str) and config.startswith("${") and config.endswith("}"):
         var_name = config[2:-1]
         return os.getenv(var_name, "")
-    return config 
+    return config

@@ -18,7 +18,9 @@ class AbstractMethodVisitor(ast.NodeVisitor):
 
     def __init__(self):
         self.classes: Dict[str, Set[str]] = {}  # class_name -> set of method names
-        self.base_classes: Dict[str, Set[str]] = {}  # class_name -> set of base class names
+        self.base_classes: Dict[
+            str, Set[str]
+        ] = {}  # class_name -> set of base class names
         self.errors: List[str] = []
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
@@ -59,17 +61,17 @@ def check_file(filename: str) -> List[str]:
     visitor.visit(tree)
 
     errors = []
-    
+
     # Check for abstract method implementations
     for class_name, base_classes in visitor.base_classes.items():
         methods = visitor.classes.get(class_name, set())
-        
+
         # BaseScript requires 'execute'
         if "BaseScript" in base_classes and "execute" not in methods:
             errors.append(
                 f"Class '{class_name}' inherits from 'BaseScript' but doesn't implement the required 'execute' method"
             )
-        
+
         # BookkeepingScript requires 'run'
         if "BookkeepingScript" in base_classes and "run" not in methods:
             errors.append(
@@ -97,9 +99,9 @@ def main():
         for error in all_errors:
             print(error)
         return 1
-    
+
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main()) 
+    sys.exit(main())

@@ -17,6 +17,7 @@ class DashboardGenerator(BaseScript):
         Args:
             config (Dict[str, Any]): The configuration dictionary.
             **kwargs (Any): Additional keyword arguments.
+
         """
         super().__init__(config=config, **kwargs)
 
@@ -32,6 +33,7 @@ class DashboardGenerator(BaseScript):
 
         Returns:
             None
+
         """
         try:
             dashboard_name = self.get_config_value("dashboard_name")
@@ -54,6 +56,7 @@ class DashboardGenerator(BaseScript):
 
         Returns:
             None
+
         """
         self.logger.info("Placeholder: Generating dashboard...")
         # Replace with actual dashboard generation logic

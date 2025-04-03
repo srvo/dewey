@@ -14,22 +14,25 @@ import typer
 from sqlalchemy import text
 from dewey.core.base_script import BaseScript
 from dewey.core.exceptions import DatabaseConnectionError
+
 # Assuming gmail utils are structured as in the original check_gmail.py
 # Adjust imports based on actual location if different
 try:
     from src.dewey.core.crm.gmail.gmail_utils import (
         check_email_count,  # Assuming this queries the DB now
-        check_email_schema, # Assuming this queries the DB now
+        check_email_schema,  # Assuming this queries the DB now
         # check_email_content, # Not including content check for brevity
         # check_enrichment_status # Not including enrichment check
     )
     from src.dewey.core.crm.gmail.gmail_api_test import test_gmail_api
+
     GMAIL_UTILS_AVAILABLE = True
 except ImportError:
     GMAIL_UTILS_AVAILABLE = False
 
 
 app = typer.Typer()
+
 
 class CheckDataScript(BaseScript):
     """Base class for check commands, ensuring DB connection if needed."""
@@ -39,28 +42,31 @@ class CheckDataScript(BaseScript):
         # This is a basic way, might need refinement based on project setup
         import os
         from pathlib import Path
-        project_root = Path(__file__).parent.parent # Assuming scripts/ is one level down from root
-        
+
+        project_root = Path(
+            __file__
+        ).parent.parent  # Assuming scripts/ is one level down from root
+
         super().__init__(
-            project_root=str(project_root), # Pass project_root to BaseScript
+            project_root=str(project_root),  # Pass project_root to BaseScript
             config_section=config_section,
             requires_db=requires_db,
             # Add other BaseScript args as needed (e.g., enable_llm=False)
         )
 
+
 # --- Database Check Subcommand ---
 db_app = typer.Typer()
 
+
 @db_app.command("structure")
-def check_db_structure(
-    limit: int = typer.Option(1, help="Limit for sample data.")
-):
+def check_db_structure(limit: int = typer.Option(1, help="Limit for sample data.")):
     """Check PostgreSQL database structure, row counts, and sample data."""
     script = CheckDataScript(requires_db=True, config_section="db_check")
     script.logger.info("Checking database structure...")
 
     try:
-        with script.db_connection() as conn: # Use BaseScript connection
+        with script.db_connection() as conn:  # Use BaseScript connection
             script.logger.info("Connected to database successfully")
 
             # Check if database has any tables
@@ -80,11 +86,13 @@ def check_db_structure(
 
             script.logger.info(f"Found {len(tables)} tables:")
             for i, table_name in enumerate(tables):
-                script.logger.info(f"{i+1}. {table_name}")
+                script.logger.info(f"{i + 1}. {table_name}")
 
                 try:
                     # Get row count
-                    count_query = text(f"SELECT COUNT(*) FROM \"{table_name}\"") # Use quotes for safety
+                    count_query = text(
+                        f'SELECT COUNT(*) FROM "{table_name}"'
+                    )  # Use quotes for safety
                     count = conn.execute(count_query).scalar()
                     script.logger.info(f"   - {count} rows")
 
@@ -95,7 +103,9 @@ def check_db_structure(
                         WHERE table_name = :table
                         ORDER BY ordinal_position
                     """)
-                    columns = conn.execute(columns_query, {"table": table_name}).fetchall()
+                    columns = conn.execute(
+                        columns_query, {"table": table_name}
+                    ).fetchall()
                     script.logger.info(f"   - Columns ({len(columns)}):")
                     for col_name, col_type in columns:
                         script.logger.info(f"      - {col_name} ({col_type})")
@@ -104,12 +114,18 @@ def check_db_structure(
                     if count > 0 and limit > 0:
                         # Note: Using f-string for table name is generally safe here as it comes
                         # from information_schema, but use with caution. Parameterization is preferred.
-                        sample_query = text(f'SELECT * FROM \"{table_name}\" LIMIT :limit')
+                        sample_query = text(
+                            f'SELECT * FROM "{table_name}" LIMIT :limit'
+                        )
                         sample = conn.execute(sample_query, {"limit": limit}).fetchone()
-                        script.logger.info(f"   - Sample data (limit {limit}): {sample}")
+                        script.logger.info(
+                            f"   - Sample data (limit {limit}): {sample}"
+                        )
 
                 except Exception as e:
-                    script.logger.error(f"   - Error inspecting table {table_name}: {e}")
+                    script.logger.error(
+                        f"   - Error inspecting table {table_name}: {e}"
+                    )
 
         script.logger.info("Database check completed successfully")
 
@@ -122,6 +138,7 @@ def check_db_structure(
 # --- Gmail Check Subcommand ---
 gmail_app = typer.Typer()
 
+
 @gmail_app.command("api")
 def check_gmail_api():
     """Test connection to the Gmail API."""
@@ -132,10 +149,11 @@ def check_gmail_api():
 
     script.logger.info("Testing Gmail API connection...")
     try:
-        success = test_gmail_api() # Assuming test_gmail_api takes no args
+        success = test_gmail_api()  # Assuming test_gmail_api takes no args
         script.logger.info(f"Gmail API test: {'PASSED' if success else 'FAILED'}")
     except Exception as e:
         script.logger.error(f"Error testing Gmail API: {e}")
+
 
 @gmail_app.command("count")
 def check_gmail_count():
@@ -145,19 +163,20 @@ def check_gmail_count():
     try:
         with script.db_connection() as conn:
             # Assuming table is named 'emails'
-            count = conn.execute(text('SELECT COUNT(*) FROM emails')).scalar()
+            count = conn.execute(text("SELECT COUNT(*) FROM emails")).scalar()
             script.logger.info(f"Total emails in 'emails' table: {count}")
     except DatabaseConnectionError as e:
         script.logger.error(f"Database connection error: {e}")
     except Exception as e:
         script.logger.error(f"Error counting emails in DB: {e}")
 
+
 @gmail_app.command("schema")
 def check_gmail_schema():
-     """Check the schema of the 'emails' table in the database."""
-     script = CheckDataScript(requires_db=True, config_section="gmail_check")
-     script.logger.info("Checking 'emails' table schema...")
-     try:
+    """Check the schema of the 'emails' table in the database."""
+    script = CheckDataScript(requires_db=True, config_section="gmail_check")
+    script.logger.info("Checking 'emails' table schema...")
+    try:
         with script.db_connection() as conn:
             columns_query = text("""
                 SELECT column_name, data_type
@@ -167,24 +186,29 @@ def check_gmail_schema():
             """)
             columns = conn.execute(columns_query).fetchall()
             if columns:
-                 script.logger.info("Email schema:")
-                 for col_name, col_type in columns:
+                script.logger.info("Email schema:")
+                for col_name, col_type in columns:
                     script.logger.info(f"  {col_name} ({col_type})")
             else:
-                script.logger.warning("Could not find 'emails' table or it has no columns.")
-     except DatabaseConnectionError as e:
+                script.logger.warning(
+                    "Could not find 'emails' table or it has no columns."
+                )
+    except DatabaseConnectionError as e:
         script.logger.error(f"Database connection error: {e}")
-     except Exception as e:
+    except Exception as e:
         script.logger.error(f"Error checking email schema: {e}")
 
 
 # --- Contacts Check Subcommand ---
 contacts_app = typer.Typer()
 
+
 @contacts_app.command("unified")
 def check_unified_contacts(
     limit: int = typer.Option(3, help="Limit for sample data."),
-    show_domains: bool = typer.Option(True, help="Show top domains by count (limit 10).")
+    show_domains: bool = typer.Option(
+        True, help="Show top domains by count (limit 10)."
+    ),
 ):
     """Check unified_contacts table: count, schema, sample data, domains."""
     script = CheckDataScript(requires_db=True, config_section="contacts_check")
@@ -210,7 +234,7 @@ def check_unified_contacts(
 
             # Get sample data
             if count > 0 and limit > 0:
-                sample_query = text('SELECT * FROM unified_contacts LIMIT :limit')
+                sample_query = text("SELECT * FROM unified_contacts LIMIT :limit")
                 sample_result = conn.execute(sample_query, {"limit": limit}).fetchall()
                 script.logger.info(f"Sample contacts (limit {limit}):")
                 for row in sample_result:

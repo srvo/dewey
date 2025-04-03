@@ -75,4 +75,4 @@ When working with code in this project:
 
 ## Legacy Code
 
-Some legacy directories like `backup/` and files directly in the `src/dewey` root have been migrated to follow this standardized structure. All new code must follow these conventions. 
+Some legacy directories like `backup/` and files directly in the `src/dewey` root have been migrated to follow this standardized structure. All new code must follow these conventions.

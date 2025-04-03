@@ -135,7 +135,7 @@ class TestLiteLLMRealAPI(unittest.TestCase):
     Tests that use real API keys (should be skipped by default).
 
     These tests can be used for manual testing with real API keys.
-    
+
 """
 
     def test_real_completion(self):

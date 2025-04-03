@@ -1,5 +1,4 @@
-"""
-Migrations module for the Dewey project.
+"""Migrations module for the Dewey project.
 
 This module provides functionality for managing database migrations, including:
 - Running migrations
@@ -9,4 +8,4 @@ This module provides functionality for managing database migrations, including:
 
 from dewey.core.migrations.migration_manager import MigrationManager
 
-__all__ = ["MigrationManager"] 
+__all__ = ["MigrationManager"]

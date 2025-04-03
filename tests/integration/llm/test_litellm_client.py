@@ -95,22 +95,24 @@ class TestLiteLLMClient(unittest.TestCase):
         """Test initialization from Dewey config file."""
         # Mock config file exists
         self.mock_path_exists.return_value = True
-        
+
         # Create the test config
         test_config = LiteLLMConfig(
             model="claude-2",
             api_key="test-claude-key",
             timeout=60,
             fallback_models=["gpt-4", "gpt-3.5-turbo"],
-            cache=True
+            cache=True,
         )
-        
+
         # Directly patch the _create_config_from_dewey method
-        with patch.object(LiteLLMClient, '_create_config_from_dewey', return_value=test_config):
+        with patch.object(
+            LiteLLMClient, "_create_config_from_dewey", return_value=test_config
+        ):
             # Also patch DEWEY_CONFIG_PATH.exists to return True
-            with patch('dewey.llm.litellm_client.DEWEY_CONFIG_PATH') as mock_path:
+            with patch("dewey.llm.litellm_client.DEWEY_CONFIG_PATH") as mock_path:
                 mock_path.exists.return_value = True
-                
+
                 # Mock yaml.safe_load
                 with patch("yaml.safe_load") as mock_yaml:
                     mock_yaml.return_value = {
@@ -122,15 +124,17 @@ class TestLiteLLMClient(unittest.TestCase):
                             "cache": True,
                         }
                     }
-                    
+
                     # Create the client
                     client = LiteLLMClient()
-                    
+
                     # Verify the config values
                     self.assertEqual(client.config.model, "claude-2")
                     self.assertEqual(client.config.api_key, "test-claude-key")
                     self.assertEqual(client.config.timeout, 60)
-                    self.assertEqual(client.config.fallback_models, ["gpt-4", "gpt-3.5-turbo"])
+                    self.assertEqual(
+                        client.config.fallback_models, ["gpt-4", "gpt-3.5-turbo"]
+                    )
                     self.assertTrue(client.config.cache)
 
     @patch("dewey.llm.litellm_utils.load_model_metadata_from_aider")
@@ -138,19 +142,23 @@ class TestLiteLLMClient(unittest.TestCase):
         """Test initialization from Aider model metadata."""
         # Create the test config
         test_config = LiteLLMConfig(
-            model="gpt-4-turbo",
-            api_key=None,
-            litellm_provider="openai"
+            model="gpt-4-turbo", api_key=None, litellm_provider="openai"
         )
-        
+
         # Directly patch the _create_config_from_aider method
-        with patch.object(LiteLLMClient, '_create_config_from_aider', return_value=test_config):
+        with patch.object(
+            LiteLLMClient, "_create_config_from_aider", return_value=test_config
+        ):
             # Mock Aider metadata path exists
-            with patch("dewey.llm.litellm_client.AIDER_MODEL_METADATA_PATH") as mock_path:
+            with patch(
+                "dewey.llm.litellm_client.AIDER_MODEL_METADATA_PATH"
+            ) as mock_path:
                 mock_path.exists.return_value = True
-                
+
                 # Ensure Dewey config path doesn't exist
-                with patch("dewey.llm.litellm_client.DEWEY_CONFIG_PATH") as mock_dewey_path:
+                with patch(
+                    "dewey.llm.litellm_client.DEWEY_CONFIG_PATH"
+                ) as mock_dewey_path:
                     mock_dewey_path.exists.return_value = False
 
                     # Mock the metadata content

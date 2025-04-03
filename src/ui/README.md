@@ -20,4 +20,4 @@ The primary entry point is `run_tui.py` which launches the application.
 
 This directory consolidates UI components previously split between:
 - `/src/ui` (TUI components)
-- `/src/dewey/ui` (older script-based interfaces) 
+- `/src/dewey/ui` (older script-based interfaces)

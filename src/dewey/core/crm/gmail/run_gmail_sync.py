@@ -24,40 +24,44 @@ from src.dewey.core.crm.gmail.gmail_sync import GmailSync
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
-logger = logging.getLogger('gmail_sync')
+logger = logging.getLogger("gmail_sync")
 
 # Load environment variables
 load_dotenv()
 
+
 class OAuthGmailClient:
     """Gmail client that uses OAuth authentication."""
-    
+
     def __init__(self, credentials_file, token_file=None, scopes=None):
         self.credentials_file = credentials_file
-        self.token_file = token_file or os.path.join(os.path.dirname(credentials_file), 'gmail_token.json')
+        self.token_file = token_file or os.path.join(
+            os.path.dirname(credentials_file), "gmail_token.json"
+        )
         self.scopes = scopes or [
             "https://www.googleapis.com/auth/gmail.readonly",
-            "https://www.googleapis.com/auth/gmail.modify"
+            "https://www.googleapis.com/auth/gmail.modify",
         ]
         self.service = None
-        self.logger = logging.getLogger('gmail_client')
-    
+        self.logger = logging.getLogger("gmail_client")
+
     def authenticate(self):
         """Authenticates with Gmail API using OAuth."""
         creds = None
-        
+
         if os.path.exists(self.token_file):
             try:
-                with open(self.token_file, 'r') as token:
+                with open(self.token_file, "r") as token:
                     creds_data = json.load(token)
-                    creds = Credentials.from_authorized_user_info(creds_data, self.scopes)
+                    creds = Credentials.from_authorized_user_info(
+                        creds_data, self.scopes
+                    )
                 self.logger.info("Loaded credentials from token file")
             except Exception as e:
                 self.logger.warning(f"Error loading token file: {e}")
-        
+
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
                 try:
@@ -66,7 +70,7 @@ class OAuthGmailClient:
                 except Exception as e:
                     self.logger.warning(f"Failed to refresh credentials: {e}")
                     creds = None
-            
+
             if not creds:
                 try:
                     flow = InstalledAppFlow.from_client_secrets_file(
@@ -74,23 +78,23 @@ class OAuthGmailClient:
                     )
                     creds = flow.run_local_server(port=0)
                     self.logger.info("Created new credentials via OAuth flow")
-                    
+
                     os.makedirs(os.path.dirname(self.token_file), exist_ok=True)
-                    with open(self.token_file, 'w') as token:
+                    with open(self.token_file, "w") as token:
                         token.write(creds.to_json())
                     self.logger.info(f"Saved new token to {self.token_file}")
                 except Exception as e:
                     self.logger.error(f"OAuth flow failed: {e}")
                     return None
-        
+
         try:
-            self.service = build('gmail', 'v1', credentials=creds)
+            self.service = build("gmail", "v1", credentials=creds)
             self.logger.info("Successfully authenticated with Gmail API via OAuth")
             return self.service
         except Exception as e:
             self.logger.error(f"Service build failed: {e}")
             return None
-    
+
     def fetch_emails(self, query=None, max_results=1000, page_token=None):
         """Fetches emails from Gmail based on the provided query."""
         try:
@@ -102,7 +106,7 @@ class OAuthGmailClient:
                     q=query,
                     maxResults=max_results,
                     pageToken=page_token,
-                    includeSpamTrash=False
+                    includeSpamTrash=False,
                 )
                 .execute()
             )
@@ -132,14 +136,14 @@ class OAuthGmailClient:
             else:
                 self.logger.error(f"Error fetching message {msg_id}: {error}")
                 return None
-    
+
     def decode_message_body(self, message):
         """Decodes the message body from base64."""
         try:
             if "data" in message:
-                return base64.urlsafe_b64decode(
-                    message["data"].encode("ASCII")
-                ).decode("utf-8")
+                return base64.urlsafe_b64decode(message["data"].encode("ASCII")).decode(
+                    "utf-8"
+                )
             return ""
         except Exception as e:
             self.logger.error(f"Error decoding message body: {e}")
@@ -148,12 +152,22 @@ class OAuthGmailClient:
     def get_history(self, start_history_id):
         """Implement history.list API for incremental sync"""
         try:
-            return self.service.users().history().list(
-                userId='me',
-                startHistoryId=start_history_id,
-                historyTypes=['messageAdded', 'messageDeleted', 'labelAdded', 'labelRemoved'],
-                maxResults=500
-            ).execute()
+            return (
+                self.service.users()
+                .history()
+                .list(
+                    userId="me",
+                    startHistoryId=start_history_id,
+                    historyTypes=[
+                        "messageAdded",
+                        "messageDeleted",
+                        "labelAdded",
+                        "labelRemoved",
+                    ],
+                    maxResults=500,
+                )
+                .execute()
+            )
         except HttpError as error:
             if error.resp.status == 404:
                 self.logger.warning("History ID expired or invalid")
@@ -161,61 +175,84 @@ class OAuthGmailClient:
             self.logger.error(f"History API error: {error}")
             return None
 
+
 def parse_args():
     """Parse command line arguments."""
-    parser = argparse.ArgumentParser(description='Sync emails from Gmail to database.')
-    parser.add_argument('--initial', action='store_true', help='Perform initial sync instead of incremental')
-    parser.add_argument('--max-results', type=int, default=10000, help='Maximum number of emails to sync')
-    parser.add_argument('--query', type=str, help='Gmail search query (e.g., "from:user@example.com")')
-    parser.add_argument('--credentials', type=str, default='/Users/srvo/dewey/config/credentials/credentials.json',
-                       help='Path to Gmail API credentials file')
-    parser.add_argument('--token', type=str, help='Path to OAuth token file (optional)')
-    parser.add_argument('--db-path', type=str, default='md:dewey', 
-                       help='Database path (default: md:dewey for MotherDuck, or a file path for local)')
-    
+    parser = argparse.ArgumentParser(description="Sync emails from Gmail to database.")
+    parser.add_argument(
+        "--initial",
+        action="store_true",
+        help="Perform initial sync instead of incremental",
+    )
+    parser.add_argument(
+        "--max-results",
+        type=int,
+        default=10000,
+        help="Maximum number of emails to sync",
+    )
+    parser.add_argument(
+        "--query", type=str, help='Gmail search query (e.g., "from:user@example.com")'
+    )
+    parser.add_argument(
+        "--credentials",
+        type=str,
+        default="/Users/srvo/dewey/config/credentials/credentials.json",
+        help="Path to Gmail API credentials file",
+    )
+    parser.add_argument("--token", type=str, help="Path to OAuth token file (optional)")
+    parser.add_argument(
+        "--db-path",
+        type=str,
+        default="md:dewey",
+        help="Database path (default: md:dewey for MotherDuck, or a file path for local)",
+    )
+
     return parser.parse_args()
+
 
 def main():
     """Main entry point for Gmail sync script."""
     args = parse_args()
-    
+
     try:
-        motherduck_token = os.getenv('MOTHERDUCK_TOKEN')
-        if motherduck_token and args.db_path.startswith('md:'):
+        motherduck_token = os.getenv("MOTHERDUCK_TOKEN")
+        if motherduck_token and args.db_path.startswith("md:"):
             logger.info("MotherDuck token found in environment")
-            os.environ['motherduck_token'] = motherduck_token
+            os.environ["motherduck_token"] = motherduck_token
         else:
-            if args.db_path.startswith('md:'):
-                logger.warning("No MotherDuck token found, but trying to connect to MotherDuck!")
+            if args.db_path.startswith("md:"):
+                logger.warning(
+                    "No MotherDuck token found, but trying to connect to MotherDuck!"
+                )
             else:
                 logger.info(f"Using local database at {args.db_path}")
-        
+
         gmail_client = OAuthGmailClient(
-            credentials_file=args.credentials,
-            token_file=args.token
+            credentials_file=args.credentials, token_file=args.token
         )
-        
+
         if not gmail_client.authenticate():
             logger.error("Failed to authenticate with Gmail API. Exiting.")
             return 1
-        
+
         sync = GmailSync(gmail_client, db_path=args.db_path)
-        
-        sync.run(
-            initial=args.initial,
-            query=args.query,
-            max_results=args.max_results
-        )
-        
-        if args.db_path.startswith('md:'):
-            logger.info(f"Gmail sync completed successfully to MotherDuck: {args.db_path}")
+
+        sync.run(initial=args.initial, query=args.query, max_results=args.max_results)
+
+        if args.db_path.startswith("md:"):
+            logger.info(
+                f"Gmail sync completed successfully to MotherDuck: {args.db_path}"
+            )
         else:
-            logger.info(f"Gmail sync completed successfully to local database: {args.db_path}")
+            logger.info(
+                f"Gmail sync completed successfully to local database: {args.db_path}"
+            )
         return 0
-        
+
     except Exception as e:
         logger.error(f"Error running Gmail sync: {e}", exc_info=True)
         return 1
+
 
 if __name__ == "__main__":
     sys.exit(main())

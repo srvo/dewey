@@ -5,10 +5,12 @@ import time
 from contextlib import contextmanager
 import requests
 
+
 def is_port_in_use(port: int) -> bool:
     """Check if a port is already in use."""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         return s.connect_ex(("localhost", port)) == 0
+
 
 def wait_for_server(port: int, timeout: float = 5.0) -> bool:
     """Wait for a server to start on the given port."""
@@ -20,6 +22,7 @@ def wait_for_server(port: int, timeout: float = 5.0) -> bool:
         except requests.RequestException:
             time.sleep(0.1)
     return False
+
 
 @contextmanager
 def temp_server(port: int, start_cmd: callable, stop_cmd: callable):

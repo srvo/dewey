@@ -20,28 +20,28 @@ class TestValidator(BaseScript):
         """Initialize the TestValidator."""
         super().__init__(config_section="test_validator")
         self.success = True
-        
+
     def execute(self) -> int:
     """
         Execute the test validation script.
-        
+
         This method is required by the BaseScript abstract class.
-        
+
         Returns:
         --------
             int: Exit code (0 for success, 1 for failure)
-        
+
     """
         return self.run()
-        
+
     def run(self) -> int:
     """
         Run the test validation.
-        
+
         Returns:
         --------
             int: Exit code (0 for success, 1 for failure)
-        
+
     """
         self.logger.info("Validating test structure...")
 
@@ -74,7 +74,7 @@ class TestValidator(BaseScript):
         Args:
         -----
             test_dir: The directory to run tests in.
-        
+
     """
         if not Path(test_dir).exists():
             self.logger.warning(f"Test directory {test_dir} does not exist. Skipping.")
@@ -107,4 +107,4 @@ class TestValidator(BaseScript):
 
 if __name__ == "__main__":
     validator = TestValidator()
-    sys.exit(validator.execute()) 
+    sys.exit(validator.execute())

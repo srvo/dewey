@@ -22,6 +22,7 @@ from dewey.llm.litellm_utils import (
     quick_completion,
     set_api_keys,
 )
+from dewey.llm.models.config import LLMConfigManager
 
 __all__ = [
     # Classes
@@ -44,4 +45,5 @@ __all__ = [
     "LLMRateLimitError",
     "LLMResponseError",
     "LLMTimeoutError",
+    "LLMConfigManager",
 ]

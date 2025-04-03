@@ -1,6 +1,5 @@
-"""
-API server management service for Ethifinx research platform.
-"""
+"""API server management service for Ethifinx research platform."""
+
 from dewey.core.base_script import BaseScript
 import multiprocessing
 import socket
@@ -10,12 +9,13 @@ import requests
 import uvicorn
 from ...core.config import get_settings
 
+
 class APIServer(BaseScript):
     """API server manager implementing BaseScript."""
-    
+
     def __init__(self, config=None):
         """Initialize with optional config override."""
-        super().__init__(config=config, config_section='ethifinx_api')
+        super().__init__(config=config, config_section="ethifinx_api")
         self.settings = get_settings()
         self.process = None
 
@@ -66,6 +66,7 @@ class APIServer(BaseScript):
     def run(self):
         """BaseScript run implementation."""
         self.start()
+
 
 @contextmanager
 def managed_api_server():

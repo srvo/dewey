@@ -27,12 +27,12 @@ from textual.widgets import (
 )
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-from src.ui.ethifinx.research.engines.deepseek import DeepSeekEngine
-from src.ui.ethifinx.research.search_flow import (
+from src.dewey.core.research.engines.deepseek import DeepSeekEngine
+from src.dewey.core.research.search_flow import (
     get_research_status,
     get_top_companies,
 )
-from src.ui.ethifinx.research.workflows.analysis_tagger import AnalysisTaggingWorkflow
+from src.dewey.core.research.workflows.analysis_tagger import AnalysisTaggingWorkflow
 
 
 class CompanyAnalysisResult:

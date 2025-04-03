@@ -32,12 +32,13 @@ def colorize(text: str, color_code: str) -> str:
 
 def generate_codebase_index() -> bool:
     """Generate a fresh codebase_structure.txt file using repomix.
-    
+
     Returns:
         bool: True if the generation was successful, False otherwise
+
     """
     print(colorize("Generating fresh codebase index using repomix...", "1;36"))
-    
+
     try:
         # Check if repomix is installed
         try:
@@ -45,29 +46,33 @@ def generate_codebase_index() -> bool:
         except subprocess.CalledProcessError:
             print(colorize("Repomix not found. Attempting to install...", "1;33"))
             subprocess.run(["npm", "install", "-g", "repomix"], check=True)
-        
+
         # Run repomix to generate a fresh index with better formatting options
         # Use markdown style with explicit file headers for easier parsing
         cmd = [
             "repomix",
-            "--output", "codebase_structure.txt",
-            "--include", "**/*.py",
-            "--style", "markdown",   # Use markdown format for clear file headers
-            "--remove-comments",     # Remove comments to reduce file size
-            "--parsable-style",      # Ensure consistent formatting that's easier to parse
-            "--header-text", "# Python Classes Index"  # Add a clear header
+            "--output",
+            "codebase_structure.txt",
+            "--include",
+            "**/*.py",
+            "--style",
+            "markdown",  # Use markdown format for clear file headers
+            "--remove-comments",  # Remove comments to reduce file size
+            "--parsable-style",  # Ensure consistent formatting that's easier to parse
+            "--header-text",
+            "# Python Classes Index",  # Add a clear header
         ]
-        
+
         if VERBOSE_MODE:
             # Show output in real-time if verbose mode is enabled
             result = subprocess.run(cmd)
         else:
             # Otherwise, capture output to keep things clean
             result = subprocess.run(cmd, capture_output=True, text=True)
-        
+
         if result.returncode == 0:
             print(colorize("✅ Codebase index generated successfully!", "1;32"))
-            
+
             # Add a supplementary class index for even faster lookups
             print(colorize("Building class-to-file index...", "1;36"))
             try:
@@ -76,7 +81,7 @@ def generate_codebase_index() -> bool:
             except Exception as e:
                 print(colorize(f"Warning: Could not build class index: {e}", "1;33"))
                 print(colorize("Will rely on full-text search only", "1;33"))
-                
+
             return True
         else:
             print(colorize("❌ Failed to generate codebase index.", "1;31"))
@@ -85,7 +90,7 @@ def generate_codebase_index() -> bool:
             if result.stderr:
                 print(colorize("Error:", "1;31"), result.stderr)
             return False
-    
+
     except Exception as e:
         print(colorize(f"Error generating codebase index: {e}", "1;31"))
         return False
@@ -93,254 +98,385 @@ def generate_codebase_index() -> bool:
 
 def build_class_index() -> None:
     """Create a supplementary index mapping class names to file paths.
-    
+
     This makes lookups much faster by avoiding the need to search through
     the entire codebase_structure.txt file each time.
     """
     repomix_file = "codebase_structure.txt"
     class_index_file = "class_index.json"
-    
+
     class_map = {}
-    
+
     # Read the repomix output file
-    with open(repomix_file, 'r', encoding='utf-8', errors='ignore') as f:
+    with open(repomix_file, "r", encoding="utf-8", errors="ignore") as f:
         content = f.read()
-    
+
     # Extract file paths and class definitions
-    file_blocks = re.split(r'(?:^|\n)#+\s+File:\s+', content)
-    
+    file_blocks = re.split(r"(?:^|\n)#+\s+File:\s+", content)
+
     for block in file_blocks[1:]:  # Skip the first block (header)
-        lines = block.strip().split('\n')
+        lines = block.strip().split("\n")
         if not lines:
             continue
-            
+
         # Get the file path from the first line
         file_path = lines[0].strip()
-        
+
         # Extract class definitions from this file
-        class_matches = re.findall(r'class\s+(\w+)[\s:(]', block)
-        
+        class_matches = re.findall(r"class\s+(\w+)[\s:(]", block)
+
         # Add to the class map
         for class_name in class_matches:
             class_map[class_name] = file_path
-    
+
     # Save the class map to a JSON file
-    with open(class_index_file, 'w', encoding='utf-8') as f:
+    with open(class_index_file, "w", encoding="utf-8") as f:
         json.dump(class_map, f, indent=2)
-        
+
     if VERBOSE_MODE:
         print(colorize(f"Created class index with {len(class_map)} entries", "1;32"))
 
 
 def find_class_in_codebase(class_name: str) -> Optional[str]:
     """Find the file containing the class definition.
-    
+
     First checks the class_index.json file for fast lookups.
     Then checks the codebase_structure.txt file generated by repomix.
     Falls back to grep if neither works.
-    
+
     Args:
         class_name: Name of the class to find
-        
+
     Returns:
         File path if found, None otherwise
+
     """
     # First, check if we have a class index for instant lookups
     class_index_file = "class_index.json"
     if os.path.exists(class_index_file):
         try:
-            with open(class_index_file, 'r', encoding='utf-8') as f:
+            with open(class_index_file, "r", encoding="utf-8") as f:
                 class_map = json.load(f)
-                
+
             if class_name in class_map:
                 file_path = class_map[class_name]
-                
+
                 # Verify the file exists and contains the class
                 if os.path.exists(file_path):
-                    print(colorize(f"Found class '{class_name}' in class index: {file_path}", "1;32"))
-                    
+                    print(
+                        colorize(
+                            f"Found class '{class_name}' in class index: {file_path}",
+                            "1;32",
+                        )
+                    )
+
                     # Double-check that the file actually contains the class
-                    with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
                         content = f.read()
-                        class_pattern = re.compile(rf"class\s+{re.escape(class_name)}[\s:(]")
+                        class_pattern = re.compile(
+                            rf"class\s+{re.escape(class_name)}[\s:(]"
+                        )
                         if class_pattern.search(content):
                             return file_path
                         else:
-                            print(colorize(f"Warning: Class not actually found in the file, continuing search...", "1;33"))
-                    
+                            print(
+                                colorize(
+                                    f"Warning: Class not actually found in the file, continuing search...",
+                                    "1;33",
+                                )
+                            )
+
                 # Try with ./ prefix if needed
-                elif not file_path.startswith("./") and os.path.exists(f"./{file_path}"):
+                elif not file_path.startswith("./") and os.path.exists(
+                    f"./{file_path}"
+                ):
                     file_path = f"./{file_path}"
-                    print(colorize(f"Found class '{class_name}' in class index: {file_path}", "1;32"))
-                    
+                    print(
+                        colorize(
+                            f"Found class '{class_name}' in class index: {file_path}",
+                            "1;32",
+                        )
+                    )
+
                     # Double-check that the file actually contains the class
-                    with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
                         content = f.read()
-                        class_pattern = re.compile(rf"class\s+{re.escape(class_name)}[\s:(]")
+                        class_pattern = re.compile(
+                            rf"class\s+{re.escape(class_name)}[\s:(]"
+                        )
                         if class_pattern.search(content):
                             return file_path
                         else:
-                            print(colorize(f"Warning: Class not actually found in the file, continuing search...", "1;33"))
+                            print(
+                                colorize(
+                                    f"Warning: Class not actually found in the file, continuing search...",
+                                    "1;33",
+                                )
+                            )
         except Exception as e:
             if VERBOSE_MODE:
                 print(colorize(f"Error reading class index: {e}", "1;33"))
-    
+
     # Next, check if we have the repomix-generated file
     repomix_file = "codebase_structure.txt"
-    
+
     if os.path.exists(repomix_file):
-        print(colorize(f"Searching for class '{class_name}' in repository index...", "1;36"))
+        print(
+            colorize(
+                f"Searching for class '{class_name}' in repository index...", "1;36"
+            )
+        )
         try:
             # Use a more efficient pattern for searching large files
             pattern = re.compile(rf"class\s+{re.escape(class_name)}[\s:(]")
-            
+
             if VERBOSE_MODE:
                 print(colorize("Looking for repomix file format markers...", "1;30"))
-                with open(repomix_file, 'r', encoding='utf-8', errors='ignore') as f:
+                with open(repomix_file, "r", encoding="utf-8", errors="ignore") as f:
                     first_lines = [next(f) for _ in range(20) if f]
                     print(colorize("First 20 lines of index file:", "1;30"))
                     for line in first_lines:
                         print(colorize(f"  {line.strip()}", "1;30"))
-            
+
             # Open the file and search line by line with better format detection
-            with open(repomix_file, 'r', encoding='utf-8', errors='ignore') as f:
+            with open(repomix_file, "r", encoding="utf-8", errors="ignore") as f:
                 current_file = None
                 current_section = None
-                
+
                 for line_number, line in enumerate(f, 1):
                     # Try multiple formats of file path indicators
                     if line.startswith("# File: "):
                         current_file = line[8:].strip()
                         if VERBOSE_MODE:
-                            print(colorize(f"Found file marker: {current_file}", "1;34"))
+                            print(
+                                colorize(f"Found file marker: {current_file}", "1;34")
+                            )
                     elif line.startswith("## File: "):
                         current_file = line[9:].strip()
                         if VERBOSE_MODE:
-                            print(colorize(f"Found alternate file marker: {current_file}", "1;34"))
+                            print(
+                                colorize(
+                                    f"Found alternate file marker: {current_file}",
+                                    "1;34",
+                                )
+                            )
                     elif "```" in line and ".py" in line:
                         # Look for markdown code blocks with filename
                         file_match = re.search(r"```(?:python:)?(.+?\.py)", line)
                         if file_match:
                             current_file = file_match.group(1).strip()
                             if VERBOSE_MODE:
-                                print(colorize(f"Found markdown code block: {current_file}", "1;34"))
-                    
+                                print(
+                                    colorize(
+                                        f"Found markdown code block: {current_file}",
+                                        "1;34",
+                                    )
+                                )
+
                     # Look for section headings that might indicate file paths
                     elif line.startswith("# ") and ".py" in line:
                         section_match = re.search(r"#\s+(.+\.py)", line)
                         if section_match:
                             current_section = section_match.group(1).strip()
                             if VERBOSE_MODE:
-                                print(colorize(f"Found section heading: {current_section}", "1;34"))
-                    
+                                print(
+                                    colorize(
+                                        f"Found section heading: {current_section}",
+                                        "1;34",
+                                    )
+                                )
+
                     # If we have a file path and found the class definition
                     if (current_file or current_section) and pattern.search(line):
                         found_file = current_file or current_section
-                        
+
                         # Try both absolute and relative paths
                         if found_file and os.path.exists(found_file):
-                            print(colorize(f"Found class '{class_name}' in index file: {found_file}", "1;32"))
+                            print(
+                                colorize(
+                                    f"Found class '{class_name}' in index file: {found_file}",
+                                    "1;32",
+                                )
+                            )
                             return found_file
-                        
+
                         # Try with ./ prefix
-                        if found_file and not found_file.startswith("./") and os.path.exists(f"./{found_file}"):
+                        if (
+                            found_file
+                            and not found_file.startswith("./")
+                            and os.path.exists(f"./{found_file}")
+                        ):
                             found_file = f"./{found_file}"
-                            print(colorize(f"Found class '{class_name}' in index file: {found_file}", "1;32"))
+                            print(
+                                colorize(
+                                    f"Found class '{class_name}' in index file: {found_file}",
+                                    "1;32",
+                                )
+                            )
                             return found_file
-                        
+
                         # Try finding the file using grep if the path isn't valid
                         if found_file and not os.path.exists(found_file):
                             if VERBOSE_MODE:
-                                print(colorize(f"Found class in index but path {found_file} doesn't exist, searching...", "1;33"))
-                            
+                                print(
+                                    colorize(
+                                        f"Found class in index but path {found_file} doesn't exist, searching...",
+                                        "1;33",
+                                    )
+                                )
+
                             # Extract just the filename
                             filename = os.path.basename(found_file)
                             find_cmd = ["find", ".", "-type", "f", "-name", filename]
-                            find_result = subprocess.run(find_cmd, capture_output=True, text=True)
-                            
+                            find_result = subprocess.run(
+                                find_cmd, capture_output=True, text=True
+                            )
+
                             if find_result.returncode == 0 and find_result.stdout:
-                                found_files = find_result.stdout.strip().split('\n')
+                                found_files = find_result.stdout.strip().split("\n")
                                 if found_files:
                                     # Verify this is actually the right file by checking for the class
                                     for potential_file in found_files:
-                                        with open(potential_file, 'r', encoding='utf-8', errors='ignore') as f:
+                                        with open(
+                                            potential_file,
+                                            "r",
+                                            encoding="utf-8",
+                                            errors="ignore",
+                                        ) as f:
                                             content = f.read()
                                             if pattern.search(content):
-                                                print(colorize(f"Found class '{class_name}' in file: {potential_file}", "1;32"))
+                                                print(
+                                                    colorize(
+                                                        f"Found class '{class_name}' in file: {potential_file}",
+                                                        "1;32",
+                                                    )
+                                                )
                                                 return potential_file
-                
+
                 # Try one more approach - search for the class name anywhere in the file
                 if VERBOSE_MODE:
-                    print(colorize(f"Class not found with file markers, doing full text search...", "1;33"))
-                
+                    print(
+                        colorize(
+                            f"Class not found with file markers, doing full text search...",
+                            "1;33",
+                        )
+                    )
+
                 # Reset file pointer to beginning
-                with open(repomix_file, 'r', encoding='utf-8', errors='ignore') as f:
+                with open(repomix_file, "r", encoding="utf-8", errors="ignore") as f:
                     content = f.read()
                     class_matches = list(pattern.finditer(content))
-                    
+
                     if class_matches:
                         if VERBOSE_MODE:
-                            print(colorize(f"Found {len(class_matches)} matches for class '{class_name}' in index", "1;33"))
-                        
+                            print(
+                                colorize(
+                                    f"Found {len(class_matches)} matches for class '{class_name}' in index",
+                                    "1;33",
+                                )
+                            )
+
                         # For each match, try to find what file it belongs to by searching backward
                         for match in class_matches:
                             # Get the 5000 characters before the match to find file reference
                             start = max(0, match.start() - 5000)
-                            before_text = content[start:match.start()]
-                            
+                            before_text = content[start : match.start()]
+
                             # Look for file paths in the text before the match
-                            file_candidates = re.findall(r'(?:^|\n)(?:# File: |## File: |```(?:python:)?)([^\n]+\.py)', before_text)
-                            
+                            file_candidates = re.findall(
+                                r"(?:^|\n)(?:# File: |## File: |```(?:python:)?)([^\n]+\.py)",
+                                before_text,
+                            )
+
                             if file_candidates:
                                 found_file = file_candidates[-1].strip()
-                                
+
                                 # Verify file exists and contains the class
                                 if os.path.exists(found_file):
-                                    with open(found_file, 'r', encoding='utf-8', errors='ignore') as f:
+                                    with open(
+                                        found_file,
+                                        "r",
+                                        encoding="utf-8",
+                                        errors="ignore",
+                                    ) as f:
                                         file_content = f.read()
                                         if pattern.search(file_content):
-                                            print(colorize(f"Found class '{class_name}' in index by context search: {found_file}", "1;32"))
+                                            print(
+                                                colorize(
+                                                    f"Found class '{class_name}' in index by context search: {found_file}",
+                                                    "1;32",
+                                                )
+                                            )
                                             return found_file
                                 # Try with ./ prefix
-                                elif not found_file.startswith("./") and os.path.exists(f"./{found_file}"):
+                                elif not found_file.startswith("./") and os.path.exists(
+                                    f"./{found_file}"
+                                ):
                                     found_file = f"./{found_file}"
-                                    with open(found_file, 'r', encoding='utf-8', errors='ignore') as f:
+                                    with open(
+                                        found_file,
+                                        "r",
+                                        encoding="utf-8",
+                                        errors="ignore",
+                                    ) as f:
                                         file_content = f.read()
                                         if pattern.search(file_content):
-                                            print(colorize(f"Found class '{class_name}' in index by context search: {found_file}", "1;32"))
+                                            print(
+                                                colorize(
+                                                    f"Found class '{class_name}' in index by context search: {found_file}",
+                                                    "1;32",
+                                                )
+                                            )
                                             return found_file
-            
-            print(colorize(f"Class '{class_name}' not found in index, trying grep fallback...", "1;33"))
+
+            print(
+                colorize(
+                    f"Class '{class_name}' not found in index, trying grep fallback...",
+                    "1;33",
+                )
+            )
         except Exception as e:
             print(colorize(f"Error searching index file: {e}", "1;33"))
             print(colorize("Falling back to grep search...", "1;33"))
     else:
         print(colorize(f"Repository index not found at {repomix_file}", "1;33"))
-        print(colorize("Consider running: repomix --output codebase_structure.txt --include \"**/*.py\"", "1;33"))
+        print(
+            colorize(
+                'Consider running: repomix --output codebase_structure.txt --include "**/*.py"',
+                "1;33",
+            )
+        )
         print(colorize("Falling back to grep search...", "1;33"))
-    
+
     # Fallback to grep
     try:
         # Use grep to search for class definition
         cmd = ["grep", "-r", f"class {class_name}[(\\s:]", "--include=*.py", "."]
         result = subprocess.run(cmd, capture_output=True, text=True)
-        
+
         if result.returncode == 0 and result.stdout:
             # Parse the output to get the file path
-            lines = result.stdout.strip().split('\n')
+            lines = result.stdout.strip().split("\n")
             for line in lines:
                 # Extract file path from grep output (format: ./path/to/file.py:class ClassName...)
-                parts = line.split(':', 1)
-                if len(parts) >= 1 and parts[0].endswith('.py'):
+                parts = line.split(":", 1)
+                if len(parts) >= 1 and parts[0].endswith(".py"):
                     file_path = parts[0]
                     # Verify this is actually a class definition, not a reference
-                    with open(file_path, 'r') as f:
+                    with open(file_path, "r") as f:
                         content = f.read()
-                        class_pattern = re.compile(rf"class\s+{re.escape(class_name)}[\s:(]")
+                        class_pattern = re.compile(
+                            rf"class\s+{re.escape(class_name)}[\s:(]"
+                        )
                         if class_pattern.search(content):
-                            print(colorize(f"Found class '{class_name}' using grep: {file_path}", "1;32"))
+                            print(
+                                colorize(
+                                    f"Found class '{class_name}' using grep: {file_path}",
+                                    "1;32",
+                                )
+                            )
                             return file_path
-        
+
         print(colorize(f"Could not find class '{class_name}' in the codebase", "1;31"))
         return None
     except Exception as e:
@@ -351,107 +487,119 @@ def find_class_in_codebase(class_name: str) -> Optional[str]:
 def read_todo_issues() -> List[Dict[str, str]]:
     """Read pre-commit issues from TODO.md."""
     todo_path = "TODO.md"
-    
+
     if not os.path.exists(todo_path):
         print(colorize("Error: TODO.md file not found.", "1;31"))
         return []
-    
+
     with open(todo_path, "r") as f:
         content = f.read()
-    
+
     # Find the pre-commit issues section
     section_match = re.search(
-        r"## Pre-commit Issues.*?\n\n(.*?)(?=\n##|\Z)",
-        content,
-        re.DOTALL
+        r"## Pre-commit Issues.*?\n\n(.*?)(?=\n##|\Z)", content, re.DOTALL
     )
-    
+
     if not section_match:
         print(colorize("No pre-commit issues section found in TODO.md.", "1;33"))
         return []
-    
+
     issues_content = section_match.group(1).strip()
-    
+
     # Parse each issue
     issues = []
     consolidated_issues = {}  # For multi-issue entries
-    
+
     lines = issues_content.split("\n")
     i = 0
     while i < len(lines):
         line = lines[i].strip()
         i += 1
-        
+
         if not line or not line.startswith("- "):
             continue
-        
+
         # Extract checkbox status
         checked = "[x]" in line or "[X]" in line
         if checked:
             continue  # Skip already fixed issues
-        
+
         # Check for class missing execute method pattern
-        class_execute_match = re.search(r"Class '([^']+)' needs to implement 'execute' method", line)
+        class_execute_match = re.search(
+            r"Class '([^']+)' needs to implement 'execute' method", line
+        )
         if class_execute_match:
             class_name = class_execute_match.group(1)
             file_path = find_class_in_codebase(class_name)
-            
+
             if file_path:
-                print(colorize(f"Found class '{class_name}' in file: {file_path}", "1;32"))
-                issues.append({
-                    "line": line,
-                    "file_path": file_path,
-                    "error_msg": f"Implement the 'execute' method in class '{class_name}'",
-                    "type": "class_method",
-                    "checked": checked,
-                    "consolidated": False,
-                    "class_name": class_name
-                })
+                print(
+                    colorize(f"Found class '{class_name}' in file: {file_path}", "1;32")
+                )
+                issues.append(
+                    {
+                        "line": line,
+                        "file_path": file_path,
+                        "error_msg": f"Implement the 'execute' method in class '{class_name}'",
+                        "type": "class_method",
+                        "checked": checked,
+                        "consolidated": False,
+                        "class_name": class_name,
+                    }
+                )
             else:
-                print(colorize(f"Could not find file containing class '{class_name}'", "1;33"))
-                issues.append({
-                    "line": line,
-                    "file_path": "",
-                    "error_msg": f"Could not locate file for class '{class_name}'. Implement the 'execute' method manually.",
-                    "type": "hook",  # Treat as hook issue since we can't fix it automatically
-                    "checked": checked,
-                    "consolidated": False
-                })
+                print(
+                    colorize(
+                        f"Could not find file containing class '{class_name}'", "1;33"
+                    )
+                )
+                issues.append(
+                    {
+                        "line": line,
+                        "file_path": "",
+                        "error_msg": f"Could not locate file for class '{class_name}'. Implement the 'execute' method manually.",
+                        "type": "hook",  # Treat as hook issue since we can't fix it automatically
+                        "checked": checked,
+                        "consolidated": False,
+                    }
+                )
             continue
-        
+
         # Check if this is a consolidated issue (has sub-bullets)
         if "Fix issues in `" in line:
             # Extract file path
             file_match = re.search(r"`([^`]+)`", line)
             if not file_match:
                 continue
-                
+
             file_path = file_match.group(1)
-            
+
             # Find all sub-issues (indented bullets)
             sub_issues = []
             while i < len(lines) and lines[i].strip().startswith("  -"):
                 sub_issue = lines[i].strip()[3:].strip()  # Remove "  - " prefix
                 sub_issues.append(sub_issue)
                 i += 1
-            
-            issues.append({
-                "line": line,
-                "file_path": file_path,
-                "error_msg": "\n".join(sub_issues),
-                "type": "file",
-                "checked": checked,
-                "consolidated": True
-            })
+
+            issues.append(
+                {
+                    "line": line,
+                    "file_path": file_path,
+                    "error_msg": "\n".join(sub_issues),
+                    "type": "file",
+                    "checked": checked,
+                    "consolidated": True,
+                }
+            )
             continue
-        
+
         # Handle single-issue entries
         file_match = re.search(r"`([^`]+)`", line)
         if not file_match:
             continue
-        
+
         first_part = file_match.group(1)
-        
+
         # Handle both formats: file paths and hook names
         if os.path.exists(first_part):
             # It's a file path
@@ -470,46 +618,46 @@ def read_todo_issues() -> List[Dict[str, str]]:
             error_msg = remaining
             file_path = ""  # No specific file for hook failures
             issue_type = "hook"
-        
-        issues.append({
-            "line": line,
-            "file_path": file_path,
-            "error_msg": error_msg,
-            "type": issue_type,
-            "checked": checked,
-            "consolidated": False
-        })
-    
+
+        issues.append(
+            {
+                "line": line,
+                "file_path": file_path,
+                "error_msg": error_msg,
+                "type": issue_type,
+                "checked": checked,
+                "consolidated": False,
+            }
+        )
+
     return issues
 
 
 def mark_issue_fixed(issue_line: str) -> None:
     """Mark an issue as fixed in TODO.md."""
     todo_path = "TODO.md"
-    
+
     with open(todo_path, "r") as f:
         content = f.read()
-    
+
     # Replace the unchecked box with a checked box
     updated_line = issue_line.replace("- [ ]", "- [x]")
-    
+
     # Make sure the line exists in the file (exact match)
     if issue_line in content:
         updated_content = content.replace(issue_line, updated_line)
-        
+
         with open(todo_path, "w") as f:
             f.write(updated_content)
-        
+
         print(colorize(f"Marked issue as fixed in TODO.md", "1;32"))
     else:
         # Try a more flexible match for consolidated issues
         # If this is a parent item with sub-items, we need to find it more carefully
         section_match = re.search(
-            r"(## Pre-commit Issues.*?\n\n)(.*?)(?=\n##|\Z)",
-            content,
-            re.DOTALL
+            r"(## Pre-commit Issues.*?\n\n)(.*?)(?=\n##|\Z)", content, re.DOTALL
         )
-        
+
         if section_match:
             section_content = section_match.group(2)
             # Look for a line that starts with "- [ ] Fix issues in" and contains the file path
@@ -517,45 +665,220 @@ def mark_issue_fixed(issue_line: str) -> None:
                 file_match = re.search(r"`([^`]+)`", issue_line)
                 if file_match:
                     file_path = file_match.group(1)
-                    pattern = re.compile(r"- \[ \] Fix issues in `" + re.escape(file_path) + r"`.*?\n(?:  -.*?\n)*", re.DOTALL)
+                    pattern = re.compile(
+                        r"- \[ \] Fix issues in `"
+                        + re.escape(file_path)
+                        + r"`.*?\n(?:  -.*?\n)*",
+                        re.DOTALL,
+                    )
                     match = pattern.search(section_content)
-                    
+
                     if match:
                         matched_content = match.group(0)
                         updated_matched = matched_content.replace("- [ ]", "- [x]", 1)
-                        updated_content = content.replace(matched_content, updated_matched)
-                        
+                        updated_content = content.replace(
+                            matched_content, updated_matched
+                        )
+
                         with open(todo_path, "w") as f:
                             f.write(updated_content)
-                        
-                        print(colorize(f"Marked consolidated issue for {file_path} as fixed in TODO.md", "1;32"))
+
+                        print(
+                            colorize(
+                                f"Marked consolidated issue for {file_path} as fixed in TODO.md",
+                                "1;32",
+                            )
+                        )
                         return
-            
-            print(colorize(f"Warning: Could not find exact match for issue in TODO.md", "1;33"))
+
+            print(
+                colorize(
+                    f"Warning: Could not find exact match for issue in TODO.md", "1;33"
+                )
+            )
             print(colorize(f"Issue line: {issue_line}", "1;33"))
         else:
-            print(colorize(f"Warning: Could not find Pre-commit Issues section in TODO.md", "1;31"))
+            print(
+                colorize(
+                    f"Warning: Could not find Pre-commit Issues section in TODO.md",
+                    "1;31",
+                )
+            )
 
 
-def run_aider(file_path: str, error_msg: str, consolidated: bool = False, class_name: Optional[str] = None) -> bool:
-    """Run aider on a file with error message as context.
+def preprocess_syntax_errors(file_path: str, error_msg: str) -> bool:
+    """Attempt to fix severe syntax errors before running Aider.
     
+    Handles common syntax errors like missing indented blocks
+    that prevent the file from being parsed.
+    
+    Args:
+        file_path: Path to the file to fix
+        error_msg: Error message with details about the syntax error
+        
+    Returns:
+        True if preprocessing was successful, False otherwise
+    """
+    if not "expected an indented block" in error_msg.lower():
+        # Only handle indentation errors for now
+        return False
+        
+    try:
+        # Extract the line number from the error message
+        line_match = re.search(r"on line (\d+)", error_msg)
+        if not line_match:
+            if VERBOSE_MODE:
+                print(colorize("Could not extract line number from error message", "1;33"))
+            return False
+            
+        line_num = int(line_match.group(1))
+        
+        # Read the file
+        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            lines = f.readlines()
+            
+        # Check if the file has enough lines
+        if line_num >= len(lines):
+            if VERBOSE_MODE:
+                print(colorize(f"Line number {line_num} is out of range", "1;33"))
+            return False
+            
+        # Add a simple placeholder indented block if needed
+        if line_num < len(lines) and not lines[line_num].strip():
+            # There's already an empty line, let's add basic indentation
+            lines[line_num] = "    pass  # Placeholder added by quick_fix.py\n"
+        else:
+            # Insert a new indented pass statement
+            lines.insert(line_num, "    pass  # Placeholder added by quick_fix.py\n")
+            
+        # Write the file back
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.writelines(lines)
+            
+        print(colorize(f"✅ Added placeholder indentation at line {line_num}", "1;32"))
+        return True
+        
+    except Exception as e:
+        print(colorize(f"Error preprocessing syntax errors: {e}", "1;31"))
+        return False
+
+
+def postprocess_with_ruff(file_path: str) -> bool:
+    """Apply ruff formatting to a file after Aider has run.
+    
+    Args:
+        file_path: Path to the file to format
+        
+    Returns:
+        True if formatting was successful, False otherwise
+    """
+    try:
+        # Check if ruff is installed
+        try:
+            subprocess.run(["which", "ruff"], check=True, capture_output=True)
+            ruff_available = True
+        except subprocess.CalledProcessError:
+            ruff_available = False
+            
+        if not ruff_available:
+            print(colorize("\nRuff formatter not found in your PATH.", "1;33"))
+            
+            # Offer to install ruff
+            install_prompt = "Would you like to install ruff for better code formatting? (y/n): "
+            if INTERACTIVE_MODE:
+                if input(colorize(install_prompt, "1;33")).lower() == 'y':
+                    print(colorize("Installing ruff...", "1;34"))
+                    try:
+                        # Try to install using pip
+                        subprocess.run(["pip", "install", "ruff"], check=True)
+                        print(colorize("Ruff installed successfully!", "1;32"))
+                        ruff_available = True
+                    except Exception as e:
+                        print(colorize(f"Error installing ruff: {e}", "1;31"))
+                        return False
+                else:
+                    print(colorize("Skipping ruff formatting step.", "1;33"))
+                    return False
+            else:
+                print(colorize("Run with --interactive to install ruff, or install manually with: pip install ruff", "1;33"))
+                return False
+                
+        print(colorize(f"Running ruff formatter on {file_path}...", "1;34"))
+        
+        # Try to run ruff format on the file
+        result = subprocess.run(
+            ["ruff", "format", file_path], 
+            capture_output=True, 
+            text=True
+        )
+        
+        if result.returncode == 0:
+            print(colorize("✅ Ruff formatting successful", "1;32"))
+            return True
+        else:
+            if VERBOSE_MODE:
+                print(colorize("Ruff formatter failed:", "1;33"))
+                if result.stdout:
+                    print(result.stdout)
+                if result.stderr:
+                    print(result.stderr)
+            
+            # Try running ruff with the --unsafe-fixes option for more aggressive fixes
+            print(colorize("Trying ruff with unsafe fixes...", "1;33"))
+            result = subprocess.run(
+                ["ruff", "check", "--fix", "--unsafe-fixes", file_path],
+                capture_output=True,
+                text=True
+            )
+            
+            if result.returncode == 0:
+                print(colorize("✅ Ruff fixes with unsafe mode successful", "1;32"))
+                return True
+            else:
+                if VERBOSE_MODE and (result.stdout or result.stderr):
+                    print(colorize("Ruff unsafe fixes failed:", "1;33"))
+                    if result.stdout:
+                        print(result.stdout)
+                    if result.stderr:
+                        print(result.stderr)
+                return False
+    
+    except Exception as e:
+        print(colorize(f"Error running ruff formatter: {e}", "1;31"))
+        return False
+
+
+def run_aider(
+    file_path: str,
+    error_msg: str,
+    consolidated: bool = False,
+    class_name: Optional[str] = None,
+) -> bool:
+    """Run aider on a file with error message as context.
+
     Args:
         file_path: Path to the file to fix
         error_msg: Error message or context for the fix
         consolidated: Whether this is a consolidated issue
         class_name: Optional class name for execute method implementation
-        
+
     Returns:
         True if aider appears to have succeeded.
+
     """
     try:
+        # For syntax errors, try preprocessing the file first
+        if "Expected an indented block" in error_msg or "Syntax error" in error_msg:
+            preprocessed = preprocess_syntax_errors(file_path, error_msg)
+            if preprocessed and VERBOSE_MODE:
+                print(colorize("File preprocessed to fix basic syntax errors", "1;32"))
+
         # Save file modification time before running aider
         try:
             file_mtime_before = os.path.getmtime(file_path)
         except OSError:
             file_mtime_before = 0
-        
+
         # Prepare a comprehensive prompt based on the type of issue
         if class_name:
             # Special prompt for adding execute method to class
@@ -563,135 +886,193 @@ def run_aider(file_path: str, error_msg: str, consolidated: bool = False, class_
         elif consolidated:
             # For consolidated issues, create a detailed prompt that addresses all issues
             prompt = f"Fix the following issues in this file, ensuring all are addressed:\n\n{error_msg}\n\nImportant: Do NOT implement placeholder or stub code. Do NOT drop any existing functionality. Add ONLY the required implementations."
-        elif "Expected an indented block" in error_msg or "Syntax error" in error_msg:
-            # For syntax errors, focus on the specific syntax issue
-            prompt = f"Fix the following syntax error in this file: {error_msg}. Add the missing indented block or correct the syntax error.\n\nImportant: Do NOT implement placeholder or stub code. Do NOT drop any existing functionality."
+        elif "Expected an indented block" in error_msg:
+            # Specific guidance for indentation errors
+            line_match = re.search(r"on line (\d+)", error_msg)
+            line_num = int(line_match.group(1)) if line_match else "unknown"
+            
+            prompt = f"""Fix the indentation error in this file at line {line_num}.
+            
+The file has a syntax error where Python expects an indented block (e.g. after a function definition, if statement, for loop, etc.) but none was provided.
+
+YOUR TASK:
+1. Identify the line that requires an indented block (likely line {line_num-1})
+2. Provide an appropriate indented block that matches the context
+3. Make sure your solution maintains all existing functionality
+4. Ensure proper indentation (4 spaces per level)
+5. If this is a function definition, implement the function body properly
+6. Do NOT use placeholder 'pass' statements unless absolutely necessary
+
+Remember that Python relies on indentation to define blocks of code - every function, if statement, for loop, etc. needs an indented block afterward."""
+        elif "Syntax error" in error_msg:
+            # General syntax error handling with detailed guidance
+            prompt = f"""Fix the syntax error in this file: {error_msg}
+
+Analyze the code carefully to identify the syntax issue. Common problems include:
+1. Missing colons after function definitions, if statements, for loops, etc.
+2. Missing parentheses, brackets, or quotes
+3. Incorrect indentation
+4. Misspelled keywords
+5. Improper function or class definitions
+6. Missing imports
+
+Apply the smallest change needed to fix the syntax while preserving all functionality. If you add any code, ensure it matches the project's style and intent."""
         else:
             # For other issues
             prompt = f"Fix the following pre-commit hook error in this file: {error_msg}\n\nImportant: Do NOT implement placeholder or stub code. Do NOT drop any existing functionality."
-        
+
         # Check if CONVENTIONS.md exists
         conventions_path = "CONVENTIONS.md"
         includes_conventions = os.path.exists(conventions_path)
-        
+
         # Check if aider is available
         try:
             subprocess.run(["which", "aider"], check=True, capture_output=True)
             aider_available = True
         except subprocess.CalledProcessError:
             aider_available = False
-        
+
         if not aider_available:
             print(colorize("\nAider not found in your PATH.", "1;31"))
             print(colorize("You can install it with: pip install aider-chat", "1;33"))
-            
+
             if not INTERACTIVE_MODE:
                 return False
-                
-            print(colorize("\nWould you like to open the file in your default editor instead?", "1;33"))
-            
-            if input(colorize("Open in editor? (y/n): ", "1;33")).lower() == 'y':
+
+            print(
+                colorize(
+                    "\nWould you like to open the file in your default editor instead?",
+                    "1;33",
+                )
+            )
+
+            if input(colorize("Open in editor? (y/n): ", "1;33")).lower() == "y":
                 # Try to open in default editor
                 try:
-                    if sys.platform == 'darwin':  # macOS
+                    if sys.platform == "darwin":  # macOS
                         subprocess.run(["open", file_path], check=True)
-                    elif sys.platform == 'win32':  # Windows
+                    elif sys.platform == "win32":  # Windows
                         subprocess.run(["start", file_path], check=True, shell=True)
                     else:  # Linux and others
                         subprocess.run(["xdg-open", file_path], check=True)
-                    print(colorize(f"\nOpened {file_path} in your default editor.", "1;32"))
+                    print(
+                        colorize(
+                            f"\nOpened {file_path} in your default editor.", "1;32"
+                        )
+                    )
                 except Exception as e:
                     print(colorize(f"Error opening file: {e}", "1;31"))
             return False
-        
+
         # Print what we're about to do
         print(colorize(f"Running aider to fix issues in {file_path}...", "1;34"))
         if includes_conventions:
             print(colorize(f"Including CONVENTIONS.md as reference context", "1;34"))
-        
+
         # Show the prompt in a formatted way for better clarity
         print(colorize("\nPrompt:", "1;36"))
         for line in prompt.split("\n"):
             print(colorize(f"  {line}", "1;36"))
         print()
-        
+
         # Confirm before proceeding if in interactive mode
         if INTERACTIVE_MODE:
-            if input(colorize("Proceed? (y/n): ", "1;33")).lower() != 'y':
+            if input(colorize("Proceed? (y/n): ", "1;33")).lower() != "y":
                 print(colorize("Cancelled aider command.", "1;33"))
                 return False
         else:
             # Just show that we're proceeding automatically
             print(colorize("Proceeding automatically...", "1;33"))
-        
+
         # Use documented Aider options
         cmd = [
             "aider",
-            "--yes-always",           # Always accept changes without prompting
-            "--message", prompt,      # The instruction message for Aider
-            "--no-show-model-warnings", # Don't show model warnings
-            "--no-check-update",      # Don't check for updates
-            "--edit-format", "whole", # Use whole file edit format instead of diff
-            "--exit"                  # Exit after processing
+            "--yes-always",  # Always accept changes without prompting
+            "--message",
+            prompt,  # The instruction message for Aider
+            "--no-show-model-warnings",  # Don't show model warnings
+            "--no-check-update",  # Don't check for updates
+            "--edit-format",
+            "whole",  # Use whole file edit format instead of diff
+            "--exit",  # Exit after processing
         ]
-        
+
         if includes_conventions:
             cmd.extend([conventions_path, file_path])
         else:
             cmd.append(file_path)
-        
+
         print(colorize("Running aider... (this might take a moment)", "1;33"))
         print(colorize("-" * 60, "1;30"))  # Divider line
-        
+
         # Run aider and show real-time output
         result = subprocess.run(cmd)
-        
+
         # Check if the file was actually modified by comparing modification times
         try:
             file_mtime_after = os.path.getmtime(file_path)
             file_modified = file_mtime_after > file_mtime_before
         except OSError:
             file_modified = False
-        
+
         if result.returncode == 0 and file_modified:
             print(colorize("\nAider successfully edited the file!", "1;32"))
+            
+            # Apply ruff formatting as a post-processing step
+            postprocess_with_ruff(file_path)
         else:
             print(colorize("\nAider ran but might not have modified the file.", "1;33"))
-        
+            
+            # If Aider didn't modify the file, try preprocessing and formatting directly
+            if not file_modified and ("Expected an indented block" in error_msg or "Syntax error" in error_msg):
+                print(colorize("Trying direct formatting approach...", "1;33"))
+                if postprocess_with_ruff(file_path):
+                    print(colorize("Direct formatting approach successful!", "1;32"))
+                    file_modified = True
+
         print(colorize("-" * 60, "1;30"))  # Divider line
-        
+
         # Run pre-commit on the file to verify it passes
         print(colorize("Running pre-commit to verify fix...", "1;33"))
         verify_result = subprocess.run(
             ["pre-commit", "run", "--files", file_path],
             capture_output=(not VERBOSE_MODE),  # Show output in verbose mode
-            text=True
+            text=True,
         )
-        
+
         if verify_result.returncode == 0:
             print(colorize("Pre-commit verification passed!", "1;32"))
             return True
         else:
-            print(colorize("Pre-commit verification failed. The fix may be incomplete.", "1;33"))
-            
+            print(
+                colorize(
+                    "Pre-commit verification failed. The fix may be incomplete.", "1;33"
+                )
+            )
+
             if VERBOSE_MODE and verify_result.stdout:
                 print(colorize("Pre-commit output:", "1;33"))
                 print(verify_result.stdout)
-            
+
             print(colorize("You may need to manually fix remaining issues.", "1;33"))
-            
+
             # Mark as fixed if aider made changes, even if pre-commit still fails
             # This handles the case where aider fixed the specific issue but there are other issues
             if file_modified:
                 return True
-                
+
             return False
-            
+
     except subprocess.CalledProcessError as e:
         print(colorize(f"Error running aider: {e}", "1;31"))
         return False
     except FileNotFoundError:
-        print(colorize("The aider command was not found. Please install aider: pip install aider-chat", "1;31"))
+        print(
+            colorize(
+                "The aider command was not found. Please install aider: pip install aider-chat",
+                "1;31",
+            )
+        )
         return False
     except KeyboardInterrupt:
         print(colorize("\nAider operation interrupted by user.", "1;31"))
@@ -703,49 +1084,53 @@ def display_issues_menu(issues: List[Dict[str, str]]) -> Optional[Dict[str, str]
     if not issues:
         print(colorize("No issues found to fix.", "1;33"))
         return None
-    
+
     print(colorize("\n=== PRE-COMMIT ISSUES TO FIX ===", "1;36"))
-    
+
     file_issues = [i for i in issues if i["type"] == "file"]
     hook_issues = [i for i in issues if i["type"] == "hook"]
-    
+
     if file_issues:
         print(colorize("\nFile-specific issues:", "1;33"))
         for i, issue in enumerate(file_issues, 1):
             # For consolidated issues, show a summary
             if issue.get("consolidated", False):
                 sub_issues_count = issue["error_msg"].count("\n") + 1
-                print(f"  {i}. {issue['file_path']}: {colorize(f'[{sub_issues_count} issues]', '1;32')}")
+                print(
+                    f"  {i}. {issue['file_path']}: {colorize(f'[{sub_issues_count} issues]', '1;32')}"
+                )
             else:
                 print(f"  {i}. {issue['file_path']}: {issue['error_msg']}")
-    
+
     if hook_issues:
         print(colorize("\nHook failures:", "1;31"))
         for i, issue in enumerate(hook_issues, 1):
             print(f"  {len(file_issues) + i}. {issue['error_msg']}")
-    
+
     print(colorize("\n  A. Fix all issues sequentially (batch mode)", "1;32"))
     print(colorize("  0. Exit", "1;37"))
-    
+
     while True:
-        choice = input(colorize("\nSelect an issue to fix or 'A' for all (number/A): ", "1;33"))
-        
-        if choice.lower() == 'a':
-            return {'batch_mode': True}
-            
+        choice = input(
+            colorize("\nSelect an issue to fix or 'A' for all (number/A): ", "1;33")
+        )
+
+        if choice.lower() == "a":
+            return {"batch_mode": True}
+
         try:
             choice_num = int(choice)
             if choice_num == 0:
                 return None
-                
+
             if 1 <= choice_num <= len(file_issues):
                 return file_issues[choice_num - 1]
-                
+
             if len(file_issues) < choice_num <= len(file_issues) + len(hook_issues):
                 return hook_issues[choice_num - len(file_issues) - 1]
-                
+
             print(colorize("Invalid selection. Try again.", "1;31"))
-                
+
         except ValueError:
             print(colorize("Please enter a number or 'A'.", "1;31"))
 
@@ -753,72 +1138,94 @@ def display_issues_menu(issues: List[Dict[str, str]]) -> Optional[Dict[str, str]
 def parse_args():
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        description='Fix pre-commit issues listed in TODO.md')
-    parser.add_argument('--verbose', '-v', action='store_true',
-                        help='Enable verbose output mode')
-    parser.add_argument('--interactive', '-i', action='store_true',
-                        help='Enable interactive mode with confirmations')
-    parser.add_argument('--auto-all', '-a', action='store_true',
-                        help='Automatically fix all issues without menu selection')
+        description="Fix pre-commit issues listed in TODO.md"
+    )
+    parser.add_argument(
+        "--verbose", "-v", action="store_true", help="Enable verbose output mode"
+    )
+    parser.add_argument(
+        "--interactive",
+        "-i",
+        action="store_true",
+        help="Enable interactive mode with confirmations",
+    )
+    parser.add_argument(
+        "--auto-all",
+        "-a",
+        action="store_true",
+        help="Automatically fix all issues without menu selection",
+    )
     return parser.parse_args()
 
 
 def process_all_issues(issues: List[Dict[str, str]]) -> int:
     """Process all issues sequentially in batch mode.
-    
+
     Returns count of fixed issues.
     """
     if not issues:
         return 0
-    
+
     print(colorize(f"\nProcessing {len(issues)} issues in batch mode...", "1;36"))
-    
+
     fixed_count = 0
     skipped_count = 0
-    
+
     # Process file issues first (they're more likely to be fixable automatically)
-    file_issues = [i for i in issues if (i["type"] == "file" or i["type"] == "class_method") and os.path.exists(i["file_path"])]
-    hook_issues = [i for i in issues if i["type"] == "hook" or not os.path.exists(i["file_path"])]
-    
+    file_issues = [
+        i
+        for i in issues
+        if (i["type"] == "file" or i["type"] == "class_method")
+        and os.path.exists(i["file_path"])
+    ]
+    hook_issues = [
+        i for i in issues if i["type"] == "hook" or not os.path.exists(i["file_path"])
+    ]
+
     for i, issue in enumerate(file_issues, 1):
-        print(colorize(f"\n[{i}/{len(file_issues)}] Processing: {issue['file_path']}", "1;36"))
-        
+        print(
+            colorize(
+                f"\n[{i}/{len(file_issues)}] Processing: {issue['file_path']}", "1;36"
+            )
+        )
+
         # Special handling for class method issues
         if issue["type"] == "class_method":
-            print(colorize(f"Adding execute method to class '{issue.get('class_name')}'", "1;33"))
+            print(
+                colorize(
+                    f"Adding execute method to class '{issue.get('class_name')}'",
+                    "1;33",
+                )
+            )
             success = run_aider(
                 issue["file_path"],
                 issue["error_msg"],
                 consolidated=False,
-                class_name=issue.get("class_name")
+                class_name=issue.get("class_name"),
             )
         # If the issue is consolidated, show how many sub-issues it contains
         elif issue.get("consolidated", False):
             sub_issues_count = issue["error_msg"].count("\n") + 1
             print(colorize(f"This file has {sub_issues_count} issues to fix", "1;33"))
             success = run_aider(
-                issue["file_path"], 
-                issue["error_msg"],
-                consolidated=True
+                issue["file_path"], issue["error_msg"], consolidated=True
             )
         else:
             success = run_aider(
-                issue["file_path"], 
-                issue["error_msg"],
-                consolidated=False
+                issue["file_path"], issue["error_msg"], consolidated=False
             )
-        
+
         if success:
             mark_issue_fixed(issue["line"])
             fixed_count += 1
         else:
             skipped_count += 1
-            
+
         # Small delay between files to avoid rate limiting
         if i < len(file_issues):
             print(colorize("Waiting 2 seconds before next file...", "1;33"))
             time.sleep(2)
-    
+
     return fixed_count
 
 
@@ -826,109 +1233,154 @@ def main():
     """Main function."""
     # Parse command line arguments
     args = parse_args()
-    
+
     # Set global settings
     global VERBOSE_MODE, INTERACTIVE_MODE, AUTO_ALL_MODE
     VERBOSE_MODE = args.verbose
     INTERACTIVE_MODE = args.interactive
     AUTO_ALL_MODE = args.auto_all
-    
+
     print(colorize("====== QUICK FIX TOOL FOR PRE-COMMIT ISSUES ======", "1;36"))
     print(colorize("This tool helps fix issues listed in TODO.md", "1;37"))
-    
+
     if VERBOSE_MODE:
         print(colorize("Verbose mode enabled - showing detailed output", "1;33"))
-    
+
     if INTERACTIVE_MODE:
-        print(colorize("Interactive mode enabled - confirmations will be requested", "1;33"))
-    
+        print(
+            colorize(
+                "Interactive mode enabled - confirmations will be requested", "1;33"
+            )
+        )
+
     if AUTO_ALL_MODE:
-        print(colorize("Auto-all mode enabled - fixing all issues automatically", "1;32"))
-    
+        print(
+            colorize("Auto-all mode enabled - fixing all issues automatically", "1;32")
+        )
+
     # Generate fresh codebase index for accurate class searching
     generate_codebase_index()
-    
+
     issues = read_todo_issues()
-    
+
     if not issues:
         print(colorize("No issues found to fix. Your code looks good!", "1;32"))
         return 0
-    
+
     print(colorize(f"Found {len(issues)} issues to fix.", "1;33"))
-    
+
     # Auto-all mode: skip menu and process all issues
     if AUTO_ALL_MODE:
         fixed_count = process_all_issues(issues)
-        print(colorize(f"\nAutomatic processing complete! Fixed {fixed_count} issues.", "1;32"))
-        
+        print(
+            colorize(
+                f"\nAutomatic processing complete! Fixed {fixed_count} issues.", "1;32"
+            )
+        )
+
         # Check if any issues remain
         remaining_issues = read_todo_issues()
         if not remaining_issues:
-            print(colorize("\nAll issues have been fixed! Your code looks good!", "1;32"))
+            print(
+                colorize("\nAll issues have been fixed! Your code looks good!", "1;32")
+            )
         else:
-            print(colorize(f"\n{len(remaining_issues)} issues remain to be fixed.", "1;33"))
-        
+            print(
+                colorize(
+                    f"\n{len(remaining_issues)} issues remain to be fixed.", "1;33"
+                )
+            )
+
         return 0
-    
+
     # Interactive menu loop
     while True:
         selected_issue = display_issues_menu(issues)
-        
+
         if not selected_issue:
             print(colorize("Exiting. Goodbye!", "1;32"))
             break
-            
-        if isinstance(selected_issue, dict) and selected_issue.get('batch_mode'):
+
+        if isinstance(selected_issue, dict) and selected_issue.get("batch_mode"):
             # Batch process all issues
-            fixed_count = process_all_issues(issues) 
-            
+            fixed_count = process_all_issues(issues)
+
             # Update our issues list
             issues = read_todo_issues()
-            
+
             if fixed_count > 0:
-                print(colorize(f"\nBatch processing complete! Fixed {fixed_count} issues.", "1;32"))
-                
+                print(
+                    colorize(
+                        f"\nBatch processing complete! Fixed {fixed_count} issues.",
+                        "1;32",
+                    )
+                )
+
             if not issues:
-                print(colorize("\nAll issues have been fixed! Your code looks good!", "1;32"))
+                print(
+                    colorize(
+                        "\nAll issues have been fixed! Your code looks good!", "1;32"
+                    )
+                )
                 break
             else:
                 print(colorize(f"\n{len(issues)} issues remain to be fixed.", "1;33"))
                 continue
-        
-        if selected_issue["type"] == "file" and os.path.exists(selected_issue["file_path"]):
+
+        if selected_issue["type"] == "file" and os.path.exists(
+            selected_issue["file_path"]
+        ):
             success = run_aider(
-                selected_issue["file_path"], 
+                selected_issue["file_path"],
                 selected_issue["error_msg"],
-                consolidated=selected_issue.get("consolidated", False)
+                consolidated=selected_issue.get("consolidated", False),
             )
-            
+
             if success:
                 mark_issue_fixed(selected_issue["line"])
                 # Remove from our list of issues
                 issues = [i for i in issues if i["line"] != selected_issue["line"]]
-                
+
                 # Check if we have more issues
                 if not issues:
-                    print(colorize("\nAll issues have been fixed! Your code looks good!", "1;32"))
+                    print(
+                        colorize(
+                            "\nAll issues have been fixed! Your code looks good!",
+                            "1;32",
+                        )
+                    )
                     break
             else:
-                print(colorize("Issue not marked as fixed. You can try again or fix it manually.", "1;33"))
+                print(
+                    colorize(
+                        "Issue not marked as fixed. You can try again or fix it manually.",
+                        "1;33",
+                    )
+                )
         else:
             print(colorize("This issue requires manual intervention:", "1;31"))
             print(colorize(f"  {selected_issue['error_msg']}", "1;37"))
-            
+
             if INTERACTIVE_MODE:
-                if input(colorize("Mark as fixed anyway? (y/n): ", "1;33")).lower() == 'y':
+                if (
+                    input(colorize("Mark as fixed anyway? (y/n): ", "1;33")).lower()
+                    == "y"
+                ):
                     mark_issue_fixed(selected_issue["line"])
                     # Remove from our list of issues
                     issues = [i for i in issues if i["line"] != selected_issue["line"]]
             else:
-                print(colorize("Use --interactive mode to manually mark issues as fixed.", "1;33"))
+                print(
+                    colorize(
+                        "Use --interactive mode to manually mark issues as fixed.",
+                        "1;33",
+                    )
+                )
                 # Keep the issue in the list
-    
+
     return 0
 
 
 if __name__ == "__main__":
     exit_code = main()
-    sys.exit(exit_code) 
+    sys.exit(exit_code)

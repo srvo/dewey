@@ -1,9 +1,8 @@
 #!/usr/bin/env python
-"""
-    Schedule DB Sync Cron Job.
+"""Schedule DB Sync Cron Job.
 
-    This script sets up a cron job to run the database synchronization
-    between MotherDuck and local DuckDB during off-hours.
+This script sets up a cron job to run the database synchronization
+between MotherDuck and local DuckDB during off-hours.
 """
 
 import argparse
@@ -28,18 +27,17 @@ logger = logging.getLogger(__name__)
 
 
 def setup_cron_job(schedule="0 3 * * *", copy_first=True, incremental=True, user=None):
-    """
-    Set up a cron job to run the database sync script.
+    """Set up a cron job to run the database sync script.
 
     Args:
-    -----
+    ----
         schedule: Cron schedule expression (default: 3 AM daily)
         copy_first: Whether to copy the database before syncing
         incremental: Whether to use incremental sync
         user: User for crontab (None for current user)
 
     Returns:
-    --------
+    -------
         True if successful, False otherwise
 
     """
@@ -90,11 +88,10 @@ def setup_cron_job(schedule="0 3 * * *", copy_first=True, incremental=True, user
 
 
 def test_sync_script():
-    """
-    Test if the sync script runs correctly.
+    """Test if the sync script runs correctly.
 
-    Returns:
-    --------
+    Returns
+    -------
         True if successful, False otherwise
 
     """
