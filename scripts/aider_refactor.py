@@ -88,13 +88,13 @@ def find_python_files(path: Path) -> list[Path]:
     if path.is_dir():
         try:
             python_files = list(path.glob("**/*.py"))
-            logger.info(f"Found {len(python_files)} Python files in {path}")
+            logger.info("Found %s Python files in %s", len(python_files), path)
             return python_files
         except Exception as e:
-            logger.exception(f"Error finding Python files: {e}")
+            logger.exception("Error finding Python files: %s", e)
             return []
     else:
-        logger.error(f"Error: {path} is not a Python file or directory")
+        logger.error("Error: %s is not a Python file or directory", path)
         return []
 
 
