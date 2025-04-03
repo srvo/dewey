@@ -167,7 +167,7 @@ def setup_logging(log_level: str = "INFO", log_file: str | None = None) -> None:
             log_config["filename"] = log_file
         except (OSError, PermissionError) as e:
             logger.warning(
-                f"Could not create log directory: {e}. Logging to console only.",
+                "Could not create log directory: %s. Logging to console only.", e
             )
 
     logging.basicConfig(**log_config)

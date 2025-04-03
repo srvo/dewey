@@ -159,10 +159,10 @@ class BaseScript(ABC):
 
             return all_config
         except FileNotFoundError:
-            self.logger.error(f"Configuration file not found: {config_path}")
+            self.logger.error("Configuration file not found: %s", config_path)
             raise
         except yaml.YAMLError as e:
-            self.logger.error(f"Error parsing YAML configuration: {e}")
+            self.logger.error("Error parsing YAML configuration: %s", e)
             raise
 
     def _initialize_db_connection(self) -> None:
@@ -278,7 +278,7 @@ class BaseScript(ABC):
             from dewey.llm.litellm_client import LiteLLMClient, LiteLLMConfig
 
             self.llm_client = LiteLLMClient(config=LiteLLMConfig(model=args.llm_model))
-            self.logger.info(f"Using custom LLM model: {args.llm_model}")
+            self.logger.info("Using custom LLM model: %s", args.llm_model)
 
         return args
 
@@ -305,14 +305,14 @@ class BaseScript(ABC):
             "Using deprecated run() method. Update to use execute() instead.",
         )
         try:
-            self.logger.info(f"Starting execution of {self.name}")
+            self.logger.info("Starting execution of %s", self.name)
 
             # Call execute method
             self.execute()
 
-            self.logger.info(f"Successfully completed {self.name}")
+            self.logger.info("Successfully completed %s", self.name)
         except Exception as e:
-            self.logger.error(f"Error executing {self.name}: {e}", exc_info=True)
+            self.logger.error("Error executing %s: %s", self.name, e, exc_info=True)
             raise
         finally:
             self._cleanup()

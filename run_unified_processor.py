@@ -40,7 +40,7 @@ def setup_logging(debug=False):
         logging.getLogger("gmail_sync").setLevel(logging.DEBUG)
 
     logger = logging.getLogger(__name__)
-    logger.info("Logging set up at level: %s", 'DEBUG' if debug else 'INFO')
+    logger.info("Logging set up at level: %s", "DEBUG" if debug else "INFO")
     return logger
 
 

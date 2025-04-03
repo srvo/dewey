@@ -85,7 +85,7 @@ class UnifiedEmailProcessor(BaseScript):
             signal.signal(signal.SIGTERM, self.__signal_handler)  # Termination signal
             self.logger.debug("Signal handlers registered")
         except (ImportError, AttributeError) as e:
-            self.logger.warning(f"Could not set up signal handlers: {e}")
+            self.logger.warning("Could not set up signal handlers: %s", e)
 
     def execute(self) -> None:
         """Main execution method following BaseScript convention."""
@@ -101,7 +101,7 @@ class UnifiedEmailProcessor(BaseScript):
                 self._setup_database_tables()
             except Exception as e:
                 self.logger.error(
-                    f"❌ Error setting up database tables: {e}", exc_info=True,
+                    "❌ Error setting up database tables: %s", e, exc_info=True,
                 )
                 # Continue execution - we'll try to work with existing tables
 
@@ -154,7 +154,7 @@ class UnifiedEmailProcessor(BaseScript):
             )
 
             self.logger.info(
-                f"Initializing Gmail client with credentials from {credentials_path}",
+                "Initializing Gmail client with credentials from %s", credentials_path
             )
 
             # Initialize the Gmail OAuth client
@@ -167,7 +167,7 @@ class UnifiedEmailProcessor(BaseScript):
 
             # Get MotherDuck database name from config
             motherduck_db = self.get_config_value("database.motherduck_db", "md:dewey")
-            self.logger.info(f"📊 Using MotherDuck database: {motherduck_db}")
+            self.logger.info("📊 Using MotherDuck database: %s", motherduck_db)
 
             # Initialize GmailSync with the authenticated client and MotherDuck path
             self.gmail_sync = GmailSync(
@@ -299,7 +299,7 @@ class UnifiedEmailProcessor(BaseScript):
 
                     except Exception as e:
                         self.logger.error(
-                            f"❌ Error processing email {email_id}: {e}", exc_info=True,
+                            "❌ Error processing email %s: %s", email_id, e, exc_info=True,
                         )
                         batch_error += 1
 
@@ -328,12 +328,18 @@ class UnifiedEmailProcessor(BaseScript):
                 if isinstance(remaining_time, str):
                     eta_str = "unknown"
                 else:
-                    eta_str = f"{remaining_time:.1f} seconds"
+                    eta_str = "{:.1f} seconds".format(remaining_time)
 
                 self.logger.info(
-                    f"✓ Processed {processed_count}/{total_count or 'unknown'} "
-                    f"emails ({batch_success}/{batch_count} success in {batch_time:.1f}s, "
-                    f"rate: {rate:.1f}/s, avg: {avg_rate:.1f}/s, ETA: {eta_str})",
+                    "✓ Processed %s/%s emails (%s/%s success in %.1fs, rate: %.1f/s, avg: %.1f/s, ETA: %s)",
+                    processed_count,
+                    total_count or "unknown",
+                    batch_success,
+                    batch_count,
+                    batch_time,
+                    rate,
+                    avg_rate,
+                    eta_str,
                 )
 
                 # Adaptive delay - if we're getting write conflicts, slow down
@@ -375,7 +381,9 @@ class UnifiedEmailProcessor(BaseScript):
 
         self.logger.info(
             f"🏁 Processing complete: {success_count}/{processed_count} emails processed successfully "
-            f"in {total_time:.1f} seconds ({processed_count / total_time:.1f}/s)",
+            "in {:.1f} seconds ({:.1f}/s)".format(
+                total_time, processed_count / total_time
+            ),
         )
 
     def _setup_database_tables(self):
@@ -489,7 +497,7 @@ class UnifiedEmailProcessor(BaseScript):
                             )
                         except Exception as e:
                             self.logger.warning(
-                                f"Could not add column {col_name} to email_analyses: {e}",
+                                "Could not add column %s to email_analyses: %s", col_name, e
                             )
 
                 # Try to create indexes if they don't exist
@@ -551,10 +559,10 @@ class UnifiedEmailProcessor(BaseScript):
                         for_write=True,
                     )
                 except Exception as e:
-                    self.logger.warning(f"Could not create index on contacts: {e}")
+                    self.logger.warning("Could not create index on contacts: %s", e)
 
             except Exception as e:
-                self.logger.error(f"Error creating contacts table: {e}")
+                self.logger.error("Error creating contacts table: %s", e)
 
         # For existing contacts table, check and add missing columns
         if "contacts" in existing_tables:
@@ -592,7 +600,7 @@ class UnifiedEmailProcessor(BaseScript):
                 for col_name, col_type in expected_columns.items():
                     if col_name.lower() not in existing_columns:
                         self.logger.info(
-                            f"➕ Adding missing column to contacts: {col_name}",
+                            "➕ Adding missing column to contacts: %s", col_name
                         )
                         try:
                             default_value = ""
@@ -606,12 +614,12 @@ class UnifiedEmailProcessor(BaseScript):
                                 default_value = "DEFAULT CURRENT_TIMESTAMP"
 
                             db_manager.execute_query(
-                                f"ALTER TABLE contacts ADD COLUMN {col_name} {col_type} {default_value}",
+                                "ALTER TABLE contacts ADD COLUMN {col_name} {col_type} {default_value}".format(col_name=col_name, col_type=col_type, default_value=default_value),
                                 for_write=True,
                             )
                         except Exception as e:
                             self.logger.warning(
-                                f"Could not add column {col_name} to contacts: {e}",
+                                "Could not add column %s to contacts: %s", col_name, e
                             )
 
                 # Try to create index if it doesn't exist
@@ -623,10 +631,10 @@ class UnifiedEmailProcessor(BaseScript):
                         for_write=True,
                     )
                 except Exception as e:
-                    self.logger.warning(f"Could not create index on contacts: {e}")
+                    self.logger.warning("Could not create index on contacts: %s", e)
 
             except Exception as e:
-                self.logger.error(f"Error checking contacts columns: {e}")
+                self.logger.error("Error checking contacts columns: %s", e)
 
         self.logger.info("✅ Database tables and columns verified and created")
 
@@ -697,7 +705,8 @@ class UnifiedEmailProcessor(BaseScript):
 
             if result:
                 self.logger.debug(
-                    f"Email {email_id} already in email_analyses, checking if processing is complete",
+                    "Email %s already in email_analyses, checking if processing is complete",
+                    email_id,
                 )
 
                 # Check if already fully processed
@@ -709,7 +718,8 @@ class UnifiedEmailProcessor(BaseScript):
 
                 if status_result:
                     self.logger.debug(
-                        f"Email {email_id} already fully processed, skipping",
+                        "Email %s already fully processed, skipping",
+                        email_id,
                     )
                     return True
 
@@ -728,7 +738,7 @@ class UnifiedEmailProcessor(BaseScript):
             email_data = db_manager.execute_query(raw_email_query, [email_id])
 
             if not email_data:
-                self.logger.warning(f"⚠️ Email {email_id} not found in raw_emails")
+                self.logger.warning("⚠️ Email %s not found in raw_emails", email_id)
                 return False
 
             # Extract raw email data
@@ -745,16 +755,16 @@ class UnifiedEmailProcessor(BaseScript):
                 try:
                     if hasattr(self.enrichment, "enrich_email"):
                         self.logger.info(
-                            f"Performing additional enrichment for email {email_id}",
+                            "Performing additional enrichment for email %s", email_id
                         )
                         success = self.enrichment.enrich_email(email_id)
                         if success:
                             self.logger.info(
-                                f"Additional enrichment completed for email {email_id}",
+                                "Additional enrichment completed for email %s", email_id
                             )
                         else:
                             self.logger.warning(
-                                f"Additional enrichment failed for email {email_id}",
+                                "Additional enrichment failed for email %s", email_id
                             )
                     else:
                         self.logger.warning(
@@ -762,7 +772,7 @@ class UnifiedEmailProcessor(BaseScript):
                         )
                 except Exception as e:
                     self.logger.error(
-                        f"Error during email enrichment: {e}", exc_info=True,
+                        "Error during email enrichment: %s", e, exc_info=True,
                     )
 
             # Create standardized entry in email_analyses
@@ -780,7 +790,7 @@ class UnifiedEmailProcessor(BaseScript):
 
         except Exception as e:
             self.logger.error(
-                f"❌ Error processing single email {email_id}: {e}", exc_info=True,
+                "❌ Error processing single email %s: %s", email_id, e, exc_info=True,
             )
             return False
 
@@ -836,7 +846,7 @@ class UnifiedEmailProcessor(BaseScript):
             return contact
 
         except Exception as e:
-            self.logger.error(f"Error extracting contact info from {from_address}: {e}")
+            self.logger.error("Error extracting contact info from %s: %s", from_address, e)
             return {"email": from_address, "error": str(e)}
 
     def _get_column_names(self, table_name: str) -> list[str]:
@@ -1373,7 +1383,7 @@ class UnifiedEmailProcessor(BaseScript):
                 contact_info["is_client"] = True
                 contact_info["confidence_score"] = simple_contact["confidence_score"]
         except Exception as e:
-            self.logger.warning(f"Error checking client status: {e}")
+            self.logger.warning("Error checking client status: %s", e)
 
         # Get existing columns to ensure we're using the right field names
         try:
@@ -1422,10 +1432,10 @@ class UnifiedEmailProcessor(BaseScript):
                         for_write=True,
                     )
                     self.logger.debug(
-                        f"Updated existing contact: {simple_contact['email']}",
+                        "Updated existing contact: %s", simple_contact["email"]
                     )
                 except Exception as e:
-                    self.logger.warning(f"Error updating contact: {e}")
+                    self.logger.warning("Error updating contact: %s", e)
                     # Try a simpler update as fallback
                     try:
                         db_manager.execute_query(
@@ -1439,7 +1449,7 @@ class UnifiedEmailProcessor(BaseScript):
                         )
                     except Exception as e2:
                         self.logger.error(
-                            f"Both update attempts failed for contact {simple_contact['email']}: {e2}",
+                            "Both update attempts failed for contact %s: %s", simple_contact["email"], e2
                         )
             else:
                 # Insert new contact with minimal required fields
@@ -1495,10 +1505,10 @@ class UnifiedEmailProcessor(BaseScript):
                             )
                         except Exception as e:
                             self.logger.warning(
-                                f"Could not update additional contact info: {e}",
+                                "Could not update additional contact info: %s", e
                             )
                 except Exception as e:
-                    self.logger.warning(f"Error inserting contact: {e}")
+                    self.logger.warning("Error inserting contact: %s", e)
                     # Try an absolutely minimal insert as last resort
                     try:
                         # Use plain INSERT instead of INSERT OR IGNORE
@@ -1524,10 +1534,10 @@ class UnifiedEmailProcessor(BaseScript):
                             )
                     except Exception as e2:
                         self.logger.error(
-                            f"All insert attempts failed for {simple_contact['email']}: {e2}",
+                            "All insert attempts failed for %s: %s", simple_contact["email"], e2
                         )
         except Exception as e:
-            self.logger.error(f"Error enriching contact from email: {e}", exc_info=True)
+            self.logger.error("Error enriching contact from email: %s", e, exc_info=True)
 
     def _calculate_priority_score(
         self, contact_info: dict[str, Any], body: str,
@@ -1653,7 +1663,7 @@ def main():
     except KeyboardInterrupt:
         print("\nProcess interrupted by user. Shutting down gracefully...")
     except Exception as e:
-        print(f"Error: {e}")
+        print("Error: %s", e)
         import traceback
 
         traceback.print_exc()

@@ -40,7 +40,7 @@ def setup_logging(debug=False):
         logging.getLogger("UnifiedEmailProcessor").setLevel(logging.DEBUG)
         logging.getLogger("gmail_sync").setLevel(logging.DEBUG)
 
-    logging.info("Logging set up at level: %s", 'DEBUG' if debug else 'INFO')
+    logging.info("Logging set up at level: %s", "DEBUG" if debug else "INFO")
 
 
 def run_processor(batch_size=None, max_emails=None, debug=False):
