@@ -82,3 +82,17 @@ class AdversarialAgent(BaseScript):
         except Exception as e:
             self.logger.exception(f"Error running LLM: {e}")
             return f"LLM Error: {e}"
+
+    def execute(self) -> None:
+        """Executes the adversarial analysis based on configuration.
+
+        This method retrieves a proposal from the configuration, if available,
+        and performs a risk analysis. The result is logged.
+        """
+        proposal = self.get_config_value("proposal")
+        if proposal:
+            self.logger.info("Executing Adversarial Agent analysis from config...")
+            analysis_result = self.analyze_risks(proposal)
+            self.logger.info(f"Analysis Result: {analysis_result}")
+        else:
+            self.logger.warning("No proposal found in configuration.")
