@@ -1,5 +1,8 @@
-# Configuration file for the Sphinx documentation builder.
-# Full docs: https://www.sphinx-doc.org/en/master/usage/configuration.html
+"""Configuration file for the Sphinx documentation builder.
+
+For the full list of configuration options, see:
+https://www.sphinx-doc.org/en/master/usage/configuration.html
+"""
 
 import sys
 from datetime import datetime

@@ -5,8 +5,16 @@ from datetime import datetime
 import duckdb
 
 
-def analyze_data_types(conn, table):
-    """Analyze data types and determine appropriate SQL data types."""
+def analyze_data_types(conn: duckdb.DuckDBPyConnection, table: str) -> dict[str, str]:
+    """Analyze data types and determine appropriate SQL data types.
+
+    Args:
+        conn: DuckDB connection object.
+        table: Table name.
+
+    Returns:
+        A dictionary mapping column names to data types.
+    """
     schema = conn.execute(f"DESCRIBE {table}").fetchdf()
     sample = conn.execute(f"SELECT * FROM {table} LIMIT 100").fetchdf()
 
@@ -20,12 +28,22 @@ def analyze_data_types(conn, table):
     return data_types
 
 
-def identify_potential_relationships(conn, tables):
-    """Identify potential relationships between tables based on column names."""
-    relationships = []
+def identify_potential_relationships(
+    conn: duckdb.DuckDBPyConnection, tables: list[str],
+) -> list[dict[str, str]]:
+    """Identify potential relationships between tables based on column names.
+
+    Args:
+        conn: DuckDB connection object.
+        tables: List of table names.
+
+    Returns:
+        A list of dictionaries, each representing a potential relationship.
+    """
+    relationships: list[dict[str, str]] = []
 
     # Get schemas for all tables
-    schemas = {}
+    schemas: dict[str, Any] = {}
     for table in tables:
         schemas[table] = conn.execute(f"DESCRIBE {table}").fetchdf()
 
@@ -49,7 +67,7 @@ def identify_potential_relationships(conn, tables):
                     if col1 == col2:
                         # Check if it's a likely key column
                         is_likely_key = any(
-                            pattern in col1.lower() for pattern in id_patterns
+                            pattern in col1.lower() for pattern in id_patterns,
                         )
                         if is_likely_key or col1.lower() in {
                             "symbol",
@@ -70,10 +88,18 @@ def identify_potential_relationships(conn, tables):
     return relationships
 
 
-def generate_documentation(output_file="database_documentation.md") -> None:
-    """Generate comprehensive database documentation with table relationships."""
+def generate_documentation(output_file: str = "database_documentation.md") -> None:
+    """Generate comprehensive database documentation with table relationships.
+
+    Args:
+        output_file: The name of the output file.
+    """
     # Connect to MotherDuck
-    conn = duckdb.connect(f"md:dewey?motherduck_token={os.environ['MOTHERDUCK_TOKEN']}")
+    try:
+        conn = duckdb.connect(f"md:dewey?motherduck_token={os.environ['MOTHERDUCK_TOKEN']}")
+    except KeyError:
+        print("Error: MOTHERDUCK_TOKEN environment variable not set.")
+        return
 
     # Get all tables
     tables = conn.execute("SHOW TABLES").fetchdf()["name"].tolist()
