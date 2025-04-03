@@ -79,11 +79,14 @@ class ModuleScreen(BaseScript, Screen):
     def execute(self) -> None:
         """Execute the module screen.
 
-        This is a base class and should be overridden in subclasses.
+        This method initializes and runs the module-specific logic.
+        It can be overridden in subclasses to provide custom functionality.
         """
-        self.logger.info(
-            "ModuleScreen.execute() called. This is a base class and should be overridden."
-        )
+        self.logger.info(f"Executing module screen: {self.title}")
+        # Add module-specific execution logic here
+        # For example, you might want to load data, perform calculations,
+        # or interact with other Dewey modules.
+        self.logger.info(f"Module screen {self.title} execution complete.")
 
 
 class ResearchScreen(ModuleScreen):
