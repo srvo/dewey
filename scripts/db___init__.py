@@ -1,3 +1,5 @@
+"""Module for managing database maintenance tasks within Dewey."""
+
 from typing import Any
 
 from dewey.core.base_script import BaseScript

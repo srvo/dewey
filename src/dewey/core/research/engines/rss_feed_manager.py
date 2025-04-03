@@ -1,3 +1,5 @@
+"""Manages RSS feed operations, including fetching and processing feed data."""
+
 from typing import Any
 
 from dewey.core.base_script import BaseScript

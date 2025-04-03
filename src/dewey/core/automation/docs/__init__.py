@@ -2,7 +2,7 @@
 
 from typing import Any, Protocol
 
-from dewey.core.script import BaseScript
+from dewey.core.base_script import BaseScript
 
 
 class LoggerInterface(Protocol):

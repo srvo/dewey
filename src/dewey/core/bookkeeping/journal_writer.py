@@ -1,3 +1,5 @@
+"""Handles journal file writing and management."""
+
 import shutil
 from collections import defaultdict
 from collections.abc import Callable

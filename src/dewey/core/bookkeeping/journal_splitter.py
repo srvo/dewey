@@ -1,3 +1,5 @@
+"""Splits a journal file into separate files by year."""
+
 #!/usr/bin/env python3
 
 import os
