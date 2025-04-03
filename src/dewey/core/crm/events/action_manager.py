@@ -20,7 +20,7 @@ class ActionManager(BaseScript):
         """
         super().__init__(*args, **kwargs)
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Executes the primary logic of the ActionManager.
 
         This method defines the specific actions to be performed.
