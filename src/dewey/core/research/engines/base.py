@@ -28,7 +28,7 @@ class BaseEngine(BaseScript):
         )
         self.logger.debug(
             "BaseEngine initialized with config section: %s", config_section
-        )  # G004 fix
+        )
 
     @abstractmethod
     def execute(self) -> None:
@@ -143,12 +143,12 @@ class BaseEngine(BaseScript):
         if hasattr(args, "engine_config") and args.engine_config:
             config_path = self.get_path(args.engine_config)
             if not config_path.exists():
-                self.logger.error("Configuration file not found: %s", config_path)  # G004 fix
+                self.logger.error("Configuration file not found: %s", config_path)
                 raise FileNotFoundError(
                     "Configuration file not found: %s" % config_path
                 )
 
             self.config = self._load_config()  # Reload the entire config
-            self.logger.info("Loaded configuration from %s", config_path)  # G004 fix
+            self.logger.info("Loaded configuration from %s", config_path)
 
         return args
