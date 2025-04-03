@@ -34,6 +34,7 @@ def sync_table(table_name):
     motherduck_db = "dewey"
 
     print(
+    pass  # Placeholder added by quick_fix.py
         f"Syncing table {table_name} from MotherDuck:{motherduck_db} to local:{local_db_path}"
     )
 
