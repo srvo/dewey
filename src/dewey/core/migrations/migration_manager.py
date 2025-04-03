@@ -69,6 +69,30 @@ class MigrationManager(BaseScript):
                 self.conn.close()
                 self.conn = None
 
+    def execute(self) -> None:
+        """Execute the migration manager to apply pending migrations."""
+        try:
+            self._ensure_migrations_table()
+            pending_migrations = self._get_pending_migrations()
+
+            if not pending_migrations:
+                self.logger.info("No pending migrations to apply.")
+                return
+
+            self.logger.info(f"Found {len(pending_migrations)} pending migrations.")
+            for migration_file, migration_module in pending_migrations:
+                self._apply_migration(migration_file, migration_module)
+
+            self.logger.info("All migrations applied successfully.")
+
+        except Exception as e:
+            self.logger.exception(f"Error during migration: {e}")
+            raise
+        finally:
+            if self.conn:
+                self.conn.close()
+                self.conn = None
+
     def _get_connection(self) -> duckdb.DuckDBPyConnection:
         """Get a database connection.
 
