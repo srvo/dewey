@@ -10,6 +10,18 @@ class Companies(BaseScript):
         """Initializes the Companies script with configuration and dependencies."""
         super().__init__(config_section="companies", requires_db=True, enable_llm=True)
 
+    def execute(self) -> None:
+        """Executes the main logic of the Companies script.
+
+        This method orchestrates the process of researching and analyzing companies,
+        including fetching data, performing analysis, and storing results.
+
+        Raises:
+            Exception: If any error occurs during the process.
+
+        """
+        self.run()
+
     def run(self) -> None:
         """Executes the main logic of the Companies script.
 
