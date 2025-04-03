@@ -114,5 +114,5 @@ class LabelerModule(BaseScript):
             self.logger.info("Label processing completed successfully.")
 
         except Exception as e:
-            self.logger.error(f"Error during label processing: {e}", exc_info=True)
+            self.logger.error("Error during label processing: %s", e, exc_info=True)
             raise
