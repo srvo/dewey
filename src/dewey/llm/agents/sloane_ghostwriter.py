@@ -49,3 +49,14 @@ class SloaneGhostwriter(BaseScript):
         except Exception as e:
             self.logger.exception(f"Error during text generation: {e}")
             raise
+
+    def execute(self) -> None:
+        """Executes the SloaneGhostwriter script.
+
+        This method calls the run method and logs any exceptions.
+        """
+        try:
+            self.run()
+        except Exception as e:
+            self.logger.exception(f"Error during script execution: {e}")
+            raise
