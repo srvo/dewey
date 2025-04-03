@@ -36,14 +36,19 @@ class PopulateStocks(BaseScript):
             enable_llm=enable_llm,
         )
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Executes the stock population process.
 
         This method fetches the API key from the configuration, logs its usage,
-        and then simulates fetching and storing stock data.  It uses the
+        and then simulates fetching and storing stock data. It uses the
         logger for all output.
         """
+        self.logger.info("Starting stock population process.")
+
         api_key = self.get_config_value("api_key")
         self.logger.info(f"Using API key: {api_key}")
         # Implement your logic here to fetch and store stock data
+        # For now, we'll just log a message
+        self.logger.info("Fetching and storing stock data (placeholder).")
+
         self.logger.info("Stock population process completed.")
