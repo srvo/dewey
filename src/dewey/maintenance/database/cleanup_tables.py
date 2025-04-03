@@ -54,6 +54,45 @@ class CleanupTables(BaseScript):
             self.logger.exception(f"An error occurred during table cleanup: {e}")
             raise
 
+    def execute(self) -> None:
+        """Executes the table cleanup process.
+
+        This method retrieves table names from the configuration, connects
+        to the database, and then either simulates (dry_run=True) or executes
+        the deletion of data from those tables.
+
+        Raises:
+            Exception: If there is an error during the database operation.
+
+        """
+        try:
+            tables_to_clean: list[str] = self.get_config_value("tables_to_clean")
+            self.logger.info(f"Tables to clean: {tables_to_clean}")
+
+            if self.dry_run:
+                self.logger.info(
+                    "Dry run mode enabled. No actual data will be deleted."
+                )
+            else:
+                self.logger.info("Starting actual data cleanup...")
+                with self.db_connection() as conn:
+                    with conn.cursor() as cursor:
+                        for table in tables_to_clean:
+                            self.logger.info(f"Cleaning table: {table}")
+                            try:
+                                cursor.execute(f"DELETE FROM {table}")
+                                conn.commit()
+                                self.logger.info(f"Successfully cleaned table: {table}")
+                            except Exception as e:
+                                conn.rollback()
+                                self.logger.error(f"Error cleaning table {table}: {e}")
+
+                self.logger.info("Data cleanup completed.")
+
+        except Exception as e:
+            self.logger.exception(f"An error occurred during table cleanup: {e}")
+            raise
+
 
 if __name__ == "__main__":
     # Example usage (replace with actual config path and dry_run flag)
