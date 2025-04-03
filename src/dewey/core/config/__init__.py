@@ -79,13 +79,13 @@ class ConfigManager(BaseScript):
         self._db_connection = db_connection
         self._motherduck_connection = motherduck_connection
 
-    def run(self) -> None:
-        """Runs the configuration manager.
+    def execute(self) -> None:
+        """Executes the configuration manager.
 
         This method performs setup and initialization tasks, and demonstrates
         accessing a configuration value.
         """
-        self.logger.info("ConfigManager running.")
+        self.logger.info("ConfigManager executing.")
         example_value = self.get_config_value("utils.example_config", "default_value")
         self.logger.info(f"Example configuration value: {example_value}")
 
