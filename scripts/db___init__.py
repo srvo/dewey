@@ -9,6 +9,7 @@ class DatabaseModule(BaseScript):
     within Dewey.
     """
 
+    """
     This module inherits from BaseScript and provides a
     standardized structure for database maintenance scripts,
     including configuration loading, logging, and a `run` method
