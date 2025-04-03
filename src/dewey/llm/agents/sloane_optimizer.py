@@ -57,6 +57,11 @@ class SloanOptimizer(BaseScript):
         # TODO: Implement agent execution logic here
         return None
 
+    def execute(self) -> None:
+        """Executes the Sloan Optimizer agent with a default prompt."""
+        default_prompt = "What are the most important things I should be working on right now?"
+        self.run(default_prompt)
+
     def analyze_current_state(self) -> dict[str, Any]:
         """Analyzes current state and provides optimization recommendations.
 
