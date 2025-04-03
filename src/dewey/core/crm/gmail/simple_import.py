@@ -333,10 +333,10 @@ class GmailImporter(BaseScript):
                     ).fetchall()
                 }
                 self.logger.info(
-                    f"Found {existing_count} existing emails in MotherDuck ({len(existing_ids)} IDs loaded)",
+                    "Found %s existing emails in MotherDuck (%s IDs loaded)", existing_count, len(existing_ids),
                 )
             except Exception as e:
-                self.logger.error(f"Error getting existing emails: {e}")
+                self.logger.error("Error getting existing emails: %s", e)
                 existing_ids = set()
 
             # Fetch all messages in batches
@@ -695,21 +695,21 @@ class GmailImporter(BaseScript):
         """
         try:
             # Debug logging
-            self.logger.info(f"Email data type: {type(email_data)}")
+            self.logger.info("Email data type: %s", type(email_data))
             if isinstance(email_data, dict):
-                self.logger.info(f"Email data keys: {list(email_data.keys())}")
+                self.logger.info("Email data keys: %s", list(email_data.keys()))
                 if "payload" in email_data:
-                    self.logger.info(f"Payload type: {type(email_data['payload'])}")
+                    self.logger.info("Payload type: %s", type(email_data['payload']))
 
             # Handle string input
             if isinstance(email_data, str):
                 try:
                     self.logger.info(
-                        f"Attempting to parse string email data: {email_data[:100]}...",
+                        "Attempting to parse string email data: %s...", email_data[:100],
                     )
                     email_data = json.loads(email_data)
                 except json.JSONDecodeError as e:
-                    self.logger.error(f"Failed to parse email_data string as JSON: {e}")
+                    self.logger.error("Failed to parse email_data string as JSON: %s", e)
                     return False
 
             if not isinstance(email_data, dict):
@@ -876,7 +876,7 @@ class GmailImporter(BaseScript):
             )
             return date_parser.parse(cleaned_date_str)
         except Exception as e:
-            raise ValueError(f"Could not parse date string: {date_str}") from e
+            raise ValueError("Could not parse date string: %s", date_str) from e
 
     def execute(self) -> None:
         """Main execution method."""
@@ -925,7 +925,7 @@ class GmailImporter(BaseScript):
                     self.db_conn, email_batch, batch_id,
                 )
                 self.logger.info(
-                    f"Successfully stored {success_count} emails, {error_count} errors.",
+                    "Successfully stored %d emails, %d errors.", success_count, error_count,
                 )
             else:
                 self.logger.info("No new emails to store.")
@@ -933,7 +933,7 @@ class GmailImporter(BaseScript):
             self.logger.info("Email import completed")
 
         except Exception as e:
-            self.logger.error(f"Error in execute method: {e}")
+            self.logger.error("Error in execute method: %s", e)
 
 
 def run(self) -> None:

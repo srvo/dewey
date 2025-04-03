@@ -105,7 +105,7 @@ class JournalWriter(BaseScript):
                 return set(content.splitlines())
             return set()
         except Exception as e:
-            self.logger.exception(f"Failed to load processed hashes: {e!s}")
+            self.logger.exception("Failed to load processed hashes: %s", e)
             return set()
 
     def _save_processed_hashes(self, seen_hashes: set[str]) -> None:

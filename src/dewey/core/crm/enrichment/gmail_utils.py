@@ -165,7 +165,7 @@ class GmailAPIClient:
                             os.makedirs(os.path.dirname(self.token_path), exist_ok=True)
                             with open(self.token_path, "w") as token:
                                 token.write(credentials.to_json())
-                                self.logger.info(f"Saved token to {self.token_path}")
+                                self.logger.info("Saved token to %s", self.token_path)
 
                         else:
                             self.logger.warning(
