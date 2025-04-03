@@ -38,7 +38,11 @@ class DropJVTables(BaseScript):
         pass
 
     def execute(self) -> None:
-        """Executes the script's primary logic to drop JV tables."""
+        """Executes the script's primary logic to drop JV tables.
+
+        This method retrieves a list of table names from the configuration
+        and attempts to drop each table from the database.
+        """
         self.logger.info("Starting the process to drop JV tables.")
 
         table_names = self.get_config_value("tables_to_drop", [])
