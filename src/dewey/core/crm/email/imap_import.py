@@ -923,7 +923,7 @@ class UnifiedIMAPImporter(BaseScript):
             self.logger.error("Error getting existing message IDs: %s", e)
         return existing_ids
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Main execution method."""
         try:
             args = self.parse_args()
@@ -953,7 +953,3 @@ class UnifiedIMAPImporter(BaseScript):
         except Exception as e:
             self.logger.error("IMAP sync failed: %s", str(e))
             raise
-
-
-if __name__ == "__main__":
-    UnifiedIMAPImporter().execute()
