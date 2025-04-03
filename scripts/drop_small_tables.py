@@ -133,6 +133,10 @@ class DropSmallTablesScript(BaseScript):
         action = "Would have dropped" if self.args.dry_run else "Dropped"
         self.logger.info(f"\n{action} {len(to_drop)} tables")
 
+    def execute(self) -> None:
+        """Execute the script."""
+        self.run()
+
 
 if __name__ == "__main__":
     DropSmallTablesScript().main()
