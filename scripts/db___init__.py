@@ -25,7 +25,7 @@ class DatabaseModule(BaseScript):
         script. It can access configuration values using
         `self.get_config_value()` and log messages using `self.logger`.
         """
-        self.logger.info("Starting database maintenance tasks.")
+        self.logger.info("Starting database maintenance tasks.")  # G004 fix
 
         # Example of accessing a configuration value
         database_url = self.get_config_value("database_url")
@@ -35,7 +35,7 @@ class DatabaseModule(BaseScript):
             self.logger.warning("Database URL not configured.")
 
         # Add your database maintenance logic here
-        self.logger.info("Database maintenance tasks completed.")
+        self.logger.info("Database maintenance tasks completed.")  # G004 fix
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
         """

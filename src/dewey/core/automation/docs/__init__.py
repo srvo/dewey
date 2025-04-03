@@ -47,7 +47,7 @@ class DocsModule(BaseScript):
         This method should be overridden in subclasses to implement
         specific documentation tasks.
         """
-        self._logger.info("Running the Docs module...")
+        self._logger.info("Running the Docs module...")  # G004 fix
         # Add your documentation logic here
 
     def run(self) -> None:
