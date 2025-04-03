@@ -53,6 +53,31 @@ class LogicalFallacyAgent(BaseScript):
             self.logger.exception(f"An error occurred during analysis: {e}")
             raise
 
+    def execute(self) -> None:
+        """Executes the logical fallacy detection workflow.
+
+        This method retrieves text to analyze from a configured source,
+        analyzes it for logical fallacies using the configured LLM, and
+        stores the results in a designated location.
+        """
+        self.logger.info("Starting logical fallacy detection workflow.")
+
+        try:
+            # 1. Retrieve text to analyze (replace with actual implementation)
+            text_to_analyze = "This policy must be correct because everyone supports it."
+
+            # 2. Analyze text for logical fallacies (using the run method)
+            analysis_results = self.run(text_to_analyze)
+
+            # 3. Store the results (replace with actual implementation)
+            self.logger.info(f"Analysis results: {analysis_results}")
+
+            self.logger.info("Logical fallacy detection workflow completed.")
+
+        except Exception as e:
+            self.logger.exception(f"Error during logical fallacy detection workflow: {e}")
+            raise
+
 
 # Example usage (for testing purposes)
 if __name__ == "__main__":
