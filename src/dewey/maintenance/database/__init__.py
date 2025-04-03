@@ -1,4 +1,5 @@
 """Module for managing database maintenance tasks within Dewey."""
+
 from typing import Any
 
 from dewey.core.base_script import BaseScript
@@ -12,12 +13,14 @@ class DatabaseModule(BaseScript):
     loading, logging, and a `run` method to execute the script's
     primary logic.
     """
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initializes the DatabaseModule."""
         super().__init__(*args, **kwargs)
 
     def run(self) -> None:
-        """Executes the database maintenance tasks.
+        """
+        Executes the database maintenance tasks.
 
         This method contains the primary logic for the database maintenance
         script. It can access configuration values using
@@ -36,7 +39,8 @@ class DatabaseModule(BaseScript):
         self.logger.info("Database maintenance tasks completed.")
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """Retrieves a configuration value associated with the given key.
+        """
+        Retrieves a configuration value associated with the given key.
 
         Args:
         ----
@@ -52,7 +56,8 @@ class DatabaseModule(BaseScript):
         return super().get_config_value(key, default)
 
     def execute(self) -> None:
-        """Executes the database maintenance tasks.
+        """
+        Executes the database maintenance tasks.
 
         This method orchestrates the execution of database maintenance procedures,
         such as running migrations, performing backups, and cleaning up old data.

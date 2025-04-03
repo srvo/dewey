@@ -333,7 +333,9 @@ class GmailImporter(BaseScript):
                     ).fetchall()
                 }
                 self.logger.info(
-                    "Found %s existing emails in MotherDuck (%s IDs loaded)", existing_count, len(existing_ids),
+                    "Found %s existing emails in MotherDuck (%s IDs loaded)",
+                    existing_count,
+                    len(existing_ids),
                 )
             except Exception as e:
                 self.logger.error("Error getting existing emails: %s", e)
@@ -376,7 +378,10 @@ class GmailImporter(BaseScript):
                         total_fetched += len(messages)
 
                         self.logger.info(
-                            "Fetched %s messages, %s new, total new: %s", len(messages), len(new_messages), len(all_messages),
+                            "Fetched %s messages, %s new, total new: %s",
+                            len(messages),
+                            len(new_messages),
+                            len(all_messages),
                         )
 
                         # Check if we've reached the max
@@ -422,14 +427,18 @@ class GmailImporter(BaseScript):
                                         )
                                     except Exception as parse_error:
                                         self.logger.warning(
-                                            "Failed to parse retry time: %s", parse_error,
+                                            "Failed to parse retry time: %s",
+                                            parse_error,
                                         )
                                         delay = base_delay * (2 ** (retry_count - 1))
                                 else:
                                     delay = base_delay * (2 ** (retry_count - 1))
 
                                 self.logger.info(
-                                    "Rate limit exceeded. Waiting %.2f seconds before retry %d/%d...", delay, retry_count, max_retries
+                                    "Rate limit exceeded. Waiting %.2f seconds before retry %d/%d...",
+                                    delay,
+                                    retry_count,
+                                    max_retries,
                                 )
                                 time.sleep(delay)
                                 continue
@@ -442,7 +451,8 @@ class GmailImporter(BaseScript):
 
                 if retry_count == max_retries:
                     self.logger.warning(
-                        "Max retries (%d) reached. Moving on with collected messages.", max_retries
+                        "Max retries (%d) reached. Moving on with collected messages.",
+                        max_retries,
                     )
                     break
 
@@ -652,7 +662,10 @@ class GmailImporter(BaseScript):
                     conn.execute("BEGIN TRANSACTION")
 
                     self.logger.info(
-                        "Processed sub-batch %s, Success: %s, Errors: %s", i // sub_batch_size + 1, success_count, error_count,
+                        "Processed sub-batch %s, Success: %s, Errors: %s",
+                        i // sub_batch_size + 1,
+                        success_count,
+                        error_count,
                     )
 
                 # Final commit
@@ -666,7 +679,10 @@ class GmailImporter(BaseScript):
                 if retry_count < max_retries:
                     wait_time = retry_count * 5  # Exponential backoff
                     self.logger.warning(
-                        "Batch failed, retrying in %s seconds... (%s/%s)", wait_time, retry_count, max_retries,
+                        "Batch failed, retrying in %s seconds... (%s/%s)",
+                        wait_time,
+                        retry_count,
+                        max_retries,
                     )
                     time.sleep(wait_time)
                 else:
@@ -698,7 +714,7 @@ class GmailImporter(BaseScript):
             if isinstance(email_data, dict):
                 self.logger.info("Email data keys: %s", list(email_data.keys()))
                 if "payload" in email_data:
-                    self.logger.info("Payload type: %s", type(email_data['payload']))
+                    self.logger.info("Payload type: %s", type(email_data["payload"]))
 
             # Handle string input
             if isinstance(email_data, str):
@@ -708,7 +724,9 @@ class GmailImporter(BaseScript):
                     )
                     email_data = json.loads(email_data)
                 except json.JSONDecodeError as e:
-                    self.logger.error("Failed to parse email_data string as JSON: %s", str(e))
+                    self.logger.error(
+                        "Failed to parse email_data string as JSON: %s", str(e),
+                    )
                     return False
 
             if not isinstance(email_data, dict):
@@ -834,7 +852,7 @@ class GmailImporter(BaseScript):
 
         except Exception as e:
             self.logger.error(
-                "Error storing email %s: %s", email_data.get('id', 'unknown'), str(e),
+                "Error storing email %s: %s", email_data.get("id", "unknown"), str(e),
             )
             return False
 
@@ -924,7 +942,9 @@ class GmailImporter(BaseScript):
                     self.db_conn, email_batch, batch_id,
                 )
                 self.logger.info(
-                    "Successfully stored %s emails, %s errors.", success_count, error_count,
+                    "Successfully stored %s emails, %s errors.",
+                    success_count,
+                    error_count,
                 )
             else:
                 self.logger.info("No new emails to store.")
