@@ -70,7 +70,7 @@ def read_conventions() -> str:
 
 
 def read_config() -> str:
-"""
+    """
     Read the dewey.yaml config file for context.
 
     Returns:
