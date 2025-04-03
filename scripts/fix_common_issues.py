@@ -183,17 +183,16 @@ def fix_unused_imports(content: str) -> str:
 
 
 def fix_bare_except(content: str) -> str:
-"""Fix bare except statements by converting them to except Exception:."""
+    """Fix bare except statements by converting them to except Exception:."""
     pattern = r"except\s*:"
     return re.sub(pattern, "except Exception:", content)
 
 
 def fix_missing_docstrings(content: str) -> str:
-"""
+    """
     Add basic docstrings to functions and classes that are missing them.
     Note: This is a simple implementation and won't handle all cases perfectly.
-
-"""
+    """
     try:
         tree = ast.parse(content)
         missing_docstrings = []
@@ -334,7 +333,7 @@ def fix_file(file_path: Path, dry_run: bool = False) -> dict:
 
 
 def main():
-"""Execute main functions to run the script."""
+    """Execute main functions to run the script."""
     import argparse
 
     parser = argparse.ArgumentParser(description="Fix common flake8 issues")
