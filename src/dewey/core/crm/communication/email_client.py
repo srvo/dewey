@@ -463,6 +463,14 @@ class EmailClient(BaseScript):
             # Ensure connections are closed
             self.close()
 
+    def execute(self) -> None:
+        """Execute the email import process."""
+        try:
+            self.run()
+        except Exception as e:
+            self.logger.error(f"Error during email import: {e}")
+            raise
+
 
 if __name__ == "__main__":
     client = EmailClient()
