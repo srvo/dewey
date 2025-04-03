@@ -16,11 +16,10 @@ class UploadDb(BaseScript):
         """Initializes the UploadDb module."""
         super().__init__(*args, **kwargs)
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Executes the database uploading logic.
 
-        This method should be overridden in subclasses to implement the
-        specific database uploading functionality.
+        This method implements the specific database uploading functionality.
         """
         self.logger.info("Starting database upload process.")
 
@@ -33,6 +32,17 @@ class UploadDb(BaseScript):
 
         # Add your database uploading logic here
         self.logger.info("Database upload process completed.")
+
+    def run(self) -> None:
+        """Executes the database uploading logic.
+
+        This method should be overridden in subclasses to implement the
+        specific database uploading functionality.
+        """
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()
 
 
 if __name__ == "__main__":
