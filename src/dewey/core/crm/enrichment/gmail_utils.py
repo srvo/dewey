@@ -252,7 +252,7 @@ class GmailAPIClient:
                     data = part["body"]["data"]
                     return base64.urlsafe_b64decode(data).decode("utf-8")
                 except Exception as e:
-                    self.logger.warning(f"Failed to decode email part: {e}")
+                    self.logger.warning("Failed to decode email part: %s", e)
                     return ""
             return ""
 

@@ -126,9 +126,9 @@ class GmailImporter(BaseScript):
                 try:
                     conn.execute(idx)
                 except Exception as e:
-                    self.logger.warning(f"Failed to create index: {e}")
+                    self.logger.warning("Failed to create index: %s", e)
         except Exception as e:
-            self.logger.error(f"Error creating emails table: {e}")
+            self.logger.error("Error creating emails table: %s", e)
             raise
 
     def build_gmail_service(self, user_email: str | None = None):
@@ -160,7 +160,7 @@ class GmailImporter(BaseScript):
                     self.logger.info("Refreshing expired credentials")
                     credentials.refresh(Request())
                 elif os.path.exists(self.credentials_path):
-                    self.logger.info(f"Using credentials from {self.credentials_path}")
+                    self.logger.info("Using credentials from %s", self.credentials_path)
 
                     # Load the raw JSON to inspect its format
                     try:
@@ -168,7 +168,7 @@ class GmailImporter(BaseScript):
                             creds_data = json.load(f)
 
                         self.logger.info(
-                            f"Credentials file format: {list(creds_data.keys())}",
+                            "Credentials file format: %s", list(creds_data.keys()),
                         )
 
                         # Check if it's a token file (has 'access_token' field)
@@ -243,7 +243,7 @@ class GmailImporter(BaseScript):
                             )
 
                     except Exception as e:
-                        self.logger.warning(f"Failed to parse credentials file: {e}")
+                        self.logger.warning("Failed to parse credentials file: %s", e)
                         self.logger.info("Using application default credentials")
                         credentials, _ = google.auth.default(
                             scopes=self.scopes
@@ -712,7 +712,7 @@ class GmailImporter(BaseScript):
                     return False
 
             if not isinstance(email_data, dict):
-                self.logger.error(f"Invalid email data type: {type(email_data)}")
+                self.logger.error("Invalid email data type: %s", type(email_data))
                 return False
 
             # Extract and validate required fields

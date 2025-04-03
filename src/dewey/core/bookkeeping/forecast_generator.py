@@ -245,7 +245,7 @@ account Expenses:Hosting:Mormair_E650
             with self.fs.open(file_path, "a") as f:
                 f.write(entry)
         except Exception as e:
-            self.logger.error(f"Error writing to file: {e}")
+            self.logger.error("Error writing to file: %s", e)
             raise
 
     def generate_journal_entries(
