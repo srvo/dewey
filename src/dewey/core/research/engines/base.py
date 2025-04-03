@@ -6,11 +6,8 @@ from dewey.core.base_script import BaseScript
 
 
 class BaseEngine(BaseScript):
-    """
-    Base class for all engines.
-    """
+    """Base class for all engines.
 
-    """
     This class provides a foundation for building engines within
     the Dewey project, offering standardized configuration,
     logging, and database/LLM integration.

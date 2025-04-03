@@ -9,8 +9,7 @@ class DocsModule(BaseScript):
     This module inherits from BaseScript and provides a standardized
     structure for documentation-related scripts, including
     configuration loading, logging, and a `run` method to execute
-    the script's primary logic.
-    """
+    the script's primary logic."""
     def __init__(
         self,
         name: str = "CRM Docs Module",
