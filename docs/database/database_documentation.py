@@ -1,3 +1,4 @@
+import operator
 import os
 from datetime import datetime
 
@@ -50,11 +51,11 @@ def identify_potential_relationships(conn, tables):
                         is_likely_key = any(
                             pattern in col1.lower() for pattern in id_patterns
                         )
-                        if is_likely_key or col1.lower() in [
+                        if is_likely_key or col1.lower() in {
                             "symbol",
                             "ticker",
                             "email",
-                        ]:
+                        }:
                             relationships.append(
                                 {
                                     "table1": table1,
@@ -63,13 +64,13 @@ def identify_potential_relationships(conn, tables):
                                     "column2": col2,
                                     "relationship_type": "potential_join",
                                     "confidence": "high" if is_likely_key else "medium",
-                                }
+                                },
                             )
 
     return relationships
 
 
-def generate_documentation(output_file="database_documentation.md"):
+def generate_documentation(output_file="database_documentation.md") -> None:
     """Generate comprehensive database documentation with table relationships."""
     # Connect to MotherDuck
     conn = duckdb.connect(f"md:dewey?motherduck_token={os.environ['MOTHERDUCK_TOKEN']}")
@@ -100,7 +101,6 @@ def generate_documentation(output_file="database_documentation.md"):
                 "data_types": data_types,
             }
         except Exception as e:
-            print(f"Error analyzing table {table}: {str(e)}")
             table_info[table] = {"error": str(e)}
 
     # Identify potential relationships
@@ -120,7 +120,7 @@ def generate_documentation(output_file="database_documentation.md"):
             t
             for t in tables
             if t
-            not in [
+            not in {
                 "growth_sheets",
                 "income_sheets",
                 "diversification_sheets",
@@ -132,12 +132,12 @@ def generate_documentation(output_file="database_documentation.md"):
                 "contacts",
                 "emails",
                 "email_analyses",
-            ]
+            }
         ],
     }
 
     # Generate documentation
-    with open(output_file, "w") as f:
+    with open(output_file, "w", encoding="utf-8") as f:
         # Header
         f.write("# Database Documentation - MotherDuck:dewey\n\n")
         f.write(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
@@ -185,7 +185,7 @@ def generate_documentation(output_file="database_documentation.md"):
                     # Generate description based on column name
                     description = ""
                     lower_name = col_name.lower()
-                    if "id" == lower_name or lower_name.endswith("_id"):
+                    if lower_name == "id" or lower_name.endswith("_id"):
                         description = "Unique identifier"
                     elif "name" in lower_name:
                         description = "Name/description"
@@ -215,17 +215,17 @@ def generate_documentation(output_file="database_documentation.md"):
                     f.write("| " + " | ".join(columns) + " |\n")
                     f.write("| " + " | ".join(["---"] * len(columns)) + " |\n")
 
-                    for row in sample:
-                        f.write(
-                            "| "
-                            + " | ".join(
-                                [
-                                    str(row.get(col, "")).replace("\n", "<br>")
-                                    for col in columns
-                                ]
-                            )
-                            + " |\n"
+                    f.writelines(
+                        "| "
+                        + " | ".join(
+                            [
+                                str(row.get(col, "")).replace("\n", "<br>")
+                                for col in columns
+                            ],
                         )
+                        + " |\n"
+                        for row in sample
+                    )
                 else:
                     f.write("No sample data available.\n")
 
@@ -234,19 +234,20 @@ def generate_documentation(output_file="database_documentation.md"):
         # Table Relationships
         f.write("## Table Relationships\n\n")
         f.write(
-            "| Table 1 | Column 1 | Table 2 | Column 2 | Relationship Type | Confidence |\n"
+            "| Table 1 | Column 1 | Table 2 | Column 2 | Relationship Type | Confidence |\n",
         )
         f.write(
-            "|---------|----------|---------|----------|-------------------|------------|\n"
+            "|---------|----------|---------|----------|-------------------|------------|\n",
         )
 
-        for rel in sorted(relationships, key=lambda x: (x["table1"], x["table2"])):
-            f.write(
-                f"| {rel['table1']} | {rel['column1']} | {rel['table2']} | {rel['column2']} | {rel['relationship_type']} | {rel['confidence']} |\n"
+        f.writelines(
+            f"| {rel['table1']} | {rel['column1']} | {rel['table2']} | {rel['column2']} | {rel['relationship_type']} | {rel['confidence']} |\n"
+            for rel in sorted(
+                relationships, key=operator.itemgetter("table1", "table2"),
             )
+        )
 
     conn.close()
-    print(f"Documentation generated: {output_file}")
 
 
 if __name__ == "__main__":
