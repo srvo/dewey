@@ -22,3 +22,14 @@ class ApiManager(BaseScript):
         self.logger.info("ApiManager started.")
         # Add your API logic here
         self.logger.info("ApiManager finished.")
+
+    def execute(self) -> None:
+        """Executes the main logic of the API manager.
+
+        This method logs the start and finish of the API manager's execution.
+        Subclasses should override this method to implement specific
+        API-related tasks.
+        """
+        self.logger.info("ApiManager execute started.")
+        # Add your API logic here
+        self.logger.info("ApiManager execute finished.")
