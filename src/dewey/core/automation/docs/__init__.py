@@ -13,11 +13,9 @@ class LoggerInterface(Protocol):
 
 
 class DocsModule(BaseScript):
-    """
-    A module for managing documentation tasks within Dewey's
+    """A module for managing documentation tasks within Dewey's
     automation scripts.
-    """
-    """
+
     This module inherits from BaseScript and provides a
     standardized structure for documentation-related scripts,
     including configuration loading, logging, and a `run` method

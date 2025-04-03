@@ -49,9 +49,7 @@ class ConfigInterface(Protocol):
 
 
 class JournalSplitter(BaseScript):
-    """
-    Splits a journal file into separate files by year.
-    """
+    """Splits a journal file into separate files by year."""
     def __init__(
         self, file_system: FileSystemInterface = None, config: ConfigInterface = None
     ) -> None:

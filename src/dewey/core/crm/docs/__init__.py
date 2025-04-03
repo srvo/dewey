@@ -4,8 +4,7 @@ from dewey.core.base_script import BaseScript
 
 
 class DocsModule(BaseScript):
-    """
-    A module for managing documentation tasks within Dewey's CRM.
+    """A module for managing documentation tasks within Dewey's CRM.
 
     This module inherits from BaseScript and provides a standardized
     structure for documentation-related scripts, including
