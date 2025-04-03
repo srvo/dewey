@@ -11,3 +11,9 @@ class ViewEmail(BaseScript):
     def run(self):
         """Runs the email viewing process."""
         self.logger.info("Running ViewEmail script")
+
+    def execute(self):
+        """Executes the email viewing process."""
+        self.logger.info("Executing ViewEmail script")
+        self.run()  # Call the existing run method for now
+        self.logger.info("ViewEmail script execution complete.")
