@@ -67,6 +67,10 @@ class APIServer(BaseScript):
         """BaseScript run implementation."""
         self.start()
 
+    def execute(self) -> None:
+        """Execute the API server."""
+        self.start()
+
 
 @contextmanager
 def managed_api_server():
