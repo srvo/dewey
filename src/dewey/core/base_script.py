@@ -178,7 +178,7 @@ class BaseScript(ABC):
             self.logger.error("Could not import database module. Is it installed?")
             raise
         except Exception as e:
-            self.logger.error(f"Failed to initialize database connection: {e}")
+            self.logger.error("Failed to initialize database connection: %s", e)
             raise
 
     def _initialize_llm_client(self) -> None:
@@ -196,7 +196,7 @@ class BaseScript(ABC):
             # Don't raise to allow scripts to run without LLM support
             self.llm_client = None
         except Exception as e:
-            self.logger.error(f"Failed to initialize LLM client: {e}")
+            self.logger.error("Failed to initialize LLM client: %s", e)
             self.llm_client = None
 
     def setup_argparse(self) -> argparse.ArgumentParser:
@@ -247,18 +247,18 @@ class BaseScript(ABC):
         if args.log_level:
             log_level = getattr(logging, args.log_level)
             self.logger.setLevel(log_level)
-            self.logger.debug(f"Log level set to {args.log_level}")
+            self.logger.debug("Log level set to %s", args.log_level)
 
         # Update config if specified
         if args.config:
             config_path = Path(args.config)
             if not config_path.exists():
-                self.logger.error(f"Configuration file not found: {config_path}")
+                self.logger.error("Configuration file not found: %s", config_path)
                 sys.exit(1)
 
             with open(config_path) as f:
                 self.config = yaml.safe_load(f)
-            self.logger.info(f"Loaded configuration from {config_path}")
+            self.logger.info("Loaded configuration from %s", config_path)
 
         # Update database connection if specified
         if (
@@ -325,7 +325,7 @@ class BaseScript(ABC):
                 self.logger.debug("Closing database connection")
                 self.db_conn.close()
             except Exception as e:
-                self.logger.warning(f"Error closing database connection: {e}")
+                self.logger.warning("Error closing database connection: %s", e)
 
     def get_path(self, path: str | Path) -> Path:
         """Get a path relative to the project root.

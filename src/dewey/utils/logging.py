@@ -76,7 +76,8 @@ def setup_logging(
         log_dir_path = Path(log_dir)
         log_dir_path.mkdir(exist_ok=True)
         log_file = log_dir_path / "{}.log".format(name)
-        file_handler = _create_rotating_handler(log_file,
+        file_handler = _create_rotating_handler(
+            log_file,
             maxBytes=log_config.get("maxBytes", 10 * 1024 * 1024),  # 10MB
             backupCount=log_config.get("backupCount", 5),
             formatter=formatter,
