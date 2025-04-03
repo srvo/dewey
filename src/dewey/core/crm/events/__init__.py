@@ -45,7 +45,7 @@ class EventsModule(BaseScript):
             enable_llm=enable_llm,
         )
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Executes the primary logic of the EventsModule.
 
         This method retrieves configuration values, connects to the database,
@@ -81,6 +81,14 @@ class EventsModule(BaseScript):
                 self.logger.error(f"Error interacting with the LLM: {e}")
         else:
             self.logger.debug("LLM client is not enabled.")
+
+    def run(self) -> None:
+        """Executes the primary logic of the EventsModule.
+
+        This method retrieves configuration values, connects to the database,
+        and performs event processing tasks.
+        """
+        super().run()
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
         """Retrieves a configuration value by key.
