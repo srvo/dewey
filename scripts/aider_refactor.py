@@ -41,8 +41,7 @@ GLOBAL_CHAT_HISTORY_FILE = None
 def signal_handler(signum, frame) -> Never:
     """Handle timeout signal."""
     logger.error("Timeout reached")
-    msg = "Timeout reached"
-    raise TimeoutError(msg)
+    raise TimeoutError("Timeout reached")
 
 
 # Register signal handlers
@@ -140,7 +139,7 @@ def initialize_persistent_session(args):
     # Create a chat history file for this specific directory/file
     target_path = Path(args.dir).resolve()
     safe_name = re.sub(r"[^\w-]", "_", str(target_path))
-    GLOBAL_CHAT_HISTORY_FILE = str(chat_history_dir / f"{safe_name}.json")
+    GLOBAL_CHAT_HISTORY_FILE = str(chat_history_dir / "{}.json".format(safe_name))
 
     # Set up environment variables
     os.environ["AIDER_NO_AUTO_COMMIT"] = "1"
@@ -360,7 +359,7 @@ def fix_file_with_aider(
             io = InputOutput(yes=True, input_history_file=null_device)
 
             # Create Aider coder instance
-            logger.info(f"Creating Aider instance for {file_path}")
+            logger.info("Creating Aider instance for %s", file_path)
             coder = Coder.create(
                 main_model=model,
                 fnames=[str(file_path)],
@@ -369,7 +368,7 @@ def fix_file_with_aider(
             )
         else:
             # Use the existing coder but add the current file if it's not already included
-            logger.info(f"Using persistent Aider session for {file_path}")
+            logger.info("Using persistent Aider session for %s", file_path)
             coder = GLOBAL_CODER
 
             # Different coders in Aider have different APIs
@@ -616,8 +615,8 @@ def main() -> None:
 
     # Print summary
     logger.info(f"\nProcessed {len(python_files)} Python files")
-    logger.info(f"Successfully fixed {successful} files")
-    logger.info(f"Failed to fix {failed} files")
+    logger.info("Successfully fixed %s files", successful)
+    logger.info("Failed to fix %s files", failed)
 
 
 if __name__ == "__main__":
