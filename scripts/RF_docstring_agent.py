@@ -35,7 +35,7 @@ class RFDocstringAgent(BaseScript):
 
             # Example of accessing configuration values
             example_config_value = self.get_config_value("example_config_key")
-            self.logger.info(f"Example config value: {example_config_value}")
+            self.logger.info("Example config value: %s", example_config_value)
 
             # Placeholder for core logic - replace with actual implementation
             self.logger.info("Docstring refactoring logic would be executed here.")
@@ -48,7 +48,7 @@ class RFDocstringAgent(BaseScript):
             self.logger.info("Docstring refactoring process completed.")
 
         except Exception as e:
-            self.logger.exception(f"An error occurred: {e}")
+            self.logger.exception("An error occurred: %s", e)
             raise
 
 
