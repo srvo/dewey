@@ -34,6 +34,19 @@ class ScreenManager(BaseScript):
         # Add logic to display the screen here
         print(f"Displaying screen: {screen_name}")
 
+    def execute(self) -> None:
+        """Executes the screen management logic.
+
+        This method initializes and manages the display of screens
+        within the text-based user interface. It retrieves the default
+        screen from the configuration and displays it.
+        """
+        self.logger.info("Executing screen manager...")
+        default_screen = self.get_config_value("default_screen", "MainScreen")
+        self.logger.debug(f"Default screen: {default_screen}")
+        self.display_screen(default_screen)
+        self.logger.info("Screen manager execution completed.")
+
 
 if __name__ == "__main__":
     screen_manager = ScreenManager()
