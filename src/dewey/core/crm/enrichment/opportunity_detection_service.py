@@ -49,3 +49,9 @@ class OpportunityDetectionService(BaseScript):
         import re
 
         return bool(re.search(pattern, text, re.IGNORECASE))
+
+    def execute(self) -> None:
+        """Executes the opportunity detection process."""
+        sample_text = "Check out our new demo and speaking opportunities!"
+        opportunities = self.detect_opportunities(sample_text)
+        self.logger.info(f"Detected opportunities: {opportunities}")
