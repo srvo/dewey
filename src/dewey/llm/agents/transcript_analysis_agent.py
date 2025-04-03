@@ -77,6 +77,16 @@ class TranscriptAnalysisAgent(BaseScript):
         self.logger.info("Transcript analysis complete.")
         return result
 
+    def execute(self) -> None:
+        """Executes the transcript analysis agent.
+
+        This method is the main entry point for the script. It calls the run method
+        with a predefined prompt and logs the results.
+        """
+        prompt = "Please analyze the meeting transcript and extract key information."
+        results = self.run(prompt)
+        self.logger.info(f"Analysis results: {results}")
+
 
 if __name__ == "__main__":
     # Example usage (replace with actual arguments)
