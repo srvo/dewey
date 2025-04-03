@@ -2,7 +2,9 @@
 
 
 class BaseException(Exception):
-    """Base exception for all Dewey-specific exceptions."""
+    """
+    Base exception for all Dewey-specific exceptions.
+    """
 
 
 class ConfigurationError(BaseException):

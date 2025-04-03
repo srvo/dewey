@@ -6,7 +6,8 @@ from dewey.core.base_script import BaseScript
 
 
 class LLMAnalysis(BaseScript):
-    """A script for performing LLM analysis.
+    """
+    A script for performing LLM analysis.
 
     Inherits from BaseScript for standardized configuration and logging.
     """

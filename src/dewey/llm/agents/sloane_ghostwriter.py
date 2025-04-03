@@ -4,7 +4,8 @@ from dewey.core.base_script import BaseScript
 
 
 class SloaneGhostwriter(BaseScript):
-    """A script for generating text using a language model.
+    """
+    A script for generating text using a language model.
 
     This class inherits from BaseScript and implements the Dewey conventions
     for logging, configuration, and script execution.
