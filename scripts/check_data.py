@@ -54,6 +54,15 @@ class CheckDataScript(BaseScript):
             # Add other BaseScript args as needed (e.g., enable_llm=False)
         )
 
+    def execute(self) -> None:
+        """Execute the data check script.
+
+        This method is intentionally left blank as the data checks are
+        performed by the subcommands. This ensures that the BaseScript
+        is initialized correctly for all subcommands.
+        """
+        self.logger.info("CheckDataScript execute method called (doing nothing). Use subcommands.")
+
 
 # --- Database Check Subcommand ---
 db_app = typer.Typer()
