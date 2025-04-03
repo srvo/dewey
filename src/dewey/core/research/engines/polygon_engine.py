@@ -67,3 +67,7 @@ class PolygonEngine(BaseScript):
             return
 
         self.logger.info("Polygon engine finished.")
+
+    def execute(self) -> None:
+        """Executes the Polygon engine logic."""
+        self.run()
