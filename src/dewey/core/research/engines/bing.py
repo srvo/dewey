@@ -13,7 +13,7 @@ class Bing(BaseScript):
         """
         super().__init__(config_section=config_section)
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Executes the main logic of the Bing script."""
         self.logger.info("Bing script started.")
 
