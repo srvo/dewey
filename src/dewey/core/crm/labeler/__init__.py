@@ -1,17 +1,11 @@
-import logging
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import (
-    DatabaseConnection,
-    get_connection,
-    get_motherduck_connection,
-)
-from dewey.llm import llm_utils
 
 
 class LabelerModule(BaseScript):
-    """A module for managing label-related tasks within Dewey's CRM.
+    """
+    A module for managing label-related tasks within Dewey's CRM.
 
     This module inherits from BaseScript and provides a standardized
     structure for label processing scripts, including configuration
@@ -24,18 +18,22 @@ class LabelerModule(BaseScript):
         super().__init__(*args, config_section="labeler", **kwargs)
 
     def run(self) -> None:
-        """Executes the primary logic of the labeler module.
+        """
+        Executes the primary logic of the labeler module.
 
         This method demonstrates accessing configuration values and using the logger.
         Add your label processing logic here.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If something goes wrong during label processing.
 
         """
@@ -44,7 +42,7 @@ class LabelerModule(BaseScript):
         try:
             # Example of accessing a configuration value
             some_config_value = self.get_config_value(
-                "some_config_key", "default_value"
+                "some_config_key", "default_value",
             )
             self.logger.debug(f"Some config value: {some_config_value}")
 
@@ -76,13 +74,16 @@ class LabelerModule(BaseScript):
             raise
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """Retrieves a configuration value associated with the given key.
+        """
+        Retrieves a configuration value associated with the given key.
 
         Args:
+        ----
             key: The key of the configuration value to retrieve.
             default: The default value to return if the key is not found.
 
         Returns:
+        -------
             The configuration value associated with the key, or the default value
             if the key is not found.
 
@@ -90,7 +91,8 @@ class LabelerModule(BaseScript):
         return super().get_config_value(key, default)
 
     def execute(self) -> None:
-        """Executes the label processing logic.
+        """
+        Executes the label processing logic.
 
         This method orchestrates the label processing workflow, including
         reading data, applying labels, and updating the database.
