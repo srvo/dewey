@@ -86,7 +86,7 @@ def validate_config() -> bool:
     required_pg_params = ["pg_host", "pg_port", "pg_user", "pg_dbname"]
     missing_params = [p for p in required_pg_params if not config.get(p)]
     if missing_params:
-        error_msg = f"Missing required PostgreSQL config parameters: {', '.join(missing_params)}"
+        error_msg = "Missing required PostgreSQL config parameters: %s" % ', '.join(missing_params)
         logger.error(error_msg)
         raise ValueError(error_msg)
 
@@ -106,8 +106,7 @@ def validate_config() -> bool:
                 pass  # Decide if directory creation is needed for PG
         except (OSError, PermissionError) as e:
             logger.warning(
-                "Could not create directories: %s. This is expected in test environments or if backup dir is unused.", e
-            )
+                "Could not create directories: %s. This is expected in test environments or if backup dir is unused.", e)
 
     # Check pool configuration
     if config["pool_size"] < 1:
@@ -246,8 +245,7 @@ def get_connection_string() -> str:
     missing = [p for p in required_params if not config.get(p)]
     if missing:
         raise ValueError(
-            f"Missing required PostgreSQL config for connection string: {missing}",
-        )
+            "Missing required PostgreSQL config for connection string: %s" % missing)
 
     # Construct DSN (Data Source Name) string
     # Example: "postgresql://user:password@host:port/dbname"

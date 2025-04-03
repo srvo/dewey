@@ -64,7 +64,7 @@ def run_processor(batch_size=None, max_emails=None, debug=False):
         processor.execute()
 
     except Exception as e:
-        logging.exception(f"Error initializing or running UnifiedEmailProcessor: {e}")
+        logging.exception("Error initializing or running UnifiedEmailProcessor: %s", e)
         import traceback
 
         traceback.print_exc()
