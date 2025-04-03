@@ -31,3 +31,15 @@ class CliTickManager(BaseScript):
         self.logger.info(f"CLI tick interval: {tick_interval}")
         # Add your CLI tick management logic here
         pass
+
+    def execute(self) -> None:
+        """Executes the CLI tick management process.
+
+        This method retrieves the CLI tick interval from the configuration,
+        logs the interval, and then executes the CLI tick management logic.
+        """
+        tick_interval = self.get_config_value("tick_interval", 60)
+        self.logger.info(f"CLI tick interval: {tick_interval}")
+        self.logger.info("Executing CLI tick management logic...")
+        # Add your CLI tick management logic here
+        pass
