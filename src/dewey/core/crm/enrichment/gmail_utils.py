@@ -150,12 +150,12 @@ class GmailAPIClient:
                         # Check if it's an OAuth client credentials file
                         elif "installed" in creds_data or "web" in creds_data:
                             self.logger.info(
-                                "Using OAuth client credentials from credentials file",
+                                "Using OAuth client credentials from credentials file"
                             )
 
                             # Create a flow from the credentials file
                             flow = InstalledAppFlow.from_client_secrets_file(
-                                self.credentials_path, self.scopes,
+                                self.credentials_path, self.scopes
                             )
 
                             # Run the OAuth flow to get credentials
@@ -169,11 +169,11 @@ class GmailAPIClient:
 
                         else:
                             self.logger.warning(
-                                "Unknown credentials format, falling back to application default credentials",
+                                "Unknown credentials format, falling back to application default credentials"
                             )
                             credentials, _ = google.auth.default(
                                 scopes=self.scopes
-                                + ["https://www.googleapis.com/auth/cloud-platform"],
+                                + ["https://www.googleapis.com/auth/cloud-platform"]
                             )
 
                     except Exception as e:
@@ -181,17 +181,17 @@ class GmailAPIClient:
                         self.logger.info("Using application default credentials")
                         credentials, _ = google.auth.default(
                             scopes=self.scopes
-                            + ["https://www.googleapis.com/auth/cloud-platform"],
+                            + ["https://www.googleapis.com/auth/cloud-platform"]
                         )
                 else:
                     self.logger.warning(
-                        "Credentials file not found at %s", self.credentials_path,
+                        "Credentials file not found at %s", self.credentials_path
                     )
                     self.logger.info("Using application default credentials")
                     # Use application default credentials from gcloud CLI
                     credentials, _ = google.auth.default(
                         scopes=self.scopes
-                        + ["https://www.googleapis.com/auth/cloud-platform"],
+                        + ["https://www.googleapis.com/auth/cloud-platform"]
                     )
 
             # Build the service with memory cache
