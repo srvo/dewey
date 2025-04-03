@@ -253,6 +253,22 @@ class ControversyAnalyzer(BaseScript):
         )
         return result
 
+    def execute(self) -> None:
+        """Execute the controversy analysis."""
+        parser = argparse.ArgumentParser(description="Analyze controversies for an entity")
+        parser.add_argument("entity", help="Name of the entity to analyze")
+        parser.add_argument("--lookback-days", type=int, help="Number of days to look back")
+
+        args = parser.parse_args()
+        entity = args.entity
+        lookback_days = args.lookback_days or 365
+
+        self.logger.info(f"Running controversy analysis for {entity}")
+        result = asyncio.run(self.analyze_entity_controversies(entity, lookback_days))
+        self.logger.info(
+            f"Analysis complete: found {len(result.get('recent_controversies', []))} recent controversies"
+        )
+
 
 def main() -> None:
     """Main entry point."""
