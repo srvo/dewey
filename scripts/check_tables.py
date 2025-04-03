@@ -26,7 +26,7 @@ def format_table_info(table_name, row_count, schema, sample_row=None):
 
 
 def analyze_database(conn, db_name):
-"""Analyze tables in a database connection."""
+    """Analyze tables in a database connection."""
     results = []
 
     try:
