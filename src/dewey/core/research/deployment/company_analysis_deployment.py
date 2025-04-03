@@ -27,13 +27,8 @@ class CompanyAnalysisDeployment(BaseScript):
             config_section="paths",  # Assuming relevant paths are under 'paths'
         )
 
-    def run(self, args: Any | None = None) -> None:
-        """Main execution method to deploy the company analysis flow.
-
-        Args:
-            args: Optional arguments (not used in this implementation).
-
-        """
+    def execute(self) -> None:
+        """Main execution method to deploy the company analysis flow."""
         self.deploy()
 
     def deploy(self) -> None:
@@ -88,6 +83,15 @@ class CompanyAnalysisDeployment(BaseScript):
         # Apply the deployment
         deployment.apply()
         self.logger.info("Company analysis deployment created successfully")
+
+    def run(self, args: Any | None = None) -> None:
+        """Main execution method to deploy the company analysis flow.
+
+        Args:
+            args: Optional arguments (not used in this implementation).
+
+        """
+        self.deploy()
 
 
 def main() -> None:
