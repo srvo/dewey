@@ -37,7 +37,7 @@ logger = logging.getLogger("aider_refactor_and_test")
 
 
 def read_file(file_path: Path) -> str:
-"""
+    """
     Read a file and return its contents.
 
     Args:
