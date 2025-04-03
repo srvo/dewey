@@ -15,3 +15,11 @@ class ContactAgent(BaseScript):
         self.logger.info(f"Config value: {config_value}")
         # Add your main logic here
         self.logger.info("ContactAgent finished.")
+
+    def execute(self) -> None:
+        """Executes the contact agent logic.
+
+        This method calls the run method to maintain existing functionality.
+        """
+        self.logger.info("Executing ContactAgent...")
+        self.run()
