@@ -214,8 +214,8 @@ class DataImporter(BaseScript):
             self.logger.error(f"Error listing person records: {e}")
             return []
 
-    def run(self) -> None:
-        """Run the data import process.
+    def execute(self) -> None:
+        """Execute the data import process.
 
         This method orchestrates the data import process by reading
         configuration values and importing data from the specified source.
