@@ -98,7 +98,7 @@ class GmailAPIClient:
                     self.logger.info("Refreshing expired credentials")
                     credentials.refresh(Request())
                 elif os.path.exists(self.credentials_path):
-                    self.logger.info(f"Using credentials from {self.credentials_path}")
+                    self.logger.info("Using credentials from %s", self.credentials_path)
 
                     # Load the raw JSON to inspect its format
                     try:
@@ -177,7 +177,7 @@ class GmailAPIClient:
                             )
 
                     except Exception as e:
-                        self.logger.warning(f"Failed to parse credentials file: {e}")
+                        self.logger.warning("Failed to parse credentials file: %s", e)
                         self.logger.info("Using application default credentials")
                         credentials, _ = google.auth.default(
                             scopes=self.scopes

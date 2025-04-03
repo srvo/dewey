@@ -643,7 +643,7 @@ class GmailImporter(BaseScript):
                             else:
                                 error_count += 1
                         except Exception as e:
-                            self.logger.error(f"Error storing email: {e}")
+                            self.logger.error("Error storing email: %s", e)
                             error_count += 1
                             continue
 
@@ -747,7 +747,7 @@ class GmailImporter(BaseScript):
             ).fetchone()
 
             if result:
-                self.logger.info(f"Email {msg_id} already exists, skipping")
+                self.logger.info("Email %s already exists, skipping", msg_id)
                 return False
 
             # Extract body and attachments
@@ -760,7 +760,7 @@ class GmailImporter(BaseScript):
             try:
                 received_date = self.parse_email_date(headers.get("date", ""))
             except ValueError as e:
-                self.logger.warning(f"Failed to parse date for email {msg_id}: {e}")
+                self.logger.warning("Failed to parse date for email %s: %s", msg_id, e)
                 received_date = datetime.fromtimestamp(
                     int(email_data.get("internalDate", "0")) / 1000,
                 )

@@ -127,7 +127,7 @@ class JournalEntryGenerator(BaseScript):
                 with self.fs.open(complete_ledger_file, "a") as f:  # type: ignore
                     f.write(acquisition_entry)
             except Exception as e:
-                self.logger.error(f"Error writing to file: {e}")
+                self.logger.error("Error writing to file: %s", e)
 
     def initialize_forecast_ledger(self, forecast_ledger_file: str) -> None:
         """
