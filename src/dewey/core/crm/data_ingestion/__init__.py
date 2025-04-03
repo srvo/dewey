@@ -23,34 +23,50 @@ class DataIngestionModule(BaseScript):
                 Defaults to "Data Ingestion Module".
 
         """
-        super().__init__(name, description, config_section="data_ingestion")
+        super().__init__(name, description, config_section="crm")
 
-    def run(self) -> None:
-        """Executes the primary logic of the data ingestion module."""
+    def execute(self) -> None:
+        """Executes the data ingestion process.
+
+        This method retrieves configuration values, connects to the database,
+        and performs data ingestion tasks. It also logs the progress and
+        any errors that occur.
+        """
         self.logger.info("Starting data ingestion process...")
 
         # Example of accessing a configuration value
-        data_source = self.get_config_value("data_source", "default_source")
+        data_source = self.get_config_value("crm_data.email_data", "default_source")
         self.logger.info(f"Using data source: {data_source}")
 
         # Add your data ingestion logic here
         # Example database connection
         try:
-            with self.db_conn.cursor() as cursor:
-                cursor.execute("SELECT 1")
-                result = cursor.fetchone()
-                self.logger.info(f"Database connection test: {result}")
+            with self.db_connection() as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute("SELECT 1")
+                    result = cursor.fetchone()
+                    self.logger.info(f"Database connection test: {result}")
         except Exception as e:
             self.logger.error(f"Database error: {e}")
 
         # Example LLM usage
         try:
-            response = self.llm_client.generate_text("Tell me a joke.")
-            self.logger.info(f"LLM response: {response}")
+            if self.llm_client:
+                response = self.llm_client.generate_text("Tell me a joke.")
+                self.logger.info(f"LLM response: {response}")
+            else:
+                self.logger.warning("LLM client not initialized. Skipping LLM usage.")
         except Exception as e:
             self.logger.error(f"LLM error: {e}")
 
         self.logger.info("Data ingestion process completed.")
+
+    def run(self) -> None:
+        """Executes the primary logic of the data ingestion module."""
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
         """Retrieves a configuration value associated with the given key.
