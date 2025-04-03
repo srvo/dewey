@@ -157,3 +157,14 @@ class Service(BaseScript):
 
         """
         raise NotImplementedError("The run method must be implemented")
+
+    def execute(self) -> None:
+        """Executes the service.
+
+        This method calls the run method, which should be implemented by subclasses.
+
+        Raises:
+            NotImplementedError: If the run method is not implemented.
+
+        """
+        self.run()
