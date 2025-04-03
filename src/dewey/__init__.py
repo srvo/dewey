@@ -20,13 +20,17 @@ class DeweyManager(BaseScript):
         super().__init__(config_section="dewey_manager")
         self.__version__ = "0.1.0"
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Executes the main logic of the DeweyManager."""
         self.logger.info("DeweyManager started.")
         version = self.get_config_value("version", self.__version__)
         self.logger.info(f"Dewey version: {version}")
         # Add your main logic here
         self.logger.info("DeweyManager finished.")
+
+    def run(self) -> None:
+        """Executes the main logic of the DeweyManager."""
+        self.execute()
 
 
 if __name__ == "__main__":
