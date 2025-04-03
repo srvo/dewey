@@ -58,7 +58,7 @@ def read_file(file_path: Path) -> str:
 
 
 def read_conventions() -> str:
-"""
+    """
     Read the conventions.md file for context.
 
     Returns:
