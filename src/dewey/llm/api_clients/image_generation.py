@@ -73,3 +73,11 @@ class ImageGeneration(BaseScript):
         except Exception as e:
             self.logger.error(f"Image generation failed: {e}")
             raise
+
+    def execute(self) -> None:
+        """Executes the image generation script.
+
+        This method serves as the main entry point for the script,
+        calling the run method to perform the image generation.
+        """
+        self.run()
