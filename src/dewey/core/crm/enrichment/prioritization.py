@@ -4,7 +4,8 @@ from dewey.core.base_script import BaseScript
 
 
 class Prioritization(BaseScript):
-    """A module for handling prioritization tasks within Dewey's CRM enrichment process.
+    """
+    A module for handling prioritization tasks within Dewey's CRM enrichment process.
 
     This module inherits from BaseScript and provides a standardized
     structure for prioritization scripts, including configuration
@@ -13,9 +14,11 @@ class Prioritization(BaseScript):
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initializes the Prioritization module.
+        """
+        Initializes the Prioritization module.
 
         Args:
+        ----
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
 
@@ -25,19 +28,23 @@ class Prioritization(BaseScript):
         self.description = "Handles prioritization of CRM enrichment tasks."
 
     def execute(self) -> None:
-        """Executes the primary logic of the prioritization script.
+        """
+        Executes the primary logic of the prioritization script.
 
         This method should be implemented to perform the actual
         prioritization tasks, utilizing configuration values and
         logging as needed.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If something goes wrong during prioritization.
 
         """
@@ -46,7 +53,7 @@ class Prioritization(BaseScript):
         try:
             # Example of accessing a configuration value
             some_config_value = self.get_config_value(
-                "some_config_key", "default_value"
+                "some_config_key", "default_value",
             )
             self.logger.debug(f"Some config value: {some_config_value}")
 
@@ -60,18 +67,21 @@ class Prioritization(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """Retrieves a configuration value associated with the given key.
+        """
+        Retrieves a configuration value associated with the given key.
 
         Args:
+        ----
             key: The key of the configuration value to retrieve.
             default: The default value to return if the key is not found.
 
         Returns:
+        -------
             The configuration value associated with the key, or the default
             value if the key is not found.
 

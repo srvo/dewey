@@ -27,7 +27,7 @@ class BaseEngine(BaseScript):
             config_section=config_section, requires_db=False, enable_llm=False,
         )
         self.logger.debug(
-            "BaseEngine initialized with config section: %s", config_section
+            "BaseEngine initialized with config section: %s", config_section,
         )
 
     @abstractmethod
@@ -145,7 +145,7 @@ class BaseEngine(BaseScript):
             if not config_path.exists():
                 self.logger.error("Configuration file not found: %s", config_path)
                 raise FileNotFoundError(
-                    "Configuration file not found: %s" % config_path
+                    "Configuration file not found: %s" % config_path,
                 )
 
             self.config = self._load_config()  # Reload the entire config

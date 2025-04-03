@@ -1,6 +1,5 @@
-"""Module for managing Gmail-related tasks within Dewey.
+"""Module for managing Gmail-related tasks within Dewey."""
 
-"""
 from typing import Any
 
 from dewey.core.base_script import BaseScript
@@ -17,7 +16,8 @@ class GmailModule(BaseScript):
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initializes the GmailModule.
+        """
+        Initializes the GmailModule.
 
         Args:
         ----
@@ -28,7 +28,8 @@ class GmailModule(BaseScript):
         super().__init__(*args, **kwargs)
 
     def run(self) -> None:
-        """Executes the primary logic of the Gmail module.
+        """
+        Executes the primary logic of the Gmail module.
 
         This method should be overridden in subclasses to implement
         specific Gmail-related tasks.
@@ -38,7 +39,8 @@ class GmailModule(BaseScript):
         self.logger.info("Gmail module finished.")
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """Retrieves a configuration value associated with the given key.
+        """
+        Retrieves a configuration value associated with the given key.
 
         Args:
         ----
@@ -54,7 +56,8 @@ class GmailModule(BaseScript):
         return super().get_config_value(key, default)
 
     def execute(self) -> None:
-        """Executes the Gmail module to fetch and process emails.
+        """
+        Executes the Gmail module to fetch and process emails.
 
         This method connects to Gmail, retrieves a list of emails,
         and logs the number of emails fetched.
@@ -73,11 +76,12 @@ class GmailModule(BaseScript):
             self._process_emails(emails)
 
         except Exception as e:
-            self.logger.error("Error executing Gmail module: %s", e, exc_info=True, )
+            self.logger.error("Error executing Gmail module: %s", e, exc_info=True)
             raise
 
     def _fetch_emails(self, max_results: int) -> list:
-        """Fetches emails from Gmail.
+        """
+        Fetches emails from Gmail.
 
         Args:
         ----
@@ -93,7 +97,8 @@ class GmailModule(BaseScript):
         return [f"Email {i}" for i in range(max_results)]
 
     def _process_emails(self, emails: list) -> None:
-        """Processes the fetched emails.
+        """
+        Processes the fetched emails.
 
         Args:
         ----

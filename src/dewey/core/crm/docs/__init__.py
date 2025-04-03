@@ -12,12 +12,14 @@ class DocsModule(BaseScript):
     configuration loading, logging, and a `run` method to execute
     the script's primary logic.
     """
+
     def __init__(
         self,
         name: str = "CRM Docs Module",
         description: str = "Manages CRM documentation tasks.",
     ) -> None:
-        """Initializes the DocsModule.
+        """
+        Initializes the DocsModule.
 
         Args:
         ----
@@ -46,7 +48,8 @@ class DocsModule(BaseScript):
         self.execute()
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """Retrieves a configuration value associated with the given key.
+        """
+        Retrieves a configuration value associated with the given key.
 
         Args:
         ----
