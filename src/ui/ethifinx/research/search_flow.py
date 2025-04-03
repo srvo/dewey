@@ -181,3 +181,23 @@ class ResearchWorkflow:
             }
         else:
             raise Exception("Failed to process company data")
+
+    def execute(self) -> None:
+        """Execute the research workflow.
+
+        This method processes a batch of companies and logs the results.
+        """
+        import asyncio
+
+        limit = 5  # You can adjust the limit as needed
+        results = asyncio.run(self.process_companies(limit=limit))
+
+        for result in results:
+            if result.get("success"):
+                self.logger.info(
+                    f"Successfully processed {result.get('name')} ({result.get('ticker')})"
+                )
+            else:
+                self.logger.error(
+                    f"Failed to process {result.get('name')} ({result.get('ticker')}): {result.get('error')}"
+                )
