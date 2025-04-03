@@ -53,7 +53,7 @@ class DocsModule(BaseScript):
         This method should be overridden in subclasses to implement
         specific documentation tasks.
         """
-        self._logger.info("Running the Docs module...")  # Consider revising this line
+        self._logger.info("Running the Docs module...")
 
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""

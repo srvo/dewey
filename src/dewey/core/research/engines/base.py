@@ -150,7 +150,7 @@ class BaseEngine(BaseScript):
                     "Configuration file not found: %s" % config_path,
                 )
 
-            self.config = self._load_config()  # Reload the entire config
+            self.config = self._load_config()
             self.logger.info("Loaded configuration from %s", config_path)
 
         return args

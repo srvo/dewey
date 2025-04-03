@@ -35,7 +35,6 @@ class ResearchWorkflow(BaseScript):
     def run(self) -> None:
         """Executes the primary logic of the research workflow."""
         self.logger.info(f"Running research workflow: {self.name}")
-        # Add your workflow logic here
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
         """
