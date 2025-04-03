@@ -81,7 +81,7 @@ class GmailModule(BaseScript):
             self._process_emails(emails)
 
         except Exception as e:
-            self.error("Error executing Gmail module: %s", e, exc_info=True)
+            self.logger.error("Error executing Gmail module: %s", e, exc_info=True)
             raise
 
     def _fetch_emails(self, max_results: int) -> list:
