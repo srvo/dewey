@@ -1,11 +1,19 @@
 #!/usr/bin/env python
+"""Fixes Python files by removing markdown code markers."""
 import os
 import re
 import sys
 
 
-def fix_python_file(file_path):
-    """Fix a Python file by removing ```python and ``` markers."""
+def fix_python_file(file_path: str) -> bool:
+    """Fixes a Python file by removing ```python and ``` markers.
+
+    Args:
+        file_path: The path to the Python file.
+
+    Returns:
+        True if the file was fixed, False otherwise.
+    """
     with open(file_path, encoding="utf-8") as f:
         content = f.read()
 
@@ -23,8 +31,15 @@ def fix_python_file(file_path):
     return False
 
 
-def fix_files_in_directory(directory):
-    """Fix all Python files in a directory recursively."""
+def fix_files_in_directory(directory: str) -> int:
+    """Fixes all Python files in a directory recursively.
+
+    Args:
+        directory: The directory to search.
+
+    Returns:
+        The number of files fixed.
+    """
     fixed_count = 0
     for root, _, files in os.walk(directory):
         for file in files:

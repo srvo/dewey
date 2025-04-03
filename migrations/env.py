@@ -1,3 +1,4 @@
+"""Alembic environment configuration."""
 import os
 import sys
 from logging.config import fileConfig
@@ -25,6 +26,13 @@ target_metadata = Base.metadata
 
 
 def run_migrations_online() -> None:
+    """Run migrations in 'online' mode.
+
+    That is, connect to the DB and execute the migrations.
+
+    Raises:
+        Exception: If any error occurs during the migration process.
+    """
     with Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),
