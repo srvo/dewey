@@ -1,15 +1,16 @@
 """Base class for all Dewey scripts.
 
-This module implements the BaseScript class, which serves as the foundation
-for all scripts in the Dewey project. It provides standardized access to:
+This module implements the BaseScript class, which serves as the
+foundation for all scripts in the Dewey project. It provides
+standardized access to:
 - Configuration management (via dewey.yaml)
 - Logging facilities
 - Database connections
 - LLM integrations
 - Error handling
 
-All non-test scripts MUST inherit from this class as specified in the
-project conventions.
+All non-test scripts MUST inherit from this class as specified
+in the project conventions.
 """
 
 import argparse
@@ -18,7 +19,7 @@ import os
 import sys
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any
 
 import yaml
 from dotenv import load_dotenv
@@ -34,7 +35,8 @@ class BaseScript(ABC):
     This class provides standardized access to configuration, logging,
     database connections, and LLM integrations.
 
-    Attributes:
+    Attributes
+    ----------
         name: Name of the script (used for logging)
         description: Description of the script
         logger: Configured logger instance
@@ -56,6 +58,7 @@ class BaseScript(ABC):
         """Initialize base script functionality.
 
         Args:
+        ----
             name: Name of the script (used for logging)
             description: Description of the script
             config_section: Section in dewey.yaml to load for this script
@@ -107,7 +110,7 @@ class BaseScript(ABC):
                 log_config = config.get("core", {}).get("logging", {})
                 log_level = getattr(logging, log_config.get("level", "INFO"))
                 log_format = log_config.get(
-                    "format", "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+                    "format", "%(asctime)s - %(levelname)s - %(name)s - %(message)s",
                 )
                 date_format = log_config.get("date_format", "%Y-%m-%d %H:%M:%S")
         except Exception:
@@ -117,11 +120,7 @@ class BaseScript(ABC):
             date_format = "%Y-%m-%d %H:%M:%S"
 
         # Configure root logger
-        logging.basicConfig(
-            level=log_level,
-            format=log_format,
-            datefmt=date_format,
-        )
+        logging.basicConfig(level=log_level, format=log_format, datefmt=date_format)
 
         # Get logger for this script
         self.logger = logging.getLogger(self.name)
@@ -129,10 +128,12 @@ class BaseScript(ABC):
     def _load_config(self) -> dict[str, Any]:
         """Load configuration from dewey.yaml.
 
-        Returns:
+        Returns
+        -------
             Dictionary containing configuration
 
-        Raises:
+        Raises
+        ------
             FileNotFoundError: If the configuration file doesn't exist
             yaml.YAMLError: If the configuration file isn't valid YAML
 
@@ -148,7 +149,7 @@ class BaseScript(ABC):
                 if self.config_section not in all_config:
                     self.logger.warning(
                         f"Config section '{self.config_section}' not found in dewey.yaml. "
-                        "Using full config."
+                        "Using full config.",
                     )
                     return all_config
                 return all_config[self.config_section]
@@ -198,13 +199,14 @@ class BaseScript(ABC):
     def setup_argparse(self) -> argparse.ArgumentParser:
         """Set up command line arguments.
 
-        Returns:
+        Returns
+        -------
             An argument parser configured with common options.
 
         """
         parser = argparse.ArgumentParser(description=self.description)
         parser.add_argument(
-            "--config", help=f"Path to configuration file (default: {CONFIG_PATH})"
+            "--config", help=f"Path to configuration file (default: {CONFIG_PATH})",
         )
         parser.add_argument(
             "--log-level",
@@ -222,7 +224,7 @@ class BaseScript(ABC):
         # Add LLM-specific arguments if needed
         if self.enable_llm:
             parser.add_argument(
-                "--llm-model", help="LLM model to use (overrides config)"
+                "--llm-model", help="LLM model to use (overrides config)",
             )
 
         return parser
@@ -230,7 +232,8 @@ class BaseScript(ABC):
     def parse_args(self) -> argparse.Namespace:
         """Parse command line arguments.
 
-        Returns:
+        Returns
+        -------
             Parsed arguments
 
         """
@@ -263,7 +266,7 @@ class BaseScript(ABC):
             from dewey.core.db import get_connection
 
             self.db_conn = get_connection(
-                {"connection_string": args.db_connection_string}
+                {"connection_string": args.db_connection_string},
             )
             self.logger.info("Using custom database connection")
 
@@ -288,7 +291,6 @@ class BaseScript(ABC):
         3. Cleaning up resources
         4. Handling exceptions
         """
-        pass
 
     def run(self) -> None:
         """Legacy method for backward compatibility.
@@ -297,7 +299,7 @@ class BaseScript(ABC):
         This method will be deprecated in a future version.
         """
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         try:
             self.logger.info(f"Starting execution of {self.name}")
@@ -326,9 +328,11 @@ class BaseScript(ABC):
         """Get a path relative to the project root.
 
         Args:
+        ----
             path: Path relative to project root or absolute path
 
         Returns:
+        -------
             Resolved Path object
 
         """
@@ -340,10 +344,12 @@ class BaseScript(ABC):
         """Get a value from the configuration.
 
         Args:
+        ----
             key: Dot-separated path to the configuration value (e.g., "llm.model")
             default: Default value to return if the key doesn't exist
 
         Returns:
+        -------
             Configuration value or default
 
         """
@@ -366,7 +372,7 @@ class BaseScript(ABC):
         return config
 
     def get_credential(
-        self, credential_key: str, default: str | None = None
+        self, credential_key: str, default: str | None = None,
     ) -> str | None:
         """Get a credential from environment variables or config.
 
@@ -374,13 +380,16 @@ class BaseScript(ABC):
         First checks environment variables, then checks config if not found.
 
         Args:
+        ----
             credential_key: The name of the credential (e.g., "OPENAI_API_KEY" or "api_keys.openai")
             default: Default value if credential isn't found
 
         Returns:
+        -------
             The credential value or default if not found
 
         Examples:
+        --------
             >>> self.get_credential("DEEPINFRA_API_KEY")  # Check env var directly
             >>> self.get_credential("api_keys.openai")  # Check in config
 
@@ -402,16 +411,18 @@ class BaseScript(ABC):
         Should be used with a with statement.
 
         Example:
+        -------
             >>> with self.db_connection() as conn:
             >>>     result = conn.execute(query)
 
         Returns:
+        -------
             A context manager providing a database connection
 
         """
         if not self.db_conn:
             self.logger.error(
-                "Database connection not initialized. Set requires_db=True when initializing the script."
+                "Database connection not initialized. Set requires_db=True when initializing the script.",
             )
             raise RuntimeError("Database connection not initialized")
 
@@ -424,16 +435,18 @@ class BaseScript(ABC):
         Should be used with a with statement.
 
         Example:
+        -------
             >>> with self.db_session_scope() as session:
             >>>     result = session.query(Model).filter(Model.id == 1).first()
 
         Returns:
+        -------
             A context manager providing a SQLAlchemy session
 
         """
         if not self.db_conn:
             self.logger.error(
-                "Database connection not initialized. Set requires_db=True when initializing the script."
+                "Database connection not initialized. Set requires_db=True when initializing the script.",
             )
             raise RuntimeError("Database connection not initialized")
 

@@ -1,4 +1,4 @@
-from typing import Any, Optional, Protocol
+from typing import Any, Protocol
 
 from dewey.core.base_script import BaseScript
 
@@ -15,9 +15,9 @@ class DocsModule(BaseScript):
     """A module for managing documentation tasks within Dewey.
 
     This module inherits from BaseScript and provides a standardized
-    structure for documentation-related scripts, including configuration
-    loading, logging, and a `run` method to execute the script's
-    primary logic.
+    structure for documentation-related scripts, including
+    configuration loading, logging, and a `run` method to execute
+    the script's primary logic.
     """
 
     def __init__(
@@ -29,6 +29,7 @@ class DocsModule(BaseScript):
         """Initializes the DocsModule.
 
         Args:
+        ----
             name (str): The name of the module.
             description (str, optional): A brief description of the module.
                 Defaults to "Documentation Module".
@@ -46,12 +47,15 @@ class DocsModule(BaseScript):
         specific documentation tasks.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If something goes wrong during the documentation task.
 
         """
@@ -62,14 +66,14 @@ class DocsModule(BaseScript):
 
         except Exception as e:
             self.logger.error(
-                f"An error occurred during documentation: {e}", exc_info=True
+                f"An error occurred during documentation: {e}", exc_info=True,
             )
             raise
 
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 
@@ -80,22 +84,23 @@ class DocsModule(BaseScript):
         else:
             # Example of accessing a configuration value
             example_config_value = self.get_config_value(
-                "docs_setting", "default_value"
+                "docs_setting", "default_value",
             )
             self.logger.info(f"Example config value: {example_config_value}")
 
             # Add your documentation logic here
-            pass
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
         """Retrieves a configuration value associated with the given key.
 
         Args:
+        ----
             key (str): The key of the configuration value to retrieve.
             default (Any, optional): The default value to return if the key
                 is not found in the configuration. Defaults to None.
 
         Returns:
+        -------
             Any: The configuration value associated with the key, or the
                 default value if the key is not found.
 

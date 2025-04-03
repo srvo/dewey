@@ -1,11 +1,11 @@
-import logging
 from typing import Any
 
 from dewey.core.base_script import BaseScript
 
 
 class DatabaseModule(BaseScript):
-    """A module for managing database maintenance tasks within Dewey.
+    """
+    A module for managing database maintenance tasks within Dewey.
 
     This module inherits from BaseScript and provides a standardized
     structure for database maintenance scripts, including configuration
@@ -40,10 +40,12 @@ class DatabaseModule(BaseScript):
         """Retrieves a configuration value associated with the given key.
 
         Args:
+        ----
             key: The key of the configuration value to retrieve.
             default: The default value to return if the key is not found.
 
         Returns:
+        -------
             The configuration value associated with the key, or the default
             value if the key is not found.
 

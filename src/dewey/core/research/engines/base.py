@@ -6,25 +6,27 @@ from dewey.core.base_script import BaseScript
 
 
 class BaseEngine(BaseScript):
-    """Base class for all engines.
+    """
+    Base class for all engines.
 
-    This class provides a foundation for building engines within the Dewey
-    project, offering standardized configuration, logging, and database/LLM
-    integration.
+    This class provides a foundation for building engines within the
+    Dewey project, offering standardized configuration, logging, and
+    database/LLM integration.
     """
 
     def __init__(self, config_section: str = "base_engine") -> None:
         """Initializes the BaseEngine.
 
         Args:
+        ----
             config_section: The configuration section to use for this engine.
 
         """
         super().__init__(
-            config_section=config_section, requires_db=False, enable_llm=False
+            config_section=config_section, requires_db=False, enable_llm=False,
         )
         self.logger.debug(
-            f"BaseEngine initialized with config section: {config_section}"
+            f"BaseEngine initialized with config section: {config_section}",
         )
 
     @abstractmethod
@@ -34,7 +36,8 @@ class BaseEngine(BaseScript):
         This method must be overridden by subclasses to implement the
         engine's specific functionality.
 
-        Raises:
+        Raises
+        ------
             NotImplementedError: If the method is not implemented in a subclass.
 
         """
@@ -43,7 +46,7 @@ class BaseEngine(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 
@@ -51,10 +54,12 @@ class BaseEngine(BaseScript):
         """Gets a configuration value for this engine.
 
         Args:
+        ----
             key: The key of the configuration value to retrieve.
             default: The default value to return if the key is not found.
 
         Returns:
+        -------
             The configuration value, or the default value if the key is not found.
 
         """
@@ -64,6 +69,7 @@ class BaseEngine(BaseScript):
         """Logs an info message using the engine's logger.
 
         Args:
+        ----
             message: The message to log.
 
         """
@@ -73,6 +79,7 @@ class BaseEngine(BaseScript):
         """Logs an error message using the engine's logger.
 
         Args:
+        ----
             message: The message to log.
 
         """
@@ -82,6 +89,7 @@ class BaseEngine(BaseScript):
         """Logs a debug message using the engine's logger.
 
         Args:
+        ----
             message: The message to log.
 
         """
@@ -91,6 +99,7 @@ class BaseEngine(BaseScript):
         """Logs a warning message using the engine's logger.
 
         Args:
+        ----
             message: The message to log.
 
         """
@@ -99,7 +108,8 @@ class BaseEngine(BaseScript):
     def setup_argparse(self) -> argparse.ArgumentParser:
         """Set up command line arguments.
 
-        Returns:
+        Returns
+        -------
             An argument parser configured with common options.
 
         """
@@ -113,7 +123,8 @@ class BaseEngine(BaseScript):
     def parse_args(self) -> argparse.Namespace:
         """Parse command line arguments.
 
-        Returns:
+        Returns
+        -------
             Parsed arguments
 
         """

@@ -1,15 +1,16 @@
 """Configuration management for Dewey project."""
 
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 import yaml
-
 from dewey.core.exceptions import ConfigurationError
 
 
 class Config:
-    """Centralized configuration manager for Dewey project."""
+    """
+    Centralized configuration manager for Dewey project.
+    """
 
     _instance = None
 
@@ -27,14 +28,14 @@ class Config:
             config_path = Path("src/dewey/config/dewey.yaml")
             if not config_path.exists():
                 raise ConfigurationError(
-                    "Could not find dewey.yaml in expected locations"
+                    "Could not find dewey.yaml in expected locations",
                 )
 
         try:
             with open(config_path) as f:
                 self._config = yaml.safe_load(f)
         except Exception as e:
-            raise ConfigurationError(f"Failed to load config: {str(e)}")
+            raise ConfigurationError(f"Failed to load config: {e!s}")
 
     def get(self, section: str, default: Any | None = None) -> dict[str, Any]:
         """Get a configuration section."""

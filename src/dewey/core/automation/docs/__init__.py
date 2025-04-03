@@ -1,21 +1,25 @@
-from typing import Any, Dict, Optional, Protocol
+from typing import Any, Protocol
 
 from dewey.core.script import BaseScript
 
 
 class LoggerInterface(Protocol):
-    """An interface for logging functionality."""
+    """An interface for logging functionality.
+
+    """
 
     def info(self, message: str) -> None: ...
 
 
 class DocsModule(BaseScript):
-    """A module for managing documentation tasks within Dewey's automation scripts.
+    """
+    A module for managing documentation tasks within Dewey's
+    automation scripts.
 
     This module inherits from BaseScript and provides a standardized
-    structure for documentation-related scripts, including configuration
-    loading, logging, and a `run` method to execute the script's
-    primary logic.
+    structure for documentation-related scripts, including
+    configuration loading, logging, and a `run` method to execute
+    the script's primary logic.
     """
 
     def __init__(
@@ -26,6 +30,7 @@ class DocsModule(BaseScript):
         """Initializes the DocsModule with optional configuration.
 
         Args:
+        ----
             config (Optional[Dict[str, Any]]): A dictionary containing
                 configuration parameters. Defaults to None.
             logger (Optional[LoggerInterface]): An optional logger instance.
@@ -41,23 +46,26 @@ class DocsModule(BaseScript):
         This method should be overridden in subclasses to implement
         specific documentation tasks.
         """
-        pass
         self._logger.info("Running the Docs module...")
         # Add your documentation logic here
 
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
-        self._logger.warning("Using deprecated run() method. Update to use execute() instead.")
+        self._logger.warning(
+            "Using deprecated run() method. Update to use execute() instead.",
+        )
         self.execute()
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
         """Retrieves a configuration value associated with the given key.
 
         Args:
+        ----
             key (str): The key of the configuration value to retrieve.
             default (Any): The default value to return if the key is not found.
 
         Returns:
+        -------
             Any: The configuration value associated with the key, or the
             default value if the key is not found.
 

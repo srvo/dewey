@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -16,6 +16,7 @@ class GmailModule(BaseScript):
         """Initializes the GmailModule.
 
         Args:
+        ----
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
 
@@ -36,10 +37,12 @@ class GmailModule(BaseScript):
         """Retrieves a configuration value associated with the given key.
 
         Args:
+        ----
             key: The key of the configuration value to retrieve.
             default: The default value to return if the key is not found.
 
         Returns:
+        -------
             The configuration value associated with the key, or the default
             value if the key is not found.
 
@@ -73,9 +76,11 @@ class GmailModule(BaseScript):
         """Fetches emails from Gmail.
 
         Args:
+        ----
             max_results: The maximum number of emails to fetch.
 
         Returns:
+        -------
             A list of emails.
 
         """
@@ -87,6 +92,7 @@ class GmailModule(BaseScript):
         """Processes the fetched emails.
 
         Args:
+        ----
             emails: A list of emails to process.
 
         """

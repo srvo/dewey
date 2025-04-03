@@ -1,13 +1,7 @@
 import time
-from dataclasses import dataclass
-from typing import (
-    Any,
-    Dict,
-    List,
-    Optional,
-    Union,
-)
 from collections.abc import Callable, Iterator
+from dataclasses import dataclass
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -32,14 +26,16 @@ class Email:
 
 
 class EventManager(BaseScript):
-    """A comprehensive class for managing events, including creation, filtering,
-    retries, logging, and context management.
+    """
+    A comprehensive class for managing events, including
+    creation, filtering, retries, logging, and context management.
     """
 
     def __init__(self, request_id: str, max_retries: int = 3) -> None:
         """Initializes the EventManager with a request ID and maximum retry attempts.
 
         Args:
+        ----
             request_id: A unique identifier for the request.
             max_retries: The maximum number of retries for operations. Defaults to 3.
 
@@ -57,7 +53,8 @@ class EventManager(BaseScript):
         This method currently serves as a placeholder and raises a NotImplementedError.
         Subclasses should override this method to implement their specific logic.
 
-        Raises:
+        Raises
+        ------
             NotImplementedError: If the method is not overridden in a subclass.
 
         """
@@ -80,7 +77,7 @@ class EventManager(BaseScript):
         if self.llm_client:
             try:
                 response = self.llm_client.generate_text(
-                    "Write a short poem about events."
+                    "Write a short poem about events.",
                 )
                 self.logger.info(f"LLM response: {response}")
             except Exception as e:
@@ -91,7 +88,8 @@ class EventManager(BaseScript):
     def objects(self) -> list[dict[str, Any]]:
         """Returns a list of all stored event objects.
 
-        Returns:
+        Returns
+        -------
             A list of dictionaries, where each dictionary represents an event.
 
         """
@@ -102,15 +100,15 @@ class EventManager(BaseScript):
         persist the events to a database or other storage.
         """
         self.logger.info(
-            f"Saving {len(self._events)} events (implementation placeholder)."
+            f"Saving {len(self._events)} events (implementation placeholder).",
         )
         # In a real implementation, this would save self._events to a database, file, etc.
-        pass
 
     def all(self) -> list[dict[str, Any]]:
         """Returns all stored events.  Equivalent to `objects()`.
 
-        Returns:
+        Returns
+        -------
             A list of dictionaries, where each dictionary represents an event.
 
         """
@@ -119,7 +117,8 @@ class EventManager(BaseScript):
     def __iter__(self) -> Iterator[dict[str, Any]]:
         """Returns an iterator for the stored events.
 
-        Yields:
+        Yields
+        ------
             Dictionaries representing individual events.
 
         """
@@ -128,7 +127,8 @@ class EventManager(BaseScript):
     def __len__(self) -> int:
         """Returns the number of stored events.
 
-        Returns:
+        Returns
+        -------
             The number of stored events as an integer.
 
         """
@@ -138,10 +138,12 @@ class EventManager(BaseScript):
         """Filters the stored events based on keyword arguments.
 
         Args:
+        ----
             **kwargs: Keyword arguments representing filter criteria.  For example,
                       `filter(event_type="user_login", entity_id=123)`
 
         Returns:
+        -------
             A list of dictionaries that match the filter criteria.
 
         """
@@ -167,6 +169,7 @@ class EventManager(BaseScript):
         """Creates a new event and stores it.
 
         Args:
+        ----
             event_type: The type of the event (e.g., "user_login", "order_placed").
             entity_id: Optional ID of the entity associated with the event.
             error: Optional error message if the event represents an error.
@@ -189,39 +192,42 @@ class EventManager(BaseScript):
         """Placeholder for enriching events with contact information.
 
         Args:
+        ----
             contact: A Contact object.
 
         """
         self.logger.info(f"Enriching events with contact: {contact}")
         # In a real implementation, this would add contact-related data to existing events.
-        pass
 
     def enrich_email(self, email: Email) -> None:
         """Placeholder for enriching events with email information.
 
         Args:
+        ----
             email: An Email object.
 
         """
         self.logger.info(f"Enriching events with email: {email}")
         # In a real implementation, this would add email-related data to existing events.
-        pass
 
     def retry(
-        self, func: Callable[..., Any], *args: Any, countdown: int = 0, **kwargs: Any
+        self, func: Callable[..., Any], *args: Any, countdown: int = 0, **kwargs: Any,
     ) -> Any:
         """Retries a function call if an exception occurs.
 
         Args:
+        ----
             func: The function to retry.
             *args: Positional arguments to pass to the function.
             countdown: The initial countdown in seconds before the first retry.
             **kwargs: Keyword arguments to pass to the function.
 
         Returns:
+        -------
             The result of the function call if successful.
 
         Raises:
+        ------
             Exception: If the function fails after the maximum number of retries.
 
         """
@@ -229,18 +235,18 @@ class EventManager(BaseScript):
             try:
                 if attempt > 0:
                     self.logger.info(
-                        f"Retrying function (attempt {attempt}/{self.max_retries})..."
+                        f"Retrying function (attempt {attempt}/{self.max_retries})...",
                     )
                 if attempt > 0 and countdown > 0:
                     time.sleep(countdown)
                 return func(*args, **kwargs)
             except Exception as e:
                 self.logger.error(
-                    f"Function failed (attempt {attempt}/{self.max_retries}): {e}"
+                    f"Function failed (attempt {attempt}/{self.max_retries}): {e}",
                 )
                 if attempt == self.max_retries:
                     self.logger.error(
-                        f"Function failed after {self.max_retries} retries."
+                        f"Function failed after {self.max_retries} retries.",
                     )
                     raise  # Re-raise the exception after all retries
                 # Exponential backoff (optional)
@@ -251,6 +257,7 @@ class EventManager(BaseScript):
         """Sets contextual data that will be added to all subsequent events.
 
         Args:
+        ----
             **kwargs: Keyword arguments representing context data.
 
         """
@@ -261,6 +268,7 @@ class EventManager(BaseScript):
         """Logs an informational message.
 
         Args:
+        ----
             message: The message to log.
 
         """
@@ -270,6 +278,7 @@ class EventManager(BaseScript):
         """Logs an error message.
 
         Args:
+        ----
             message: The error message to log.
 
         """
@@ -280,6 +289,7 @@ class EventManager(BaseScript):
         has already been caught.
 
         Args:
+        ----
             message: The exception message to log.
 
         """
@@ -293,5 +303,5 @@ class EventManager(BaseScript):
         """
         self.save()
         self.logger.info(
-            f"Request {self.request_id}: Processed {len(self._events)} events."
+            f"Request {self.request_id}: Processed {len(self._events)} events.",
         )
