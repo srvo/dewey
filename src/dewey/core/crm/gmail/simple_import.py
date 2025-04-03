@@ -924,7 +924,7 @@ class GmailImporter(BaseScript):
                     self.db_conn, email_batch, batch_id,
                 )
                 self.logger.info(
-                    "Successfully stored %d emails, %d errors.", success_count, error_count,
+                    "Successfully stored %s emails, %s errors.", success_count, error_count,
                 )
             else:
                 self.logger.info("No new emails to store.")

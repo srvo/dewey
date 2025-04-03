@@ -155,7 +155,7 @@ class JournalWriter(BaseScript):
 
             self.io_service.write_text(filename, "\n".join(entries) + "\n")
         except Exception as e:
-            self.logger.exception(f"Failed to write file with backup: {e!s}")
+            self.logger.exception("Failed to write file with backup: %s", e)
 
     def _get_account_id(self) -> str:
         """Get the account ID from the config."""
