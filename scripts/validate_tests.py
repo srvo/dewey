@@ -14,7 +14,7 @@ from dewey.core.base_script import BaseScript
 
 
 class TestValidator(BaseScript):
-"""Validate the test structure by running tests in different directories."""
+    """Validate the test structure by running tests in different directories."""
 
     def __init__(self) -> None:
         """Initialize the TestValidator."""
@@ -22,7 +22,7 @@ class TestValidator(BaseScript):
         self.success = True
 
     def execute(self) -> int:
-    """
+        """
         Execute the test validation script.
 
         This method is required by the BaseScript abstract class.
@@ -31,18 +31,18 @@ class TestValidator(BaseScript):
         --------
             int: Exit code (0 for success, 1 for failure)
 
-    """
+        """
         return self.run()
 
     def run(self) -> int:
-    """
+        """
         Run the test validation.
 
         Returns:
         --------
             int: Exit code (0 for success, 1 for failure)
 
-    """
+        """
         self.logger.info("Validating test structure...")
 
         # Define test directories to validate
@@ -68,14 +68,14 @@ class TestValidator(BaseScript):
             return 1
 
     def _run_tests(self, test_dir: str) -> None:
-    """
+        """
         Run pytest on a specific directory.
 
         Args:
         -----
             test_dir: The directory to run tests in.
 
-    """
+        """
         if not Path(test_dir).exists():
             self.logger.warning(f"Test directory {test_dir} does not exist. Skipping.")
             return
