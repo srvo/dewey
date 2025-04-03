@@ -94,7 +94,7 @@ def read_base_script() -> str:
 
 
 def find_python_files(path: Path) -> list[Path]:
-"""
+    """
     Find all Python files in the directory or return the given file if it's a Python file.
 
     Args:
@@ -114,7 +114,7 @@ def find_python_files(path: Path) -> list[Path]:
 
 
 def find_test_files(path: Path) -> list[Path]:
-"""
+    """
     Find all test files in the directory.
 
     Args:
@@ -134,7 +134,7 @@ def find_test_files(path: Path) -> list[Path]:
 def build_refactor_prompt(
     conventions_content: str, config_content: str, base_script_content: str
 ) -> str:
-"""
+    """
     Build the refactor prompt with all context.
 
     Args:
@@ -184,7 +184,7 @@ def build_test_prompt(
     config_content: str,
     base_script_content: str,
 ) -> str:
-"""
+    """
     Build the test generation prompt with all context.
 
     Args:
@@ -318,7 +318,7 @@ def process_files_for_refactoring(
     base_script_content: str,
     dry_run: bool = False,
 ) -> None:
-"""
+    """
     Process Python files for refactoring.
 
     Args:
@@ -361,7 +361,7 @@ def process_files_for_refactoring(
 def run_generated_tests(
     test_dir: Path, source_files: list[Path], verbose: bool = False
 ) -> bool:
-"""
+    """
     Run the generated tests using pytest.
 
     Args:
@@ -438,7 +438,7 @@ def generate_tests_for_files(
     dry_run: bool = False,
     make_testable: bool = True,  # New parameter to allow modifying source files
 ) -> None:
-"""
+    """
     Generate tests for each source file.
 
     Args:
@@ -531,7 +531,6 @@ from typing import Dict, List, Any, Optional
 """)
 
             # First create/update the test file
-    pass  # Placeholder added by quick_fix.py
             test_coder = Coder.create(
                 main_model=model, fnames=[str(test_file_path)], io=io
             )
