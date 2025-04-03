@@ -41,8 +41,7 @@ GLOBAL_CHAT_HISTORY_FILE = None
 def signal_handler(signum, frame) -> Never:
     """Handle timeout signal."""
     logger.error("Timeout reached")
-    msg = "Timeout reached"
-    raise TimeoutError(msg)
+    raise TimeoutError("Timeout reached")
 
 
 # Register signal handlers
@@ -88,13 +87,13 @@ def find_python_files(path: Path) -> list[Path]:
     if path.is_dir():
         try:
             python_files = list(path.glob("**/*.py"))
-            logger.info("Found %s Python files in %s", len(python_files), path)
+            logger.info("Found %s Python files in %s", len(python_files), str(path))
             return python_files
         except Exception as e:
-            logger.exception("Error finding Python files: %s", e)
+            logger.exception("Error finding Python files: %s", str(e))
             return []
     else:
-        logger.error("Error: %s is not a Python file or directory", path)
+        logger.error("Error: %s is not a Python file or directory", str(path))
         return []
 
 
@@ -104,7 +103,7 @@ def get_flake8_issues(file_path: Path, max_line_length: int = 88) -> list[str]:
         cmd = [
             "flake8",
             str(file_path),
-            f"--max-line-length={max_line_length}",
+            "--max-line-length={}".format(max_line_length),
             "--format=%(path)s:%(row)d:%(col)d: %(code)s %(text)s",
         ]
         result = subprocess.run(
@@ -115,10 +114,10 @@ def get_flake8_issues(file_path: Path, max_line_length: int = 88) -> list[str]:
             issues = []
         return issues
     except subprocess.TimeoutExpired:
-        logger.exception(f"Timed out running flake8 on {file_path}")
+        logger.exception("Timed out running flake8 on %s", str(file_path))
         return []
     except Exception as e:
-        logger.exception(f"Error running flake8 on {file_path}: {e}")
+        logger.exception("Error running flake8 on %s: %s", str(file_path), str(e))
         return []
 
 
@@ -571,7 +570,7 @@ def main() -> None:
             logger.info("Repomix not available; using custom prompt as is")
             custom_prompt = args.custom_prompt
         except Exception as e:
-            logger.exception(f"Error generating repository context: {e}")
+            logger.exception("Error generating repository context: %s", str(e))
             custom_prompt = args.custom_prompt
     else:
         custom_prompt = args.custom_prompt

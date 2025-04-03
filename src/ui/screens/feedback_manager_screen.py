@@ -1159,7 +1159,7 @@ class FeedbackManagerScreen(Screen):
             )
 
         # Update status to indicate this is mock data
-        self.status_text = f"Using mock data ({len(self.feedback_items)} emails)"
+        self.status_text = "Using mock data ({} emails)".format(len(self.feedback_items))
 
     @work
     async def save_sender_profile(self, sender: SenderProfile) -> None:
