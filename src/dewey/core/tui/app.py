@@ -343,7 +343,10 @@ class DeweyTUI(App):
         self.push_screen("main")
 
     def execute(self) -> None:
-        """Execute the TUI application."""
+        """Execute the TUI application.
+
+        This method runs the Textual application, starting the user interface.
+        """
         self.run()
 
 
