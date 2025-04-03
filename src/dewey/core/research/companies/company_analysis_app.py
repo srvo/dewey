@@ -24,6 +24,13 @@ class CompanyAnalysisApp(BaseScript):
             enable_llm=True,
         )
 
+    def execute(self) -> None:
+        """Executes the company analysis process.
+
+        This method calls the run() method to perform the core logic of the script.
+        """
+        self.run()
+
     def run(self) -> None:
         """Runs the company analysis process.
 
