@@ -18,6 +18,7 @@ class DocsModule(BaseScript):
     automation scripts.
     """
 
+    """
     This module inherits from BaseScript and provides a
     standardized structure for documentation-related scripts,
     including configuration loading, logging, and a `run` method

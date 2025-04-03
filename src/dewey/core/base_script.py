@@ -138,6 +138,7 @@ class BaseScript(ABC):
         ------
             FileNotFoundError: If the configuration file doesn't exist
             yaml.YAMLError: If the configuration file isn't valid YAML
+        """
 
         """
         try:

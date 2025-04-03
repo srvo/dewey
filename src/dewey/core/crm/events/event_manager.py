@@ -30,6 +30,7 @@ class EventManager(BaseScript):
     A comprehensive class for managing events, including
     creation, filtering, retries, logging, and context management.
     """
+
     """
 
     def __init__(self, request_id: str, max_retries: int = 3) -> None:
