@@ -9,7 +9,7 @@ class ImportInstitutionalProspects(BaseScript):
     logging, and a `run` method to execute the script's primary logic.
     """
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Executes the institutional prospects import process."""
         self.logger.info("Starting institutional prospects import.")
 
