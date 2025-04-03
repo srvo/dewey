@@ -36,14 +36,14 @@ class DropSmallTablesScript(BaseScript):
         return parser
 
     def get_table_counts(self) -> list[tuple[str, int]]:
-    """
+        """
         Get all tables and their row counts.
 
         Returns:
         --------
             List of (table_name, row_count) tuples
 
-    """
+        """
         results = []
         tables = self.db_engine.execute(
             "SELECT table_name FROM duckdb_tables()"
@@ -83,7 +83,7 @@ class DropSmallTablesScript(BaseScript):
     def save_results(
         self, dropped_tables: list[tuple[str, int]], output_path: Path
     ) -> None:
-    """
+        """
         Save the list of dropped tables.
 
         Args:
@@ -91,7 +91,7 @@ class DropSmallTablesScript(BaseScript):
             dropped_tables: List of (table_name, row_count) tuples
             output_path: Path to save results
 
-    """
+        """
         with open(output_path, "w") as f:
             f.write("Table Name,Row Count\n")
             for table, count in dropped_tables:
