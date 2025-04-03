@@ -41,3 +41,19 @@ class VerifyDb(BaseScript):
             return True
         else:
             return False
+
+    def execute(self) -> None:
+        """Executes the database verification process.
+
+        This method retrieves database configuration, connects to the
+        database, and performs validation checks.
+        """
+        db_host = self.get_config_value("db_host", "localhost")
+        db_name = self.get_config_value("db_name", "mydatabase")
+
+        self.logger.info(f"Verifying database connection to {db_host}/{db_name}")
+
+        if self.is_db_valid(db_host, db_name):
+            self.logger.info("Database verification successful.")
+        else:
+            self.logger.error("Database verification failed.")
