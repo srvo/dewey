@@ -35,6 +35,21 @@ class SelfCareAgent(BaseScript, DeweyBaseAgent):
             ]
         )
 
+    def execute(self, prompt: str) -> dict[str, Any]:
+        """Executes the agent with the given prompt.
+
+        Args:
+            prompt: The prompt to run the agent with.
+
+        Returns:
+            The result of running the agent.
+
+        """
+        self.logger.info(f"Executing SelfCareAgent with prompt: {prompt}")
+        result = self.run(prompt)
+        self.logger.info(f"SelfCareAgent completed with result: {result}")
+        return result
+
     def run(self, prompt: str) -> dict[str, Any]:
         """Runs the agent with the given prompt.
 
