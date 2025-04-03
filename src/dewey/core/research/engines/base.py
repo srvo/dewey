@@ -1,9 +1,11 @@
-"""Base class for all engines.
+"""
+Base class for all engines.
 
 This module defines the BaseEngine class, which serves as a foundation for
 building engines within the Dewey project. It provides standardized
 configuration, logging, and database/LLM integration.
 """
+
 import argparse
 from abc import abstractmethod
 from typing import Any
@@ -33,7 +35,7 @@ class BaseEngine(BaseScript):
             config_section=config_section, requires_db=False, enable_llm=False,
         )
         self.logger.debug(
-            "BaseEngine initialized with config section: %s", config_section
+            "BaseEngine initialized with config section: %s", config_section,
         )
 
     @abstractmethod
