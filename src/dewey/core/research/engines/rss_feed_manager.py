@@ -50,3 +50,7 @@ class RssFeedManager(BaseScript):
 
         """
         return super().get_config_value(key, default)
+
+    def execute(self) -> None:
+        """Executes the RSS feed management process."""
+        self.run()
