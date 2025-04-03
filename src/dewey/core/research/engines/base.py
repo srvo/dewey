@@ -1,5 +1,4 @@
 """Base class for all engines."""
-
 import argparse
 from abc import abstractmethod
 from typing import Any

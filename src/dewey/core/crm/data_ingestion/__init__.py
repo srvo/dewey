@@ -1,5 +1,4 @@
 """Module for managing data ingestion tasks within Dewey's CRM."""
-
 from typing import Any
 
 from dewey.core.base_script import BaseScript
