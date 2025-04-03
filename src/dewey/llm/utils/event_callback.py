@@ -51,3 +51,35 @@ class EventCallback(BaseScript):
         except Exception as e:
             self.logger.exception(f"Error processing event: {e}")
             raise
+
+    def execute(self) -> None:
+        """Executes the event callback logic.
+
+        This method retrieves the callback URL from the configuration,
+        logs the event type, and then attempts to post the event data
+        to the callback URL.  Any exceptions during the process are
+        logged and re-raised.
+        """
+        try:
+            callback_url = self.get_config_value("callback_url")
+            event_type = self.event_data.get("event_type", "unknown")
+
+            self.logger.info(f"Executing event callback for event type: {event_type}")
+            self.logger.debug(f"Callback URL: {callback_url}")
+            self.logger.debug(f"Event Data: {self.event_data}")
+
+            # TODO: Implement the actual HTTP POST request here.
+            # Example using the 'requests' library:
+            # import requests
+            # response = requests.post(callback_url, json=self.event_data)
+            # response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
+            # self.logger.info(f"Callback response status code: {response.status_code}")
+
+            self.logger.info(f"Successfully executed event callback for event type: {event_type}")
+
+        except KeyError as e:
+            self.logger.error(f"Missing configuration value: {e}")
+            raise ValueError(f"Required configuration missing: {e}")
+        except Exception as e:
+            self.logger.exception(f"Error during event callback execution: {e}")
+            raise
