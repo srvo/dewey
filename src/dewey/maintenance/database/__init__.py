@@ -49,3 +49,11 @@ class DatabaseModule(BaseScript):
 
         """
         return super().get_config_value(key, default)
+
+    def execute(self) -> None:
+        """Executes the database module's maintenance tasks.
+
+        This method calls the run method to perform the database maintenance.
+        """
+        self.logger.info("Executing database maintenance using execute method.")
+        self.run()
