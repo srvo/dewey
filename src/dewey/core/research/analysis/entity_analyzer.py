@@ -1,4 +1,5 @@
 from typing import Any, Dict
+import argparse
 
 from dewey.core.base_script import BaseScript
 
