@@ -507,3 +507,64 @@ class ServiceDeployment(BaseScript):
             self.service_manager.run_command(
                 f"cat > {remote_path} << 'EOL'\n{compose_content}\nEOL",
             )
+
+    def execute(self) -> None:
+        """Execute the service deployment script."""
+        parser = self.setup_argparse()
+        parser.add_argument(
+            "--service-name",
+            type=str,
+            required=True,
+            help="Name of the service to deploy",
+        )
+        parser.add_argument(
+            "--config-file",
+            type=str,
+            required=True,
+            help="Path to the service configuration file (YAML/JSON)",
+        )
+        args = self.parse_args()
+
+        try:
+            # Load service configuration
+            config_path = Path(args.config_file)
+            if not self.fs.exists(config_path):
+                self.logger.error(f"Configuration file not found: {config_path}")
+                raise FileNotFoundError(f"Configuration file not found: {config_path}")
+
+            config_text = self.fs.read_text(config_path)
+            if config_path.suffix in (".yaml", ".yml"):
+                import yaml
+
+                config = yaml.safe_load(config_text)
+            elif config_path.suffix == ".json":
+                config = self.json.loads(config_text)
+            else:
+                self.logger.error(
+                    "Unsupported configuration file format. Use YAML or JSON."
+                )
+                raise ValueError(
+                    "Unsupported configuration file format. Use YAML or JSON."
+                )
+
+            # Define the service
+            service = Service(
+                name=args.service_name,
+                path=Path(self.get_config_value("paths.project_root"))
+                / "services"
+                / args.service_name,
+                config_path=Path(self.get_config_value("paths.project_root"))
+                / "config"
+                / "services"
+                / args.service_name,
+                containers=[],
+            )
+
+            # Deploy the service
+            self.deploy_service(service, config)
+
+            self.logger.info(f"Service '{service.name}' deployed successfully.")
+
+        except Exception as e:
+            self.logger.error(f"Service deployment failed: {e}")
+            raise
