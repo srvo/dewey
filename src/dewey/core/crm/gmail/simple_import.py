@@ -482,7 +482,7 @@ class GmailImporter(BaseScript):
             )
             return message
         except Exception as e:
-            self.logger.error(f"Error fetching message {msg_id}: {e}")
+            self.logger.error("Error fetching message %s: %s", msg_id, str(e))
             return None
 
     def parse_email(self, message: dict) -> dict[str, Any]:
@@ -549,7 +549,7 @@ class GmailImporter(BaseScript):
                     data = part["body"]["data"]
                     return base64.urlsafe_b64decode(data).decode("utf-8")
                 except Exception as e:
-                    self.logger.warning(f"Failed to decode email part: {e}")
+                    self.logger.warning("Failed to decode email part: %s", str(e))
                     return ""
             return ""
 
@@ -708,7 +708,7 @@ class GmailImporter(BaseScript):
                     )
                     email_data = json.loads(email_data)
                 except json.JSONDecodeError as e:
-                    self.logger.error("Failed to parse email_data string as JSON: %s", e)
+                    self.logger.error("Failed to parse email_data string as JSON: %s", str(e))
                     return False
 
             if not isinstance(email_data, dict):
@@ -834,7 +834,7 @@ class GmailImporter(BaseScript):
 
         except Exception as e:
             self.logger.error(
-                "Error storing email %s: %s", email_data.get('id', 'unknown'), e,
+                "Error storing email %s: %s", email_data.get('id', 'unknown'), str(e),
             )
             return False
 
@@ -875,7 +875,7 @@ class GmailImporter(BaseScript):
             )
             return date_parser.parse(cleaned_date_str)
         except Exception as e:
-            raise ValueError("Could not parse date string: %s", date_str) from e
+            raise ValueError("Could not parse date string: %s" % date_str) from e
 
     def execute(self) -> None:
         """Main execution method."""
@@ -932,7 +932,7 @@ class GmailImporter(BaseScript):
             self.logger.info("Email import completed")
 
         except Exception as e:
-            self.logger.error("Error in execute method: %s", e)
+            self.logger.error("Error in execute method: %s", str(e))
 
 
 def run(self) -> None:

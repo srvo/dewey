@@ -197,7 +197,7 @@ class GmailAPIClient:
             # Build the service with memory cache
             return build("gmail", "v1", credentials=credentials, cache=MemoryCache())
         except Exception as e:
-            self.logger.error("Failed to build Gmail service: %s", e)
+            self.logger.error("Failed to build Gmail service: %s", str(e))
             raise
 
     def fetch_message(self, msg_id: str, user_id: str = "me") -> dict[str, Any] | None:
