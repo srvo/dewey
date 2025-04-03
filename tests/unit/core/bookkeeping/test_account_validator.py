@@ -28,7 +28,7 @@ class MockFileSystem(FileSystemInterface):
         path_str = str(path)
         if path_str not in self.files and "r" in mode:
             raise FileNotFoundError(f"File not found: {path_str}")
-        return mock_open(read_data=self.files.get(path_str, ""))(path_str, mode)
+        return mock_open(read_data=self.files.get(path_str, ""))(str(path), mode)
 
     def exists(self, path: Path) -> bool:
         """Mock file existence check."""

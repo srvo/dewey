@@ -27,7 +27,7 @@ class RealFileSystem:
     """Real file system operations."""
 
     def open(self, path: str, mode: str = "r") -> IO:
-        return open(path, mode)
+        return Path(path).open(mode)
 
     def mkdir(self, path: Path, parents: bool = False, exist_ok: bool = False) -> None:
         Path(path).mkdir(parents=parents, exist_ok=exist_ok)

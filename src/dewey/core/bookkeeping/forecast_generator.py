@@ -23,7 +23,7 @@ class RealFileSystem:
 
     def open(self, path: str, mode: str = "r") -> object:
         """Open a file."""
-        return open(path, mode)
+        return Path(path).open(mode)
 
     def exists(self, path: str) -> bool:
         """Check if a file exists."""

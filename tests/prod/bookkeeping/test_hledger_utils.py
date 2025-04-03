@@ -64,6 +64,7 @@ class MockFileSystem(FileSystemInterface):
     def open(self, path: Path | str, mode: str = "r") -> MagicMock:
         """Mock open a file."""
         path_str = str(path)
+        path_obj = Path(path_str)
 
         if "w" in mode and path_str not in self.written_content:
             # Track writes to files
