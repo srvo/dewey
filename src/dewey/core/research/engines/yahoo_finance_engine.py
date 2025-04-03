@@ -10,9 +10,9 @@ class YahooFinanceEngine(BaseScript):
 
     def __init__(self) -> None:
         """Initializes the YahooFinanceEngine."""
-        super().__init__(config_section="yahoo_finance")
+        super().__init__(config_section="research_engines.yahoo_finance")
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Executes the main logic of the Yahoo Finance engine.
 
         Args:
@@ -34,3 +34,21 @@ class YahooFinanceEngine(BaseScript):
         # Example usage of logger and config value
         self.logger.info(f"API Key: {api_key[:4]}... (truncated for security)")
         self.logger.info("Yahoo Finance engine completed.")
+
+    def run(self) -> None:
+        """Executes the main logic of the Yahoo Finance engine.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            None
+
+        """
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()
