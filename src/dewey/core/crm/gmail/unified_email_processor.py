@@ -434,7 +434,7 @@ class UnifiedEmailProcessor(BaseScript):
                     )
                 except Exception as e:
                     self.logger.warning(
-                        f"Could not create indexes on email_analyses: {e}",
+                        "Could not create indexes on email_analyses: %s", e,
                     )
 
             except Exception as e:
@@ -665,7 +665,7 @@ class UnifiedEmailProcessor(BaseScript):
                         if row[1] not in ("sqlite_master", "sqlite_temp_master")
                     ]
                 except Exception as e:
-                    self.logger.warning(f"All table list approaches failed: {e}")
+                    self.logger.warning("All table list approaches failed: %s", e)
                     return []
 
         except Exception as e:
