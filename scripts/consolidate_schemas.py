@@ -55,7 +55,7 @@ class ConsolidateSchemas(BaseScript):
     def _are_schemas_compatible(
         self, schema1: dict[str, str], schema2: dict[str, str]
     ) -> bool:
-    """
+        """
         Check if two schemas are compatible.
 
         Args:
@@ -67,7 +67,8 @@ class ConsolidateSchemas(BaseScript):
         --------
             True if schemas are compatible, False otherwise
 
-    """
+        """
+        pass
         # Convert column names to lowercase for case-insensitive comparison
         schema1_lower = {k.lower(): v for k, v in schema1.items()}
         schema2_lower = {k.lower(): v for k, v in schema2.items()}
