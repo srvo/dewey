@@ -65,8 +65,8 @@ class JournalWriter(BaseScript):
         self.config_source = config_source or self
         self.output_dir: Path = Path(
             self.config_source.get_config_value(
-                "journal_dir", "data/bookkeeping/journals",
-            ),
+                "journal_dir", "data/bookkeeping/journals"
+            )
         )
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.processed_hashes_file: Path = self.output_dir / ".processed_hashes"
@@ -84,7 +84,7 @@ class JournalWriter(BaseScript):
         """
         # Example usage of config and database:
         example_config_value = self.config_source.get_config_value(
-            "utils.example_config", "default_value",
+            "utils.example_config", "default_value"
         )
 
         if self.db_conn:
