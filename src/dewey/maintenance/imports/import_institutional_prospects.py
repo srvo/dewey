@@ -1,4 +1,6 @@
+import csv
 from dewey.core.base_script import BaseScript
+from pathlib import Path
 
 
 class ImportInstitutionalProspects(BaseScript):
@@ -10,16 +12,39 @@ class ImportInstitutionalProspects(BaseScript):
     """
 
     def execute(self) -> None:
-        """Executes the institutional prospects import process."""
+        """Executes the institutional prospects import process.
+
+        Reads a CSV file containing institutional prospect data, logs each row,
+        and handles file not found errors. The file path is obtained from the
+        'institutional_prospects_file' configuration value.
+        """
         self.logger.info("Starting institutional prospects import.")
 
-        # Example of accessing a configuration value
-        file_path = self.get_config_value(
+        file_path_str = self.get_config_value(
             "institutional_prospects_file", "default_path.csv"
         )
-        self.logger.info(f"Using file: {file_path}")
+        file_path = Path(file_path_str)
 
-        # Add your import logic here
-        # For example, reading the file and processing the data
+        try:
+            with open(file_path, mode="r", encoding="utf-8") as csvfile:
+                reader = csv.DictReader(csvfile)
+                if reader.fieldnames:
+                    self.logger.info(f"CSV Headers: {reader.fieldnames}")
+                else:
+                    self.logger.warning("CSV file has no headers.")
+
+                row_count = 0
+                for row in reader:
+                    self.logger.debug(f"Processing row: {row}")
+                    row_count += 1
+
+                self.logger.info(f"Successfully processed {row_count} rows.")
+
+        except FileNotFoundError:
+            self.logger.error(f"File not found: {file_path}")
+            raise
+        except Exception as e:
+            self.logger.error(f"Error importing institutional prospects: {e}")
+            raise
 
         self.logger.info("Institutional prospects import completed.")
