@@ -65,3 +65,7 @@ class PriorityModule(BaseScript):
         except Exception as e:
             self.logger.error(f"Error in priority module: {e}", exc_info=True)
             raise
+
+    def execute(self) -> None:
+        """Executes the priority module's logic by calling the run method."""
+        self.run()
