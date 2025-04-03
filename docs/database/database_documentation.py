@@ -1,6 +1,9 @@
+"""Module for generating database documentation."""
+
 import operator
 import os
 from datetime import datetime
+from typing import Any
 
 import duckdb
 
