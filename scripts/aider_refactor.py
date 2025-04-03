@@ -531,7 +531,7 @@ def fix_file_with_aider(
 
 
 def main():
-"""Execute main functions to run the script."""
+    """Execute main functions to run the script."""
     args = parse_args()
     path = Path(args.dir)
 
