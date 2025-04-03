@@ -40,3 +40,22 @@ class ContactEnrichmentService(BaseScript):
 
         self.logger.info(f"Using API key: {api_key}")
         self.logger.info("Contact enrichment process completed.")
+
+    def execute(self) -> None:
+        """Executes the contact enrichment process.
+
+        Fetches the enrichment API key from the configuration, logs its usage,
+        and then logs the completion of the process.
+
+        Returns:
+            None
+        """
+        self.logger.info("Starting contact enrichment process.")
+
+        api_key = self.get_config_value("enrichment_api_key")
+        if not api_key:
+            self.logger.warning("Enrichment API key not found in config.")
+            return
+
+        self.logger.info(f"Using API key: {api_key}")
+        self.logger.info("Contact enrichment process completed.")
