@@ -123,6 +123,25 @@ class DataAnalysisScript(BaseScript):
             self.logger.error(f"Error analyzing data with LLM: {e}")
             raise
 
+    def execute(self) -> None:
+        """Executes the data analysis script.
+
+        This method orchestrates the fetching of data from the database,
+        analyzing it using a language model, and logging the analysis results.
+        """
+        try:
+            # Fetch data
+            data = self.fetch_data_from_db()
+
+            # Analyze data
+            analysis = self.analyze_data_with_llm(data)
+
+            self.logger.info(f"Analysis: {analysis}")
+            self.logger.info("Script finished.")
+
+        except Exception as e:
+            self.logger.error(f"Script failed: {e}")
+
     def run(self) -> None:
         """Runs the data analysis script."""
         try:
