@@ -177,6 +177,7 @@ def _cleanup_old_logs(
 
 def configure_logging(config: dict) -> None:
     """Configure logging with colored console output and file rotation.
+    """Configure logging with colored console output and file rotation.
 
     This function provides a simpler interface for setting up logging without
     requiring a BaseScript instance.

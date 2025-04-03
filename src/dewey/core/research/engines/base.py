@@ -67,7 +67,7 @@ class BaseEngine(BaseScript):
         return super().get_config_value(key, default)
 
     def info(self, message: str) -> None:
-        """Logs an info message using the engine's logger.
+        """Logs an info message using the engine's logger."""
 
         Args:
         ----
@@ -107,7 +107,7 @@ class BaseEngine(BaseScript):
         self.logger.warning(message)
 
     def setup_argparse(self) -> argparse.ArgumentParser:
-        """Set up command line arguments.
+        """Set up command line arguments."""
 
         Returns
         -------
