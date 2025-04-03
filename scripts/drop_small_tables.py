@@ -61,15 +61,15 @@ class DropSmallTablesScript(BaseScript):
         return sorted(results, key=lambda x: x[1])
 
     def drop_tables(self, tables: list[str], dry_run: bool = True) -> None:
-    """
-        Drop the specified tables.
+        """
+            Drop the specified tables.
 
-        Args:
-        -----
-            tables: List of table names to drop
-            dry_run: If True, only show what would be dropped
+            Args:
+            -----
+                tables: List of table names to drop
+                dry_run: If True, only show what would be dropped
 
-    """
+        """
         for table in tables:
             try:
                 if not dry_run:
