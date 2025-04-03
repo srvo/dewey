@@ -1,10 +1,11 @@
-from typing import Any, Optional
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
 
 class PortModule(BaseScript):
-    """Base class for port modules within Dewey.
+    """
+    Base class for port modules within Dewey.
 
     This class provides a standardized structure for port scripts,
     including configuration loading, logging, and a `run` method to
@@ -19,9 +20,11 @@ class PortModule(BaseScript):
         requires_db: bool = False,
         enable_llm: bool = False,
     ) -> None:
-        """Initializes the PortModule.
+        """
+        Initializes the PortModule.
 
         Args:
+        ----
             name: The name of the port module.
             description: A description of the port module.
             config_section: The configuration section to use.
@@ -90,13 +93,16 @@ class PortModule(BaseScript):
                 self.logger.error(f"Error calling LLM: {e}")
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """Retrieves a configuration value by key.
+        """
+        Retrieves a configuration value by key.
 
         Args:
+        ----
             key: The key of the configuration value to retrieve.
             default: The default value to return if the key is not found.
 
         Returns:
+        -------
             The configuration value, or the default value if the key is not found.
 
         """

@@ -5,7 +5,8 @@ from dewey.core.base_script import BaseScript
 
 
 class EnrichmentModule(BaseScript):
-    """A module for managing enrichment tasks within Dewey's CRM.
+    """
+    A module for managing enrichment tasks within Dewey's CRM.
 
     This module inherits from BaseScript and provides a standardized
     structure for enrichment scripts, including configuration
@@ -14,9 +15,11 @@ class EnrichmentModule(BaseScript):
     """
 
     def __init__(self, name: str, description: str = "CRM Enrichment Module"):
-        """Initializes the EnrichmentModule.
+        """
+        Initializes the EnrichmentModule.
 
         Args:
+        ----
             name: The name of the module.
             description: A brief description of the module.
 
@@ -43,13 +46,16 @@ class EnrichmentModule(BaseScript):
         self.logger.info("Enrichment process completed.")
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """Retrieves a configuration value associated with the given key.
+        """
+        Retrieves a configuration value associated with the given key.
 
         Args:
+        ----
             key: The key of the configuration value to retrieve.
             default: The default value to return if the key is not found.
 
         Returns:
+        -------
             The configuration value associated with the key, or the default value
             if the key is not found.
 
