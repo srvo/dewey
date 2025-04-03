@@ -135,7 +135,10 @@ class JournalSplitter(BaseScript):
             if current_year not in files:
                 output_file = self.file_system.join(
                     output_dir,
-                    "{}_{}.journal".format(self.file_system.basename(input_file).replace('.journal', ''), current_year)
+                    "{}_{}.journal".format(
+                        self.file_system.basename(input_file).replace(".journal", ""),
+                        current_year,
+                    )
                 )
                 files[current_year] = self.file_system.open(output_file, "w")
             files[current_year].write("".join(current_transaction))
