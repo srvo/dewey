@@ -1602,14 +1602,14 @@ class UnifiedEmailProcessor(BaseScript):
                 self.logger.info("Closing Gmail sync connections...")
                 self.gmail_sync.close_connection()
             except Exception as e:
-                self.logger.warning(f"Error closing Gmail sync connection: {e}")
+                self.logger.warning("Error closing Gmail sync connection: %s", e)
 
         # Ensure db_manager connections are closed
         try:
             self.logger.info("Closing database connections...")
             db_manager.close()
         except Exception as e:
-            self.logger.warning(f"Error closing database connections: {e}")
+            self.logger.warning("Error closing database connections: %s", e)
 
     def __signal_handler(self, sig, frame):
         """Handle signals like CTRL+C to allow clean shutdown."""

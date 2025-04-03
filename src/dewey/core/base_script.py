@@ -101,7 +101,7 @@ class BaseScript(ABC):
         if self.enable_llm:
             self._initialize_llm_client()
 
-        self.logger.info(f"Initialized {self.name}")
+        self.logger.info("Initialized %s", self.name)
 
     def _setup_logging(self) -> None:
         """Set up logging for this script."""
@@ -112,8 +112,8 @@ class BaseScript(ABC):
                 log_config = config.get("core", {}).get("logging", {})
                 log_level = getattr(logging, log_config.get("level", "INFO"))
                 log_format = log_config.get(
-                    "format", "%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-                )
+                    "format", "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+                ),
                 date_format = log_config.get("date_format", "%Y-%m-%d %H:%M:%S")
         except Exception:
             # Default logging configuration if config can't be loaded
