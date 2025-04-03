@@ -4,7 +4,8 @@ from dewey.core.script import BaseScript
 
 
 class LoggerInterface(Protocol):
-    """An interface for logging functionality.
+    """
+    An interface for logging functionality.
 
     """
 
