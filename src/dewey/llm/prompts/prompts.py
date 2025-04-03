@@ -67,3 +67,31 @@ class Prompts(BaseScript):
         except KeyError as e:
             self.logger.error(f"Missing key in data: {e}")
             raise ValueError(f"Missing key in data: {e}")
+
+    def execute(self) -> None:
+        """Executes the core logic of the Prompts script.
+
+        This method retrieves configuration values, generates prompts,
+        and logs relevant information.
+
+        Returns:
+            None
+
+        Raises:
+            ValueError: If a required configuration value is missing.
+
+        """
+        try:
+            prompt_template = self.get_config_value("prompt_template")
+            model_name = self.get_config_value("model_name")
+
+            self.logger.info(f"Using prompt template: {prompt_template}")
+            self.logger.info(f"Using model: {model_name}")
+
+            # Example prompt generation (replace with actual logic)
+            prompt = self.generate_prompt(prompt_template, {"task": "summarization"})
+            self.logger.info(f"Generated prompt: {prompt}")
+
+        except KeyError as e:
+            self.logger.error(f"Missing configuration value: {e}")
+            raise ValueError(f"Missing configuration value: {e}")
