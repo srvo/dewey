@@ -3,6 +3,7 @@
 A workflow for tagging and analyzing company information.
 """
 
+import asyncio
 import logging
 from datetime import datetime
 from typing import Any, Dict, List
@@ -136,3 +137,31 @@ class AnalysisTaggingWorkflow:
                 "industry": "Unknown",
             },
         )
+
+    async def execute(self, tickers: List[str]) -> None:
+        """Execute the analysis tagging workflow.
+
+        Processes a list of company tickers, analyzes them, and prints the results.
+
+        Args:
+            tickers: List of company ticker symbols to analyze.
+
+        """
+        async for result in self.process_companies_by_tickers(tickers):
+            print(result)
+
+
+if __name__ == "__main__":
+    # Example usage (replace with your actual engine and tickers)
+    class MockEngine:
+        async def analyze_company(self, company_data: Dict[str, Any]) -> Dict[str, Any]:
+            await asyncio.sleep(0.1)  # Simulate some work
+            return {"success": True, "analysis": {"tags": ["AI", "Cloud"], "summary": "This company is doing great!"}}
+
+    async def main():
+        engine = MockEngine()
+        workflow = AnalysisTaggingWorkflow(engine)
+        tickers = ["AAPL", "MSFT", "GOOGL"]
+        await workflow.execute(tickers)
+
+    asyncio.run(main())
