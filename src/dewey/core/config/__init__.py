@@ -54,12 +54,12 @@ class MotherDuckInterface(Protocol):
 
 
 class ConfigManager(BaseScript):
-    """Manages configuration settings for the application.
+    """
+    Manages configuration settings for the application.
 
     This class inherits from BaseScript and provides methods for loading
     and accessing configuration values.
     """
-
     def __init__(
         self,
         config_section: str = "config_manager",

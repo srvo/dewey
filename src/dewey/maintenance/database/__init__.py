@@ -12,7 +12,6 @@ class DatabaseModule(BaseScript):
     loading, logging, and a `run` method to execute the script's
     primary logic.
     """
-
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initializes the DatabaseModule."""
         super().__init__(*args, **kwargs)

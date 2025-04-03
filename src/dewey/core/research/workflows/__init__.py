@@ -4,13 +4,13 @@ from dewey.core.base_script import BaseScript
 
 
 class ResearchWorkflow(BaseScript):
-    """Base class for research workflows within Dewey.
+    """
+    Base class for research workflows within Dewey.
 
     This class provides a standardized structure for research scripts,
     including configuration loading, logging, and a `run` method to
     execute the script's primary logic.
     """
-
     def __init__(self, name: str, description: str):
         """Initializes the ResearchWorkflow.
 
