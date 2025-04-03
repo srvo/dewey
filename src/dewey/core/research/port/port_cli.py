@@ -2,8 +2,8 @@ import argparse
 import sys
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.utils import build_insert_query, create_table, execute_query
-from dewey.llm.llm_utils import call_llm
+from dewey.core.db.utils import build_insert_query
+from dewey.llm.litellm_utils import quick_completion
 
 
 class PortCLI(BaseScript):
@@ -21,21 +21,33 @@ class PortCLI(BaseScript):
         """
         args = self.parse_args()
 
-        try:
-            # Example usage of database utilities
-            table_name = "port_results"
-            schema = {"id": "INTEGER", "result": "TEXT"}
-            create_table(self.db_conn, table_name, schema)
+        if not self.db_conn:
+            self.logger.error("Database connection required but not available.")
+            sys.exit(1)
 
-            # Example usage of LLM utilities
+        try:
+            table_name = "port_results"
+            # Define schema as SQL
+            create_table_sql = f"""
+            CREATE TABLE IF NOT EXISTS {table_name} (
+                id INTEGER PRIMARY KEY,
+                result TEXT
+            );
+            """
+            # Use db_conn.execute
+            self.db_conn.execute(create_table_sql)
+
+            # Use quick_completion and self.llm_client
             prompt = "Summarize the following data:"
             data = {"key1": "value1", "key2": "value2"}
-            response = call_llm(self.llm_client, prompt + str(data))
+            response = quick_completion(prompt + str(data), llm_client=self.llm_client)
 
-            # Insert data into the database
-            insert_query = build_insert_query(table_name, ["id", "result"])
-            values = [1, response]
-            execute_query(self.db_conn, insert_query, values)
+            # Insert data into the database using build_insert_query and db_conn.execute
+            # Assume build_insert_query returns (query_string, values_tuple)
+            insert_data = {"id": 1, "result": response}
+            insert_query, values = build_insert_query(table_name, insert_data)
+            self.db_conn.execute(insert_query, values)
+            self.db_conn.commit()
 
             self.logger.info("PortCLI script executed successfully.")
 
