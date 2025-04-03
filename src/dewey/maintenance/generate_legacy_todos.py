@@ -10,7 +10,7 @@ class GenerateLegacyTodos(BaseScript):
         """Initializes the GenerateLegacyTodos script."""
         super().__init__(config_section="generate_legacy_todos")
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Executes the legacy todo generation process.
 
         This method retrieves configuration values, iterates through data,
@@ -58,6 +58,28 @@ class GenerateLegacyTodos(BaseScript):
                 f"An error occurred during legacy todo generation: {e}"
             )
             raise
+
+    def run(self) -> None:
+        """Legacy method for backward compatibility.
+
+        New scripts should implement execute() instead of run().
+        This method will be deprecated in a future version.
+        """
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        try:
+            self.logger.info(f"Starting execution of {self.name}")
+
+            # Call execute method
+            self.execute()
+
+            self.logger.info(f"Successfully completed {self.name}")
+        except Exception as e:
+            self.logger.error(f"Error executing {self.name}: {e}", exc_info=True)
+            raise
+        finally:
+            self._cleanup()
 
 
 # Example usage (for demonstration purposes)
