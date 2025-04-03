@@ -82,7 +82,7 @@ def read_config() -> str:
 
 
 def read_base_script() -> str:
-"""
+    """
     Read the base_script.py file for context.
 
     Returns:
