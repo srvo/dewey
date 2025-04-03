@@ -13,8 +13,8 @@ class PortDatabase(BaseScript):
         """Initializes the PortDatabase class."""
         super().__init__(config_section="port_database")
 
-    def run(self) -> None:
-        """Runs the main logic of the PortDatabase.
+    def execute(self) -> None:
+        """Executes the main logic of the PortDatabase.
 
         This method retrieves the database URL from the configuration,
         establishes a database connection, and performs database operations.
@@ -37,7 +37,7 @@ class PortDatabase(BaseScript):
             self.logger.info(f"Database URL: {database_url}")
 
             # Establishing a database connection
-            with get_connection(self.config.get("database", {})) as db_conn:
+            with self.db_connection() as db_conn:
                 if isinstance(db_conn, DatabaseConnection):
                     self.logger.info("Successfully connected to the database.")
                     # Example database operation (replace with your actual logic)
