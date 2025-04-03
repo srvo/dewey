@@ -36,3 +36,27 @@ class DropJVTables(BaseScript):
         # Add actual database dropping code here, using a database connection
         # obtained from configuration or elsewhere.
         pass
+
+    def execute(self) -> None:
+        """Executes the script's primary logic to drop JV tables."""
+        self.logger.info("Starting the process to drop JV tables.")
+
+        table_names = self.get_config_value("tables_to_drop", [])
+
+        if not table_names:
+            self.logger.info("No tables specified to drop.")
+            return
+
+        with self.db_connection() as conn:
+            with conn.cursor() as cursor:
+                for table_name in table_names:
+                    try:
+                        self.logger.info(f"Dropping table: {table_name}")
+                        cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
+                        conn.commit()
+                        self.logger.info(f"Successfully dropped table: {table_name}")
+                    except Exception as e:
+                        self.logger.error(f"Error dropping table {table_name}: {e}")
+                        conn.rollback()
+
+        self.logger.info("Finished dropping JV tables.")
