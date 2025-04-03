@@ -52,7 +52,6 @@ class DocsModule(BaseScript):
         specific documentation tasks.
         """
         self._logger.info("Running the Docs module...")  # Consider revising this line
-        # Add your documentation logic here
 
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""

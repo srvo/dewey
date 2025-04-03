@@ -116,10 +116,10 @@ class JournalEntryGenerator(BaseScript):
                 if acquisition_entry in f.read():
                     acquisition_entry_exists = True
         except FileNotFoundError:
-            self.logger.warning(f"File not found: {complete_ledger_file}")
+            self.logger.warning("File not found: %s", complete_ledger_file)
             # Handle missing file gracefully
         except Exception as e:
-            self.logger.error(f"Error reading file: {e}")
+            self.logger.error("Error reading file: %s", e)
             return
 
         if not acquisition_entry_exists:
@@ -155,7 +155,7 @@ account Expenses:Hosting:Mormair_E650
 """
                     f.write(account_declarations)
         except Exception as e:
-            self.logger.error(f"Error initializing forecast ledger: {e}")
+            self.logger.error("Error initializing forecast ledger: %s", e)
             raise
 
     def create_depreciation_entry(self, current_date: datetime) -> str:

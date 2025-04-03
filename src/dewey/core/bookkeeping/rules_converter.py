@@ -256,12 +256,12 @@ class RulesConverter(BaseScript):
         with self.file_system.open(output_file, "w") as f:
             json.dump(rules, f, indent=2)
 
-        self.logger.info(f"Generated rules file: {output_file}")
-        self.logger.info(f"Total patterns: {rules['stats']['total_patterns']}")
+        self.logger.info("Generated rules file: %s", output_file)
+        self.logger.info("Total patterns: %s", rules['stats']['total_patterns'])
         self.logger.info(
-            f"Patterns with examples: {rules['stats']['patterns_with_examples']}",
+            "Patterns with examples: %s", rules['stats']['patterns_with_examples'],
         )
-        self.logger.info(f"Unique categories: {len(rules['categories'])}")
+        self.logger.info("Unique categories: %s", len(rules['categories']))
 
     def execute(self) -> None:
         """Orchestrates the rule parsing, analysis, and generation."""

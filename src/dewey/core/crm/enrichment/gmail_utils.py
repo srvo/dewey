@@ -87,7 +87,7 @@ class GmailAPIClient:
 
             # Check if we have a token file
             if os.path.exists(self.token_path):
-                self.logger.info(f"Using token from {self.token_path}")
+                self.logger.info("Using token from %s", self.token_path)
                 credentials = Credentials.from_authorized_user_file(
                     self.token_path, self.scopes,
                 )
@@ -197,7 +197,7 @@ class GmailAPIClient:
             # Build the service with memory cache
             return build("gmail", "v1", credentials=credentials, cache=MemoryCache())
         except Exception as e:
-            self.logger.error(f"Failed to build Gmail service: {e}")
+            self.logger.error("Failed to build Gmail service: %s", e)
             raise
 
     def fetch_message(self, msg_id: str, user_id: str = "me") -> dict[str, Any] | None:
@@ -224,7 +224,7 @@ class GmailAPIClient:
             )
             return message
         except Exception as e:
-            self.logger.error(f"Error fetching message {msg_id}: {e}")
+            self.logger.error("Error fetching message %s: %s", msg_id, e)
             return None
 
     def extract_body(self, message: dict[str, Any]) -> tuple[str, str]:

@@ -198,7 +198,7 @@ class JournalWriter(BaseScript):
 
         """
         total_entries = sum(len(e) for e in entries.values())
-        self.logger.info(f"Writing {total_entries} journal entries")
+        self.logger.info("Writing %s journal entries", total_entries)
 
         for (account_id, year), entries in self._group_entries_by_account_and_year(
             entries,

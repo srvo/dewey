@@ -149,7 +149,7 @@ class GmailImporter(BaseScript):
 
             # Check if we have a token file
             if os.path.exists(self.token_path):
-                self.logger.info(f"Using token from {self.token_path}")
+                self.logger.info("Using token from %s", self.token_path)
                 credentials = Credentials.from_authorized_user_file(
                     self.token_path, self.scopes,
                 )
@@ -231,7 +231,7 @@ class GmailImporter(BaseScript):
                             os.makedirs(os.path.dirname(self.token_path), exist_ok=True)
                             with open(self.token_path, "w") as token:
                                 token.write(credentials.to_json())
-                                self.logger.info(f"Saved token to {self.token_path}")
+                                self.logger.info("Saved token to %s", self.token_path)
 
                         else:
                             self.logger.warning(
@@ -251,7 +251,7 @@ class GmailImporter(BaseScript):
                         )
                 else:
                     self.logger.warning(
-                        f"Credentials file not found at {self.credentials_path}",
+                        "Credentials file not found at %s", self.credentials_path,
                     )
                     self.logger.info("Using application default credentials")
                     # Use application default credentials from gcloud CLI
@@ -263,7 +263,7 @@ class GmailImporter(BaseScript):
             # Build the service with memory cache
             return build("gmail", "v1", credentials=credentials, cache=MemoryCache())
         except Exception as e:
-            self.logger.error(f"Failed to build Gmail service: {e}")
+            self.logger.error("Failed to build Gmail service: %s", e)
             raise
 
     def fetch_emails(
@@ -305,7 +305,7 @@ class GmailImporter(BaseScript):
                 end_date_str = end_date.strftime("%Y/%m/%d")
 
                 self.logger.info(
-                    f"Importing emails from {start_date_str} to {end_date_str}",
+                    "Importing emails from %s to %s", start_date_str, end_date_str,
                 )
             else:
                 self.logger.info("Importing all historical emails")
@@ -376,7 +376,7 @@ class GmailImporter(BaseScript):
                         total_fetched += len(messages)
 
                         self.logger.info(
-                            f"Fetched {len(messages)} messages, {len(new_messages)} new, total new: {len(all_messages)}",
+                            "Fetched %s messages, %s new, total new: %s", len(messages), len(new_messages), len(all_messages),
                         )
 
                         # Check if we've reached the max
@@ -450,7 +450,7 @@ class GmailImporter(BaseScript):
                 self.logger.info("No new emails found.")
                 return []
 
-            self.logger.info("Found %d new emails to process", len(all_messages))
+            self.logger.info("Found %s new emails to process", len(all_messages))
             return [msg["id"] for msg in all_messages]
 
         except Exception as e:
@@ -652,8 +652,7 @@ class GmailImporter(BaseScript):
                     conn.execute("BEGIN TRANSACTION")
 
                     self.logger.info(
-                        f"Processed sub-batch {i // sub_batch_size + 1}, "
-                        f"Success: {success_count}, Errors: {error_count}",
+                        "Processed sub-batch %s, Success: %s, Errors: %s", i // sub_batch_size + 1, success_count, error_count,
                     )
 
                 # Final commit
@@ -667,12 +666,12 @@ class GmailImporter(BaseScript):
                 if retry_count < max_retries:
                     wait_time = retry_count * 5  # Exponential backoff
                     self.logger.warning(
-                        f"Batch failed, retrying in {wait_time} seconds... ({retry_count}/{max_retries})",
+                        "Batch failed, retrying in %s seconds... (%s/%s)", wait_time, retry_count, max_retries,
                     )
                     time.sleep(wait_time)
                 else:
                     self.logger.error(
-                        f"Failed to process batch after {max_retries} attempts",
+                        "Failed to process batch after %s attempts", max_retries,
                     )
                     raise
 
@@ -823,19 +822,19 @@ class GmailImporter(BaseScript):
             columns = ", ".join(insert_data.keys())
 
             conn.execute(
-                f"""
+                """
             INSERT INTO emails ({columns})
             VALUES ({placeholders})
             """,
                 list(insert_data.values()),
             )
 
-            self.logger.info(f"Stored email {msg_id} successfully")
+            self.logger.info("Stored email %s successfully", msg_id)
             return True
 
         except Exception as e:
             self.logger.error(
-                f"Error storing email {email_data.get('id', 'unknown')}: {e}",
+                "Error storing email %s: %s", email_data.get('id', 'unknown'), e,
             )
             return False
 
