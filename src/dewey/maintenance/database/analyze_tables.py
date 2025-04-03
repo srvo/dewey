@@ -15,15 +15,47 @@ class AnalyzeTables(BaseScript):
         super().__init__(*args, **kwargs)
 
     def execute(self) -> None:
-        """Executes the table analysis and maintenance process."""
+        """Executes the table analysis and maintenance process.
+
+        This method connects to the database and analyzes each table to
+        provide statistics such as row count and size.
+        """
         self.logger.info("Starting table analysis...")
 
-        # Example of accessing a configuration value
-        threshold = self.get_config_value("threshold", default=0.9)
-        self.logger.debug(f"Using threshold: {threshold}")
+        try:
+            with self.db_connection() as conn:
+                with conn.cursor() as cursor:
+                    # Get all table names in the database
+                    cursor.execute(
+                        """
+                        SELECT table_name
+                        FROM information_schema.tables
+                        WHERE table_schema = 'public'
+                        AND table_type = 'BASE TABLE';
+                        """
+                    )
+                    tables = [table[0] for table in cursor.fetchall()]
 
-        # Add your table analysis logic here
-        self.analyze_tables()
+                    for table in tables:
+                        self.logger.info(f"Analyzing table: {table}")
+
+                        # Get the row count for the table
+                        cursor.execute(f"SELECT COUNT(*) FROM {table};")
+                        row_count = cursor.fetchone()[0]
+                        self.logger.info(f"Table {table} has {row_count} rows.")
+
+                        # Get the table size
+                        cursor.execute(
+                            f"""
+                            SELECT pg_size_pretty(pg_total_relation_size('{table}'));
+                            """
+                        )
+                        table_size = cursor.fetchone()[0]
+                        self.logger.info(f"Table {table} size: {table_size}")
+
+        except Exception as e:
+            self.logger.error(f"Error analyzing tables: {e}")
+            raise
 
         self.logger.info("Table analysis complete.")
 
