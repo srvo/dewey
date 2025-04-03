@@ -13,3 +13,7 @@ class EmailPrioritization(BaseScript):
         self.logger.info("Starting email prioritization process.")
         # Add your email prioritization logic here
         self.logger.info("Email prioritization process completed.")
+
+    def execute(self) -> None:
+        """Executes the email prioritization process."""
+        self.run()
