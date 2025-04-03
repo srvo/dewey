@@ -80,3 +80,17 @@ class NextQuestionSuggestion(BaseScript):
         except Exception as e:
             self.logger.exception(f"LLM call failed: {e}")
             raise
+
+    def execute(self) -> None:
+        """Executes the next question suggestion logic.
+
+        This method retrieves the conversation history from the configuration,
+        calls the run method to get the next question suggestion, and logs the suggestion.
+        """
+        try:
+            conversation_history = self.get_config_value("conversation_history", [])
+            next_question = self.run(conversation_history)
+            self.logger.info(f"Suggested next question: {next_question}")
+        except Exception as e:
+            self.logger.exception(f"Error in execute method: {e}")
+            raise
