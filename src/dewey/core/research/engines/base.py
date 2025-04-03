@@ -133,10 +133,10 @@ class BaseEngine(BaseScript):
         if hasattr(args, "engine_config") and args.engine_config:
             config_path = self.get_path(args.engine_config)
             if not config_path.exists():
-                self.logger.error(f"Configuration file not found: {config_path}")
-                raise FileNotFoundError(f"Configuration file not found: {config_path}")
+                self.logger.error("Configuration file not found: %s", config_path)
+                raise FileNotFoundError("Configuration file not found: %s" % config_path)
 
             self.config = self._load_config()  # Reload the entire config
-            self.logger.info(f"Loaded configuration from {config_path}")
+            self.logger.info("Loaded configuration from %s", config_path)
 
         return args
