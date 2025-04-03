@@ -16,8 +16,8 @@ class Investments(BaseScript):
         """
         super().__init__(config_section="investments")
 
-    def run(self) -> None:
-        """Runs the investment analysis script.
+    def execute(self) -> None:
+        """Executes the investment analysis script.
 
         This method contains the core logic of the script.
         """
@@ -32,7 +32,10 @@ class Investments(BaseScript):
             try:
                 # Example query (replace with your actual query)
                 query = "SELECT * FROM investments LIMIT 10"
-                result = self.db_conn.execute(query)
+                with self.db_connection() as conn:
+                    with conn.cursor() as cursor:
+                        cursor.execute(query)
+                        result = cursor.fetchall()
                 self.logger.info(f"Query Result: {result}")
             except Exception as e:
                 self.logger.error(f"Error executing database query: {e}")
@@ -47,3 +50,13 @@ class Investments(BaseScript):
                 self.logger.error(f"Error calling LLM: {e}")
 
         self.logger.info("Investment analysis completed.")
+
+    def run(self) -> None:
+        """Runs the investment analysis script.
+
+        This method contains the core logic of the script.
+        """
+        self.logger.warning(
+            "Using deprecated run() method. Update to use execute() instead."
+        )
+        self.execute()
