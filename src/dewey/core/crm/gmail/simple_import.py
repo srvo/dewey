@@ -899,7 +899,7 @@ class GmailImporter(BaseScript):
             historical = args.historical
             include_sent = args.include_sent
 
-            self.logger.info(f"Starting email import for the past {days_back} days")
+            self.logger.info("Starting email import for the past %s days", days_back)
             email_ids = self.fetch_emails(
                 service,
                 self.db_conn,

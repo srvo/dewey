@@ -73,7 +73,7 @@ class JournalEntryGenerator(BaseScript):
                     else:
                         self.logger.warning("Invalid input. Please enter 'y' or 'n'.")
         except Exception as e:
-            self.logger.exception("Error during assumption validation: %s", str(e))
+            self.logger.exception("Error during assumption validation: %s", e)
             sys.exit(1)
 
     def create_acquisition_entry(self, acquisition_date: date) -> str:

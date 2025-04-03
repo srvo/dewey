@@ -149,7 +149,7 @@ class RulesConverter(BaseScript):
                             self.logger.exception(
                                 "Skipping invalid regex pattern '%s': %s",
                                 pattern,
-                                str(e),
+                                e,
                             )
                             continue
 

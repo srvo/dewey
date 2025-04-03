@@ -112,7 +112,7 @@ class JournalWriter(BaseScript):
                 return set(content.splitlines())
             return set()
         except Exception as e:
-            self.logger.exception("Failed to load processed hashes: %s", str(e))
+            self.logger.exception("Failed to load processed hashes: %s", e)
             return set()
 
     def _save_processed_hashes(self, seen_hashes: set[str]) -> None:
@@ -129,7 +129,7 @@ class JournalWriter(BaseScript):
                 self.processed_hashes_file, "\n".join(seen_hashes),
             )
         except Exception as e:
-            self.logger.exception("Failed to save processed hashes: %s", str(e))
+            self.logger.exception("Failed to save processed hashes: %s", e)
 
     def _write_file_with_backup(
         self,
@@ -155,7 +155,7 @@ class JournalWriter(BaseScript):
 
             self.io_service.write_text(filename, "\n".join(entries) + "\n")
         except Exception as e:
-            self.logger.exception("Failed to write file with backup: %s", str(e))
+            self.logger.exception("Failed to write file with backup: %s", e)
 
     def _get_account_id(self) -> str:
         """Get the account ID from the config."""
