@@ -98,7 +98,7 @@ class JournalSplitter(BaseScript):
 
         # Get account number from filename
         account_num = self.file_system.basename(input_file).split("_")[1].split(".")[0]
-        bank_account = f"assets:checking:mercury{account_num}"
+        bank_account = "assets:checking:mercury{}".format(account_num)
 
         # Initialize files dict to store transactions by year
         files: dict[str, IO] = {}
