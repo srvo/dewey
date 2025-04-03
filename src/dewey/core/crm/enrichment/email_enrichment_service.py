@@ -267,3 +267,25 @@ class EmailEnrichmentService(BaseScript):
         except Exception as e:
             self.logger.error(f"Failed to fail enrichment task {task.id}: {e}")
             raise
+
+    def execute(self) -> None:
+        """Execute the email enrichment service.
+
+        This method retrieves a batch of emails from the database that
+        have not yet been enriched and calls the `enrich_email` method
+        on each of them.
+        """
+        try:
+            # Query for emails that have not been enriched (example query)
+            emails = Email.objects.filter(plain_body__isnull=True)[:10]  # Limit to 10 emails for processing
+
+            self.logger.info(f"Found {len(emails)} emails to enrich.")
+
+            for email in emails:
+                self.enrich_email(email)
+
+            self.logger.info("Email enrichment process completed.")
+
+        except Exception as e:
+            self.logger.error(f"Error during email enrichment execution: {e}")
+            raise
