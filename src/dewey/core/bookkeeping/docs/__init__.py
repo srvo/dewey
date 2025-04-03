@@ -13,11 +13,13 @@ class DocumentationTask(Protocol):
 
 
 class DocsModule(BaseScript):
-    """A module for managing documentation tasks within Dewey.
+    """
+    A module for managing documentation tasks within Dewey.
     This module inherits from BaseScript and provides a
     standardized structure for documentation-related scripts,
     including configuration loading, logging, and a `run` method
-    to execute the script's primary logic."""
+    to execute the script's primary logic.
+    """
 
     def __init__(
         self,
