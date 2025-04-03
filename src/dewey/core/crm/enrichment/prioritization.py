@@ -58,15 +58,15 @@ class Prioritization(BaseScript):
             self.logger.debug(f"Some config value: {some_config_value}")
 
             # Add your prioritization logic here
-            self.logger.info("Prioritization process completed.")
+            self.info("Prioritization process completed.")
 
         except Exception as e:
-            self.logger.error(f"Error during prioritization: {e}")
+            self.error(f"Error during prioritization: {e}")
             raise
 
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
-        self.logger.warning(
+        self.warning(
             "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()

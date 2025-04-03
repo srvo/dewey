@@ -38,11 +38,11 @@ class DocsModule(BaseScript):
         self.logger.info(f"Example configuration value: {example_config_value}")
 
         # Add your documentation management logic here
-        self.logger.info("CRM Docs Module completed.")
+        self.info("CRM Docs Module completed.")
 
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
-        self.logger.warning(
+        self.warning(
             "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()

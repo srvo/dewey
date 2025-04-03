@@ -88,7 +88,7 @@ class BaseEngine(BaseScript):
             message: The message to log.
 
         """
-        self.logger.error(message)
+        self.error(message)
 
     def debug(self, message: str) -> None:
         """
