@@ -150,7 +150,7 @@ class JournalWriter(BaseScript):
         try:
             if filename.exists():
                 timestamp = now_func().strftime("%Y%m%d%H%M%S")
-                backup_name = f"{filename.stem}_{timestamp}{filename.suffix}"
+                backup_name = "{}_{}{}".format(filename.stem, timestamp, filename.suffix)
                 self.io_service.copy_file(filename, filename.parent / backup_name)
 
             self.io_service.write_text(filename, "\n".join(entries) + "\n")
@@ -203,7 +203,7 @@ class JournalWriter(BaseScript):
         for (account_id, year), entries in self._group_entries_by_account_and_year(
             entries,
         ).items():
-            filename = self.output_dir / f"{account_id}_{year}.journal"
+            filename = self.output_dir / "{}_{}.journal".format(account_id, year)
             self._write_file_with_backup(filename, entries)
 
         self._save_processed_hashes(self.seen_hashes)
