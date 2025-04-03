@@ -14,8 +14,8 @@ class VerifyDb(BaseScript):
         This method retrieves database configuration, connects to the
         database, and performs validation checks.
         """
-        db_host = self.get_config_value("db_host", "localhost")
-        db_name = self.get_config_value("db_name", "mydatabase")
+        db_host = self.get_config_value("db.postgres.host", "localhost")
+        db_name = self.get_config_value("db.postgres.dbname", "mydatabase")
 
         self.logger.info(f"Verifying database connection to {db_host}/{db_name}")
 
@@ -48,12 +48,22 @@ class VerifyDb(BaseScript):
         This method retrieves database configuration, connects to the
         database, and performs validation checks.
         """
-        db_host = self.get_config_value("db_host", "localhost")
-        db_name = self.get_config_value("db_name", "mydatabase")
+        db_host = self.get_config_value("db.postgres.host", "localhost")
+        db_name = self.get_config_value("db.postgres.dbname", "mydatabase")
 
         self.logger.info(f"Verifying database connection to {db_host}/{db_name}")
 
-        if self.is_db_valid(db_host, db_name):
+        try:
+            with self.db_connection() as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute("SELECT 1")
+                    result = cursor.fetchone()
+                    if result is not None:
+                        self.logger.info("Database connection successful.")
+                    else:
+                        self.logger.error("Database connection failed: Unable to execute simple query.")
+                        return
             self.logger.info("Database verification successful.")
-        else:
-            self.logger.error("Database verification failed.")
+
+        except Exception as e:
+            self.logger.error(f"Database verification failed: {e}")
