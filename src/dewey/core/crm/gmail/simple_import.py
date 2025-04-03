@@ -429,12 +429,12 @@ class GmailImporter(BaseScript):
                                     delay = base_delay * (2 ** (retry_count - 1))
 
                                 self.logger.info(
-                                    f"Rate limit exceeded. Waiting {delay:.2f} seconds before retry {retry_count}/{max_retries}...",
+                                    "Rate limit exceeded. Waiting %.2f seconds before retry %d/%d...", delay, retry_count, max_retries,
                                 )
                                 time.sleep(delay)
                                 continue
 
-                        self.logger.error(f"Error fetching messages: {e}")
+                        self.logger.error("Error fetching messages: %s", e)
                         if retry_count == max_retries - 1:
                             return [msg["id"] for msg in all_messages]
                         retry_count += 1
@@ -442,7 +442,7 @@ class GmailImporter(BaseScript):
 
                 if retry_count == max_retries:
                     self.logger.warning(
-                        f"Max retries ({max_retries}) reached. Moving on with collected messages.",
+                        "Max retries (%d) reached. Moving on with collected messages.", max_retries,
                     )
                     break
 
@@ -450,11 +450,11 @@ class GmailImporter(BaseScript):
                 self.logger.info("No new emails found.")
                 return []
 
-            self.logger.info(f"Found {len(all_messages)} new emails to process")
+            self.logger.info("Found %d new emails to process", len(all_messages))
             return [msg["id"] for msg in all_messages]
 
         except Exception as e:
-            self.logger.error(f"Error fetching emails: {e}")
+            self.logger.error("Error fetching emails: %s", e)
             return []
 
     def fetch_email(self, service, msg_id, user_id="me"):

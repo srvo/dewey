@@ -122,7 +122,7 @@ class JournalWriter(BaseScript):
                 self.processed_hashes_file, "\n".join(seen_hashes),
             )
         except Exception as e:
-            self.logger.exception(f"Failed to save processed hashes: {e!s}")
+            self.logger.exception("Failed to save processed hashes: %s", e)
 
     def _write_file_with_backup(
         self,
