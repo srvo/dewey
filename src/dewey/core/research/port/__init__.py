@@ -63,6 +63,32 @@ class PortModule(BaseScript):
             except Exception as e:
                 self.logger.error(f"Error calling LLM: {e}")
 
+    def execute(self) -> None:
+        """Executes the primary logic of the port module."""
+        self.logger.info("Running the port module...")
+        # Add your implementation here
+        config_value = self.get_config_value("some_config_key", "default_value")
+        self.logger.info(f"Config value: {config_value}")
+
+        # Example database usage
+        if self.db_conn:
+            try:
+                # Execute a query (replace with your actual query)
+                with self.db_conn.cursor() as cur:
+                    cur.execute("SELECT 1")
+                    result = cur.fetchone()
+                    self.logger.info(f"Database query result: {result}")
+            except Exception as e:
+                self.logger.error(f"Error executing database query: {e}")
+
+        # Example LLM usage
+        if self.llm_client:
+            try:
+                response = self.llm_client.generate(prompt="Write a short poem.")
+                self.logger.info(f"LLM response: {response}")
+            except Exception as e:
+                self.logger.error(f"Error calling LLM: {e}")
+
     def get_config_value(self, key: str, default: Any = None) -> Any:
         """Retrieves a configuration value by key.
 
