@@ -19,7 +19,7 @@ class ChatAgent(BaseScript):
         """
         super().__init__(**kwargs)
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Executes the core logic of the chat agent.
 
         This method retrieves configuration values, interacts with the user,
@@ -47,6 +47,13 @@ class ChatAgent(BaseScript):
         except Exception as e:
             self.logger.exception(f"An error occurred: {e}")
             raise
+
+    def run(self) -> None:
+        """Executes the core logic of the chat agent.
+
+        This method calls the execute method.
+        """
+        self.execute()
 
     def _process_input(self, user_input: str) -> str:
         """Processes the user input and generates a response.
