@@ -224,10 +224,10 @@ class UnifiedEmailProcessor(BaseScript):
                 return
 
             self.logger.info(
-                f"📨 Found {total_count} emails to process (limiting to {max_emails})",
+                "📨 Found %s emails to process (limiting to %s)", total_count, max_emails
             )
         except Exception as e:
-            self.logger.error(f"❌ Error counting unprocessed emails: {e}")
+            self.logger.error("❌ Error counting unprocessed emails: %s", e)
             # Default to proceeding without knowing the count
             total_count = None
 
@@ -1147,19 +1147,19 @@ class UnifiedEmailProcessor(BaseScript):
                             [msg_id],
                             for_write=True,
                         )
-                        self.logger.warning(f"Fell back to minimal insert for {msg_id}")
+                        self.logger.warning("Fell back to minimal insert for %s", msg_id)
                     except Exception as e2:
-                        self.logger.error(f"Even minimal insert failed: {e2}")
+                        self.logger.error("Even minimal insert failed: %s", e2)
 
             # Update contact info based on extracted data
             try:
                 self._enrich_contact_from_email(msg_id, contact)
             except Exception as e:
-                self.logger.warning(f"Error enriching contact from email: {e}")
+                self.logger.warning("Error enriching contact from email: %s", e)
 
         except Exception as e:
             self.logger.error(
-                f"Error storing email analysis for {msg_id}: {e}", exc_info=True,
+                "Error storing email analysis for %s: %s", msg_id, e, exc_info=True,
             )
 
     def _update_timestamp_fields(
