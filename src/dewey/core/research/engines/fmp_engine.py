@@ -50,3 +50,16 @@ class FMPEngine(BaseScript):
 
         # For now, just return a dummy value
         return {"status": "success", "endpoint": endpoint}
+
+    def execute(self) -> None:
+        """Executes the FMP engine's data retrieval process."""
+        self.logger.info("Starting FMP Engine execution...")
+
+        api_key = self.get_config_value("api_key")
+        if not api_key:
+            self.logger.error("FMP API key not found in configuration.")
+            return
+
+        self.logger.info(f"FMP API Key: {api_key}")
+
+        self.logger.info("FMP Engine execution finished.")
