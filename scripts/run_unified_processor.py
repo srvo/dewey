@@ -2,11 +2,10 @@
 
 """Run the unified email processor that handles Gmail sync and contact enrichment."""
 
-import os
-import sys
-import signal
 import argparse
 import logging
+import signal
+import sys
 from pathlib import Path
 
 # Set up project paths
@@ -49,10 +48,10 @@ def main():
     # Set up argument parsing
     parser = argparse.ArgumentParser(description="Run the Unified Email Processor")
     parser.add_argument(
-        "--batch-size", type=int, help="Number of emails to process in each batch"
+        "--batch-size", type=int, help="Number of emails to process in each batch",
     )
     parser.add_argument(
-        "--max-emails", type=int, help="Maximum number of emails to process"
+        "--max-emails", type=int, help="Maximum number of emails to process",
     )
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
     args = parser.parse_args()
@@ -67,7 +66,7 @@ def main():
         # Setup graceful exit handler for the wrapper script
         def signal_handler(sig, frame):
             logger.info(
-                "Received interrupt signal in wrapper, forwarding to processor..."
+                "Received interrupt signal in wrapper, forwarding to processor...",
             )
             # The processor will handle the actual shutdown
 
@@ -77,7 +76,7 @@ def main():
 
         logger.info("🔄 Starting unified email processor...")
         logger.info(
-            "✨ This process will sync new emails, extract contacts, and calculate priorities"
+            "✨ This process will sync new emails, extract contacts, and calculate priorities",
         )
         logger.info("ℹ️ Use Ctrl+C to gracefully exit at any time")
 

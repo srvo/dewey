@@ -64,7 +64,7 @@ def run_processor(batch_size=None, max_emails=None, debug=False):
         processor.execute()
 
     except Exception as e:
-        logging.error(f"Error initializing or running UnifiedEmailProcessor: {e}")
+        logging.exception(f"Error initializing or running UnifiedEmailProcessor: {e}")
         import traceback
 
         traceback.print_exc()
@@ -75,10 +75,10 @@ def main():
     """Main entry point for the script."""
     parser = argparse.ArgumentParser(description="Run the Unified Email Processor")
     parser.add_argument(
-        "--batch-size", type=int, help="Number of emails to process in each batch"
+        "--batch-size", type=int, help="Number of emails to process in each batch",
     )
     parser.add_argument(
-        "--max-emails", type=int, help="Maximum number of emails to process"
+        "--max-emails", type=int, help="Maximum number of emails to process",
     )
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
     args = parser.parse_args()

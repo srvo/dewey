@@ -4,7 +4,7 @@ import sys
 from datetime import datetime, timedelta
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 import yaml
 
@@ -26,16 +26,18 @@ def load_config() -> dict[str, Any]:
 
 
 def setup_logging(
-    name: str, log_dir: str | None = None, config: dict[str, Any] | None = None
+    name: str, log_dir: str | None = None, config: dict[str, Any] | None = None,
 ) -> logging.Logger:
     """Set up logging with configuration from dewey.yaml.
 
     Args:
+    ----
         name: Name of the logger (typically __name__ or script name)
         log_dir: Optional override for log directory
         config: Optional override for config (for testing)
 
     Returns:
+    -------
         Configured logger instance
 
     """
@@ -55,7 +57,7 @@ def setup_logging(
     # Create formatter
     formatter = logging.Formatter(
         fmt=log_config.get(
-            "format", "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+            "format", "%(asctime)s - %(levelname)s - %(name)s - %(message)s",
         ),
         datefmt=log_config.get("datefmt", "%Y-%m-%d %H:%M:%S"),
     )
@@ -104,10 +106,12 @@ def get_logger(name: str, log_dir: str | None = None) -> logging.Logger:
     This is the main entry point for getting a logger in the Dewey project.
 
     Args:
+    ----
         name: Name of the logger (typically __name__ or script name)
         log_dir: Optional override for log directory
 
     Returns:
+    -------
         Configured logger instance
 
     """
@@ -123,20 +127,19 @@ def _create_rotating_handler(
     """Create a rotating file handler with specified parameters.
 
     Args:
+    ----
         log_file: Path to the log file
         maxBytes: Maximum size of log file before rotating (default: 10MB)
         backupCount: Number of backup files to keep (default: 5)
         formatter: Formatter to use for log messages
 
     Returns:
+    -------
         Configured RotatingFileHandler
 
     """
     handler = RotatingFileHandler(
-        log_file,
-        maxBytes=maxBytes,
-        backupCount=backupCount,
-        encoding="utf-8",
+        log_file, maxBytes=maxBytes, backupCount=backupCount, encoding="utf-8",
     )
 
     if formatter:
@@ -146,11 +149,12 @@ def _create_rotating_handler(
 
 
 def _cleanup_old_logs(
-    log_dir: Path, retention_days: int, logger: logging.Logger
+    log_dir: Path, retention_days: int, logger: logging.Logger,
 ) -> None:
     """Delete log files older than retention_days.
 
     Args:
+    ----
         log_dir: Directory containing log files
         retention_days: Number of days to keep log files
         logger: Logger instance for reporting cleanup actions
@@ -178,6 +182,7 @@ def configure_logging(config: dict) -> None:
     requiring a BaseScript instance.
 
     Args:
+    ----
         config: A dictionary containing logging configuration options
 
     """
@@ -185,7 +190,7 @@ def configure_logging(config: dict) -> None:
     logger.setLevel(config.get("level", logging.INFO))
 
     formatter = logging.Formatter(
-        config.get("format", "%(asctime)s - %(levelname)s - %(message)s")
+        config.get("format", "%(asctime)s - %(levelname)s - %(message)s"),
     )
 
     # Console handler
