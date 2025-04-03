@@ -15,6 +15,7 @@ class ResearchWorkflow(BaseScript):
         """Initializes the ResearchWorkflow.
 
         Args:
+        ----
             name: Name of the workflow.
             description: Description of the workflow.
 
@@ -30,10 +31,12 @@ class ResearchWorkflow(BaseScript):
         """Retrieves a configuration value using the base script method.
 
         Args:
+        ----
             key: The configuration key to retrieve.
             default: The default value to return if the key is not found.
 
         Returns:
+        -------
             The configuration value, or the default if not found.
 
         """

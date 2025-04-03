@@ -33,9 +33,9 @@ def _expand_env_vars(config: Any) -> Any:
     """Recursively expand environment variables in config values."""
     if isinstance(config, dict):
         return {k: _expand_env_vars(v) for k, v in config.items()}
-    elif isinstance(config, list):
+    if isinstance(config, list):
         return [_expand_env_vars(v) for v in config]
-    elif isinstance(config, str) and config.startswith("${") and config.endswith("}"):
+    if isinstance(config, str) and config.startswith("${") and config.endswith("}"):
         var_name = config[2:-1]
         return os.getenv(var_name, "")
     return config
@@ -69,6 +69,7 @@ class ConfigManager(BaseScript):
         """Initializes the ConfigManager.
 
         Args:
+        ----
             config_section: The section in the configuration file to use.
             db_connection: An optional database connection to use.  Defaults to None, which will create a connection.
             motherduck_connection: An optional MotherDuck connection to use. Defaults to None, which will create a connection.
@@ -123,10 +124,12 @@ class ConfigManager(BaseScript):
         """Retrieves a configuration value.
 
         Args:
+        ----
             key: The key of the configuration value to retrieve.
             default: The default value to return if the key is not found.
 
         Returns:
+        -------
             The configuration value, or the default value if the key is not found.
 
         """

@@ -7,9 +7,9 @@ class DocsModule(BaseScript):
     """A module for managing documentation tasks within Dewey's CRM.
 
     This module inherits from BaseScript and provides a standardized
-    structure for documentation-related scripts, including configuration
-    loading, logging, and a `run` method to execute the script's
-    primary logic.
+    structure for documentation-related scripts, including
+    configuration loading, logging, and a `run` method to execute
+    the script's primary logic.
     """
 
     def __init__(
@@ -20,6 +20,7 @@ class DocsModule(BaseScript):
         """Initializes the DocsModule.
 
         Args:
+        ----
             name: The name of the module.
             description: A description of the module.
 
@@ -40,7 +41,7 @@ class DocsModule(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 
@@ -48,10 +49,12 @@ class DocsModule(BaseScript):
         """Retrieves a configuration value associated with the given key.
 
         Args:
+        ----
             key: The key of the configuration value to retrieve.
             default: The default value to return if the key is not found.
 
         Returns:
+        -------
             The configuration value, or the default value if the key is not found.
 
         """

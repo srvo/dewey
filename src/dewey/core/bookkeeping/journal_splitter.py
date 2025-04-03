@@ -2,7 +2,7 @@
 
 import os
 from pathlib import Path
-from typing import IO, Dict, List, Protocol
+from typing import IO, Protocol
 
 from dewey.core.base_script import BaseScript
 
@@ -13,7 +13,7 @@ class FileSystemInterface(Protocol):
     def open(self, path: str, mode: str = "r") -> IO: ...
 
     def mkdir(
-        self, path: str, parents: bool = False, exist_ok: bool = False
+        self, path: str, parents: bool = False, exist_ok: bool = False,
     ) -> None: ...
 
     def basename(self, path: str) -> str: ...
@@ -49,10 +49,12 @@ class ConfigInterface(Protocol):
 
 
 class JournalSplitter(BaseScript):
-    """Splits a journal file into separate files by year."""
+    """
+    Splits a journal file into separate files by year.
+    """
 
     def __init__(
-        self, file_system: FileSystemInterface = None, config: ConfigInterface = None
+        self, file_system: FileSystemInterface = None, config: ConfigInterface = None,
     ) -> None:
         """Initializes the JournalSplitter."""
         super().__init__(config_section="bookkeeping")
@@ -78,10 +80,12 @@ class JournalSplitter(BaseScript):
         """Split a journal file into separate files by year.
 
         Args:
+        ----
             input_file: Path to the input journal file.
             output_dir: Path to the output directory.
 
         Returns:
+        -------
             None
 
         """
@@ -109,7 +113,7 @@ class JournalSplitter(BaseScript):
                                 f"{self.file_system.basename(input_file).replace('.journal', '')}_{current_year}.journal",
                             )
                             files[current_year] = self.file_system.open(
-                                output_file, "w"
+                                output_file, "w",
                             )
                         files[current_year].write("".join(current_transaction))
 
