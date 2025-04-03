@@ -1,4 +1,9 @@
 """Module for port modules within Dewey."""
+"""
+Dewey Research Port Module.
+
+This module provides functionality for managing port modules within Dewey.
+"""
 from typing import Any
 
 from dewey.core.base_script import BaseScript

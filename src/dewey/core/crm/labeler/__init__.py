@@ -1,4 +1,10 @@
 """Module for managing label-related tasks within Dewey's CRM."""
+"""
+Dewey CRM Labeler Module.
+
+This module provides functionality for managing label-related tasks
+within Dewey's CRM.
+"""
 from typing import Any
 
 from dewey.core.base_script import BaseScript

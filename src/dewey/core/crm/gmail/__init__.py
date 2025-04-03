@@ -1,4 +1,10 @@
 """Module for managing Gmail-related tasks within Dewey."""
+"""
+Dewey CRM Gmail Module.
+
+This module provides functionality for managing Gmail-related tasks
+within Dewey.
+"""
 from typing import Any
 
 from dewey.core.base_script import BaseScript

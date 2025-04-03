@@ -1,4 +1,10 @@
 """Module for managing documentation tasks within Dewey's automation scripts."""
+"""
+Dewey Automation Docs Module.
+
+This module provides functionality for managing documentation tasks
+within Dewey's automation scripts.
+"""
 from typing import Any, Protocol
 
 from dewey.core.base_script import BaseScript
