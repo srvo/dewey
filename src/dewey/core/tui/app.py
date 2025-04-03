@@ -385,6 +385,14 @@ class TUIApp(BaseScript):
         super()._cleanup()
         self.logger.info("TUI application cleanup complete")
 
+    def execute(self) -> None:
+        """Execute the TUI application.
+
+        This method initializes and runs the Textual application.
+        """
+        self.logger.info("Executing Dewey TUI application via BaseScript")
+        self.run()
+
 
 def run() -> None:
     """Run the TUI application."""
