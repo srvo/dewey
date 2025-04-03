@@ -1,4 +1,5 @@
 from dewey.core.base_script import BaseScript
+from duckduckgo_search import ddg
 
 
 class DuckDuckGo(BaseScript):
@@ -32,3 +33,16 @@ class DuckDuckGo(BaseScript):
         # Implement your DuckDuckGo search logic here
         # This is just a placeholder
         return f"DuckDuckGo search results for: {query}"
+
+    def execute(self) -> None:
+        """Executes the DuckDuckGo search and logs the results."""
+        query = self.get_config_value("query", "default_query")
+        max_results = self.get_config_value("max_results", 5)
+
+        self.logger.info(f"Executing DuckDuckGo search for: {query}")
+
+        try:
+            results = ddg(query, max_results=max_results)
+            self.logger.info(f"DuckDuckGo search results: {results}")
+        except Exception as e:
+            self.logger.error(f"Error during DuckDuckGo search: {e}")
