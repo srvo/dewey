@@ -57,7 +57,7 @@ class DocsModule(BaseScript):
 
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
-        self._logger.warning(
+        self.logger.warning(
             "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
