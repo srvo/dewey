@@ -33,7 +33,7 @@ class CrmCataloger(BaseScript):
             enable_llm=True,
         )
 
-    def run(self) -> None:
+    def execute(self) -> None:
         """Executes the CRM cataloging process.
 
         This method contains the main logic for cataloging CRM data,
@@ -86,3 +86,11 @@ class CrmCataloger(BaseScript):
                 f"Error during CRM cataloging process: {e}", exc_info=True
             )
             raise
+
+    def run(self) -> None:
+        """Legacy method for backward compatibility.
+
+        New scripts should implement execute() instead of run().
+        This method will be deprecated in a future version.
+        """
+        super().run()
