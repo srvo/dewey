@@ -76,6 +76,15 @@ class ModuleScreen(BaseScript, Screen):
         """Refresh screen content."""
         self.update_content()
 
+    def execute(self) -> None:
+        """Execute the module screen.
+
+        This is a base class and should be overridden in subclasses.
+        """
+        self.logger.info(
+            "ModuleScreen.execute() called. This is a base class and should be overridden."
+        )
+
 
 class ResearchScreen(ModuleScreen):
     """Research module screen."""
