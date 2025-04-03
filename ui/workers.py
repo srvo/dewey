@@ -73,3 +73,7 @@ class Workers(BaseScript):
         self.logger.debug(f"Some method called with arg: {arg}")
         some_other_config = self.get_config_value("some_other_config", 123)
         self.logger.info(f"Some other config: {some_other_config}")
+
+    def execute(self) -> None:
+        """Executes the worker's main functionality."""
+        self.run()
