@@ -284,3 +284,12 @@ class EventManager(BaseScript):
 
         """
         self.logger.exception(message)
+
+    def execute(self) -> None:
+        """Executes the event saving and logging process.
+
+        This method saves the stored events and logs a summary of the
+        events that were processed.
+        """
+        self.save()
+        self.logger.info(f"Request {self.request_id}: Processed {len(self._events)} events.")
