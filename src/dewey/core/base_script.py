@@ -302,7 +302,7 @@ class BaseScript(ABC):
         This method will be deprecated in a future version.
         """
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead.",
+            "Using deprecated run() method. Update to use execute() instead."
         )
         try:
             self.logger.info("Starting execution of %s", self.name)
