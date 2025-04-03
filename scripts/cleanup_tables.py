@@ -27,7 +27,7 @@ class CleanupTables(BaseScript):
         return parser
 
     def should_delete_table(self, table_name: str) -> bool:
-    """
+        """
         Determine if a table should be deleted based on patterns.
 
         Args:
@@ -38,7 +38,7 @@ class CleanupTables(BaseScript):
         --------
             True if the table should be deleted, False otherwise
 
-    """
+        """
         # Never delete consolidated tables
         if table_name.endswith("_consolidated"):
             return False
