@@ -106,7 +106,7 @@ class PathFinder(cst.CSTVisitor):
                 self.path_usages.append(node)
 
 def main():
-"""Execute main functions to find non-compliant files."""
+    """Execute main functions to find non-compliant files."""
     # Get the src directory
     src_dir = Path('src')
     if not src_dir.exists():
