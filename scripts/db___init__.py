@@ -30,7 +30,7 @@ class DatabaseModule(BaseScript):
         # Example of accessing a configuration value
         database_url = self.get_config_value("database_url")
         if database_url:
-            self.logger.info(f"Using database URL: {database_url}")
+            self.logger.info("Using database URL: %s", database_url)
         else:
             self.logger.warning("Database URL not configured.")
 
