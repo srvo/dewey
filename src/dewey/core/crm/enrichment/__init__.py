@@ -1,3 +1,4 @@
+"""Module for managing enrichment tasks within Dewey's CRM."""
 import logging
 from typing import Any
 

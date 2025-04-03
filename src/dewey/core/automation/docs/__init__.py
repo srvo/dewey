@@ -1,5 +1,4 @@
-"""
-Module for managing documentation tasks within Dewey's automation scripts.
+"""Module for managing documentation tasks within Dewey's automation scripts.
 
 This module provides a standardized structure for documentation-related scripts,
 including configuration loading, logging, and a `run` method to execute the
