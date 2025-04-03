@@ -1,4 +1,9 @@
-"""Module for managing database maintenance tasks within Dewey."""
+"""Module for managing database maintenance tasks within Dewey.
+
+This module provides a standardized structure for database maintenance scripts,
+including configuration loading, logging, and a `run` method to execute the
+script's primary logic.
+"""
 from typing import Any
 
 from dewey.core.base_script import BaseScript

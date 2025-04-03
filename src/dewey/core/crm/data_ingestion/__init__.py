@@ -1,4 +1,9 @@
-"""Module for managing data ingestion tasks within Dewey's CRM."""
+"""Module for managing data ingestion tasks within Dewey's CRM.
+
+This module provides a standardized structure for data ingestion scripts,
+including configuration loading, logging, and a `run` method to execute the
+script's primary logic.
+"""
 from typing import Any
 
 from dewey.core.base_script import BaseScript

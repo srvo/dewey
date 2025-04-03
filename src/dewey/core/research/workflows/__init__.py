@@ -1,4 +1,9 @@
-"""Base class for research workflows within Dewey."""
+"""Base class for research workflows within Dewey.
+
+This module provides a standardized structure for research scripts,
+including configuration loading, logging, and a `run` method to
+execute the script's primary logic.
+"""
 from typing import Any
 
 from dewey.core.base_script import BaseScript

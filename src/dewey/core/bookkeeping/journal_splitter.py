@@ -1,4 +1,8 @@
-"""Splits a journal file into separate files by year."""
+"""Splits a journal file into separate files by year.
+
+This script splits a journal file into separate files based on the year
+of the transactions.
+"""
 #!/usr/bin/env python3
 
 import os

@@ -1,4 +1,9 @@
-"""Handles journal file writing and management."""
+"""Handles journal file writing and management.
+
+This module provides classes and functions for writing and managing journal files,
+including functionalities for backing up existing files, handling processed hashes,
+and logging classification decisions.
+"""
 import shutil
 from collections import defaultdict
 from collections.abc import Callable
