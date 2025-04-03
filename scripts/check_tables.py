@@ -83,7 +83,7 @@ def analyze_database(conn, db_name):
 
 
 def analyze_tables():
-"""Analyze tables in both local and MotherDuck databases."""
+    """Analyze tables in both local and MotherDuck databases."""
     results = {"timestamp": datetime.now().isoformat(), "databases": {}}
 
     # Load environment variables
