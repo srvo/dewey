@@ -1,359 +1,72 @@
+# Dewey Configuration
+
 core:
-  backup_strategy: 3-2-1
-  conventions_document: /Users/srvo/dewey/CONVENTIONS.md
-  default_timezone: UTC
-  project_root: /Users/srvo/dewey
-  # ABSOLUTE REQUIREMENT - All scripts must inherit from this base class
-  base_script: /Users/srvo/dewey/src/dewey/core/base_script.py
-  script_enforcement:
-    validation_hooks:
-      - pre-commit
-      - pre-push
-      - ci-pipeline
-    failure_action: hard-fail
+  logging:
+    level: INFO
+    format: "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+    file: ${LOG_FILE:-logs/dewey.log}
+    retention: 30  # days
 
-formatting:
-  formatters:
-  - command:
-    - ruff
-    - check
-    - --fix
-    - --unsafe-fixes
-    - --select
-    - ALL
-  - command:
-    - black
-  lint_timeout: 120
+  database:
+    type: postgres  # Indicates we're using PostgreSQL
+    postgres:
+      host: localhost
+      port: 5432
+      dbname: dewey_db
+      user: srvo
+      password: ${DB_PASSWORD}
+      sslmode: prefer
+      # Connection pool settings
+      pool_min: 5
+      pool_max: 10
+      # Retry settings
+      connect_timeout: 10
+      keepalives_idle: 30
+      max_retries: 3
+      retry_delay: 1
 
-paths:
-  log_dir: logs
-  db_path: md:dewey
-  credentials_dir: config/credentials
-  prefect_flows_dir: /var/lib/dokku/data/storage/prefect/flows
-  prefect_configs_dir: /var/lib/dokku/data/storage/prefect/configs
-  # Data directories
-  data_dir: data
-  output_dir: output
-  cache_dir: .cache
-  temp_dir: /tmp/dewey
-  # Research paths
-  research_data: data/research
-  company_analysis: data/research/companies
-  financial_analysis: data/research/financial
-  controversy_data: data/research/controversy
-  # CRM paths
-  crm_data: data/crm
-  email_data: data/crm/email
-  contact_data: data/crm/contacts
-  enrichment_data: data/crm/enrichment
-  # Bookkeeping paths
-  ledger_dir: data/bookkeeping/ledger
-  journal_dir: data/bookkeeping/journals
-  forecast_dir: data/bookkeeping/forecasts
-  transaction_dir: data/bookkeeping/transactions
-  # Import/Export paths
-  import_dir: data/imports
-  export_dir: data/exports
-  backup_dir: data/backups
-  archive_dir: data/archive
-
-settings:
-  deepinfra_api_url: https://api.deepinfra.com/v1/openai/chat/completions
-  deepinfra_api_key: ${DEEPINFRA_API_KEY}
-  default_db: postgres
-  default_llm: deepseek-ai/DeepSeek-V3
-  gmail_scopes:
-    - https://www.googleapis.com/auth/gmail.readonly
-    - https://www.googleapis.com/auth/gmail.modify
-    - https://www.googleapis.com/auth/gmail.metadata
-    - https://mail.google.com/
-  gmail_credentials:
-    client_id: ${GMAIL_CLIENT_ID}
-    client_secret: ${GMAIL_CLIENT_SECRET}
-    token: ${GMAIL_TOKEN}
-    refresh_token: ${GMAIL_REFRESH_TOKEN}
-  prefect_api_base: https://flow.sloane-collective.com/api
-  # API endpoints and keys
-  github_api_url: https://api.github.com/graphql
-  github_token: ${GITHUB_TOKEN}
-  sec_api_url: https://data.sec.gov/api/xbrl/frames
-  sec_api_key: ${SEC_API_KEY}
-  # Database settings
-  db_url: ${DB_URL}
-  db_port: ${DB_PORT:-5432}
-  db_name: ${DB_NAME:-dewey}
-  db_user: ${DB_USER:-dewey_user}
-  db_password: ${DB_PASSWORD}
-  db_timeout: ${DB_TIMEOUT:-30}
-  # Email settings
-  smtp_host: smtp.gmail.com
-  smtp_port: 587
-  email_username: ${EMAIL_USERNAME}
-  email_password: ${GMAIL_APP_PASSWORD}
-  email_timeout: 30
-  # Analysis settings
-  analysis_batch_size: 100
-  analysis_timeout: 300
-  max_retries: 3
-  retry_delay: 5
-  # CRM settings
-  crm_api_url: ${CRM_API_URL}
-  crm_api_key: ${CRM_API_KEY}
-  enrichment_api_url: ${ENRICHMENT_API_URL}
-  enrichment_api_key: ${ENRICHMENT_API_KEY}
-
-logging:
-  level: INFO
-  format: "%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s"
-  root_dir: logs
-  retention_days: 3  # Keep logs for 3 days
-  maxBytes: 10485760  # 10MB
-  backupCount: 3  # Keep 3 backups
-  archive_dir: logs/archived  # Separate archive directory
-  subdirectories:
-    app: app
-    tests: tests
-  handlers:
-    - type: file
-      class: logging.handlers.RotatingFileHandler
-      filename: ${logging.root_dir}/${logging.subdirectories.app}/app.log
-      maxBytes: 10485760
-      backupCount: 5
-    - type: console
-      class: logging.StreamHandler
-      stream: ext://sys.stdout
+    # Backup settings
+    backup:
+      enabled: true
+      directory: ${BACKUP_DIR:-backups}
+      retention_days: 30
+      schedule: "0 2 * * *"  # Cron expression for daily backup at 2 AM
 
 llm:
-  client: deepinfra
-  default_provider: deepinfra
-  providers:
-    deepinfra:
-      api_key: ${DEEPINFRA_API_KEY}
-      default_model: google/gemini-2.0-flash-001
-      fallback_models:
-      - google/gemini-2.0-pro
-      - google/gemini-2.0-pro-vision
-      api_base: https://api.deepinfra.com/v1/openai
-      timeout: 30.0
-    openai:
-      api_key: ${OPENAI_API_KEY}
-      default_model: gpt-4-turbo
-      fallback_models:
-      - gpt-3.5-turbo
-      api_base: https://api.openai.com/v1
-      timeout: 30.0
-    anthropic:
-      api_key: ${ANTHROPIC_API_KEY}
-      default_model: claude-3-opus
-      fallback_models:
-      - claude-3-sonnet
-      - claude-3-haiku
-      api_base: https://api.anthropic.com
-      timeout: 45.0
-  agents:
-    communication:
-      analysis_model: "gpt-4-turbo"
-      max_communications: 50
-      temperature: 0.3
+  provider: openai  # or anthropic, claude, etc.
+  model: gpt-3.5-turbo
+  api_key: ${OPENAI_API_KEY}
+  timeout: 60
+  max_tokens: 2000
+  temperature: 0.7
 
-agents:
-  # Common agent configuration
-  defaults:
-    enabled: true
-    version: 1.0
-    logging:
-      level: INFO
-      format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-
-  # Agent-specific configurations
-  client_advocacy:
-    enabled: true
-    version: 1.0
-    client_rules:
-      priority_levels: [1-5]
-      response_time:
-        critical: 1h
-        high: 4h
-        normal: 24h
-
-  data_analysis:
-    enabled: true
-    version: 1.0
-    schema_rules:
-      default_types:
-        string: VARCHAR(255)
-        number: DECIMAL(18,4)
-      naming_conventions:
-        table: snake_case
-        column: camelCase
-
-  agent_creation:
-    enabled: true
-    version: 1.0
-    templates:
-      base_agent: "src/dewey/llm/templates/base_agent.j2"
-      function_template: "src/dewey/llm/templates/function.j2"
-    gemini:
-      api_key: ${GEMINI_API_KEY}
-      default_model: gemini-2.0-flash
-      model_limits:
-        gemini-2.0-flash:
-          rpm: 15
-          tpm: 1000000
-
-pipeline: null
-test_database_config:
-  local_db_path: ${DEWEY_LOCAL_DB:-/Users/srvo/dewey/dewey.duckdb}
-  motherduck_db: ${DEWEY_MOTHERDUCK_DB:-md:dewey}
-  pool_size: ${DEWEY_DB_POOL_SIZE:-1}
-  max_retries: ${DEWEY_DB_MAX_RETRIES:-3}
-  retry_delay: ${DEWEY_DB_RETRY_DELAY:-1}
-  sync_interval: ${DEWEY_DB_SYNC_INTERVAL:-21600}
-  max_sync_age: ${DEWEY_DB_MAX_SYNC_AGE:-604800}
-  backup_dir: ${DEWEY_BACKUP_DIR:-/Users/srvo/dewey/backups}
-  backup_retention_days: ${DEWEY_BACKUP_RETENTION_DAYS:-7}
-prd:
-  base_template:
-    assumptions:
-    - All non-client modules assume single-stakeholder (Sloane Ortel) usage
-    - Data security requirements follow FINRA/SEC regulations
-    - Python 3.11+ runtime environment
-    evaluation_metrics:
-    - Code maintainability (cyclomatic complexity < 15)
-    - LLM response latency < 2.5s
-    - Data processing throughput > 100MB/s
-    market_assessment:
-      client_facing: High-net-worth individuals and institutional investors
-      default: Internal knowledge management and client-facing financial analysis
-        systems
-    metadata:
-      author: Sloane Ortel
-      revision_policy: Bi-weekly review
-    stakeholders:
-      client_modules:
-      - name: Client Services Team
-        role: Client Interface
-      default:
-      - contact: srvo@domain.com
-        name: Sloane Ortel
-        role: Primary Stakeholder
-    timelines:
-      deployment: 0.5
-      development: 3
-      discovery: 2
-      testing: 1
-  tracked_prds:
-  - /Users/srvo/dewey/src/dewey/llm/docs/llm_Product_Requirements_Document.yaml
-  - docs/llm_Product_Requirements_Document.yaml
-  - docs/llm_Product_Requirements_Document.md
-  - /Users/srvo/dewey/tests/docs/tests_Product_Requirements_Document.yaml
-test_config:
-  local_db_path: ':memory:'
-  motherduck_db: 'md:dewey_test'
-  motherduck_token: 'test_token'
-  pool_size: 2
-  max_retries: 2
-  retry_delay: 0.1
-  sync_interval: 60
-  max_sync_age: 3600
-  backup_dir: '/tmp/dewey_test_backups'
-  backup_retention_days: 1
-regex_patterns:
-  contact_info:
-    company: (?i)(?:at|@)\s*([A-Za-z0-9][A-Za-z0-9\s&-]+(?:\s+(?:LLC|Inc|Ltd|Limited|Corp|Corporation|Capital|Partners|Group|Advisory|Consulting))?)
-    job_title: (?i)(CEO|CTO|CFO|Director|Manager|Analyst|Associate|Partner|VP|President|Founder|Co-founder|Principal|Advisor|Consultant)
-    linkedin: LinkedIn:\s*(linkedin\.com/in/[a-zA-Z0-9_-]+)
-    name_email: ([^<\n]*?)\s*<([^>]+)>
-    phone: Phone:\s*(\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})
-  opportunity:
-    cancellation: \bcancel\b|\bneed to cancel\b|\bneed to reschedule\b
-    demo: \bdemo\b|\bschedule a demo\b
-    publicity: \bpublicity opportunity\b|\bmedia\b
-    speaking: \bspeaking opportunity\b|\bpresentation\b
-    submission: \bpaper submission\b|\bsubmit a paper\b
-vector_stores:
-  code_consolidation:
-    collection_name: code_functions
-    embedding_model: sentence-transformers/all-MiniLM-L6-v2
-    hnsw_config:
-      M: 24
-      construction_ef: 300
-      search_ef: 200
-      space: cosine
-    persist_dir: .chroma_cache
-    similarity_threshold: 0.85
-  document_store:
-    collection_name: document_chunks
-    embedding_model: all-mpnet-base-v2
-    hnsw_config:
-      M: 32
-      construction_ef: 500
-      search_ef: 300
-      space: cosine
-    persist_dir: .chroma_docs
-
-utils:
-  example_config: "example_value_in_config"
-
-database:
-  init_sql: |
-    CREATE TABLE IF NOT EXISTS example_table (
-        id INTEGER PRIMARY KEY,
-        value INTEGER
-    );
-    INSERT INTO example_table (id, value) VALUES (1, 1) ON CONFLICT (id) DO NOTHING;
-
-api_manager: {}
-
-crm:
-  gmail:
-    sync_interval_seconds: 300
-    max_results_per_sync: 1000
-    # Add OAuth2 configuration
-    client_secrets_path: ${CRM_GMAIL_CREDENTIALS_PATH:-config/credentials/gmail_credentials.json}
-    token_path: ${CRM_GMAIL_TOKEN_PATH:-config/credentials/gmail_token.json}
-    scopes:
-      - https://www.googleapis.com/auth/gmail.readonly
-      - https://www.googleapis.com/auth/gmail.modify
-      - https://www.googleapis.com/auth/gmail.metadata
-    # Existing regex patterns remain unchanged
-    regex_patterns:
-      contact_info:
-        phone: '(?:Phone|Tel|Mobile|Cell)?\s*[:.]?\s*((?:\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})'
-        email: '[\w\.-]+@[\w\.-]+\.\w+'
-        title: '(?:^|\n)([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s*(?:\||,|\n)'
-        company: '(?:@|at)\s*([A-Z][A-Za-z0-9&]+)(?:\s|$|\n)'
-        linkedin: 'linkedin\.com/in/[\w-]+'
-        twitter: 'twitter\.com/[\w-]+'
-  enrichment:
+pipelines:
+  data_processing:
     batch_size: 100
-    confidence_threshold: 0.7
-    priority_weights:
-      is_client: 0.5
-      title_match: 0.2
-      company_match: 0.1
-      urgent_keywords: 0.2
-      opportunity_keywords: 0.2
+    timeout: 300
+    concurrent_workers: 4
 
-research_engines:
-  tavily:
-    api_key: ${TAVILY_API_KEY}
-    timeout: 30
-  brave:
-    api_key: ${BRAVE_API_KEY}
-    timeout: 30
-  fred:
-    api_key: ${FRED_API_KEY}
-    timeout: 30
-  exa:
-    api_key: ${EXA_API_KEY}
-    timeout: 30
-  fmp:
-    api_key: ${FMP_API_KEY}
-    timeout: 30
-  polygon:
-    api_key: ${POLYGON_API_KEY}
-    timeout: 30
-  apitube:
-    api_key: ${APITUBE_API_KEY}
-    timeout: 30
+# Application-specific settings
+app:
+  server:
+    host: 0.0.0.0
+    port: 8000
+    debug: ${DEBUG:-false}
+
+  ui:
+    theme: light
+    language: en
+    refresh_interval: 60  # seconds
+
+# Module-specific configurations
+modules:
+  crm:
+    enabled: true
+    sync_interval: 3600  # seconds
+    max_contacts: 10000
+
+  bookkeeping:
+    enabled: true
+    tax_rate: 0.07
+    currency: USD
+    fiscal_year_start: "01-01"
