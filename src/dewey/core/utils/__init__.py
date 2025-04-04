@@ -1,11 +1,5 @@
-import logging
-from typing import Optional
-
-import yaml
-from dotenv import load_dotenv
-
 from dewey.core.base_script import BaseScript
-from dewey.llm.litellm_utils import quick_completion, initialize_client_from_env
+from dewey.llm.litellm_utils import quick_completion
 
 try:
     from dewey.core.db.connection import get_connection
@@ -16,14 +10,17 @@ except ImportError:
 
 
 class MyUtils(BaseScript):
-    """A comprehensive class for utility functions, including database connections,
+    """
+    A comprehensive class for utility functions, including database connections,
     LLM integrations, and configuration management.
     """
 
     def __init__(self, config_section: str | None = "utils") -> None:
-        """Initialize MyUtils with configuration and optional database/LLM.
+        """
+        Initialize MyUtils with configuration and optional database/LLM.
 
         Args:
+        ----
             config_section (Optional[str]): Section in dewey.yaml to load for
                 this script. Defaults to "utils".
 
@@ -44,7 +41,7 @@ class MyUtils(BaseScript):
             # Example usage of config, database, and LLM
             try:
                 example_config_value = self.get_config_value(
-                    "example_config", "default_value"
+                    "example_config", "default_value",
                 )
                 self.logger.info(f"Example config value: {example_config_value}")
             except Exception as e:
@@ -85,12 +82,15 @@ class MyUtils(BaseScript):
             self.logger.error(f"An error occurred: {e}", exc_info=True)
 
     def example_utility_function(self, input_data: str) -> str:
-        """An example utility function that processes input data.
+        """
+        An example utility function that processes input data.
 
         Args:
+        ----
             input_data (str): The input data to process.
 
         Returns:
+        -------
             str: The processed output data.
 
         """
