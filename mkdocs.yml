@@ -6,8 +6,8 @@ repo_name: srvo/dewey
 
 nav:
     - Home: index.md
-    - Dewey: /dewey/
-    - Documentation: /docs/
+    - Dewey: dewey/
+    - Documentation: docs/
 
 markdown_extensions:
     - pymdownx.tasklist:

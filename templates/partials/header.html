@@ -1,8 +1,8 @@
 <!-- Project Navigation Header -->
 <div class="md-header-nav__projects">
   <div class="md-header-nav__project-links">
-    <a href="/" class="md-header-nav__project-link{% if config.site_name == 'Ethical Capital' %} md-header-nav__project-link--active{% endif %}">Ethical Capital</a>
-    <a href="/dewey/" class="md-header-nav__project-link{% if config.site_name == 'Dewey' %} md-header-nav__project-link--active{% endif %}">Dewey</a>
-    <a href="/docs/" class="md-header-nav__project-link{% if config.site_name == 'Documentation' %} md-header-nav__project-link--active{% endif %}">Documentation</a>
+    <a href="{{ config.site_url }}" class="md-header-nav__project-link{% if config.site_name == 'Ethical Capital' %} md-header-nav__project-link--active{% endif %}">Ethical Capital</a>
+    <a href="{{ config.site_url }}dewey/" class="md-header-nav__project-link{% if config.site_name == 'Dewey' %} md-header-nav__project-link--active{% endif %}">Dewey</a>
+    <a href="{{ config.site_url }}docs/" class="md-header-nav__project-link{% if config.site_name == 'Documentation' %} md-header-nav__project-link--active{% endif %}">Documentation</a>
   </div>
 </div> 
