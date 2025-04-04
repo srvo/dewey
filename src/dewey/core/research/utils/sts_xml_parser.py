@@ -1,11 +1,11 @@
 import xml.etree.ElementTree as ET
-from typing import List, Optional
 
 from dewey.core.base_script import BaseScript
 
 
 class STSXmlParser(BaseScript):
-    """Parses STS XML files to extract relevant information.
+    """
+    Parses STS XML files to extract relevant information.
 
     This class inherits from BaseScript and utilizes its logging and
     configuration capabilities.
@@ -16,22 +16,27 @@ class STSXmlParser(BaseScript):
         super().__init__(config_section="sts_xml_parser")
 
     def run(self) -> None:
-        """Placeholder for the run method.
+        """
+        Placeholder for the run method.
 
         This method should contain the core logic of the script.
         """
         self.logger.info("STSXmlParser is running.")
 
     def parse_xml_file(self, xml_file_path: str) -> ET.Element | None:
-        """Parses an XML file and returns the root element.
+        """
+        Parses an XML file and returns the root element.
 
         Args:
+        ----
             xml_file_path: The path to the XML file.
 
         Returns:
+        -------
             The root element of the XML file, or None if parsing fails.
 
         Raises:
+        ------
             FileNotFoundError: If the XML file does not exist.
             ET.ParseError: If the XML file is not well-formed.
 
@@ -50,13 +55,16 @@ class STSXmlParser(BaseScript):
             raise
 
     def extract_text_from_element(self, element: ET.Element, xpath: str) -> str | None:
-        """Extracts text from an XML element using XPath.
+        """
+        Extracts text from an XML element using XPath.
 
         Args:
+        ----
             element: The XML element to extract from.
             xpath: The XPath expression to locate the desired element.
 
         Returns:
+        -------
             The text content of the element, or None if the element is not found.
 
         """
@@ -66,23 +74,25 @@ class STSXmlParser(BaseScript):
                 text = result.text
                 self.logger.debug(f"Extracted text from {xpath}: {text}")
                 return text
-            else:
-                self.logger.warning(f"Element not found for XPath: {xpath}")
-                return None
+            self.logger.warning(f"Element not found for XPath: {xpath}")
+            return None
         except Exception as e:
             self.logger.error(f"Error extracting text from XPath {xpath}: {e}")
             return None
 
     def extract_all_texts_from_element(
-        self, element: ET.Element, xpath: str
+        self, element: ET.Element, xpath: str,
     ) -> list[str]:
-        """Extracts all text elements from an XML element using XPath.
+        """
+        Extracts all text elements from an XML element using XPath.
 
         Args:
+        ----
             element: The XML element to extract from.
             xpath: The XPath expression to locate the desired elements.
 
         Returns:
+        -------
             A list of text contents of the elements.
 
         """
@@ -102,16 +112,19 @@ class STSXmlParser(BaseScript):
             return texts
 
     def get_element_attribute(
-        self, element: ET.Element, xpath: str, attribute: str
+        self, element: ET.Element, xpath: str, attribute: str,
     ) -> str | None:
-        """Gets the value of an attribute from an XML element using XPath.
+        """
+        Gets the value of an attribute from an XML element using XPath.
 
         Args:
+        ----
             element: The XML element to extract from.
             xpath: The XPath expression to locate the desired element.
             attribute: The name of the attribute to retrieve.
 
         Returns:
+        -------
             The value of the attribute, or None if the element or attribute is not found.
 
         """
@@ -120,15 +133,14 @@ class STSXmlParser(BaseScript):
             if result is not None:
                 value = result.get(attribute)
                 self.logger.debug(
-                    f"Extracted attribute {attribute} from {xpath}: {value}"
+                    f"Extracted attribute {attribute} from {xpath}: {value}",
                 )
                 return value
-            else:
-                self.logger.warning(f"Element not found for XPath: {xpath}")
-                return None
+            self.logger.warning(f"Element not found for XPath: {xpath}")
+            return None
         except Exception as e:
             self.logger.error(
-                f"Error extracting attribute {attribute} from XPath {xpath}: {e}"
+                f"Error extracting attribute {attribute} from XPath {xpath}: {e}",
             )
             return None
 
