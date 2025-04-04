@@ -1,13 +1,11 @@
-import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection
-from dewey.llm.llm_utils import LLMClient
 
 
 class EmailClassifier(BaseScript):
-    """A module for classifying emails.
+    """
+    A module for classifying emails.
 
     This module inherits from BaseScript and provides a standardized
     structure for email classification scripts, including configuration
@@ -23,9 +21,11 @@ class EmailClassifier(BaseScript):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        """Initializes the EmailClassifier.
+        """
+        Initializes the EmailClassifier.
 
         Args:
+        ----
             config_section: The section in the dewey.yaml config file to use for configuration.
             requires_db: Whether this script requires a database connection.
             enable_llm: Whether this script requires an LLM client.
@@ -42,7 +42,8 @@ class EmailClassifier(BaseScript):
         )
 
     def run(self) -> None:
-        """Executes the email classification process.
+        """
+        Executes the email classification process.
 
         This method retrieves the API key from the configuration, logs the start and
         completion of the email classification process, and includes placeholder logic
