@@ -6,13 +6,15 @@ import base64
 import json
 import os
 import sys
-from datetime import datetime, timezone
-from typing import Dict, List
+from datetime import UTC, datetime
 
 import duckdb
 import google.auth.exceptions
 import google.auth.transport.requests
 import requests
+from dewey.core.base_script import BaseScript
+from dewey.core.db.connection import get_connection
+from dewey.llm.llm_utils import call_llm
 from dotenv import load_dotenv
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import (
@@ -21,10 +23,6 @@ from google_auth_oauthlib.flow import (
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from openai import OpenAI
-
-from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import get_connection
-from dewey.llm.llm_utils import call_llm
 
 # Load environment variables from .env file
 load_dotenv(os.path.join(os.path.expanduser("~"), "crm", ".env"))
@@ -60,12 +58,15 @@ class EmailClassifier(BaseScript):
         self.REVIEW_LABEL = "1_For_Review"
 
     def get_gmail_service(self):
-        """Authenticates with the Gmail API and returns the service object.
+        """
+        Authenticates with the Gmail API and returns the service object.
 
-        Returns:
+        Returns
+        -------
             The Gmail service object.
 
-        Raises:
+        Raises
+        ------
             google.auth.exceptions.RefreshError: If the token refresh fails.
 
         """
@@ -83,7 +84,7 @@ class EmailClassifier(BaseScript):
                     return self.get_gmail_service()
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
-                    self.CREDENTIALS_FILE, self.SCOPES
+                    self.CREDENTIALS_FILE, self.SCOPES,
                 )
                 creds = flow.run_local_server(port=0)
             with open(self.TOKEN_FILE, "w", encoding="utf-8") as token:
@@ -93,17 +94,21 @@ class EmailClassifier(BaseScript):
         return service
 
     def get_message_body(self, service, user_id, msg_id):
-        """Retrieves the full message body.
+        """
+        Retrieves the full message body.
 
         Args:
+        ----
             service: The Gmail service object.
             user_id: The user ID.
             msg_id: The message ID.
 
         Returns:
+        -------
             The message body as a string.
 
         Raises:
+        ------
             HttpError: If an error occurs while retrieving the message.
 
         """
@@ -123,17 +128,17 @@ class EmailClassifier(BaseScript):
                     if "data" in part["body"]:
                         if part["mimeType"] == "text/html":
                             body = base64.urlsafe_b64decode(
-                                part["body"]["data"]
+                                part["body"]["data"],
                             ).decode("utf-8", "ignore")
                             break
-                        elif part["mimeType"] == "text/plain" and not body:
+                        if part["mimeType"] == "text/plain" and not body:
                             body = base64.urlsafe_b64decode(
-                                part["body"]["data"]
+                                part["body"]["data"],
                             ).decode("utf-8", "ignore")
                 return body
-            elif "body" in payload and "data" in payload["body"]:
+            if "body" in payload and "data" in payload["body"]:
                 return base64.urlsafe_b64decode(payload["body"]["data"]).decode(
-                    "utf-8", "ignore"
+                    "utf-8", "ignore",
                 )
 
             return ""
@@ -143,17 +148,20 @@ class EmailClassifier(BaseScript):
             return ""
 
     def analyze_email_with_deepinfra(
-        self, message_body: str, subject: str, from_header: str, prompt: str
+        self, message_body: str, subject: str, from_header: str, prompt: str,
     ) -> dict:
-        """Analyzes email content using the DeepInfra API.
+        """
+        Analyzes email content using the DeepInfra API.
 
         Args:
+        ----
             message_body: The email message body.
             subject: The email subject.
             from_header: The email from header.
             prompt: The prompt for the LLM.
 
         Returns:
+        -------
             A dictionary containing the analysis results.
 
         """
@@ -169,7 +177,7 @@ class EmailClassifier(BaseScript):
                 },
             ]
             result = call_llm(
-                self.llm_client, messages, response_format={"type": "json_object"}
+                self.llm_client, messages, response_format={"type": "json_object"},
             )
 
             # Validate required structure
@@ -186,33 +194,36 @@ class EmailClassifier(BaseScript):
             self.logger.debug("🔍 Analysis results for message:")
             self.logger.debug(f"   Priority: {result.get('priority', 'N/A')}")
             self.logger.debug(
-                f"   Scores: { {k: v['score'] for k, v in result['scores'].items()} }"
+                f"   Scores: { {k: v['score'] for k, v in result['scores'].items()} }",
             )
             self.logger.debug(
-                f"   Source: {result['metadata'].get('source', 'Unknown')}"
+                f"   Source: {result['metadata'].get('source', 'Unknown')}",
             )
 
             return result
 
         except requests.exceptions.RequestException as e:
-            self.logger.error(f"API Request Error: {str(e)}")
+            self.logger.error(f"API Request Error: {e!s}")
             if hasattr(e, "response") and e.response is not None:
                 self.logger.error(f"HTTP Status: {e.response.status_code}")
                 self.logger.error(
-                    f"Response Body: {e.response.text[:200]}..."
+                    f"Response Body: {e.response.text[:200]}...",
                 )  # Show first 200 chars
             return {}
         except Exception as e:
-            self.logger.error(f"Unexpected Error: {str(e)}")
+            self.logger.error(f"Unexpected Error: {e!s}")
             return {}
 
     def extract_message_parts(self, payload: dict) -> list[dict]:
-        """Recursively extract message parts from payload.
+        """
+        Recursively extract message parts from payload.
 
         Args:
+        ----
             payload: The message payload.
 
         Returns:
+        -------
             A list of message parts.
 
         """
@@ -233,12 +244,15 @@ class EmailClassifier(BaseScript):
         return _extract_part(payload)
 
     def extract_attachments(self, payload: dict) -> list[dict]:
-        """Extract attachment information from message parts.
+        """
+        Extract attachment information from message parts.
 
         Args:
+        ----
             payload: The message payload.
 
         Returns:
+        -------
             A list of attachment information.
 
         """
@@ -252,7 +266,7 @@ class EmailClassifier(BaseScript):
                         "filename": part.get("filename"),
                         "mimeType": part.get("mimeType"),
                         "size": part["body"].get("size"),
-                    }
+                    },
                 )
             if "parts" in part:
                 for p in part["parts"]:
@@ -262,12 +276,15 @@ class EmailClassifier(BaseScript):
         return attachments
 
     def _calculate_uncertainty(self, scores: dict) -> float:
-        """Calculate uncertainty as coefficient of variation of scores.
+        """
+        Calculate uncertainty as coefficient of variation of scores.
 
         Args:
+        ----
             scores: A dictionary of scores.
 
         Returns:
+        -------
             The uncertainty score.
 
         """
@@ -294,13 +311,16 @@ class EmailClassifier(BaseScript):
         return round(variance, 4)
 
     def calculate_priority(self, analysis_result: dict, preferences: dict) -> int:
-        """Calculates email priority.
+        """
+        Calculates email priority.
 
         Args:
+        ----
             analysis_result: The analysis result dictionary.
             preferences: The email preferences dictionary.
 
         Returns:
+        -------
             The calculated priority.
 
         """
@@ -334,7 +354,7 @@ class EmailClassifier(BaseScript):
                     return source["max_priority"]
 
         for newsletter_name, newsletter_details in preferences.get(
-            "newsletter_defaults", {}
+            "newsletter_defaults", {},
         ).items():
             for keyword in newsletter_details["keywords"]:
                 if (
@@ -355,13 +375,16 @@ class EmailClassifier(BaseScript):
         return priority
 
     def create_or_get_label_id(self, service, label_name: str) -> str:
-        """Creates/gets a label ID.
+        """
+        Creates/gets a label ID.
 
         Args:
+        ----
             service: The Gmail service object.
             label_name: The name of the label.
 
         Returns:
+        -------
             The label ID.
 
         """
@@ -391,9 +414,11 @@ class EmailClassifier(BaseScript):
         priority: int,
         message_full: dict,
     ):
-        """Stores analysis results in DuckDB using batch insertion.
+        """
+        Stores analysis results in DuckDB using batch insertion.
 
         Args:
+        ----
             msg_id: The message ID.
             subject: The email subject.
             from_address: The email from address.
@@ -411,35 +436,35 @@ class EmailClassifier(BaseScript):
                     message_full.get("threadId"),
                     subject,
                     from_address,
-                    datetime.now(timezone.utc).isoformat(),  # ISO format for timestamp
+                    datetime.now(UTC).isoformat(),  # ISO format for timestamp
                     json.dumps(analysis_result),
                     float(
                         analysis_result.get("scores", {})
                         .get("automation_score", {})
-                        .get("score", 0.0)
+                        .get("score", 0.0),
                     ),
                     float(
                         analysis_result.get("scores", {})
                         .get("content_value", {})
-                        .get("score", 0.0)
+                        .get("score", 0.0),
                     ),
                     float(
                         analysis_result.get("scores", {})
                         .get("human_interaction", {})
-                        .get("score", 0.0)
+                        .get("score", 0.0),
                     ),
                     float(
                         analysis_result.get("scores", {})
                         .get("time_value", {})
-                        .get("score", 0.0)
+                        .get("score", 0.0),
                     ),
                     float(
                         analysis_result.get("scores", {})
                         .get("business_impact", {})
-                        .get("score", 0.0)
+                        .get("score", 0.0),
                     ),
                     float(
-                        self._calculate_uncertainty(analysis_result.get("scores", {}))
+                        self._calculate_uncertainty(analysis_result.get("scores", {})),
                     ),
                     json.dumps(analysis_result.get("metadata", {})),
                     int(priority),
@@ -448,16 +473,16 @@ class EmailClassifier(BaseScript):
                     int(message_full.get("internalDate", 0)),
                     int(message_full.get("sizeEstimate", 0)),
                     json.dumps(
-                        self.extract_message_parts(message_full.get("payload", {}))
+                        self.extract_message_parts(message_full.get("payload", {})),
                     ),
                     message_full.get(
-                        "draftId"
+                        "draftId",
                     ),  # NULL as None is handled automatically
                     json.dumps(message_full.get("draftMessage"))
                     if message_full.get("draftMessage")
                     else None,
                     json.dumps(
-                        self.extract_attachments(message_full.get("payload", {}))
+                        self.extract_attachments(message_full.get("payload", {})),
                     ),
                 )
 
@@ -489,20 +514,23 @@ class EmailClassifier(BaseScript):
 
             self.logger.info(f"Successfully stored analysis for {msg_id} in DuckDB")
         except duckdb.Error as e:
-            self.logger.error(f"Database error storing analysis: {str(e)}")
+            self.logger.error(f"Database error storing analysis: {e!s}")
             raise
         except Exception as e:
-            self.logger.error(f"Unexpected error storing analysis: {str(e)}")
+            self.logger.error(f"Unexpected error storing analysis: {e!s}")
             raise
 
     def get_critical_emails(self, conn, limit: int = 10) -> list[dict]:
-        """Retrieve critical priority emails from database
+        """
+        Retrieve critical priority emails from database
 
         Args:
+        ----
             conn: DuckDB connection object
             limit: Max number of emails to retrieve
 
         Returns:
+        -------
             List of dictionaries containing email info
 
         """
@@ -518,16 +546,19 @@ class EmailClassifier(BaseScript):
         ).fetchall()
 
         columns = [col[0] for col in conn.description]
-        return [dict(zip(columns, row)) for row in result]
+        return [dict(zip(columns, row, strict=False)) for row in result]
 
     def generate_draft_response(self, service, email: dict) -> str:
-        """Generate draft response using Hermes-3-Llama-3.1-405B model
+        """
+        Generate draft response using Hermes-3-Llama-3.1-405B model
 
         Args:
+        ----
             service: Gmail service object
             email: Dictionary containing email info
 
         Returns:
+        -------
             Draft response string
 
         """
@@ -561,14 +592,17 @@ Guidelines:
         return response.choices[0].message.content
 
     def create_draft(self, service, email: dict, response: str) -> str:
-        """Create draft in Gmail and apply review label
+        """
+        Create draft in Gmail and apply review label
 
         Args:
+        ----
             service: Gmail service object
             email: Dictionary containing email info
             response: Draft response string
 
         Returns:
+        -------
             Draft ID
 
         """
@@ -577,9 +611,9 @@ Guidelines:
                 "raw": base64.urlsafe_b64encode(
                     f"To: {email['from_address']}\n"
                     f"Subject: RE: {email['subject']}\n\n"
-                    f"{response}".encode()
-                ).decode("utf-8")
-            }
+                    f"{response}".encode(),
+                ).decode("utf-8"),
+            },
         }
 
         draft = service.users().drafts().create(userId="me", body=message).execute()
@@ -587,15 +621,17 @@ Guidelines:
         # Apply review label
         label_id = self.create_or_get_label_id(service, self.REVIEW_LABEL)
         service.users().messages().modify(
-            userId="me", id=draft["message"]["id"], body={"addLabelIds": [label_id]}
+            userId="me", id=draft["message"]["id"], body={"addLabelIds": [label_id]},
         ).execute()
 
         return draft["id"]
 
     def apply_labels(self, service, msg_id: str, priority: int):
-        """Applies the priority label.
+        """
+        Applies the priority label.
 
         Args:
+        ----
             service: The Gmail service object.
             msg_id: The message ID.
             priority: The email priority.
@@ -611,16 +647,19 @@ Guidelines:
         self.logger.info(f"Applied label '{label_name}' to message ID {msg_id}")
 
     def initialize_feedback_entry(
-        self, msg_id: str, subject: str, assigned_priority: int
+        self, msg_id: str, subject: str, assigned_priority: int,
     ):
-        """Initializes a feedback entry in feedback.json with basic info.
+        """
+        Initializes a feedback entry in feedback.json with basic info.
 
         Args:
+        ----
             msg_id: The message ID.
             subject: The email subject.
             assigned_priority: The assigned priority.
 
         Returns:
+        -------
             A dictionary containing the feedback entry.
 
         """
@@ -637,9 +676,11 @@ Guidelines:
         return feedback_entry
 
     def save_feedback(self, feedback_entries: list[dict]):
-        """Saves (or initializes) the feedback file.
+        """
+        Saves (or initializes) the feedback file.
 
         Args:
+        ----
             feedback_entries: A list of feedback entries.
 
         """
@@ -697,7 +738,7 @@ Guidelines:
         existing_ids = {
             row[0]
             for row in self.db_conn.execute(
-                "SELECT msg_id FROM email_analyses"
+                "SELECT msg_id FROM email_analyses",
             ).fetchall()
         }
 
@@ -719,7 +760,7 @@ Guidelines:
                 "",
             )
             from_header = next(
-                (header["value"] for header in headers if header["name"] == "From"), ""
+                (header["value"] for header in headers if header["name"] == "From"), "",
             )
 
             body = self.get_message_body(service, "me", msg_id)
@@ -727,7 +768,7 @@ Guidelines:
                 self.logger.info(f"Skipping message {msg_id} - no body found.")
                 continue
             analysis_result = self.analyze_email_with_deepinfra(
-                body, subject, from_header, analysis_prompt
+                body, subject, from_header, analysis_prompt,
             )
 
             # Create minimal viable result if analysis failed
@@ -747,16 +788,16 @@ Guidelines:
             # Calculate priority even if missing from analysis result
             if "priority" not in analysis_result:
                 self.logger.info(
-                    f"Calculating priority locally for {msg_id} (missing in analysis)"
+                    f"Calculating priority locally for {msg_id} (missing in analysis)",
                 )
                 analysis_result["priority"] = self.calculate_priority(
-                    analysis_result, preferences
+                    analysis_result, preferences,
                 )
 
             priority = analysis_result["priority"]
             self.apply_labels(service, msg_id, priority)
             self.store_analysis_result(
-                msg_id, subject, from_header, analysis_result, priority, message_full
+                msg_id, subject, from_header, analysis_result, priority, message_full,
             )
 
             # Initialize a feedback entry and add to list
@@ -782,21 +823,25 @@ Guidelines:
                     draft_response = self.generate_draft_response(service, email)
                     draft_id = self.create_draft(service, email, draft_response)
                     self.logger.info(
-                        f"Created draft {draft_id} with label {self.REVIEW_LABEL}"
+                        f"Created draft {draft_id} with label {self.REVIEW_LABEL}",
                     )
                 except Exception as e:
-                    self.logger.error(f"Error processing {email['msg_id']}: {str(e)}")
+                    self.logger.error(f"Error processing {email['msg_id']}: {e!s}")
 
     def load_preferences(self, file_path: str) -> dict:
-        """Loads email preferences from a JSON file with detailed error handling.
+        """
+        Loads email preferences from a JSON file with detailed error handling.
 
         Args:
+        ----
             file_path: The path to the preferences file.
 
         Returns:
+        -------
             A dictionary containing the email preferences.
 
         Raises:
+        ------
             FileNotFoundError: If the preferences file is missing.
             json.JSONDecodeError: If the preferences file contains invalid JSON.
             Exception: If an unexpected error occurs while loading the file.
@@ -820,7 +865,7 @@ Guidelines:
             self.logger.error("Fix the syntax error and try again")
             sys.exit(1)
         except Exception as e:
-            self.logger.error(f"Unexpected error loading {file_path}: {str(e)}")
+            self.logger.error(f"Unexpected error loading {file_path}: {e!s}")
             sys.exit(1)
 
 
