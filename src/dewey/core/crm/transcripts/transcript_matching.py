@@ -5,7 +5,6 @@ import re
 import sqlite3
 from difflib import SequenceMatcher
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Union
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.utils import execute_query
@@ -71,9 +70,11 @@ class TranscriptMatcher(BaseScript):
         unmatched_limit: int = 5,
         update_db: bool = True,
     ) -> tuple[list[dict[str, str | float]], list[str]]:
-        """Matches transcript files to episode entries in a database.
+        """
+        Matches transcript files to episode entries in a database.
 
         Args:
+        ----
             database_path: The path to the SQLite database file.
             transcript_directory: The directory containing the transcript files.
             episode_table_name: The name of the table containing episode data.
@@ -89,12 +90,14 @@ class TranscriptMatcher(BaseScript):
             update_db: Whether to update the database with the matched file paths.
 
         Returns:
+        -------
             A tuple containing two lists:
                 - matches: A list of dictionaries, where each dictionary represents a matched transcript
                   and contains keys like "title", "file", "score", and potentially other episode data.
                 - unmatched_files: A list of file paths for transcripts that could not be matched.
 
         Raises:
+        ------
             FileNotFoundError: If the database or transcript directory is not found.
             sqlite3.Error: If there is an error executing a database query.
             IOError: If there is an error reading a transcript file.
@@ -128,7 +131,7 @@ class TranscriptMatcher(BaseScript):
                 # Iterate through transcript files
                 for file_name in os.listdir(transcript_directory):
                     if not file_name.endswith(
-                        (".txt", ".srt", ".vtt")
+                        (".txt", ".srt", ".vtt"),
                     ):  # Consider common transcript extensions
                         continue
 
@@ -154,7 +157,7 @@ class TranscriptMatcher(BaseScript):
                         clean_title_file = self.clean_title(file_name)
 
                         score = self.similarity_score(
-                            clean_title_episode, clean_title_file
+                            clean_title_episode, clean_title_file,
                         )
                         if score > best_score:
                             best_score = score
@@ -177,12 +180,12 @@ class TranscriptMatcher(BaseScript):
                                 # Update the database with the file path
                                 update_query = f"UPDATE {episode_table_name} SET {file_column} = ? WHERE {title_column} = ?"
                                 cursor.execute(
-                                    update_query, (str(file_path), best_match["title"])
+                                    update_query, (str(file_path), best_match["title"]),
                                 )
                                 con.commit()
                             except sqlite3.Error as e:
                                 self.logger.error(
-                                    f"Error updating database for {best_match['title']}: {e}"
+                                    f"Error updating database for {best_match['title']}: {e}",
                                 )
                     else:
                         unmatched_files.append(str(file_path))
@@ -200,12 +203,15 @@ class TranscriptMatcher(BaseScript):
         return matches[:max_matches], unmatched_files[:unmatched_limit]
 
     def clean_title(self, title: str) -> str:
-        """Cleans the title by removing special characters and converting to lowercase.
+        """
+        Cleans the title by removing special characters and converting to lowercase.
 
         Args:
+        ----
             title: The title to clean.
 
         Returns:
+        -------
             The cleaned title.
 
         """
@@ -214,13 +220,16 @@ class TranscriptMatcher(BaseScript):
         return title
 
     def similarity_score(self, title1: str, title2: str) -> float:
-        """Calculates the similarity score between two titles.
+        """
+        Calculates the similarity score between two titles.
 
         Args:
+        ----
             title1: The first title.
             title2: The second title.
 
         Returns:
+        -------
             The similarity score between the two titles.
 
         """
