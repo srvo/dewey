@@ -1,12 +1,12 @@
-from typing import Any, Dict
+from typing import Any
 
 import pandas as pd
-
 from dewey.core.base_script import BaseScript
 
 
 class CsvContactIntegration(BaseScript):
-    """A class for integrating contacts from a CSV file into the CRM system.
+    """
+    A class for integrating contacts from a CSV file into the CRM system.
 
     This class inherits from BaseScript and provides methods for
     reading contact data from a CSV file and integrating it into
@@ -18,19 +18,23 @@ class CsvContactIntegration(BaseScript):
         super().__init__(config_section="csv_contact_integration", requires_db=True)
 
     def run(self) -> None:
-        """Runs the CSV contact integration process.
+        """
+        Runs the CSV contact integration process.
 
         This method orchestrates the CSV contact integration process,
         including reading the file path from the configuration,
         processing the CSV file, and handling any exceptions.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             FileNotFoundError: If the specified CSV file does not exist.
             Exception: If any error occurs during the integration process.
 
@@ -54,18 +58,22 @@ class CsvContactIntegration(BaseScript):
             raise
 
     def process_csv(self, file_path: str) -> None:
-        """Processes the CSV file and integrates contacts into the CRM system.
+        """
+        Processes the CSV file and integrates contacts into the CRM system.
 
         This method reads the CSV file from the specified path, extracts
         contact data, and integrates it into the CRM system.
 
         Args:
+        ----
             file_path: The path to the CSV file.
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If any error occurs during CSV processing.
 
         """
@@ -92,18 +100,22 @@ class CsvContactIntegration(BaseScript):
             raise
 
     def insert_contact(self, contact_data: dict[str, Any]) -> None:
-        """Inserts contact data into the CRM system.
+        """
+        Inserts contact data into the CRM system.
 
         This method takes a dictionary of contact data and inserts it
         into the appropriate table in the CRM database.
 
         Args:
+        ----
             contact_data: A dictionary containing contact data.
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If any error occurs during contact insertion.
 
         """
