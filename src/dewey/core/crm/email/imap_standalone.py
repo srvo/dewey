@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""IMAP email synchronization standalone script.
+"""
+IMAP email synchronization standalone script.
 This script connects to a Gmail account using IMAP and downloads emails,
 storing email metadata in a simple CSV file instead of a database.
 """
@@ -16,7 +17,7 @@ import time
 from datetime import datetime, timedelta
 from email.header import decode_header
 from email.message import Message
-from typing import Any, Dict, Optional, Set
+from typing import Any
 
 
 class EmailHeaderEncoder(json.JSONEncoder):
@@ -92,15 +93,14 @@ def get_message_structure(msg: Message) -> dict[str, Any]:
             parts.append(part_info)
 
         return {"multipart": True, "parts": parts}
-    else:
-        return {
-            "multipart": False,
-            "content_type": msg.get_content_type(),
-            "charset": msg.get_content_charset(),
-            "content_disposition": msg.get("Content-Disposition", ""),
-            "filename": msg.get_filename(),
-            "size": len(msg.as_bytes()) if hasattr(msg, "as_bytes") else 0,
-        }
+    return {
+        "multipart": False,
+        "content_type": msg.get_content_type(),
+        "charset": msg.get_content_charset(),
+        "content_disposition": msg.get("Content-Disposition", ""),
+        "filename": msg.get_filename(),
+        "size": len(msg.as_bytes()) if hasattr(msg, "as_bytes") else 0,
+    }
 
 
 def parse_email_message(email_data: bytes) -> dict[str, Any]:
@@ -152,7 +152,7 @@ def parse_email_message(email_data: bytes) -> dict[str, Any]:
                             "filename": filename,
                             "content_type": content_type,
                             "size": len(payload) if payload else 0,
-                        }
+                        },
                     )
                 continue
 
@@ -194,10 +194,7 @@ def parse_email_message(email_data: bytes) -> dict[str, Any]:
         "body_html": body_html,
         "attachments": json.dumps(attachments, cls=EmailHeaderEncoder),
         "raw_analysis": json.dumps(
-            {
-                "headers": all_headers,
-                "structure": get_message_structure(msg),
-            },
+            {"headers": all_headers, "structure": get_message_structure(msg)},
             cls=EmailHeaderEncoder,
         ),
     }
@@ -269,7 +266,7 @@ def fetch_emails(
             print(f"Searching with criteria: {search_criteria}")
             _, message_numbers = imap.search(None, search_criteria)
             print(
-                f"Found {len(message_numbers[0].split())} messages between {start} and {end}"
+                f"Found {len(message_numbers[0].split())} messages between {start} and {end}",
             )
         else:
             date = (datetime.now() - timedelta(days=days_back)).strftime("%d-%b-%Y")
@@ -285,7 +282,7 @@ def fetch_emails(
         batch_id = datetime.now().strftime("%Y%m%d_%H%M%S")
 
         print(
-            f"Processing {min(len(message_numbers), max_emails)} emails in batches of {batch_size}"
+            f"Processing {min(len(message_numbers), max_emails)} emails in batches of {batch_size}",
         )
 
         # Open CSV file for appending
@@ -313,7 +310,7 @@ def fetch_emails(
             for i in range(0, min(len(message_numbers), max_emails), batch_size):
                 batch = message_numbers[i : i + batch_size]
                 print(
-                    f"Processing batch {i // batch_size + 1} of {len(batch)} messages"
+                    f"Processing batch {i // batch_size + 1} of {len(batch)} messages",
                 )
 
                 for num in batch:
@@ -369,15 +366,15 @@ def fetch_emails(
                         total_processed += 1
                         if total_processed % 10 == 0:
                             print(
-                                f"Progress: {total_processed}/{min(len(message_numbers), max_emails)} emails processed"
+                                f"Progress: {total_processed}/{min(len(message_numbers), max_emails)} emails processed",
                             )
 
                     except Exception as e:
-                        print(f"Error processing message {num}: {str(e)}")
+                        print(f"Error processing message {num}: {e!s}")
                         continue
 
                 print(
-                    f"Completed batch {i // batch_size + 1}. Total processed: {total_processed}"
+                    f"Completed batch {i // batch_size + 1}. Total processed: {total_processed}",
                 )
 
                 if total_processed >= max_emails:
@@ -390,7 +387,7 @@ def fetch_emails(
         print(f"Emails saved to {csv_file}")
 
     except Exception as e:
-        print(f"Error in fetch_emails: {str(e)}")
+        print(f"Error in fetch_emails: {e!s}")
         raise
 
 
@@ -398,10 +395,10 @@ def parse_args() -> argparse.Namespace:
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(description="Import emails from Gmail")
     parser.add_argument(
-        "--username", help="Gmail username (if not using GMAIL_USERNAME env var)"
+        "--username", help="Gmail username (if not using GMAIL_USERNAME env var)",
     )
     parser.add_argument(
-        "--password", help="Gmail password (if not using GMAIL_APP_PASSWORD env var)"
+        "--password", help="Gmail password (if not using GMAIL_APP_PASSWORD env var)",
     )
     parser.add_argument(
         "--days_back",
@@ -422,12 +419,12 @@ def parse_args() -> argparse.Namespace:
         help="Number of emails to process in each batch",
     )
     parser.add_argument(
-        "--historical", action="store_true", help="Import all historical emails"
+        "--historical", action="store_true", help="Import all historical emails",
     )
     parser.add_argument("--start_date", help="Start date in YYYY-MM-DD format")
     parser.add_argument("--end_date", help="End date in YYYY-MM-DD format")
     parser.add_argument(
-        "--output", default="data/emails.csv", help="Output CSV file path"
+        "--output", default="data/emails.csv", help="Output CSV file path",
     )
 
     return parser.parse_args()
@@ -443,13 +440,13 @@ def main():
 
     if not username:
         print(
-            "Gmail username not provided via GMAIL_USERNAME environment variable or command line argument"
+            "Gmail username not provided via GMAIL_USERNAME environment variable or command line argument",
         )
         sys.exit(1)
 
     if not password:
         print(
-            "Gmail password not provided via GMAIL_APP_PASSWORD environment variable or command line argument"
+            "Gmail password not provided via GMAIL_APP_PASSWORD environment variable or command line argument",
         )
         sys.exit(1)
 
