@@ -1,13 +1,12 @@
 import datetime
 import os
-from typing import Any, Dict, List
+from typing import Any
 
 import duckdb
 import pandas as pd
 import requests
-from dotenv import load_dotenv
-
 from dewey.core.base_script import BaseScript
+from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
@@ -42,16 +41,20 @@ class TickProcessor(BaseScript):
         )
 
     def _fetch_ticks(self, ticker: str, date: datetime.date) -> list[dict[str, Any]]:
-        """Fetches stock tick data from the Polygon.io API for a given ticker and date.
+        """
+        Fetches stock tick data from the Polygon.io API for a given ticker and date.
 
         Args:
+        ----
             ticker: The stock ticker symbol (e.g., "AAPL").
             date: The date for which to fetch tick data.
 
         Returns:
+        -------
             A list of dictionaries, where each dictionary represents a stock tick.
 
         Raises:
+        ------
             requests.exceptions.RequestException: If there is an error during the API request.
 
         """
@@ -63,25 +66,27 @@ class TickProcessor(BaseScript):
             data = response.json()
             if data["status"] == "OK" and "results" in data:
                 return data["results"]
-            else:
-                self.logger.warning(
-                    f"No results found for {ticker} on {date}: {data.get('error')}"
-                )
-                return []
+            self.logger.warning(
+                f"No results found for {ticker} on {date}: {data.get('error')}",
+            )
+            return []
         except requests.exceptions.RequestException as e:
             self.logger.error(f"API request failed for {ticker} on {date}: {e}")
             raise
 
     def _transform_ticks(
-        self, ticks: list[dict[str, Any]], ticker: str
+        self, ticks: list[dict[str, Any]], ticker: str,
     ) -> pd.DataFrame:
-        """Transforms raw tick data into a Pandas DataFrame with appropriate data types.
+        """
+        Transforms raw tick data into a Pandas DataFrame with appropriate data types.
 
         Args:
+        ----
             ticks: A list of dictionaries representing raw tick data.
             ticker: The stock ticker symbol.
 
         Returns:
+        -------
             A Pandas DataFrame containing the transformed tick data.
 
         """
@@ -98,14 +103,14 @@ class TickProcessor(BaseScript):
                 "c": "conditions",
                 "t": "trade_id",
                 "q": "sequence_number",
-            }
+            },
         )
 
         # Apply transformations
         df["ticker"] = ticker
         df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms", utc=True)
         df["conditions"] = df["conditions"].apply(
-            lambda x: ",".join(x)
+            lambda x: ",".join(x),
         )  # Join conditions list
 
         # Select and reorder columns
@@ -124,9 +129,11 @@ class TickProcessor(BaseScript):
         return df
 
     def _store_ticks(self, df: pd.DataFrame) -> None:
-        """Stores the transformed tick data into the DuckDB database.
+        """
+        Stores the transformed tick data into the DuckDB database.
 
         Args:
+        ----
             df: A Pandas DataFrame containing the transformed tick data.
 
         """
