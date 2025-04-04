@@ -2,12 +2,12 @@ import logging
 import sys
 
 import psycopg2
-
 from dewey.core.base_script import BaseScript
 
 
 class AdminTasks(BaseScript):
-    """A class for performing administrative tasks, such as database
+    """
+    A class for performing administrative tasks, such as database
     maintenance and user management.
     """
 
@@ -23,10 +23,10 @@ class AdminTasks(BaseScript):
         # Only raise error if not in a test environment
         if self.db_conn is None and not self._is_test_environment():
             self.logger.error(
-                "Database connection is not established during initialization."
+                "Database connection is not established during initialization.",
             )
             raise ValueError(
-                "Database connection is not established during initialization."
+                "Database connection is not established during initialization.",
             )
 
     def _is_test_environment(self) -> bool:
@@ -54,7 +54,8 @@ class AdminTasks(BaseScript):
             raise
 
     def perform_database_maintenance(self) -> None:
-        """Performs database maintenance tasks, such as vacuuming and
+        """
+        Performs database maintenance tasks, such as vacuuming and
         analyzing tables.
         """
         try:
@@ -62,7 +63,7 @@ class AdminTasks(BaseScript):
             if self.db_conn is None:
                 if self._is_test_environment():
                     self.logger.info(
-                        "Skipping database maintenance in test environment"
+                        "Skipping database maintenance in test environment",
                     )
                     return
                 self.logger.error("Database connection is not established.")
@@ -86,13 +87,16 @@ class AdminTasks(BaseScript):
             raise
 
     def add_user(self, username: str, password: str) -> None:
-        """Adds a new user to the system.
+        """
+        Adds a new user to the system.
 
         Args:
+        ----
             username (str): The username of the new user.
             password (str): The password of the new user.
 
         Raises:
+        ------
             ValueError: If the username already exists.
 
         """
@@ -100,7 +104,7 @@ class AdminTasks(BaseScript):
         if self.db_conn is None:
             if self._is_test_environment():
                 self.logger.info(
-                    f"Skipping add_user operation in test environment for {username}"
+                    f"Skipping add_user operation in test environment for {username}",
                 )
                 return
             self.logger.error("Database connection is not established.")
@@ -112,7 +116,7 @@ class AdminTasks(BaseScript):
                 table_exists = False
                 try:
                     cursor.execute(
-                        "SELECT EXISTS (SELECT 1 FROM pg_tables WHERE tablename = 'users');"
+                        "SELECT EXISTS (SELECT 1 FROM pg_tables WHERE tablename = 'users');",
                     )
                     table_exists = cursor.fetchone()[0]
                 except psycopg2.Error as e:
@@ -128,7 +132,7 @@ class AdminTasks(BaseScript):
                                 username VARCHAR(255) PRIMARY KEY,
                                 password VARCHAR(255)
                             );
-                            """
+                            """,
                         )
                         self.logger.info("The 'users' table created successfully.")
                     except psycopg2.Error as e:
