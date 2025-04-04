@@ -12,7 +12,8 @@ class ConfigHandlerInterface(Protocol):
 
 
 class ConfigHandler(BaseScript, ConfigHandlerInterface):
-    """Handles configuration settings for the application.
+    """
+    Handles configuration settings for the application.
 
     This class inherits from BaseScript and provides methods for loading
     and accessing configuration values.
@@ -27,13 +28,16 @@ class ConfigHandler(BaseScript, ConfigHandlerInterface):
         self.logger.info("ConfigHandler is running.")
 
     def get_value(self, key: str, default: Any = None) -> Any:
-        """Retrieves a configuration value by key.
+        """
+        Retrieves a configuration value by key.
 
         Args:
+        ----
             key: The key of the configuration value to retrieve.
             default: The default value to return if the key is not found.
 
         Returns:
+        -------
             The configuration value, or the default value if the key is not found.
 
         """
