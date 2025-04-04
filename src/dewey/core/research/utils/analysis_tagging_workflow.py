@@ -1,10 +1,11 @@
-from typing import Any, Optional
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
 
 class AnalysisTaggingWorkflow(BaseScript):
-    """A workflow for analysis tagging.
+    """
+    A workflow for analysis tagging.
 
     This class inherits from BaseScript and provides methods for
     tagging analysis results.
@@ -18,9 +19,11 @@ class AnalysisTaggingWorkflow(BaseScript):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        """Initializes the AnalysisTaggingWorkflow.
+        """
+        Initializes the AnalysisTaggingWorkflow.
 
         Args:
+        ----
             config_section: Section in dewey.yaml to load for this script. Defaults to None.
             requires_db: Whether this script requires database access. Defaults to False.
             enable_llm: Whether this script requires LLM access. Defaults to False.
