@@ -1,0 +1,64 @@
+site_name: Ethical Capital
+docs_dir: projects/ethical_capital/docs
+nav:
+    - Home: index.md
+    - Dewey: /dewey/
+    - Documentation: /docs/
+
+markdown_extensions:
+    - pymdownx.tasklist:
+          custom_checkbox: true
+    - pymdownx.emoji:
+          emoji_generator: !!python/name:pymdownx.emoji.to_svg
+    - pymdownx.magiclink: {}
+
+extra_javascript:
+    - https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.0/mermaid.min.js
+
+plugins:
+    - mkdocstrings:
+          default_handler: python
+          handlers:
+              python:
+                  options:
+                      docstring_style: google
+    - mermaid2: {}
+    - autorefs: {}
+    - exporter: {}
+    - search: {}
+    - blog:
+        enabled: true
+    - meta: {}
+
+theme:
+    name: material
+    mermaid:
+      javascript: https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.0/mermaid.min.js
+    features:
+      - navigation.sections
+      - search.suggest
+      - search.highlight
+      - navigation.top
+      - navigation.tracking
+      - navigation.tabs
+    palette:
+      scheme: default
+      primary: indigo
+      accent: indigo
+    font:
+      text: Raleway
+      code: Raleway
+    icon:
+      logo: material/book
+    analytics:
+      provider: google
+      property: G-XXXXXXXXXX
+    cookieconsent:
+      name: cookieconsent
+      content: "This site uses cookies to analyze traffic and offer a better browsing experience."
+      button:
+        text: Accept
+extra:
+    social:
+      - icon: fontawesome/brands/github
+        link: https://github.com/ethicalcapital

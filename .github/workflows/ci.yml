@@ -31,7 +31,6 @@ jobs:
       - run: pip install mkdocs-mermaid2-plugin
       - run: pip install mkdocs-autorefs
       - run: pip install mkdocs-exporter
-      - run: pip install mkdocs-projects-plugin
       - run: pip install mkdocs-blogging-plugin
       - run: pip install mkdocs-meta-plugin
       - run: mkdocs gh-deploy --force
