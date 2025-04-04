@@ -1,0 +1,34 @@
+site_name: Documentation
+docs_dir: docs
+site_url: https://srvo.github.io/dewey/docs/
+repo_url: https://github.com/srvo/dewey
+repo_name: srvo/dewey
+
+theme:
+  name: material
+  custom_dir: ../../templates/themes/custom
+  features:
+    - navigation.sections
+    - search.suggest
+    - search.highlight
+    - navigation.top
+  palette:
+    scheme: default
+    primary: indigo
+    accent: indigo
+  font:
+    text: Raleway
+    code: Raleway
+    
+plugins:
+  - search
+  
+markdown_extensions:
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+  - pymdownx.magiclink: {}
+
+extra_css:
+  - ../../templates/assets/stylesheets/extra.css 

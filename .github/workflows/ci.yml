@@ -33,6 +33,8 @@ jobs:
       - run: pip install mkdocs-exporter
       - run: pip install mkdocs-blogging-plugin
       - run: pip install mkdocs-meta-plugin
+      - name: Copy template assets 
+        run: python copy_templates.py
       - run: mkdocs gh-deploy --force
     env:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}

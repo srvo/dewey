@@ -1,5 +1,9 @@
 site_name: Ethical Capital
 docs_dir: projects/ethical_capital/docs
+site_url: https://srvo.github.io/dewey/
+repo_url: https://github.com/srvo/dewey
+repo_name: srvo/dewey
+
 nav:
     - Home: index.md
     - Dewey: /dewey/
@@ -32,6 +36,7 @@ plugins:
 
 theme:
     name: material
+    custom_dir: templates/themes/custom
     mermaid:
       javascript: https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.0/mermaid.min.js
     features:
@@ -58,7 +63,11 @@ theme:
       content: "This site uses cookies to analyze traffic and offer a better browsing experience."
       button:
         text: Accept
+
 extra:
     social:
       - icon: fontawesome/brands/github
         link: https://github.com/ethicalcapital
+    
+extra_css:
+    - assets/stylesheets/extra.css

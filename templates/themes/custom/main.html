@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ config.site_url }}assets/stylesheets/extra.css">
+{% endblock %}
+
+{% block header %}
+  {{ super() }}
+  {% include "partials/header.html" %}
+{% endblock %}
+
+{% block footer %}
+  {{ super() }}
+  {% include "partials/footer.html" %}
+{% endblock %} 
