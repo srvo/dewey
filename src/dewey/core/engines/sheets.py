@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class Sheets(BaseScript):
-    """Synchronizes data with Google Sheets.
+    """
+    Synchronizes data with Google Sheets.
 
     This class inherits from BaseScript and provides methods for
     reading from and writing to Google Sheets.
@@ -13,7 +14,8 @@ class Sheets(BaseScript):
         super().__init__(config_section="sheets")
 
     def run(self) -> None:
-        """Executes the main logic for synchronizing data with Google Sheets.
+        """
+        Executes the main logic for synchronizing data with Google Sheets.
 
         Retrieves the sheet ID from the configuration and logs it.
         """
