@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Contact Consolidation Script
+"""
+Contact Consolidation Script
 ===========================
 
 This script consolidates contact information from various tables in the MotherDuck database
@@ -8,10 +9,9 @@ into a single unified_contacts table, focusing on individuals.
 
 import json
 import sys
-from typing import Any, Dict, List
+from typing import Any
 
 import duckdb
-
 from dewey.core.base_script import BaseScript
 
 
@@ -23,14 +23,17 @@ class ContactConsolidation(BaseScript):
         super().__init__(config_section="contact_consolidation", requires_db=True)
 
     def create_unified_contacts_table(self, conn: duckdb.DuckDBPyConnection) -> None:
-        """Create the unified_contacts table if it doesn't exist.
+        """
+        Create the unified_contacts table if it doesn't exist.
 
         Args:
+        ----
             conn: DuckDB connection
 
         """
         try:
-            conn.execute("""
+            conn.execute(
+                """
             CREATE TABLE IF NOT EXISTS unified_contacts (
                 email VARCHAR PRIMARY KEY,
                 first_name VARCHAR,
@@ -49,27 +52,32 @@ class ContactConsolidation(BaseScript):
                 notes VARCHAR,
                 metadata JSON
             )
-            """)
+            """,
+            )
             self.logger.info("Created or verified unified_contacts table")
         except Exception as e:
             self.logger.error(f"Error creating unified_contacts table: {e}")
             raise
 
     def extract_contacts_from_crm(
-        self, conn: duckdb.DuckDBPyConnection
+        self, conn: duckdb.DuckDBPyConnection,
     ) -> list[dict[str, Any]]:
-        """Extract contacts from CRM-related tables.
+        """
+        Extract contacts from CRM-related tables.
 
         Args:
+        ----
             conn: DuckDB connection
 
         Returns:
+        -------
             List of contact dictionaries
 
         """
         try:
             # We'll use crm_contacts as the primary source since all three CRM tables have the same schema
-            result = conn.execute("""
+            result = conn.execute(
+                """
             SELECT
                 email,
                 name as full_name,
@@ -96,7 +104,8 @@ class ContactConsolidation(BaseScript):
                 event_summary as notes,
                 NULL as metadata
             FROM crm_contacts
-            """).fetchall()
+            """,
+            ).fetchall()
 
             contacts = []
             for row in result:
@@ -127,20 +136,24 @@ class ContactConsolidation(BaseScript):
             return []
 
     def extract_contacts_from_emails(
-        self, conn: duckdb.DuckDBPyConnection
+        self, conn: duckdb.DuckDBPyConnection,
     ) -> list[dict[str, Any]]:
-        """Extract contacts from email-related tables.
+        """
+        Extract contacts from email-related tables.
 
         Args:
+        ----
             conn: DuckDB connection
 
         Returns:
+        -------
             List of contact dictionaries
 
         """
         try:
             # Extract from crm_emails
-            result = conn.execute("""
+            result = conn.execute(
+                """
             SELECT DISTINCT
                 from_email as email,
                 from_name as full_name,
@@ -168,7 +181,8 @@ class ContactConsolidation(BaseScript):
                 NULL as metadata
             FROM crm_emails
             WHERE from_email IS NOT NULL AND from_email != ''
-            """).fetchall()
+            """,
+            ).fetchall()
 
             contacts = []
             for row in result:
@@ -193,7 +207,8 @@ class ContactConsolidation(BaseScript):
                 contacts.append(contact)
 
             # Extract from activedata_email_analyses
-            result = conn.execute("""
+            result = conn.execute(
+                """
             SELECT DISTINCT
                 from_address as email,
                 NULL as full_name,
@@ -213,7 +228,8 @@ class ContactConsolidation(BaseScript):
                 raw_analysis as metadata
             FROM activedata_email_analyses
             WHERE from_address IS NOT NULL AND from_address != ''
-            """).fetchall()
+            """,
+            ).fetchall()
 
             for row in result:
                 contact = {
@@ -243,20 +259,24 @@ class ContactConsolidation(BaseScript):
             return []
 
     def extract_contacts_from_subscribers(
-        self, conn: duckdb.DuckDBPyConnection
+        self, conn: duckdb.DuckDBPyConnection,
     ) -> list[dict[str, Any]]:
-        """Extract contacts from subscriber-related tables.
+        """
+        Extract contacts from subscriber-related tables.
 
         Args:
+        ----
             conn: DuckDB connection
 
         Returns:
+        -------
             List of contact dictionaries
 
         """
         try:
             # Extract from input_data_subscribers
-            result = conn.execute("""
+            result = conn.execute(
+                """
             SELECT
                 email,
                 name as full_name,
@@ -284,7 +304,8 @@ class ContactConsolidation(BaseScript):
                 NULL as metadata
             FROM input_data_subscribers
             WHERE email IS NOT NULL AND email != ''
-            """).fetchall()
+            """,
+            ).fetchall()
 
             contacts = []
             for row in result:
@@ -310,7 +331,8 @@ class ContactConsolidation(BaseScript):
 
             # Extract from input_data_EIvirgin_csvSubscribers
             # This table has a complex schema, so we'll extract what we can
-            result = conn.execute("""
+            result = conn.execute(
+                """
             SELECT
                 "Email Address" as email,
                 "Name" as full_name,
@@ -330,7 +352,8 @@ class ContactConsolidation(BaseScript):
                 NULL as metadata
             FROM input_data_EIvirgin_csvSubscribers
             WHERE "Email Address" IS NOT NULL AND "Email Address" != ''
-            """).fetchall()
+            """,
+            ).fetchall()
 
             for row in result:
                 contact = {
@@ -354,7 +377,7 @@ class ContactConsolidation(BaseScript):
                 contacts.append(contact)
 
             self.logger.info(
-                f"Extracted {len(contacts)} contacts from subscriber tables"
+                f"Extracted {len(contacts)} contacts from subscriber tables",
             )
             return contacts
         except Exception as e:
@@ -362,19 +385,23 @@ class ContactConsolidation(BaseScript):
             return []
 
     def extract_contacts_from_blog_signups(
-        self, conn: duckdb.DuckDBPyConnection
+        self, conn: duckdb.DuckDBPyConnection,
     ) -> list[dict[str, Any]]:
-        """Extract contacts from blog signup form responses.
+        """
+        Extract contacts from blog signup form responses.
 
         Args:
+        ----
             conn: DuckDB connection
 
         Returns:
+        -------
             List of contact dictionaries
 
         """
         try:
-            result = conn.execute("""
+            result = conn.execute(
+                """
             SELECT
                 email,
                 name as full_name,
@@ -402,7 +429,8 @@ class ContactConsolidation(BaseScript):
                 raw_content as metadata
             FROM input_data_blog_signup_form_responses
             WHERE email IS NOT NULL AND email != ''
-            """).fetchall()
+            """,
+            ).fetchall()
 
             contacts = []
             for row in result:
@@ -427,24 +455,27 @@ class ContactConsolidation(BaseScript):
                 contacts.append(contact)
 
             self.logger.info(
-                f"Extracted {len(contacts)} contacts from blog signup form responses"
+                f"Extracted {len(contacts)} contacts from blog signup form responses",
             )
             return contacts
         except Exception as e:
             self.logger.error(
-                f"Error extracting contacts from blog signup form responses: {e}"
+                f"Error extracting contacts from blog signup form responses: {e}",
             )
             return []
 
     def merge_contacts(
-        self, contacts: list[dict[str, Any]]
+        self, contacts: list[dict[str, Any]],
     ) -> dict[str, dict[str, Any]]:
-        """Merge contacts by email, prioritizing more complete information.
+        """
+        Merge contacts by email, prioritizing more complete information.
 
         Args:
+        ----
             contacts: List of contact dictionaries
 
         Returns:
+        -------
             Dictionary of merged contacts keyed by email
 
         """
@@ -475,11 +506,13 @@ class ContactConsolidation(BaseScript):
         return merged_contacts
 
     def insert_unified_contacts(
-        self, conn: duckdb.DuckDBPyConnection, contacts: dict[str, dict[str, Any]]
+        self, conn: duckdb.DuckDBPyConnection, contacts: dict[str, dict[str, Any]],
     ) -> None:
-        """Insert merged contacts into the unified_contacts table.
+        """
+        Insert merged contacts into the unified_contacts table.
 
         Args:
+        ----
             conn: DuckDB connection
             contacts: Dictionary of merged contacts keyed by email
 
@@ -496,16 +529,16 @@ class ContactConsolidation(BaseScript):
             total_batches = (total_contacts + batch_size - 1) // batch_size
 
             self.logger.info(
-                f"Inserting {total_contacts} contacts in {total_batches} batches of {batch_size}"
+                f"Inserting {total_contacts} contacts in {total_batches} batches of {batch_size}",
             )
 
-            for batch_idx in range(0, total_batches):
+            for batch_idx in range(total_batches):
                 start_idx = batch_idx * batch_size
                 end_idx = min(start_idx + batch_size, total_contacts)
                 batch = contact_items[start_idx:end_idx]
 
                 self.logger.info(
-                    f"Processing batch {batch_idx + 1}/{total_batches} ({start_idx} to {end_idx - 1})"
+                    f"Processing batch {batch_idx + 1}/{total_batches} ({start_idx} to {end_idx - 1})",
                 )
 
                 for email, contact in batch:
@@ -545,11 +578,11 @@ class ContactConsolidation(BaseScript):
                 self.logger.info(f"Completed batch {batch_idx + 1}/{total_batches}")
 
             self.logger.info(
-                f"Inserted {total_contacts} contacts into unified_contacts table"
+                f"Inserted {total_contacts} contacts into unified_contacts table",
             )
         except Exception as e:
             self.logger.error(
-                f"Error inserting contacts into unified_contacts table: {e}"
+                f"Error inserting contacts into unified_contacts table: {e}",
             )
             raise
 
