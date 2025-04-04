@@ -1,35 +1,38 @@
-from typing import Optional
-
 from dewey.core.base_script import BaseScript
 
 
 class PypiSearch(BaseScript):
-    """A class for searching PyPI packages.
+    """
+    A class for searching PyPI packages.
 
     Inherits from BaseScript and provides methods for searching PyPI
     using configuration values.
     """
 
     def __init__(self, config_section: str | None = None) -> None:
-        """Initializes the PypiSearch class.
+        """
+        Initializes the PypiSearch class.
 
         Calls the superclass constructor to initialize the base script.
 
         Args:
+        ----
             config_section: The section of the config file to use for this script.
 
         """
         super().__init__(
-            config_section=config_section, requires_db=False, enable_llm=False
+            config_section=config_section, requires_db=False, enable_llm=False,
         )
         self.name = "PypiSearch"
 
     def run(self) -> None:
-        """Executes the PyPI search.
+        """
+        Executes the PyPI search.
 
         This method retrieves configuration values and performs the PyPI search.
 
-        Raises:
+        Raises
+        ------
             Exception: If an error occurs during the PyPI search.
 
         """
