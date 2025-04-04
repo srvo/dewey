@@ -9,7 +9,7 @@ It processes JSON files containing company research data and updates the researc
 import json
 import sys
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any
 
 import duckdb
 
@@ -30,12 +30,15 @@ class JsonResearchIntegration(BaseScript):
         """Connect to the MotherDuck database.
 
         Args:
+        ----
             database_name: Name of the MotherDuck database
 
         Returns:
+        -------
             DuckDB connection
 
         Raises:
+        ------
             Exception: If there is an error connecting to the database.
 
         """
@@ -51,9 +54,11 @@ class JsonResearchIntegration(BaseScript):
         """Ensure that the necessary tables exist in the database.
 
         Args:
+        ----
             conn: DuckDB connection
 
         Raises:
+        ------
             Exception: If there is an error ensuring the tables exist.
 
         """
@@ -61,7 +66,8 @@ class JsonResearchIntegration(BaseScript):
             # Check if company_research table exists
             if not db_utils.table_exists(conn, "company_research"):
                 self.logger.info("Creating company_research table")
-                conn.execute("""
+                conn.execute(
+                    """
                 CREATE TABLE company_research (
                     id BIGINT AUTO_INCREMENT PRIMARY KEY,
                     ticker VARCHAR,
@@ -71,12 +77,14 @@ class JsonResearchIntegration(BaseScript):
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
-                """)
+                """
+                )
 
             # Check if company_research_queries table exists
             if not db_utils.table_exists(conn, "company_research_queries"):
                 self.logger.info("Creating company_research_queries table")
-                conn.execute("""
+                conn.execute(
+                    """
                 CREATE TABLE company_research_queries (
                     id BIGINT AUTO_INCREMENT PRIMARY KEY,
                     company_ticker VARCHAR,
@@ -86,12 +94,14 @@ class JsonResearchIntegration(BaseScript):
                     priority INTEGER,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
-                """)
+                """
+                )
 
             # Check if company_research_results table exists
             if not db_utils.table_exists(conn, "company_research_results"):
                 self.logger.info("Creating company_research_results table")
-                conn.execute("""
+                conn.execute(
+                    """
                 CREATE TABLE company_research_results (
                     id BIGINT AUTO_INCREMENT PRIMARY KEY,
                     company_ticker VARCHAR,
@@ -102,28 +112,32 @@ class JsonResearchIntegration(BaseScript):
                     web_results JSON,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
-                """)
+                """
+                )
 
             self.logger.info("Tables verified/created successfully")
         except Exception as e:
             self.logger.error(f"Error ensuring tables exist: {e}")
             raise
 
-    def process_json_file(self, file_path: str) -> Dict[str, Any]:
+    def process_json_file(self, file_path: str) -> dict[str, Any]:
         """Process a JSON file containing company research data.
 
         Args:
+        ----
             file_path: Path to the JSON file
 
         Returns:
+        -------
             Dictionary containing the parsed JSON data
 
         Raises:
+        ------
             Exception: If there is an error processing the JSON file.
 
         """
         try:
-            with open(file_path, "r") as f:
+            with open(file_path) as f:
                 data = json.load(f)
             return data
         except Exception as e:
@@ -131,15 +145,17 @@ class JsonResearchIntegration(BaseScript):
             raise
 
     def update_company_research(
-        self, conn: duckdb.DuckDBPyConnection, data: Dict[str, Any]
+        self, conn: duckdb.DuckDBPyConnection, data: dict[str, Any]
     ) -> None:
         """Update the company_research table with data from the JSON file.
 
         Args:
+        ----
             conn: DuckDB connection
             data: Dictionary containing company research data
 
         Raises:
+        ------
             Exception: If there is an error updating the company_research table.
 
         """
@@ -201,15 +217,17 @@ class JsonResearchIntegration(BaseScript):
             raise
 
     def update_company_research_queries(
-        self, conn: duckdb.DuckDBPyConnection, data: Dict[str, Any]
+        self, conn: duckdb.DuckDBPyConnection, data: dict[str, Any]
     ) -> None:
         """Update the company_research_queries table with data from the JSON file.
 
         Args:
+        ----
             conn: DuckDB connection
             data: Dictionary containing company research data
 
         Raises:
+        ------
             Exception: If there is an error updating the company_research_queries table.
 
         """
@@ -234,7 +252,7 @@ class JsonResearchIntegration(BaseScript):
 
             # Delete existing queries for this company
             conn.execute(
-                f"DELETE FROM company_research_queries WHERE company_ticker = ?",
+                "DELETE FROM company_research_queries WHERE company_ticker = ?",
                 [ticker],
             )
 
@@ -263,15 +281,17 @@ class JsonResearchIntegration(BaseScript):
             raise
 
     def update_company_research_results(
-        self, conn: duckdb.DuckDBPyConnection, data: Dict[str, Any]
+        self, conn: duckdb.DuckDBPyConnection, data: dict[str, Any]
     ) -> None:
         """Update the company_research_results table with data from the JSON file.
 
         Args:
+        ----
             conn: DuckDB connection
             data: Dictionary containing company research data
 
         Raises:
+        ------
             Exception: If there is an error updating the company_research_results table.
 
         """
@@ -296,7 +316,7 @@ class JsonResearchIntegration(BaseScript):
 
             # Delete existing results for this company
             conn.execute(
-                f"DELETE FROM company_research_results WHERE company_ticker = ?",
+                "DELETE FROM company_research_results WHERE company_ticker = ?",
                 [ticker],
             )
 
@@ -333,10 +353,12 @@ class JsonResearchIntegration(BaseScript):
         """Process all JSON files in a directory.
 
         Args:
+        ----
             conn: DuckDB connection
             directory_path: Path to the directory containing JSON files
 
         Raises:
+        ------
             Exception: If there is an error processing the directory.
 
         """
