@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.utils import execute_query
@@ -6,7 +6,8 @@ from dewey.llm.llm_utils import generate_text
 
 
 class PriorityManager(BaseScript):
-    """A class for managing priority within Dewey's CRM.
+    """
+    A class for managing priority within Dewey's CRM.
 
     This module inherits from BaseScript and provides a standardized
     structure for priority scripts, including configuration
@@ -22,9 +23,11 @@ class PriorityManager(BaseScript):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        """Initializes the PriorityManager.
+        """
+        Initializes the PriorityManager.
 
         Args:
+        ----
             config_section (Optional[str]): The configuration section to use. Defaults to "priority_manager".
             requires_db (bool): Whether the script requires a database connection. Defaults to True.
             enable_llm (bool): Whether the script requires LLM access. Defaults to False.
@@ -43,7 +46,8 @@ class PriorityManager(BaseScript):
         self.description = "Manages priority within Dewey's CRM."
 
     def run(self) -> None:
-        """Executes the primary logic of the Priority Manager.
+        """
+        Executes the primary logic of the Priority Manager.
 
         This method retrieves a priority threshold from the configuration,
         logs the start and completion of the manager, and includes a placeholder
