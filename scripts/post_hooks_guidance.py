@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Post-hooks guidance script for pre-commit.
+"""
+Post-hooks guidance script for pre-commit.
 
 This script provides clear, colorful guidance after pre-commit hooks run,
 showing which files were modified and what actions to take next.
@@ -8,21 +9,17 @@ including staging changes and using aider to fix issues.
 """
 
 import os
+import re
 import subprocess
 import sys
-import re
-from typing import List, Dict, Optional, Tuple
 
 
-def get_modified_files() -> List[str]:
+def get_modified_files() -> list[str]:
     """Get list of modified files that need to be staged."""
     try:
         # Get modified files that aren't staged
         result = subprocess.run(
-            ["git", "diff", "--name-only"],
-            capture_output=True,
-            text=True,
-            check=True,
+            ["git", "diff", "--name-only"], capture_output=True, text=True, check=True,
         )
         modified = result.stdout.strip().split("\n") if result.stdout.strip() else []
 
@@ -41,8 +38,9 @@ def get_modified_files() -> List[str]:
         return []
 
 
-def get_hook_errors() -> Dict[str, str]:
-    """Gather any error messages from pre-commit hooks output.
+def get_hook_errors() -> dict[str, str]:
+    """
+    Gather any error messages from pre-commit hooks output.
 
     Returns a dictionary of {filename: error_message}
     """
@@ -55,7 +53,7 @@ def get_hook_errors() -> Dict[str, str]:
         # Simple parsing strategy - find files and their errors
         # This is basic and might need improvement for different hook outputs
         file_error_pattern = re.compile(
-            r"([^\s]+\.[^\s]+).*?\n(.*?)(?=\n[^\s]+\.[^\s]+|\Z)", re.DOTALL
+            r"([^\s]+\.[^\s]+).*?\n(.*?)(?=\n[^\s]+\.[^\s]+|\Z)", re.DOTALL,
         )
         matches = file_error_pattern.findall(hook_output)
 
@@ -66,10 +64,12 @@ def get_hook_errors() -> Dict[str, str]:
     return errors
 
 
-def parse_pre_commit_output() -> Tuple[Dict[str, List[str]], List[str], List[str]]:
-    """Parse pre-commit output to get better context on hooks and modifications.
+def parse_pre_commit_output() -> tuple[dict[str, list[str]], list[str], list[str]]:
+    """
+    Parse pre-commit output to get better context on hooks and modifications.
 
-    Returns:
+    Returns
+    -------
         Tuple containing:
         - Dictionary of {hook_name: list_of_modified_files}
         - List of hooks that failed but didn't modify files
@@ -93,7 +93,7 @@ def parse_pre_commit_output() -> Tuple[Dict[str, List[str]], List[str], List[str
 
             # Pattern to match syntax errors
             syntax_error_pattern = re.compile(
-                r"(?:error: |Syntax error in )([^:]+):[^:]+: (Expected an indented block|[^\n]+)"
+                r"(?:error: |Syntax error in )([^:]+):[^:]+: (Expected an indented block|[^\n]+)",
             )
 
             current_hook = None
@@ -165,8 +165,9 @@ def colorize(text: str, color_code: str) -> str:
     return f"\033[{color_code}m{text}\033[0m"
 
 
-def stage_files(files: List[str]) -> bool:
-    """Stage modified files with git add.
+def stage_files(files: list[str]) -> bool:
+    """
+    Stage modified files with git add.
 
     Returns True if successful, False otherwise.
     """
@@ -183,8 +184,8 @@ def stage_files(files: List[str]) -> bool:
         if len(files) > chunk_size:
             print(
                 colorize(
-                    f"Staging {len(files)} files in chunks of {chunk_size}...", "1;33"
-                )
+                    f"Staging {len(files)} files in chunks of {chunk_size}...", "1;33",
+                ),
             )
 
             # Process in chunks
@@ -196,13 +197,13 @@ def stage_files(files: List[str]) -> bool:
                         colorize(
                             f"Staged files {i + 1}-{min(i + chunk_size, len(files))} of {len(files)}",
                             "1;32",
-                        )
+                        ),
                     )
                 except subprocess.CalledProcessError as e:
                     print(
                         colorize(
-                            f"Error staging chunk {i // chunk_size + 1}: {e}", "1;31"
-                        )
+                            f"Error staging chunk {i // chunk_size + 1}: {e}", "1;31",
+                        ),
                     )
                     success = False
         else:
@@ -222,7 +223,8 @@ def stage_files(files: List[str]) -> bool:
 
 
 def run_aider_with_fallback(file_path: str, error_message: str) -> None:
-    """Run aider on a file with error message as context.
+    """
+    Run aider on a file with error message as context.
     Fall back to simple git add if aider is not available.
     """
     try:
@@ -255,7 +257,7 @@ def run_aider_with_fallback(file_path: str, error_message: str) -> None:
                 colorize(
                     "\nWould you like to open the file in your default editor instead?",
                     "1;33",
-                )
+                ),
             )
 
             if input(colorize("Open in editor? (y/n): ", "1;33")).lower() == "y":
@@ -269,8 +271,8 @@ def run_aider_with_fallback(file_path: str, error_message: str) -> None:
                         subprocess.run(["xdg-open", file_path], check=True)
                     print(
                         colorize(
-                            f"\nOpened {file_path} in your default editor.", "1;32"
-                        )
+                            f"\nOpened {file_path} in your default editor.", "1;32",
+                        ),
                     )
                 except Exception as e:
                     print(colorize(f"Error opening file: {e}", "1;31"))
@@ -279,7 +281,7 @@ def run_aider_with_fallback(file_path: str, error_message: str) -> None:
         # Print what we're about to do
         print(colorize(f"Running aider to fix issues in {file_path}...", "1;34"))
         if includes_conventions:
-            print(colorize(f"Including CONVENTIONS.md as reference context", "1;34"))
+            print(colorize("Including CONVENTIONS.md as reference context", "1;34"))
         print(colorize(f"Prompt: {prompt}", "1;36"))
 
         # Confirm before proceeding
@@ -290,7 +292,7 @@ def run_aider_with_fallback(file_path: str, error_message: str) -> None:
         # Prepare command with or without conventions file
         if includes_conventions:
             subprocess.run(
-                ["aider", "--message", prompt, conventions_path, file_path], check=True
+                ["aider", "--message", prompt, conventions_path, file_path], check=True,
             )
         else:
             subprocess.run(["aider", "--message", prompt, file_path], check=True)
@@ -302,11 +304,11 @@ def run_aider_with_fallback(file_path: str, error_message: str) -> None:
             colorize(
                 "The aider command was not found. Please install aider: pip install aider-chat",
                 "1;31",
-            )
+            ),
         )
 
 
-def select_file_menu(files: List[str], action: str) -> Optional[str]:
+def select_file_menu(files: list[str], action: str) -> str | None:
     """Show a menu to select a file from a list."""
     if not files:
         print(colorize("No files available.", "1;33"))
@@ -320,7 +322,7 @@ def select_file_menu(files: List[str], action: str) -> Optional[str]:
     print(colorize(f"\nSelect a file to {action}:", "1;36"))
     for i, file in enumerate(files, 1):
         print(f"  {i}. {file}")
-    print(f"  0. Return to main menu")
+    print("  0. Return to main menu")
 
     try:
         while True:
@@ -340,12 +342,12 @@ def select_file_menu(files: List[str], action: str) -> Optional[str]:
             colorize(
                 "Cannot read input. Run this script directly for interactive mode.",
                 "1;31",
-            )
+            ),
         )
         return None
 
 
-def display_hook_summary(hook_results: Dict[str, List[str]]) -> None:
+def display_hook_summary(hook_results: dict[str, list[str]]) -> None:
     """Display a summary of what each hook did."""
     print(colorize("\n=== HOOK SUMMARY ===", "1;36"))
 
@@ -353,7 +355,7 @@ def display_hook_summary(hook_results: Dict[str, List[str]]) -> None:
         print(colorize("No hook information available.", "1;33"))
         print(colorize("Run this script directly after pre-commit with: ", "1;33"))
         print(
-            colorize("  pre-commit run | python scripts/post_hooks_guidance.py", "1;36")
+            colorize("  pre-commit run | python scripts/post_hooks_guidance.py", "1;36"),
         )
         return
 
@@ -362,7 +364,7 @@ def display_hook_summary(hook_results: Dict[str, List[str]]) -> None:
             file_count = len(files)
             print(
                 colorize(f"\n{hook}: ", "1;33")
-                + colorize(f"Modified {file_count} files", "1;32")
+                + colorize(f"Modified {file_count} files", "1;32"),
             )
 
             # Show a preview of files (up to 5)
@@ -375,11 +377,11 @@ def display_hook_summary(hook_results: Dict[str, List[str]]) -> None:
                 print(colorize(f"  ... and {file_count - 5} more files", "1;33"))
         else:
             print(
-                colorize(f"\n{hook}: ", "1;33") + colorize("No files modified", "1;31")
+                colorize(f"\n{hook}: ", "1;33") + colorize("No files modified", "1;31"),
             )
 
 
-def display_syntax_errors(syntax_errors: List[str]) -> None:
+def display_syntax_errors(syntax_errors: list[str]) -> None:
     """Display syntax errors found in files."""
     if not syntax_errors:
         return
@@ -387,8 +389,8 @@ def display_syntax_errors(syntax_errors: List[str]) -> None:
     print(colorize("\n=== SYNTAX ERRORS ===", "1;31"))
     print(
         colorize(
-            "The following files have syntax errors that need to be fixed:", "1;37"
-        )
+            "The following files have syntax errors that need to be fixed:", "1;37",
+        ),
     )
 
     for i, error in enumerate(syntax_errors, 1):
@@ -424,17 +426,17 @@ def show_modified_files_menu() -> None:
 
 
 def show_interactive_menu(
-    modified_files: List[str],
-    errors: Dict[str, str],
-    hook_results: Dict[str, List[str]],
-    failed_hooks: List[str],
-    syntax_errors: List[str],
+    modified_files: list[str],
+    errors: dict[str, str],
+    hook_results: dict[str, list[str]],
+    failed_hooks: list[str],
+    syntax_errors: list[str],
 ) -> None:
     """Show an interactive menu of actions the user can take."""
     # Check if we're in an interactive terminal
     if not sys.stdin.isatty() or not sys.stdout.isatty():
         print(
-            colorize("\nRun this script directly to see the interactive menu:", "1;36")
+            colorize("\nRun this script directly to see the interactive menu:", "1;36"),
         )
         print(f"  python {os.path.basename(__file__)}")
         return
@@ -490,7 +492,7 @@ def show_interactive_menu(
                     # If no syntax error found, use the hook error message if available
                     if not error_msg:
                         error_msg = errors.get(
-                            file, "Fix any code quality issues in this file"
+                            file, "Fix any code quality issues in this file",
                         )
 
                     run_aider_with_fallback(file, error_msg)
@@ -506,7 +508,7 @@ def show_interactive_menu(
                         colorize(
                             "\nThe following hooks failed without modifying files:",
                             "1;31",
-                        )
+                        ),
                     )
                     for hook in failed_hooks:
                         print(f"  - {hook}")
@@ -523,7 +525,7 @@ def show_interactive_menu(
                     colorize(
                         "\nInvalid choice. Please enter a number between 1 and 7.",
                         "1;31",
-                    )
+                    ),
                 )
         except EOFError:
             # Handle the case where we can't read from stdin
@@ -531,7 +533,7 @@ def show_interactive_menu(
                 colorize(
                     "\nCannot read input. Run this script directly for interactive mode.",
                     "1;31",
-                )
+                ),
             )
             break
 
@@ -551,13 +553,13 @@ def print_guidance():
             + colorize(
                 f"Found {len(syntax_errors)} syntax errors that must be fixed before committing!",
                 "1;37",
-            )
+            ),
         )
         print(
             colorize(
                 "These are usually due to missing indentation blocks in Python files.",
                 "1;37",
-            )
+            ),
         )
 
         # Show just a few examples
@@ -579,24 +581,24 @@ def print_guidance():
                 + colorize(
                     "Some hooks reported as 'Failed' actually FIXED issues in your files.",
                     "1;37",
-                )
+                ),
             )
             print(
                 colorize(
                     "This is normal - it means pre-commit automatically corrected problems for you.",
                     "1;37",
-                )
+                ),
             )
             print(
                 colorize(
-                    "You need to STAGE these changes before you can commit.", "1;37"
-                )
+                    "You need to STAGE these changes before you can commit.", "1;37",
+                ),
             )
 
     if modified_files:
         print(
             "\n"
-            + colorize(f"{len(modified_files)} files were modified by hooks:", "1;33")
+            + colorize(f"{len(modified_files)} files were modified by hooks:", "1;33"),
         )
         # Show at most 5 files to avoid overwhelming output
         preview_files = modified_files[:5]
@@ -618,8 +620,8 @@ def print_guidance():
                 print(
                     "\n"
                     + colorize(
-                        "Run these commands to stage changes and commit:", "1;32"
-                    )
+                        "Run these commands to stage changes and commit:", "1;32",
+                    ),
                 )
                 print(f"  git add {files_str}")
 
@@ -627,19 +629,19 @@ def print_guidance():
             print(
                 "\n"
                 + colorize(
-                    "Or run this script directly for interactive options:", "1;36"
-                )
+                    "Or run this script directly for interactive options:", "1;36",
+                ),
             )
             print(f"  python {os.path.basename(__file__)}")
 
         # Only show interactive menu if in interactive mode
         show_interactive_menu(
-            modified_files, errors, hook_results, failed_hooks, syntax_errors
+            modified_files, errors, hook_results, failed_hooks, syntax_errors,
         )
     else:
         print(
             "\n"
-            + colorize("No files were modified by hooks that need staging.", "1;32")
+            + colorize("No files were modified by hooks that need staging.", "1;32"),
         )
 
         # Check if there were any hook failures or syntax errors
@@ -654,7 +656,7 @@ def print_guidance():
                     + colorize(
                         "However, some hooks failed. Fix the issues and try again.",
                         "1;31",
-                    )
+                    ),
                 )
 
             # Show failing hook information
@@ -667,7 +669,7 @@ def print_guidance():
             show_interactive_menu([], errors, hook_results, failed_hooks, syntax_errors)
         elif not syntax_errors:  # Only show this if there are no syntax errors
             print(
-                "\n" + colorize("All hooks passed! Your commit should proceed.", "1;32")
+                "\n" + colorize("All hooks passed! Your commit should proceed.", "1;32"),
             )
 
     # Always exit with success in hook mode to not block commits

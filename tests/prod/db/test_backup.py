@@ -1,4 +1,5 @@
-"""Tests for database backup and restore functionality.
+"""
+Tests for database backup and restore functionality.
 
 This module tests the database backup and restore functions.
 """
@@ -40,7 +41,7 @@ class TestBackupFunctions(unittest.TestCase):
 
         # Mock BACKUP_DIR and LOCAL_DB_PATH
         self.backup_dir_patcher = patch(
-            "src.dewey.core.db.backup.BACKUP_DIR", self.temp_dir
+            "src.dewey.core.db.backup.BACKUP_DIR", self.temp_dir,
         )
         self.mock_backup_dir = self.backup_dir_patcher.start()
 
@@ -79,13 +80,13 @@ class TestBackupFunctions(unittest.TestCase):
 
                 # Check backup path
                 expected_path = os.path.join(
-                    self.temp_dir, "dewey_backup_20230115_123045.duckdb"
+                    self.temp_dir, "dewey_backup_20230115_123045.duckdb",
                 )
                 self.assertEqual(backup_path, expected_path)
 
                 # Check that shutil.copy2 was called correctly
                 mock_copy.assert_called_once_with(
-                    os.path.join(self.temp_dir, "dewey.duckdb"), expected_path
+                    os.path.join(self.temp_dir, "dewey.duckdb"), expected_path,
                 )
 
     def test_create_backup_failure(self):
@@ -106,7 +107,7 @@ class TestBackupFunctions(unittest.TestCase):
         # Mock create_backup and shutil.copy2
         with patch("src.dewey.core.db.backup.create_backup") as mock_create:
             mock_create.return_value = os.path.join(
-                self.temp_dir, "current_backup.duckdb"
+                self.temp_dir, "current_backup.duckdb",
             )
 
             with patch("shutil.copy2") as mock_copy:
@@ -118,7 +119,7 @@ class TestBackupFunctions(unittest.TestCase):
 
                 # Check that copy2 was called to restore the backup
                 mock_copy.assert_called_with(
-                    backup_path, os.path.join(self.temp_dir, "dewey.duckdb")
+                    backup_path, os.path.join(self.temp_dir, "dewey.duckdb"),
                 )
 
     def test_restore_backup_file_not_found(self):
@@ -191,7 +192,7 @@ class TestBackupFunctions(unittest.TestCase):
                 # Check that only the old backup was deleted
                 self.assertEqual(deleted, 1)
                 mock_remove.assert_called_once_with(
-                    os.path.join(self.temp_dir, "dewey_backup_old.duckdb")
+                    os.path.join(self.temp_dir, "dewey_backup_old.duckdb"),
                 )
 
     def test_verify_backup(self):

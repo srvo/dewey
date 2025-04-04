@@ -7,7 +7,7 @@ This script analyzes controversies related to entities using SearXNG and Farfall
 import argparse
 import asyncio
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 import httpx
 from prefect import flow, task
@@ -33,9 +33,11 @@ class ControversyAnalyzer(BaseScript):
         """Search for controversies related to an entity using SearXNG.
 
         Args:
+        ----
             entity: Name of the entity to analyze.
 
         Returns:
+        -------
             A list of dictionaries containing search results.
 
         """
@@ -73,9 +75,11 @@ class ControversyAnalyzer(BaseScript):
         """Analyze and categorize sources of controversy information.
 
         Args:
+        ----
             results: A list of dictionaries containing search results.
 
         Returns:
+        -------
             A dictionary containing categorized sources.
 
         """
@@ -98,13 +102,15 @@ class ControversyAnalyzer(BaseScript):
         return sources
 
     @task
-    async def categorize_source(self, url: str) -> Optional[str]:
+    async def categorize_source(self, url: str) -> str | None:
         """Categorize a source based on its URL.
 
         Args:
+        ----
             url: The URL of the source.
 
         Returns:
+        -------
             The category of the source, or None if it cannot be categorized.
 
         """
@@ -145,10 +151,12 @@ class ControversyAnalyzer(BaseScript):
         """Summarize findings about controversies.
 
         Args:
+        ----
             entity: The entity being analyzed.
             sources: A dictionary containing categorized sources.
 
         Returns:
+        -------
             A dictionary containing the summary of findings.
 
         """
@@ -200,10 +208,12 @@ class ControversyAnalyzer(BaseScript):
         """Analyze controversies for a given entity.
 
         Args:
+        ----
             entity: Name of the entity to analyze.
             lookback_days: Number of days to look back for controversies.
 
         Returns:
+        -------
             Dictionary containing analysis results.
 
         """
@@ -237,9 +247,11 @@ class ControversyAnalyzer(BaseScript):
         """Main execution method.
 
         Args:
+        ----
             args: Parsed command-line arguments.
 
         Returns:
+        -------
             A dictionary containing the analysis results.
 
         """

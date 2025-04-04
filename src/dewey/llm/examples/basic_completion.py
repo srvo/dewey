@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Basic example of using the LiteLLM client for text completion.
+"""
+Basic example of using the LiteLLM client for text completion.
 
 This script demonstrates how to initialize the LiteLLM client and
 generate a simple text completion.
@@ -7,19 +8,12 @@ generate a simple text completion.
 
 import logging
 import os
-from typing import List
 
-from dewey.llm import (
-    LiteLLMClient,
-    LiteLLMConfig,
-    Message,
-    create_message,
-)
+from dewey.llm import LiteLLMClient, LiteLLMConfig, Message, create_message
 
 # Set up logging
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
 
@@ -34,10 +28,7 @@ def main():
 
     # Create a client configuration
     config = LiteLLMConfig(
-        model="gpt-3.5-turbo",
-        api_key=api_key,
-        temperature=0.7,
-        max_tokens=150,
+        model="gpt-3.5-turbo", api_key=api_key, temperature=0.7, max_tokens=150,
     )
 
     # Initialize the client
@@ -46,7 +37,7 @@ def main():
 
     # Create message objects
     system_message = create_message(
-        "system", "You are a helpful assistant that provides concise answers."
+        "system", "You are a helpful assistant that provides concise answers.",
     )
 
     user_message = create_message(
@@ -66,7 +57,7 @@ def main():
         print(f"Model used: {result.model}")
         print(f"Response: {result.response_text}")
         print(
-            f"Tokens used: {result.total_tokens} (prompt: {result.prompt_tokens}, completion: {result.completion_tokens})"
+            f"Tokens used: {result.total_tokens} (prompt: {result.prompt_tokens}, completion: {result.completion_tokens})",
         )
         print(f"Response time: {result.response_ms}ms")
 

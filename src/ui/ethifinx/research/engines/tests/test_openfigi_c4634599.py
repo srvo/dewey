@@ -10,13 +10,13 @@ import responses
 from ethifinx.research.engines.openfigi import OpenFIGIEngine
 
 
-@pytest.fixture
+@pytest.fixture()
 def engine():
     """Create an OpenFIGI engine instance with test API key."""
     return OpenFIGIEngine(api_key="test_key")
 
 
-@pytest.fixture
+@pytest.fixture()
 def test_companies():
     """Sample company data for testing."""
     return [
@@ -30,7 +30,7 @@ def test_companies():
     ]
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_figi_response():
     """Sample OpenFIGI API response."""
     return [

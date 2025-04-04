@@ -11,7 +11,6 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import List, Dict
 
 DEWEY_ROOT = Path("/Users/srvo/dewey")
 CONFIG_PATH = DEWEY_ROOT / "config" / "dewey.yaml"
@@ -80,7 +79,7 @@ def verify_environment() -> None:
         )
 
 
-def read_non_compliant_files() -> Dict[str, List[str]]:
+def read_non_compliant_files() -> dict[str, list[str]]:
     """Read the list of non-compliant files and their violations."""
     files = {}
     all_files_path = NON_COMPLIANT_DIR / "all_files.txt"
@@ -88,7 +87,7 @@ def read_non_compliant_files() -> Dict[str, List[str]]:
     if not all_files_path.exists():
         raise FileNotFoundError(f"all_files.txt not found at {all_files_path}")
 
-    with open(all_files_path, "r") as f:
+    with open(all_files_path) as f:
         for line in f:
             line = line.strip()
             if line and not line.startswith("#"):
@@ -101,7 +100,7 @@ def read_non_compliant_files() -> Dict[str, List[str]]:
     return files
 
 
-def create_aider_message(file_path: str, violations: List[str]) -> str:
+def create_aider_message(file_path: str, violations: list[str]) -> str:
     """Create a specific message for Aider based on the file's violations."""
     message = BASE_MESSAGE
 

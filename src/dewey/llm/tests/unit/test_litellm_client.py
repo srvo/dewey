@@ -49,7 +49,7 @@ class TestMessage:
         user_msg = Message(role="user", content="Hello, can you help me?")
         assistant_msg = Message(role="assistant", content="Sure, I'd be happy to help!")
         tool_msg = Message(
-            role="tool", content="Search result: Information found.", name="search_tool"
+            role="tool", content="Search result: Information found.", name="search_tool",
         )
 
         # Verify message properties
@@ -71,7 +71,7 @@ class TestMessage:
 class TestLiteLLMClient:
     """Tests for the LiteLLMClient class."""
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_litellm_completion(self) -> MagicMock:
         """Mock for litellm.completion."""
         with patch("litellm.completion") as mock_completion:
@@ -82,7 +82,7 @@ class TestLiteLLMClient:
             mock_completion.return_value = mock_response
             yield mock_completion
 
-    @pytest.fixture
+    @pytest.fixture()
     def client(self) -> LiteLLMClient:
         """Create a basic LiteLLMClient for testing."""
         config = LiteLLMConfig(model="gpt-3.5-turbo")
@@ -104,7 +104,7 @@ class TestLiteLLMClient:
                     mock_response = MagicMock()
                     mock_response.choices = [MagicMock()]
                     mock_response.choices[0].message = {
-                        "content": "This is a mock response"
+                        "content": "This is a mock response",
                     }
                     mock_completion.return_value = mock_response
                     mock_cost.return_value = 0.001

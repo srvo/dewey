@@ -1,4 +1,5 @@
 """Module for handling prioritization tasks within Dewey's CRM enrichment process."""
+
 from typing import Any
 
 from dewey.core.base_script import BaseScript

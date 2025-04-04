@@ -2,7 +2,7 @@
 
 import os
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from prefect.deployments import Deployment
 from prefect.filesystems import LocalFileSystem
@@ -14,7 +14,8 @@ from dewey.core.research.analysis.company_analysis import analyze_companies
 
 
 class CompanyAnalysisDeployment(BaseScript):
-    """Handles deployment of company analysis flow.
+    """
+    Handles deployment of company analysis flow.
 
     Inherits from BaseScript for standardized configuration and logging.
     """
@@ -50,10 +51,7 @@ class CompanyAnalysisDeployment(BaseScript):
         )
 
         # Create a local storage block for our flow code
-        storage = LocalFileSystem(
-            basepath=str(flows_path),
-            persist_local=True,
-        )
+        storage = LocalFileSystem(basepath=str(flows_path), persist_local=True)
 
         # Use Process infrastructure (since we're running on the same machine)
         infrastructure = Process(env={"PREFECT_API_URL": api_url})
@@ -68,9 +66,7 @@ class CompanyAnalysisDeployment(BaseScript):
             infrastructure=infrastructure,
             path="company_analysis.py",
             description="Analyzes companies for controversies using LLM models",
-            parameters={
-                "config_path": str(config_path),
-            },
+            parameters={"config_path": str(config_path)},
             tags=["company-analysis", "llm", "production"],
             schedule=(
                 CronSchedule(
@@ -85,9 +81,11 @@ class CompanyAnalysisDeployment(BaseScript):
         self.logger.info("Company analysis deployment created successfully")
 
     def run(self, args: Any | None = None) -> None:
-        """Main execution method to deploy the company analysis flow.
+        """
+        Main execution method to deploy the company analysis flow.
 
         Args:
+        ----
             args: Optional arguments (not used in this implementation).
 
         """

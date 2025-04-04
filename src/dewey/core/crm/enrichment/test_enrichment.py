@@ -4,7 +4,8 @@ from dewey.core.base_script import BaseScript
 
 
 class TestEnrichment(BaseScript):
-    """A module for testing enrichment processes within Dewey's CRM.
+    """
+    A module for testing enrichment processes within Dewey's CRM.
 
     This module inherits from BaseScript and provides a standardized
     structure for testing enrichment scripts, including configuration
@@ -13,9 +14,11 @@ class TestEnrichment(BaseScript):
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initializes the TestEnrichment module.
+        """
+        Initializes the TestEnrichment module.
 
         Args:
+        ----
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
 
@@ -25,19 +28,23 @@ class TestEnrichment(BaseScript):
         self.description = "Tests the CRM enrichment process."
 
     def execute(self) -> None:
-        """Executes the test enrichment process.
+        """
+        Executes the test enrichment process.
 
         This method retrieves an example configuration value and logs
         messages to indicate the start and completion of the test
         enrichment process.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If there is an error during the enrichment process.
 
         """
@@ -52,6 +59,6 @@ class TestEnrichment(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()

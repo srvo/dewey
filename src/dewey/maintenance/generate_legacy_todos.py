@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -11,15 +11,18 @@ class GenerateLegacyTodos(BaseScript):
         super().__init__(config_section="generate_legacy_todos")
 
     def execute(self) -> None:
-        """Executes the legacy todo generation process.
+        """
+        Executes the legacy todo generation process.
 
         This method retrieves configuration values, iterates through data,
         and generates todos based on certain conditions.
 
-        Raises:
+        Raises
+        ------
             Exception: If there is an error during the todo generation process.
 
-        Returns:
+        Returns
+        -------
             None
 
         """
@@ -48,25 +51,26 @@ class GenerateLegacyTodos(BaseScript):
                         # llm.analyze_and_assign(todo_message)
                     else:
                         self.logger.info(
-                            f"[Dry Run] Would create TODO for item {item['id']}"
+                            f"[Dry Run] Would create TODO for item {item['id']}",
                         )
 
             self.logger.info("Legacy todo generation process completed.")
 
         except Exception as e:
             self.logger.exception(
-                f"An error occurred during legacy todo generation: {e}"
+                f"An error occurred during legacy todo generation: {e}",
             )
             raise
 
     def run(self) -> None:
-        """Legacy method for backward compatibility.
+        """
+        Legacy method for backward compatibility.
 
         New scripts should implement execute() instead of run().
         This method will be deprecated in a future version.
         """
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         try:
             self.logger.info(f"Starting execution of {self.name}")

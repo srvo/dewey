@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class YahooFinanceEngine(BaseScript):
-    """A class for fetching and processing data from Yahoo Finance.
+    """
+    A class for fetching and processing data from Yahoo Finance.
 
     Inherits from BaseScript to provide standardized access to configuration,
     logging, and other utilities.
@@ -13,15 +14,19 @@ class YahooFinanceEngine(BaseScript):
         super().__init__(config_section="research_engines.yahoo_finance")
 
     def execute(self) -> None:
-        """Executes the main logic of the Yahoo Finance engine.
+        """
+        Executes the main logic of the Yahoo Finance engine.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             None
 
         """
@@ -36,19 +41,23 @@ class YahooFinanceEngine(BaseScript):
         self.logger.info("Yahoo Finance engine completed.")
 
     def run(self) -> None:
-        """Executes the main logic of the Yahoo Finance engine.
+        """
+        Executes the main logic of the Yahoo Finance engine.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             None
 
         """
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()

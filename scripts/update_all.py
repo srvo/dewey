@@ -1,4 +1,5 @@
-"""Main script to orchestrate the compliance update process.
+"""
+Main script to orchestrate the compliance update process.
 
 This script:
 1. Runs compliance tests to identify non-compliant files
@@ -34,7 +35,7 @@ def verify_environment() -> None:
         subprocess.run(["aider", "--version"], capture_output=True, check=True)
     except subprocess.CalledProcessError:
         raise RuntimeError(
-            "Aider is not installed. Please install it with 'pip install aider-chat'"
+            "Aider is not installed. Please install it with 'pip install aider-chat'",
         )
 
 
@@ -47,12 +48,12 @@ def run_script(script_name: str, description: str) -> bool:
         return False
 
     print(
-        "\n================================================================================"
+        "\n================================================================================",
     )
     print(f"Running {script_name}...")
     print(f"Purpose: {description}")
     print(
-        "================================================================================"
+        "================================================================================",
     )
 
     try:
@@ -90,7 +91,7 @@ def run_final_tests() -> bool:
     except subprocess.CalledProcessError:
         print("✗ Some compliance tests still failing")
         print(
-            "Review the output above and the generated files in scripts/non_compliant/"
+            "Review the output above and the generated files in scripts/non_compliant/",
         )
         return False
 
@@ -115,7 +116,7 @@ def main():
 
         # Run update_compliance.py to fix files
         if not run_script(
-            "update_compliance.py", "Update non-compliant files to meet code standards"
+            "update_compliance.py", "Update non-compliant files to meet code standards",
         ):
             sys.exit(1)
 

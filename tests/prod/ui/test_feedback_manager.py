@@ -1,4 +1,5 @@
-"""Tests for the Feedback Manager Screen.
+"""
+Tests for the Feedback Manager Screen.
 
 Uses Textual's testing framework for UI testing.
 """
@@ -36,7 +37,7 @@ class TestApp(App):
         yield from ()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_feedback_manager_loads():
     """Test that the feedback manager screen loads properly."""
     app = TestApp()
@@ -70,7 +71,7 @@ async def test_feedback_manager_loads():
         assert status_container is not None
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_filter_input_changes():
     """Test that filter input changes update the sender list."""
     app = TestApp()
@@ -103,7 +104,7 @@ async def test_filter_input_changes():
         assert senders_table.row_count == initial_row_count
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_client_filter_switch():
     """Test that the client filter switch works correctly."""
     app = TestApp()
@@ -135,7 +136,7 @@ async def test_client_filter_switch():
         assert senders_table.row_count == initial_row_count
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_follow_up_filter_switch():
     """Test that the follow-up filter switch works correctly."""
     app = TestApp()
@@ -167,7 +168,7 @@ async def test_follow_up_filter_switch():
         assert senders_table.row_count == initial_row_count
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_sender_selection_updates_details():
     """Test that selecting a sender updates the details panel."""
     app = TestApp()
@@ -197,7 +198,7 @@ async def test_sender_selection_updates_details():
             )  # Allow for 0 in case there's no data
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_datetime_format_handling():
     """Test that the feedback manager correctly handles datetime formatting."""
     app = TestApp()

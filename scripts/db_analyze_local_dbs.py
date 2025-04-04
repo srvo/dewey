@@ -4,7 +4,8 @@ from dewey.core.base_script import BaseScript
 
 
 class AnalyzeLocalDbs(BaseScript):
-    """Analyzes local databases.
+    """
+    Analyzes local databases.
 
     This module inherits from BaseScript and provides a standardized
     structure for database analysis scripts, including configuration

@@ -14,7 +14,8 @@ class EmailProcessor(BaseScript):
         )
 
     def execute(self) -> None:
-        """Executes the core logic of the email processor.
+        """
+        Executes the core logic of the email processor.
 
         This method fetches emails, analyzes their content using LLM,
         and updates the database with the extracted information.
@@ -53,7 +54,7 @@ class EmailProcessor(BaseScript):
                                     else "No summary available"
                                 )
                                 self.logger.info(
-                                    f"LLM Summary for email {email_id}: {summary}"
+                                    f"LLM Summary for email {email_id}: {summary}",
                                 )
 
                                 # 3. Update database with analysis results
@@ -61,16 +62,16 @@ class EmailProcessor(BaseScript):
                                 cursor.execute(update_query, (summary, email_id))
                                 conn.commit()
                                 self.logger.info(
-                                    f"Updated email {email_id} with summary."
+                                    f"Updated email {email_id} with summary.",
                                 )
                             else:
                                 self.logger.warning(
-                                    "LLM client not initialized. Skipping email summarization."
+                                    "LLM client not initialized. Skipping email summarization.",
                                 )
 
                         except Exception as llm_err:
                             self.logger.error(
-                                f"LLM processing failed for email {email_id}: {llm_err}"
+                                f"LLM processing failed for email {email_id}: {llm_err}",
                             )
 
         except Exception as db_err:

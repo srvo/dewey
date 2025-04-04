@@ -1,19 +1,19 @@
 """Dewey - A Python package for managing research, analysis, and client interactions."""
 
-import logging
-
 from dewey.core.base_script import BaseScript
 
 
 class DeweyManager(BaseScript):
-    """Manages research, analysis, and client interactions.
+    """
+    Manages research, analysis, and client interactions.
 
     Inherits from BaseScript for standardized configuration, logging,
     and utilities.
     """
 
     def __init__(self) -> None:
-        """Initializes the DeweyManager.
+        """
+        Initializes the DeweyManager.
 
         Calls the superclass constructor to set up configuration and logging.
         """

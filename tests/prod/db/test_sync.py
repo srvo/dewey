@@ -1,4 +1,5 @@
-"""Tests for database synchronization.
+"""
+Tests for database synchronization.
 
 This module tests database synchronization functionality.
 """
@@ -90,7 +91,7 @@ class TestSyncFunctions(unittest.TestCase):
         """Test getting changes since a timestamp."""
         # Mock execute_query to return changes
         test_changes = [
-            {"record_id": "1", "operation": "UPDATE", "table_name": "test_table"}
+            {"record_id": "1", "operation": "UPDATE", "table_name": "test_table"},
         ]
         self.mock_db_manager.execute_query.return_value = [
             (
@@ -100,7 +101,7 @@ class TestSyncFunctions(unittest.TestCase):
                 "2023-01-01T12:00:00",
                 "user1",
                 '{"field":"value"}',
-            )
+            ),
         ]
 
         # Mock get_column_names

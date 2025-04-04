@@ -65,7 +65,7 @@ class TestResearchOutputHandler(unittest.TestCase):
         try:
             # Test with default config
             with patch(
-                "dewey.core.base_script.BaseScript._load_config"
+                "dewey.core.base_script.BaseScript._load_config",
             ) as mock_load_config:
                 mock_load_config.return_value = {"output_dir": "test_output"}
                 handler = ResearchOutputHandler()
@@ -73,7 +73,7 @@ class TestResearchOutputHandler(unittest.TestCase):
 
             # Test with custom output_dir
             with patch(
-                "dewey.core.base_script.BaseScript._load_config"
+                "dewey.core.base_script.BaseScript._load_config",
             ) as mock_load_config:
                 mock_load_config.return_value = {"output_dir": "test_output"}
                 handler = ResearchOutputHandler(output_dir="/custom/path")
@@ -83,7 +83,7 @@ class TestResearchOutputHandler(unittest.TestCase):
             BaseScript._setup_logging = original_setup_logging
 
     @patch(
-        "dewey.core.research.research_output_handler.ResearchOutputHandler.write_output"
+        "dewey.core.research.research_output_handler.ResearchOutputHandler.write_output",
     )
     def test_run(self, mock_write_output):
         """Test the run method."""
@@ -208,7 +208,7 @@ class TestResearchOutputHandler(unittest.TestCase):
             # Expect an exception to be raised
             with self.assertRaises(Exception):
                 self.handler.write_output(
-                    str(self.temp_path / "error.txt"), self.test_data
+                    str(self.temp_path / "error.txt"), self.test_data,
                 )
 
             # Verify that error was logged

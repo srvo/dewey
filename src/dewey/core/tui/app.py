@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""TUI Application Module
+"""
+TUI Application Module
 
 This module provides the main TUI application class.
 """
 
 import argparse
 import os
-import sys
 
 from textual.app import App, ComposeResult
 from textual.binding import Binding
@@ -32,9 +32,11 @@ class ModuleScreen(BaseScript, Screen):
     ]
 
     def __init__(self, title: str) -> None:
-        """Initialize module screen.
+        """
+        Initialize module screen.
 
         Args:
+        ----
             title: The title of the module screen.
 
         """
@@ -43,9 +45,11 @@ class ModuleScreen(BaseScript, Screen):
         self.status = reactive("Idle")
 
     def compose(self) -> ComposeResult:
-        """Create child widgets.
+        """
+        Create child widgets.
 
-        Yields:
+        Yields
+        ------
             ComposeResult: The composed widgets.
 
         """
@@ -56,7 +60,7 @@ class ModuleScreen(BaseScript, Screen):
                 Label("Status: [yellow]Loading...[/]", id="status"),
                 Static("", id="content"),
                 id="main-content",
-            )
+            ),
         )
         yield Footer()
 
@@ -66,7 +70,6 @@ class ModuleScreen(BaseScript, Screen):
 
     def update_content(self) -> None:
         """Update screen content."""
-        pass
 
     async def action_go_back(self) -> None:
         """Go back to main menu."""
@@ -77,7 +80,8 @@ class ModuleScreen(BaseScript, Screen):
         self.update_content()
 
     def execute(self) -> None:
-        """Execute the module screen.
+        """
+        Execute the module screen.
 
         This method initializes and runs the module-specific logic.
         It can be overridden in subclasses to provide custom functionality.
@@ -110,7 +114,7 @@ class ResearchScreen(ModuleScreen):
 • Research Workflows
   - Data Collection
   - Analysis Pipeline
-  - Report Generation"""
+  - Report Generation""",
         )
 
 
@@ -131,7 +135,7 @@ class DatabaseScreen(ModuleScreen):
 • Data Operations
   - Query Interface
   - Backup/Restore
-  - Data Validation"""
+  - Data Validation""",
         )
 
 
@@ -157,7 +161,7 @@ class LLMAgentsScreen(ModuleScreen):
 • Research Agent
   - Data Collection
   - Analysis
-  - Report Generation"""
+  - Report Generation""",
         )
 
 
@@ -180,7 +184,7 @@ class EnginesScreen(ModuleScreen):
 
 • Data Processing
   - ETL Pipeline
-  - Data Validation"""
+  - Data Validation""",
         )
 
 
@@ -190,9 +194,11 @@ class MainMenu(Screen):
     BINDINGS = [Binding("q", "quit", "Quit", show=True)]
 
     def compose(self) -> ComposeResult:
-        """Create child widgets.
+        """
+        Create child widgets.
 
-        Yields:
+        Yields
+        ------
             ComposeResult: The composed widgets.
 
         """
@@ -226,20 +232,22 @@ class MainMenu(Screen):
                 Label("[bold]Tools & Utilities[/bold]", id="tools-title"),
                 Horizontal(
                     Button(
-                        "Feedback Manager", id="feedback-manager", variant="success"
+                        "Feedback Manager", id="feedback-manager", variant="success",
                     ),
                     Button("Port5 Research", id="port5", variant="success"),
                     id="tools-row",
                 ),
                 id="menu",
-            )
+            ),
         )
         yield Footer()
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        """Handle button press events.
+        """
+        Handle button press events.
 
         Args:
+        ----
             event: The button press event.
 
         """
@@ -329,12 +337,12 @@ class DeweyTUI(App):
                 os.path.join(
                     os.path.dirname(__file__),
                     "../../../src/ui/assets/feedback_manager.tcss",
-                )
+                ),
             ),
             os.path.abspath(
                 os.path.join(
-                    os.path.dirname(__file__), "../../../src/ui/assets/port5.tcss"
-                )
+                    os.path.dirname(__file__), "../../../src/ui/assets/port5.tcss",
+                ),
             ),
         ]
 
@@ -343,7 +351,8 @@ class DeweyTUI(App):
         self.push_screen("main")
 
     def execute(self) -> None:
-        """Execute the TUI application.
+        """
+        Execute the TUI application.
 
         This method runs the Textual application, starting the user interface.
         """
@@ -370,9 +379,11 @@ class TUIApp(BaseScript):
         self.tui_app.run()
 
     def setup_argparse(self) -> argparse.ArgumentParser:
-        """Set up command line arguments.
+        """
+        Set up command line arguments.
 
-        Returns:
+        Returns
+        -------
             An argument parser configured with common options.
 
         """
@@ -386,7 +397,8 @@ class TUIApp(BaseScript):
         self.logger.info("TUI application cleanup complete")
 
     def execute(self) -> None:
-        """Execute the TUI application.
+        """
+        Execute the TUI application.
 
         This method initializes and runs the Textual application.
         """

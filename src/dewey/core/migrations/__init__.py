@@ -1,4 +1,5 @@
-"""Migrations module for the Dewey project.
+"""
+Migrations module for the Dewey project.
 
 This module provides functionality for managing database migrations, including:
 - Running migrations

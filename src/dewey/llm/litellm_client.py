@@ -1,4 +1,5 @@
-"""LiteLLM client for handling LLM calls across different providers.
+"""
+LiteLLM client for handling LLM calls across different providers.
 
 This module provides a unified interface for interacting with different
 LLM providers using the LiteLLM library.
@@ -8,7 +9,8 @@ import logging
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
+import time
 
 import litellm
 from litellm import (
@@ -67,9 +69,11 @@ class LiteLLMClient:
     """Client for interacting with various LLM providers using LiteLLM."""
 
     def __init__(self, config: LiteLLMConfig | None = None, verbose: bool = False):
-        """Initialize the LiteLLM client.
+        """
+        Initialize the LiteLLM client.
 
         Args:
+        ----
             config: Configuration for the client, defaults to environment-based config
             verbose: Whether to enable verbose logging
 
@@ -107,7 +111,7 @@ class LiteLLMClient:
                         # Fall back to environment variables
                         self.config = self._create_config_from_env()
                         logger.debug(
-                            "Loaded LiteLLM config from environment variables."
+                            "Loaded LiteLLM config from environment variables.",
                         )
                 elif AIDER_MODEL_METADATA_PATH.exists():
                     # If no Dewey config, try Aider
@@ -120,7 +124,7 @@ class LiteLLMClient:
 
             except Exception as e:
                 logger.warning(
-                    f"Error loading config from Dewey/Aider: {e}. Falling back to env vars."
+                    f"Error loading config from Dewey/Aider: {e}. Falling back to env vars.",
                 )
                 # Fall back to environment variables if any loading step fails unexpectedly
                 self.config = self._create_config_from_env()
@@ -167,12 +171,15 @@ class LiteLLMClient:
     #         return None
 
     def _create_config_from_dewey(self, dewey_config: Any) -> LiteLLMConfig:
-        """Create LiteLLMConfig from Dewey config.
+        """
+        Create LiteLLMConfig from Dewey config.
 
         Args:
+        ----
             dewey_config: The loaded Dewey configuration object (dictionary or object)
 
         Returns:
+        -------
             LiteLLMConfig populated with values from the Dewey config
 
         """
@@ -215,9 +222,11 @@ class LiteLLMClient:
         return config
 
     def _create_config_from_aider(self) -> LiteLLMConfig:
-        """Create LiteLLMConfig from Aider model metadata.
+        """
+        Create LiteLLMConfig from Aider model metadata.
 
-        Returns:
+        Returns
+        -------
             LiteLLMConfig populated with values from Aider metadata
 
         """
@@ -264,7 +273,7 @@ class LiteLLMClient:
             )
 
             logger.debug(
-                f"Created config from Aider metadata with model: {config.model}"
+                f"Created config from Aider metadata with model: {config.model}",
             )
             return config
 
@@ -273,18 +282,69 @@ class LiteLLMClient:
             return self._create_config_from_env()
 
     def _create_config_from_env(self) -> LiteLLMConfig:
-        """Create LiteLLMConfig from environment variables.
+        """
+        Create LiteLLMConfig from environment variables.
+
+        This is the fallback method for configuration creation when other methods fail.
 
         Returns:
+        -------
             LiteLLMConfig populated with values from environment variables
 
         """
-        # Get environment variables with defaults
+        # Check for DeepInfra API key first
+        deepinfra_key = os.environ.get("DEEPINFRA_API_KEY")
+        if deepinfra_key:
+            # If DeepInfra key is present, use Gemini model through DeepInfra
+            logger.debug("Found DeepInfra API key, configuring for DeepInfra Gemini")
+            # Set the key in the environment for LiteLLM to find
+            os.environ["DEEPINFRA_API_KEY"] = deepinfra_key
+
+            config = LiteLLMConfig(
+                model="deepinfra/google/gemini-2.0-flash-001",
+                api_key=deepinfra_key,
+                base_url="https://api.deepinfra.com/v1/openai",  # Using OpenAI-compatible endpoint
+                timeout=int(os.environ.get("LITELLM_TIMEOUT", "60")),
+                max_retries=int(os.environ.get("LITELLM_MAX_RETRIES", "3")),
+                proxy=os.environ.get("LITELLM_PROXY"),
+                cache=os.environ.get("LITELLM_CACHE", "").lower() == "true",
+                cache_folder=os.environ.get("LITELLM_CACHE_FOLDER", ".litellm_cache"),
+                verbose=os.environ.get("LITELLM_VERBOSE", "").lower() == "true",
+                litellm_provider="deepinfra"  # Set the provider explicitly
+            )
+
+            logger.debug(f"Created config from DeepInfra with model: {config.model}")
+            return config
+
+        # Check for Google/Gemini API key next
+        gemini_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+        if gemini_key:
+            # If Gemini key is present, use Gemini model directly
+            logger.debug("Found Gemini API key, configuring for Gemini")
+            # Set the key in the environment for LiteLLM to find
+            os.environ["GEMINI_API_KEY"] = gemini_key
+
+            config = LiteLLMConfig(
+                model="gemini-1.5-pro",  # Use the latest Gemini model
+                api_key=gemini_key,
+                timeout=int(os.environ.get("LITELLM_TIMEOUT", "60")),
+                max_retries=int(os.environ.get("LITELLM_MAX_RETRIES", "3")),
+                proxy=os.environ.get("LITELLM_PROXY"),
+                cache=os.environ.get("LITELLM_CACHE", "").lower() == "true",
+                cache_folder=os.environ.get("LITELLM_CACHE_FOLDER", ".litellm_cache"),
+                verbose=os.environ.get("LITELLM_VERBOSE", "").lower() == "true",
+                litellm_provider="gemini"  # Set the provider explicitly
+            )
+
+            logger.debug(f"Created config from Gemini with model: {config.model}")
+            return config
+
+        # Fallback to OpenAI if no specific key found
         config = LiteLLMConfig(
             model=os.environ.get("LITELLM_MODEL", "gpt-3.5-turbo"),
             api_key=os.environ.get("OPENAI_API_KEY"),
             organization_id=os.environ.get("OPENAI_ORGANIZATION"),
-            base_url=os.environ.get("OPENAI_BASE_URL"),
+            base_url=os.environ.get("OPENAI_API_BASE"),
             timeout=int(os.environ.get("LITELLM_TIMEOUT", "60")),
             max_retries=int(os.environ.get("LITELLM_MAX_RETRIES", "3")),
             proxy=os.environ.get("LITELLM_PROXY"),
@@ -317,9 +377,11 @@ class LiteLLMClient:
         functions: list[dict[str, Any]] | None = None,
         function_call: str | dict[str, Any] | None = None,
     ) -> ModelResponse:
-        """Generate a completion from messages.
+        """
+        Generate a completion from messages.
 
         Args:
+        ----
             messages: List of Message objects
             model: Model to use, defaults to config model
             temperature: Sampling temperature
@@ -333,9 +395,11 @@ class LiteLLMClient:
             function_call: Function call configuration
 
         Returns:
+        -------
             LiteLLM ModelResponse
 
         Raises:
+        ------
             LLMResponseError: For general response errors
             LLMConnectionError: For connection issues
             LLMAuthenticationError: For authentication issues
@@ -361,33 +425,128 @@ class LiteLLMClient:
             if self.verbose:
                 logger.debug(
                     f"Generating completion with model {model_name}, "
-                    f"{len(messages)} messages, temperature={temperature}"
+                    f"{len(messages)} messages, temperature={temperature}",
                 )
 
+            # Special handling for DeepInfra models
+            if model_name.startswith("deepinfra/") or self.config.litellm_provider == "deepinfra":
+                logger.debug("Using DeepInfra-specific configuration")
+
+                # Ensure API key is set
+                if self.config.api_key:
+                    os.environ["DEEPINFRA_API_KEY"] = self.config.api_key
+
+                # Set the base URL if provided - ensure it's the correct OpenAI-compatible endpoint
+                if self.config.base_url:
+                    os.environ["DEEPINFRA_API_BASE"] = self.config.base_url
+                else:
+                    # Make sure we're using the correct endpoint according to docs
+                    os.environ["DEEPINFRA_API_BASE"] = "https://api.deepinfra.com/v1/openai"
+                    self.config.base_url = "https://api.deepinfra.com/v1/openai"
+
+                # Clean up any problematic characters in messages
+                for msg in messages_dict:
+                    if isinstance(msg["content"], str):
+                        # Replace any characters that might cause JSON issues
+                        msg["content"] = msg["content"].replace("\x00", "")
+
+                # Add model metadata to help with debugging
+                metadata = {
+                    "provider": "deepinfra",
+                    "model_name": model_name,
+                    "timestamp": time.time()
+                }
+                
+                # log detailed information for debugging
+                logger.debug(f"DeepInfra API Key: {'Set' if self.config.api_key else 'Not set'}")
+                logger.debug(f"DeepInfra API Base: {os.environ.get('DEEPINFRA_API_BASE')}")
+                logger.debug(f"Using model: {model_name}")
+                logger.debug(f"Number of messages: {len(messages_dict)}")
+                logger.debug(f"First message role: {messages_dict[0]['role'] if messages_dict else 'No messages'}")
+                logger.debug(f"Timeout: {self.config.timeout}, Max retries: {self.config.max_retries}")
+            
+            elif model_name.startswith("gemini-") or self.config.litellm_provider == "gemini":
+                logger.debug("Using Gemini-specific configuration")
+
+                # Ensure API key is set
+                if self.config.api_key:
+                    os.environ["GEMINI_API_KEY"] = self.config.api_key
+
+                # Clean up any problematic characters in messages
+                for msg in messages_dict:
+                    if isinstance(msg["content"], str):
+                        # Replace any characters that might cause JSON issues
+                        msg["content"] = msg["content"].replace("\x00", "")
+
+                # Add model metadata to help with debugging
+                metadata = {
+                    "provider": "gemini",
+                    "model_name": model_name,
+                    "timestamp": time.time()
+                }
+            else:
+                metadata = {}
+
+            # Log when we're about to make the API call
+            logger.debug(f"Calling LiteLLM completion with model: {model_name}")
+
             # Call litellm completion
-            response = completion(
-                model=model_name,
-                messages=messages_dict,
-                temperature=temperature,
-                max_tokens=max_tokens,
-                top_p=top_p,
-                frequency_penalty=frequency_penalty,
-                presence_penalty=presence_penalty,
-                stop=stop,
-                user=user,
-                functions=functions,
-                function_call=function_call,
-                timeout=self.config.timeout,
-                max_retries=self.config.max_retries,
-            )
+            try:
+                response = completion(
+                    model=model_name,
+                    messages=messages_dict,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    top_p=top_p,
+                    frequency_penalty=frequency_penalty,
+                    presence_penalty=presence_penalty,
+                    stop=stop,
+                    user=user,
+                    functions=functions,
+                    function_call=function_call,
+                    timeout=self.config.timeout,
+                    max_retries=self.config.max_retries,
+                    metadata=metadata,
+                )
 
-            # Calculate cost for logging
-            cost = completion_cost(
-                completion_response=response,
-            )
-            logger.debug(f"Completion cost: ${cost:.6f}")
+                # Log successful API call
+                logger.debug(f"Successfully received response from {model_name}")
 
-            return response
+                # Calculate cost for logging
+                try:
+                    cost = completion_cost(completion_response=response)
+                    logger.debug(f"Completion cost: ${cost:.6f}")
+                except Exception as cost_error:
+                    logger.warning(f"Error calculating cost: {cost_error}")
+
+                # Verify response format for debugging purposes
+                if self.verbose:
+                    if hasattr(response, 'choices') and response.choices:
+                        logger.debug(f"Response has {len(response.choices)} choices")
+                    else:
+                        logger.warning("Response has unexpected format (no choices)")
+
+                return response
+
+            except litellm.exceptions.BadRequestError as e:
+                # More detailed error handling for bad requests
+                error_msg = str(e)
+
+                if "Invalid model name" in error_msg:
+                    logger.error(f"Invalid model: {model_name}")
+                    raise LLMResponseError(f"Invalid model '{model_name}'. Please check your model configuration.")
+
+                elif "API key" in error_msg.lower() and "invalid" in error_msg.lower():
+                    logger.error(f"Invalid API key for {model_name}")
+                    raise LLMAuthenticationError(f"Invalid API key for {model_name}. Please check your API key.")
+
+                elif "exceeded your current quota" in error_msg.lower():
+                    logger.error(f"Quota exceeded for {model_name}")
+                    raise LLMRateLimitError(f"Quota exceeded for {model_name}. Please check your plan limits.")
+
+                else:
+                    logger.error(f"Bad request: {e}")
+                    raise LLMResponseError(f"Bad request: {e}")
 
         except litellm.exceptions.RateLimitError as e:
             logger.warning(f"Rate limit exceeded: {e}")
@@ -406,6 +565,9 @@ class LiteLLMClient:
             raise LLMResponseError(f"Bad request: {e}")
         except Exception as e:
             logger.error(f"Failed to generate completion: {e}")
+            if self.verbose:
+                import traceback
+                logger.error(traceback.format_exc())
             raise LLMResponseError(f"Failed to generate completion: {e}")
 
     def generate_embedding(
@@ -416,9 +578,11 @@ class LiteLLMClient:
         dimensions: int | None = None,
         user: str | None = None,
     ) -> dict[str, Any]:
-        """Generate embeddings for input text.
+        """
+        Generate embeddings for input text.
 
         Args:
+        ----
             input_text: String or list of strings to embed
             model: Model to use, defaults to a suitable embedding model
             encoding_format: Encoding format for vectors
@@ -426,9 +590,11 @@ class LiteLLMClient:
             user: User identifier
 
         Returns:
+        -------
             Dictionary with embedding data
 
         Raises:
+        ------
             LLMResponseError: For general response errors
             LLMConnectionError: For connection issues
             LLMAuthenticationError: For authentication issues
@@ -437,7 +603,7 @@ class LiteLLMClient:
         try:
             # Use model from parameters, or a default embedding model
             model_name = model or os.environ.get(
-                "LITELLM_EMBEDDING_MODEL", "text-embedding-ada-002"
+                "LITELLM_EMBEDDING_MODEL", "text-embedding-ada-002",
             )
 
             # Log the request if verbose
@@ -451,7 +617,7 @@ class LiteLLMClient:
                 )
                 logger.debug(
                     f"Generating embedding with model {model_name}, "
-                    f"input length {input_len}"
+                    f"input length {input_len}",
                 )
 
             # Call litellm embedding
@@ -484,15 +650,19 @@ class LiteLLMClient:
             raise LLMResponseError(f"Failed to generate embedding: {e}")
 
     def get_model_details(self, model: str | None = None) -> dict[str, Any]:
-        """Get details about a specific model.
+        """
+        Get details about a specific model.
 
         Args:
+        ----
             model: Model name to get details for, defaults to config model
 
         Returns:
+        -------
             Dictionary with model details
 
         Raises:
+        ------
             LLMResponseError: If model details cannot be retrieved
 
         """

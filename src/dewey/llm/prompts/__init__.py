@@ -1,19 +1,22 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
 
 class Prompts(BaseScript):
-    """A class for managing and executing prompt-related tasks.
+    """
+    A class for managing and executing prompt-related tasks.
 
     Inherits from:
         BaseScript
     """
 
     def __init__(self, config_section: str = "prompts", **kwargs: Any) -> None:
-        """Initializes the Prompts class.
+        """
+        Initializes the Prompts class.
 
         Args:
+        ----
             config_section (str): The configuration section to use. Defaults to 'prompts'.
             **kwargs (Any): Additional keyword arguments.
 
@@ -21,16 +24,19 @@ class Prompts(BaseScript):
         super().__init__(config_section=config_section, **kwargs)
 
     def run(self) -> None:
-        """Executes the core logic of the Prompts script.
+        """
+        Executes the core logic of the Prompts script.
 
         This method retrieves a prompt and an API key from the configuration,
         and logs them.
 
-        Raises:
+        Raises
+        ------
             ValueError: If the 'prompt' configuration value is not found.
             ValueError: If the 'api_key' configuration value is not found.
 
-        Returns:
+        Returns
+        -------
             None
 
         """

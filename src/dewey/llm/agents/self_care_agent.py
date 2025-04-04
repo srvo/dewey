@@ -1,15 +1,15 @@
 """Wellness monitoring and self-care intervention agent using smolagents."""
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from smolagents import Tool
 
-from dewey.core.base_script import BaseScript
 from dewey.llm.agents.base_agent import BaseAgent
 
 
 class SelfCareAgent(BaseAgent):
-    """Agent for monitoring user wellness and suggesting self-care interventions.
+    """
+    Agent for monitoring user wellness and suggesting self-care interventions.
 
     Features:
         - Work pattern monitoring
@@ -32,16 +32,19 @@ class SelfCareAgent(BaseAgent):
                     self.suggest_break,
                     description="Suggests a break based on current work patterns.",
                 ),
-            ]
+            ],
         )
 
     def execute(self, prompt: str) -> dict[str, Any]:
-        """Executes the agent with the given prompt.
+        """
+        Executes the agent with the given prompt.
 
         Args:
+        ----
             prompt: The prompt to run the agent with.
 
         Returns:
+        -------
             The result of running the agent.
 
         """
@@ -51,27 +54,33 @@ class SelfCareAgent(BaseAgent):
         return result
 
     def run(self, prompt: str) -> dict[str, Any]:
-        """Runs the agent with the given prompt.
+        """
+        Runs the agent with the given prompt.
 
         Args:
+        ----
             prompt: The prompt to run the agent with.
 
         Returns:
+        -------
             The result of running the agent.
 
         """
         return super().run(prompt)
 
     def monitor_and_intervene(
-        self, work_patterns: dict[str, Any] | None = None
+        self, work_patterns: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
-        """Monitors work patterns and intervenes if needed.
+        """
+        Monitors work patterns and intervenes if needed.
 
         Args:
+        ----
             work_patterns: Information about recent work patterns.
                 Defaults to None.
 
         Returns:
+        -------
             Assessment and recommendations for self-care.
 
         """
@@ -94,18 +103,19 @@ class SelfCareAgent(BaseAgent):
         return result
 
     def suggest_break(
-        self,
-        work_duration: int = 0,
-        break_history: list[dict[str, Any]] | None = None,
+        self, work_duration: int = 0, break_history: list[dict[str, Any]] | None = None,
     ) -> dict[str, Any]:
-        """Suggests a break based on current work patterns.
+        """
+        Suggests a break based on current work patterns.
 
         Args:
+        ----
             work_duration: Minutes of continuous work. Defaults to 0.
             break_history: Recent break history.
                 Defaults to None.
 
         Returns:
+        -------
             Break recommendation with activity suggestion and duration.
 
         """

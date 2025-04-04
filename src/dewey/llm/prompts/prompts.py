@@ -1,34 +1,40 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
 
 class Prompts(BaseScript):
-    """A class for managing and generating prompts using LLMs.
+    """
+    A class for managing and generating prompts using LLMs.
 
     Inherits from:
         BaseScript
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        """Initializes the Prompts class.
+        """
+        Initializes the Prompts class.
 
         Args:
+        ----
             **kwargs: Additional keyword arguments.
 
         """
         super().__init__(config_section="prompts", **kwargs)
 
     def run(self) -> None:
-        """Executes the core logic of the Prompts script.
+        """
+        Executes the core logic of the Prompts script.
 
         This method retrieves configuration values, generates prompts,
         and logs relevant information.
 
-        Returns:
+        Returns
+        -------
             None
 
-        Raises:
+        Raises
+        ------
             ValueError: If a required configuration value is missing.
 
         """
@@ -48,16 +54,20 @@ class Prompts(BaseScript):
             raise ValueError(f"Missing configuration value: {e}")
 
     def generate_prompt(self, template: str, data: dict[str, str]) -> str:
-        """Generates a prompt by populating a template with data.
+        """
+        Generates a prompt by populating a template with data.
 
         Args:
+        ----
             template: The prompt template.
             data: A dictionary containing the data to populate the template.
 
         Returns:
+        -------
             The generated prompt.
 
         Raises:
+        ------
             ValueError: If a required key is missing in the data.
 
         """
@@ -69,15 +79,18 @@ class Prompts(BaseScript):
             raise ValueError(f"Missing key in data: {e}")
 
     def execute(self) -> None:
-        """Executes the core logic of the Prompts script.
+        """
+        Executes the core logic of the Prompts script.
 
         This method retrieves configuration values, generates prompts,
         and logs relevant information.
 
-        Returns:
+        Returns
+        -------
             None
 
-        Raises:
+        Raises
+        ------
             ValueError: If a required configuration value is missing.
 
         """

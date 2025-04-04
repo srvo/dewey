@@ -1,8 +1,6 @@
 """LLM agent for analyzing client communications from the database."""
 
-from typing import Dict, List
-
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import joinedload
 
@@ -15,6 +13,8 @@ from dewey.llm.litellm_client import LiteLLMClient, Message
 
 class CommunicationAnalysis(BaseModel):
     """Structured output format for communication analysis."""
+
+    model_config = ConfigDict(extra="forbid")
 
     summary: str
     key_topics: list[str]
@@ -39,12 +39,15 @@ class CommunicationAnalyzerAgent(BaseScript):
         self.analysis_model = self.get_config_value("analysis_model", "gpt-4-turbo")
 
     def retrieve_communications(self, client_identifier: str) -> list[dict]:
-        """Retrieve communications for a client.
+        """
+        Retrieve communications for a client.
 
         Args:
+        ----
             client_identifier: Email address or client_profile_id
 
         Returns:
+        -------
             List of communication dictionaries with subject, content, and dates
 
         """
@@ -60,7 +63,7 @@ class CommunicationAnalyzerAgent(BaseScript):
                     .join(ClientProfiles)
                     .filter(
                         (ClientCommunicationsIndex.client_email == client_identifier)
-                        | (ClientProfiles.id == client_identifier)
+                        | (ClientProfiles.id == client_identifier),
                     )
                     .options(joinedload(ClientCommunicationsIndex.email_analysis))
                 )
@@ -69,7 +72,7 @@ class CommunicationAnalyzerAgent(BaseScript):
 
                 if not communications:
                     self.logger.warning(
-                        f"No communications found for {client_identifier}"
+                        f"No communications found for {client_identifier}",
                     )
                     return []
 
@@ -117,7 +120,7 @@ Return JSON format with: summary, key_topics, sentiment, action_items, urgency, 
         return [
             Message(role="system", content=system_prompt),
             Message(
-                role="user", content=f"Analyze these communications:\n{comms_text}"
+                role="user", content=f"Analyze these communications:\n{comms_text}",
             ),
         ]
 

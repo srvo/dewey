@@ -3,7 +3,6 @@
 import json
 import subprocess
 from pathlib import Path
-from typing import Dict
 from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
@@ -18,7 +17,7 @@ class MockFileSystem(FileSystemInterface):
     """Mock implementation of FileSystemInterface for testing."""
 
     def __init__(
-        self, files: dict[str, str] = None, existing_files: set = None
+        self, files: dict[str, str] = None, existing_files: set = None,
     ) -> None:
         """Initialize with optional files dictionary and existing files set."""
         self.files = files or {}
@@ -36,7 +35,7 @@ class MockFileSystem(FileSystemInterface):
         return str(path) in self.existing_files
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_fs() -> MockFileSystem:
     """Fixture providing a mock file system."""
     sample_rules = json.dumps(
@@ -46,8 +45,8 @@ def mock_fs() -> MockFileSystem:
                 "Income:Salary",
                 "Expenses:Food",
                 "Expenses:Utilities",
-            ]
-        }
+            ],
+        },
     )
 
     fs = MockFileSystem(
@@ -58,13 +57,13 @@ def mock_fs() -> MockFileSystem:
     return fs
 
 
-@pytest.fixture
+@pytest.fixture()
 def validator(mock_fs: MockFileSystem) -> AccountValidator:
     """Fixture providing an AccountValidator with mock file system."""
     return AccountValidator(fs=mock_fs)
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_sys_exit() -> MagicMock:
     """Fixture to provide a mock for sys.exit."""
     with patch("sys.exit") as mock_exit:
@@ -114,7 +113,7 @@ class TestAccountValidator:
 
     @patch("json.load")
     def test_load_rules_invalid_json(
-        self, mock_json_load: MagicMock, validator: AccountValidator
+        self, mock_json_load: MagicMock, validator: AccountValidator,
     ) -> None:
         """Test error handling when rules file contains invalid JSON."""
         mock_json_load.side_effect = json.JSONDecodeError("Invalid JSON", "", 0)
@@ -134,7 +133,7 @@ class TestAccountValidator:
 
         rules = validator.load_rules(Path("rules.json"))
         result = validator.validate_accounts(
-            Path("journal.hledger"), rules, run_command=mock_run
+            Path("journal.hledger"), rules, run_command=mock_run,
         )
 
         assert result is True
@@ -148,7 +147,7 @@ class TestAccountValidator:
         assert "journal.hledger" in str(args[0][3])
 
     def test_validate_accounts_missing_accounts(
-        self, validator: AccountValidator
+        self, validator: AccountValidator,
     ) -> None:
         """Test validation with missing accounts."""
         # Mock subprocess.run to return only some of the accounts
@@ -159,7 +158,7 @@ class TestAccountValidator:
 
         rules = validator.load_rules(Path("rules.json"))
         result = validator.validate_accounts(
-            Path("journal.hledger"), rules, run_command=mock_run
+            Path("journal.hledger"), rules, run_command=mock_run,
         )
 
         assert result is False
@@ -169,14 +168,14 @@ class TestAccountValidator:
         """Test error handling when hledger command fails."""
         # Mock subprocess.run to raise CalledProcessError
         mock_run = MagicMock(
-            side_effect=subprocess.CalledProcessError(1, "hledger", "Command failed")
+            side_effect=subprocess.CalledProcessError(1, "hledger", "Command failed"),
         )
 
         rules = validator.load_rules(Path("rules.json"))
 
         with pytest.raises(subprocess.CalledProcessError):
             validator.validate_accounts(
-                Path("journal.hledger"), rules, run_command=mock_run
+                Path("journal.hledger"), rules, run_command=mock_run,
             )
 
     def test_validate_accounts_other_error(self, validator: AccountValidator) -> None:
@@ -188,18 +187,18 @@ class TestAccountValidator:
 
         with pytest.raises(Exception):
             validator.validate_accounts(
-                Path("journal.hledger"), rules, run_command=mock_run
+                Path("journal.hledger"), rules, run_command=mock_run,
             )
 
     @patch("sys.argv", ["account_validator.py", "journal.hledger", "rules.json"])
     @patch("sys.exit")
     def test_run_success(
-        self, mock_exit: MagicMock, validator: AccountValidator
+        self, mock_exit: MagicMock, validator: AccountValidator,
     ) -> None:
         """Test successful execution of run method."""
         with patch.object(validator, "load_rules") as mock_load:
             with patch.object(
-                validator, "validate_accounts", return_value=True
+                validator, "validate_accounts", return_value=True,
             ) as mock_validate:
                 # Configure mocks
                 mock_load.return_value = {"categories": ["Assets:Checking"]}
@@ -215,12 +214,12 @@ class TestAccountValidator:
     @patch("sys.argv", ["account_validator.py", "journal.hledger", "rules.json"])
     @patch("sys.exit")
     def test_run_validation_failure(
-        self, mock_exit: MagicMock, validator: AccountValidator
+        self, mock_exit: MagicMock, validator: AccountValidator,
     ) -> None:
         """Test run method when validation fails."""
         with patch.object(validator, "load_rules") as mock_load:
             with patch.object(
-                validator, "validate_accounts", return_value=False
+                validator, "validate_accounts", return_value=False,
             ) as mock_validate:
                 # Configure mocks
                 mock_load.return_value = {"categories": ["Assets:Checking"]}
@@ -236,11 +235,11 @@ class TestAccountValidator:
     @patch("sys.argv", ["account_validator.py", "journal.hledger", "rules.json"])
     @patch("sys.exit")
     def test_run_load_error(
-        self, mock_exit: MagicMock, validator: AccountValidator
+        self, mock_exit: MagicMock, validator: AccountValidator,
     ) -> None:
         """Test run method when rules loading fails."""
         with patch.object(
-            validator, "load_rules", side_effect=Exception("Failed to load rules")
+            validator, "load_rules", side_effect=Exception("Failed to load rules"),
         ):
             # Execute run
             validator.run()
@@ -263,7 +262,7 @@ class TestAccountValidator:
                 mock_exit.assert_called_once_with(1)
 
     def test_run_journal_not_found(
-        self, validator: AccountValidator, mock_sys_exit: MagicMock
+        self, validator: AccountValidator, mock_sys_exit: MagicMock,
     ) -> None:
         """Test run method when journal file is not found."""
         mock_argv = [
@@ -278,18 +277,18 @@ class TestAccountValidator:
 
         with patch("sys.argv", mock_argv):
             with patch(
-                "os.path.exists", lambda path: path != "nonexistent_journal.journal"
+                "os.path.exists", lambda path: path != "nonexistent_journal.journal",
             ):
                 validator.run()
 
                 # Check that sys.exit was called with the correct error code
                 mock_sys_exit.assert_any_call(1)
                 mock_logger.error.assert_any_call(
-                    "Journal file not found: nonexistent_journal.journal"
+                    "Journal file not found: nonexistent_journal.journal",
                 )
 
     def test_run_rules_not_found(
-        self, validator: AccountValidator, mock_sys_exit: MagicMock
+        self, validator: AccountValidator, mock_sys_exit: MagicMock,
     ) -> None:
         """Test run method when rules file is not found."""
         mock_argv = [
@@ -309,5 +308,5 @@ class TestAccountValidator:
                 # Check that sys.exit was called with the correct error code
                 mock_sys_exit.assert_any_call(1)
                 mock_logger.error.assert_any_call(
-                    "Rules file not found: nonexistent_rules.json"
+                    "Rules file not found: nonexistent_rules.json",
                 )

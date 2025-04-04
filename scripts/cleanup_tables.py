@@ -27,7 +27,8 @@ class CleanupTables(BaseScript):
         return parser
 
     def should_delete_table(self, table_name: str) -> bool:
-        """Determine if a table should be deleted based on patterns.
+        """
+        Determine if a table should be deleted based on patterns.
 
         Args:
         ----
@@ -83,15 +84,15 @@ class CleanupTables(BaseScript):
                 self.logger.info(f"Deleted table: {table}")
                 deleted_count += 1
             except Exception as e:
-                self.logger.error(f"Error deleting table {table}: {str(e)}")
+                self.logger.error(f"Error deleting table {table}: {e!s}")
                 error_count += 1
 
         self.logger.info(
-            f"Cleanup complete. Successfully deleted {deleted_count} tables."
+            f"Cleanup complete. Successfully deleted {deleted_count} tables.",
         )
         if error_count > 0:
             self.logger.warning(
-                f"Encountered errors while deleting {error_count} tables."
+                f"Encountered errors while deleting {error_count} tables.",
             )
 
 

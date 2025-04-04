@@ -1,9 +1,11 @@
-from dewey.core.base_script import BaseScript
 import gspread
+
+from dewey.core.base_script import BaseScript
 
 
 class Sheets(BaseScript):
-    """Synchronizes data with Google Sheets.
+    """
+    Synchronizes data with Google Sheets.
 
     This class inherits from BaseScript and provides methods for
     reading from and writing to Google Sheets.
@@ -14,7 +16,8 @@ class Sheets(BaseScript):
         super().__init__(config_section="sheets")
 
     def run(self) -> None:
-        """Executes the main logic for synchronizing data with Google Sheets.
+        """
+        Executes the main logic for synchronizing data with Google Sheets.
 
         Retrieves the sheet ID from the configuration and logs it.
         """
@@ -24,7 +27,8 @@ class Sheets(BaseScript):
         self.logger.info("Google Sheets synchronization completed.")
 
     def execute(self) -> None:
-        """Executes the data synchronization with Google Sheets.
+        """
+        Executes the data synchronization with Google Sheets.
 
         Reads data from the specified Google Sheet and logs the dimensions of the data.
         """
@@ -33,7 +37,7 @@ class Sheets(BaseScript):
         try:
             # Authenticate with Google Sheets API
             gc = gspread.service_account(
-                filename=self.get_config_value("credentials_path")
+                filename=self.get_config_value("credentials_path"),
             )
             # Open the Google Sheet
             sheet = gc.open_by_key(sheet_id).sheet1
@@ -44,12 +48,12 @@ class Sheets(BaseScript):
 
             self.logger.info(f"Successfully read data from Google Sheet '{sheet_id}'.")
             self.logger.info(
-                f"Number of rows: {num_rows}, Number of columns: {num_cols}"
+                f"Number of rows: {num_rows}, Number of columns: {num_cols}",
             )
 
         except Exception as e:
             self.logger.error(
-                f"Error during Google Sheets synchronization: {e}", exc_info=True
+                f"Error during Google Sheets synchronization: {e}", exc_info=True,
             )
             raise
         finally:

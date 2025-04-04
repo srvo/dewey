@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Script to identify and drop tables with fewer than N rows."""
 
+import operator
 from pathlib import Path
-from typing import List, Tuple
 
 from dewey.core.base_script import BaseScript
 
@@ -13,7 +13,7 @@ class DropSmallTablesScript(BaseScript):
     def __init__(self):
         """Initialize the script."""
         super().__init__(
-            name="drop_small_tables", description="Drop tables with fewer than N rows"
+            name="drop_small_tables", description="Drop tables with fewer than N rows",
         )
 
     def setup_argparse(self):
@@ -31,12 +31,13 @@ class DropSmallTablesScript(BaseScript):
             help="Show what would be dropped without actually dropping",
         )
         parser.add_argument(
-            "--output", type=Path, help="Path to save list of dropped tables"
+            "--output", type=Path, help="Path to save list of dropped tables",
         )
         return parser
 
     def get_table_counts(self) -> list[tuple[str, int]]:
-        """Get all tables and their row counts.
+        """
+        Get all tables and their row counts.
 
         Returns
         -------
@@ -45,22 +46,23 @@ class DropSmallTablesScript(BaseScript):
         """
         results = []
         tables = self.db_engine.execute(
-            "SELECT table_name FROM duckdb_tables()"
+            "SELECT table_name FROM duckdb_tables()",
         ).fetchall()
 
         for (table,) in tables:
             try:
                 count = self.db_engine.execute(
-                    f'SELECT COUNT(*) FROM "{table}"'
+                    f'SELECT COUNT(*) FROM "{table}"',
                 ).fetchone()[0]
                 results.append((table, count))
             except Exception as e:
                 self.logger.warning(f"Could not get count for table {table}: {e}")
 
-        return sorted(results, key=lambda x: x[1])
+        return sorted(results, key=operator.itemgetter(1))
 
     def drop_tables(self, tables: list[str], dry_run: bool = True) -> None:
-        """Drop the specified tables.
+        """
+        Drop the specified tables.
 
         Args:
         ----
@@ -73,15 +75,16 @@ class DropSmallTablesScript(BaseScript):
                 if not dry_run:
                     self.db_engine.execute(f'DROP TABLE IF EXISTS "{table}"')
                 self.logger.info(
-                    f"{'Would drop' if dry_run else 'Dropped'} table: {table}"
+                    f"{'Would drop' if dry_run else 'Dropped'} table: {table}",
                 )
             except Exception as e:
                 self.logger.error(f"Error dropping table {table}: {e}")
 
     def save_results(
-        self, dropped_tables: list[tuple[str, int]], output_path: Path
+        self, dropped_tables: list[tuple[str, int]], output_path: Path,
     ) -> None:
-        """Save the list of dropped tables.
+        """
+        Save the list of dropped tables.
 
         Args:
         ----
@@ -109,7 +112,7 @@ class DropSmallTablesScript(BaseScript):
 
         # Log summary
         self.logger.info(
-            f"\nFound {len(to_drop)} tables with fewer than {self.args.min_rows} rows:"
+            f"\nFound {len(to_drop)} tables with fewer than {self.args.min_rows} rows:",
         )
         for table, count in to_drop:
             self.logger.info(f"  {table}: {count} rows")

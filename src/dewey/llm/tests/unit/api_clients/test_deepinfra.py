@@ -10,7 +10,7 @@ from dewey.llm.api_clients.deepinfra import DeepInfraClient
 class TestDeepInfraClient:
     """Tests for the DeepInfraClient class."""
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_client(self) -> DeepInfraClient:
         """Create a DeepInfraClient with mocked BaseScript initialization."""
         with patch("dewey.core.base_script.BaseScript.__init__", return_value=None):
@@ -29,7 +29,7 @@ class TestDeepInfraClient:
                         "completion_tokens": 20,
                         "total_tokens": 30,
                     },
-                }
+                },
             )
             return client
 
@@ -37,7 +37,7 @@ class TestDeepInfraClient:
         """Test client initialization."""
         # Arrange & Act
         with patch(
-            "dewey.core.base_script.BaseScript.__init__", return_value=None
+            "dewey.core.base_script.BaseScript.__init__", return_value=None,
         ) as mock_init:
             client = DeepInfraClient(config_section="test_deepinfra")
 
@@ -53,10 +53,10 @@ class TestDeepInfraClient:
         # Assert
         mock_client.get_config_value.assert_any_call("deepinfra_api_key")
         mock_client.get_config_value.assert_any_call(
-            "deepinfra_model_name", default="default_model"
+            "deepinfra_model_name", default="default_model",
         )
         mock_client._simulate_api_call.assert_called_once_with(
-            "llama2-70b", "test-api-key"
+            "llama2-70b", "test-api-key",
         )
         mock_client.logger.info.assert_called()
 

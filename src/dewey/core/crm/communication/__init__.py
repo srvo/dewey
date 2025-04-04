@@ -1,4 +1,5 @@
-"""Communication Module for CRM
+"""
+Communication Module for CRM
 
 This module contains classes and utilities for handling various communication channels
 in the CRM system, including email, Gmail integration, and other messaging platforms.

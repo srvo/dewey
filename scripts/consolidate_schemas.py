@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from typing import Dict
 
 from dewey.core.base_script import BaseScript
 
@@ -17,7 +16,8 @@ class ConsolidateSchemas(BaseScript):
         )
 
     def _are_types_compatible(self, type1: str, type2: str) -> bool:
-        """Check if two SQL types are compatible.
+        """
+        Check if two SQL types are compatible.
 
         Args:
         ----
@@ -29,7 +29,6 @@ class ConsolidateSchemas(BaseScript):
             True if types are compatible, False otherwise
 
         """
-        pass
         # Normalize types to uppercase
         type1 = type1.upper()
         type2 = type2.upper()
@@ -52,9 +51,10 @@ class ConsolidateSchemas(BaseScript):
         return False
 
     def _are_schemas_compatible(
-        self, schema1: dict[str, str], schema2: dict[str, str]
+        self, schema1: dict[str, str], schema2: dict[str, str],
     ) -> bool:
-        """Check if two schemas are compatible.
+        """
+        Check if two schemas are compatible.
 
         Args:
         ----
@@ -66,7 +66,6 @@ class ConsolidateSchemas(BaseScript):
             True if schemas are compatible, False otherwise
 
         """
-        pass
         # Convert column names to lowercase for case-insensitive comparison
         schema1_lower = {k.lower(): v for k, v in schema1.items()}
         schema2_lower = {k.lower(): v for k, v in schema2.items()}
@@ -128,7 +127,7 @@ class ConsolidateSchemas(BaseScript):
                 try:
                     # Check if table is empty
                     count_result = self.db_conn.execute_query(
-                        f"SELECT COUNT(*) FROM {table}"
+                        f"SELECT COUNT(*) FROM {table}",
                     )
                     if count_result and count_result[0][0] == 0:
                         empty_tables.append(table)
@@ -147,10 +146,10 @@ class ConsolidateSchemas(BaseScript):
                         self.logger.info(f"Merged data from {table}")
                     else:
                         self.logger.warning(
-                            f"Schema mismatch for table {table}, skipping"
+                            f"Schema mismatch for table {table}, skipping",
                         )
                 except Exception as e:
-                    self.logger.error(f"Error processing table {table}: {str(e)}")
+                    self.logger.error(f"Error processing table {table}: {e!s}")
 
         # Delete empty tables
         self.logger.info(f"Found {len(empty_tables)} empty tables to delete")
@@ -159,7 +158,7 @@ class ConsolidateSchemas(BaseScript):
                 self.db_conn.execute_query(f"DROP TABLE IF EXISTS {table}")
                 self.logger.info(f"Deleted empty table: {table}")
             except Exception as e:
-                self.logger.error(f"Error deleting table {table}: {str(e)}")
+                self.logger.error(f"Error deleting table {table}: {e!s}")
 
         self.logger.info("Schema consolidation complete")
 

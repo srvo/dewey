@@ -5,9 +5,9 @@ import os
 import re
 import shutil
 import sys
-from pathlib import Path
-from typing import Any, Dict, Protocol
 from collections.abc import Callable
+from pathlib import Path
+from typing import Any, Protocol
 
 from dewey.core.base_script import BaseScript
 
@@ -74,15 +74,19 @@ class JournalCategorizer(BaseScript):
         self.copy_func = copy_func or shutil.copy2
 
     def load_classification_rules(self, rules_file: str) -> dict[str, Any]:
-        """Load classification rules from JSON file.
+        """
+        Load classification rules from JSON file.
 
         Args:
+        ----
             rules_file: Path to the JSON file containing classification rules.
 
         Returns:
+        -------
             A dictionary containing the classification rules.
 
         Raises:
+        ------
             FileNotFoundError: If the rules file does not exist.
             json.JSONDecodeError: If the rules file is not a valid JSON.
 
@@ -95,19 +99,23 @@ class JournalCategorizer(BaseScript):
             self.logger.exception(f"Classification rules file not found: {rules_file}")
             raise
         except json.JSONDecodeError as e:
-            self.logger.exception(f"Failed to load classification rules: {str(e)}")
+            self.logger.exception(f"Failed to load classification rules: {e!s}")
             raise
 
     def create_backup(self, file_path: Path) -> str:
-        """Create a backup of the journal file.
+        """
+        Create a backup of the journal file.
 
         Args:
+        ----
             file_path: Path to the journal file.
 
         Returns:
+        -------
             The path to the backup file.
 
         Raises:
+        ------
             Exception: If the backup creation fails.
 
         """
@@ -117,19 +125,22 @@ class JournalCategorizer(BaseScript):
             self.logger.debug(f"Created backup at {backup_path}")
             return backup_path
         except Exception as e:
-            self.logger.exception(f"Backup failed for {file_path}: {str(e)}")
+            self.logger.exception(f"Backup failed for {file_path}: {e!s}")
             raise
 
     def classify_transaction(
-        self, transaction: dict[str, Any], rules: dict[str, Any]
+        self, transaction: dict[str, Any], rules: dict[str, Any],
     ) -> str:
-        """Classify a transaction based on the provided rules.
+        """
+        Classify a transaction based on the provided rules.
 
         Args:
+        ----
             transaction: A dictionary representing the transaction.
             rules: A dictionary containing the classification rules.
 
         Returns:
+        -------
             The category to which the transaction belongs.
 
         """
@@ -140,13 +151,16 @@ class JournalCategorizer(BaseScript):
         return rules["default_category"]
 
     def process_journal_file(self, file_path: str, rules: dict[str, Any]) -> bool:
-        """Process a journal file and categorize its transactions.
+        """
+        Process a journal file and categorize its transactions.
 
         Args:
+        ----
             file_path: Path to the journal file.
             rules: A dictionary containing the classification rules.
 
         Returns:
+        -------
             True if the processing was successful, False otherwise.
 
         """
@@ -161,7 +175,7 @@ class JournalCategorizer(BaseScript):
             with self.fs.open(file_path) as f:
                 journal = json.load(f)
         except Exception as e:
-            self.logger.exception(f"Failed to load journal file: {str(e)}")
+            self.logger.exception(f"Failed to load journal file: {e!s}")
             return False
 
         modified = False
@@ -172,7 +186,7 @@ class JournalCategorizer(BaseScript):
                 modified = True
 
                 self.logger.debug(
-                    f"Classifying transaction: {trans['description']} (${trans['amount']:.2f})"
+                    f"Classifying transaction: {trans['description']} (${trans['amount']:.2f})",
                 )
                 self.logger.debug(f"Classified as: {new_category}")
 
@@ -182,23 +196,25 @@ class JournalCategorizer(BaseScript):
                     json.dump(journal, f, indent=4)
                 self.logger.info(f"Journal file updated: {file_path}")
             except Exception as e:
-                self.logger.exception(f"Failed to update journal file: {str(e)}")
+                self.logger.exception(f"Failed to update journal file: {e!s}")
                 # Restore from backup
                 try:
                     self.copy_func(backup_path, file_path)
                     self.logger.warning("Journal file restored from backup.")
                 except Exception as restore_e:
                     self.logger.exception(
-                        f"Failed to restore journal from backup: {str(restore_e)}"
+                        f"Failed to restore journal from backup: {restore_e!s}",
                     )
                 return False
 
         return True
 
     def process_by_year_files(self, base_dir: str, rules: dict[str, Any]) -> None:
-        """Process all journal files within a base directory, organized by year.
+        """
+        Process all journal files within a base directory, organized by year.
 
         Args:
+        ----
             base_dir: The base directory containing the journal files.
             rules: A dictionary containing the classification rules.
 
@@ -212,15 +228,17 @@ class JournalCategorizer(BaseScript):
                         self.process_journal_file(file_path, rules)
 
     def execute(self) -> int:
-        """Main function to process all journal files.
+        """
+        Main function to process all journal files.
 
-        Returns:
+        Returns
+        -------
             0 if the process was successful, 1 otherwise.
 
         """
         base_dir = self.get_config_value("journal_base_dir", ".")
         rules_file = self.get_config_value(
-            "classification_rules", "classification_rules.json"
+            "classification_rules", "classification_rules.json",
         )
 
         try:

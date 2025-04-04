@@ -1,4 +1,5 @@
 import httpx
+
 from dewey.core.base_script import BaseScript
 
 
@@ -10,20 +11,24 @@ class SearxNG(BaseScript):
         super().__init__(config_section="searxng")
 
     def run(self) -> None:
-        """Executes the main logic of the SearxNG script.
+        """
+        Executes the main logic of the SearxNG script.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If there is an error during the SearxNG script execution.
 
         """
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.logger.info("Starting SearxNG script")
         try:
@@ -38,15 +43,19 @@ class SearxNG(BaseScript):
             raise
 
     def execute(self) -> None:
-        """Executes a search using the SearxNG API and logs the results.
+        """
+        Executes a search using the SearxNG API and logs the results.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             httpx.RequestError: If the request to the SearxNG API fails.
             Exception: If there is an error during the search execution.
 

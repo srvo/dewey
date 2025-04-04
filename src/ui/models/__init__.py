@@ -1,4 +1,5 @@
-"""UI Models
+"""
+UI Models
 
 This module provides model classes for the UI components.
 """

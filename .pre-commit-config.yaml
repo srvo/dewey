@@ -1,35 +1,43 @@
 # .pre-commit-config.yaml
 
+
 # Optional: Specify minimum pre-commit version
 # default_language_version:
 #   python: python3.12
 
 repos:
+  - repo: https://github.com/executablebooks/mdformat
+    rev: 0.7.16
+    hooks:
+      - id: mdformat
+        additional_dependencies: [mdformat-myst]
+        files: ^docs/.*\.md$
+
   # Standard hooks provided by pre-commit
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0 # Use the latest stable version
     hooks:
-      - id: trailing-whitespace # Removes trailing whitespace
+      - id: trailing-whitespace
         fail_fast: true
         verbose: true
-      - id: end-of-file-fixer   # Ensures files end in a newline
+      - id: end-of-file-fixer
         fail_fast: true
         verbose: true
-      - id: check-yaml          # Checks yaml files for parseable syntax
+      - id: check-yaml
         verbose: true
-      - id: check-json          # Checks json files for parseable syntax
+      - id: check-json
         verbose: true
-      - id: check-added-large-files # Prevents committing large files
+      - id: check-added-large-files
         verbose: true
-      - id: detect-private-key  # Detects the presence of private keys
+      - id: detect-private-key
         verbose: true
-      - id: check-merge-conflict # Checks for files that contain merge conflict strings
+      - id: check-merge-conflict
         verbose: true
-      - id: no-commit-to-branch # Prevents committing directly to specified branches
-        args: [--branch, main]  # Configure for your main branch (e.g., main, master)
+      - id: no-commit-to-branch
+        args: [--branch, main]
         verbose: true
-      - id: mixed-line-ending   # Replaces mixed line endings with system's line ending
-        args: [--fix=lf]        # Force Unix line endings
+      - id: mixed-line-ending
+        args: [--fix=lf]
         verbose: true
 
   # Add indentation checker - must run BEFORE other Python formatters
@@ -37,7 +45,7 @@ repos:
     rev: 6.3.0
     hooks:
       - id: pydocstyle
-        args: ["--ignore=D100,D101,D102,D103,D104,D105,D107,D203,D213"]
+        args: ["--ignore=D203"]  # Only ignore D203 (conflicts with D211)
         additional_dependencies: [tomli]
         exclude: >
           (?x)^(
@@ -82,39 +90,33 @@ repos:
         pass_filenames: true
         verbose: true
         description: "Automatically formats docstrings according to PEP 257 conventions"
-      - id: capture-precommit-issues
-        name: Log issues to TODO.md
-        entry: bash -c "pre-commit run --all-files --hook-stage manual | python scripts/capture_precommit_issues.py"
-        language: system
-        pass_filenames: false
-        always_run: true
-        stages: [pre-commit]
-        verbose: true
-        description: "Captures pre-commit issues and logs them to TODO.md for later resolution"
 
   # Ruff - Linter and Formatter (super fast, replaces flake8, isort, black etc.)
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.4.4 # Use the latest stable version
     hooks:
-      # Run the linter first to fix indentation and other issues
+      # Run the linter with comprehensive checks
       - id: ruff
-        args: [
-          --fix,
-          --preview,  # Enable preview mode for unstable rules
-          --select=E111,E114,E117,E201,E202,E203,E211,E221,E222,E225,E231,E251,E261,E262,E265,E266,E271,E272,E273,E274,E275,W291,W292,W293,F401,F403
-        ]
+        args:
+          - --fix  # Re-enable auto-fixing for safe fixes
+          - --preview  # Enable preview mode for unstable rules
+          - --select=ALL  # Enable all error codes
+          - --ignore=E501  # Line too long (handled by formatter)
+          - --ignore=E203  # Whitespace before colon (conflicts with black)
+          - --ignore=D203  # 1 blank line required before class docstring (conflicts with D211)
+          - --ignore=D212  # Multi-line docstring summary should start at first line (conflicts with D213)
+          - --show-source  # Show source code context
+          - --show-fixes  # Show what fixes would be applied
         fail_fast: true
         verbose: true
-      # Run the formatter (replaces black)
-      - id: ruff-format
-        fail_fast: true
-        verbose: true
-        exclude: |
-          (?x)(
-            scripts/extract_non_compliant\.py|
-            scripts/find_non_compliant\.py|
-            scripts/fix_backticks\.py|
-            scripts/migrate_script_init\.py|
+        # Exclude files in gitignore
+        exclude: >
+          (?x)^(
+            __pycache__/|\.git/|\.venv/|venv/|\.env|logs/|\.aider|
+            .*\.duckdb|.*\.duckdb\.wal|backups/|
+            .*_token\.json|.*_credentials\.json|.*_secret\.|secrets/|.*_key\.txt|
+            scripts/extract_non_compliant\.py|scripts/find_non_compliant\.py|
+            scripts/fix_backticks\.py|scripts/migrate_script_init\.py|
             scripts/update_compliance\.py|
             src/dewey/core/research/analysis/controversy_analyzer\.py|
             src/dewey/core/research/analysis/financial_analysis\.py|
@@ -127,7 +129,31 @@ repos:
             src/ui/ethifinx/research/tests/test_search_workflow_a80fabda\.py|
             src/ui/ethifinx/utils_29150819\.py|
             src/ui/screens/crm_screen\.py
-          )
+          )$
+      # Run the formatter (replaces black)
+      - id: ruff-format
+        fail_fast: true
+        verbose: true
+        exclude: >
+          (?x)^(
+            __pycache__/|\.git/|\.venv/|venv/|\.env|logs/|\.aider|
+            .*\.duckdb|.*\.duckdb\.wal|backups/|
+            .*_token\.json|.*_credentials\.json|.*_secret\.|secrets/|.*_key\.txt|
+            scripts/extract_non_compliant\.py|scripts/find_non_compliant\.py|
+            scripts/fix_backticks\.py|scripts/migrate_script_init\.py|
+            scripts/update_compliance\.py|
+            src/dewey/core/research/analysis/controversy_analyzer\.py|
+            src/dewey/core/research/analysis/financial_analysis\.py|
+            src/dewey/core/research/companies/companies\.py|
+            src/dewey/core/research/json_research_integration\.py|
+            src/dewey/core/research/port/tic_delta_workflow\.py|
+            src/dewey/core/research/workflows/ethical\.py|
+            src/dewey/llm/agents/docstring_agent\.py|
+            src/ui/ethifinx/exceptions_8201d6dc\.py|
+            src/ui/ethifinx/research/tests/test_search_workflow_a80fabda\.py|
+            src/ui/ethifinx/utils_29150819\.py|
+            src/ui/screens/crm_screen\.py
+          )$
 
   # Pyupgrade - Upgrades Python syntax to newer versions
   # This needs to run AFTER indentation issues are fixed

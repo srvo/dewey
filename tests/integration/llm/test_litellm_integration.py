@@ -41,7 +41,7 @@ class TestLiteLLMIntegration(unittest.TestCase):
 
         # Set up mock response
         mock_response = {
-            "choices": [{"message": {"content": "Test response", "role": "assistant"}}]
+            "choices": [{"message": {"content": "Test response", "role": "assistant"}}],
         }
         self.mock_completion.return_value = mock_response
 
@@ -92,9 +92,9 @@ class TestLiteLLMIntegration(unittest.TestCase):
                         "message": {
                             "content": "Paris is the capital of France",
                             "role": "assistant",
-                        }
-                    }
-                ]
+                        },
+                    },
+                ],
             }
             mock_completion.return_value = mock_response
 
@@ -110,7 +110,7 @@ class TestLiteLLMIntegration(unittest.TestCase):
             self.assertEqual(call_args["model"], "gpt-3.5-turbo")
             self.assertEqual(call_args["messages"][0]["role"], "user")
             self.assertEqual(
-                call_args["messages"][0]["content"], "What is the capital of France?"
+                call_args["messages"][0]["content"], "What is the capital of France?",
             )
 
             # Check result
@@ -131,6 +131,8 @@ class TestLiteLLMIntegration(unittest.TestCase):
 
 @pytest.mark.skip(reason="Only run when you have actual API keys configured")
 class TestLiteLLMRealAPI(unittest.TestCase):
+
+
 """
     Tests that use real API keys (should be skipped by default).
 

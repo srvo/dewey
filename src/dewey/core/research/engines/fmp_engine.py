@@ -1,10 +1,11 @@
-from typing import Any, Dict, Optional
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
 
 class FMPEngine(BaseScript):
-    """Engine for interacting with the Financial Modeling Prep (FMP) API.
+    """
+    Engine for interacting with the Financial Modeling Prep (FMP) API.
 
     This class provides methods for retrieving financial data from FMP.
     """
@@ -25,13 +26,16 @@ class FMPEngine(BaseScript):
         self.logger.info("FMP Engine Finished.")
 
     def get_data(self, endpoint: str, params: dict[str, Any] | None = None) -> Any:
-        """Retrieves data from the specified FMP API endpoint.
+        """
+        Retrieves data from the specified FMP API endpoint.
 
         Args:
+        ----
             endpoint: The FMP API endpoint to query.
             params: A dictionary of query parameters.
 
         Returns:
+        -------
             The JSON response from the API, or None if an error occurred.
 
         """

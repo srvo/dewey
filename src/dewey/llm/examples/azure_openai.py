@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Example of using Azure OpenAI with the LiteLLM client.
+"""
+Example of using Azure OpenAI with the LiteLLM client.
 
 This script demonstrates how to configure and use Azure OpenAI
 through the LiteLLM client.
@@ -7,7 +8,6 @@ through the LiteLLM client.
 
 import logging
 import os
-from typing import List
 
 from dewey.llm import (
     LiteLLMClient,
@@ -19,8 +19,7 @@ from dewey.llm import (
 
 # Set up logging
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
 
@@ -37,7 +36,7 @@ def main():
     if not all([azure_api_key, azure_api_base, azure_deployment_name]):
         logger.error("Azure OpenAI configuration is not complete")
         logger.error(
-            "Please set AZURE_API_KEY, AZURE_API_BASE, and AZURE_DEPLOYMENT_NAME environment variables"
+            "Please set AZURE_API_KEY, AZURE_API_BASE, and AZURE_DEPLOYMENT_NAME environment variables",
         )
         return
 
@@ -69,12 +68,12 @@ def main():
     # Initialize the client
     client = LiteLLMClient(config)
     logger.info(
-        f"Initialized LiteLLM client for Azure OpenAI with model: {config.model}"
+        f"Initialized LiteLLM client for Azure OpenAI with model: {config.model}",
     )
 
     # Create message objects
     system_message = create_message(
-        "system", "You are a helpful assistant that provides concise answers."
+        "system", "You are a helpful assistant that provides concise answers.",
     )
 
     user_message = create_message(
@@ -94,7 +93,7 @@ def main():
         print(f"Model used: {result.model}")
         print(f"Response: {result.response_text}")
         print(
-            f"Tokens used: {result.total_tokens} (prompt: {result.prompt_tokens}, completion: {result.completion_tokens})"
+            f"Tokens used: {result.total_tokens} (prompt: {result.prompt_tokens}, completion: {result.completion_tokens})",
         )
         print(f"Response time: {result.response_ms}ms")
 

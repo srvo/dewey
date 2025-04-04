@@ -1,10 +1,11 @@
-from typing import Any, Optional
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
 
 class UploadDb(BaseScript):
-    """A module for uploading databases within Dewey.
+    """
+    A module for uploading databases within Dewey.
 
     This module inherits from BaseScript and provides a standardized
     structure for database uploading scripts, including configuration
@@ -17,7 +18,8 @@ class UploadDb(BaseScript):
         super().__init__(*args, **kwargs)
 
     def execute(self) -> None:
-        """Executes the database uploading logic.
+        """
+        Executes the database uploading logic.
 
         This method implements the specific database uploading functionality.
         """
@@ -34,13 +36,14 @@ class UploadDb(BaseScript):
         self.logger.info("Database upload process completed.")
 
     def run(self) -> None:
-        """Executes the database uploading logic.
+        """
+        Executes the database uploading logic.
 
         This method should be overridden in subclasses to implement the
         specific database uploading functionality.
         """
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 

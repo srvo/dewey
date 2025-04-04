@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-"""Script to analyze tables in both local DuckDB and MotherDuck databases.
+"""
+Script to analyze tables in both local DuckDB and MotherDuck databases.
 Provides information about table structure, row counts, and data samples.
 """
 
@@ -14,12 +15,11 @@ from dotenv import load_dotenv
 
 def format_table_info(table_name, row_count, schema, sample_row=None):
     """Format table information in a consistent way."""
-    pass
     info = {
         "table_name": table_name,
         "row_count": row_count,
         "schema": schema,
-        "sample_row": sample_row if sample_row else None,
+        "sample_row": sample_row or None,
     }
     return info
 
@@ -40,7 +40,7 @@ def analyze_database(conn, db_name):
             try:
                 # Get row count
                 row_count = conn.execute(
-                    f"SELECT COUNT(*) FROM {table_name}"
+                    f"SELECT COUNT(*) FROM {table_name}",
                 ).fetchone()[0]
 
                 # Get schema
@@ -51,13 +51,15 @@ def analyze_database(conn, db_name):
                 sample_row = None
                 if row_count > 0:
                     sample_row = conn.execute(
-                        f"SELECT * FROM {table_name} LIMIT 1"
+                        f"SELECT * FROM {table_name} LIMIT 1",
                     ).fetchone()
                     if sample_row:
-                        sample_row = dict(zip([col[0] for col in schema], sample_row))
+                        sample_row = dict(
+                            zip([col[0] for col in schema], sample_row, strict=False),
+                        )
 
                 table_info = format_table_info(
-                    table_name, row_count, schema_dict, sample_row
+                    table_name, row_count, schema_dict, sample_row,
                 )
                 results.append(table_info)
 
@@ -72,11 +74,11 @@ def analyze_database(conn, db_name):
                         print(f"  {key}: {value}")
 
             except Exception as e:
-                print(f"Error analyzing table {table_name}: {str(e)}")
+                print(f"Error analyzing table {table_name}: {e!s}")
                 continue
 
     except Exception as e:
-        print(f"Error listing tables in {db_name}: {str(e)}")
+        print(f"Error listing tables in {db_name}: {e!s}")
 
     return results
 
@@ -96,7 +98,7 @@ def analyze_tables():
             results["databases"]["local"] = analyze_database(local_conn, "Local DuckDB")
             local_conn.close()
         except Exception as e:
-            print(f"Error connecting to local database: {str(e)}")
+            print(f"Error connecting to local database: {e!s}")
     else:
         print("Local database not found")
 
@@ -110,7 +112,7 @@ def analyze_tables():
         results["databases"]["motherduck"] = analyze_database(md_conn, "MotherDuck")
         md_conn.close()
     except Exception as e:
-        print(f"Error connecting to MotherDuck: {str(e)}")
+        print(f"Error connecting to MotherDuck: {e!s}")
 
     # Save results to file
     try:
@@ -118,7 +120,7 @@ def analyze_tables():
             json.dump(results, f, indent=2, default=str)
         print("\nResults saved to table_analysis_results.json")
     except Exception as e:
-        print(f"Error saving results: {str(e)}")
+        print(f"Error saving results: {e!s}")
 
 
 if __name__ == "__main__":

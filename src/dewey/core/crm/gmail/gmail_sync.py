@@ -7,19 +7,19 @@ import os
 import random
 import time
 from datetime import datetime
-from typing import Dict, List, Optional
 
 import duckdb
 from dotenv import load_dotenv
 
 # Import directly from dewey module
+from src.dewey.core.crm.gmail.gmail_utils import OAuthGmailClient
 
 
 class GmailSync:
     """Gmail synchronization handler with MotherDuck integration."""
 
-    def __init__(self, gmail_client, db_path: str = "md:dewey"):
-        self.gmail_client = gmail_client
+    def __init__(self, credentials_file, db_path: str = "md:dewey", token_file=None):
+        self.gmail_client = OAuthGmailClient(credentials_file=credentials_file, token_file=token_file)
         # Set up MotherDuck connection
         load_dotenv()  # Load environment variables from .env file
         self.db_path = db_path
@@ -35,11 +35,11 @@ class GmailSync:
 
         if self.is_motherduck:
             self.logger.info(
-                f"🔌 Initializing Gmail sync with MotherDuck database: {self.db_path}"
+                f"🔌 Initializing Gmail sync with MotherDuck database: {self.db_path}",
             )
         else:
             self.logger.info(
-                f"💾 Initializing Gmail sync with local database: {self.db_path}"
+                f"💾 Initializing Gmail sync with local database: {self.db_path}",
             )
 
         self._init_db()
@@ -53,7 +53,7 @@ class GmailSync:
             try:
                 if self.is_motherduck and not self.motherduck_token:
                     self.logger.warning(
-                        "⚠️ No MotherDuck token found in environment variables!"
+                        "⚠️ No MotherDuck token found in environment variables!",
                     )
 
                 # Create a fresh connection
@@ -99,7 +99,7 @@ class GmailSync:
         """Initialize database tables."""
         if self.is_motherduck:
             self.logger.info(
-                f"🏗️ Initializing tables in MotherDuck database: {self.db_path}"
+                f"🏗️ Initializing tables in MotherDuck database: {self.db_path}",
             )
         else:
             self.logger.info(f"🏗️ Initializing tables in local database: {self.db_path}")
@@ -108,7 +108,8 @@ class GmailSync:
             conn = self._get_connection()
 
             self.logger.info("Creating/verifying raw_emails table...")
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS raw_emails (
                     message_id VARCHAR PRIMARY KEY,
                     thread_id VARCHAR,
@@ -124,17 +125,20 @@ class GmailSync:
                     raw_data VARCHAR,
                     snippet VARCHAR
                 )
-            """)
+            """,
+            )
             self.logger.info("📋 Created or verified raw_emails table")
 
             self.logger.info("Creating/verifying sync_history table...")
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS sync_history (
                     id INTEGER PRIMARY KEY,
                     last_history_id VARCHAR,
                     last_sync TIMESTAMP
                 )
-            """)
+            """,
+            )
             self.logger.info("📋 Created or verified sync_history table")
 
             # Verify tables exist and check current state
@@ -151,7 +155,7 @@ class GmailSync:
                         0
                     ]
                     self.logger.info(
-                        f"✅ Database initialized successfully. Current raw email count: {count}"
+                        f"✅ Database initialized successfully. Current raw email count: {count}",
                     )
                 except Exception as e:
                     self.logger.warning(f"⚠️ Could not count emails: {e}")
@@ -159,19 +163,21 @@ class GmailSync:
                 # Check sync history
                 try:
                     history_count = conn.execute(
-                        "SELECT COUNT(*) FROM sync_history"
+                        "SELECT COUNT(*) FROM sync_history",
                     ).fetchone()[0]
-                    last_sync = conn.execute("""
+                    last_sync = conn.execute(
+                        """
                         SELECT last_sync, last_history_id
                         FROM sync_history
                         ORDER BY last_sync DESC
                         LIMIT 1
-                    """).fetchone()
+                    """,
+                    ).fetchone()
 
                     self.logger.info(f"Sync history entries: {history_count}")
                     if last_sync:
                         self.logger.info(
-                            f"Last sync: {last_sync[0]}, Last history ID: {last_sync[1]}"
+                            f"Last sync: {last_sync[0]}, Last history ID: {last_sync[1]}",
                         )
                 except Exception as e:
                     self.logger.warning(f"⚠️ Could not check sync history: {e}")
@@ -185,30 +191,29 @@ class GmailSync:
         return self.run()
 
     def run(
-        self,
-        initial: bool = False,
-        query: str | None = None,
-        max_results: int = 10000,
+        self, initial: bool = False, query: str | None = None, max_results: int = 10000,
     ):
         """Synchronize data with increased default max_results."""
         try:
             if initial:
                 self.logger.info(
-                    f"🚀 Starting initial sync with max {max_results} messages to {self.db_path}"
+                    f"🚀 Starting initial sync with max {max_results} messages to {self.db_path}",
                 )
                 self._process_initial_sync(query, max_results)
             else:
                 self.logger.info(f"🔄 Starting incremental sync to {self.db_path}")
                 # Check if we have any history to work with
                 conn = self._get_connection()
-                last_history = conn.execute("""
+                last_history = conn.execute(
+                    """
                     SELECT last_history_id FROM sync_history
                     ORDER BY last_sync DESC LIMIT 1
-                """).fetchone()
+                """,
+                ).fetchone()
 
                 if not last_history:
                     self.logger.warning(
-                        "⚠️ No sync history found - falling back to initial sync"
+                        "⚠️ No sync history found - falling back to initial sync",
                     )
                     self._process_initial_sync(query, max_results)
                 else:
@@ -221,7 +226,7 @@ class GmailSync:
             conn = self._get_connection()
             count = conn.execute("SELECT COUNT(*) FROM raw_emails").fetchone()[0]
             self.logger.info(
-                f"✅ Sync completed successfully! Total raw emails in database: {count}"
+                f"✅ Sync completed successfully! Total raw emails in database: {count}",
             )
 
             # Close connection after sync is complete to avoid hanging connections
@@ -242,11 +247,15 @@ class GmailSync:
         batch_size = 1000  # Increased batch size for more data
 
         while True:
-            response = self.gmail_client.fetch_emails(
-                query=query,
-                max_results=min(batch_size, max_results - processed),
-                page_token=page_token,
-            )
+            try:
+                response = self.gmail_client.fetch_emails(
+                    query=query,
+                    max_results=min(batch_size, max_results - processed),
+                    page_token=page_token,
+                )
+            except Exception as e:
+                self.logger.error(f"Error fetching emails: {e}")
+                break
 
             if not response or "messages" not in response:
                 self.logger.info("📭 No messages found or end of results")
@@ -258,7 +267,7 @@ class GmailSync:
 
             processed += message_count
             self.logger.info(
-                f"📊 Progress: {processed}/{max_results} messages ({int(processed / max_results * 100)}%)"
+                f"📊 Progress: {processed}/{max_results} messages ({int(processed / max_results * 100)}%)",
             )
 
             if "nextPageToken" in response and processed < max_results:
@@ -272,23 +281,27 @@ class GmailSync:
         """Handle incremental updates using history ID."""
         conn = self._get_connection()
         result = conn.execute(
-            "SELECT last_history_id FROM sync_history ORDER BY last_sync DESC LIMIT 1"
+            "SELECT last_history_id FROM sync_history ORDER BY last_sync DESC LIMIT 1",
         ).fetchone()
 
         history_id = result[0] if result else None
         if not history_id:
             self.logger.warning(
-                "⚠️ No previous history ID found, performing initial sync"
+                "⚠️ No previous history ID found, performing initial sync",
             )
             self._process_initial_sync(None, 10000)
             return
 
         self.logger.info(f"🕒 Starting incremental sync from history ID: {history_id}")
-        history_response = self.gmail_client.get_history(history_id)
+        try:
+            history_response = self.gmail_client.get_history(history_id)
+        except Exception as e:
+            self.logger.error(f"Error getting history: {e}")
+            return
 
         if not history_response:
             self.logger.warning(
-                "⚠️ No history available or history ID expired, performing full sync"
+                "⚠️ No history available or history ID expired, performing full sync",
             )
             self._process_initial_sync(None, 10000)
             return
@@ -306,7 +319,7 @@ class GmailSync:
                 if msg_id not in processed_ids:
                     self.logger.info(f"➖ Deleting message: {msg_id}")
                     conn.execute(
-                        "DELETE FROM raw_emails WHERE message_id = ?", [msg_id]
+                        "DELETE FROM raw_emails WHERE message_id = ?", [msg_id],
                     )
                     processed_ids.add(msg_id)
 
@@ -327,11 +340,10 @@ class GmailSync:
                     if "404" in str(e):
                         # Message was probably deleted or moved before we could fetch it
                         self.logger.debug(
-                            f"Message {msg_id} no longer available (probably deleted)"
+                            f"Message {msg_id} no longer available (probably deleted)",
                         )
                         continue
-                    else:
-                        self.logger.error(f"Error processing message {msg_id}: {e}")
+                    self.logger.error(f"Error processing message {msg_id}: {e}")
 
             # Handle label changes if needed
             for label_added in history.get("labelsAdded", []):
@@ -347,14 +359,13 @@ class GmailSync:
                         if "404" in str(e):
                             self.logger.debug(f"Message {msg_id} no longer available")
                             continue
-                        else:
-                            self.logger.error(
-                                f"Error processing label change for {msg_id}: {e}"
-                            )
+                        self.logger.error(
+                            f"Error processing label change for {msg_id}: {e}",
+                        )
 
         total_processed = len(processed_ids)
         self.logger.info(
-            f"✅ Incremental sync completed. Processed {total_processed} messages"
+            f"✅ Incremental sync completed. Processed {total_processed} messages",
         )
 
     def _process_message_batch(self, messages: list[dict]):
@@ -368,10 +379,14 @@ class GmailSync:
                     # Only log every 10th message to reduce noise
                     if idx % 10 == 0:
                         self.logger.info(
-                            f"{emoji} Processing message {idx + 1}/{len(messages)}: {msg_id[:8]}..."
+                            f"{emoji} Processing message {idx + 1}/{len(messages)}: {msg_id[:8]}...",
                         )
 
-                    full_msg = self.gmail_client.get_message(msg_id, format="full")
+                    try:
+                        full_msg = self.gmail_client.get_message(msg_id, format="full")
+                    except Exception as e:
+                        self.logger.error(f"Error getting message: {e}")
+                        continue
                     if full_msg:
                         parsed = self._parse_message(full_msg)
                         self._store_message(parsed)
@@ -385,12 +400,12 @@ class GmailSync:
                     else:
                         backoff_time = 2**attempt
                         self.logger.warning(
-                            f"⏱️ Retry {attempt + 1} for message {msg_id}: {e}. Waiting {backoff_time}s..."
+                            f"⏱️ Retry {attempt + 1} for message {msg_id}: {e}. Waiting {backoff_time}s...",
                         )
                         time.sleep(backoff_time)  # Exponential backoff
 
         self.logger.info(
-            f"✅ Successfully processed {success_count}/{len(messages)} messages in batch"
+            f"✅ Successfully processed {success_count}/{len(messages)} messages in batch",
         )
 
     def _parse_message(self, message: dict) -> dict:
@@ -405,7 +420,7 @@ class GmailSync:
             "message_id": message["id"],
             "thread_id": message.get("threadId"),
             "internal_date": datetime.fromtimestamp(
-                int(message.get("internalDate", 0)) / 1000
+                int(message.get("internalDate", 0)) / 1000,
             ),
             "labels": message.get("labelIds", []),
             "subject": headers.get("Subject"),
@@ -427,7 +442,10 @@ class GmailSync:
         body = ""
         # Check for body in the main payload
         if "body" in payload and "data" in payload["body"]:
-            body += self.gmail_client.decode_message_body(payload["body"])
+            try:
+                body += self.gmail_client.decode_message_body(payload["body"])
+            except Exception as e:
+                self.logger.error(f"Error decoding message body: {e}")
 
         # Check for parts
         for part in payload.get("parts", []):
@@ -449,7 +467,7 @@ class GmailSync:
 
         # Check for inline attachments
         if payload.get("filename") and payload.get("mimeType", "").startswith(
-            "application/"
+            "application/",
         ):
             attachments.append(payload["filename"])
 
@@ -497,29 +515,26 @@ class GmailSync:
         latest_history_id = self._get_latest_history_id()
         if latest_history_id:
             conn = self._get_connection()
-            # Handle ID generation by omitting it from both field list and values
-            max_id_result = conn.execute(
-                "SELECT COALESCE(MAX(id), 0) FROM sync_history"
-            ).fetchone()
-            next_id = (max_id_result[0] or 0) + 1
-
             conn.execute(
                 """
-                INSERT INTO sync_history (id, last_history_id, last_sync)
-                VALUES (?, ?, CURRENT_TIMESTAMP)
+                INSERT OR REPLACE INTO sync_history (last_history_id, last_sync)
+                VALUES (?, ?)
             """,
-                [next_id, latest_history_id],
+                [latest_history_id, datetime.utcnow()],
             )
-            self.logger.info(f"📝 Updated sync history with ID: {latest_history_id}")
+            self.logger.info(f"Updated sync history to ID: {latest_history_id}")
+        else:
+            self.logger.warning("No history ID found to update.")
 
     def _get_latest_history_id(self) -> str | None:
-        """Get most recent history ID from messages."""
+        """Fetch the latest history ID from the most recent message."""
         conn = self._get_connection()
-        result = conn.execute(
-            "SELECT history_id FROM raw_emails ORDER BY internal_date DESC LIMIT 1"
+        latest_message = conn.execute(
+            "SELECT history_id FROM raw_emails ORDER BY internal_date DESC LIMIT 1",
         ).fetchone()
-        return result[0] if result else None
 
-    def __del__(self):
-        """Ensure connection is closed when object is destroyed."""
-        self.close_connection()
+        if latest_message:
+            return latest_message[0]
+        else:
+            self.logger.warning("No messages found to extract history ID from.")
+            return None

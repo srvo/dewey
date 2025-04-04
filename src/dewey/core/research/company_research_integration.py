@@ -1,36 +1,42 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
 
 class CompanyResearchIntegration(BaseScript):
-    """Integrates company research data using Dewey conventions.
+    """
+    Integrates company research data using Dewey conventions.
 
     Inherits from BaseScript and utilizes its features for configuration,
     logging, and more.
     """
 
     def __init__(self, config_section: str = "company_research") -> None:
-        """Initializes the CompanyResearchIntegration script.
+        """
+        Initializes the CompanyResearchIntegration script.
 
         Args:
+        ----
             config_section: The configuration section to use.
 
         """
         super().__init__(
-            config_section=config_section, requires_db=True, enable_llm=True
+            config_section=config_section, requires_db=True, enable_llm=True,
         )
 
     def execute(self) -> None:
-        """Executes the company research integration process.
+        """
+        Executes the company research integration process.
 
         This method orchestrates the retrieval, processing, and storage
         of company research data.
 
-        Returns:
+        Returns
+        -------
             None
 
-        Raises:
+        Raises
+        ------
             Exception: If any error occurs during the integration process.
 
         """
@@ -50,24 +56,27 @@ class CompanyResearchIntegration(BaseScript):
 
         except Exception as e:
             self.logger.exception(
-                f"An error occurred during company research integration: {e}"
+                f"An error occurred during company research integration: {e}",
             )
             raise
 
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 
     def _retrieve_company_data(self) -> dict[str, Any]:
-        """Retrieves company data from an external source.
+        """
+        Retrieves company data from an external source.
 
-        Returns:
+        Returns
+        -------
             A dictionary containing the retrieved company data.
 
-        Raises:
+        Raises
+        ------
             NotImplementedError: If the method is not implemented.
 
         """
@@ -77,15 +86,19 @@ class CompanyResearchIntegration(BaseScript):
         raise NotImplementedError("Retrieval of company data not implemented.")
 
     def _process_company_data(self, company_data: dict[str, Any]) -> dict[str, Any]:
-        """Processes the retrieved company data.
+        """
+        Processes the retrieved company data.
 
         Args:
+        ----
             company_data: A dictionary containing the company data.
 
         Returns:
+        -------
             A dictionary containing the processed company data.
 
         Raises:
+        ------
             NotImplementedError: If the method is not implemented.
 
         """
@@ -94,15 +107,19 @@ class CompanyResearchIntegration(BaseScript):
         raise NotImplementedError("Processing of company data not implemented.")
 
     def _store_company_data(self, processed_data: dict[str, Any]) -> None:
-        """Stores the processed company data.
+        """
+        Stores the processed company data.
 
         Args:
+        ----
             processed_data: A dictionary containing the processed company data.
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             NotImplementedError: If the method is not implemented.
 
         """

@@ -1,4 +1,5 @@
-"""Unified Email Client Module
+"""
+Unified Email Client Module
 
 This module provides a unified interface for interacting with email accounts,
 supporting both Gmail-specific APIs and generic IMAP protocols.
@@ -12,22 +13,25 @@ import re
 from datetime import datetime, timedelta
 from email.header import decode_header
 from email.message import Message
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
 
 class EmailClient(BaseScript):
-    """A unified client for interacting with email accounts.
+    """
+    A unified client for interacting with email accounts.
 
     This class provides a consistent interface for email operations,
     supporting both Gmail-specific APIs and standard IMAP protocols.
     """
 
     def __init__(self, provider: str = "gmail") -> None:
-        """Initialize the EmailClient.
+        """
+        Initialize the EmailClient.
 
         Args:
+        ----
             provider: The email provider ('gmail' or 'generic_imap')
 
         """
@@ -59,10 +63,10 @@ class EmailClient(BaseScript):
 
             # Get connection details from config or environment variables
             imap_server = self.get_config_value(
-                "imap_server", os.environ.get("IMAP_SERVER", "imap.gmail.com")
+                "imap_server", os.environ.get("IMAP_SERVER", "imap.gmail.com"),
             )
             imap_port = int(
-                self.get_config_value("imap_port", os.environ.get("IMAP_PORT", "993"))
+                self.get_config_value("imap_port", os.environ.get("IMAP_PORT", "993")),
             )
 
             # First try to get from config, then from environment variables
@@ -76,7 +80,7 @@ class EmailClient(BaseScript):
 
             if not username or not password:
                 raise ValueError(
-                    "Missing email credentials in configuration or environment variables"
+                    "Missing email credentials in configuration or environment variables",
                 )
 
             # Connect to the IMAP server
@@ -94,23 +98,25 @@ class EmailClient(BaseScript):
         limit: int = 100,
         since_date: datetime | None = None,
     ) -> list[dict[str, Any]]:
-        """Fetch emails from the specified folder.
+        """
+        Fetch emails from the specified folder.
 
         Args:
+        ----
             folder: The email folder to fetch from
             limit: Maximum number of emails to fetch
             since_date: Only fetch emails since this date
 
         Returns:
+        -------
             A list of dictionaries containing email data
 
         """
         if self.provider == "gmail" and self.gmail_service:
             return self._fetch_emails_gmail(folder, limit, since_date)
-        elif self.imap_conn:
+        if self.imap_conn:
             return self._fetch_emails_imap(folder, limit, since_date)
-        else:
-            raise RuntimeError("No email connection available")
+        raise RuntimeError("No email connection available")
 
     def _fetch_emails_gmail(
         self,
@@ -118,14 +124,17 @@ class EmailClient(BaseScript):
         limit: int = 100,
         since_date: datetime | None = None,
     ) -> list[dict[str, Any]]:
-        """Fetch emails using Gmail API.
+        """
+        Fetch emails using Gmail API.
 
         Args:
+        ----
             folder: The email folder/label to fetch from
             limit: Maximum number of emails to fetch
             since_date: Only fetch emails since this date
 
         Returns:
+        -------
             A list of dictionaries containing email data
 
         """
@@ -139,14 +148,17 @@ class EmailClient(BaseScript):
         limit: int = 100,
         since_date: datetime | None = None,
     ) -> list[dict[str, Any]]:
-        """Fetch emails using IMAP protocol.
+        """
+        Fetch emails using IMAP protocol.
 
         Args:
+        ----
             folder: The email folder to fetch from
             limit: Maximum number of emails to fetch
             since_date: Only fetch emails since this date
 
         Returns:
+        -------
             A list of dictionaries containing email data
 
         """
@@ -183,7 +195,7 @@ class EmailClient(BaseScript):
 
                 raw_email = data[0][1]
                 email_message = email.message_from_bytes(
-                    raw_email, policy=email.policy.default
+                    raw_email, policy=email.policy.default,
                 )
 
                 # Process email
@@ -197,15 +209,18 @@ class EmailClient(BaseScript):
             raise
 
     def _process_email_message(
-        self, email_message: Message, email_id: bytes
+        self, email_message: Message, email_id: bytes,
     ) -> dict[str, Any]:
-        """Process an email message into a structured dictionary.
+        """
+        Process an email message into a structured dictionary.
 
         Args:
+        ----
             email_message: The email message object
             email_id: The email ID
 
         Returns:
+        -------
             A dictionary containing processed email data
 
         """
@@ -243,12 +258,15 @@ class EmailClient(BaseScript):
         return email_data
 
     def _decode_header(self, header: str) -> str:
-        """Decode an email header string.
+        """
+        Decode an email header string.
 
         Args:
+        ----
             header: The header string to decode
 
         Returns:
+        -------
             The decoded header string
 
         """
@@ -267,12 +285,15 @@ class EmailClient(BaseScript):
         return " ".join(decoded_parts)
 
     def _parse_email_header(self, header: str) -> tuple[str, str]:
-        """Parse an email header to extract name and email address.
+        """
+        Parse an email header to extract name and email address.
 
         Args:
+        ----
             header: The header string to parse
 
         Returns:
+        -------
             A tuple containing (name, email_address)
 
         """
@@ -296,12 +317,15 @@ class EmailClient(BaseScript):
         return name, email_address
 
     def _get_email_body(self, email_message: Message) -> tuple[str, str]:
-        """Extract text and HTML body from an email message.
+        """
+        Extract text and HTML body from an email message.
 
         Args:
+        ----
             email_message: The email message object
 
         Returns:
+        -------
             A tuple containing (text_body, html_body)
 
         """
@@ -354,12 +378,15 @@ class EmailClient(BaseScript):
         return text_body, html_body
 
     def save_emails_to_db(self, emails: list[dict[str, Any]]) -> None:
-        """Save fetched emails to the database.
+        """
+        Save fetched emails to the database.
 
         Args:
+        ----
             emails: A list of email dictionaries to save
 
         Returns:
+        -------
             None
 
         """
@@ -368,7 +395,8 @@ class EmailClient(BaseScript):
                 raise RuntimeError("No database connection available")
 
             # Create the emails table if it doesn't exist
-            self.db_conn.execute("""
+            self.db_conn.execute(
+                """
             CREATE TABLE IF NOT EXISTS crm_emails (
                 email_id VARCHAR PRIMARY KEY,
                 subject VARCHAR,
@@ -382,7 +410,8 @@ class EmailClient(BaseScript):
                 processed BOOLEAN DEFAULT FALSE,
                 import_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-            """)
+            """,
+            )
 
             # Insert emails into the database
             for email_data in emails:
@@ -426,7 +455,8 @@ class EmailClient(BaseScript):
         self.gmail_service = None
 
     def run(self) -> None:
-        """Run the email import process.
+        """
+        Run the email import process.
 
         This method orchestrates the email import process by:
         1. Connecting to the email account
@@ -445,7 +475,7 @@ class EmailClient(BaseScript):
 
             # Fetch emails
             self.logger.info(
-                f"Fetching emails from {folder} (limit: {limit}, since: {since_date})"
+                f"Fetching emails from {folder} (limit: {limit}, since: {since_date})",
             )
             emails = self.fetch_emails(folder, limit, since_date)
             self.logger.info(f"Fetched {len(emails)} emails")

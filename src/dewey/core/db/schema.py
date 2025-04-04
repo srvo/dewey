@@ -1,15 +1,15 @@
-"""Schema management module.
+"""
+Schema management module.
 
 This module handles database schema creation, migrations, and versioning
 for PostgreSQL databases.
 """
 
 import logging
-from datetime import datetime
-from typing import Dict, List, Optional, Tuple
+
+from dewey.core.exceptions import DatabaseConnectionError
 
 from .connection import db_manager
-from dewey.core.exceptions import DatabaseConnectionError
 
 logger = logging.getLogger(__name__)
 
@@ -191,7 +191,8 @@ CREATE TABLE IF NOT EXISTS ai_feedback (
 
 
 def initialize_schema():
-    """Initialize the database schema by creating all required tables.
+    """
+    Initialize the database schema by creating all required tables.
 
     This will ensure all tables defined in the schema are created if they don't exist.
     """
@@ -222,7 +223,7 @@ def initialize_schema():
                 """
                 INSERT INTO schema_versions (version, description, status)
                 VALUES (1, 'Initial schema creation', 'applied')
-                """
+                """,
             )
             logger.info("Set initial schema version to 1")
 
@@ -233,9 +234,11 @@ def initialize_schema():
 
 
 def get_current_version() -> int:
-    """Get the current schema version from the database.
+    """
+    Get the current schema version from the database.
 
-    Returns:
+    Returns
+    -------
         int: The current schema version, or 0 if no version exists
 
     """
@@ -244,7 +247,7 @@ def get_current_version() -> int:
             """
             SELECT MAX(version) FROM schema_versions
             WHERE status = 'applied'
-            """
+            """,
         )
         if result and result[0][0] is not None:
             return result[0][0]
@@ -255,21 +258,24 @@ def get_current_version() -> int:
 
 
 def apply_migration(version: int, description: str, sql_statements: list[str]) -> bool:
-    """Apply a database migration.
+    """
+    Apply a database migration.
 
     Args:
+    ----
         version: The version number to migrate to
         description: Description of the migration
         sql_statements: List of SQL statements to execute
 
     Returns:
+    -------
         bool: True if migration was successful, False otherwise
 
     """
     current_version = get_current_version()
     if version <= current_version:
         logger.warning(
-            f"Migration to version {version} skipped (current: {current_version})"
+            f"Migration to version {version} skipped (current: {current_version})",
         )
         return False
 
@@ -317,11 +323,13 @@ def verify_schema_consistency():
     """Verify schema consistency using PostgreSQL information schema."""
     try:
         # Get table list from PostgreSQL
-        result = db_manager.execute_query("""
+        result = db_manager.execute_query(
+            """
             SELECT table_name
             FROM information_schema.tables
             WHERE table_schema = 'public'
-        """)
+        """,
+        )
         postgres_tables = {row[0] for row in result} if result else set()
 
         # Compare against expected tables
@@ -341,24 +349,26 @@ def verify_schema_consistency():
         missing_tables = expected_tables - postgres_tables
         if missing_tables:
             raise DatabaseConnectionError(
-                f"Missing tables: {', '.join(missing_tables)}"
+                f"Missing tables: {', '.join(missing_tables)}",
             )
 
         # Verify table structures
         for table_name in expected_tables:
             # Get column info from PostgreSQL
-            columns = db_manager.execute_query(f"""
+            columns = db_manager.execute_query(
+                f"""
                 SELECT column_name, data_type, is_nullable
                 FROM information_schema.columns
                 WHERE table_name = '{table_name}'
                 ORDER BY ordinal_position
-            """)
+            """,
+            )
 
             # Compare with expected schema (would need schema definition)
             # This is simplified - would need actual schema definition to compare
             if not columns:
                 raise DatabaseConnectionError(
-                    f"Table {table_name} exists but has no columns"
+                    f"Table {table_name} exists but has no columns",
                 )
 
         logger.info("Schema consistency verified")
@@ -371,8 +381,8 @@ def verify_schema_consistency():
 
 __all__ = [
     "TABLES",
-    "initialize_schema",
-    "get_current_version",
     "apply_migration",
+    "get_current_version",
+    "initialize_schema",
     "verify_schema_consistency",
 ]

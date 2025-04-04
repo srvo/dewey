@@ -4,7 +4,6 @@ import argparse
 import base64
 import json
 import os
-from typing import Dict, List
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -45,7 +44,7 @@ class GmailImporter(BaseScript):
             help="Number of emails to process per batch",
         )
         parser.add_argument(
-            "--label", type=str, default="INBOX", help="Gmail label to process"
+            "--label", type=str, default="INBOX", help="Gmail label to process",
         )
         return parser
 
@@ -74,7 +73,7 @@ class GmailImporter(BaseScript):
             with open(token_path) as f:
                 token_data = json.load(f)
             creds = Credentials.from_authorized_user_info(
-                token_data, scopes=self.get_config_value("gmail_scopes")
+                token_data, scopes=self.get_config_value("gmail_scopes"),
             )
             self.logger.debug("Credentials loaded from file")
             return creds
@@ -99,10 +98,10 @@ class GmailImporter(BaseScript):
 
             # Extract relevant headers
             subject = next(
-                (h["value"] for h in headers if h["name"] == "Subject"), None
+                (h["value"] for h in headers if h["name"] == "Subject"), None,
             )
             from_address = next(
-                (h["value"] for h in headers if h["name"] == "From"), None
+                (h["value"] for h in headers if h["name"] == "From"), None,
             )
             to_addresses = [h["value"] for h in headers if h["name"] == "To"]
 
@@ -133,7 +132,7 @@ class GmailImporter(BaseScript):
         if "data" in part["body"]:
             data = part["body"]["data"]
             return base64.urlsafe_b64decode(data).decode("utf-8", errors="ignore")
-        elif "parts" in part:
+        if "parts" in part:
             return "\n".join(self._decode_part(p) for p in part["parts"])
         return ""
 

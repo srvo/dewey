@@ -185,7 +185,6 @@ def configure_logging(config: dict) -> None:
     Args:
     ----
         config: A dictionary containing logging configuration options
-
     """
     logger = logging.getLogger()
     logger.setLevel(config.get("level", logging.INFO))

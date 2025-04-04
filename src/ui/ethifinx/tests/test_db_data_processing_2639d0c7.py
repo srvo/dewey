@@ -1,16 +1,15 @@
 """Tests for database data processing and conversion."""
 
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any
 
 import pytest
-
 from ethifinx.db.converters import database_to_workflow, workflow_to_database
 from ethifinx.db.data_processing import DataProcessor
 
 
-@pytest.fixture
-def sample_workflow_data() -> Dict[str, Any]:
+@pytest.fixture()
+def sample_workflow_data() -> dict[str, Any]:
     """Sample workflow output data."""
     return {
         "analysis_id": "test_analysis",
@@ -40,8 +39,8 @@ def sample_workflow_data() -> Dict[str, Any]:
     }
 
 
-@pytest.fixture
-def sample_research_data() -> Dict[str, Any]:
+@pytest.fixture()
+def sample_research_data() -> dict[str, Any]:
     """Sample research data."""
     return {
         "content": "Research findings about company X",
@@ -50,8 +49,8 @@ def sample_research_data() -> Dict[str, Any]:
     }
 
 
-@pytest.fixture
-def sample_database_data() -> Dict[str, Any]:
+@pytest.fixture()
+def sample_database_data() -> dict[str, Any]:
     """Sample database format data."""
     return {
         "id": 123,
@@ -71,7 +70,7 @@ def sample_database_data() -> Dict[str, Any]:
     }
 
 
-def test_data_processor_workflow_data(sample_workflow_data: Dict[str, Any]) -> None:
+def test_data_processor_workflow_data(sample_workflow_data: dict[str, Any]) -> None:
     """Test processing of workflow data."""
     processor = DataProcessor()
     result = processor.process(sample_workflow_data)
@@ -85,7 +84,7 @@ def test_data_processor_workflow_data(sample_workflow_data: Dict[str, Any]) -> N
     assert 0 <= result["confidence_score"] <= 100
 
 
-def test_data_processor_research_data(sample_research_data: Dict[str, Any]) -> None:
+def test_data_processor_research_data(sample_research_data: dict[str, Any]) -> None:
     """Test processing of research data."""
     processor = DataProcessor()
     result = processor.process(sample_research_data)
@@ -118,7 +117,7 @@ def test_data_processor_invalid_data() -> None:
         processor.process({"key": None})
 
 
-def test_workflow_to_database_conversion(sample_workflow_data: Dict[str, Any]) -> None:
+def test_workflow_to_database_conversion(sample_workflow_data: dict[str, Any]) -> None:
     """Test conversion from workflow to database format."""
     result = workflow_to_database(sample_workflow_data)
 
@@ -129,14 +128,11 @@ def test_workflow_to_database_conversion(sample_workflow_data: Dict[str, Any]) -
 
 
 def test_workflow_to_database_with_history(
-    sample_workflow_data: Dict[str, Any],
+    sample_workflow_data: dict[str, Any],
 ) -> None:
     """Test conversion with existing data merging."""
-    existing_data: Dict[str, Any] = {
-        "structured_data": {
-            "concern_level": 2,
-            "history": [],
-        }
+    existing_data: dict[str, Any] = {
+        "structured_data": {"concern_level": 2, "history": []},
     }
 
     result = workflow_to_database(sample_workflow_data, existing_data)
@@ -148,7 +144,7 @@ def test_workflow_to_database_with_history(
     )
 
 
-def test_database_to_workflow_conversion(sample_database_data: Dict[str, Any]) -> None:
+def test_database_to_workflow_conversion(sample_database_data: dict[str, Any]) -> None:
     """Test conversion from database to workflow format."""
     result = database_to_workflow(sample_database_data)
 
@@ -160,12 +156,12 @@ def test_database_to_workflow_conversion(sample_database_data: Dict[str, Any]) -
 
 def test_database_to_workflow_missing_data() -> None:
     """Test conversion with missing database fields."""
-    invalid_data: Dict[str, Any] = {"structured_data": {}}
+    invalid_data: dict[str, Any] = {"structured_data": {}}
     with pytest.raises(KeyError):
         database_to_workflow(invalid_data)
 
 
-def test_risk_score_calculation(sample_workflow_data: Dict[str, Any]) -> None:
+def test_risk_score_calculation(sample_workflow_data: dict[str, Any]) -> None:
     """Test risk score calculation logic."""
     result = workflow_to_database(sample_workflow_data)
 

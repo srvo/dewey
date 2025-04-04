@@ -2,12 +2,12 @@
 
 from smolagents import Tool
 
-from dewey.core.base_script import BaseScript
 from dewey.llm.agents.base_agent import BaseAgent
 
 
 class PhilosophicalAgent(BaseAgent):
-    """Agent for philosophical discussions using advanced AI models.
+    """
+    Agent for philosophical discussions using advanced AI models.
 
     Features:
         - Deep philosophical analysis
@@ -25,17 +25,20 @@ class PhilosophicalAgent(BaseAgent):
                 Tool.from_function(
                     self.discuss_philosophy,
                     description="Engages in philosophical discussions.",
-                )
-            ]
+                ),
+            ],
         )
 
     def discuss_philosophy(self, topic: str) -> str:
-        """Engages in philosophical discussions.
+        """
+        Engages in philosophical discussions.
 
         Args:
+        ----
             topic: The topic to discuss.
 
         Returns:
+        -------
             A string containing the philosophical discussion.
 
         """
@@ -44,12 +47,15 @@ class PhilosophicalAgent(BaseAgent):
         return result
 
     def execute(self, prompt: str) -> str:
-        """Executes the philosophical discussion agent.
+        """
+        Executes the philosophical discussion agent.
 
         Args:
+        ----
             prompt: The prompt for the philosophical discussion.
 
         Returns:
+        -------
             The result of the philosophical discussion.
 
         """
@@ -63,6 +69,6 @@ class PhilosophicalAgent(BaseAgent):
     def run(self, prompt: str) -> str:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         return self.execute(prompt)

@@ -5,9 +5,11 @@ class Bing(BaseScript):
     """A class for interacting with the Bing search engine."""
 
     def __init__(self, config_section: str = "bing") -> None:
-        """Initializes the Bing search engine class.
+        """
+        Initializes the Bing search engine class.
 
         Args:
+        ----
             config_section (str): The section in the config file to use for this engine.
 
         """

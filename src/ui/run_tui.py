@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Run TUI
+"""
+Run TUI
 
 A standalone script to run the Dewey TUI with the new screens.
 """
@@ -26,10 +27,7 @@ class SimpleDeweyTUI(App):
 
     CSS_PATH = ["assets/feedback_manager.tcss", "assets/port5.tcss"]
 
-    SCREENS = {
-        "feedback": FeedbackManagerScreen,
-        "port5": Port5Screen,
-    }
+    SCREENS = {"feedback": FeedbackManagerScreen, "port5": Port5Screen}
 
     BINDINGS = [
         Binding("f", "switch_screen('feedback')", "Feedback Manager"),
@@ -43,9 +41,11 @@ class SimpleDeweyTUI(App):
         self.push_screen("feedback")
 
     def action_switch_screen(self, screen_name: str) -> None:
-        """Switch to the specified screen.
+        """
+        Switch to the specified screen.
 
         Args:
+        ----
             screen_name: The name of the screen to switch to
 
         """

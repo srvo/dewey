@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -7,9 +7,11 @@ class LLMUtils(BaseScript):
     """A utility class for interacting with Language Models (LLMs)."""
 
     def __init__(self, config: dict[str, Any], dry_run: bool = False) -> None:
-        """Initializes the LLMUtils class.
+        """
+        Initializes the LLMUtils class.
 
         Args:
+        ----
             config (Dict[str, Any]): A dictionary containing the configuration parameters.
             dry_run (bool, optional): A boolean indicating whether to run in dry-run mode. Defaults to False.
 
@@ -17,15 +19,18 @@ class LLMUtils(BaseScript):
         super().__init__(config=config, dry_run=dry_run)
 
     def execute(self) -> None:
-        """Executes the main logic of the LLM utility.
+        """
+        Executes the main logic of the LLM utility.
 
         This method demonstrates the usage of various features such as accessing configuration values
         and logging messages.
 
-        Returns:
+        Returns
+        -------
             None
 
-        Raises:
+        Raises
+        ------
             ValueError: If a required configuration value is missing.
 
         """
@@ -42,6 +47,6 @@ class LLMUtils(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()

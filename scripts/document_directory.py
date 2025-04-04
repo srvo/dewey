@@ -6,7 +6,7 @@ import subprocess
 import sys
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Protocol, Tuple
+from typing import Any, Protocol
 
 from dewey.core.base_script import BaseScript
 
@@ -128,9 +128,11 @@ class DirectoryDocumenter(BaseScript):
         llm_client: LLMClientInterface | None = None,
         fs: FileSystemInterface | None = None,
     ) -> None:
-        """Initializes the DirectoryDocumenter.
+        """
+        Initializes the DirectoryDocumenter.
 
         Args:
+        ----
             root_dir: The root directory to document. Defaults to the current directory.
             llm_client: The LLM client to use for code analysis.
             fs: The file system interface.
@@ -140,21 +142,21 @@ class DirectoryDocumenter(BaseScript):
         self.root_dir = Path(root_dir).resolve()
         self.conventions_path = self.get_path(
             self.get_config_value(
-                "core.conventions_document", "../.aider/CONVENTIONS.md"
+                "core.conventions_document", "../.aider/CONVENTIONS.md",
             ),
         )  # Relative path to CONVENTIONS.md
         self.checkpoint_file = self.root_dir / ".dewey_documenter_checkpoint.json"
         self.checkpoints: dict[str, str] = self._load_checkpoints()
         self.conventions: str = self._load_conventions()
-        self.llm_client: LLMClientInterface = (
-            llm_client if llm_client else self.llm_client
-        )  # type: ignore[assignment]
-        self.fs: FileSystemInterface = fs if fs else RealFileSystem()
+        self.llm_client: LLMClientInterface = llm_client or self.llm_client  # type: ignore[assignment]
+        self.fs: FileSystemInterface = fs or RealFileSystem()
 
     def _validate_directory(self) -> None:
-        """Ensure directory exists and is accessible.
+        """
+        Ensure directory exists and is accessible.
 
-        Raises:
+        Raises
+        ------
             FileNotFoundError: If the directory does not exist.
             PermissionError: If the directory is not accessible.
 
@@ -167,12 +169,15 @@ class DirectoryDocumenter(BaseScript):
             raise PermissionError(msg)
 
     def _load_conventions(self) -> str:
-        """Load project coding conventions from CONVENTIONS.md.
+        """
+        Load project coding conventions from CONVENTIONS.md.
 
-        Returns:
+        Returns
+        -------
             The content of the CONVENTIONS.md file.
 
-        Raises:
+        Raises
+        ------
             FileNotFoundError: If the CONVENTIONS.md file is not found.
             Exception: If there is an error loading the conventions.
 
@@ -189,9 +194,11 @@ class DirectoryDocumenter(BaseScript):
             sys.exit(1)
 
     def _load_checkpoints(self) -> dict[str, str]:
-        """Load checkpoint data from file.
+        """
+        Load checkpoint data from file.
 
-        Returns:
+        Returns
+        -------
             A dictionary containing the checkpoint data.
 
         """
@@ -209,21 +216,25 @@ class DirectoryDocumenter(BaseScript):
         """Save checkpoint data to file."""
         try:
             self.fs.write_text(
-                self.checkpoint_file, json.dumps(self.checkpoints, indent=4)
+                self.checkpoint_file, json.dumps(self.checkpoints, indent=4),
             )
         except Exception as e:
             self.logger.exception(f"Could not save checkpoint file: {e}")
 
     def _calculate_file_hash(self, file_path: Path) -> str:
-        """Calculate SHA256 hash of file contents with size check.
+        """
+        Calculate SHA256 hash of file contents with size check.
 
         Args:
+        ----
             file_path: The path to the file.
 
         Returns:
+        -------
             The SHA256 hash of the file contents.
 
         Raises:
+        ------
             Exception: If the hash calculation fails.
 
         """
@@ -238,12 +249,15 @@ class DirectoryDocumenter(BaseScript):
             raise
 
     def _is_checkpointed(self, file_path: Path) -> bool:
-        """Check if a file has been processed based on content hash.
+        """
+        Check if a file has been processed based on content hash.
 
         Args:
+        ----
             file_path: The path to the file.
 
         Returns:
+        -------
             True if the file has been processed, False otherwise.
 
         """
@@ -255,9 +269,11 @@ class DirectoryDocumenter(BaseScript):
             return False
 
     def _checkpoint(self, file_path: Path) -> None:
-        """Checkpoint a file by saving its content hash.
+        """
+        Checkpoint a file by saving its content hash.
 
         Args:
+        ----
             file_path: The path to the file.
 
         """
@@ -270,12 +286,15 @@ class DirectoryDocumenter(BaseScript):
             self.logger.exception(f"Could not checkpoint file: {e}")
 
     def analyze_code(self, code: str) -> tuple[str, str | None]:
-        """Analyzes the given code using an LLM and returns a summary.
+        """
+        Analyzes the given code using an LLM and returns a summary.
 
         Args:
+        ----
             code: The code to analyze.
 
         Returns:
+        -------
             A tuple containing the analysis and the suggested module.
 
         """
@@ -303,8 +322,7 @@ class DirectoryDocumenter(BaseScript):
                 parts[1]
                 .strip()
                 .replace(
-                    "Suggest a target module within the Dewey project structure",
-                    "",
+                    "Suggest a target module within the Dewey project structure", "",
                 )
                 .replace(":", "")
                 .strip()
@@ -317,12 +335,15 @@ class DirectoryDocumenter(BaseScript):
             raise
 
     def _analyze_code_quality(self, file_path: Path) -> dict[str, list[str]]:
-        """Run code quality checks using flake8 and ruff.
+        """
+        Run code quality checks using flake8 and ruff.
 
         Args:
+        ----
             file_path: The path to the file.
 
         Returns:
+        -------
             A dictionary containing the results of the code quality checks.
 
         """
@@ -330,10 +351,7 @@ class DirectoryDocumenter(BaseScript):
         try:
             # Run flake8
             flake8_result = subprocess.run(
-                ["flake8", str(file_path)],
-                capture_output=True,
-                text=True,
-                check=False,
+                ["flake8", str(file_path)], capture_output=True, text=True, check=False,
             )
             results["flake8"] = flake8_result.stdout.splitlines()
 
@@ -350,9 +368,11 @@ class DirectoryDocumenter(BaseScript):
         return results
 
     def _analyze_directory_structure(self) -> dict[str, Any]:
-        """Check directory structure against project conventions.
+        """
+        Check directory structure against project conventions.
 
-        Returns:
+        Returns
+        -------
             A dictionary containing the directory structure analysis.
 
         """
@@ -388,13 +408,16 @@ class DirectoryDocumenter(BaseScript):
         return {"structure": dir_structure, "deviations": deviations}
 
     def generate_readme(self, directory: Path, analysis_results: dict[str, str]) -> str:
-        """Generate comprehensive README with quality and structure analysis.
+        """
+        Generate comprehensive README with quality and structure analysis.
 
         Args:
+        ----
             directory: The directory to generate the README for.
             analysis_results: A dictionary containing the analysis results.
 
         Returns:
+        -------
             The content of the README file.
 
         """
@@ -431,12 +454,15 @@ class DirectoryDocumenter(BaseScript):
         return "\n".join(readme_content)
 
     def correct_code_style(self, code: str) -> str:
-        """Corrects the code style of the given code using an LLM based on project conventions.
+        """
+        Corrects the code style of the given code using an LLM based on project conventions.
 
         Args:
+        ----
             code: The code to correct.
 
         Returns:
+        -------
             The corrected code.
 
         """
@@ -457,12 +483,15 @@ class DirectoryDocumenter(BaseScript):
             raise
 
     def suggest_filename(self, code: str) -> str | None:
-        """Suggests a more human-readable filename for the given code using an LLM.
+        """
+        Suggests a more human-readable filename for the given code using an LLM.
 
         Args:
+        ----
             code: The code to suggest a filename for.
 
         Returns:
+        -------
             The suggested filename.
 
         """
@@ -482,12 +511,15 @@ class DirectoryDocumenter(BaseScript):
             return None
 
     def _process_file(self, file_path: Path) -> tuple[str | None, str | None]:
-        """Processes a single file, analyzes its contents, and suggests improvements.
+        """
+        Processes a single file, analyzes its contents, and suggests improvements.
 
         Args:
+        ----
             file_path: The path to the file.
 
         Returns:
+        -------
             A tuple containing the analysis and the suggested module, if applicable.
 
         """
@@ -508,11 +540,13 @@ class DirectoryDocumenter(BaseScript):
             return None, None
 
     def _apply_improvements(
-        self, file_path: Path, suggested_module: str | None
+        self, file_path: Path, suggested_module: str | None,
     ) -> None:
-        """Applies suggested improvements to a file, such as moving, renaming, and correcting code style.
+        """
+        Applies suggested improvements to a file, such as moving, renaming, and correcting code style.
 
         Args:
+        ----
             file_path: The path to the file.
             suggested_module: The suggested module to move the file to, if applicable.
 
@@ -524,12 +558,10 @@ class DirectoryDocumenter(BaseScript):
                 self.root_dir / "src" / "dewey" / suggested_module.replace(".", "/")
             )
             self.fs.mkdir(
-                target_dir, parents=True, exist_ok=True
+                target_dir, parents=True, exist_ok=True,
             )  # Ensure the directory exists
             target_path = target_dir / filename
-            move_file = input(
-                f"Move {filename} to {target_path}? (y/n): ",
-            ).lower()
+            move_file = input(f"Move {filename} to {target_path}? (y/n): ").lower()
             if move_file == "y":
                 try:
                     self.fs.move(file_path, target_path)
@@ -565,9 +597,7 @@ class DirectoryDocumenter(BaseScript):
                 self.logger.info(f"Skipped renaming {filename}.")
 
         # Ask for confirmation before correcting code style
-        correct_style = input(
-            f"Correct code style for {filename}? (y/n): ",
-        ).lower()
+        correct_style = input(f"Correct code style for {filename}? (y/n): ").lower()
         if correct_style == "y":
             corrected_code = self.correct_code_style(code)
             if corrected_code:
@@ -590,16 +620,16 @@ class DirectoryDocumenter(BaseScript):
                         f"Corrected code style for {filename}, but did not write to file.",
                     )
             else:
-                self.logger.warning(
-                    f"Failed to correct code style for {filename}.",
-                )
+                self.logger.warning(f"Failed to correct code style for {filename}.")
         else:
             self.logger.info(f"Skipped correcting code style for {filename}.")
 
     def process_directory(self, directory: str) -> None:
-        """Processes the given directory, analyzes its contents, and generates a README.md file.
+        """
+        Processes the given directory, analyzes its contents, and generates a README.md file.
 
         Args:
+        ----
             directory: The directory to process.
 
         """

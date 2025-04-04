@@ -1,12 +1,13 @@
 import json
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
 
 class ResearchOutputHandler(BaseScript):
-    """Handler for research output.
+    """
+    Handler for research output.
 
     This class handles the output of research tasks, providing methods for
     saving and loading research results, as well as writing output to
@@ -14,9 +15,11 @@ class ResearchOutputHandler(BaseScript):
     """
 
     def __init__(self, output_dir: str | None = None, **kwargs: Any) -> None:
-        """Initialize the output handler.
+        """
+        Initialize the output handler.
 
         Args:
+        ----
             output_dir: Directory for output files
             **kwargs: Additional keyword arguments
 
@@ -29,13 +32,15 @@ class ResearchOutputHandler(BaseScript):
         )
 
     def execute(self) -> None:
-        """Executes the research output handler.
+        """
+        Executes the research output handler.
 
         This method handles core output operations if configured to run
         independently, but most functionality is typically accessed via
         the specific methods.
 
-        Raises:
+        Raises
+        ------
             ValueError: If a required configuration value is missing.
 
         """
@@ -45,7 +50,7 @@ class ResearchOutputHandler(BaseScript):
             output_path = self.get_config_value("output_path")
             if not output_path:
                 self.logger.info(
-                    "No output_path specified in config, using default operations"
+                    "No output_path specified in config, using default operations",
                 )
                 return
 
@@ -58,23 +63,25 @@ class ResearchOutputHandler(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 
     def save_results(
-        self, results: dict[str, Any], output_file: Path | None = None
+        self, results: dict[str, Any], output_file: Path | None = None,
     ) -> None:
-        """Save research results to a file.
+        """
+        Save research results to a file.
 
         Args:
+        ----
             results: Results to save.
             output_file: Optional output file path.
 
         """
         if output_file is None:
             default_output_file = self.get_config_value(
-                "default_output_file", "results.json"
+                "default_output_file", "results.json",
             )
             output_file = self.output_dir / default_output_file
 
@@ -90,18 +97,21 @@ class ResearchOutputHandler(BaseScript):
             self.logger.error(f"Error saving results to {output_file}: {e}")
 
     def load_results(self, input_file: Path | None = None) -> dict[str, Any]:
-        """Load research results from a file.
+        """
+        Load research results from a file.
 
         Args:
+        ----
             input_file: Optional input file path.
 
         Returns:
+        -------
             Loaded results.
 
         """
         if input_file is None:
             default_output_file = self.get_config_value(
-                "default_output_file", "results.json"
+                "default_output_file", "results.json",
             )
             input_file = self.output_dir / default_output_file
 
@@ -120,9 +130,11 @@ class ResearchOutputHandler(BaseScript):
             return {}
 
     def write_output(self, output_path: str, data: dict[str, Any]) -> None:
-        """Writes the output data to the specified path.
+        """
+        Writes the output data to the specified path.
 
         Args:
+        ----
             output_path: The path to write the output data.
             data: The data to write.
 

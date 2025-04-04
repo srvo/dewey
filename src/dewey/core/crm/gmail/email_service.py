@@ -1,22 +1,24 @@
 import signal
 import time
 from datetime import datetime, timedelta
-from typing import Optional
 
 from dewey.core.base_script import BaseScript
 
 
 class EmailService(BaseScript):
-    """Manages the email fetching and processing service.
+    """
+    Manages the email fetching and processing service.
 
     Inherits from BaseScript for standardized configuration, logging,
     and lifecycle management.
     """
 
     def __init__(self, gmail_client, email_processor, config_section: str = "crm"):
-        """Initializes the EmailService with dependencies and configuration.
+        """
+        Initializes the EmailService with dependencies and configuration.
 
         Args:
+        ----
             gmail_client: An instance of the GmailClient class.
             email_processor: An instance of the EmailProcessor class.
             config_section: The configuration section to use for this service.
@@ -37,9 +39,11 @@ class EmailService(BaseScript):
         signal.signal(signal.SIGTERM, self.handle_signal)
 
     def handle_signal(self, signum: int, frame) -> None:
-        """Handles shutdown signals gracefully.
+        """
+        Handles shutdown signals gracefully.
 
         Args:
+        ----
             signum: The signal number.
             frame: The frame object.
 
@@ -60,11 +64,11 @@ class EmailService(BaseScript):
                         processed_email = self.email_processor.process_email(email_data)
                         if processed_email:
                             self.logger.info(
-                                f"Successfully processed email {message['id']}"
+                                f"Successfully processed email {message['id']}",
                             )
                         else:
                             self.logger.warning(
-                                f"Failed to fully process email {message['id']}"
+                                f"Failed to fully process email {message['id']}",
                             )
                     else:
                         self.logger.warning(f"Could not retrieve email {message['id']}")
@@ -84,7 +88,7 @@ class EmailService(BaseScript):
             while self.running:
                 current_time = datetime.now()
                 if self.last_run is None or (current_time - self.last_run) >= timedelta(
-                    seconds=self.fetch_interval
+                    seconds=self.fetch_interval,
                 ):
                     self.fetch_cycle()
                 time.sleep(self.check_interval)
@@ -94,7 +98,8 @@ class EmailService(BaseScript):
             self.logger.info("Email service shutting down")
 
     def execute(self) -> None:
-        """Executes the email service in a continuous loop.
+        """
+        Executes the email service in a continuous loop.
 
         This method is the main entry point for running the email service.
         It initializes the service, enters a continuous loop to fetch and
@@ -107,7 +112,7 @@ class EmailService(BaseScript):
             while self.running:
                 current_time = datetime.now()
                 if self.last_run is None or (current_time - self.last_run) >= timedelta(
-                    seconds=self.fetch_interval
+                    seconds=self.fetch_interval,
                 ):
                     self.fetch_cycle()
                 time.sleep(self.check_interval)

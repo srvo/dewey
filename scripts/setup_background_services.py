@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""Setup Background Services.
+"""
+Setup Background Services.
 
 This script helps configure background services for Dewey:
 1. Database synchronization between MotherDuck and local DuckDB
@@ -8,16 +9,14 @@ This script helps configure background services for Dewey:
 It supports both cron jobs and systemd services depending on the platform.
 """
 
-import os
-import sys
-import platform
 import argparse
-import logging
-import subprocess
 import getpass
+import logging
+import os
+import platform
+import subprocess
+import sys
 from pathlib import Path
-from datetime import datetime
-import re
 
 # Ensure the project root is in the path
 script_dir = Path(__file__).parent
@@ -26,7 +25,7 @@ sys.path.insert(0, str(project_root))
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
 
@@ -39,6 +38,7 @@ def is_crontab_available():
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
+            check=False,
         )
         return result.returncode == 0
     except:
@@ -53,6 +53,7 @@ def is_systemd_available():
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
+            check=False,
         )
         return result.returncode == 0
     except:
@@ -73,7 +74,7 @@ def setup_db_sync_cron(schedule="0 3 * * *", copy_first=True, incremental=True):
         except ImportError:
             logger.warning("python-crontab not installed, installing now...")
             subprocess.run(
-                [sys.executable, "-m", "pip", "install", "python-crontab"], check=True
+                [sys.executable, "-m", "pip", "install", "python-crontab"], check=True,
             )
             from crontab import CronTab
 
@@ -223,7 +224,7 @@ def setup_unified_processor_systemd():
             return False
 
         # Read template
-        with open(service_template_path, "r") as f:
+        with open(service_template_path) as f:
             service_content = f.read()
 
         # Replace placeholders
@@ -247,7 +248,7 @@ def setup_unified_processor_systemd():
 
         logger.info(f"Systemd service set up at {service_path}")
         logger.info(
-            "To start the service, run: sudo systemctl start dewey-unified-processor"
+            "To start the service, run: sudo systemctl start dewey-unified-processor",
         )
 
         return True
@@ -338,7 +339,7 @@ def setup_unified_processor_launchd():
 
         logger.info(f"LaunchAgent set up successfully at {plist_path}")
         logger.info(
-            "The unified processor will start automatically at boot and restart if it fails"
+            "The unified processor will start automatically at boot and restart if it fails",
         )
 
         return True

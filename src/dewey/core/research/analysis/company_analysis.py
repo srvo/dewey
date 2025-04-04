@@ -15,12 +15,13 @@ class CompanyAnalysis(BaseScript):
         self.logger.info("Company analysis completed.")
 
     def run(self) -> None:
-        """Legacy method for backward compatibility.
+        """
+        Legacy method for backward compatibility.
 
         New scripts should implement execute() instead of run().
         This method will be deprecated in a future version.
         """
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()

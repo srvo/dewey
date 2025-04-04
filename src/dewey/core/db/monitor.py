@@ -1,4 +1,5 @@
-"""Database monitoring module.
+"""
+Database monitoring module.
 
 This module provides monitoring and health check functionality for both
 local DuckDB and MotherDuck cloud databases.
@@ -9,7 +10,6 @@ import os
 import threading
 import time
 from datetime import datetime, timedelta
-from typing import Dict
 
 from .config import get_db_config
 from .connection import db_manager
@@ -26,8 +26,6 @@ _monitor_thread = None
 class HealthCheckError(Exception):
     """Exception raised for health check errors."""
 
-    pass
-
 
 def stop_monitoring() -> None:
     """Stop the monitoring thread."""
@@ -40,12 +38,15 @@ def stop_monitoring() -> None:
 
 
 def check_connection(local_only: bool = False) -> bool:
-    """Check database connection health.
+    """
+    Check database connection health.
 
     Args:
+    ----
         local_only: Whether to only check local database
 
     Returns:
+    -------
         True if connection is healthy, False otherwise
 
     """
@@ -59,13 +60,16 @@ def check_connection(local_only: bool = False) -> bool:
 
 
 def check_table_health(table_name: str, local_only: bool = False) -> dict:
-    """Check health of a specific table.
+    """
+    Check health of a specific table.
 
     Args:
+    ----
         table_name: Name of the table to check
         local_only: Whether to only check local database
 
     Returns:
+    -------
         Dictionary containing table health information
 
     """
@@ -129,9 +133,11 @@ def check_table_health(table_name: str, local_only: bool = False) -> dict:
 
 
 def check_sync_health() -> dict:
-    """Check health of database synchronization.
+    """
+    Check health of database synchronization.
 
-    Returns:
+    Returns
+    -------
         Dictionary containing sync health information
 
     """
@@ -147,19 +153,23 @@ def check_sync_health() -> dict:
             is_overdue = time_since_sync > sync_interval
 
         # Check for conflicts
-        conflicts = db_manager.execute_query("""
+        conflicts = db_manager.execute_query(
+            """
             SELECT COUNT(*) FROM sync_conflicts
             WHERE resolved = FALSE
-        """)
+        """,
+        )
 
         unresolved_conflicts = conflicts[0][0] if conflicts else 0
 
         # Check for failed syncs
-        failed_syncs = db_manager.execute_query("""
+        failed_syncs = db_manager.execute_query(
+            """
             SELECT COUNT(*) FROM sync_status
             WHERE status = 'error'
             AND sync_time > CURRENT_TIMESTAMP - INTERVAL '24 HOURS'
-        """)
+        """,
+        )
 
         recent_failures = failed_syncs[0][0] if failed_syncs else 0
 
@@ -179,9 +189,11 @@ def check_sync_health() -> dict:
 
 
 def check_schema_consistency() -> dict:
-    """Check schema consistency between local and MotherDuck databases.
+    """
+    Check schema consistency between local and MotherDuck databases.
 
-    Returns:
+    Returns
+    -------
         Dictionary containing schema consistency information
 
     """
@@ -191,10 +203,10 @@ def check_schema_consistency() -> dict:
         for table_name in TABLES:
             # Get schema from both databases
             local_schema = db_manager.execute_query(
-                f"DESCRIBE {table_name}", local_only=True
+                f"DESCRIBE {table_name}", local_only=True,
             )
             remote_schema = db_manager.execute_query(
-                f"DESCRIBE {table_name}", local_only=False
+                f"DESCRIBE {table_name}", local_only=False,
             )
 
             # Compare schemas
@@ -216,7 +228,7 @@ def check_schema_consistency() -> dict:
                                 "column": col,
                                 "local_type": local_cols[col][1],
                                 "remote_type": remote_cols[col][1],
-                            }
+                            },
                         )
 
                 inconsistencies.append(
@@ -225,7 +237,7 @@ def check_schema_consistency() -> dict:
                         "local_missing": list(local_missing),
                         "remote_missing": list(remote_missing),
                         "type_mismatches": type_mismatches,
-                    }
+                    },
                 )
 
         return {"consistent": not inconsistencies, "inconsistencies": inconsistencies}
@@ -237,9 +249,11 @@ def check_schema_consistency() -> dict:
 
 
 def check_database_size() -> dict:
-    """Check database size and growth.
+    """
+    Check database size and growth.
 
-    Returns:
+    Returns
+    -------
         Dictionary containing database size information
 
     """
@@ -249,11 +263,13 @@ def check_database_size() -> dict:
         total_rows = 0
 
         for table_name in TABLES:
-            result = db_manager.execute_query(f"""
+            result = db_manager.execute_query(
+                f"""
                 SELECT COUNT(*) as row_count,
                        SUM(LENGTH(CAST(* AS VARCHAR))) as approx_size
                 FROM {table_name}
-            """)
+            """,
+            )
 
             if result and result[0]:
                 row_count, approx_size = result[0]
@@ -285,9 +301,11 @@ def check_database_size() -> dict:
 
 
 def check_query_performance() -> dict:
-    """Check database query performance.
+    """
+    Check database query performance.
 
-    Returns:
+    Returns
+    -------
         Dictionary containing performance metrics
 
     """
@@ -303,9 +321,11 @@ def check_query_performance() -> dict:
         table_metrics = {}
         for table_name in TABLES:
             start_time = time.time()
-            result = db_manager.execute_query(f"""
+            result = db_manager.execute_query(
+                f"""
                 SELECT COUNT(*) FROM {table_name}
-            """)
+            """,
+            )
             scan_time = time.time() - start_time
 
             row_count = result[0][0] if result else 0
@@ -329,12 +349,15 @@ def check_query_performance() -> dict:
 
 
 def run_health_check(include_performance: bool = False) -> dict:
-    """Run a comprehensive health check on the database.
+    """
+    Run a comprehensive health check on the database.
 
     Args:
+    ----
         include_performance: Whether to include performance metrics
 
     Returns:
+    -------
         Dictionary containing all health check results
 
     """
@@ -368,9 +391,11 @@ def run_health_check(include_performance: bool = False) -> dict:
 
 
 def monitor_database(interval: int = 300, run_once: bool = False) -> None:
-    """Run regular database monitoring.
+    """
+    Run regular database monitoring.
 
     Args:
+    ----
         interval: Monitoring interval in seconds
         run_once: Whether to run only once instead of in a loop
 
@@ -396,7 +421,7 @@ def monitor_database(interval: int = 300, run_once: bool = False) -> None:
                     for issue in issues:
                         if issue.get("severity") == "critical":
                             logger.critical(
-                                f"Critical database issue: {issue.get('message')}"
+                                f"Critical database issue: {issue.get('message')}",
                             )
                         elif issue.get("severity") == "warning":
                             logger.warning(f"Database warning: {issue.get('message')}")

@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from email.header import decode_header
 from email.message import Message
-from typing import Any, Dict, List, Optional, Set
+from typing import Any
 
 import duckdb
 from dotenv import load_dotenv
@@ -34,13 +34,16 @@ class EmailHeaderEncoder(json.JSONEncoder):
 
 
 def safe_json_dumps(data: Any, encoder: json.JSONEncoder | None = None) -> str:
-    """JSON dumping with multiple fallback strategies.
+    """
+    JSON dumping with multiple fallback strategies.
 
     Args:
+    ----
         data: The data to serialize
         encoder: Optional JSON encoder to use
 
     Returns:
+    -------
         JSON string representation of data
 
     """
@@ -52,14 +55,13 @@ def safe_json_dumps(data: Any, encoder: json.JSONEncoder | None = None) -> str:
             if isinstance(data, dict):
                 cleaned = {k: str(v) for k, v in data.items()}
                 return json.dumps(cleaned, cls=encoder or EmailHeaderEncoder)
-            else:
-                return json.dumps(str(data))
+            return json.dumps(str(data))
         except Exception as fallback_error:
             return json.dumps(
                 {
-                    "error": f"JSON serialization failed: {str(e)}",
+                    "error": f"JSON serialization failed: {e!s}",
                     "fallback_error": str(fallback_error),
-                }
+                },
             )
 
 
@@ -159,7 +161,7 @@ class UnifiedIMAPImporter(BaseScript):
         """Set up command line arguments."""
         parser = super().setup_argparse()
         parser.add_argument(
-            "--motherduck", action="store_true", help="Use MotherDuck database"
+            "--motherduck", action="store_true", help="Use MotherDuck database",
         )
         parser.add_argument(
             "--username",
@@ -171,27 +173,16 @@ class UnifiedIMAPImporter(BaseScript):
             help="App password (uses GMAIL_APP_PASSWORD from .env by default)",
         )
         parser.add_argument(
-            "--days",
-            type=int,
-            default=7,
-            help="Days back to search for emails",
+            "--days", type=int, default=7, help="Days back to search for emails",
         )
         parser.add_argument(
-            "--max",
-            type=int,
-            default=1000,
-            help="Maximum emails to import",
+            "--max", type=int, default=1000, help="Maximum emails to import",
         )
         parser.add_argument(
-            "--batch-size",
-            type=int,
-            default=10,
-            help="Batch size for processing",
+            "--batch-size", type=int, default=10, help="Batch size for processing",
         )
         parser.add_argument(
-            "--historical",
-            action="store_true",
-            help="Import all historical emails",
+            "--historical", action="store_true", help="Import all historical emails",
         )
         parser.add_argument("--start-date", help="Start date (YYYY-MM-DD)")
         parser.add_argument("--end-date", help="End date (YYYY-MM-DD)")
@@ -216,7 +207,7 @@ class UnifiedIMAPImporter(BaseScript):
             for index_sql in self.email_indexes:
                 self.db_conn.execute(index_sql)
             self.logger.info(
-                "Initialized SQLite database with email schema and indexes"
+                "Initialized SQLite database with email schema and indexes",
             )
 
     def _init_motherduck(self) -> None:
@@ -233,13 +224,16 @@ class UnifiedIMAPImporter(BaseScript):
         self.logger.info("Initialized MotherDuck database connection")
 
     def connect_to_gmail(self, username: str, password: str) -> imaplib.IMAP4_SSL:
-        """Connect to Gmail using IMAP.
+        """
+        Connect to Gmail using IMAP.
 
         Args:
+        ----
             username: Gmail username
             password: App-specific password
 
         Returns:
+        -------
             IMAP connection
 
         """
@@ -253,12 +247,15 @@ class UnifiedIMAPImporter(BaseScript):
         return self._connect_imap(config)
 
     def _connect_imap(self, config: dict) -> imaplib.IMAP4_SSL:
-        """Connect to IMAP server using configured credentials.
+        """
+        Connect to IMAP server using configured credentials.
 
         Args:
+        ----
             config: Dictionary with connection parameters
 
         Returns:
+        -------
             IMAP connection object
 
         """
@@ -277,13 +274,10 @@ class UnifiedIMAPImporter(BaseScript):
                 # Set socket timeout to prevent hanging
                 socket_timeout = 60  # 60 seconds timeout
                 imap = imaplib.IMAP4_SSL(
-                    config["host"], config["port"], timeout=socket_timeout
+                    config["host"], config["port"], timeout=socket_timeout,
                 )
                 imap.login(config["user"], config["password"])
-                self.logger.info(
-                    "Successfully logged in as %s",
-                    config["user"],
-                )
+                self.logger.info("Successfully logged in as %s", config["user"])
 
                 # Set a shorter timeout for operations
                 imap.socket().settimeout(socket_timeout)
@@ -300,7 +294,7 @@ class UnifiedIMAPImporter(BaseScript):
                 OSError,
             ) as e:
                 self.logger.error(
-                    "IMAP connection failed on attempt %d: %s", attempt + 1, e
+                    "IMAP connection failed on attempt %d: %s", attempt + 1, e,
                 )
                 if attempt < max_retries - 1:
                     self.logger.info("Retrying in %d seconds...", retry_delay)
@@ -313,12 +307,15 @@ class UnifiedIMAPImporter(BaseScript):
                 raise
 
     def _decode_email_header(self, header: str) -> str:
-        """Decode email header properly handling various encodings.
+        """
+        Decode email header properly handling various encodings.
 
         Args:
+        ----
             header: Raw email header
 
         Returns:
+        -------
             Decoded header string
 
         """
@@ -340,13 +337,16 @@ class UnifiedIMAPImporter(BaseScript):
         return " ".join(decoded_parts)
 
     def _decode_payload(self, payload: bytes, charset: str | None = None) -> str:
-        """Decode email payload bytes to string.
+        """
+        Decode email payload bytes to string.
 
         Args:
+        ----
             payload: The binary payload data
             charset: Character set to use for decoding
 
         Returns:
+        -------
             Decoded string
 
         """
@@ -369,12 +369,15 @@ class UnifiedIMAPImporter(BaseScript):
                     return payload.decode("ascii", errors="replace")
 
     def _get_message_structure(self, msg: Message) -> dict[str, Any]:
-        """Extract the structure of an email message for analysis.
+        """
+        Extract the structure of an email message for analysis.
 
         Args:
+        ----
             msg: The email message object
 
         Returns:
+        -------
             Dictionary with message structure information
 
         """
@@ -396,23 +399,25 @@ class UnifiedIMAPImporter(BaseScript):
                 parts.append(part_info)
 
             return {"multipart": True, "parts": parts}
-        else:
-            return {
-                "multipart": False,
-                "content_type": msg.get_content_type(),
-                "charset": msg.get_content_charset(),
-                "content_disposition": msg.get("Content-Disposition", ""),
-                "filename": msg.get_filename(),
-                "size": (len(msg.as_bytes()) if hasattr(msg, "as_bytes") else 0),
-            }
+        return {
+            "multipart": False,
+            "content_type": msg.get_content_type(),
+            "charset": msg.get_content_charset(),
+            "content_disposition": msg.get("Content-Disposition", ""),
+            "filename": msg.get_filename(),
+            "size": (len(msg.as_bytes()) if hasattr(msg, "as_bytes") else 0),
+        }
 
     def _parse_email_message(self, email_data: bytes) -> dict[str, Any]:
-        """Parse email message data into a structured dictionary.
+        """
+        Parse email message data into a structured dictionary.
 
         Args:
+        ----
             email_data: Raw email data
 
         Returns:
+        -------
             Dictionary containing parsed email data
 
         """
@@ -464,7 +469,7 @@ class UnifiedIMAPImporter(BaseScript):
                                 "filename": filename,
                                 "content_type": content_type,
                                 "size": len(payload) if payload else 0,
-                            }
+                            },
                         )
                     continue
 
@@ -532,10 +537,7 @@ class UnifiedIMAPImporter(BaseScript):
             "from_address": from_addr,
             "analysis_date": datetime.now().isoformat(),
             "raw_analysis": safe_json_dumps(
-                {
-                    "headers": all_headers,
-                    "structure": self._get_message_structure(msg),
-                }
+                {"headers": all_headers, "structure": self._get_message_structure(msg)},
             ),
             "metadata": safe_json_dumps(metadata),
             "snippet": body_text[:500] if body_text else "",
@@ -557,9 +559,11 @@ class UnifiedIMAPImporter(BaseScript):
         end_date: str | None = None,
         num_workers: int = 4,  # Number of worker threads
     ) -> None:
-        """Fetch emails from Gmail using IMAP with parallel processing.
+        """
+        Fetch emails from Gmail using IMAP with parallel processing.
 
         Args:
+        ----
             imap: IMAP connection
             days_back: Number of days back to fetch
             max_emails: Maximum number of emails to fetch
@@ -582,39 +586,29 @@ class UnifiedIMAPImporter(BaseScript):
             elif start_date and end_date:
                 # Format dates as DD-MMM-YYYY for IMAP
                 start_fmt = datetime.strptime(start_date, "%Y-%m-%d").strftime(
-                    "%d-%b-%Y"
+                    "%d-%b-%Y",
                 )
 
                 end_fmt = datetime.strptime(end_date, "%Y-%m-%d").strftime("%d-%b-%Y")
 
                 search_criteria = f"(SINCE {start_fmt} BEFORE {end_fmt})"
-                self.logger.info(
-                    "Searching with criteria: %s",
-                    search_criteria,
-                )
+                self.logger.info("Searching with criteria: %s", search_criteria)
 
                 _, message_numbers = imap.search(None, search_criteria)
                 num_msgs = len(message_numbers[0].split())
 
                 self.logger.debug(
-                    "Found %d messages between %s and %s",
-                    num_msgs,
-                    start_fmt,
-                    end_fmt,
+                    "Found %d messages between %s and %s", num_msgs, start_fmt, end_fmt,
                 )
             else:
                 date_fmt = (datetime.now() - timedelta(days=days_back)).strftime(
-                    "%d-%b-%Y"
+                    "%d-%b-%Y",
                 )
 
                 _, message_numbers = imap.search(None, f"SINCE {date_fmt}")
                 num_msgs = len(message_numbers[0].split())
 
-                self.logger.debug(
-                    "Found %d messages since %s",
-                    num_msgs,
-                    date_fmt,
-                )
+                self.logger.debug("Found %d messages since %s", num_msgs, date_fmt)
 
             message_numbers = [int(num) for num in message_numbers[0].split()]
 
@@ -643,9 +637,7 @@ class UnifiedIMAPImporter(BaseScript):
                 batch_num = i // batch_size + 1
 
                 self.logger.debug(
-                    "Processing batch %d of %d messages",
-                    batch_num,
-                    len(batch),
+                    "Processing batch %d of %d messages", batch_num, len(batch),
                 )
 
                 try:
@@ -665,7 +657,7 @@ class UnifiedIMAPImporter(BaseScript):
                                     msg_num,
                                     existing_ids,
                                     batch_id,
-                                )
+                                ),
                             )
 
                         # Process results as they complete
@@ -707,8 +699,7 @@ class UnifiedIMAPImporter(BaseScript):
                     pass
 
             self.logger.info(
-                "Import completed. Total emails processed: %d",
-                total_processed,
+                "Import completed. Total emails processed: %d", total_processed,
             )
 
         except Exception as e:
@@ -716,12 +707,15 @@ class UnifiedIMAPImporter(BaseScript):
             raise
 
     def _create_imap_connections(self, num_connections: int) -> list[imaplib.IMAP4_SSL]:
-        """Create multiple IMAP connections for parallel processing.
+        """
+        Create multiple IMAP connections for parallel processing.
 
         Args:
+        ----
             num_connections: Number of connections to create
 
         Returns:
+        -------
             List of IMAP connections
 
         """
@@ -749,7 +743,7 @@ class UnifiedIMAPImporter(BaseScript):
         if not password:
             raise ValueError(
                 "Gmail password required in GMAIL_APP_PASSWORD "
-                "environment variable or --password"
+                "environment variable or --password",
             )
 
         return {
@@ -767,31 +761,28 @@ class UnifiedIMAPImporter(BaseScript):
         existing_ids: set[str],
         batch_id: str,
     ) -> bool:
-        """Process a single email message in a worker thread.
+        """
+        Process a single email message in a worker thread.
 
         Args:
+        ----
             imap: IMAP connection to use
             msg_num: Message number to process
             existing_ids: Set of existing message IDs
             batch_id: Current batch ID
 
         Returns:
+        -------
             True if email was processed successfully
 
         """
         try:
             # First fetch Gmail-specific IDs
-            self.logger.debug(
-                "Fetching Gmail IDs for message %d",
-                msg_num,
-            )
+            self.logger.debug("Fetching Gmail IDs for message %d", msg_num)
             _, msg_data = imap.fetch(str(msg_num), "(X-GM-MSGID X-GM-THRID)")
 
             if not msg_data or not msg_data[0]:
-                self.logger.error(
-                    "No Gmail ID data for message %d",
-                    msg_num,
-                )
+                self.logger.error("No Gmail ID data for message %d", msg_num)
                 return False
 
             # Parse Gmail IDs from response
@@ -802,20 +793,11 @@ class UnifiedIMAPImporter(BaseScript):
             )
 
             # Extract Gmail IDs using regex
-            msgid_match = re.search(
-                r"X-GM-MSGID\s+(\d+)",
-                response,
-            )
-            thrid_match = re.search(
-                r"X-GM-THRID\s+(\d+)",
-                response,
-            )
+            msgid_match = re.search(r"X-GM-MSGID\s+(\d+)", response)
+            thrid_match = re.search(r"X-GM-THRID\s+(\d+)", response)
 
             if not msgid_match or not thrid_match:
-                self.logger.error(
-                    "Failed to extract Gmail IDs: %s",
-                    response,
-                )
+                self.logger.error("Failed to extract Gmail IDs: %s", response)
                 return False
 
             gmail_msgid = msgid_match.group(1)
@@ -823,24 +805,15 @@ class UnifiedIMAPImporter(BaseScript):
 
             # Skip if message already exists
             if gmail_msgid in existing_ids:
-                self.logger.debug(
-                    "Message %s already exists, skipping",
-                    gmail_msgid,
-                )
+                self.logger.debug("Message %s already exists, skipping", gmail_msgid)
                 return False
 
             # Now fetch the full message
-            self.logger.debug(
-                "Fetching full message %d",
-                msg_num,
-            )
+            self.logger.debug("Fetching full message %d", msg_num)
             _, msg_data = imap.fetch(str(msg_num), "(RFC822)")
 
             if not msg_data or not msg_data[0]:
-                self.logger.error(
-                    "No message data for %d",
-                    msg_num,
-                )
+                self.logger.error("No message data for %d", msg_num)
                 return False
 
             # Extract and store message data
@@ -852,21 +825,20 @@ class UnifiedIMAPImporter(BaseScript):
             return self._store_email(email_data, batch_id)
 
         except Exception as e:
-            self.logger.error(
-                "Error processing message %d: %s",
-                msg_num,
-                str(e),
-            )
+            self.logger.error("Error processing message %d: %s", msg_num, str(e))
             return False
 
     def _store_email(self, email_data: dict[str, Any], batch_id: str) -> bool:
-        """Store email in the database.
+        """
+        Store email in the database.
 
         Args:
+        ----
             email_data: Parsed email data
             batch_id: Batch identifier
 
         Returns:
+        -------
             True if successful
 
         """
@@ -904,9 +876,11 @@ class UnifiedIMAPImporter(BaseScript):
             return False
 
     def _get_existing_ids(self) -> set[str]:
-        """Get existing message IDs from database.
+        """
+        Get existing message IDs from database.
 
-        Returns:
+        Returns
+        -------
             Set of existing message IDs
 
         """
@@ -916,8 +890,7 @@ class UnifiedIMAPImporter(BaseScript):
             result = self.db_conn.execute(query).fetchall()
             existing_ids = {str(row[0]) for row in result}
             self.logger.info(
-                "Found %d existing messages in database",
-                len(existing_ids),
+                "Found %d existing messages in database", len(existing_ids),
             )
         except Exception as e:
             self.logger.error("Error getting existing message IDs: %s", e)

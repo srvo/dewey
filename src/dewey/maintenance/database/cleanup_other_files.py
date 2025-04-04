@@ -4,7 +4,8 @@ from dewey.core.base_script import BaseScript
 
 
 class CleanupOtherFiles(BaseScript):
-    """A script for cleaning up other files in the database.
+    """
+    A script for cleaning up other files in the database.
 
     This script inherits from BaseScript and provides a standardized
     structure for database cleanup, including configuration loading,

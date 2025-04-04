@@ -4,7 +4,8 @@ from dewey.core.base_script import BaseScript
 
 
 class AnalyzeTables(BaseScript):
-    """Analyzes database tables.
+    """
+    Analyzes database tables.
 
     This module analyzes the tables in the database and performs
     maintenance tasks as needed.
@@ -15,7 +16,8 @@ class AnalyzeTables(BaseScript):
         super().__init__(*args, **kwargs)
 
     def execute(self) -> None:
-        """Executes the table analysis and maintenance process.
+        """
+        Executes the table analysis and maintenance process.
 
         This method connects to the database and analyzes each table to
         provide statistics such as row count and size.
@@ -32,7 +34,7 @@ class AnalyzeTables(BaseScript):
                         FROM information_schema.tables
                         WHERE table_schema = 'public'
                         AND table_type = 'BASE TABLE';
-                        """
+                        """,
                     )
                     tables = [table[0] for table in cursor.fetchall()]
 
@@ -48,7 +50,7 @@ class AnalyzeTables(BaseScript):
                         cursor.execute(
                             f"""
                             SELECT pg_size_pretty(pg_total_relation_size('{table}'));
-                            """
+                            """,
                         )
                         table_size = cursor.fetchone()[0]
                         self.logger.info(f"Table {table} size: {table_size}")

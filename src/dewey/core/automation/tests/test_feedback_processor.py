@@ -9,7 +9,7 @@ from dewey.core.base_script import BaseScript
 class TestFeedbackProcessor:
     """Tests for the FeedbackProcessor class."""
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_base_script(self) -> MagicMock:
         """Mock BaseScript instance."""
         mock_script = MagicMock(spec=BaseScript)
@@ -28,7 +28,7 @@ class TestFeedbackProcessor:
     @patch("dewey.core.db.connection.get_motherduck_connection")
     @patch("dewey.core.db.connection.get_connection")
     def test_database_interaction(
-        self, mock_get_conn, mock_get_motherduck, mock_base_script
+        self, mock_get_conn, mock_get_motherduck, mock_base_script,
     ):
         """Test database interaction."""
         # Arrange

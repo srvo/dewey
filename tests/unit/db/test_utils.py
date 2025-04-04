@@ -1,11 +1,12 @@
-"""Tests for database utility functions.
+"""
+Tests for database utility functions.
 
 This module tests the database utility functions.
 """
 
 import json
 import unittest
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import patch
 
 from src.dewey.core.db.utils import (
@@ -65,7 +66,7 @@ class TestDatabaseUtils(unittest.TestCase):
     def test_format_timestamp(self):
         """Test formatting timestamps."""
         # Create a timestamp
-        dt = datetime(2023, 1, 15, 12, 30, 45, tzinfo=timezone.utc)
+        dt = datetime(2023, 1, 15, 12, 30, 45, tzinfo=UTC)
 
         # Format it
         formatted = format_timestamp(dt)
@@ -295,7 +296,7 @@ class TestDatabaseUtils(unittest.TestCase):
         """Test building UPDATE queries."""
         # Build an UPDATE query
         query, params = build_update_query(
-            "users", {"name": "Updated", "age": 43}, {"id": 1}
+            "users", {"name": "Updated", "age": 43}, {"id": 1},
         )
 
         # Check result

@@ -1,9 +1,11 @@
-from dewey.core.base_script import BaseScript
 from duckduckgo_search import ddg
+
+from dewey.core.base_script import BaseScript
 
 
 class DuckDuckGo(BaseScript):
-    """A class for interacting with the DuckDuckGo search engine.
+    """
+    A class for interacting with the DuckDuckGo search engine.
 
     Inherits from BaseScript and provides methods for performing searches
     and retrieving results.
@@ -21,12 +23,15 @@ class DuckDuckGo(BaseScript):
         self.logger.info(f"Results: {results}")
 
     def search(self, query: str) -> str:
-        """Performs a search on DuckDuckGo and returns the results.
+        """
+        Performs a search on DuckDuckGo and returns the results.
 
         Args:
+        ----
             query: The search query.
 
         Returns:
+        -------
             The search results as a string.
 
         """

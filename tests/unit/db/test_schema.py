@@ -1,4 +1,5 @@
-"""Tests for database schema management.
+"""
+Tests for database schema management.
 
 This module tests the schema creation, migration, and versioning functionality.
 """
@@ -54,7 +55,7 @@ class TestSchemaManagement(unittest.TestCase):
                 break
 
         self.assertIsNotNone(
-            schema_version_call, "schema_versions table was not created"
+            schema_version_call, "schema_versions table was not created",
         )
 
     def test_get_current_version_no_versions(self):
@@ -70,7 +71,7 @@ class TestSchemaManagement(unittest.TestCase):
 
         # Check that execute_query was called with correct query
         self.mock_db_manager.execute_query.assert_called_with(
-            "\n            SELECT MAX(version) FROM schema_versions\n            WHERE status = 'success'\n        "
+            "\n            SELECT MAX(version) FROM schema_versions\n            WHERE status = 'success'\n        ",
         )
 
     def test_get_current_version_with_versions(self):

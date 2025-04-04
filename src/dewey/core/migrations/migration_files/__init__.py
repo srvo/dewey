@@ -1,4 +1,5 @@
-"""Migration files for the Dewey project.
+"""
+Migration files for the Dewey project.
 
 This package contains database migration files that define the schema and
 structure of the database. Each migration file follows the format:

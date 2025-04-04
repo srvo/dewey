@@ -1,10 +1,11 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
 
 class ExceptionsScript(BaseScript):
-    """A script to handle exceptions using LLMs.
+    """
+    A script to handle exceptions using LLMs.
 
     This script inherits from BaseScript and implements the run() method
     to execute the core logic. It uses the self.logger for logging,
@@ -13,24 +14,29 @@ class ExceptionsScript(BaseScript):
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        """Initializes the ExceptionsScript.
+        """
+        Initializes the ExceptionsScript.
 
         Args:
+        ----
             **kwargs: Keyword arguments passed to the BaseScript constructor.
 
         """
         super().__init__(**kwargs)
 
     def run(self) -> dict[str, Any]:
-        """Executes the core logic of the ExceptionsScript.
+        """
+        Executes the core logic of the ExceptionsScript.
 
         This method retrieves configuration values, processes data, and
         handles exceptions using LLMs.
 
-        Returns:
+        Returns
+        -------
             Dict[str, Any]: A dictionary containing the results of the script execution.
 
-        Raises:
+        Raises
+        ------
             Exception: If an error occurs during script execution.
 
         """
@@ -40,7 +46,7 @@ class ExceptionsScript(BaseScript):
             temperature: float = self.get_config_value("temperature")
 
             self.logger.info(
-                f"Using model: {model_name} with temperature: {temperature}"
+                f"Using model: {model_name} with temperature: {temperature}",
             )
 
             # Placeholder for core logic

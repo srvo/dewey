@@ -36,42 +36,42 @@ Total tables: 15
 
 #### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| tick | VARCHAR |  |
-| symbol | VARCHAR | Stock symbol/ticker |
-| si | VARCHAR |  |
-| name | VARCHAR | Name/description |
-| target | VARCHAR |  |
-| current | VARCHAR |  |
-| position_chg | VARCHAR |  |
-| model_portfolio | VARCHAR |  |
-| last_close | VARCHAR |  |
-| si_sum | VARCHAR |  |
-| pct change | VARCHAR |  |
-| yield | VARCHAR | Yield percentage |
-| yield_contribution | VARCHAR | Yield percentage |
-| sector | VARCHAR |  |
-| country | VARCHAR |  |
-| usa | VARCHAR |  |
-| asia | VARCHAR |  |
-| latam | VARCHAR |  |
-| europe | VARCHAR |  |
-| real_estate | VARCHAR |  |
-| infrastructure | VARCHAR |  |
-| innovation | VARCHAR |  |
-| lending | VARCHAR |  |
-| market_cap_3_11_2024 | VARCHAR |  |
-| real_estate_1 | VARCHAR |  |
-| infrastructure_1 | VARCHAR |  |
+| Column               | Type    | Description         |
+| -------------------- | ------- | ------------------- |
+| tick                 | VARCHAR |                     |
+| symbol               | VARCHAR | Stock symbol/ticker |
+| si                   | VARCHAR |                     |
+| name                 | VARCHAR | Name/description    |
+| target               | VARCHAR |                     |
+| current              | VARCHAR |                     |
+| position_chg         | VARCHAR |                     |
+| model_portfolio      | VARCHAR |                     |
+| last_close           | VARCHAR |                     |
+| si_sum               | VARCHAR |                     |
+| pct change           | VARCHAR |                     |
+| yield                | VARCHAR | Yield percentage    |
+| yield_contribution   | VARCHAR | Yield percentage    |
+| sector               | VARCHAR |                     |
+| country              | VARCHAR |                     |
+| usa                  | VARCHAR |                     |
+| asia                 | VARCHAR |                     |
+| latam                | VARCHAR |                     |
+| europe               | VARCHAR |                     |
+| real_estate          | VARCHAR |                     |
+| infrastructure       | VARCHAR |                     |
+| innovation           | VARCHAR |                     |
+| lending              | VARCHAR |                     |
+| market_cap_3_11_2024 | VARCHAR |                     |
+| real_estate_1        | VARCHAR |                     |
+| infrastructure_1     | VARCHAR |                     |
 
 #### Sample Data
 
-| tick | symbol | si | name | target | current | position_chg | model_portfolio | last_close | si_sum | pct change | yield | yield_contribution | sector | country | usa | asia | latam | europe | real_estate | infrastructure | innovation | lending | market_cap_3_11_2024 | real_estate_1 | infrastructure_1 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 55 | AGM | * | Federal Agricultural Mortgage Corp | 13.38% | 15.47% | -13.51% | 13.25% |  | 13.38% |  |  | 0.00% | Lending | United States | 13.38% |  |  |  |  |  |  | 15.47% | 2.01 | None | None |
-| 50 | NTDOY |  | Nintendo Co Ltd | 12.17% | 9.50% | 28.11% | 12.05% |  |  |  | 1.68% | 0.20% | Innovation | Japan |  |  |  |  |  |  | 9.50% |  | 22.2 | None | None |
-| 48 | MELI |  | MercadoLibre | 11.68% | 8.06% | 44.91% | 11.57% |  |  |  |  | 0.00% | Innovation | Argentina |  |  |  |  |  |  | 8.06% |  | 17.47 | None | None |
+| tick | symbol | si  | name                               | target | current | position_chg | model_portfolio | last_close | si_sum | pct change | yield | yield_contribution | sector     | country       | usa    | asia | latam | europe | real_estate | infrastructure | innovation | lending | market_cap_3_11_2024 | real_estate_1 | infrastructure_1 |
+| ---- | ------ | --- | ---------------------------------- | ------ | ------- | ------------ | --------------- | ---------- | ------ | ---------- | ----- | ------------------ | ---------- | ------------- | ------ | ---- | ----- | ------ | ----------- | -------------- | ---------- | ------- | -------------------- | ------------- | ---------------- |
+| 55   | AGM    | \*  | Federal Agricultural Mortgage Corp | 13.38% | 15.47%  | -13.51%      | 13.25%          |            | 13.38% |            |       | 0.00%              | Lending    | United States | 13.38% |      |       |        |             |                |            | 15.47%  | 2.01                 | None          | None             |
+| 50   | NTDOY  |     | Nintendo Co Ltd                    | 12.17% | 9.50%   | 28.11%       | 12.05%          |            |        |            | 1.68% | 0.20%              | Innovation | Japan         |        |      |       |        |             |                | 9.50%      |         | 22.2                 | None          | None             |
+| 48   | MELI   |     | MercadoLibre                       | 11.68% | 8.06%   | 44.91%       | 11.57%          |            |        |            |       | 0.00%              | Innovation | Argentina     |        |      |       |        |             |                | 8.06%      |         | 17.47                | None          | None             |
 
 ### income_sheets
 
@@ -79,37 +79,37 @@ Total tables: 15
 
 #### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| tick | VARCHAR |  |
-| symbol | VARCHAR | Stock symbol/ticker |
-| name | VARCHAR | Name/description |
-| target | VARCHAR |  |
-| current | VARCHAR |  |
-| model_portfolio | VARCHAR |  |
-| drift | VARCHAR |  |
-| last_close | VARCHAR |  |
-| yield | VARCHAR | Yield percentage |
-| yield_cont | VARCHAR | Yield percentage |
-| social_impact | VARCHAR |  |
-| sustainable_infrastructure | VARCHAR |  |
-| energy_infrastructure | VARCHAR |  |
-| private_companies | VARCHAR |  |
-| public_companies | VARCHAR |  |
-| social_impact_1 | VARCHAR |  |
-| infrastructure | VARCHAR |  |
-| private_companies_1 | VARCHAR |  |
-| public_companies_1 | VARCHAR |  |
-| legacy_exposure | VARCHAR |  |
-| duration | VARCHAR |  |
+| Column                     | Type    | Description         |
+| -------------------------- | ------- | ------------------- |
+| tick                       | VARCHAR |                     |
+| symbol                     | VARCHAR | Stock symbol/ticker |
+| name                       | VARCHAR | Name/description    |
+| target                     | VARCHAR |                     |
+| current                    | VARCHAR |                     |
+| model_portfolio            | VARCHAR |                     |
+| drift                      | VARCHAR |                     |
+| last_close                 | VARCHAR |                     |
+| yield                      | VARCHAR | Yield percentage    |
+| yield_cont                 | VARCHAR | Yield percentage    |
+| social_impact              | VARCHAR |                     |
+| sustainable_infrastructure | VARCHAR |                     |
+| energy_infrastructure      | VARCHAR |                     |
+| private_companies          | VARCHAR |                     |
+| public_companies           | VARCHAR |                     |
+| social_impact_1            | VARCHAR |                     |
+| infrastructure             | VARCHAR |                     |
+| private_companies_1        | VARCHAR |                     |
+| public_companies_1         | VARCHAR |                     |
+| legacy_exposure            | VARCHAR |                     |
+| duration                   | VARCHAR |                     |
 
 #### Sample Data
 
-| tick | symbol | name | target | current | model_portfolio | drift | last_close | yield | yield_cont | social_impact | sustainable_infrastructure | energy_infrastructure | private_companies | public_companies | social_impact_1 | infrastructure | private_companies_1 | public_companies_1 | legacy_exposure | duration |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 29 | TEAF | Ecofin Term | 30.21% | 35.98% | 29.91% | -5.77% |  | 7.19% | 2.17% | 29.00% | 60.00% | 10.00% |  |  | 8.67% | 17.94% |  |  | 2.99% | 8.81% |
-| 12 | SUSC | iShares Trust - iShares ESG Aware USD Corporate Bond ETF | 12.50% | 12.16% | 12.38% | 0.34% |  | 4.07% | 0.51% |  |  |  |  | 100.00% |  |  |  | 12.50% |  | 7.04 |
-| 20 | AGM PRG | Farmer Mac Preferreds | 20.83% | 19.66% | 20.62% | 1.17% |  | 5.89% | 1.23% |  |  |  |  |  |  |  |  |  |  | 119.92 |
+| tick | symbol  | name                                                     | target | current | model_portfolio | drift  | last_close | yield | yield_cont | social_impact | sustainable_infrastructure | energy_infrastructure | private_companies | public_companies | social_impact_1 | infrastructure | private_companies_1 | public_companies_1 | legacy_exposure | duration |
+| ---- | ------- | -------------------------------------------------------- | ------ | ------- | --------------- | ------ | ---------- | ----- | ---------- | ------------- | -------------------------- | --------------------- | ----------------- | ---------------- | --------------- | -------------- | ------------------- | ------------------ | --------------- | -------- |
+| 29   | TEAF    | Ecofin Term                                              | 30.21% | 35.98%  | 29.91%          | -5.77% |            | 7.19% | 2.17%      | 29.00%        | 60.00%                     | 10.00%                |                   |                  | 8.67%           | 17.94%         |                     |                    | 2.99%           | 8.81%    |
+| 12   | SUSC    | iShares Trust - iShares ESG Aware USD Corporate Bond ETF | 12.50% | 12.16%  | 12.38%          | 0.34%  |            | 4.07% | 0.51%      |               |                            |                       |                   | 100.00%          |                 |                |                     | 12.50%             |                 | 7.04     |
+| 20   | AGM PRG | Farmer Mac Preferreds                                    | 20.83% | 19.66%  | 20.62%          | 1.17%  |            | 5.89% | 1.23%      |               |                            |                       |                   |                  |                 |                |                     |                    |                 | 119.92   |
 
 ### diversification_sheets
 
@@ -117,36 +117,36 @@ Total tables: 15
 
 #### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| symbol | VARCHAR | Stock symbol/ticker |
-| name | VARCHAR | Name/description |
-| allocation | VARCHAR |  |
-| current_weight | VARCHAR | Weighting percentage |
-| target_weight | VARCHAR | Weighting percentage |
-| drift | VARCHAR |  |
-| market_value | VARCHAR |  |
-| last_price | VARCHAR | Price value |
-| shares | VARCHAR |  |
-| yield | VARCHAR | Yield percentage |
-| yield_contribution | VARCHAR | Yield percentage |
-| sector | VARCHAR |  |
-| country | VARCHAR |  |
-| strategy | VARCHAR |  |
-| risk_score | VARCHAR |  |
-| correlation | VARCHAR |  |
-| beta | VARCHAR |  |
-| volatility | VARCHAR |  |
-| sharpe_ratio | VARCHAR |  |
-| notes | VARCHAR |  |
+| Column             | Type    | Description          |
+| ------------------ | ------- | -------------------- |
+| symbol             | VARCHAR | Stock symbol/ticker  |
+| name               | VARCHAR | Name/description     |
+| allocation         | VARCHAR |                      |
+| current_weight     | VARCHAR | Weighting percentage |
+| target_weight      | VARCHAR | Weighting percentage |
+| drift              | VARCHAR |                      |
+| market_value       | VARCHAR |                      |
+| last_price         | VARCHAR | Price value          |
+| shares             | VARCHAR |                      |
+| yield              | VARCHAR | Yield percentage     |
+| yield_contribution | VARCHAR | Yield percentage     |
+| sector             | VARCHAR |                      |
+| country            | VARCHAR |                      |
+| strategy           | VARCHAR |                      |
+| risk_score         | VARCHAR |                      |
+| correlation        | VARCHAR |                      |
+| beta               | VARCHAR |                      |
+| volatility         | VARCHAR |                      |
+| sharpe_ratio       | VARCHAR |                      |
+| notes              | VARCHAR |                      |
 
 #### Sample Data
 
-| symbol | name | allocation | current_weight | target_weight | drift | market_value | last_price | shares | yield | yield_contribution | sector | country | strategy | risk_score | correlation | beta | volatility | sharpe_ratio | notes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| TICK | Symbol | Name | Target | Current | Model Portfolio | Drift | Last Close | Yield |  | Equity | Fixed Income | Commodities | Cash | Public Companies | Social Impact | Infrastructure | Private Companies | Public Companies | Legacy exposure |
-| 42 | ECAT | Blackrock ESG Capital Allocation Trust | 38.89% | 48.52% | 38.54% | -9.63% |  | 20.59% | 8.01% | 70.78% | 25.71 | 0.03% | 3.48% | None | None | None | None | None | None |
-| 26 | GMIIX | GMO Usonian Value Creation | 24.07% | 24.92% | 23.85% | -0.85% |  | 4.04% | 0.97% | 100.00% | None | None | None | None | None | None | None | None | None |
+| symbol | name   | allocation                             | current_weight | target_weight | drift           | market_value | last_price | shares | yield | yield_contribution | sector       | country     | strategy | risk_score       | correlation   | beta           | volatility        | sharpe_ratio     | notes           |
+| ------ | ------ | -------------------------------------- | -------------- | ------------- | --------------- | ------------ | ---------- | ------ | ----- | ------------------ | ------------ | ----------- | -------- | ---------------- | ------------- | -------------- | ----------------- | ---------------- | --------------- |
+| TICK   | Symbol | Name                                   | Target         | Current       | Model Portfolio | Drift        | Last Close | Yield  |       | Equity             | Fixed Income | Commodities | Cash     | Public Companies | Social Impact | Infrastructure | Private Companies | Public Companies | Legacy exposure |
+| 42     | ECAT   | Blackrock ESG Capital Allocation Trust | 38.89%         | 48.52%        | 38.54%          | -9.63%       |            | 20.59% | 8.01% | 70.78%             | 25.71        | 0.03%       | 3.48%    | None             | None          | None           | None              | None             | None            |
+| 26     | GMIIX  | GMO Usonian Value Creation             | 24.07%         | 24.92%        | 23.85%          | -0.85%       |            | 4.04%  | 0.97% | 100.00%            | None         | None        | None     | None             | None          | None           | None              | None             | None            |
 
 ## Reference Tables
 
@@ -156,33 +156,33 @@ Total tables: 15
 
 #### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| excluded | VARCHAR |  |
-| workflow | VARCHAR |  |
-| ticker | VARCHAR | Stock symbol/ticker |
-| isin | VARCHAR |  |
-| tick | VARCHAR |  |
-| security_name | VARCHAR | Name/description |
-| note | VARCHAR |  |
-| last_tick_date | VARCHAR | Date/timestamp |
-| category | VARCHAR |  |
-| sector | VARCHAR |  |
-| benchmark | VARCHAR |  |
-| fund | VARCHAR |  |
-| col_12 | VARCHAR |  |
-| col_13 | VARCHAR |  |
-| col_14 | VARCHAR |  |
-| col_15 | VARCHAR |  |
-| col_16 | VARCHAR |  |
+| Column         | Type    | Description         |
+| -------------- | ------- | ------------------- |
+| excluded       | VARCHAR |                     |
+| workflow       | VARCHAR |                     |
+| ticker         | VARCHAR | Stock symbol/ticker |
+| isin           | VARCHAR |                     |
+| tick           | VARCHAR |                     |
+| security_name  | VARCHAR | Name/description    |
+| note           | VARCHAR |                     |
+| last_tick_date | VARCHAR | Date/timestamp      |
+| category       | VARCHAR |                     |
+| sector         | VARCHAR |                     |
+| benchmark      | VARCHAR |                     |
+| fund           | VARCHAR |                     |
+| col_12         | VARCHAR |                     |
+| col_13         | VARCHAR |                     |
+| col_14         | VARCHAR |                     |
+| col_15         | VARCHAR |                     |
+| col_16         | VARCHAR |                     |
 
 #### Sample Data
 
-| excluded | workflow | ticker | isin | tick | security_name | note | last_tick_date | category | sector | benchmark | fund | col_12 | col_13 | col_14 | col_15 | col_16 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Excluded | Workflow | Ticker | ISIN | Tick | Security Name | Note | Last Tick Date | Category | Sector | Benchmark | Fund | None | None | None | None | None |
-| No Match | AGM | AGM | US3131483063 | 55 | Farmer Mac | Is it problematic if we call our fanclub "aparnaholics" or is #rameshistans better | 3/5/2025 | Financials | Financials |  |  |  |  |  |  | 3/5/25 18:10 |
-| No Match | GABE | NTDOY | US6544453037 | 50 | Nintendo | 117 million annual users. so much ip. Structural nostalgia dividend. and they're legendary at hardware?!?@?@??@??# | 12/25/2024 | Entertainment | None | None | None | None | None | None | None | None |
+| excluded | workflow | ticker | isin         | tick | security_name | note                                                                                                               | last_tick_date | category      | sector     | benchmark | fund | col_12 | col_13 | col_14 | col_15 | col_16       |
+| -------- | -------- | ------ | ------------ | ---- | ------------- | ------------------------------------------------------------------------------------------------------------------ | -------------- | ------------- | ---------- | --------- | ---- | ------ | ------ | ------ | ------ | ------------ |
+| Excluded | Workflow | Ticker | ISIN         | Tick | Security Name | Note                                                                                                               | Last Tick Date | Category      | Sector     | Benchmark | Fund | None   | None   | None   | None   | None         |
+| No Match | AGM      | AGM    | US3131483063 | 55   | Farmer Mac    | Is it problematic if we call our fanclub "aparnaholics" or is #rameshistans better                                 | 3/5/2025       | Financials    | Financials |           |      |        |        |        |        | 3/5/25 18:10 |
+| No Match | GABE     | NTDOY  | US6544453037 | 50   | Nintendo      | 117 million annual users. so much ip. Structural nostalgia dividend. and they're legendary at hardware?!?@?@??@??# | 12/25/2024     | Entertainment | None       | None      | None | None   | None   | None   | None   | None         |
 
 ### exclude_sheets
 
@@ -190,27 +190,27 @@ Total tables: 15
 
 #### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| company | VARCHAR |  |
-| symbol | VARCHAR | Stock symbol/ticker |
-| isin | VARCHAR |  |
-| category | VARCHAR |  |
-| criteria | VARCHAR |  |
-| concerned_groups | VARCHAR |  |
-| decision | VARCHAR |  |
-| date | VARCHAR | Date/timestamp |
-| notes | VARCHAR |  |
-| col_9 | VARCHAR |  |
-| col_10 | VARCHAR |  |
+| Column           | Type    | Description         |
+| ---------------- | ------- | ------------------- |
+| company          | VARCHAR |                     |
+| symbol           | VARCHAR | Stock symbol/ticker |
+| isin             | VARCHAR |                     |
+| category         | VARCHAR |                     |
+| criteria         | VARCHAR |                     |
+| concerned_groups | VARCHAR |                     |
+| decision         | VARCHAR |                     |
+| date             | VARCHAR | Date/timestamp      |
+| notes            | VARCHAR |                     |
+| col_9            | VARCHAR |                     |
+| col_10           | VARCHAR |                     |
 
 #### Sample Data
 
-| company | symbol | isin | category | criteria | concerned_groups | decision | date | notes | col_9 | col_10 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Company | Symbol | ISIN | Category | Criteria | Concerned groups | Decision | Date | Notes | None | None |
-| 1-800 FLOWERS.COM, Inc. | FLWS | US68243Q1067 | Product-based | Animal products | Cruelty Free Investors | Exclude |  | Meat/Dairy/Eggs | None | None |
-| 111, Inc. | YI | US68247Q1022 | Conduct-based | Animal Testing | Cruelty Free Investors | Exclude | None | None | None | None |
+| company                 | symbol | isin         | category      | criteria        | concerned_groups       | decision | date | notes           | col_9 | col_10 |
+| ----------------------- | ------ | ------------ | ------------- | --------------- | ---------------------- | -------- | ---- | --------------- | ----- | ------ |
+| Company                 | Symbol | ISIN         | Category      | Criteria        | Concerned groups       | Decision | Date | Notes           | None  | None   |
+| 1-800 FLOWERS.COM, Inc. | FLWS   | US68243Q1067 | Product-based | Animal products | Cruelty Free Investors | Exclude  |      | Meat/Dairy/Eggs | None  | None   |
+| 111, Inc.               | YI     | US68247Q1022 | Conduct-based | Animal Testing  | Cruelty Free Investors | Exclude  | None | None            | None  | None   |
 
 ### preferreds_sheets
 
@@ -218,29 +218,29 @@ Total tables: 15
 
 #### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| symbol
-cusip | VARCHAR | Stock symbol/ticker |
-| symbol | VARCHAR | Stock symbol/ticker |
-| tick | VARCHAR |  |
-| note | VARCHAR |  |
-| C4 | VARCHAR |  |
-| security_description | VARCHAR |  |
-| ipo_date | VARCHAR | Date/timestamp |
-| cpn_rate
-ann_amt | VARCHAR |  |
-| liqpref
-callprice | VARCHAR | Price value |
-| call_date
-matur_date | VARCHAR | Date/timestamp |
-| moodys_s&p
-dated | VARCHAR | Date/timestamp |
-| 15pct
-tax_rate | VARCHAR |  |
-| conv | VARCHAR |  |
-| ipo_prospectus | VARCHAR |  |
-| distribution_dates | VARCHAR | Date/timestamp |
+| Column               | Type    | Description         |
+| -------------------- | ------- | ------------------- |
+| symbol               |         |                     |
+| cusip                | VARCHAR | Stock symbol/ticker |
+| symbol               | VARCHAR | Stock symbol/ticker |
+| tick                 | VARCHAR |                     |
+| note                 | VARCHAR |                     |
+| C4                   | VARCHAR |                     |
+| security_description | VARCHAR |                     |
+| ipo_date             | VARCHAR | Date/timestamp      |
+| cpn_rate             |         |                     |
+| ann_amt              | VARCHAR |                     |
+| liqpref              |         |                     |
+| callprice            | VARCHAR | Price value         |
+| call_date            |         |                     |
+| matur_date           | VARCHAR | Date/timestamp      |
+| moodys_s&p           |         |                     |
+| dated                | VARCHAR | Date/timestamp      |
+| 15pct                |         |                     |
+| tax_rate             | VARCHAR |                     |
+| conv                 | VARCHAR |                     |
+| ipo_prospectus       | VARCHAR |                     |
+| distribution_dates   | VARCHAR | Date/timestamp      |
 
 #### Sample Data
 
@@ -251,7 +251,7 @@ callprice | call_date
 matur_date | moodys_s&p
 dated | 15pct
 tax_rate | conv | ipo_prospectus | distribution_dates |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| \--- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | ZIONP<br>98973A104 | ZIONP | 4 | nice | 6.88% | Zions Bancorporation, Floating Rate Series A Non-cumul Perp Preferred Stock | 12/06/2006 | Variable<br>n.a. | $25.00<br>$25.00 | 12/15/2011<br>None | Baa3 BB+<br>4/09/2023 | YES |  | Prospectus | 3/15, 6/15, 9/15 & 12/15<br>Click for MW ExDiv Date<br>Click for Yahoo ExDiv Date |
 | SLMBP<br>78442P502 | SLMBP | 1 |  | 9.95% | SLM Corp., Floating Rate Non-Cumulative Preferred Stock, Series B | 06/03/2005 | Variable<br>n.a. | $100.00<br>$100.00 | 6/15/2010<br>None | Ba3 NR<br>4/16/2023 | YES |  | Prospectus | 3/15, 6/15, 9/15 & 12/15<br>Click for MW ExDiv Date<br>Click for Yahoo ExDiv Date |
 | TFC-I<br>89832Q810 | TFC-I | 1 |  |  | Truist Financial Corp Series I Non-Cumulative Perpetual Preferred Stock | n.a. | Variable<br>n.a. | $25.00<br>$25.00 | 12/15/2024<br>None | Baa2 BBB-<br>3/30/2023 | YES |  | Prospectus | 3/15, 6/15, 9/15 & 12/15<br>Click for MW ExDiv Date<br>Click for Yahoo ExDiv Date |
@@ -264,24 +264,24 @@ tax_rate | conv | ipo_prospectus | distribution_dates |
 
 #### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| ticker | VARCHAR | Stock symbol/ticker |
-| old_tick | VARCHAR |  |
-| new_tick | VARCHAR |  |
-| date | VARCHAR | Date/timestamp |
-| isin | VARCHAR |  |
-| month | VARCHAR |  |
-| year | VARCHAR |  |
-| monthyear | VARCHAR |  |
+| Column    | Type    | Description         |
+| --------- | ------- | ------------------- |
+| ticker    | VARCHAR | Stock symbol/ticker |
+| old_tick  | VARCHAR |                     |
+| new_tick  | VARCHAR |                     |
+| date      | VARCHAR | Date/timestamp      |
+| isin      | VARCHAR |                     |
+| month     | VARCHAR |                     |
+| year      | VARCHAR |                     |
+| monthyear | VARCHAR |                     |
 
 #### Sample Data
 
-| ticker | old_tick | new_tick | date | isin | month | year | monthyear |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| AGM | PORT | 82 | 7/13/22 3:37 |  | 7 | 2022 | 72022 |
-| AGM | 82 | 85 | 7/13/22 3:40 |  | 7 | 2022 | 72022 |
-| ENPH | PORT | 41 | 7/13/22 3:40 |  | 7 | 2022 | 72022 |
+| ticker | old_tick | new_tick | date         | isin | month | year | monthyear |
+| ------ | -------- | -------- | ------------ | ---- | ----- | ---- | --------- |
+| AGM    | PORT     | 82       | 7/13/22 3:37 |      | 7     | 2022 | 72022     |
+| AGM    | 82       | 85       | 7/13/22 3:40 |      | 7     | 2022 | 72022     |
+| ENPH   | PORT     | 41       | 7/13/22 3:40 |      | 7     | 2022 | 72022     |
 
 ### weighting_history_sheets
 
@@ -289,23 +289,23 @@ tax_rate | conv | ipo_prospectus | distribution_dates |
 
 #### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| C0 | VARCHAR |  |
-| name | VARCHAR | Name/description |
-| sector | VARCHAR |  |
-| last_price | VARCHAR | Price value |
-| 5yr_revenue_cagr | VARCHAR |  |
-| dividend_yield | VARCHAR | Yield percentage |
-| p_fcf | VARCHAR |  |
+| Column           | Type    | Description      |
+| ---------------- | ------- | ---------------- |
+| C0               | VARCHAR |                  |
+| name             | VARCHAR | Name/description |
+| sector           | VARCHAR |                  |
+| last_price       | VARCHAR | Price value      |
+| 5yr_revenue_cagr | VARCHAR |                  |
+| dividend_yield   | VARCHAR | Yield percentage |
+| p_fcf            | VARCHAR |                  |
 
 #### Sample Data
 
-| C0 | name | sector | last_price | 5yr_revenue_cagr | dividend_yield | p_fcf |
-| --- | --- | --- | --- | --- | --- | --- |
-| 11/13/2023 | AGM | 0.133 | y | 0.1233 | 0.0266 | 2.7 |
-| 11/13/2023 | AHH | 0.051 | y | 0.0845 | 0.0729 | 6.2 |
-| 11/13/2023 | ARE | 0.051 | y | 0.1805 | 0.0472 | 11.4 |
+| C0         | name | sector | last_price | 5yr_revenue_cagr | dividend_yield | p_fcf |
+| ---------- | ---- | ------ | ---------- | ---------------- | -------------- | ----- |
+| 11/13/2023 | AGM  | 0.133  | y          | 0.1233           | 0.0266         | 2.7   |
+| 11/13/2023 | AHH  | 0.051  | y          | 0.0845           | 0.0729         | 6.2   |
+| 11/13/2023 | ARE  | 0.051  | y          | 0.1805           | 0.0472         | 11.4  |
 
 ## Core System Tables
 
@@ -315,66 +315,66 @@ tax_rate | conv | ipo_prospectus | distribution_dates |
 
 #### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| email | VARCHAR | Email address |
-| first_name | VARCHAR | Name/description |
-| last_name | VARCHAR | Name/description |
-| full_name | VARCHAR | Name/description |
-| company | VARCHAR |  |
-| job_title | VARCHAR |  |
-| phone | VARCHAR |  |
-| country | VARCHAR |  |
-| source | VARCHAR |  |
-| domain | VARCHAR |  |
-| last_interaction_date | TIMESTAMP | Date/timestamp |
-| first_seen_date | TIMESTAMP | Date/timestamp |
-| last_updated | TIMESTAMP | Date/timestamp |
-| tags | VARCHAR |  |
-| notes | VARCHAR |  |
-| metadata | VARCHAR |  |
-| event_id | VARCHAR | Unique identifier |
-| event_summary | VARCHAR |  |
-| event_time | TIMESTAMP |  |
-| website | INTEGER |  |
-| address_1 | VARCHAR |  |
-| address_2 | INTEGER |  |
-| city | VARCHAR |  |
-| state | VARCHAR |  |
-| zip | INTEGER |  |
-| current_client | INTEGER |  |
-| investment_professional | INTEGER |  |
-| last_contact | INTEGER |  |
-| email_verified | INTEGER | Email address |
-| social_media | INTEGER |  |
-| breached_sites | INTEGER |  |
-| related_domains | INTEGER |  |
-| password_leaks | INTEGER |  |
-| pastebin_records | INTEGER |  |
-| is_newsletter | BOOLEAN |  |
-| is_client | BOOLEAN |  |
-| is_free_money | BOOLEAN |  |
-| last_outreach | INTEGER |  |
-| lead_source | INTEGER |  |
-| birthdate | INTEGER | Date/timestamp |
-| employment_status | INTEGER |  |
-| is_partnered | BOOLEAN |  |
-| partner_name | INTEGER | Name/description |
-| investment_experience | BIGINT |  |
-| social_instagram | INTEGER |  |
-| social_linkedin | INTEGER |  |
-| social_tiktok | INTEGER |  |
-| subscriber_since | TIMESTAMP |  |
-| email_opens | BIGINT | Email address |
-| email_clicks | BIGINT | Email address |
+| Column                  | Type      | Description       |
+| ----------------------- | --------- | ----------------- |
+| email                   | VARCHAR   | Email address     |
+| first_name              | VARCHAR   | Name/description  |
+| last_name               | VARCHAR   | Name/description  |
+| full_name               | VARCHAR   | Name/description  |
+| company                 | VARCHAR   |                   |
+| job_title               | VARCHAR   |                   |
+| phone                   | VARCHAR   |                   |
+| country                 | VARCHAR   |                   |
+| source                  | VARCHAR   |                   |
+| domain                  | VARCHAR   |                   |
+| last_interaction_date   | TIMESTAMP | Date/timestamp    |
+| first_seen_date         | TIMESTAMP | Date/timestamp    |
+| last_updated            | TIMESTAMP | Date/timestamp    |
+| tags                    | VARCHAR   |                   |
+| notes                   | VARCHAR   |                   |
+| metadata                | VARCHAR   |                   |
+| event_id                | VARCHAR   | Unique identifier |
+| event_summary           | VARCHAR   |                   |
+| event_time              | TIMESTAMP |                   |
+| website                 | INTEGER   |                   |
+| address_1               | VARCHAR   |                   |
+| address_2               | INTEGER   |                   |
+| city                    | VARCHAR   |                   |
+| state                   | VARCHAR   |                   |
+| zip                     | INTEGER   |                   |
+| current_client          | INTEGER   |                   |
+| investment_professional | INTEGER   |                   |
+| last_contact            | INTEGER   |                   |
+| email_verified          | INTEGER   | Email address     |
+| social_media            | INTEGER   |                   |
+| breached_sites          | INTEGER   |                   |
+| related_domains         | INTEGER   |                   |
+| password_leaks          | INTEGER   |                   |
+| pastebin_records        | INTEGER   |                   |
+| is_newsletter           | BOOLEAN   |                   |
+| is_client               | BOOLEAN   |                   |
+| is_free_money           | BOOLEAN   |                   |
+| last_outreach           | INTEGER   |                   |
+| lead_source             | INTEGER   |                   |
+| birthdate               | INTEGER   | Date/timestamp    |
+| employment_status       | INTEGER   |                   |
+| is_partnered            | BOOLEAN   |                   |
+| partner_name            | INTEGER   | Name/description  |
+| investment_experience   | BIGINT    |                   |
+| social_instagram        | INTEGER   |                   |
+| social_linkedin         | INTEGER   |                   |
+| social_tiktok           | INTEGER   |                   |
+| subscriber_since        | TIMESTAMP |                   |
+| email_opens             | BIGINT    | Email address     |
+| email_clicks            | BIGINT    | Email address     |
 
 #### Sample Data
 
-| email | first_name | last_name | full_name | company | job_title | phone | country | source | domain | last_interaction_date | first_seen_date | last_updated | tags | notes | metadata | event_id | event_summary | event_time | website | address_1 | address_2 | city | state | zip | current_client | investment_professional | last_contact | email_verified | social_media | breached_sites | related_domains | password_leaks | pastebin_records | is_newsletter | is_client | is_free_money | last_outreach | lead_source | birthdate | employment_status | is_partnered | partner_name | investment_experience | social_instagram | social_linkedin | social_tiktok | subscriber_since | email_opens | email_clicks |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| akunesh@me.com |  | Kunesh |  | None | None | None | None | attendee | me.com | 2024-11-22 16:15:00 | 2024-11-22 16:15:00 | 2024-11-26 21:53:58.245000 | enabled | Free Money Podcast - Andrew Kunesh joins the call | None | 5ir623is2bb4hmiee421toqf0v | Free Money Podcast - Andrew Kunesh joins the call | 2024-11-22 16:15:00 | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | 2023-05-06 20:20:00 | 5 | 0 |
-| tomamis@apb-legal.com | Tom | Amis | Tom Amis | None | None | None | None | attendee | apb-legal.com | 2024-11-20 13:00:00 | 2024-11-20 13:00:00 | 2024-11-26 21:53:58.245000 | enabled | FW: Sloane & Tom Catch Up  | None | 4bbml1n0ltmuis4ss354frbeh9_20241120T200000Z | FW: Sloane & Tom Catch Up  | 2024-11-20 13:00:00 | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | NaT | None | None |
-| sam@alturaslawgroup.com | Sam | Linnet | Sam Linnet | None | None | None | None | attendee | alturaslawgroup.com | 2024-11-20 13:00:00 | 2024-11-20 13:00:00 | 2024-11-26 21:53:58.245000 | enabled | FW: Sloane & Tom Catch Up  | None | 4bbml1n0ltmuis4ss354frbeh9_20241120T200000Z | FW: Sloane & Tom Catch Up  | 2024-11-20 13:00:00 | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | False | False | False | None | None | None | None | False | None | None | None | None | None | 2023-07-20 22:54:08 | 3 | 0 |
+| email                   | first_name | last_name | full_name  | company | job_title | phone | country | source   | domain              | last_interaction_date | first_seen_date     | last_updated               | tags    | notes                                             | metadata | event_id                                    | event_summary                                     | event_time          | website | address_1 | address_2 | city | state | zip  | current_client | investment_professional | last_contact | email_verified | social_media | breached_sites | related_domains | password_leaks | pastebin_records | is_newsletter | is_client | is_free_money | last_outreach | lead_source | birthdate | employment_status | is_partnered | partner_name | investment_experience | social_instagram | social_linkedin | social_tiktok | subscriber_since    | email_opens | email_clicks |
+| ----------------------- | ---------- | --------- | ---------- | ------- | --------- | ----- | ------- | -------- | ------------------- | --------------------- | ------------------- | -------------------------- | ------- | ------------------------------------------------- | -------- | ------------------------------------------- | ------------------------------------------------- | ------------------- | ------- | --------- | --------- | ---- | ----- | ---- | -------------- | ----------------------- | ------------ | -------------- | ------------ | -------------- | --------------- | -------------- | ---------------- | ------------- | --------- | ------------- | ------------- | ----------- | --------- | ----------------- | ------------ | ------------ | --------------------- | ---------------- | --------------- | ------------- | ------------------- | ----------- | ------------ |
+| akunesh@me.com          |            | Kunesh    |            | None    | None      | None  | None    | attendee | me.com              | 2024-11-22 16:15:00   | 2024-11-22 16:15:00 | 2024-11-26 21:53:58.245000 | enabled | Free Money Podcast - Andrew Kunesh joins the call | None     | 5ir623is2bb4hmiee421toqf0v                  | Free Money Podcast - Andrew Kunesh joins the call | 2024-11-22 16:15:00 | None    | None      | None      | None | None  | None | None           | None                    | None         | None           | None         | None           | None            | None           | None             | None          | None      | None          | None          | None        | None      | None              | None         | None         | None                  | None             | None            | None          | 2023-05-06 20:20:00 | 5           | 0            |
+| tomamis@apb-legal.com   | Tom        | Amis      | Tom Amis   | None    | None      | None  | None    | attendee | apb-legal.com       | 2024-11-20 13:00:00   | 2024-11-20 13:00:00 | 2024-11-26 21:53:58.245000 | enabled | FW: Sloane & Tom Catch Up                         | None     | 4bbml1n0ltmuis4ss354frbeh9_20241120T200000Z | FW: Sloane & Tom Catch Up                         | 2024-11-20 13:00:00 | None    | None      | None      | None | None  | None | None           | None                    | None         | None           | None         | None           | None            | None           | None             | None          | None      | None          | None          | None        | None      | None              | None         | None         | None                  | None             | None            | None          | NaT                 | None        | None         |
+| sam@alturaslawgroup.com | Sam        | Linnet    | Sam Linnet | None    | None      | None  | None    | attendee | alturaslawgroup.com | 2024-11-20 13:00:00   | 2024-11-20 13:00:00 | 2024-11-26 21:53:58.245000 | enabled | FW: Sloane & Tom Catch Up                         | None     | 4bbml1n0ltmuis4ss354frbeh9_20241120T200000Z | FW: Sloane & Tom Catch Up                         | 2024-11-20 13:00:00 | None    | None      | None      | None | None  | None | None           | None                    | None         | None           | None         | None           | None            | None           | None             | False         | False     | False         | None          | None        | None      | None              | False        | None         | None                  | None             | None            | None          | 2023-07-20 22:54:08 | 3           | 0            |
 
 ### emails
 
@@ -382,207 +382,207 @@ tax_rate | conv | ipo_prospectus | distribution_dates |
 
 #### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| id | VARCHAR | Unique identifier |
-| thread_id | VARCHAR | Unique identifier |
-| subject | VARCHAR |  |
-| from_email | VARCHAR | Email address |
-| from_name | VARCHAR | Name/description |
-| plain_body | VARCHAR |  |
-| html_body | INTEGER |  |
-| importance | INTEGER |  |
-| is_mailing_list | BOOLEAN |  |
-| to_address | VARCHAR |  |
-| body_preview | VARCHAR |  |
-| analysis_date | TIMESTAMP | Date/timestamp |
-| raw_analysis | INTEGER |  |
-| automation_score | INTEGER |  |
-| content_value | INTEGER |  |
-| human_interaction | INTEGER |  |
-| time_value | INTEGER |  |
-| business_impact | INTEGER |  |
-| uncertainty_score | INTEGER |  |
-| metadata | INTEGER |  |
-| priority | INTEGER |  |
-| label_ids | INTEGER |  |
-| snippet | VARCHAR |  |
-| internal_date | INTEGER | Date/timestamp |
-| size_estimate | INTEGER |  |
-| message_parts | INTEGER |  |
-| draft_id | INTEGER | Unique identifier |
-| draft_message | INTEGER |  |
-| attachments | INTEGER |  |
-| status | VARCHAR |  |
-| error_message | INTEGER |  |
-| batch_id | INTEGER | Unique identifier |
-| import_timestamp | TIMESTAMP |  |
-| created_at | TIMESTAMP |  |
-| updated_at | TIMESTAMP | Date/timestamp |
+| Column            | Type      | Description       |
+| ----------------- | --------- | ----------------- |
+| id                | VARCHAR   | Unique identifier |
+| thread_id         | VARCHAR   | Unique identifier |
+| subject           | VARCHAR   |                   |
+| from_email        | VARCHAR   | Email address     |
+| from_name         | VARCHAR   | Name/description  |
+| plain_body        | VARCHAR   |                   |
+| html_body         | INTEGER   |                   |
+| importance        | INTEGER   |                   |
+| is_mailing_list   | BOOLEAN   |                   |
+| to_address        | VARCHAR   |                   |
+| body_preview      | VARCHAR   |                   |
+| analysis_date     | TIMESTAMP | Date/timestamp    |
+| raw_analysis      | INTEGER   |                   |
+| automation_score  | INTEGER   |                   |
+| content_value     | INTEGER   |                   |
+| human_interaction | INTEGER   |                   |
+| time_value        | INTEGER   |                   |
+| business_impact   | INTEGER   |                   |
+| uncertainty_score | INTEGER   |                   |
+| metadata          | INTEGER   |                   |
+| priority          | INTEGER   |                   |
+| label_ids         | INTEGER   |                   |
+| snippet           | VARCHAR   |                   |
+| internal_date     | INTEGER   | Date/timestamp    |
+| size_estimate     | INTEGER   |                   |
+| message_parts     | INTEGER   |                   |
+| draft_id          | INTEGER   | Unique identifier |
+| draft_message     | INTEGER   |                   |
+| attachments       | INTEGER   |                   |
+| status            | VARCHAR   |                   |
+| error_message     | INTEGER   |                   |
+| batch_id          | INTEGER   | Unique identifier |
+| import_timestamp  | TIMESTAMP |                   |
+| created_at        | TIMESTAMP |                   |
+| updated_at        | TIMESTAMP | Date/timestamp    |
 
 #### Sample Data
 
-| id | thread_id | subject | from_email | from_name | plain_body | html_body | importance | is_mailing_list | to_address | body_preview | analysis_date | raw_analysis | automation_score | content_value | human_interaction | time_value | business_impact | uncertainty_score | metadata | priority | label_ids | snippet | internal_date | size_estimate | message_parts | draft_id | draft_message | attachments | status | error_message | batch_id | import_timestamp | created_at | updated_at |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 17b73bf61f3c33da | 17b73bf61f3c33da | quick question... | sales@wealthbox.com | Krystal Stanley | Hi Sloane,
-<br>
-<br>Quick question about Wealthbox CRM: Do you need any help getting started?
-<br>
-<br>We're here for you. We'd like to invite you to join one of our These online sessions are...
-<br>
-<br> * Live demonstrations of Wealthbox
-<br> * Held daily at 1pm ET, Monday - Friday
-<br> * Only 20 minutes long, plus Q&A
-<br>
-<br>
-<br>Interested? to jumpstart your Wealthbox experience. Or you can watch a on demand, right now.
-<br>
-<br>Any questions? You can reply to this email, or get answers in our .
-<br>
-<br>Talk soon,
-<br>
-<br>Krystal Stanley
-<br>Team Wealthbox
-<br>
-<br>If you don't want to hear from me anymore, [https://apus5.com/unsubscribe/v2?s=wealthbox&m=s_fe6f69f1-c957-484b-8812-ddeaedf5c7c9] . Hi Sloane, Quick question about Wealthbox CRM: Do you need any help getting started? We're here for you. We'd like to invite you to join one of our live demos. These online sessions are... Live demonstrations of Wealthbox Held daily at 1pm ET, Monday - Friday Only 20 minutes long, plus Q&A Interested? Sign up for a demo to jumpstart your Weal | None | 0 | True | Sloane Ortel <sloane@investvegan.org> | Hi Sloane,
-<br>
-<br>Quick question about Wealthbox CRM: Do you need any help getting started?
-<br>
-<br>We're here for you. We'd like to invite you to join one of our These online sessions are...
-<br>
-<br> * Live demonstrations of Wealthbox
-<br> * Held daily at 1pm ET, Monday - Friday
-<br> * Only 20 minutes long, plus Q&A
-<br>
-<br>
-<br>Interested? to jumpstart your Wealthbox experience. Or you can watch a on demand, right now.
-<br>
-<br>Any questions? You can reply to this email, or get answers in our .
-<br>
-<br>Talk soon,
-<br>
-<br>Krystal Stanley
-<br>Team Wealthbox
-<br>
-<br>If you don't want to hear from me anymore, [https://apus5.com/unsubscribe/v2?s=wealthbox&m=s_fe6f69f1-c957-484b-8812-ddeaedf5c7c9] . Hi Sloane, Quick question about Wealthbox CRM: Do you need any help getting started? We're here for you. We'd like to invite you to join one of our live demos. These online sessions are... Live demonstrations of Wealthbox Held daily at 1pm ET, Monday - Friday Only 20 minutes long, plus Q&A Interested? Sign up for a demo to jumpstart your Weal | 2021-08-23 16:02:05 | None | None | None | None | None | None | None | None | None | None | Hi Sloane,
-<br>
-<br>Quick question about Wealthbox CRM: Do you need any help getting started?
-<br>
-<br>We're here for you. We'd like to invite you to join one of our These online sessions are...
-<br>
-<br> * Live demonstrations of Wealthbox
-<br> * Held daily at 1pm ET, Monday - Friday
-<br> * Only 20 minutes long, plus Q&A
-<br>
-<br>
-<br>Interested? to jumpstart your Wealthbox experience. Or you can watch a on demand, right now.
-<br>
-<br>Any questions? You can reply to this email, or get answers in our .
-<br>
-<br>Talk soon,
-<br>
-<br>Krystal Stanley
-<br>Team Wealthbox
-<br>
-<br>If you don't want to hear from me anymore, [https://apus5.com/unsubscribe/v2?s=wealthbox&m=s_fe6f69f1-c957-484b-8812-ddeaedf5c7c9] . Hi Sloane, Quick question about Wealthbox CRM: Do you need any help getting started? We're here for you. We'd like to invite you to join one of our live demos. These online sessions are... Live demonstrations of Wealthbox Held daily at 1pm ET, Monday - Friday Only 20 minutes long, plus Q&A Interested? Sign up for a demo to jumpstart your Weal | None | None | None | None | None | None | imported | None | None | 2021-08-23 16:02:05 | 2021-08-23 16:02:05 | 2021-08-23 16:02:05 |
-| 17b73c00680dad26 | 17b73c00680dad26 | Test | sloane@investvegan.org | Sloane Ortel | I send you email from fancy new platform.
-<br>
-<br>
-<br>
-<br>Sloane Ortel
-<br>Founder
-<br>Invest Vegan
-<br>[Click here to schedule a
-<br>meeting](https://nyl.as/t1/296/6kjira38fvpi1l1m9i7357m3p/0/c957df034ee69324c4354c2e96404efc5108545a6693bcc691ec0ef0ccc0e27a
-<br>"https://calendly.com/investvegan")
-<br>
-<br>
-<br>
-<br>(845) 684-2779
-<br>813 Halsey Street, Third Floor
-<br>Brooklyn, New York, 11233
-<br>
-<br>Investment advisory services are offered through Invest Vegan LLC; a New York
-<br>domiciled registered investment adviser. This communication is not to be
-<br>directly or indirectly interpreted as a solicitation of investment advisory
-<br>services to residents of another jurisdiction unless the firm and the sender
-<br>of this message are registered and/or licensed in that jurisdiction, or as
-<br>otherwise permitted by statute.
-<br>
-<br>The contents of this email communication and any accompanying documents are
-<br>confidential and for the sole use of the recipient. They are not to be copied,
-<br>quoted, excerpted or distributed without exp | None | 0 | False | sloane@srvo.org | I send you email from fancy new platform.
-<br>
-<br>
-<br>
-<br>Sloane Ortel
-<br>Founder
-<br>Invest Vegan
-<br>[Click here to schedule a
-<br>meeting](https://nyl.as/t1/296/6kjira38fvpi1l1m9i7357m3p/0/c957df034ee69324c4354c2e96404efc5108545a6693bcc691ec0ef0ccc0e27a
-<br>"https://calendly.com/investvegan")
-<br>
-<br>
-<br>
-<br>(845) 684-2779
-<br>813 Halsey Street, Third Floor
-<br>Brooklyn, New York, 11233
-<br>
-<br>Investment advisory services are offered through Invest Vegan LLC; a New York
-<br>domiciled registered investment adviser. This communication is not to be
-<br>directly or indirectly interpreted as a solicitation of investment advisory
-<br>services to residents of another jurisdiction unless the firm and the sender
-<br>of this message are registered and/or licensed in that jurisdiction, or as
-<br>otherwise permitted by statute.
-<br>
-<br>The contents of this email communication and any accompanying documents are
-<br>confidential and for the sole use of the recipient. They are not to be copied,
-<br>quoted, excerpted or distributed without exp | 2021-08-23 16:02:49 | None | None | None | None | None | None | None | None | None | None | I send you email from fancy new platform.
-<br>
-<br>
-<br>
-<br>Sloane Ortel
-<br>Founder
-<br>Invest Vegan
-<br>[Click here to schedule a
-<br>meeting](https://nyl.as/t1/296/6kjira38fvpi1l1m9i7357m3p/0/c957df034ee69324c4354c2e96404efc5108545a6693bcc691ec0ef0ccc0e27a
-<br>"https://calendly.com/investvegan")
-<br>
-<br>
-<br>
-<br>(845) 684-2779
-<br>813 Halsey Street, Third Floor
-<br>Brooklyn, New York, 11233
-<br>
-<br>Investment advisory services are offered through Invest Vegan LLC; a New York
-<br>domiciled registered investment adviser. This communication is not to be
-<br>directly or indirectly interpreted as a solicitation of investment advisory
-<br>services to residents of another jurisdiction unless the firm and the sender
-<br>of this message are registered and/or licensed in that jurisdiction, or as
-<br>otherwise permitted by statute.
-<br>
-<br>The contents of this email communication and any accompanying documents are
-<br>confidential and for the sole use of the recipient. They are not to be copied,
-<br>quoted, excerpted or distributed without exp | None | None | None | None | None | None | imported | None | None | 2021-08-23 16:02:49 | 2021-08-23 16:02:49 | 2021-08-23 16:02:49 |
-| 17b73f2197ba814e | 17b73f2197ba814e | Form shared with you: "Invest Vegan Email Signup " | drive-shares-dm-noreply@google.com | Sloane Ortel (via Google Forms) | I've shared an item with you:
-<br>
-<br>Invest Vegan Email Signup
-<br>https://docs.google.com/forms/d/1izOkczwVACugF2Cm83B2mOQdMfYC5d7YGtxoQvGlAuw/edit?usp=sharing&ts=6123d37a
-<br>
-<br>It's not an attachment -- it's stored online. To open this item, just click
-<br>the link above. Sloane Ortel shared a form Sloane Ortel has invited you to edit the following form: Invest Vegan Email Signup Sloane Ortel is outside your organization. Open Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA You have received this email because Sloane@srvo.org shared a file or folder located in Google Drive with you. | None | 0 | False | sloane@investvegan.org | I've shared an item with you:
-<br>
-<br>Invest Vegan Email Signup
-<br>https://docs.google.com/forms/d/1izOkczwVACugF2Cm83B2mOQdMfYC5d7YGtxoQvGlAuw/edit?usp=sharing&ts=6123d37a
-<br>
-<br>It's not an attachment -- it's stored online. To open this item, just click
-<br>the link above. Sloane Ortel shared a form Sloane Ortel has invited you to edit the following form: Invest Vegan Email Signup Sloane Ortel is outside your organization. Open Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA You have received this email because Sloane@srvo.org shared a file or folder located in Google Drive with you. | 2021-08-23 16:57:30 | None | None | None | None | None | None | None | None | None | None | I've shared an item with you:
-<br>
-<br>Invest Vegan Email Signup
-<br>https://docs.google.com/forms/d/1izOkczwVACugF2Cm83B2mOQdMfYC5d7YGtxoQvGlAuw/edit?usp=sharing&ts=6123d37a
-<br>
-<br>It's not an attachment -- it's stored online. To open this item, just click
-<br>the link above. Sloane Ortel shared a form Sloane Ortel has invited you to edit the following form: Invest Vegan Email Signup Sloane Ortel is outside your organization. Open Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA You have received this email because Sloane@srvo.org shared a file or folder located in Google Drive with you. | None | None | None | None | None | None | imported | None | None | 2021-08-23 16:57:30 | 2021-08-23 16:57:30 | 2021-08-23 16:57:30 |
+| id                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | thread_id           | subject                                            | from_email                         | from_name                             | plain_body                                | html_body | importance | is_mailing_list | to_address | body_preview        | analysis_date       | raw_analysis                              | automation_score | content_value | human_interaction | time_value | business_impact | uncertainty_score | metadata | priority | label_ids | snippet | internal_date | size_estimate | message_parts | draft_id | draft_message | attachments | status | error_message | batch_id | import_timestamp | created_at | updated_at |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | -------------------------------------------------- | ---------------------------------- | ------------------------------------- | ----------------------------------------- | --------- | ---------- | --------------- | ---------- | ------------------- | ------------------- | ----------------------------------------- | ---------------- | ------------- | ----------------- | ---------- | --------------- | ----------------- | -------- | -------- | --------- | ------- | ------------- | ------------- | ------------- | -------- | ------------- | ----------- | ------ | ------------- | -------- | ---------------- | ---------- | ---------- |
+| 17b73bf61f3c33da                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 17b73bf61f3c33da    | quick question...                                  | sales@wealthbox.com                | Krystal Stanley                       | Hi Sloane,                                |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Quick question about Wealthbox CRM: Do you need any help getting started?                                                                                                                                                                                                                                                                                                                                                                                                                       |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>We're here for you. We'd like to invite you to join one of our These online sessions are...                                                                                                                                                                                                                                                                                                                                                                                                     |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br> * Live demonstrations of Wealthbox                                                                                                                                                                                                                                                                                                                                                                                                                                                             |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br> * Held daily at 1pm ET, Monday - Friday                                                                                                                                                                                                                                                                                                                                                                                                                                                        |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br> * Only 20 minutes long, plus Q&A                                                                                                                                                                                                                                                                                                                                                                                                                                                               |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Interested? to jumpstart your Wealthbox experience. Or you can watch a on demand, right now.                                                                                                                                                                                                                                                                                                                                                                                                    |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Any questions? You can reply to this email, or get answers in our .                                                                                                                                                                                                                                                                                                                                                                                                                             |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Talk soon,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Krystal Stanley                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Team Wealthbox                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>If you don't want to hear from me anymore, \[https://apus5.com/unsubscribe/v2?s=wealthbox&m=s_fe6f69f1-c957-484b-8812-ddeaedf5c7c9\] . Hi Sloane, Quick question about Wealthbox CRM: Do you need any help getting started? We're here for you. We'd like to invite you to join one of our live demos. These online sessions are... Live demonstrations of Wealthbox Held daily at 1pm ET, Monday - Friday Only 20 minutes long, plus Q&A Interested? Sign up for a demo to jumpstart your Weal | None                | 0                                                  | True                               | Sloane Ortel <sloane@investvegan.org> | Hi Sloane,                                |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Quick question about Wealthbox CRM: Do you need any help getting started?                                                                                                                                                                                                                                                                                                                                                                                                                       |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>We're here for you. We'd like to invite you to join one of our These online sessions are...                                                                                                                                                                                                                                                                                                                                                                                                     |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br> * Live demonstrations of Wealthbox                                                                                                                                                                                                                                                                                                                                                                                                                                                             |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br> * Held daily at 1pm ET, Monday - Friday                                                                                                                                                                                                                                                                                                                                                                                                                                                        |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br> * Only 20 minutes long, plus Q&A                                                                                                                                                                                                                                                                                                                                                                                                                                                               |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Interested? to jumpstart your Wealthbox experience. Or you can watch a on demand, right now.                                                                                                                                                                                                                                                                                                                                                                                                    |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Any questions? You can reply to this email, or get answers in our .                                                                                                                                                                                                                                                                                                                                                                                                                             |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Talk soon,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Krystal Stanley                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Team Wealthbox                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>If you don't want to hear from me anymore, \[https://apus5.com/unsubscribe/v2?s=wealthbox&m=s_fe6f69f1-c957-484b-8812-ddeaedf5c7c9\] . Hi Sloane, Quick question about Wealthbox CRM: Do you need any help getting started? We're here for you. We'd like to invite you to join one of our live demos. These online sessions are... Live demonstrations of Wealthbox Held daily at 1pm ET, Monday - Friday Only 20 minutes long, plus Q&A Interested? Sign up for a demo to jumpstart your Weal | 2021-08-23 16:02:05 | None                                               | None                               | None                                  | None                                      | None      | None       | None            | None       | None                | None                | Hi Sloane,                                |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Quick question about Wealthbox CRM: Do you need any help getting started?                                                                                                                                                                                                                                                                                                                                                                                                                       |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>We're here for you. We'd like to invite you to join one of our These online sessions are...                                                                                                                                                                                                                                                                                                                                                                                                     |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br> * Live demonstrations of Wealthbox                                                                                                                                                                                                                                                                                                                                                                                                                                                             |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br> * Held daily at 1pm ET, Monday - Friday                                                                                                                                                                                                                                                                                                                                                                                                                                                        |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br> * Only 20 minutes long, plus Q&A                                                                                                                                                                                                                                                                                                                                                                                                                                                               |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Interested? to jumpstart your Wealthbox experience. Or you can watch a on demand, right now.                                                                                                                                                                                                                                                                                                                                                                                                    |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Any questions? You can reply to this email, or get answers in our .                                                                                                                                                                                                                                                                                                                                                                                                                             |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Talk soon,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Krystal Stanley                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Team Wealthbox                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>If you don't want to hear from me anymore, \[https://apus5.com/unsubscribe/v2?s=wealthbox&m=s_fe6f69f1-c957-484b-8812-ddeaedf5c7c9\] . Hi Sloane, Quick question about Wealthbox CRM: Do you need any help getting started? We're here for you. We'd like to invite you to join one of our live demos. These online sessions are... Live demonstrations of Wealthbox Held daily at 1pm ET, Monday - Friday Only 20 minutes long, plus Q&A Interested? Sign up for a demo to jumpstart your Weal | None                | None                                               | None                               | None                                  | None                                      | None      | imported   | None            | None       | 2021-08-23 16:02:05 | 2021-08-23 16:02:05 | 2021-08-23 16:02:05                       |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| 17b73c00680dad26                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 17b73c00680dad26    | Test                                               | sloane@investvegan.org             | Sloane Ortel                          | I send you email from fancy new platform. |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Sloane Ortel                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Founder                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Invest Vegan                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>\[Click here to schedule a                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>meeting\](https://nyl.as/t1/296/6kjira38fvpi1l1m9i7357m3p/0/c957df034ee69324c4354c2e96404efc5108545a6693bcc691ec0ef0ccc0e27a                                                                                                                                                                                                                                                                                                                                                                    |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>"https://calendly.com/investvegan")                                                                                                                                                                                                                                                                                                                                                                                                                                                             |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>(845) 684-2779                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>813 Halsey Street, Third Floor                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Brooklyn, New York, 11233                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Investment advisory services are offered through Invest Vegan LLC; a New York                                                                                                                                                                                                                                                                                                                                                                                                                   |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>domiciled registered investment adviser. This communication is not to be                                                                                                                                                                                                                                                                                                                                                                                                                        |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>directly or indirectly interpreted as a solicitation of investment advisory                                                                                                                                                                                                                                                                                                                                                                                                                     |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>services to residents of another jurisdiction unless the firm and the sender                                                                                                                                                                                                                                                                                                                                                                                                                    |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>of this message are registered and/or licensed in that jurisdiction, or as                                                                                                                                                                                                                                                                                                                                                                                                                      |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>otherwise permitted by statute.                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>The contents of this email communication and any accompanying documents are                                                                                                                                                                                                                                                                                                                                                                                                                     |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>confidential and for the sole use of the recipient. They are not to be copied,                                                                                                                                                                                                                                                                                                                                                                                                                  |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>quoted, excerpted or distributed without exp                                                                                                                                                                                                                                                                                                                                                                                                                                                    | None                | 0                                                  | False                              | sloane@srvo.org                       | I send you email from fancy new platform. |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Sloane Ortel                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Founder                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Invest Vegan                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>\[Click here to schedule a                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>meeting\](https://nyl.as/t1/296/6kjira38fvpi1l1m9i7357m3p/0/c957df034ee69324c4354c2e96404efc5108545a6693bcc691ec0ef0ccc0e27a                                                                                                                                                                                                                                                                                                                                                                    |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>"https://calendly.com/investvegan")                                                                                                                                                                                                                                                                                                                                                                                                                                                             |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>(845) 684-2779                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>813 Halsey Street, Third Floor                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Brooklyn, New York, 11233                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Investment advisory services are offered through Invest Vegan LLC; a New York                                                                                                                                                                                                                                                                                                                                                                                                                   |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>domiciled registered investment adviser. This communication is not to be                                                                                                                                                                                                                                                                                                                                                                                                                        |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>directly or indirectly interpreted as a solicitation of investment advisory                                                                                                                                                                                                                                                                                                                                                                                                                     |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>services to residents of another jurisdiction unless the firm and the sender                                                                                                                                                                                                                                                                                                                                                                                                                    |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>of this message are registered and/or licensed in that jurisdiction, or as                                                                                                                                                                                                                                                                                                                                                                                                                      |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>otherwise permitted by statute.                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>The contents of this email communication and any accompanying documents are                                                                                                                                                                                                                                                                                                                                                                                                                     |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>confidential and for the sole use of the recipient. They are not to be copied,                                                                                                                                                                                                                                                                                                                                                                                                                  |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>quoted, excerpted or distributed without exp                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 2021-08-23 16:02:49 | None                                               | None                               | None                                  | None                                      | None      | None       | None            | None       | None                | None                | I send you email from fancy new platform. |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Sloane Ortel                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Founder                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Invest Vegan                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>\[Click here to schedule a                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>meeting\](https://nyl.as/t1/296/6kjira38fvpi1l1m9i7357m3p/0/c957df034ee69324c4354c2e96404efc5108545a6693bcc691ec0ef0ccc0e27a                                                                                                                                                                                                                                                                                                                                                                    |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>"https://calendly.com/investvegan")                                                                                                                                                                                                                                                                                                                                                                                                                                                             |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>(845) 684-2779                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>813 Halsey Street, Third Floor                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Brooklyn, New York, 11233                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Investment advisory services are offered through Invest Vegan LLC; a New York                                                                                                                                                                                                                                                                                                                                                                                                                   |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>domiciled registered investment adviser. This communication is not to be                                                                                                                                                                                                                                                                                                                                                                                                                        |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>directly or indirectly interpreted as a solicitation of investment advisory                                                                                                                                                                                                                                                                                                                                                                                                                     |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>services to residents of another jurisdiction unless the firm and the sender                                                                                                                                                                                                                                                                                                                                                                                                                    |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>of this message are registered and/or licensed in that jurisdiction, or as                                                                                                                                                                                                                                                                                                                                                                                                                      |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>otherwise permitted by statute.                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>The contents of this email communication and any accompanying documents are                                                                                                                                                                                                                                                                                                                                                                                                                     |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>confidential and for the sole use of the recipient. They are not to be copied,                                                                                                                                                                                                                                                                                                                                                                                                                  |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>quoted, excerpted or distributed without exp                                                                                                                                                                                                                                                                                                                                                                                                                                                    | None                | None                                               | None                               | None                                  | None                                      | None      | imported   | None            | None       | 2021-08-23 16:02:49 | 2021-08-23 16:02:49 | 2021-08-23 16:02:49                       |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| 17b73f2197ba814e                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 17b73f2197ba814e    | Form shared with you: "Invest Vegan Email Signup " | drive-shares-dm-noreply@google.com | Sloane Ortel (via Google Forms)       | I've shared an item with you:             |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Invest Vegan Email Signup                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>https://docs.google.com/forms/d/1izOkczwVACugF2Cm83B2mOQdMfYC5d7YGtxoQvGlAuw/edit?usp=sharing&ts=6123d37a                                                                                                                                                                                                                                                                                                                                                                                       |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>It's not an attachment -- it's stored online. To open this item, just click                                                                                                                                                                                                                                                                                                                                                                                                                     |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>the link above. Sloane Ortel shared a form Sloane Ortel has invited you to edit the following form: Invest Vegan Email Signup Sloane Ortel is outside your organization. Open Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA You have received this email because Sloane@srvo.org shared a file or folder located in Google Drive with you.                                                                                                                                | None                | 0                                                  | False                              | sloane@investvegan.org                | I've shared an item with you:             |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Invest Vegan Email Signup                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>https://docs.google.com/forms/d/1izOkczwVACugF2Cm83B2mOQdMfYC5d7YGtxoQvGlAuw/edit?usp=sharing&ts=6123d37a                                                                                                                                                                                                                                                                                                                                                                                       |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>It's not an attachment -- it's stored online. To open this item, just click                                                                                                                                                                                                                                                                                                                                                                                                                     |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>the link above. Sloane Ortel shared a form Sloane Ortel has invited you to edit the following form: Invest Vegan Email Signup Sloane Ortel is outside your organization. Open Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA You have received this email because Sloane@srvo.org shared a file or folder located in Google Drive with you.                                                                                                                                | 2021-08-23 16:57:30 | None                                               | None                               | None                                  | None                                      | None      | None       | None            | None       | None                | None                | I've shared an item with you:             |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>Invest Vegan Email Signup                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>https://docs.google.com/forms/d/1izOkczwVACugF2Cm83B2mOQdMfYC5d7YGtxoQvGlAuw/edit?usp=sharing&ts=6123d37a                                                                                                                                                                                                                                                                                                                                                                                       |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>It's not an attachment -- it's stored online. To open this item, just click                                                                                                                                                                                                                                                                                                                                                                                                                     |                     |                                                    |                                    |                                       |                                           |           |            |                 |            |                     |                     |                                           |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
+| <br>the link above. Sloane Ortel shared a form Sloane Ortel has invited you to edit the following form: Invest Vegan Email Signup Sloane Ortel is outside your organization. Open Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA You have received this email because Sloane@srvo.org shared a file or folder located in Google Drive with you.                                                                                                                                | None                | None                                               | None                               | None                                  | None                                      | None      | imported   | None            | None       | 2021-08-23 16:57:30 | 2021-08-23 16:57:30 | 2021-08-23 16:57:30                       |                  |               |                   |            |                 |                   |          |          |           |         |               |               |               |          |               |             |        |               |          |                  |            |            |
 
 ### email_analyses
 
@@ -590,36 +590,36 @@ tax_rate | conv | ipo_prospectus | distribution_dates |
 
 #### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| msg_id | VARCHAR | Unique identifier |
-| thread_id | VARCHAR | Unique identifier |
-| subject | VARCHAR |  |
-| from_address | VARCHAR |  |
-| analysis_date | TIMESTAMP | Date/timestamp |
-| raw_analysis | JSON |  |
-| automation_score | FLOAT |  |
-| content_value | FLOAT |  |
-| human_interaction | FLOAT |  |
-| time_value | FLOAT |  |
-| business_impact | FLOAT |  |
-| uncertainty_score | FLOAT |  |
-| metadata | JSON |  |
-| priority | INTEGER |  |
-| label_ids | JSON |  |
-| snippet | VARCHAR |  |
-| internal_date | BIGINT | Date/timestamp |
-| size_estimate | INTEGER |  |
-| message_parts | JSON |  |
-| draft_id | VARCHAR | Unique identifier |
-| draft_message | JSON |  |
-| attachments | JSON |  |
-| status | VARCHAR |  |
-| error_message | VARCHAR |  |
-| batch_id | VARCHAR | Unique identifier |
-| import_timestamp | TIMESTAMP |  |
-| created_at | TIMESTAMP |  |
-| updated_at | TIMESTAMP | Date/timestamp |
+| Column            | Type      | Description       |
+| ----------------- | --------- | ----------------- |
+| msg_id            | VARCHAR   | Unique identifier |
+| thread_id         | VARCHAR   | Unique identifier |
+| subject           | VARCHAR   |                   |
+| from_address      | VARCHAR   |                   |
+| analysis_date     | TIMESTAMP | Date/timestamp    |
+| raw_analysis      | JSON      |                   |
+| automation_score  | FLOAT     |                   |
+| content_value     | FLOAT     |                   |
+| human_interaction | FLOAT     |                   |
+| time_value        | FLOAT     |                   |
+| business_impact   | FLOAT     |                   |
+| uncertainty_score | FLOAT     |                   |
+| metadata          | JSON      |                   |
+| priority          | INTEGER   |                   |
+| label_ids         | JSON      |                   |
+| snippet           | VARCHAR   |                   |
+| internal_date     | BIGINT    | Date/timestamp    |
+| size_estimate     | INTEGER   |                   |
+| message_parts     | JSON      |                   |
+| draft_id          | VARCHAR   | Unique identifier |
+| draft_message     | JSON      |                   |
+| attachments       | JSON      |                   |
+| status            | VARCHAR   |                   |
+| error_message     | VARCHAR   |                   |
+| batch_id          | VARCHAR   | Unique identifier |
+| import_timestamp  | TIMESTAMP |                   |
+| created_at        | TIMESTAMP |                   |
+| updated_at        | TIMESTAMP | Date/timestamp    |
 
 #### Sample Data
 
@@ -633,26 +633,26 @@ No sample data available.
 
 #### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| col_0 | VARCHAR |  |
-| col_1 | VARCHAR |  |
-| col_2 | VARCHAR |  |
-| col_3 | VARCHAR |  |
-| col_4 | VARCHAR |  |
-| col_5 | VARCHAR |  |
-| col_6 | VARCHAR |  |
-| col_7 | VARCHAR |  |
-| col_8 | VARCHAR |  |
-| col_9 | VARCHAR |  |
+| Column | Type    | Description |
+| ------ | ------- | ----------- |
+| col_0  | VARCHAR |             |
+| col_1  | VARCHAR |             |
+| col_2  | VARCHAR |             |
+| col_3  | VARCHAR |             |
+| col_4  | VARCHAR |             |
+| col_5  | VARCHAR |             |
+| col_6  | VARCHAR |             |
+| col_7  | VARCHAR |             |
+| col_8  | VARCHAR |             |
+| col_9  | VARCHAR |             |
 
 #### Sample Data
 
-| col_0 | col_1 | col_2 | col_3 | col_4 | col_5 | col_6 | col_7 | col_8 | col_9 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Company | Exchange | Symbol | Category | Criteria | Concerned groups | Decision | Date | Notes | SPY |
-| John Bean Technologies Corp |  | JBT | Product-based | Animal Agriculture | ECIC | Observe | 10/28/2021 | Could be a good one to push engagments on | None |
-| Aemetis, Inc | NASDAQ | AMTX | Product-based | Animal Feed | Cruelty Free Investors | Observe | None | None | None |
+| col_0                       | col_1    | col_2  | col_3         | col_4              | col_5                  | col_6    | col_7      | col_8                                     | col_9 |
+| --------------------------- | -------- | ------ | ------------- | ------------------ | ---------------------- | -------- | ---------- | ----------------------------------------- | ----- |
+| Company                     | Exchange | Symbol | Category      | Criteria           | Concerned groups       | Decision | Date       | Notes                                     | SPY   |
+| John Bean Technologies Corp |          | JBT    | Product-based | Animal Agriculture | ECIC                   | Observe  | 10/28/2021 | Could be a good one to push engagments on | None  |
+| Aemetis, Inc                | NASDAQ   | AMTX   | Product-based | Animal Feed        | Cruelty Free Investors | Observe  | None       | None                                      | None  |
 
 ### overview_tables_sheets
 
@@ -660,36 +660,36 @@ No sample data available.
 
 #### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| col_0 | VARCHAR |  |
-| col_1 | VARCHAR |  |
-| col_2 | VARCHAR |  |
-| col_3 | VARCHAR |  |
-| col_4 | VARCHAR |  |
-| col_5 | VARCHAR |  |
-| col_6 | VARCHAR |  |
-| col_7 | VARCHAR |  |
-| col_8 | VARCHAR |  |
-| col_9 | VARCHAR |  |
-| col_10 | VARCHAR |  |
-| col_11 | VARCHAR |  |
-| col_12 | VARCHAR |  |
-| col_13 | VARCHAR |  |
-| col_14 | VARCHAR |  |
-| col_15 | VARCHAR |  |
-| col_16 | VARCHAR |  |
-| col_17 | VARCHAR |  |
-| col_18 | VARCHAR |  |
-| col_19 | VARCHAR |  |
+| Column | Type    | Description |
+| ------ | ------- | ----------- |
+| col_0  | VARCHAR |             |
+| col_1  | VARCHAR |             |
+| col_2  | VARCHAR |             |
+| col_3  | VARCHAR |             |
+| col_4  | VARCHAR |             |
+| col_5  | VARCHAR |             |
+| col_6  | VARCHAR |             |
+| col_7  | VARCHAR |             |
+| col_8  | VARCHAR |             |
+| col_9  | VARCHAR |             |
+| col_10 | VARCHAR |             |
+| col_11 | VARCHAR |             |
+| col_12 | VARCHAR |             |
+| col_13 | VARCHAR |             |
+| col_14 | VARCHAR |             |
+| col_15 | VARCHAR |             |
+| col_16 | VARCHAR |             |
+| col_17 | VARCHAR |             |
+| col_18 | VARCHAR |             |
+| col_19 | VARCHAR |             |
 
 #### Sample Data
 
-| col_0 | col_1 | col_2 | col_3 | col_4 | col_5 | col_6 | col_7 | col_8 | col_9 | col_10 | col_11 | col_12 | col_13 | col_14 | col_15 | col_16 | col_17 | col_18 | col_19 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None | None |
-|  | Sector | Δ | Strategy | MSCI ACWI |  |  |  | SI | Name | Target | None | None | None | None | None | None | None | None | None |
-|  | Real Estate | 16.4% | 18.7% | 2.3% |  |  |  | * | Federal Agricultural Mortgage Corp | 13.44% | 1 | None | None | None | None | None | None | None | None |
+| col_0 | col_1       | col_2 | col_3    | col_4     | col_5 | col_6 | col_7 | col_8 | col_9                              | col_10 | col_11 | col_12 | col_13 | col_14 | col_15 | col_16 | col_17 | col_18 | col_19 |
+| ----- | ----------- | ----- | -------- | --------- | ----- | ----- | ----- | ----- | ---------------------------------- | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
+| None  | None        | None  | None     | None      | None  | None  | None  | None  | None                               | None   | None   | None   | None   | None   | None   | None   | None   | None   | None   |
+|       | Sector      | Δ     | Strategy | MSCI ACWI |       |       |       | SI    | Name                               | Target | None   | None   | None   | None   | None   | None   | None   | None   | None   |
+|       | Real Estate | 16.4% | 18.7%    | 2.3%      |       |       |       | \*    | Federal Agricultural Mortgage Corp | 13.44% | 1      | None   | None   | None   | None   | None   | None   | None   | None   |
 
 ### portfolio_screener_sheets
 
@@ -697,26 +697,26 @@ No sample data available.
 
 #### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| col_0 | VARCHAR |  |
-| col_1 | VARCHAR |  |
-| col_2 | VARCHAR |  |
-| col_3 | VARCHAR |  |
-| col_4 | VARCHAR |  |
-| col_5 | VARCHAR |  |
-| col_6 | VARCHAR |  |
-| col_7 | VARCHAR |  |
-| col_8 | VARCHAR |  |
-| col_9 | VARCHAR |  |
+| Column | Type    | Description |
+| ------ | ------- | ----------- |
+| col_0  | VARCHAR |             |
+| col_1  | VARCHAR |             |
+| col_2  | VARCHAR |             |
+| col_3  | VARCHAR |             |
+| col_4  | VARCHAR |             |
+| col_5  | VARCHAR |             |
+| col_6  | VARCHAR |             |
+| col_7  | VARCHAR |             |
+| col_8  | VARCHAR |             |
+| col_9  | VARCHAR |             |
 
 #### Sample Data
 
-| col_0 | col_1 | col_2 | col_3 | col_4 | col_5 | col_6 | col_7 | col_8 | col_9 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Exclude? | Reason | Concerned Group | Tick | Note | Workflow | Last Tick Date |  | Tickers | Paste Tickers In On This Side |
-| Exclude | Extractive practices | ECIC | 0 | At 33x earnings, this feels a little priced for perfection? |  | NONE |  | AAPL | None |
-| Exclude | Extractive practices | ECIC | 1 | legit carbon removal, but a mainline BDS Exclude |  | 3/12/24 8:27 |  | MSFT | None |
+| col_0    | col_1                | col_2           | col_3 | col_4                                                       | col_5    | col_6          | col_7 | col_8   | col_9                         |
+| -------- | -------------------- | --------------- | ----- | ----------------------------------------------------------- | -------- | -------------- | ----- | ------- | ----------------------------- |
+| Exclude? | Reason               | Concerned Group | Tick  | Note                                                        | Workflow | Last Tick Date |       | Tickers | Paste Tickers In On This Side |
+| Exclude  | Extractive practices | ECIC            | 0     | At 33x earnings, this feels a little priced for perfection? |          | NONE           |       | AAPL    | None                          |
+| Exclude  | Extractive practices | ECIC            | 1     | legit carbon removal, but a mainline BDS Exclude            |          | 3/12/24 8:27   |       | MSFT    | None                          |
 
 ### risk_based_portfolios_sheets
 
@@ -724,60 +724,60 @@ No sample data available.
 
 #### Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| col_0 | VARCHAR |  |
-| col_1 | VARCHAR |  |
-| col_2 | VARCHAR |  |
-| col_3 | VARCHAR |  |
-| col_4 | VARCHAR |  |
-| col_5 | VARCHAR |  |
-| col_6 | VARCHAR |  |
-| col_7 | VARCHAR |  |
-| col_8 | VARCHAR |  |
-| col_9 | VARCHAR |  |
-| col_10 | VARCHAR |  |
-| col_11 | VARCHAR |  |
+| Column | Type    | Description |
+| ------ | ------- | ----------- |
+| col_0  | VARCHAR |             |
+| col_1  | VARCHAR |             |
+| col_2  | VARCHAR |             |
+| col_3  | VARCHAR |             |
+| col_4  | VARCHAR |             |
+| col_5  | VARCHAR |             |
+| col_6  | VARCHAR |             |
+| col_7  | VARCHAR |             |
+| col_8  | VARCHAR |             |
+| col_9  | VARCHAR |             |
+| col_10 | VARCHAR |             |
+| col_11 | VARCHAR |             |
 
 #### Sample Data
 
-| col_0 | col_1 | col_2 | col_3 | col_4 | col_5 | col_6 | col_7 | col_8 | col_9 | col_10 | col_11 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| None | None | None | None | None | None | None | None | None | None | None | None |
-| None | None | None | None | None | None | None | None | None | None | None | None |
-|  | Assessed Risk Score:  |  | Conservative | Moderate | Balanced | Growth | Aggressive | None | None | None | None |
+| col_0 | col_1                | col_2 | col_3        | col_4    | col_5    | col_6  | col_7      | col_8 | col_9 | col_10 | col_11 |
+| ----- | -------------------- | ----- | ------------ | -------- | -------- | ------ | ---------- | ----- | ----- | ------ | ------ |
+| None  | None                 | None  | None         | None     | None     | None   | None       | None  | None  | None   | None   |
+| None  | None                 | None  | None         | None     | None     | None   | None       | None  | None  | None   | None   |
+|       | Assessed Risk Score: |       | Conservative | Moderate | Balanced | Growth | Aggressive | None  | None  | None   | None   |
 
 ## Table Relationships
 
-| Table 1 | Column 1 | Table 2 | Column 2 | Relationship Type | Confidence |
-|---------|----------|---------|----------|-------------------|------------|
-| diversification_sheets | symbol | exclude_sheets | symbol | potential_join | high |
-| diversification_sheets | symbol | growth_sheets | symbol | potential_join | high |
-| diversification_sheets | symbol | income_sheets | symbol | potential_join | high |
-| diversification_sheets | symbol | preferreds_sheets | symbol | potential_join | high |
-| email_analyses | thread_id | emails | thread_id | potential_join | high |
-| email_analyses | label_ids | emails | label_ids | potential_join | high |
-| email_analyses | draft_id | emails | draft_id | potential_join | high |
-| email_analyses | batch_id | emails | batch_id | potential_join | high |
-| emails | thread_id | email_analyses | thread_id | potential_join | high |
-| emails | label_ids | email_analyses | label_ids | potential_join | high |
-| emails | draft_id | email_analyses | draft_id | potential_join | high |
-| emails | batch_id | email_analyses | batch_id | potential_join | high |
-| exclude_sheets | symbol | diversification_sheets | symbol | potential_join | high |
-| exclude_sheets | symbol | growth_sheets | symbol | potential_join | high |
-| exclude_sheets | symbol | income_sheets | symbol | potential_join | high |
-| exclude_sheets | symbol | preferreds_sheets | symbol | potential_join | high |
-| growth_sheets | symbol | diversification_sheets | symbol | potential_join | high |
-| growth_sheets | symbol | exclude_sheets | symbol | potential_join | high |
-| growth_sheets | symbol | income_sheets | symbol | potential_join | high |
-| growth_sheets | symbol | preferreds_sheets | symbol | potential_join | high |
-| income_sheets | symbol | diversification_sheets | symbol | potential_join | high |
-| income_sheets | symbol | exclude_sheets | symbol | potential_join | high |
-| income_sheets | symbol | growth_sheets | symbol | potential_join | high |
-| income_sheets | symbol | preferreds_sheets | symbol | potential_join | high |
-| preferreds_sheets | symbol | diversification_sheets | symbol | potential_join | high |
-| preferreds_sheets | symbol | exclude_sheets | symbol | potential_join | high |
-| preferreds_sheets | symbol | growth_sheets | symbol | potential_join | high |
-| preferreds_sheets | symbol | income_sheets | symbol | potential_join | high |
-| tick_history_sheets | ticker | universe_sheets | ticker | potential_join | high |
-| universe_sheets | ticker | tick_history_sheets | ticker | potential_join | high |
+| Table 1                | Column 1  | Table 2                | Column 2  | Relationship Type | Confidence |
+| ---------------------- | --------- | ---------------------- | --------- | ----------------- | ---------- |
+| diversification_sheets | symbol    | exclude_sheets         | symbol    | potential_join    | high       |
+| diversification_sheets | symbol    | growth_sheets          | symbol    | potential_join    | high       |
+| diversification_sheets | symbol    | income_sheets          | symbol    | potential_join    | high       |
+| diversification_sheets | symbol    | preferreds_sheets      | symbol    | potential_join    | high       |
+| email_analyses         | thread_id | emails                 | thread_id | potential_join    | high       |
+| email_analyses         | label_ids | emails                 | label_ids | potential_join    | high       |
+| email_analyses         | draft_id  | emails                 | draft_id  | potential_join    | high       |
+| email_analyses         | batch_id  | emails                 | batch_id  | potential_join    | high       |
+| emails                 | thread_id | email_analyses         | thread_id | potential_join    | high       |
+| emails                 | label_ids | email_analyses         | label_ids | potential_join    | high       |
+| emails                 | draft_id  | email_analyses         | draft_id  | potential_join    | high       |
+| emails                 | batch_id  | email_analyses         | batch_id  | potential_join    | high       |
+| exclude_sheets         | symbol    | diversification_sheets | symbol    | potential_join    | high       |
+| exclude_sheets         | symbol    | growth_sheets          | symbol    | potential_join    | high       |
+| exclude_sheets         | symbol    | income_sheets          | symbol    | potential_join    | high       |
+| exclude_sheets         | symbol    | preferreds_sheets      | symbol    | potential_join    | high       |
+| growth_sheets          | symbol    | diversification_sheets | symbol    | potential_join    | high       |
+| growth_sheets          | symbol    | exclude_sheets         | symbol    | potential_join    | high       |
+| growth_sheets          | symbol    | income_sheets          | symbol    | potential_join    | high       |
+| growth_sheets          | symbol    | preferreds_sheets      | symbol    | potential_join    | high       |
+| income_sheets          | symbol    | diversification_sheets | symbol    | potential_join    | high       |
+| income_sheets          | symbol    | exclude_sheets         | symbol    | potential_join    | high       |
+| income_sheets          | symbol    | growth_sheets          | symbol    | potential_join    | high       |
+| income_sheets          | symbol    | preferreds_sheets      | symbol    | potential_join    | high       |
+| preferreds_sheets      | symbol    | diversification_sheets | symbol    | potential_join    | high       |
+| preferreds_sheets      | symbol    | exclude_sheets         | symbol    | potential_join    | high       |
+| preferreds_sheets      | symbol    | growth_sheets          | symbol    | potential_join    | high       |
+| preferreds_sheets      | symbol    | income_sheets          | symbol    | potential_join    | high       |
+| tick_history_sheets    | ticker    | universe_sheets        | ticker    | potential_join    | high       |
+| universe_sheets        | ticker    | tick_history_sheets    | ticker    | potential_join    | high       |

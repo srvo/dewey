@@ -1,4 +1,5 @@
-"""Production UI tests for the Dewey application.
+"""
+Production UI tests for the Dewey application.
 
 These tests are designed to work with the actual database and connections,
 allowing for testing against real data environments.

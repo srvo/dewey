@@ -14,7 +14,8 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent.parent.parent.parent
 
 
 class FinancialPipeline(BaseScript):
-    """A class for managing the financial analysis pipeline.
+    """
+    A class for managing the financial analysis pipeline.
 
     Inherits from BaseScript to provide standardized access to configuration,
     logging, and other utilities.
@@ -25,9 +26,11 @@ class FinancialPipeline(BaseScript):
         name: str = "FinancialPipeline",
         description: str = "Manages financial analysis",
     ) -> None:
-        """Initializes the FinancialPipeline.
+        """
+        Initializes the FinancialPipeline.
 
         Args:
+        ----
             name: The name of the script.
             description: A description of what the script does.
 
@@ -36,12 +39,15 @@ class FinancialPipeline(BaseScript):
         self.PROJECT_ROOT = PROJECT_ROOT
 
     def get_path(self, path: str) -> Path:
-        """Get a path, resolving it relative to the project root if it's not absolute.
+        """
+        Get a path, resolving it relative to the project root if it's not absolute.
 
         Args:
+        ----
             path: The path string to resolve
 
         Returns:
+        -------
             Path: The resolved path
 
         """

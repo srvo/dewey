@@ -1,6 +1,7 @@
 # Formatting failed: LLM generation failed: Gemini API error: Model gemini-2.0-flash in cooldown until Sat Mar 15 00:33:42 2025
 
-"""Tests for APITube News Engine.
+"""
+Tests for APITube News Engine.
 =========================
 """
 
@@ -9,25 +10,24 @@ from unittest.mock import MagicMock, patch
 
 import aiohttp
 import pytest
-
 from ethifinx.research.engines.apitube import APITubeEngine
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_env():
     """Mock environment variables."""
     with patch.dict(os.environ, {"APITUBE_API_KEY": "test_key"}):
         yield
 
 
-@pytest.fixture
+@pytest.fixture()
 async def engine(mock_env):
     """Create an APITubeEngine instance for testing."""
     async with APITubeEngine(max_retries=2) as engine:
         yield engine
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_engine_initialization(mock_env) -> None:
     """Test that the engine initializes correctly."""
     engine = APITubeEngine(max_retries=2)
@@ -36,7 +36,7 @@ async def test_engine_initialization(mock_env) -> None:
     assert engine.api_key == "test_key"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_process_method(engine) -> None:
     """Test the process method returns expected status."""
     result = await engine.process()
@@ -44,7 +44,7 @@ async def test_process_method(engine) -> None:
     assert result["status"] == "APITube engine ready"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_search_news_basic(engine) -> None:
     """Test basic news search functionality."""
     mock_response = {
@@ -82,7 +82,7 @@ async def test_search_news_basic(engine) -> None:
         assert params["page_size"] == 20
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_search_news_with_filters(engine) -> None:
     """Test news search with various filters."""
     mock_response = {"articles": []}
@@ -121,7 +121,7 @@ async def test_search_news_with_filters(engine) -> None:
         assert params["sort_by"] == "date"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_trending_topics(engine) -> None:
     """Test trending topics functionality."""
     mock_response = {
@@ -136,9 +136,7 @@ async def test_trending_topics(engine) -> None:
         mock_get.return_value = mock_context
 
         result = await engine.trending_topics(
-            language="en",
-            country="US",
-            timeframe="24h",
+            language="en", country="US", timeframe="24h",
         )
 
         assert result == mock_response
@@ -153,7 +151,7 @@ async def test_trending_topics(engine) -> None:
         assert params["timeframe"] == "24h"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_sentiment_analysis(engine) -> None:
     """Test sentiment analysis functionality."""
     mock_response = {
@@ -173,10 +171,7 @@ async def test_sentiment_analysis(engine) -> None:
         mock_get.return_value = mock_context
 
         result = await engine.sentiment_analysis(
-            "test query",
-            from_date="2024-01-01",
-            to_date="2024-01-31",
-            language="en",
+            "test query", from_date="2024-01-01", to_date="2024-01-31", language="en",
         )
 
         assert result == mock_response
@@ -192,7 +187,7 @@ async def test_sentiment_analysis(engine) -> None:
         assert params["language"] == "en"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_search_retry_on_error(engine) -> None:
     """Test search retries on API errors."""
     mock_response = {"articles": []}
@@ -214,7 +209,7 @@ async def test_search_retry_on_error(engine) -> None:
         assert mock_get.call_count == 2
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_missing_api_key() -> None:
     """Test error handling for missing API key."""
     with patch.dict(os.environ, clear=True):

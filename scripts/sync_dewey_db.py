@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""Sync data between local dewey.duckdb and MotherDuck.
+"""
+Sync data between local dewey.duckdb and MotherDuck.
 
 This script is a simple wrapper around the dewey.core.db.sync_duckdb module.
 It provides a convenient way to sync data between a local dewey.duckdb file

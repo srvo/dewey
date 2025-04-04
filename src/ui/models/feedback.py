@@ -1,11 +1,12 @@
-"""Feedback Models
+"""
+Feedback Models
 
 Classes for feedback management in the TUI.
 """
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 @dataclass
@@ -109,7 +110,7 @@ class SenderProfile:
     ):
         """Initialize a SenderProfile."""
         self.email = email
-        self.name = name if name else email.split("@")[0]
+        self.name = name or email.split("@")[0]
         self.message_count = message_count
         self.last_contact = last_contact
         self.first_contact = first_contact
@@ -126,7 +127,7 @@ class SenderProfile:
         # Add to recent emails list, keeping newest at the beginning
         self.recent_emails.append(email_data)
         self.recent_emails.sort(
-            key=lambda x: x.get("timestamp", datetime.now()), reverse=True
+            key=lambda x: x.get("timestamp", datetime.now()), reverse=True,
         )
 
         # Keep only the 10 most recent emails
@@ -172,12 +173,15 @@ class SenderProfile:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "SenderProfile":
-        """Create a SenderProfile from a dictionary.
+        """
+        Create a SenderProfile from a dictionary.
 
         Args:
+        ----
             data: Dictionary containing sender data
 
         Returns:
+        -------
             A SenderProfile instance
 
         """
@@ -216,9 +220,11 @@ class SenderProfile:
         )
 
     def to_dict(self) -> dict[str, Any]:
-        """Convert the sender profile to a dictionary.
+        """
+        Convert the sender profile to a dictionary.
 
-        Returns:
+        Returns
+        -------
             Dictionary representation of the sender profile
 
         """

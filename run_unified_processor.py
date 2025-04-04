@@ -66,7 +66,7 @@ def main():
         # Setup graceful exit handler for the wrapper script
         def signal_handler(sig, frame):
             logger.info(
-                "Received interrupt signal in wrapper, forwarding to processor..."
+                "Received interrupt signal in wrapper, forwarding to processor...",
             )
             # The processor will handle the actual shutdown
 

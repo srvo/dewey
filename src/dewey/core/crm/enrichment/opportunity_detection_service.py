@@ -15,13 +15,16 @@ class OpportunityDetectionService(BaseScript):
         self.logger.info(f"Detected opportunities: {opportunities}")
 
     def detect_opportunities(self, text: str) -> list[str]:
-        """Detects opportunities in the given text based on regex patterns
+        """
+        Detects opportunities in the given text based on regex patterns
         defined in the configuration.
 
         Args:
+        ----
             text (str): The text to analyze.
 
         Returns:
+        -------
             list[str]: A list of detected opportunity types.
 
         """
@@ -36,13 +39,16 @@ class OpportunityDetectionService(BaseScript):
         return detected_opportunities
 
     def _check_opportunity(self, text: str, pattern: str) -> bool:
-        """Checks if a specific opportunity exists in the text based on the given regex pattern.
+        """
+        Checks if a specific opportunity exists in the text based on the given regex pattern.
 
         Args:
+        ----
             text (str): The text to analyze.
             pattern (str): The regex pattern to search for.
 
         Returns:
+        -------
             bool: True if the opportunity is found, False otherwise.
 
         """

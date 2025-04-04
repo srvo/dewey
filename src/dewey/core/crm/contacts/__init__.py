@@ -1,4 +1,5 @@
-"""Contact Management Module for CRM
+"""
+Contact Management Module for CRM
 
 This module contains classes and utilities for managing contacts in the CRM system,
 including contact consolidation and CSV import functionality.

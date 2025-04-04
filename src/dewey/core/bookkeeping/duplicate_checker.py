@@ -1,7 +1,7 @@
 import fnmatch
 import hashlib
 import os
-from typing import Dict, List, Protocol, runtime_checkable
+from typing import Protocol, runtime_checkable
 
 
 @runtime_checkable
@@ -55,9 +55,11 @@ class DuplicateChecker(BaseScript):
         )
 
     def find_ledger_files(self) -> dict[str, list[str]]:
-        """Finds all ledger files and calculates their hashes.
+        """
+        Finds all ledger files and calculates their hashes.
 
-        Returns:
+        Returns
+        -------
             A dictionary where keys are file hashes and values are lists of
             filepaths with that hash.
 
@@ -78,9 +80,11 @@ class DuplicateChecker(BaseScript):
         return hashes
 
     def check_duplicates(self) -> bool:
-        """Checks for duplicate ledger files.
+        """
+        Checks for duplicate ledger files.
 
-        Returns:
+        Returns
+        -------
             True if duplicate files were found, False otherwise.
 
         """
@@ -89,12 +93,11 @@ class DuplicateChecker(BaseScript):
 
         if duplicates:
             self.logger.warning(
-                f"Found {len(duplicates)} groups of duplicate files: {duplicates}"
+                f"Found {len(duplicates)} groups of duplicate files: {duplicates}",
             )
             return True
-        else:
-            self.logger.info("No duplicate ledger files found.")
-            return False
+        self.logger.info("No duplicate ledger files found.")
+        return False
 
     def execute(self) -> None:
         """Runs the duplicate check and logs the result."""

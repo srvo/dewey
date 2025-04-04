@@ -9,16 +9,13 @@ import time
 from collections import Counter, defaultdict
 from datetime import datetime
 from queue import Queue
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 import pandas as pd
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from dewey.core.db.connection import (
-    DatabaseConnection,
-    get_motherduck_connection,
-)
+from dewey.core.db.connection import DatabaseConnection, get_motherduck_connection
 
 # Try to import OpenAI with fallback if package is not installed
 try:
@@ -34,8 +31,8 @@ except ImportError:
                 (),
                 {
                     "completions": type(
-                        "completions", (), {"create": lambda **kw: None}
-                    )()
+                        "completions", (), {"create": lambda **kw: None},
+                    )(),
                 },
             )
 
@@ -83,9 +80,11 @@ class ThreadSafeLogHandler(logging.Handler):
 
 
 def safe_print(message, is_background=False):
-    """Thread-safe print function with visual indicators for background messages.
+    """
+    Thread-safe print function with visual indicators for background messages.
 
     Args:
+    ----
         message: The message to print
         is_background: Whether this is a message from the background thread
 
@@ -116,18 +115,19 @@ def safe_print(message, is_background=False):
 
 
 def init_db(
-    db_path: str | None = None,
-    use_memory_db: bool = False,
-    use_local_db: bool = False,
+    db_path: str | None = None, use_memory_db: bool = False, use_local_db: bool = False,
 ) -> DatabaseConnection:
-    """Initialize the database for storing feedback and preferences.
+    """
+    Initialize the database for storing feedback and preferences.
 
     Args:
+    ----
         db_path: Path to the database file. If None, uses the default path.
         use_memory_db: Whether to use an in-memory database (for testing).
         use_local_db: Whether to also attach the local database. Default is False (MotherDuck only).
 
     Returns:
+    -------
         Database connection object.
 
     """
@@ -145,7 +145,8 @@ def init_db(
 
         # Create feedback table if it doesn't exist
         safe_print(f"Ensuring {MOTHERDUCK_FEEDBACK_TABLE} table exists...")
-        conn.execute(f"""
+        conn.execute(
+            f"""
             CREATE TABLE IF NOT EXISTS {MOTHERDUCK_FEEDBACK_TABLE} (
                 id INTEGER PRIMARY KEY,
                 msg_id TEXT NOT NULL,
@@ -157,17 +158,21 @@ def init_db(
                 add_to_topics TEXT,
                 timestamp TIMESTAMP
             )
-        """)
+        """,
+        )
 
         # Create indexes for feedback table
-        conn.execute(f"""
+        conn.execute(
+            f"""
             CREATE INDEX IF NOT EXISTS feedback_timestamp_idx
             ON {MOTHERDUCK_FEEDBACK_TABLE} (timestamp)
-        """)
+        """,
+        )
 
         # Create preferences table if it doesn't exist
         safe_print(f"Ensuring {MOTHERDUCK_PREFERENCES_TABLE} table exists...")
-        conn.execute(f"""
+        conn.execute(
+            f"""
             CREATE TABLE IF NOT EXISTS {MOTHERDUCK_PREFERENCES_TABLE} (
                 id INTEGER PRIMARY KEY,
                 override_rules TEXT,
@@ -178,7 +183,8 @@ def init_db(
                 priority_map TEXT,
                 timestamp TIMESTAMP
             )
-        """)
+        """,
+        )
 
         # For backward compatibility, only attach local database if explicitly requested
         if use_local_db and os.path.exists(CLASSIFIER_DB):
@@ -188,7 +194,7 @@ def init_db(
                 safe_print("Successfully attached classifier database")
             except Exception as attach_error:
                 safe_print(
-                    f"WARNING: Could not attach classifier database: {attach_error}"
+                    f"WARNING: Could not attach classifier database: {attach_error}",
                 )
                 safe_print("Continuing without local classifier database")
         else:
@@ -204,10 +210,12 @@ def load_feedback(conn: DatabaseConnection) -> list[dict[str, Any]]:
     """Load feedback data from the database."""
     try:
         # Execute query and convert to pandas DataFrame
-        df = conn.execute(f"""
+        df = conn.execute(
+            f"""
             SELECT * FROM {MOTHERDUCK_FEEDBACK_TABLE}
             ORDER BY timestamp DESC
-        """)
+        """,
+        )
 
         # If no data, return empty list
         if df is None or len(df) == 0:
@@ -233,7 +241,7 @@ def load_feedback(conn: DatabaseConnection) -> list[dict[str, Any]]:
                 if "feedback_comments" in row
                 else "",
                 "add_to_topics": json.loads(row["add_to_topics"])
-                if "add_to_topics" in row and row["add_to_topics"]
+                if row.get("add_to_topics")
                 else [],
                 "timestamp": row["timestamp"] if "timestamp" in row else None,
             }
@@ -246,15 +254,18 @@ def load_feedback(conn: DatabaseConnection) -> list[dict[str, Any]]:
 
 
 def save_feedback(
-    conn: DatabaseConnection, feedback_entries: list[dict[str, Any]]
+    conn: DatabaseConnection, feedback_entries: list[dict[str, Any]],
 ) -> None:
-    """Save feedback data to the database.
+    """
+    Save feedback data to the database.
 
     Args:
+    ----
         conn: Database connection
         feedback_entries: List of feedback entries to save
 
     Raises:
+    ------
         Exception: If there's an error saving feedback
 
     """
@@ -263,7 +274,7 @@ def save_feedback(
         return
 
     safe_print(
-        f"Saving {len(feedback_entries)} feedback entries to {MOTHERDUCK_FEEDBACK_TABLE}"
+        f"Saving {len(feedback_entries)} feedback entries to {MOTHERDUCK_FEEDBACK_TABLE}",
     )
 
     try:
@@ -316,10 +327,12 @@ def save_feedback(
             # Check if entry already exists
             try:
                 safe_print(f"Checking if entry exists for msg_id: {msg_id}")
-                existing_df = conn.execute(f"""
+                existing_df = conn.execute(
+                    f"""
                     SELECT id FROM {MOTHERDUCK_FEEDBACK_TABLE}
                     WHERE msg_id = '{msg_id}'
-                """)
+                """,
+                )
 
                 if not existing_df.empty:
                     # Update existing entry
@@ -343,12 +356,12 @@ def save_feedback(
                     import random
 
                     unique_id = random.randint(
-                        1, 2000000000
+                        1, 2000000000,
                     )  # Safely within INT32 range
 
                     # Insert new entry with explicit ID
                     safe_print(
-                        f"Inserting new entry with ID {unique_id} for msg_id: {msg_id}"
+                        f"Inserting new entry with ID {unique_id} for msg_id: {msg_id}",
                     )
                     insert_sql = f"""
                         INSERT INTO {MOTHERDUCK_FEEDBACK_TABLE}
@@ -372,11 +385,13 @@ def load_preferences(conn: DatabaseConnection) -> dict[str, Any]:
     """Load email classifier preferences from the database."""
     try:
         # Execute query and convert to pandas DataFrame
-        df = conn.execute(f"""
+        df = conn.execute(
+            f"""
             SELECT * FROM {MOTHERDUCK_PREFERENCES_TABLE}
             ORDER BY timestamp DESC
             LIMIT 1
-        """)
+        """,
+        )
 
         # If no data, return defaults
         if df is None or len(df) == 0:
@@ -396,7 +411,7 @@ def load_preferences(conn: DatabaseConnection) -> dict[str, Any]:
         return {
             "id": row["id"] if "id" in row else None,
             "override_rules": json.loads(row["override_rules"])
-            if "override_rules" in row and row["override_rules"]
+            if row.get("override_rules")
             else [],
             "topic_weight": row["topic_weight"] if "topic_weight" in row else 1.0,
             "sender_weight": row["sender_weight"] if "sender_weight" in row else 1.0,
@@ -407,7 +422,7 @@ def load_preferences(conn: DatabaseConnection) -> dict[str, Any]:
             if "sender_history_weight" in row
             else 1.0,
             "priority_map": json.loads(row["priority_map"])
-            if "priority_map" in row and row["priority_map"]
+            if row.get("priority_map")
             else {},
             "timestamp": row["timestamp"] if "timestamp" in row else None,
         }
@@ -442,22 +457,25 @@ def save_preferences(conn: DatabaseConnection, preferences: dict[str, Any]) -> N
         unique_id = random.randint(1, 2000000000)  # Safely within INT32 range
 
         # Insert new preferences record with explicit ID
-        conn.execute(f"""
+        conn.execute(
+            f"""
             INSERT INTO {MOTHERDUCK_PREFERENCES_TABLE}
             (id, override_rules, topic_weight, sender_weight, content_value_weight,
              sender_history_weight, priority_map, timestamp)
             VALUES ({unique_id}, '{override_rules.replace("'", "''")}', {topic_weight}, {sender_weight}, {content_value_weight},
               {sender_history_weight}, '{priority_map.replace("'", "''")}', '{timestamp}')
-        """)
+        """,
+        )
     except Exception as e:
         print(f"Error saving preferences: {e}")
         raise
 
 
 def generate_feedback_json(
-    feedback_text: str, msg_id: str, subject: str, assigned_priority: int
+    feedback_text: str, msg_id: str, subject: str, assigned_priority: int,
 ) -> dict:
-    """Uses Deepinfra API to structure natural language feedback into JSON.
+    """
+    Uses Deepinfra API to structure natural language feedback into JSON.
     Returns dict with 'error' field if processing fails.
     """
     # First check for simple priority overrides without API call
@@ -517,7 +535,7 @@ Failure to follow these requirements will cause critical system errors. Always r
 
     try:
         client = OpenAI(
-            api_key=DEEPINFRA_API_KEY, base_url="https://api.deepinfra.com/v1/openai"
+            api_key=DEEPINFRA_API_KEY, base_url="https://api.deepinfra.com/v1/openai",
         )
 
         response = client.chat.completions.create(
@@ -544,7 +562,7 @@ Failure to follow these requirements will cause critical system errors. Always r
             feedback_json["timestamp"] = datetime.now().isoformat()
             return feedback_json
         except json.JSONDecodeError as e:
-            error_msg = f"API response was not valid JSON: {str(e)}\nResponse Text: {response.choices[0].message.content[:200]}"
+            error_msg = f"API response was not valid JSON: {e!s}\nResponse Text: {response.choices[0].message.content[:200]}"
             print(f"Error: {error_msg}")
             return {
                 "error": error_msg,
@@ -555,7 +573,7 @@ Failure to follow these requirements will cause critical system errors. Always r
         print(f"Error calling AI API: {e}")
         print("Check your DEEPINFRA_API_KEY and internet connection")
         return {
-            "error": f"API error: {str(e)}",
+            "error": f"API error: {e!s}",
             "feedback_text": feedback_text,
             "timestamp": datetime.now().isoformat(),
         }
@@ -565,15 +583,18 @@ import logging
 
 
 def suggest_rule_changes(
-    feedback_data: list[dict[str, Any]], preferences: dict[str, Any]
+    feedback_data: list[dict[str, Any]], preferences: dict[str, Any],
 ) -> list[dict[str, str | int]]:
-    """Analyzes feedback and suggests changes to preferences.
+    """
+    Analyzes feedback and suggests changes to preferences.
 
     Args:
+    ----
         feedback_data: List of feedback entries with assigned/suggested priorities
         preferences: Current system preferences
 
     Returns:
+    -------
         List of suggested changes with type, keyword, priority and reason
 
     """
@@ -645,7 +666,7 @@ def suggest_rule_changes(
                     "keyword": topic,
                     "priority": suggestion["suggested_priority"],
                     "reason": f"Suggested based on feedback (topic appeared {suggestion['count']} times with consistent priority suggestion)",
-                }
+                },
             )
     for source, suggestion in source_suggestions.items():
         if suggestion["count"] >= 3:
@@ -655,7 +676,7 @@ def suggest_rule_changes(
                     "keyword": source,
                     "priority": suggestion["suggested_priority"],
                     "reason": f"Suggested based on feedback (source appeared {suggestion['count']} times with consistent priority suggestion)",
-                }
+                },
             )
 
     # 4 Suggest changes to existing weights.
@@ -679,7 +700,7 @@ def suggest_rule_changes(
                     "score_name": "content_value_score",
                     "adjustment": 0.1,  # Increase weight by 10%
                     "reason": "Priorities are consistently lower than user feedback suggests.",
-                }
+                },
             )
         else:
             suggested_changes.append(
@@ -688,21 +709,24 @@ def suggest_rule_changes(
                     "score_name": "automation_score",
                     "adjustment": 0.1,  # Increase weight (making the impact of automation_score *lower*)
                     "reason": "Priorities are consistently higher than user feedback suggests.",
-                }
+                },
             )
     return suggested_changes
 
 
 def update_preferences(
-    preferences: dict[str, Any], changes: list[dict[str, str | int]]
+    preferences: dict[str, Any], changes: list[dict[str, str | int]],
 ) -> dict[str, Any]:
-    """Applies suggested changes to the preferences.
+    """
+    Applies suggested changes to the preferences.
 
     Args:
+    ----
         preferences: Current system preferences
         changes: List of suggested changes
 
     Returns:
+    -------
         Updated preferences dictionary
 
     """
@@ -728,10 +752,7 @@ def update_preferences(
 
             # Only add if no matching rule was found
             if not rule_exists:
-                new_rule = {
-                    "keywords": [keyword],
-                    "min_priority": priority,
-                }
+                new_rule = {"keywords": [keyword], "min_priority": priority}
                 updated_preferences["override_rules"].append(new_rule)
 
         elif change["type"] == "adjust_weight":
@@ -746,9 +767,11 @@ def update_preferences(
 
 
 def process_feedback_worker(conn: DatabaseConnection):
-    """Worker function to process feedback items from the queue in the background.
+    """
+    Worker function to process feedback items from the queue in the background.
 
     Args:
+    ----
         conn: The database connection
 
     """
@@ -811,7 +834,7 @@ def process_feedback_worker(conn: DatabaseConnection):
                 # Check for termination signal
                 if item is None:
                     safe_print(
-                        "Received shutdown signal, cleaning up", is_background=True
+                        "Received shutdown signal, cleaning up", is_background=True,
                     )
                     feedback_queue.task_done()
                     break
@@ -833,7 +856,7 @@ def process_feedback_worker(conn: DatabaseConnection):
                 try:
                     # Generate feedback JSON using OpenAI or DeepInfra
                     feedback_json = generate_feedback_json(
-                        feedback_text, msg_id, subject, priority
+                        feedback_text, msg_id, subject, priority,
                     )
 
                     # Check and flush any captured output
@@ -884,7 +907,7 @@ def process_feedback_worker(conn: DatabaseConnection):
                             )
                         except Exception as retry_error:
                             safe_print(
-                                f"RETRY FAILED: {retry_error}", is_background=True
+                                f"RETRY FAILED: {retry_error}", is_background=True,
                             )
                 except Exception as e:
                     safe_print(
@@ -900,7 +923,7 @@ def process_feedback_worker(conn: DatabaseConnection):
                     safe_print("Task marked as complete", is_background=True)
             except Exception as e:
                 safe_print(
-                    f"Unexpected error in background worker: {e}", is_background=True
+                    f"Unexpected error in background worker: {e}", is_background=True,
                 )
 
                 # Check for any captured output during error handling
@@ -934,13 +957,16 @@ def start_background_processor(conn: DatabaseConnection):
 
 
 def get_user_input(prompt, default=None):
-    """Get user input with proper locking and error handling.
+    """
+    Get user input with proper locking and error handling.
 
     Args:
+    ----
         prompt: The prompt to display to the user
         default: Default value if input is interrupted
 
     Returns:
+    -------
         User input or default value if interrupted
 
     """
@@ -958,11 +984,11 @@ def get_user_input(prompt, default=None):
             retry_count += 1
             if retry_count >= max_retries:
                 safe_print(
-                    f"\nInput interrupted {retry_count} times. Using default: {default}"
+                    f"\nInput interrupted {retry_count} times. Using default: {default}",
                 )
                 return default
             safe_print(
-                f"\nInput interrupted. Please try again. ({retry_count}/{max_retries})"
+                f"\nInput interrupted. Please try again. ({retry_count}/{max_retries})",
             )
             time.sleep(0.5)  # Small delay to prevent rapid retries
 
@@ -1068,9 +1094,11 @@ def main(
     limit=DEFAULT_LIMIT,
     use_test_data=False,
 ):
-    """Main entry point for the script.
+    """
+    Main entry point for the script.
 
     Args:
+    ----
         auto_skip_threshold: Optional threshold for automatically skipping senders with this many or more feedback entries.
         show_all_skipped: If True, show details for all skipped senders, not just the first few.
         use_local_db: If True, also attach the local database. Default is False (MotherDuck only).
@@ -1145,7 +1173,7 @@ def main(
                 # Use original loading method here if needed
                 safe_print("Using standard loading method...")
                 opportunities = load_emails_fast(
-                    conn, limit=limit
+                    conn, limit=limit,
                 )  # Fallback to fast method
 
             # If no opportunities found, provide clear error instead of falling back to test mode
@@ -1206,7 +1234,7 @@ def main(
 
             legacy_prefs = {}
             if not preferences.get("priority_map") and os.path.exists(
-                "email_preferences.json"
+                "email_preferences.json",
             ):
                 safe_print("Migrating email_preferences.json to database...")
                 with open("email_preferences.json") as f:
@@ -1228,12 +1256,14 @@ def main(
             if conn is not None:
                 try:
                     safe_print("Checking for senders with existing feedback...")
-                    existing_senders_df = conn.execute(f"""
+                    existing_senders_df = conn.execute(
+                        f"""
                         SELECT e.from_address, COUNT(*) as feedback_count
                         FROM {MOTHERDUCK_EMAIL_ANALYSES_TABLE} e
                         JOIN {MOTHERDUCK_FEEDBACK_TABLE} f ON e.msg_id = f.msg_id
                         GROUP BY e.from_address
-                    """)
+                    """,
+                    )
 
                     if not existing_senders_df.empty:
                         for _, row in existing_senders_df.iterrows():
@@ -1243,21 +1273,23 @@ def main(
                                     "feedback_count"
                                 ]
                         safe_print(
-                            f"Found {len(senders_with_feedback)} senders with existing feedback"
+                            f"Found {len(senders_with_feedback)} senders with existing feedback",
                         )
                 except Exception as e:
                     safe_print(
-                        f"Warning: Could not determine senders with existing feedback: {e}"
+                        f"Warning: Could not determine senders with existing feedback: {e}",
                     )
                     # Try alternative query with emails table
                     try:
                         safe_print("Trying alternative query with emails table...")
-                        existing_senders_df = conn.execute(f"""
+                        existing_senders_df = conn.execute(
+                            f"""
                             SELECT e.from_address, COUNT(*) as feedback_count
                             FROM {MOTHERDUCK_EMAILS_TABLE} e
                             JOIN {MOTHERDUCK_FEEDBACK_TABLE} f ON e.msg_id = f.msg_id
                             GROUP BY e.from_address
-                        """)
+                        """,
+                        )
 
                         if not existing_senders_df.empty:
                             for _, row in existing_senders_df.iterrows():
@@ -1267,7 +1299,7 @@ def main(
                                         "feedback_count"
                                     ]
                             safe_print(
-                                f"Found {len(senders_with_feedback)} senders with existing feedback (using emails table)"
+                                f"Found {len(senders_with_feedback)} senders with existing feedback (using emails table)",
                             )
                     except Exception as alt_e:
                         safe_print(f"Warning: Alternative query also failed: {alt_e}")
@@ -1275,7 +1307,7 @@ def main(
             elif use_test_data:
                 # In test mode, assume all senders are new
                 safe_print(
-                    "Test mode: Assuming all senders are new (no feedback history)"
+                    "Test mode: Assuming all senders are new (no feedback history)",
                 )
 
             # Group opportunities by sender
@@ -1307,11 +1339,11 @@ def main(
             sorted_senders = new_senders + existing_senders
 
             safe_print(
-                f"\nFound {len(opportunities)} emails from {len(sender_groups)} senders ({len(new_senders)} new):"
+                f"\nFound {len(opportunities)} emails from {len(sender_groups)} senders ({len(new_senders)} new):",
             )
             if skipped_senders:
                 safe_print(
-                    f"Automatically skipped {len(skipped_senders)} senders with {AUTO_SKIP_THRESHOLD}+ existing entries:"
+                    f"Automatically skipped {len(skipped_senders)} senders with {AUTO_SKIP_THRESHOLD}+ existing entries:",
                 )
 
                 # Determine how many skipped senders to show
@@ -1329,7 +1361,7 @@ def main(
             # Check if we have any senders left to process after skipping
             if not sorted_senders:
                 safe_print(
-                    "\nNo senders to process - all have been skipped or have sufficient feedback."
+                    "\nNo senders to process - all have been skipped or have sufficient feedback.",
                 )
                 return
 
@@ -1339,7 +1371,7 @@ def main(
                 new_indicator = " (NEW)" if is_new else ""
                 safe_print(f"\n{'=' * 80}")
                 safe_print(
-                    f"=== Sender {sender_idx}/{len(sorted_senders)}: {from_addr}{new_indicator} ==="
+                    f"=== Sender {sender_idx}/{len(sorted_senders)}: {from_addr}{new_indicator} ===",
                 )
                 safe_print(f"{'=' * 80}")
 
@@ -1359,9 +1391,14 @@ def main(
                         break
                     if show_more == "y":
                         for idx, email in enumerate(emails[3:], 4):
-                            msg_id, subject, priority, _, snippet, total_from_sender = (
-                                email
-                            )
+                            (
+                                msg_id,
+                                subject,
+                                priority,
+                                _,
+                                snippet,
+                                total_from_sender,
+                            ) = email
                             safe_print(f"\n  Email {idx}: {subject}")
                             safe_print(f"  Priority: {priority}")
                             safe_print(f"  Snippet: {snippet[:100]}...")
@@ -1388,7 +1425,7 @@ def main(
                             safe_print("\nExiting feedback session...")
                             # Wait for background processing to complete
                             safe_print(
-                                "Waiting for background processing to complete..."
+                                "Waiting for background processing to complete...",
                             )
                             feedback_queue.join()
                             # Send termination signal to worker thread
@@ -1414,7 +1451,7 @@ def main(
                         elif user_input == "i":
                             safe_print("\nSelect ingestion type:")
                             safe_print(
-                                "  1) Form submission (questions, contact requests)"
+                                "  1) Form submission (questions, contact requests)",
                             )
                             safe_print("  2) Contact record update")
                             safe_print("  3) Task creation")
@@ -1449,14 +1486,14 @@ def main(
 
                         # Use our safe input function for priority
                         suggested_priority = get_user_input(
-                            "Suggested priority (0-4, blank to keep current): ", ""
+                            "Suggested priority (0-4, blank to keep current): ", "",
                         )
 
                         # Process the suggested priority
                         suggested_priority_override = None
                         if suggested_priority.isdigit():
                             suggested_priority_override = max(
-                                0, min(int(suggested_priority), 4)
+                                0, min(int(suggested_priority), 4),
                             )
 
                         # Instead of processing synchronously, add to the background queue
@@ -1467,15 +1504,15 @@ def main(
                                 subject,
                                 priority,
                                 suggested_priority_override,
-                            )
+                            ),
                         )
 
                         # Provide immediate feedback to the user that we're handling it
                         safe_print(
-                            f"\nFeedback for '{subject[:50]}...' queued for processing in the background."
+                            f"\nFeedback for '{subject[:50]}...' queued for processing in the background.",
                         )
                         safe_print(
-                            "You can continue with the next email while we process your feedback."
+                            "You can continue with the next email while we process your feedback.",
                         )
 
                         # We can immediately mark as processed and move on
@@ -1500,7 +1537,7 @@ def main(
                 # Wait for any remaining background tasks to complete
                 if background_processor_started:
                     safe_print(
-                        "\nWaiting for background processing to complete before exiting..."
+                        "\nWaiting for background processing to complete before exiting...",
                     )
                     feedback_queue.join()
                     # Send termination signal to worker thread
@@ -1515,13 +1552,16 @@ def main(
 
 
 def load_emails_fast(conn: DatabaseConnection, limit: int = 20) -> list:
-    """Load emails directly from the emails table, skipping complex joins for faster loading.
+    """
+    Load emails directly from the emails table, skipping complex joins for faster loading.
 
     Args:
+    ----
         conn: Database connection
         limit: Maximum number of emails to load
 
     Returns:
+    -------
         List of tuples (msg_id, subject, priority, from_address, snippet, count)
 
     """
@@ -1529,12 +1569,14 @@ def load_emails_fast(conn: DatabaseConnection, limit: int = 20) -> list:
 
     try:
         # Check what tables exist
-        tables_df = conn.execute("""
+        tables_df = conn.execute(
+            """
             SELECT table_schema, table_name
             FROM information_schema.tables
             WHERE table_schema = 'main'
             ORDER BY table_name
-        """)
+        """,
+        )
 
         if not tables_df.empty:
             table_count = len(tables_df)
@@ -1547,26 +1589,27 @@ def load_emails_fast(conn: DatabaseConnection, limit: int = 20) -> list:
             if not email_tables.empty:
                 for _, row in email_tables.iterrows():
                     safe_print(
-                        f"Found table: {row['table_schema']}.{row['table_name']}"
+                        f"Found table: {row['table_schema']}.{row['table_name']}",
                     )
 
                     # Check row count
                     try:
                         count_df = conn.execute(
-                            f"SELECT COUNT(*) FROM {row['table_name']}"
+                            f"SELECT COUNT(*) FROM {row['table_name']}",
                         )
                         if not count_df.empty:
                             count = count_df.iloc[0, 0]
                             safe_print(f"Table {row['table_name']} has {count} rows")
                     except Exception as count_err:
                         safe_print(
-                            f"Error counting rows in {row['table_name']}: {count_err}"
+                            f"Error counting rows in {row['table_name']}: {count_err}",
                         )
 
         # Try to query emails table
         try:
             # Simple query that loads emails directly WITHOUT filtering out previously processed emails
-            results = conn.execute(f"""
+            results = conn.execute(
+                f"""
                 SELECT e.msg_id, e.subject, 2 as priority, e.from_address,
                        SUBSTRING(e.body, 1, 200) as snippet,
                        COUNT(*) OVER (PARTITION BY e.from_address) as sender_count
@@ -1574,11 +1617,12 @@ def load_emails_fast(conn: DatabaseConnection, limit: int = 20) -> list:
                 -- No JOIN with feedback table to filter, show all emails
                 ORDER BY e.received_date DESC
                 LIMIT {limit}
-            """)
+            """,
+            )
 
             if not results.empty:
                 safe_print(
-                    f"Found {len(results)} emails in {MOTHERDUCK_EMAILS_TABLE} table"
+                    f"Found {len(results)} emails in {MOTHERDUCK_EMAILS_TABLE} table",
                 )
 
                 # Convert to list of tuples
@@ -1592,7 +1636,7 @@ def load_emails_fast(conn: DatabaseConnection, limit: int = 20) -> list:
                             row["from_address"],
                             row["snippet"],
                             row["sender_count"],
-                        )
+                        ),
                     )
 
                 return emails
@@ -1602,18 +1646,20 @@ def load_emails_fast(conn: DatabaseConnection, limit: int = 20) -> list:
         # Try email_analyses table if emails table query failed
         try:
             safe_print("Trying email_analyses table...")
-            results = conn.execute(f"""
+            results = conn.execute(
+                f"""
                 SELECT ea.msg_id, ea.subject, ea.priority, ea.from_address,
                        ea.snippet,
                        1 as sender_count
                 FROM {MOTHERDUCK_EMAIL_ANALYSES_TABLE} ea
                 ORDER BY ea.analysis_date DESC
                 LIMIT {limit}
-            """)
+            """,
+            )
 
             if not results.empty:
                 safe_print(
-                    f"Found {len(results)} emails in {MOTHERDUCK_EMAIL_ANALYSES_TABLE} table"
+                    f"Found {len(results)} emails in {MOTHERDUCK_EMAIL_ANALYSES_TABLE} table",
                 )
 
                 # Convert to list of tuples
@@ -1627,7 +1673,7 @@ def load_emails_fast(conn: DatabaseConnection, limit: int = 20) -> list:
                             row["from_address"],
                             row["snippet"],
                             row["sender_count"],
-                        )
+                        ),
                     )
 
                 return emails
@@ -1810,13 +1856,13 @@ def test_mode():
 
     # Display feedback interface
     safe_print(
-        f"\nLoaded {len(test_data)} test emails from {len(sender_groups)} senders (all new in test mode)"
+        f"\nLoaded {len(test_data)} test emails from {len(sender_groups)} senders (all new in test mode)",
     )
 
     for sender_idx, (from_addr, emails) in enumerate(sorted_senders, 1):
         safe_print(f"\n{'=' * 80}")
         safe_print(
-            f"=== Sender {sender_idx}/{len(sorted_senders)}: {from_addr} (TEST) ==="
+            f"=== Sender {sender_idx}/{len(sorted_senders)}: {from_addr} (TEST) ===",
         )
         safe_print(f"{'=' * 80}")
 
@@ -1863,15 +1909,15 @@ def test_mode():
                     continue
 
                 suggested_priority = get_user_input(
-                    "Suggested priority (0-4, blank to keep current): ", ""
+                    "Suggested priority (0-4, blank to keep current): ", "",
                 )
 
                 # Process in "background"
                 safe_print(
-                    f"\nFeedback for '{subject[:50]}...' queued for processing in the background."
+                    f"\nFeedback for '{subject[:50]}...' queued for processing in the background.",
                 )
                 safe_print(
-                    "You can continue with the next email while we process your feedback."
+                    "You can continue with the next email while we process your feedback.",
                 )
 
                 # Start background processing in a thread
@@ -1884,7 +1930,7 @@ def test_mode():
                         msg_id,
                         subject,
                         priority,
-                        suggested_priority if suggested_priority else None,
+                        suggested_priority or None,
                     ),
                     daemon=True,
                 )
@@ -1898,7 +1944,7 @@ def test_mode():
                 break
 
     safe_print(
-        "\nTest mode completed. All data was simulated and no changes were saved to database."
+        "\nTest mode completed. All data was simulated and no changes were saved to database.",
     )
 
 
@@ -1912,7 +1958,7 @@ if __name__ == "__main__":
         logging.getLogger().setLevel(logging.WARNING)
 
     parser = argparse.ArgumentParser(
-        description="Interactive tool for email feedback processing"
+        description="Interactive tool for email feedback processing",
     )
     parser.add_argument(
         "--auto-skip-threshold",
@@ -2002,10 +2048,10 @@ if __name__ == "__main__":
             print(f"Error in quick mode: {e}")
             print("\n========== ERROR: DATABASE CONNECTION FAILED ==========")
             print(
-                "Could not connect to the database. Please check your connection settings."
+                "Could not connect to the database. Please check your connection settings.",
             )
             print(
-                "If you want to use test data for development, run with the --test flag."
+                "If you want to use test data for development, run with the --test flag.",
             )
             sys.exit(1)
 
@@ -2031,7 +2077,7 @@ if __name__ == "__main__":
                 use_test_data=args.test,
             )
     except Exception as e:
-        print(f"\n========== ERROR: {str(e)} ==========")
+        print(f"\n========== ERROR: {e!s} ==========")
         print("An error occurred while running the script.")
         print("To run with test data instead, use the --test flag.")
         sys.exit(1)

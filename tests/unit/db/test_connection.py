@@ -1,4 +1,5 @@
-"""Tests for PostgreSQL database connection module.
+"""
+Tests for PostgreSQL database connection module.
 
 This module tests the DatabaseConnection class and related functionality.
 """
@@ -28,7 +29,7 @@ class TestDatabaseConnection(unittest.TestCase):
 
         # Mock scheduler
         self.scheduler_patcher = patch(
-            "apscheduler.schedulers.background.BackgroundScheduler"
+            "apscheduler.schedulers.background.BackgroundScheduler",
         )
         self.mock_scheduler = self.scheduler_patcher.start()
 
@@ -50,7 +51,7 @@ class TestDatabaseConnection(unittest.TestCase):
                 "sslmode": "prefer",
                 "pool_min": 5,
                 "pool_max": 10,
-            }
+            },
         }
 
     def tearDown(self):
@@ -74,7 +75,7 @@ class TestDatabaseConnection(unittest.TestCase):
 
         # Check session factory was created
         self.mock_sessionmaker.assert_called_once_with(
-            autocommit=False, autoflush=False, bind=self.mock_engine_instance
+            autocommit=False, autoflush=False, bind=self.mock_engine_instance,
         )
 
         # Check scoped session was created
@@ -118,7 +119,7 @@ class TestDatabaseConnection(unittest.TestCase):
             [
                 call(text("SELECT 1")),
                 call(text("SELECT MAX(version) FROM schema_versions")),
-            ]
+            ],
         )
 
     def test_validate_connection_failure(self):

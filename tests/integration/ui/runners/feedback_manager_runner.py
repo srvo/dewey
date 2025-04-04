@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-"""Feedback Manager Runner for Production Testing.
+"""
+Feedback Manager Runner for Production Testing.
 
 This runner initializes and runs the Feedback Manager screen as a standalone app.
 """
@@ -11,7 +12,7 @@ import sys
 
 # Add the project root to sys.path to ensure imports work correctly
 sys.path.insert(
-    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../.."))
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../..")),
 )
 
 # Configure logging to show detailed debug information

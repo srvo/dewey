@@ -1,4 +1,5 @@
-"""Tests for database initialization module.
+"""
+Tests for database initialization module.
 
 This module tests the database initialization and setup functions.
 """
@@ -100,7 +101,7 @@ class TestDatabaseInitialization(unittest.TestCase):
                 mock_backup_func.return_value = mock_backups
 
                 with patch(
-                    "src.dewey.core.db.sync.get_last_sync_time"
+                    "src.dewey.core.db.sync.get_last_sync_time",
                 ) as mock_sync_func:
                     mock_sync_func.return_value = datetime.now()
 

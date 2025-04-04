@@ -1,10 +1,11 @@
-from typing import Any, Optional
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
 
 class EmailSync(BaseScript):
-    """A module for synchronizing emails from Gmail.
+    """
+    A module for synchronizing emails from Gmail.
 
     This module inherits from BaseScript and provides a standardized
     structure for email synchronization scripts, including configuration
@@ -13,11 +14,13 @@ class EmailSync(BaseScript):
     """
 
     def __init__(
-        self, config_section: str | None = None, *args: Any, **kwargs: Any
+        self, config_section: str | None = None, *args: Any, **kwargs: Any,
     ) -> None:
-        """Initializes the EmailSync module.
+        """
+        Initializes the EmailSync module.
 
         Args:
+        ----
             config_section: Section in dewey.yaml to load for this script. Defaults to None.
             *args: Additional positional arguments.
             **kwargs: Additional keyword arguments.
@@ -26,7 +29,8 @@ class EmailSync(BaseScript):
         super().__init__(config_section=config_section, *args, **kwargs)
 
     def run(self) -> None:
-        """Executes the email synchronization process.
+        """
+        Executes the email synchronization process.
 
         This method retrieves the Gmail API key from the configuration,
         logs the start and completion of the synchronization process,
@@ -45,7 +49,8 @@ class EmailSync(BaseScript):
         self.logger.info("Email synchronization completed.")
 
     def execute(self) -> None:
-        """Executes the email synchronization process.
+        """
+        Executes the email synchronization process.
 
         This method fetches emails from Gmail, processes them, and
         stores the relevant information in the database.
@@ -57,10 +62,10 @@ class EmailSync(BaseScript):
             api_key = self.get_config_value("settings.gmail_api_key")
             db_url = self.get_config_value("settings.db_url")
             sync_interval_seconds = self.get_config_value(
-                "crm.gmail.sync_interval_seconds"
+                "crm.gmail.sync_interval_seconds",
             )
             max_results_per_sync = self.get_config_value(
-                "crm.gmail.max_results_per_sync"
+                "crm.gmail.max_results_per_sync",
             )
 
             self.logger.debug(f"Gmail API key: {api_key is not None}")

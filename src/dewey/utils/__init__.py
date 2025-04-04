@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class Utils(BaseScript):
-    """A collection of utility functions for the Dewey project.
+    """
+    A collection of utility functions for the Dewey project.
 
     This class inherits from BaseScript and provides access to
     configuration, logging, and other common functionalities.

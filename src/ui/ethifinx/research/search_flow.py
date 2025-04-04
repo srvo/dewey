@@ -1,24 +1,28 @@
-"""Search Flow
+"""
+Search Flow
 
 Module for retrieving and processing company information for research.
 """
 
 import logging
 import random
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
 def get_top_companies(limit: int = 20) -> list[dict[str, Any]]:
-    """Get a list of top companies by market cap.
+    """
+    Get a list of top companies by market cap.
 
     In a real implementation, this would fetch from a database or API.
 
     Args:
+    ----
         limit: Maximum number of companies to return
 
     Returns:
+    -------
         List of company dictionaries
 
     """
@@ -66,14 +70,17 @@ def get_top_companies(limit: int = 20) -> list[dict[str, Any]]:
 
 
 def get_company_by_ticker(ticker: str) -> dict[str, Any] | None:
-    """Get company information by ticker symbol.
+    """
+    Get company information by ticker symbol.
 
     In a real implementation, this would fetch from a database or API.
 
     Args:
+    ----
         ticker: Company ticker symbol
 
     Returns:
+    -------
         Company dictionary or None if not found
 
     """
@@ -86,11 +93,13 @@ def get_company_by_ticker(ticker: str) -> dict[str, Any] | None:
 
 
 def get_research_status() -> dict[str, Any]:
-    """Get current status of research workflow.
+    """
+    Get current status of research workflow.
 
     In a real implementation, this would fetch from a database.
 
-    Returns:
+    Returns
+    -------
         Dictionary with research status information
 
     """
@@ -119,12 +128,15 @@ class ResearchWorkflow:
         self.logger = logging.getLogger(__name__)
 
     async def process_companies(self, limit: int = 10) -> list[dict[str, Any]]:
-        """Process a batch of top companies.
+        """
+        Process a batch of top companies.
 
         Args:
+        ----
             limit: Maximum number of companies to process
 
         Returns:
+        -------
             List of processed company results
 
         """
@@ -138,7 +150,7 @@ class ResearchWorkflow:
                 results.append(result)
             except Exception as e:
                 self.logger.error(
-                    f"Error processing company {company.get('ticker')}: {str(e)}"
+                    f"Error processing company {company.get('ticker')}: {e!s}",
                 )
                 results.append(
                     {
@@ -146,18 +158,21 @@ class ResearchWorkflow:
                         "name": company.get("name"),
                         "error": str(e),
                         "success": False,
-                    }
+                    },
                 )
 
         return results
 
     async def _mock_process_company(self, company: dict[str, Any]) -> dict[str, Any]:
-        """Mock processing of a company (for demonstration).
+        """
+        Mock processing of a company (for demonstration).
 
         Args:
+        ----
             company: Company data dictionary
 
         Returns:
+        -------
             Processed result dictionary
 
         """
@@ -179,11 +194,11 @@ class ResearchWorkflow:
                 },
                 "success": True,
             }
-        else:
-            raise Exception("Failed to process company data")
+        raise Exception("Failed to process company data")
 
     def execute(self) -> None:
-        """Execute the research workflow.
+        """
+        Execute the research workflow.
 
         This method processes a batch of companies and logs the results.
         """
@@ -195,9 +210,9 @@ class ResearchWorkflow:
         for result in results:
             if result.get("success"):
                 self.logger.info(
-                    f"Successfully processed {result.get('name')} ({result.get('ticker')})"
+                    f"Successfully processed {result.get('name')} ({result.get('ticker')})",
                 )
             else:
                 self.logger.error(
-                    f"Failed to process {result.get('name')} ({result.get('ticker')}): {result.get('error')}"
+                    f"Failed to process {result.get('name')} ({result.get('ticker')}): {result.get('error')}",
                 )

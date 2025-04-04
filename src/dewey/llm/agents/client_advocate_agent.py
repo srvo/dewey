@@ -1,6 +1,6 @@
 """Client relationship and task prioritization agent using smolagents."""
 
-from typing import Any, Dict, List
+from typing import Any
 
 from smolagents import Tool
 
@@ -8,7 +8,8 @@ from dewey.core.base_script import BaseScript
 
 
 class ClientAdvocateAgent(BaseScript):
-    """Agent for managing client relationships and prioritizing client work.
+    """
+    Agent for managing client relationships and prioritizing client work.
 
     Features:
         - Client relationship analysis
@@ -31,17 +32,20 @@ class ClientAdvocateAgent(BaseScript):
                     self.prioritize_tasks,
                     description="Prioritizes tasks based on client importance and deadlines.",
                 ),
-            ]
+            ],
         )
 
     def analyze_client(self, profile: dict[str, Any]) -> dict[str, Any]:
-        """Analyzes client relationship and generates insights.
+        """
+        Analyzes client relationship and generates insights.
 
         Args:
+        ----
             profile (Dict[str, Any]): The client profile containing relationship history,
                 preferences, and business details.
 
         Returns:
+        -------
             Dict[str, Any]: Relationship insights and recommendations for engagement.
 
         """
@@ -60,15 +64,18 @@ class ClientAdvocateAgent(BaseScript):
         return result
 
     def prioritize_tasks(
-        self, tasks: list[dict[str, Any]], client_priorities: dict[str, Any]
+        self, tasks: list[dict[str, Any]], client_priorities: dict[str, Any],
     ) -> list[dict[str, Any]]:
-        """Prioritizes tasks based on client importance and deadlines.
+        """
+        Prioritizes tasks based on client importance and deadlines.
 
         Args:
+        ----
             tasks (List[Dict[str, Any]]): List of tasks to prioritize.
             client_priorities (Dict[str, Any]): Information about client priorities and importance.
 
         Returns:
+        -------
             List[Dict[str, Any]]: Prioritized tasks with reasoning.
 
         """
@@ -92,12 +99,15 @@ class ClientAdvocateAgent(BaseScript):
         return result
 
     def run(self, prompt: str) -> dict[str, Any]:
-        """Executes the agent's core logic.
+        """
+        Executes the agent's core logic.
 
         Args:
+        ----
             prompt (str): The prompt to pass to the agent.
 
         Returns:
+        -------
             Dict[str, Any]: The result of the agent's execution.
 
         """
@@ -119,11 +129,11 @@ class ClientAdvocateAgent(BaseScript):
             self.logger.info(f"Client analysis result: {analysis_result}")
 
             tasks = [
-                {"description": "Prepare quarterly report", "deadline": "2024-01-01"}
+                {"description": "Prepare quarterly report", "deadline": "2024-01-01"},
             ]
             client_priorities = {"urgency": "high", "importance": "high"}
             prioritized_tasks = self.prioritize_tasks(
-                tasks=tasks, client_priorities=client_priorities
+                tasks=tasks, client_priorities=client_priorities,
             )
             self.logger.info(f"Prioritized tasks: {prioritized_tasks}")
 
@@ -131,6 +141,6 @@ class ClientAdvocateAgent(BaseScript):
 
         except Exception as e:
             self.logger.error(
-                f"Error executing ClientAdvocateAgent: {e}", exc_info=True
+                f"Error executing ClientAdvocateAgent: {e}", exc_info=True,
             )
             raise

@@ -1,4 +1,5 @@
-"""Research UI components for Dewey.
+"""
+Research UI components for Dewey.
 
 This package contains UI components for research and visualization
 functionality in the Dewey application.

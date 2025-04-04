@@ -54,18 +54,21 @@ class MotherDuckInterface(Protocol):
 
 
 class ConfigManager(BaseScript):
-    """Manages configuration settings for the application.
+    """
+    Manages configuration settings for the application.
 
     This class inherits from BaseScript and provides methods for loading
     and accessing configuration values.
     """
+
     def __init__(
         self,
         config_section: str = "config_manager",
         db_connection: DatabaseInterface | None = None,
         motherduck_connection: MotherDuckInterface | None = None,
     ) -> None:
-        """Initializes the ConfigManager.
+        """
+        Initializes the ConfigManager.
 
         Args:
         ----
@@ -80,7 +83,8 @@ class ConfigManager(BaseScript):
         self._motherduck_connection = motherduck_connection
 
     def execute(self) -> None:
-        """Executes the configuration manager.
+        """
+        Executes the configuration manager.
 
         This method performs setup and initialization tasks, and demonstrates
         accessing a configuration value.
@@ -120,7 +124,8 @@ class ConfigManager(BaseScript):
             self.logger.error(f"Error during database operation: {e}")
 
     def get_config_value(self, key: str, default: Any = None) -> Any:
-        """Retrieves a configuration value.
+        """
+        Retrieves a configuration value.
 
         Args:
         ----

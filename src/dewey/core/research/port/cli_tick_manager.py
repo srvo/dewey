@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class CliTickManager(BaseScript):
-    """Manages CLI ticks for research port.
+    """
+    Manages CLI ticks for research port.
 
     This class inherits from BaseScript and provides functionality for managing
     CLI ticks, including setting the tick interval and executing the tick
@@ -10,11 +11,13 @@ class CliTickManager(BaseScript):
     """
 
     def __init__(self, *args, **kwargs) -> None:
-        """Initializes the CliTickManager.
+        """
+        Initializes the CliTickManager.
 
         Inherits from BaseScript and initializes the configuration section.
 
         Args:
+        ----
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
 
@@ -22,7 +25,8 @@ class CliTickManager(BaseScript):
         super().__init__(*args, config_section="cli_tick_manager", **kwargs)
 
     def run(self) -> None:
-        """Executes the CLI tick management process.
+        """
+        Executes the CLI tick management process.
 
         Retrieves the CLI tick interval from the configuration, logs the interval,
         and then executes the CLI tick management logic.
@@ -30,10 +34,10 @@ class CliTickManager(BaseScript):
         tick_interval = self.get_config_value("tick_interval", 60)
         self.logger.info(f"CLI tick interval: {tick_interval}")
         # Add your CLI tick management logic here
-        pass
 
     def execute(self) -> None:
-        """Executes the CLI tick management process.
+        """
+        Executes the CLI tick management process.
 
         This method retrieves the CLI tick interval from the configuration,
         logs the interval, and then executes the CLI tick management logic.
@@ -42,4 +46,3 @@ class CliTickManager(BaseScript):
         self.logger.info(f"CLI tick interval: {tick_interval}")
         self.logger.info("Executing CLI tick management logic...")
         # Add your CLI tick management logic here
-        pass

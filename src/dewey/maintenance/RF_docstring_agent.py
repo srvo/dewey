@@ -8,9 +8,11 @@ class RFDocstringAgent(BaseScript):
     """Refactors docstrings in a codebase."""
 
     def __init__(self, config_path: str, dry_run: bool = False) -> None:
-        """Initializes the RFDocstringAgent.
+        """
+        Initializes the RFDocstringAgent.
 
         Args:
+        ----
             config_path: Path to the configuration file.
             dry_run: If True, the script will not make any changes.
 
@@ -19,7 +21,8 @@ class RFDocstringAgent(BaseScript):
         self.dry_run = dry_run
 
     def execute(self) -> None:
-        """Executes the docstring refactoring process.
+        """
+        Executes the docstring refactoring process.
 
         This method iterates through Python files in a directory (specified in the config),
         reads their content, and logs a message indicating that it would refactor the
@@ -43,16 +46,18 @@ class RFDocstringAgent(BaseScript):
                         self.logger.info(f"Processing file: {file_path}")
 
                         try:
-                            with open(file_path, "r") as f:
+                            with open(file_path) as f:
                                 content = f.read()
 
                             if self.dry_run:
                                 self.logger.info(
-                                    f"Dry run mode: Docstrings in {file_path} would be refactored."
+                                    f"Dry run mode: Docstrings in {file_path} would be refactored.",
                                 )
                             else:
                                 # Actual docstring refactoring logic would go here
-                                self.logger.info(f"Refactoring docstrings in {file_path}")
+                                self.logger.info(
+                                    f"Refactoring docstrings in {file_path}",
+                                )
                                 # For example:
                                 # new_content = refactor_docstrings(content)
                                 # with open(file_path, "w") as f:
@@ -68,12 +73,15 @@ class RFDocstringAgent(BaseScript):
             raise
 
     def run(self) -> None:
-        """Executes the docstring refactoring process.
+        """
+        Executes the docstring refactoring process.
 
-        Raises:
+        Raises
+        ------
             Exception: If an error occurs during the process.
 
-        Returns:
+        Returns
+        -------
             None
 
         """

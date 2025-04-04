@@ -4,7 +4,8 @@ from dewey.core.base_script import BaseScript
 
 
 class AnalyzeLocalDbs(BaseScript):
-    """Analyzes local databases.
+    """
+    Analyzes local databases.
 
     This module inherits from BaseScript and provides a standardized
     structure for database analysis scripts, including configuration
@@ -28,7 +29,8 @@ class AnalyzeLocalDbs(BaseScript):
         self.logger.info("Database analysis completed.")
 
     def execute(self) -> None:
-        """Executes the database analysis logic.
+        """
+        Executes the database analysis logic.
 
         This method retrieves the database path from the configuration, logs it,
         and then performs a dummy analysis. In a real implementation, this would

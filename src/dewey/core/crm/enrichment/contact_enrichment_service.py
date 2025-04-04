@@ -2,16 +2,19 @@ from dewey.core.base_script import BaseScript
 
 
 class ContactEnrichmentService(BaseScript):
-    """A service for enriching contact information.
+    """
+    A service for enriching contact information.
 
     This class provides methods for fetching additional information
     about a contact from external sources.
     """
 
     def __init__(self, *args, **kwargs):
-        """Initializes the ContactEnrichmentService.
+        """
+        Initializes the ContactEnrichmentService.
 
         Args:
+        ----
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
 
@@ -19,15 +22,18 @@ class ContactEnrichmentService(BaseScript):
         super().__init__(*args, **kwargs, config_section="crm.enrichment")
 
     def run(self) -> None:
-        """Runs the contact enrichment process.
+        """
+        Runs the contact enrichment process.
 
         Fetches the enrichment API key from the configuration, logs its usage,
         and then logs the completion of the process.
 
-        Raises:
+        Raises
+        ------
             ValueError: If the enrichment API key is not found in the configuration.
 
-        Returns:
+        Returns
+        -------
             None
 
         """
@@ -42,12 +48,14 @@ class ContactEnrichmentService(BaseScript):
         self.logger.info("Contact enrichment process completed.")
 
     def execute(self) -> None:
-        """Executes the contact enrichment process.
+        """
+        Executes the contact enrichment process.
 
         Fetches the enrichment API key from the configuration, logs its usage,
         and then logs the completion of the process.
 
-        Returns:
+        Returns
+        -------
             None
 
         """

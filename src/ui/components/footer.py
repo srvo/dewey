@@ -9,9 +9,11 @@ class Footer(Static):
     """A footer component for the TUI application."""
 
     def __init__(self, status: str = "Ready") -> None:
-        """Initialize the footer with a status.
+        """
+        Initialize the footer with a status.
 
         Args:
+        ----
             status: The status to display in the footer
 
         """
@@ -28,9 +30,11 @@ class Footer(Static):
         self.update(status_text)
 
     def update_status(self, new_status: str) -> None:
-        """Update the footer status.
+        """
+        Update the footer status.
 
         Args:
+        ----
             new_status: The new status to display
 
         """

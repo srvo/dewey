@@ -18,7 +18,7 @@ def find_incomplete_files():
                 if not re.search(r"class \w+\(BaseScript\):", content):
                     files.append(str(py_file.relative_to(PROJECT_ROOT)))
         except Exception as e:
-            print(f"Skipping {py_file}: {str(e)}")
+            print(f"Skipping {py_file}: {e!s}")
 
     with open(OUTPUT_FILE, "w") as f:
         f.write("\n".join(files))

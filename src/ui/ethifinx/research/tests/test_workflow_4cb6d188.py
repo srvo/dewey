@@ -6,7 +6,7 @@ import pytest
 from ethifinx.research.workflow import Workflow, WorkflowPhase
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_phases():
     """Fixture to create mock workflow phases."""
     return [

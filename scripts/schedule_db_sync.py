@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""Schedule DB Sync Cron Job.
+"""
+Schedule DB Sync Cron Job.
 
 This script sets up a cron job to run the database synchronization
 between MotherDuck and local DuckDB during off-hours.
@@ -21,13 +22,14 @@ sys.path.insert(0, str(project_root))
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
 
 
 def setup_cron_job(schedule="0 3 * * *", copy_first=True, incremental=True, user=None):
-    """Set up a cron job to run the database sync script.
+    """
+    Set up a cron job to run the database sync script.
 
     Args:
     ----
@@ -88,7 +90,8 @@ def setup_cron_job(schedule="0 3 * * *", copy_first=True, incremental=True, user
 
 
 def test_sync_script():
-    """Test if the sync script runs correctly.
+    """
+    Test if the sync script runs correctly.
 
     Returns
     -------
@@ -120,6 +123,7 @@ def test_sync_script():
             [sys.executable, str(sync_script), "--help"],
             capture_output=True,
             text=True,
+            check=False,
         )
 
         if process.returncode != 0:
@@ -152,11 +156,11 @@ def main():
     )
 
     parser.add_argument(
-        "--full", action="store_true", help="Use full sync instead of incremental"
+        "--full", action="store_true", help="Use full sync instead of incremental",
     )
 
     parser.add_argument(
-        "--user", help="User for crontab (default: current user)", default=None
+        "--user", help="User for crontab (default: current user)", default=None,
     )
 
     parser.add_argument("--verbose", action="store_true", help="Enable verbose logging")

@@ -1,4 +1,5 @@
-"""Dewey LLM module for interacting with LLMs through various providers.
+"""
+Dewey LLM module for interacting with LLMs through various providers.
 
 This package provides utilities for calling LLMs with consistent interfaces.
 """
@@ -25,6 +26,15 @@ from dewey.llm.litellm_utils import (
 from dewey.llm.models.config import LLMConfigManager
 
 __all__ = [
+    # Exceptions
+    "InvalidPromptError",
+    "LLMAuthenticationError",
+    "LLMConfigManager",
+    "LLMConnectionError",
+    "LLMError",
+    "LLMRateLimitError",
+    "LLMResponseError",
+    "LLMTimeoutError",
     # Classes
     "LiteLLMClient",
     "LiteLLMConfig",
@@ -37,13 +47,4 @@ __all__ = [
     "load_api_keys_from_env",
     "quick_completion",
     "set_api_keys",
-    # Exceptions
-    "InvalidPromptError",
-    "LLMAuthenticationError",
-    "LLMConnectionError",
-    "LLMError",
-    "LLMRateLimitError",
-    "LLMResponseError",
-    "LLMTimeoutError",
-    "LLMConfigManager",
 ]

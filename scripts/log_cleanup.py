@@ -14,7 +14,7 @@ class LogCleanup(BaseScript):
         # Clean main logs
         main_log_dir = Path(log_config.get("root_dir", "logs"))
         self.logger.info(
-            f"Cleaning main logs in {main_log_dir} (retention: {retention_days} days)"
+            f"Cleaning main logs in {main_log_dir} (retention: {retention_days} days)",
         )
         self._clean_directory(main_log_dir, retention_days)
 
@@ -22,10 +22,10 @@ class LogCleanup(BaseScript):
         archive_dir = Path(log_config.get("archive_dir", "logs/archived"))
         if archive_dir.exists():
             archive_retention = log_config.get(
-                "archive_retention_days", retention_days * 2
+                "archive_retention_days", retention_days * 2,
             )
             self.logger.info(
-                f"Cleaning archives in {archive_dir} (retention: {archive_retention} days)"
+                f"Cleaning archives in {archive_dir} (retention: {archive_retention} days)",
             )
             self._clean_directory(archive_dir, archive_retention)
 
@@ -89,7 +89,7 @@ class LogCleanup(BaseScript):
             file_path.unlink()
             self.logger.debug(f"Deleted: {file_path}")
         except Exception as e:
-            self.logger.error(f"Error deleting {file_path}: {str(e)}")
+            self.logger.error(f"Error deleting {file_path}: {e!s}")
 
 
 if __name__ == "__main__":

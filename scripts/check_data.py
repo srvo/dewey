@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Utility script to check data integrity and status across various parts of the system.
+"""
+Utility script to check data integrity and status across various parts of the system.
 
 Usage:
 python scripts/check_data.py [COMMAND] [OPTIONS]
@@ -11,20 +12,20 @@ contacts Check unified contacts data.
 """
 
 import typer
-from sqlalchemy import text
 from dewey.core.base_script import BaseScript
 from dewey.core.exceptions import DatabaseConnectionError
+from sqlalchemy import text
 
 # Assuming gmail utils are structured as in the original check_gmail.py
 # Adjust imports based on actual location if different
 try:
+    # check_email_content, # Not including content check for brevity
+    # check_enrichment_status # Not including enrichment check
+    from src.dewey.core.crm.gmail.gmail_api_test import test_gmail_api
     from src.dewey.core.crm.gmail.gmail_utils import (
         check_email_count,  # Assuming this queries the DB now
         check_email_schema,  # Assuming this queries the DB now
-        # check_email_content, # Not including content check for brevity
-        # check_enrichment_status # Not including enrichment check
     )
-    from src.dewey.core.crm.gmail.gmail_api_test import test_gmail_api
 
     GMAIL_UTILS_AVAILABLE = True
 except ImportError:
@@ -40,11 +41,10 @@ class CheckDataScript(BaseScript):
     def __init__(self, requires_db=False, config_section="checks"):
         # Determine project root dynamically if possible, or adjust as needed
         # This is a basic way, might need refinement based on project setup
-        import os
         from pathlib import Path
 
         project_root = Path(
-            __file__
+            __file__,
         ).parent.parent  # Assuming scripts/ is one level down from root
 
         super().__init__(
@@ -55,13 +55,16 @@ class CheckDataScript(BaseScript):
         )
 
     def execute(self) -> None:
-        """Execute the data check script.
+        """
+        Execute the data check script.
 
         This method is intentionally left blank as the data checks are
         performed by the subcommands. This ensures that the BaseScript
         is initialized correctly for all subcommands.
         """
-        self.logger.info("CheckDataScript execute method called (doing nothing). Use subcommands.")
+        self.logger.info(
+            "CheckDataScript execute method called (doing nothing). Use subcommands.",
+        )
 
 
 # --- Database Check Subcommand ---
@@ -80,11 +83,13 @@ def check_db_structure(limit: int = typer.Option(1, help="Limit for sample data.
 
             # Check if database has any tables
             tables_result = conn.execute(
-                text("""
+                text(
+                    """
                     SELECT table_name
                     FROM information_schema.tables
                     WHERE table_schema NOT IN ('pg_catalog', 'information_schema')
-                """)
+                """,
+                ),
             ).fetchall()
 
             tables = [row[0] for row in tables_result]
@@ -100,20 +105,22 @@ def check_db_structure(limit: int = typer.Option(1, help="Limit for sample data.
                 try:
                     # Get row count
                     count_query = text(
-                        f'SELECT COUNT(*) FROM "{table_name}"'
+                        f'SELECT COUNT(*) FROM "{table_name}"',
                     )  # Use quotes for safety
                     count = conn.execute(count_query).scalar()
                     script.logger.info(f"   - {count} rows")
 
                     # Get column info
-                    columns_query = text("""
+                    columns_query = text(
+                        """
                         SELECT column_name, data_type
                         FROM information_schema.columns
                         WHERE table_name = :table
                         ORDER BY ordinal_position
-                    """)
+                    """,
+                    )
                     columns = conn.execute(
-                        columns_query, {"table": table_name}
+                        columns_query, {"table": table_name},
                     ).fetchall()
                     script.logger.info(f"   - Columns ({len(columns)}):")
                     for col_name, col_type in columns:
@@ -124,16 +131,16 @@ def check_db_structure(limit: int = typer.Option(1, help="Limit for sample data.
                         # Note: Using f-string for table name is generally safe here as it comes
                         # from information_schema, but use with caution. Parameterization is preferred.
                         sample_query = text(
-                            f'SELECT * FROM "{table_name}" LIMIT :limit'
+                            f'SELECT * FROM "{table_name}" LIMIT :limit',
                         )
                         sample = conn.execute(sample_query, {"limit": limit}).fetchone()
                         script.logger.info(
-                            f"   - Sample data (limit {limit}): {sample}"
+                            f"   - Sample data (limit {limit}): {sample}",
                         )
 
                 except Exception as e:
                     script.logger.error(
-                        f"   - Error inspecting table {table_name}: {e}"
+                        f"   - Error inspecting table {table_name}: {e}",
                     )
 
         script.logger.info("Database check completed successfully")
@@ -187,12 +194,14 @@ def check_gmail_schema():
     script.logger.info("Checking 'emails' table schema...")
     try:
         with script.db_connection() as conn:
-            columns_query = text("""
+            columns_query = text(
+                """
                 SELECT column_name, data_type
                 FROM information_schema.columns
                 WHERE table_name = 'emails'
                 ORDER BY ordinal_position
-            """)
+            """,
+            )
             columns = conn.execute(columns_query).fetchall()
             if columns:
                 script.logger.info("Email schema:")
@@ -200,7 +209,7 @@ def check_gmail_schema():
                     script.logger.info(f"  {col_name} ({col_type})")
             else:
                 script.logger.warning(
-                    "Could not find 'emails' table or it has no columns."
+                    "Could not find 'emails' table or it has no columns.",
                 )
     except DatabaseConnectionError as e:
         script.logger.error(f"Database connection error: {e}")
@@ -216,7 +225,7 @@ contacts_app = typer.Typer()
 def check_unified_contacts(
     limit: int = typer.Option(3, help="Limit for sample data."),
     show_domains: bool = typer.Option(
-        True, help="Show top domains by count (limit 10)."
+        True, help="Show top domains by count (limit 10).",
     ),
 ):
     """Check unified_contacts table: count, schema, sample data, domains."""
@@ -230,12 +239,14 @@ def check_unified_contacts(
             script.logger.info(f"Total contacts in unified_contacts: {count}")
 
             # Get table schema
-            schema_query = text("""
+            schema_query = text(
+                """
                 SELECT column_name, data_type
                 FROM information_schema.columns
                 WHERE table_name = 'unified_contacts'
                 ORDER BY ordinal_position
-            """)
+            """,
+            )
             schema_result = conn.execute(schema_query).fetchall()
             script.logger.info("Table schema:")
             for col_name, col_type in schema_result:
@@ -253,7 +264,8 @@ def check_unified_contacts(
             if show_domains:
                 try:
                     # Use SUBSTRING for PostgreSQL compatibility
-                    domain_query = text("""
+                    domain_query = text(
+                        """
                         WITH email_domains AS (
                             SELECT
                                 substring(email from '@(.*)$') AS domain
@@ -268,7 +280,8 @@ def check_unified_contacts(
                         GROUP BY domain
                         ORDER BY contact_count DESC
                         LIMIT 10
-                    """)
+                    """,
+                    )
                     domain_result = conn.execute(domain_query).fetchall()
 
                     if domain_result:

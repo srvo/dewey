@@ -5,7 +5,8 @@ from dewey.llm.litellm_utils import quick_completion
 
 
 class TickReport(BaseScript):
-    """A module for generating tick reports.
+    """
+    A module for generating tick reports.
 
     This module inherits from BaseScript and provides methods for
     generating reports based on tick data.
@@ -22,15 +23,19 @@ class TickReport(BaseScript):
         )
 
     def run(self) -> None:
-        """Executes the tick report generation process.
+        """
+        Executes the tick report generation process.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If there is an error during tick report generation.
 
         """
@@ -39,7 +44,7 @@ class TickReport(BaseScript):
         try:
             # Access configuration values
             api_key = self.get_config_value("api_key")
-            self.logger.debug(f"API Key retrieved (use depends on actual logic)")
+            self.logger.debug("API Key retrieved (use depends on actual logic)")
 
             # Example database operation (replace with your actual logic)
             # Assuming you have a table named 'ticks'
@@ -64,7 +69,7 @@ class TickReport(BaseScript):
 
         except Exception as e:
             self.logger.error(
-                f"Error during tick report generation: {e}", exc_info=True
+                f"Error during tick report generation: {e}", exc_info=True,
             )
             raise
 

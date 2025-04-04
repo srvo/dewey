@@ -4,7 +4,7 @@ import re
 import subprocess
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional, Protocol
+from typing import Any, Protocol
 
 from dewey.core.base_script import BaseScript
 
@@ -40,7 +40,8 @@ class HledgerUpdaterInterface(Protocol):
 
 
 class HledgerUpdater(BaseScript, HledgerUpdaterInterface):
-    """Updates opening balances in hledger journal files.
+    """
+    Updates opening balances in hledger journal files.
 
     Inherits from BaseScript for standardized configuration and logging.
     """
@@ -56,13 +57,16 @@ class HledgerUpdater(BaseScript, HledgerUpdaterInterface):
         self._fs = fs or PathFileSystem()
 
     def get_balance(self, account: str, date: str) -> str | None:
-        """Get the balance for a specific account at a given date.
+        """
+        Get the balance for a specific account at a given date.
 
         Args:
+        ----
             account: The account to check.
             date: The date to check the balance.
 
         Returns:
+        -------
             The balance amount as a string, or None if an error occurred.
 
         """
@@ -70,10 +74,7 @@ class HledgerUpdater(BaseScript, HledgerUpdaterInterface):
             self.logger.debug("🔍 Checking balance | account=%s date=%s", account, date)
             cmd = f"hledger -f all.journal bal {account} -e {date} --depth 1"
             result = self._subprocess_runner(
-                cmd.split(),
-                capture_output=True,
-                text=True,
-                check=False,
+                cmd.split(), capture_output=True, text=True, check=False,
             )
 
             if result.returncode != 0:
@@ -85,9 +86,7 @@ class HledgerUpdater(BaseScript, HledgerUpdaterInterface):
                 return None
 
             self.logger.debug(
-                "📊 Balance result | account=%s output=%s",
-                account,
-                result.stdout[:300],
+                "📊 Balance result | account=%s output=%s", account, result.stdout[:300],
             )
 
             # Extract the balance amount from the output
@@ -108,12 +107,15 @@ class HledgerUpdater(BaseScript, HledgerUpdaterInterface):
             return None
 
     def _read_journal_file(self, journal_file: str) -> str:
-        """Reads the content of the journal file.
+        """
+        Reads the content of the journal file.
 
         Args:
+        ----
             journal_file: The path to the journal file.
 
         Returns:
+        -------
             The content of the journal file.
 
         """
@@ -122,9 +124,11 @@ class HledgerUpdater(BaseScript, HledgerUpdaterInterface):
         return content
 
     def _write_journal_file(self, journal_file: str, content: str) -> None:
-        """Writes the content to the journal file.
+        """
+        Writes the content to the journal file.
 
         Args:
+        ----
             journal_file: The path to the journal file.
             content: The content to write to the file.
 
@@ -133,9 +137,11 @@ class HledgerUpdater(BaseScript, HledgerUpdaterInterface):
             f.write(content)
 
     def update_opening_balances(self, year: int) -> None:
-        """Update opening balances in the journal file for the specified year.
+        """
+        Update opening balances in the journal file for the specified year.
 
         Args:
+        ----
             year: The year to update the opening balances for.
 
         """
@@ -158,7 +164,7 @@ class HledgerUpdater(BaseScript, HledgerUpdaterInterface):
             journal_file = f"{year}.journal"
             if not self._fs.exists(journal_file):
                 self.logger.warning(
-                    "Journal file %s does not exist. Skipping.", journal_file
+                    "Journal file %s does not exist. Skipping.", journal_file,
                 )
                 return
 
@@ -181,7 +187,7 @@ class HledgerUpdater(BaseScript, HledgerUpdaterInterface):
 
         except Exception as e:
             self.logger.exception(
-                "🔥 Error updating opening balances for year %s: %s", year, str(e)
+                "🔥 Error updating opening balances for year %s: %s", year, str(e),
             )
 
     def execute(self) -> None:

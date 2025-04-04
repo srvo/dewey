@@ -1,4 +1,5 @@
-"""Tests for the LLM exception classes.
+"""
+Tests for the LLM exception classes.
 
 This module tests the custom exception classes in the exceptions.py module.
 """

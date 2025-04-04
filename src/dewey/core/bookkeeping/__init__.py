@@ -1,11 +1,10 @@
-from typing import Optional
-
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection
 
 
 class BookkeepingScript(BaseScript):
-    """Base class for bookkeeping-related scripts.
+    """
+    Base class for bookkeeping-related scripts.
 
     This class inherits from BaseScript and provides a common
     foundation for bookkeeping scripts, including configuration
@@ -17,9 +16,11 @@ class BookkeepingScript(BaseScript):
         config_section: str = "bookkeeping",
         db_connection: DatabaseConnection | None = None,
     ) -> None:
-        """Initializes the BookkeepingScript.
+        """
+        Initializes the BookkeepingScript.
 
         Args:
+        ----
             config_section: The configuration section
                 to use from the dewey.yaml file. Defaults to 'bookkeeping'.
             db_connection: Optional DatabaseConnection instance for dependency injection.
@@ -35,7 +36,8 @@ class BookkeepingScript(BaseScript):
         )
 
     def execute(self) -> None:
-        """Execute the bookkeeping script.
+        """
+        Execute the bookkeeping script.
 
         This implementation satisfies the abstract method requirement from BaseScript
         and calls the run method which should be implemented by subclasses.
@@ -49,11 +51,13 @@ class BookkeepingScript(BaseScript):
             raise
 
     def run(self) -> None:
-        """Abstract method to be implemented by subclasses.
+        """
+        Abstract method to be implemented by subclasses.
 
         This method contains the core logic of the bookkeeping script.
 
-        Raises:
+        Raises
+        ------
             NotImplementedError: If the subclass does not implement this method.
 
         """

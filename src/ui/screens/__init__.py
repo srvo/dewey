@@ -1,4 +1,5 @@
-"""UI Screens
+"""
+UI Screens
 
 This module provides screens for the Dewey TUI system.
 """

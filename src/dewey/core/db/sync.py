@@ -1,17 +1,23 @@
-"""Database synchronization module.
+"""
+Database synchronization module.
 
 This module handles data synchronization between local DuckDB and MotherDuck cloud databases.
 It implements conflict detection, resolution, and change tracking.
 """
 
+import json
 import logging
+import os
+import tempfile
+import time
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Tuple
+from pathlib import Path
 
+# Remove the top-level import to break the circular dependency
+# from dewey.utils.database import execute_query
 from .connection import db_manager
 from .operations import get_column_names
 from .schema import TABLES
-from .utils import record_sync_status
 
 logger = logging.getLogger(__name__)
 
@@ -19,16 +25,17 @@ logger = logging.getLogger(__name__)
 class SyncError(Exception):
     """Exception raised for synchronization errors."""
 
-    pass
-
 
 def get_last_sync_time(local_only: bool = False) -> datetime | None:
-    """Get the timestamp of the last successful sync.
+    """
+    Get the timestamp of the last successful sync.
 
     Args:
+    ----
         local_only: Whether to only check local database
 
     Returns:
+    -------
         Timestamp of last successful sync or None if no sync found
 
     """
@@ -50,16 +57,19 @@ def get_last_sync_time(local_only: bool = False) -> datetime | None:
 
 
 def get_changes_since(
-    table_name: str, since: datetime, local_only: bool = False
+    table_name: str, since: datetime, local_only: bool = False,
 ) -> list[dict]:
-    """Get changes made to a table since the given timestamp.
+    """
+    Get changes made to a table since the given timestamp.
 
     Args:
+    ----
         table_name: Name of the table to check
         since: Timestamp to check changes from
         local_only: Whether to only check local database
 
     Returns:
+    -------
         List of changes as dictionaries
 
     """
@@ -79,23 +89,26 @@ def get_changes_since(
         columns = get_column_names("change_log", local_only=local_only)
 
         # Create dictionaries with proper column mapping
-        return [dict(zip(columns, row)) for row in changes]
+        return [dict(zip(columns, row, strict=False)) for row in changes]
     except Exception as e:
         logger.error(f"Failed to get changes for {table_name}: {e}")
         return []
 
 
 def detect_conflicts(
-    table_name: str, local_changes: list[dict], remote_changes: list[dict]
+    table_name: str, local_changes: list[dict], remote_changes: list[dict],
 ) -> list[dict]:
-    """Detect conflicts between local and remote changes.
+    """
+    Detect conflicts between local and remote changes.
 
     Args:
+    ----
         table_name: Name of the table being checked
         local_changes: List of local changes
         remote_changes: List of remote changes
 
     Returns:
+    -------
         List of conflicts as dictionaries
 
     """
@@ -139,16 +152,18 @@ def detect_conflicts(
                 "operation": "conflict",
                 "error_message": f"Conflicting operations: local={local_op}, remote={remote_op}",
                 "details": {"local": local, "remote": remote},
-            }
+            },
         )
 
     return conflicts
 
 
 def resolve_conflicts(conflicts: list[dict]) -> None:
-    """Record conflicts for manual resolution.
+    """
+    Record conflicts for manual resolution.
 
     Args:
+    ----
         conflicts: List of conflicts to record
 
     """
@@ -173,18 +188,20 @@ def resolve_conflicts(conflicts: list[dict]) -> None:
             )
 
             logger.warning(
-                f"Recorded conflict for {conflict['table_name']}.{conflict['record_id']}"
+                f"Recorded conflict for {conflict['table_name']}.{conflict['record_id']}",
             )
     except Exception as e:
         logger.error(f"Failed to record conflicts: {e}")
 
 
 def apply_changes(
-    table_name: str, changes: list[dict], target_local: bool = True
+    table_name: str, changes: list[dict], target_local: bool = True,
 ) -> None:
-    """Apply changes to the target database.
+    """
+    Apply changes to the target database.
 
     Args:
+    ----
         table_name: Name of the table to update
         changes: List of changes to apply
         target_local: Whether to apply to local database (True) or MotherDuck (False)
@@ -237,117 +254,328 @@ def apply_changes(
                     local_only=target_local,
                 )
 
+            else:
+                logger.warning(f"Unknown operation '{operation}' for {table_name}")
+
             logger.info(f"Applied {operation} to {table_name}.{record_id}")
 
     except Exception as e:
-        logger.error(f"Failed to apply changes to {table_name}: {e}")
-        raise SyncError(f"Failed to apply changes to {table_name}: {e}")
+        logger.error(f"Failed to apply changes for {table_name}: {e}")
 
 
-def sync_table(table_name: str, since: datetime) -> tuple[int, int]:
-    """Synchronize a single table between local and MotherDuck.
+def sync_table(table_name: str, direction: str = "both") -> bool:
+    """
+    Synchronize a single table between local and remote databases.
 
     Args:
-        table_name: Name of the table to sync
-        since: Timestamp to sync changes from
+    ----
+        table_name: The name of the table to synchronize.
+        direction: 'up', 'down', or 'both'
 
     Returns:
-        Tuple of (changes_applied, conflicts_found)
-
+    -------
+        True if sync successful, False otherwise.
     """
-    try:
-        # Get changes from both databases
-        local_changes = get_changes_since(table_name, since, local_only=True)
-        remote_changes = get_changes_since(table_name, since, local_only=False)
+    logger.info(f"Starting sync for table: {table_name} ({direction}) ...")
+    success = True
 
-        # Detect conflicts
-        conflicts = detect_conflicts(table_name, local_changes, remote_changes)
+    last_local_sync = get_last_sync_time(local_only=True)
+    last_remote_sync = get_last_sync_time(local_only=False)
 
-        if conflicts:
-            # Record conflicts for manual resolution
-            resolve_conflicts(conflicts)
-            logger.warning(f"Found {len(conflicts)} conflicts in {table_name}")
+    # Determine the effective last sync time for fetching changes
+    # Use the older of the two for safety, or epoch if none
+    effective_last_sync = datetime.min
+    if last_local_sync and last_remote_sync:
+        effective_last_sync = min(last_local_sync, last_remote_sync)
+    elif last_local_sync:
+        effective_last_sync = last_local_sync
+    elif last_remote_sync:
+        effective_last_sync = last_remote_sync
 
-        # Apply non-conflicting changes
-        local_ids = {c["record_id"] for c in local_changes}
-        remote_ids = {c["record_id"] for c in remote_changes}
-        conflict_ids = {c["record_id"] for c in conflicts}
+    logger.debug(f"Effective last sync time for {table_name}: {effective_last_sync}")
 
-        # Changes to apply to MotherDuck
-        to_remote = [
-            c
-            for c in local_changes
-            if c["record_id"] not in conflict_ids and c["record_id"] not in remote_ids
-        ]
+    # Fetch changes
+    local_changes = get_changes_since(table_name, effective_last_sync, local_only=True)
+    remote_changes = get_changes_since(
+        table_name, effective_last_sync, local_only=False,
+    )
 
-        # Changes to apply to local
-        to_local = [
-            c
-            for c in remote_changes
-            if c["record_id"] not in conflict_ids and c["record_id"] not in local_ids
-        ]
+    if not local_changes and not remote_changes:
+        logger.info(f"No changes detected for {table_name} since {effective_last_sync}")
+        # Update sync status only if there were no previous errors
+        # record_sync_status(table_name, "success") # Consider if needed
+        return True
 
-        # Apply changes
-        if to_remote:
-            apply_changes(table_name, to_remote, target_local=False)
-        if to_local:
-            apply_changes(table_name, to_local, target_local=True)
-
-        changes_applied = len(to_remote) + len(to_local)
-        logger.info(f"Synced {changes_applied} changes for {table_name}")
-
-        return changes_applied, len(conflicts)
-
-    except Exception as e:
-        logger.error(f"Failed to sync {table_name}: {e}")
-        raise SyncError(f"Failed to sync {table_name}: {e}")
-
-
-def sync_all_tables(max_age: timedelta | None = None) -> dict[str, tuple[int, int]]:
-    """Synchronize all tables between local and MotherDuck.
-
-    Args:
-        max_age: Maximum age of changes to sync, defaults to None (sync all)
-
-    Returns:
-        Dictionary mapping table names to (changes_applied, conflicts_found)
-
-    """
-    try:
-        # Get last sync time
-        last_sync = get_last_sync_time()
-        if not last_sync and not max_age:
-            max_age = timedelta(days=7)  # Default to 7 days if no sync history
-
-        since = max(last_sync, datetime.now() - max_age) if max_age else last_sync
-
-        # Start sync
-        record_sync_status("started", f"Starting sync from {since}")
-        results = {}
-
-        # Sync each table
-        for table_name in TABLES:
-            try:
-                changes, conflicts = sync_table(table_name, since)
-                results[table_name] = (changes, conflicts)
-            except Exception as e:
-                logger.error(f"Failed to sync {table_name}: {e}")
-                record_sync_status("error", f"Failed to sync {table_name}: {e}")
-                continue
-
-        # Record successful sync
-        total_changes = sum(r[0] for r in results.values())
-        total_conflicts = sum(r[1] for r in results.values())
+    # Detect conflicts
+    conflicts = detect_conflicts(table_name, local_changes, remote_changes)
+    if conflicts:
+        logger.warning(f"Detected {len(conflicts)} conflicts for {table_name}")
+        resolve_conflicts(conflicts)
         record_sync_status(
-            "success",
-            f"Synced {total_changes} changes, found {total_conflicts} conflicts",
-            {"results": results},
+            table_name, "conflict", f"{len(conflicts)} conflicts detected",
+        )
+        success = False # Indicate sync failure due to conflicts
+
+    # Apply changes based on direction (avoiding conflicts)
+    if direction in ("down", "both"):
+        apply_changes(
+            table_name,
+            [c for c in remote_changes if c["record_id"] not in {co["record_id"] for co in conflicts}],
+            target_local=True,
         )
 
-        return results
+    if direction in ("up", "both"):
+        apply_changes(
+            table_name,
+            [c for c in local_changes if c["record_id"] not in {co["record_id"] for co in conflicts}],
+            target_local=False,
+        )
+
+    # Record final sync status
+    if success:
+        record_sync_status(table_name, "success")
+        logger.info(f"Successfully synced table {table_name}")
+    else:
+        logger.error(f"Sync failed for table {table_name} due to conflicts")
+
+    return success
+
+
+def record_sync_status(
+    table_name: str, status: str, error_message: str | None = None,
+) -> None:
+    """
+    Record the status of a synchronization attempt.
+
+    Args:
+    ----
+        table_name: The table being synced
+        status: 'success', 'failed', 'conflict'
+        error_message: Optional message if status is failed or conflict
+
+    """
+    try:
+        # Record in local db only for now
+        db_manager.execute_query(
+            """
+            INSERT INTO sync_status (table_name, status, error_message, created_at)
+            VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+        """,
+            [table_name, status, error_message],
+            for_write=True,
+            local_only=True,
+        )
+    except Exception as e:
+        logger.error(f"Failed to record sync status for {table_name}: {e}")
+
+
+def direct_copy_table(
+    table_name: str,
+    source_local: bool = False,
+    target_local: bool = True,
+    create_table: bool = True,
+) -> bool:
+    """
+    Directly copies a table between databases using CSV export/import.
+
+    This performs a full refresh, dropping the target table if it exists.
+
+    Args:
+    ----
+        table_name: The name of the table to copy.
+        source_local: If True, copy from local DB. If False, copy from MotherDuck.
+        target_local: If True, copy to local DB. If False, copy to MotherDuck.
+        create_table: If True, create the table in the target if it doesn't exist.
+
+    Returns:
+    -------
+        True if copy successful, False otherwise.
+    """
+    start_time = time.time()
+    logger.info(
+        f"Starting direct copy for table: {table_name} "
+        f"(source_local={source_local}, target_local={target_local})",
+    )
+
+    source_conn = db_manager.get_connection(local_only=source_local)
+    target_conn = db_manager.get_connection(local_only=target_local)
+
+    if not source_conn or not target_conn:
+        logger.error(f"Failed to get database connections for table {table_name}")
+        return False
+
+    try:
+        # 1. Check if source table exists
+        try:
+            source_row_count = source_conn.execute(
+                f"SELECT COUNT(*) FROM {table_name}",
+            ).fetchone()[0]
+            logger.info(f"Source table {table_name} has {source_row_count} rows.")
+        except Exception as e:
+            logger.error(f"Source table {table_name} check failed: {e}")
+            return False
+
+        # 2. Get schema from source
+        try:
+            schema_result = source_conn.execute(f"DESCRIBE {table_name}").fetchall()
+            create_stmt_parts = []
+            for col in schema_result:
+                col_name = col[0]
+                col_type = col[1]
+                # Ensure column names are quoted properly, escaping existing quotes
+                # Double quotes are standard SQL for identifiers
+                escaped_col_name = col_name.replace('"', '""')
+                quoted_col_name = f'"{escaped_col_name}"'
+                create_stmt_parts.append(f"{quoted_col_name} {col_type}")
+            create_stmt = f"CREATE TABLE {table_name} ({', '.join(create_stmt_parts)})"
+        except Exception as e:
+            logger.error(f"Failed to get schema for {table_name}: {e}")
+            return False
+
+        # 3. Export source to temporary CSV
+        with tempfile.TemporaryDirectory() as temp_dir:
+            csv_path = Path(temp_dir) / f"{table_name}.csv"
+            logger.info(f"Exporting {table_name} to {csv_path}")
+            try:
+                # Handle potential large tables (consider streaming/chunking later if needed)
+                source_conn.execute(
+                    f"COPY (SELECT * FROM {table_name}) TO ? (HEADER, DELIMITER ',')",
+                    [str(csv_path)],
+                )
+            except Exception as e:
+                logger.error(f"Failed to export {table_name} to CSV: {e}")
+                return False
+
+            # 4. Prepare target table
+            try:
+                # Check if table exists in target
+                target_exists = target_conn.execute(
+                    f"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = '{table_name}')",
+                ).fetchone()[0]
+
+                if target_exists:
+                    logger.warning(f"Dropping existing table {table_name} in target.")
+                    target_conn.execute(f"DROP TABLE IF EXISTS {table_name}")
+
+                if create_table or target_exists: # Create if needed or if recreating
+                    logger.info(f"Creating table {table_name} in target.")
+                    target_conn.execute(create_stmt)
+                else:
+                    logger.error(
+                        f"Target table {table_name} does not exist and create_table=False."
+                    )
+                    return False
+
+            except Exception as e:
+                logger.error(f"Failed to prepare target table {table_name}: {e}")
+                return False
+
+            # 5. Import CSV to target
+            try:
+                logger.info(f"Importing {csv_path} into target table {table_name}")
+                # Use DuckDB's COPY for efficiency
+                target_conn.execute(
+                    f"COPY {table_name} FROM ? (HEADER, DELIMITER ',')", [str(csv_path)],
+                )
+            except Exception as e:
+                logger.error(f"Failed to import CSV into {table_name}: {e}")
+                # Attempt to clean up the partially created table
+                try:
+                    target_conn.execute(f"DROP TABLE IF EXISTS {table_name}")
+                except Exception as drop_e:
+                    logger.error(f"Failed to cleanup partially created table {table_name}: {drop_e}")
+                return False
+
+        # 6. Verify row count
+        try:
+            target_row_count = target_conn.execute(
+                f"SELECT COUNT(*) FROM {table_name}",
+            ).fetchone()[0]
+            logger.info(
+                f"Target table {table_name} now has {target_row_count} rows.",
+            )
+            if source_row_count != target_row_count:
+                logger.warning(
+                    f"Row count mismatch for {table_name}: "
+                    f"Source={source_row_count}, Target={target_row_count}"
+                )
+                # Optionally return False here if strict matching is required
+
+        except Exception as e:
+            logger.warning(f"Failed to verify row count for {table_name}: {e}")
+
+        duration = time.time() - start_time
+        logger.info(f"Direct copy for {table_name} completed in {duration:.2f} seconds.")
+        return True
 
     except Exception as e:
-        error_msg = f"Sync failed: {e}"
-        logger.error(error_msg)
-        record_sync_status("error", error_msg)
-        raise SyncError(error_msg)
+        logger.exception(f"Unexpected error during direct copy of {table_name}: {e}")
+        return False
+    finally:
+        # Ensure connections are released/closed if managed outside db_manager
+        # If db_manager handles connections, this might not be needed
+        pass
+
+
+def direct_copy_all_tables(
+    source_local: bool = False,
+    target_local: bool = True,
+    exclude_prefix: list[str] | None = None,
+) -> bool:
+    """
+    Copies all tables from source to target using the direct copy method.
+
+    Args:
+    ----
+        source_local: If True, copy from local DB. If False, copy from MotherDuck.
+        target_local: If True, copy to local DB. If False, copy to MotherDuck.
+        exclude_prefix: List of prefixes for tables to exclude (e.g., ['sqlite_', 'tmp_'])
+
+    Returns:
+    -------
+        True if all tables copied successfully, False otherwise.
+    """
+    logger.info(
+        f"Starting direct copy for ALL tables (source_local={source_local}, target_local={target_local})",
+    )
+    source_conn = db_manager.get_connection(local_only=source_local)
+    if not source_conn:
+        logger.error("Failed to get source database connection.")
+        return False
+
+    if exclude_prefix is None:
+        exclude_prefix = ["sqlite_", "information_schema", "pg_", "duckdb_"]
+
+    try:
+        tables_result = source_conn.execute("SHOW TABLES").fetchall()
+        all_tables = [table[0] for table in tables_result]
+
+        tables_to_copy = [
+            t
+            for t in all_tables
+            if not any(t.startswith(prefix) for prefix in exclude_prefix)
+        ]
+
+        logger.info(f"Found {len(tables_to_copy)} tables to copy.")
+
+        overall_success = True
+        for table_name in tables_to_copy:
+            success = direct_copy_table(
+                table_name, source_local=source_local, target_local=target_local,
+            )
+            if not success:
+                logger.error(f"Failed to copy table: {table_name}")
+                overall_success = False
+                # Decide whether to continue or stop on first error
+                # break # Uncomment to stop on first error
+
+        logger.info("Finished direct copy for all tables.")
+        return overall_success
+
+    except Exception as e:
+        logger.exception(f"Error getting table list for direct copy: {e}")
+        return False
+
+# Placeholder for the main sync function if needed
+# def run_sync(direction='both', tables=None, exclude=None):
+#     pass

@@ -1,4 +1,5 @@
-"""Production tests package.
+"""
+Production tests package.
 
 This package contains tests for production code.
 """

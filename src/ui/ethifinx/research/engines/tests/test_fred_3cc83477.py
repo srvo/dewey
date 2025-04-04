@@ -1,6 +1,7 @@
 # Formatting failed: LLM generation failed: Gemini API error: Model gemini-2.0-flash in cooldown until Sat Mar 15 00:33:42 2025
 
-"""Tests for FRED API Engine.
+"""
+Tests for FRED API Engine.
 ====================
 """
 
@@ -12,14 +13,14 @@ import pytest
 from ethifinx.research.engines.fred import FREDEngine
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_env():
     """Mock environment variables."""
     with patch.dict(os.environ, {"FRED_API_KEY": "test_key"}):
         yield
 
 
-@pytest.fixture
+@pytest.fixture()
 async def engine(mock_env):
     """Create a FREDEngine instance for testing."""
     engine = FREDEngine(max_retries=2)
@@ -30,7 +31,7 @@ async def engine(mock_env):
         await engine._close_session()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_engine_initialization(mock_env) -> None:
     """Test that the engine initializes correctly."""
     engine = FREDEngine(max_retries=2)
@@ -39,7 +40,7 @@ async def test_engine_initialization(mock_env) -> None:
     assert engine.api_key == "test_key"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_process_method(engine) -> None:
     """Test the process method returns expected status."""
     engine = await engine
@@ -48,7 +49,7 @@ async def test_process_method(engine) -> None:
     assert result["status"] == "FRED engine ready"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_category(engine) -> None:
     """Test category retrieval."""
     engine = await engine
@@ -86,7 +87,7 @@ async def test_get_category(engine) -> None:
         assert params["file_type"] == "json"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_category_children(engine) -> None:
     """Test category children retrieval."""
     engine = await engine
@@ -112,7 +113,7 @@ async def test_get_category_children(engine) -> None:
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_category_series(engine) -> None:
     """Test category series retrieval."""
     engine = await engine
@@ -144,7 +145,7 @@ async def test_get_category_series(engine) -> None:
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_series(engine) -> None:
     """Test series retrieval."""
     engine = await engine
@@ -176,7 +177,7 @@ async def test_get_series(engine) -> None:
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_series_observations(engine) -> None:
     """Test series observations retrieval."""
     engine = await engine
@@ -201,16 +202,14 @@ async def test_get_series_observations(engine) -> None:
         mock_get.return_value = mock_context
 
         result = await engine.get_series_observations(
-            "GDP",
-            observation_start="2024-01-01",
-            observation_end="2024-01-01",
+            "GDP", observation_start="2024-01-01", observation_end="2024-01-01",
         )
 
         assert result == mock_response
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_search_series(engine) -> None:
     """Test series search."""
     engine = await engine
@@ -249,7 +248,7 @@ async def test_search_series(engine) -> None:
         assert params["limit"] == 1
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_releases(engine) -> None:
     """Test releases retrieval."""
     engine = await engine
@@ -279,7 +278,7 @@ async def test_get_releases(engine) -> None:
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_release_dates(engine) -> None:
     """Test release dates retrieval."""
     engine = await engine
@@ -308,7 +307,7 @@ async def test_get_release_dates(engine) -> None:
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_search_retry_on_error(engine) -> None:
     """Test search retries on API errors."""
     engine = await engine
@@ -334,7 +333,7 @@ async def test_search_retry_on_error(engine) -> None:
         assert mock_get.call_count == 2
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_missing_api_key() -> None:
     """Test error handling for missing API key."""
     with patch.dict(os.environ, clear=True):

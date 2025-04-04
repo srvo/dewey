@@ -1,17 +1,22 @@
 #!/usr/bin/env python3
-"""Feedback Manager TUI
+"""
+Feedback Manager TUI
 
 A Textual-based Terminal User Interface for managing feedback,
-flagging follow-ups, and annotating contacts.
+flagging follow-ups, and annotating contacts, using PostgreSQL.
 """
 
 import datetime
-from typing import Any, Dict, List, Optional
+import logging
+from typing import Any
 
-import duckdb
-
-# Import database models and utilities
-from dewey.core.db.utils import DatabaseUtils
+# Import database utilities for PostgreSQL
+from dewey.utils.database import (
+    create_table_if_not_exists,
+    execute_query,
+    fetch_all,
+    initialize_pool,
+)
 from textual import on, work
 from textual.app import App, ComposeResult
 from textual.binding import Binding
@@ -31,10 +36,7 @@ from textual.widgets import (
     TextArea,
 )
 
-# Configuration
-ACTIVE_DATA_DIR = "/Users/srvo/input_data/ActiveData"
-DB_FILE = f"{ACTIVE_DATA_DIR}/process_feedback.duckdb"
-MOTHERDUCK_DB = "md:dewey"
+logger = logging.getLogger(__name__)
 
 
 class FeedbackItem:
@@ -105,179 +107,178 @@ class FeedbackItem:
 
 
 class FeedbackDatabase:
-    """Database manager for feedback data."""
+    """Database manager for feedback data using PostgreSQL."""
 
-    def __init__(self, db_path: str = DB_FILE, md_conn: str | None = MOTHERDUCK_DB):
-        self.db_path = db_path
-        self.md_conn = md_conn
-        self.db_utils = DatabaseUtils()
+    def __init__(self):
+        initialize_pool()
         self._ensure_tables()
 
     def _ensure_tables(self) -> None:
-        """Ensure required tables exist in the database."""
-        # Connect to local database
-        conn = duckdb.connect(self.db_path)
+        """Ensure required tables exist in the PostgreSQL database."""
+        feedback_table = "feedback"
+        columns_definition = (
+            "msg_id VARCHAR(255) PRIMARY KEY, "
+            "subject TEXT, "
+            "original_priority INTEGER, "
+            "assigned_priority INTEGER, "
+            "suggested_priority INTEGER, "
+            "feedback_comments TEXT, "
+            "add_to_topics TEXT, "
+            "timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP, "
+            "follow_up BOOLEAN DEFAULT FALSE, "
+            "contact_email VARCHAR(255), "
+            "contact_name TEXT, "
+            "contact_notes TEXT"
+        )
+        try:
+            create_table_if_not_exists(feedback_table, columns_definition)
+            logger.debug(f"Ensured table '{feedback_table}' exists.")
 
-        # Create feedback table if it doesn't exist
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS feedback (
-                msg_id VARCHAR PRIMARY KEY,
-                subject VARCHAR,
-                original_priority INTEGER,
-                assigned_priority INTEGER,
-                suggested_priority INTEGER,
-                feedback_comments VARCHAR,
-                add_to_topics VARCHAR,
-                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                follow_up BOOLEAN DEFAULT FALSE,
-                contact_email VARCHAR,
-                contact_name VARCHAR,
-                contact_notes VARCHAR
-            )
-        """)
+            index_name = "idx_feedback_follow_up"
+            index_query = f"CREATE INDEX IF NOT EXISTS {index_name} ON {feedback_table}(follow_up);"
+            execute_query(index_query)
+            logger.debug(f"Ensured index '{index_name}' exists.")
 
-        # Create index on follow_up column for efficient filtering
-        conn.execute("""
-            CREATE INDEX IF NOT EXISTS idx_feedback_follow_up ON feedback(follow_up)
-        """)
-
-        conn.close()
+        except Exception as e:
+            logger.error(f"Error ensuring tables/indexes: {e}")
+            raise
 
     def get_all_feedback(self) -> list[FeedbackItem]:
         """Get all feedback items from the database."""
-        conn = duckdb.connect(self.db_path)
-        result = conn.execute("""
-            SELECT *
-            FROM feedback
-            ORDER BY timestamp DESC
-        """).fetchall()
+        query = "SELECT * FROM feedback ORDER BY timestamp DESC"
+        try:
+            results = fetch_all(query)
+            colnames = self._get_table_columns("feedback")
+            if not colnames:
+                logger.error("Could not retrieve column names for feedback table.")
+                return []
 
-        columns = [col[0] for col in conn.description()]
-        conn.close()
-
-        feedback_items = []
-        for row in result:
-            item_dict = dict(zip(columns, row))
-            feedback_items.append(FeedbackItem.from_dict(item_dict))
-
-        return feedback_items
+            feedback_items = []
+            for row in results:
+                item_dict = dict(zip(colnames, row, strict=False))
+                feedback_items.append(FeedbackItem.from_dict(item_dict))
+            return feedback_items
+        except Exception as e:
+            logger.error(f"Error getting all feedback: {e}")
+            return []
 
     def get_follow_up_items(self) -> list[FeedbackItem]:
         """Get all feedback items flagged for follow-up."""
-        conn = duckdb.connect(self.db_path)
-        result = conn.execute("""
-            SELECT *
-            FROM feedback
-            WHERE follow_up = TRUE
-            ORDER BY timestamp DESC
-        """).fetchall()
+        query = "SELECT * FROM feedback WHERE follow_up = TRUE ORDER BY timestamp DESC"
+        try:
+            results = fetch_all(query)
+            colnames = self._get_table_columns("feedback")
+            if not colnames:
+                logger.error("Could not retrieve column names for feedback table.")
+                return []
 
-        columns = [col[0] for col in conn.description()]
-        conn.close()
+            feedback_items = []
+            for row in results:
+                item_dict = dict(zip(colnames, row, strict=False))
+                feedback_items.append(FeedbackItem.from_dict(item_dict))
+            return feedback_items
+        except Exception as e:
+            logger.error(f"Error getting follow-up items: {e}")
+            return []
 
-        feedback_items = []
-        for row in result:
-            item_dict = dict(zip(columns, row))
-            feedback_items.append(FeedbackItem.from_dict(item_dict))
-
-        return feedback_items
+    def _get_table_columns(
+        self, table_name: str, schema: str = "public",
+    ) -> list[str] | None:
+        """Helper to get column names for a table."""
+        query = """
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_schema = %s AND table_name = %s
+        ORDER BY ordinal_position;
+        """
+        try:
+            results = fetch_all(query, [schema, table_name])
+            return [row[0] for row in results]
+        except Exception as e:
+            logger.error(f"Error getting columns for table {schema}.{table_name}: {e}")
+            return None
 
     def add_or_update_feedback(self, feedback_item: FeedbackItem) -> None:
-        """Add or update a feedback item in the database."""
-        conn = duckdb.connect(self.db_path)
-
-        # Use UPSERT pattern
-        conn.execute(
-            """
-            INSERT INTO feedback
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ON CONFLICT (msg_id) DO UPDATE SET
-                subject = EXCLUDED.subject,
-                original_priority = EXCLUDED.original_priority,
-                assigned_priority = EXCLUDED.assigned_priority,
-                suggested_priority = EXCLUDED.suggested_priority,
-                feedback_comments = EXCLUDED.feedback_comments,
-                add_to_topics = EXCLUDED.add_to_topics,
-                timestamp = EXCLUDED.timestamp,
-                follow_up = EXCLUDED.follow_up,
-                contact_email = EXCLUDED.contact_email,
-                contact_name = EXCLUDED.contact_name,
-                contact_notes = EXCLUDED.contact_notes
-        """,
-            [
-                feedback_item.msg_id,
-                feedback_item.subject,
-                feedback_item.original_priority,
-                feedback_item.assigned_priority,
-                feedback_item.suggested_priority,
-                feedback_item.feedback_comments,
-                feedback_item.add_to_topics,
-                feedback_item.timestamp,
-                feedback_item.follow_up,
-                feedback_item.contact_email,
-                feedback_item.contact_name,
-                feedback_item.contact_notes,
-            ],
+        """Add or update a feedback item using PostgreSQL's ON CONFLICT."""
+        query = """
+        INSERT INTO feedback (
+            msg_id, subject, original_priority, assigned_priority, suggested_priority,
+            feedback_comments, add_to_topics, timestamp, follow_up,
+            contact_email, contact_name, contact_notes
         )
-
-        conn.close()
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ON CONFLICT (msg_id) DO UPDATE SET
+            subject = EXCLUDED.subject,
+            original_priority = EXCLUDED.original_priority,
+            assigned_priority = EXCLUDED.assigned_priority,
+            suggested_priority = EXCLUDED.suggested_priority,
+            feedback_comments = EXCLUDED.feedback_comments,
+            add_to_topics = EXCLUDED.add_to_topics,
+            timestamp = EXCLUDED.timestamp,
+            follow_up = EXCLUDED.follow_up,
+            contact_email = EXCLUDED.contact_email,
+            contact_name = EXCLUDED.contact_name,
+            contact_notes = EXCLUDED.contact_notes
+        """
+        params = [
+            feedback_item.msg_id,
+            feedback_item.subject,
+            feedback_item.original_priority,
+            feedback_item.assigned_priority,
+            feedback_item.suggested_priority,
+            feedback_item.feedback_comments,
+            feedback_item.add_to_topics,
+            feedback_item.timestamp,
+            feedback_item.follow_up,
+            feedback_item.contact_email,
+            feedback_item.contact_name,
+            feedback_item.contact_notes,
+        ]
+        try:
+            execute_query(query, params)
+            logger.debug(f"Upserted feedback item: {feedback_item.msg_id}")
+        except Exception as e:
+            logger.error(f"Error upserting feedback item {feedback_item.msg_id}: {e}")
+            # Decide if re-raise is needed
 
     def delete_feedback(self, msg_id: str) -> None:
         """Delete a feedback item from the database."""
-        conn = duckdb.connect(self.db_path)
-        conn.execute("DELETE FROM feedback WHERE msg_id = ?", [msg_id])
-        conn.close()
+        query = "DELETE FROM feedback WHERE msg_id = %s"
+        params = [msg_id]
+        try:
+            execute_query(query, params)
+            logger.debug(f"Deleted feedback item: {msg_id}")
+        except Exception as e:
+            logger.error(f"Error deleting feedback item {msg_id}: {e}")
+            # Decide if re-raise is needed
 
     def toggle_follow_up(self, msg_id: str, follow_up: bool) -> None:
         """Toggle the follow-up flag for a feedback item."""
-        conn = duckdb.connect(self.db_path)
-        conn.execute(
-            """
-            UPDATE feedback
-            SET follow_up = ?
-            WHERE msg_id = ?
-        """,
-            [follow_up, msg_id],
-        )
-        conn.close()
+        query = "UPDATE feedback SET follow_up = %s WHERE msg_id = %s"
+        params = [follow_up, msg_id]
+        try:
+            execute_query(query, params)
+            logger.debug(f"Toggled follow-up for feedback item: {msg_id}")
+        except Exception as e:
+            logger.error(f"Error toggling follow-up for feedback item {msg_id}: {e}")
+            # Decide if re-raise is needed
 
     def update_contact_notes(self, email: str, notes: str) -> None:
         """Update notes for a contact."""
         if not email:
             return
 
-        conn = duckdb.connect(self.db_path)
-
-        # Update all feedback items with this contact's email
-        conn.execute(
-            """
-            UPDATE feedback
-            SET contact_notes = ?
-            WHERE contact_email = ?
-        """,
-            [notes, email],
-        )
-
-        # If connected to MotherDuck, also update the contacts table there
-        if self.md_conn:
-            try:
-                md_conn = duckdb.connect(self.md_conn)
-                md_conn.execute(
-                    """
-                    UPDATE contacts
-                    SET notes = ?
-                    WHERE email = ?
-                """,
-                    [notes, email],
-                )
-                md_conn.close()
-            except Exception as e:
-                print(f"Error updating contact in MotherDuck: {e}")
-
-        conn.close()
+        query = "UPDATE feedback SET contact_notes = %s WHERE contact_email = %s"
+        params = [notes, email]
+        try:
+            execute_query(query, params)
+            logger.debug(f"Updated contact notes for: {email}")
+        except Exception as e:
+            logger.error(f"Error updating contact notes for {email}: {e}")
+            # Decide if re-raise is needed
 
     def get_email_threads(
-        self, contact_email: str | None = None
+        self, contact_email: str | None = None,
     ) -> list[dict[str, Any]]:
         """Get email threads from MotherDuck, optionally filtered by contact."""
         if not self.md_conn:
@@ -312,7 +313,7 @@ class FeedbackDatabase:
 
             threads = []
             for row in result:
-                thread_dict = dict(zip(columns, row))
+                thread_dict = dict(zip(columns, row, strict=False))
                 threads.append(thread_dict)
 
             return threads
@@ -426,7 +427,7 @@ class FeedbackEditModal(ModalScreen):
             with Vertical(id="feedback-details"):
                 yield Label("Subject:")
                 yield Input(
-                    value=self.feedback_item.subject, id="subject-input", disabled=True
+                    value=self.feedback_item.subject, id="subject-input", disabled=True,
                 )
 
                 yield Label("Original Priority:")
@@ -460,7 +461,7 @@ class FeedbackEditModal(ModalScreen):
 
                 yield Label("Topics (comma separated):")
                 yield Input(
-                    value=self.feedback_item.add_to_topics or "", id="topics-input"
+                    value=self.feedback_item.add_to_topics or "", id="topics-input",
                 )
 
                 yield Checkbox(
@@ -495,11 +496,11 @@ class FeedbackEditModal(ModalScreen):
         )
 
         self.feedback_item.feedback_comments = self.query_one(
-            "#feedback-comments", TextArea
+            "#feedback-comments", TextArea,
         ).value
         self.feedback_item.add_to_topics = self.query_one("#topics-input", Input).value
         self.feedback_item.follow_up = self.query_one(
-            "#follow-up-checkbox", Checkbox
+            "#follow-up-checkbox", Checkbox,
         ).value
 
         # Return the updated feedback item to the caller
@@ -545,7 +546,7 @@ class FeedbackManagerApp(App):
 
             with Container(id="detail-container"):
                 yield Static(
-                    "Select a feedback item to view details", id="detail-header"
+                    "Select a feedback item to view details", id="detail-header",
                 )
                 with Vertical(id="feedback-details"):
                     yield Static("", id="feedback-subject")
@@ -660,7 +661,7 @@ class FeedbackManagerApp(App):
                 contact = contact[:17] + "..."
 
             table.add_row(
-                short_id, subject, priority, suggested, topics, follow_up, date, contact
+                short_id, subject, priority, suggested, topics, follow_up, date, contact,
             )
 
         # Reset selection
@@ -718,7 +719,7 @@ class FeedbackManagerApp(App):
     def clear_detail_view(self) -> None:
         """Clear the detail view."""
         self.query_one("#detail-header", Static).update(
-            "Select a feedback item to view details"
+            "Select a feedback item to view details",
         )
         self.query_one("#feedback-subject", Static).update("")
         self.query_one("#feedback-metadata", Static).update("")
@@ -771,13 +772,13 @@ class FeedbackManagerApp(App):
 
         if not item.contact_email:
             self.notify(
-                "No contact email associated with this feedback", title="No Contact"
+                "No contact email associated with this feedback", title="No Contact",
             )
             return
 
         result = await self.push_screen(
             ContactDetailModal(
-                item.contact_email, item.contact_name, item.contact_notes
+                item.contact_email, item.contact_name, item.contact_notes,
             ),
             wait=True,
         )

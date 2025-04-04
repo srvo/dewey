@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -7,9 +7,11 @@ class CsvIngestion(BaseScript):
     """A script for ingesting CSV data."""
 
     def __init__(self, script_name: str, config: dict[str, Any]):
-        """Initializes the CsvIngestion script.
+        """
+        Initializes the CsvIngestion script.
 
         Args:
+        ----
             script_name: The name of the script.
             config: The configuration dictionary.
 
@@ -18,15 +20,18 @@ class CsvIngestion(BaseScript):
         self.config = config
 
     def run(self) -> None:
-        """Executes the CSV ingestion process.
+        """
+        Executes the CSV ingestion process.
 
         This method retrieves configuration values, processes the CSV data,
         and performs necessary actions.
 
-        Returns:
+        Returns
+        -------
             None
 
-        Raises:
+        Raises
+        ------
             Exception: If an error occurs during the CSV ingestion process.
 
         """
@@ -52,7 +57,8 @@ class CsvIngestion(BaseScript):
             raise
 
     def execute(self) -> None:
-        """Executes the CSV ingestion process.
+        """
+        Executes the CSV ingestion process.
 
         This method retrieves configuration values, processes the CSV data,
         and performs necessary actions.

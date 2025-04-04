@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""MotherDuck Schema Extractor
+"""
+MotherDuck Schema Extractor
 
 This script connects to MotherDuck, extracts the database schema,
 and updates the SQLAlchemy models in models.py file.
@@ -11,7 +12,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 import duckdb
 import yaml
@@ -82,7 +83,8 @@ PROBLEMATIC_IDENTIFIERS = {
 
 
 def sanitize_identifier(identifier: str) -> str:
-    """Sanitize an identifier to make it a valid Python identifier.
+    """
+    Sanitize an identifier to make it a valid Python identifier.
     - Replace spaces with underscores
     - Handle reserved keywords
     - Handle identifiers starting with numbers
@@ -189,7 +191,7 @@ def load_config() -> dict[str, Any]:
     if not config_path.exists():
         # If still not found, use default connection without config
         print(
-            "Warning: Could not find dewey.yaml configuration file. Using default connection."
+            "Warning: Could not find dewey.yaml configuration file. Using default connection.",
         )
         return {"motherduck": {"token": os.environ.get("MOTHERDUCK_TOKEN")}}
 
@@ -202,11 +204,11 @@ def load_config() -> dict[str, Any]:
 def get_motherduck_connection(config: dict[str, Any]) -> duckdb.DuckDBPyConnection:
     """Establish connection to MotherDuck."""
     token = os.environ.get("MOTHERDUCK_TOKEN") or config.get("motherduck", {}).get(
-        "token"
+        "token",
     )
     if not token:
         raise ValueError(
-            "MotherDuck token not found. Set MOTHERDUCK_TOKEN environment variable or add to dewey.yaml."
+            "MotherDuck token not found. Set MOTHERDUCK_TOKEN environment variable or add to dewey.yaml.",
         )
 
     # Set token in environment variable first
@@ -254,7 +256,7 @@ def extract_schema(conn: duckdb.DuckDBPyConnection) -> list[dict[str, Any]]:
                         "column": row["from"],
                         "ref_table": row["table"],
                         "ref_column": row["to"],
-                    }
+                    },
                 )
         except Exception:
             # Some tables might not support foreign key info
@@ -276,7 +278,7 @@ def extract_schema(conn: duckdb.DuckDBPyConnection) -> list[dict[str, Any]]:
                     "nullable": is_nullable,
                     "default": default_value,
                     "primary_key": is_pk,
-                }
+                },
             )
 
         schema_info.append(
@@ -284,7 +286,7 @@ def extract_schema(conn: duckdb.DuckDBPyConnection) -> list[dict[str, Any]]:
                 "table_name": table_name,
                 "columns": column_info,
                 "foreign_keys": foreign_keys,
-            }
+            },
         )
 
     return schema_info
@@ -537,7 +539,7 @@ def generate_sqlalchemy_models(
             for fk in table["foreign_keys"]:
                 if fk["column"] == column["name"]:
                     options.append(
-                        f"sa.ForeignKey('{fk['ref_table']}.{fk['ref_column']}')"
+                        f"sa.ForeignKey('{fk['ref_table']}.{fk['ref_column']}')",
                     )
 
             # Combine options
@@ -555,18 +557,18 @@ def generate_sqlalchemy_models(
                 id_col = next(col for col in table["columns"] if col["name"] == "id")
                 id_type = map_duckdb_to_sqlalchemy(id_col["type"])
                 model_lines.append(
-                    "    # SQLAlchemy workaround: Adding primary key to id column"
+                    "    # SQLAlchemy workaround: Adding primary key to id column",
                 )
                 model_lines.append(f"    id = Column({id_type}, primary_key=True)")
             else:
                 # Table has no id column, add a virtual one for SQLAlchemy
                 model_lines.append(
-                    "    # SQLAlchemy workaround: Adding virtual primary key"
+                    "    # SQLAlchemy workaround: Adding virtual primary key",
                 )
                 model_lines.append("    id = Column(sa.Integer, primary_key=True)")
                 model_lines.append("    __mapper_args__ = {'primary_key': ['id']}")
                 model_lines.append(
-                    "    # Note: This column doesn't exist in the database"
+                    "    # Note: This column doesn't exist in the database",
                 )
 
         # Add custom methods from existing model
@@ -597,23 +599,26 @@ def generate_sqlalchemy_models(
 
     # Combine everything
     return "\n".join(
-        imports + model_definitions + [table_schemas_dict, table_indexes_dict]
+        imports + model_definitions + [table_schemas_dict, table_indexes_dict],
     )
 
 
 def parse_create_table_schema(schema_str: str) -> dict[str, dict[str, Any]]:
-    """Parse a CREATE TABLE schema string into a dictionary of column definitions.
+    """
+    Parse a CREATE TABLE schema string into a dictionary of column definitions.
 
     Args:
+    ----
         schema_str: CREATE TABLE SQL statement
 
     Returns:
+    -------
         Dictionary mapping column names to their properties
 
     """
     # Extract table name and columns
     table_match = re.search(
-        r"CREATE TABLE\s+(?:IF NOT EXISTS\s+)?(\w+)\s*\((.*?)\)", schema_str, re.DOTALL
+        r"CREATE TABLE\s+(?:IF NOT EXISTS\s+)?(\w+)\s*\((.*?)\)", schema_str, re.DOTALL,
     )
     if not table_match:
         raise ValueError(f"Invalid CREATE TABLE statement: {schema_str}")
@@ -684,15 +689,18 @@ def parse_create_table_schema(schema_str: str) -> dict[str, dict[str, Any]]:
 
 
 def compare_schemas_and_generate_alters(
-    db_schema: list[dict[str, Any]], code_schemas: dict[str, dict[str, dict[str, Any]]]
+    db_schema: list[dict[str, Any]], code_schemas: dict[str, dict[str, dict[str, Any]]],
 ) -> dict[str, list[str]]:
-    """Compare database schema with code-defined schemas and generate ALTER statements.
+    """
+    Compare database schema with code-defined schemas and generate ALTER statements.
 
     Args:
+    ----
         db_schema: Schema extracted from the database
         code_schemas: Schemas defined in code (parsed from CREATE TABLE statements)
 
     Returns:
+    -------
         Dictionary mapping table names to lists of ALTER statements
 
     """
@@ -729,7 +737,7 @@ def compare_schemas_and_generate_alters(
                         col_def += f" DEFAULT {col_info['default']}"
 
                     alter_statements[table_name].append(
-                        f"ALTER TABLE {table_name} ADD COLUMN {col_def};"
+                        f"ALTER TABLE {table_name} ADD COLUMN {col_def};",
                     )
         else:
             # Table doesn't exist, generate CREATE TABLE
@@ -737,7 +745,7 @@ def compare_schemas_and_generate_alters(
             # This assumes you have access to the original CREATE TABLE statements
             # You might need to adapt this based on how you store/access the schemas
             alter_statements[table_name] = [
-                f"-- Table {table_name} doesn't exist in the database"
+                f"-- Table {table_name} doesn't exist in the database",
                 # Add CREATE TABLE statement if you have it
             ]
 
@@ -750,15 +758,18 @@ def bidirectional_sync(
     code_schemas: dict[str, dict[str, dict[str, Any]]],
     execute_alters: bool = False,
 ) -> dict[str, list[str]]:
-    """Perform bidirectional synchronization between database and code.
+    """
+    Perform bidirectional synchronization between database and code.
 
     Args:
+    ----
         conn: Database connection
         schema_info: Schema extracted from database
         code_schemas: Schemas defined in code
         execute_alters: Whether to execute the ALTER statements
 
     Returns:
+    -------
         Dictionary of ALTER statements (executed or not)
 
     """
@@ -797,7 +808,7 @@ def extract_schema_from_code() -> dict[str, dict[str, dict[str, Any]]]:
     # You'll need to identify and locate all schema definitions in your code
     # This is just an example - adapt it to your project structure
     email_schema_path = Path(
-        "/Users/srvo/dewey/src/dewey/core/crm/email/imap_import_standalone.py"
+        "/Users/srvo/dewey/src/dewey/core/crm/email/imap_import_standalone.py",
     )
 
     try:
@@ -808,7 +819,7 @@ def extract_schema_from_code() -> dict[str, dict[str, dict[str, Any]]]:
                 content = f.read()
                 # Extract EMAIL_SCHEMA using regex
                 schema_match = re.search(
-                    r"EMAIL_SCHEMA\s*=\s*\'\'\'(.*?)\'\'\'", content, re.DOTALL
+                    r"EMAIL_SCHEMA\s*=\s*\'\'\'(.*?)\'\'\'", content, re.DOTALL,
                 )
                 if schema_match:
                     email_schema = schema_match.group(1)
@@ -837,7 +848,7 @@ def main(
         # Extract schema from database
         schema_info = extract_schema(conn)
         print(
-            f"Extracted schema information for {len(schema_info)} tables from database."
+            f"Extracted schema information for {len(schema_info)} tables from database.",
         )
 
         if sync_to_db:
@@ -847,14 +858,14 @@ def main(
 
             # Perform bidirectional sync
             alter_statements = bidirectional_sync(
-                conn, schema_info, code_schemas, execute_alters
+                conn, schema_info, code_schemas, execute_alters,
             )
 
             # Re-extract schema if we executed alters
             if execute_alters and alter_statements:
                 schema_info = extract_schema(conn)
                 print(
-                    f"Re-extracted schema after alterations for {len(schema_info)} tables."
+                    f"Re-extracted schema after alterations for {len(schema_info)} tables.",
                 )
 
         # Output file path
@@ -873,7 +884,7 @@ def main(
 
         # Generate SQLAlchemy models
         model_code = generate_sqlalchemy_models(
-            schema_info, existing_models, add_primary_key_if_missing
+            schema_info, existing_models, add_primary_key_if_missing,
         )
 
         # Write to file
@@ -892,16 +903,16 @@ def main(
             print("Successfully formatted the generated file with Black.")
         except subprocess.CalledProcessError as e:
             print(
-                f"Warning: Formatting with Black failed: {e.stderr.decode() if e.stderr else str(e)}"
+                f"Warning: Formatting with Black failed: {e.stderr.decode() if e.stderr else str(e)}",
             )
         except FileNotFoundError:
             print(
-                "Warning: Black formatter not found. Install with 'pip install black'."
+                "Warning: Black formatter not found. Install with 'pip install black'.",
             )
 
         print("Schema extraction and model updates completed successfully.")
     except Exception as e:
-        print(f"Error: {str(e)}")
+        print(f"Error: {e!s}")
         return 1
 
     return 0
@@ -911,7 +922,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Update SQLAlchemy models from MotherDuck schema."
+        description="Update SQLAlchemy models from MotherDuck schema.",
     )
     parser.add_argument(
         "--force_imports",
@@ -943,5 +954,5 @@ if __name__ == "__main__":
             add_primary_key_if_missing=args.add_primary_key,
             sync_to_db=args.sync_to_db,
             execute_alters=args.execute_alters,
-        )
+        ),
     )

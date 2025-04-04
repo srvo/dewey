@@ -3,4 +3,4 @@
 from src.ui.components.footer import Footer
 from src.ui.components.header import Header
 
-__all__ = ["Header", "Footer"]
+__all__ = ["Footer", "Header"]

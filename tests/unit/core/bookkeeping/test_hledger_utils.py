@@ -70,7 +70,7 @@ class MockFileSystem(FileSystemInterface):
             m = mock_open()
             handle = m(path_str, mode)
             handle.write.side_effect = lambda data: self.written_content.update(
-                {path_str: data}
+                {path_str: data},
             )
             return handle
 
@@ -82,7 +82,7 @@ class MockFileSystem(FileSystemInterface):
         return mock_open(read_data=content)(path_str, mode)
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_subprocess():
     """Fixture providing a mock subprocess runner."""
     mercury8542_result = MagicMock()
@@ -102,11 +102,11 @@ def mock_subprocess():
             "hledger -f all.journal bal assets:checking:mercury8542 -e 2022-12-31 --depth 1": mercury8542_result,
             "hledger -f all.journal bal assets:checking:mercury9281 -e 2022-12-31 --depth 1": mercury9281_result,
             "hledger -f all.journal bal assets:checking:error -e 2022-12-31 --depth 1": error_result,
-        }
+        },
     )
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_fs():
     """Fixture providing a mock file system."""
     return MockFileSystem(
@@ -117,12 +117,12 @@ def mock_fs():
     assets:checking:mercury8542    = $9,500.00
     assets:checking:mercury9281    = $4,500.00
     equity:opening balances
-"""
+""",
         },
     )
 
 
-@pytest.fixture
+@pytest.fixture()
 def updater(mock_subprocess, mock_fs):
     """Fixture providing a HledgerUpdater with mock dependencies."""
     return HledgerUpdater(subprocess_runner=mock_subprocess, fs=mock_fs)
@@ -256,7 +256,7 @@ class TestHledgerUpdater:
         """Test exception handling in update_opening_balances."""
         # Make _read_journal_file raise an exception
         with patch.object(
-            updater, "_read_journal_file", side_effect=Exception("Read error")
+            updater, "_read_journal_file", side_effect=Exception("Read error"),
         ):
             updater.update_opening_balances(2023)
 

@@ -1,9 +1,7 @@
 from dewey.core.base_script import BaseScript
-
+from dewey.core.crm.models import CRMContact
 from rich.console import Console
 from rich.table import Table
-
-from dewey.core.crm.models import CRMContact
 
 
 class CRMInterface(BaseScript):

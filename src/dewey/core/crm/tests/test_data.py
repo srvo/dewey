@@ -11,7 +11,7 @@ import pytest
 from dewey.core.crm.data.data_importer import DataImporter
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_csv_file() -> Generator[str, None, None]:
     """Create a temporary CSV file for testing."""
     with tempfile.NamedTemporaryFile(suffix=".csv", delete=False) as temp_file:
@@ -22,7 +22,7 @@ def mock_csv_file() -> Generator[str, None, None]:
                 "name": ["John Doe", "Jane Smith", "Bob Johnson"],
                 "age": [30, 25, 40],
                 "email": ["john@example.com", "jane@example.com", "bob@example.com"],
-            }
+            },
         )
 
         # Write to CSV
@@ -105,7 +105,7 @@ class TestDataImporter:
                 "name": "VARCHAR",
                 "age": "INTEGER",
                 "email": "VARCHAR",
-            }
+            },
         )
         importer.create_table_from_schema = MagicMock()
 
@@ -147,7 +147,7 @@ class TestDataImporter:
                 "tag1,tag2",
                 "Test notes",
                 "{}",
-            )
+            ),
         ]
 
         # Mock description to provide column names
@@ -195,7 +195,7 @@ class TestDataImporter:
                 "file_path": "/path/to/file.csv",
                 "table_name": "test_table",
                 "primary_key": "id",
-            }.get(key, default)
+            }.get(key, default),
         )
 
         # Mock import_csv
@@ -206,5 +206,5 @@ class TestDataImporter:
 
         # Verify
         importer.import_csv.assert_called_once_with(
-            "/path/to/file.csv", "test_table", "id"
+            "/path/to/file.csv", "test_table", "id",
         )

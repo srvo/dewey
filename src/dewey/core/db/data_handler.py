@@ -5,26 +5,30 @@ This module provides a utility class for handling data operations with the datab
 """
 
 from contextlib import contextmanager
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import get_connection
 
 
 class DataHandler(BaseScript):
-    """Class for handling data operations with the database.
+    """
+    Class for handling data operations with the database.
 
     This class extends BaseScript to provide methods for data management
     and database operations.
     """
 
     def __init__(self, name: str) -> None:
-        """Initialize the DataHandler with a name.
+        """
+        Initialize the DataHandler with a name.
 
         Args:
+        ----
             name: A descriptive name for this data handler
 
         Raises:
+        ------
             TypeError: If name is not a string
 
         """
@@ -39,7 +43,8 @@ class DataHandler(BaseScript):
         return f"DataHandler(name='{self.name}')"
 
     def execute(self) -> None:
-        """Executes the data handler script.
+        """
+        Executes the data handler script.
 
         This method performs database operations using the configuration
         from the config file.
@@ -64,18 +69,21 @@ class DataHandler(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 
     @contextmanager
     def _get_db_connection(self, db_config: dict[str, Any]):
-        """Context manager for getting a database connection.
+        """
+        Context manager for getting a database connection.
 
         Args:
+        ----
             db_config: Database configuration dictionary
 
         Yields:
+        ------
             A database connection to use in a with statement
 
         """
@@ -86,13 +94,14 @@ class DataHandler(BaseScript):
             conn.close()
 
     def _process_data(self, conn: Any) -> None:
-        """Process data using the database connection.
+        """
+        Process data using the database connection.
 
         This is a placeholder method that should be overridden by subclasses.
 
         Args:
+        ----
             conn: Database connection object
 
         """
         # Default implementation does nothing
-        pass

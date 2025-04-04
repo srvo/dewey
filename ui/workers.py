@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class Workers(BaseScript):
-    """A class for managing worker threads.
+    """
+    A class for managing worker threads.
 
     Inherits from BaseScript and provides methods for starting, stopping,
     and monitoring worker threads.
@@ -13,17 +14,21 @@ class Workers(BaseScript):
         super().__init__(config_section="workers")
 
     def run(self) -> None:
-        """Main method to execute the worker's functionality.
+        """
+        Main method to execute the worker's functionality.
 
         This method contains the core logic of the worker.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If an error occurs during worker execution.
 
         """
@@ -58,15 +63,19 @@ class Workers(BaseScript):
             raise
 
     def some_method(self, arg: str) -> None:
-        """Example method demonstrating logging and config access.
+        """
+        Example method demonstrating logging and config access.
 
         Args:
+        ----
             arg: A string argument.
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             None
 
         """

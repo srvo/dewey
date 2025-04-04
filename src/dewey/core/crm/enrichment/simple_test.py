@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class SimpleTest(BaseScript):
-    """A simple test module for Dewey.
+    """
+    A simple test module for Dewey.
 
     This module demonstrates the basic structure of a Dewey script,
     including configuration loading, logging, and a `run` method to
@@ -10,9 +11,11 @@ class SimpleTest(BaseScript):
     """
 
     def __init__(self, *args, **kwargs):
-        """Initializes the SimpleTest module.
+        """
+        Initializes the SimpleTest module.
 
         Args:
+        ----
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
 
@@ -27,7 +30,7 @@ class SimpleTest(BaseScript):
 
         # Accessing configuration values
         example_config_value = self.get_config_value(
-            "example_config_key", "default_value"
+            "example_config_key", "default_value",
         )
         self.logger.info(f"Example config value: {example_config_value}")
 
@@ -36,6 +39,6 @@ class SimpleTest(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()

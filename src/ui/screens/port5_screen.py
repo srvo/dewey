@@ -1,4 +1,5 @@
-"""Port5 Screen
+"""
+Port5 Screen
 
 A Textual screen for integrating the ethifinx research modules into the Dewey TUI system.
 """
@@ -7,7 +8,7 @@ import os
 
 # Import ethifinx components
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from textual import on, work
 from textual.app import ComposeResult
@@ -28,10 +29,7 @@ from textual.widgets import (
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 from src.dewey.core.research.engines.deepseek import DeepSeekEngine
-from src.dewey.core.research.search_flow import (
-    get_research_status,
-    get_top_companies,
-)
+from src.dewey.core.research.search_flow import get_research_status, get_top_companies
 from src.dewey.core.research.workflows.analysis_tagger import AnalysisTaggingWorkflow
 
 
@@ -111,7 +109,7 @@ class Port5Screen(Screen):
         with Container(id="main-container"):
             with Horizontal(id="search-container"):
                 yield Input(
-                    placeholder="Enter ticker(s) separated by commas", id="ticker-input"
+                    placeholder="Enter ticker(s) separated by commas", id="ticker-input",
                 )
                 yield Button("Analyze", variant="primary", id="analyze-button")
                 yield Button("Top Companies", id="top-companies-button")
@@ -120,7 +118,7 @@ class Port5Screen(Screen):
             with Horizontal(id="content-container"):
                 with Vertical(id="companies-container"):
                     yield Static(
-                        "Companies", id="companies-header", classes="section-header"
+                        "Companies", id="companies-header", classes="section-header",
                     )
                     yield DataTable(id="companies-table")
 
@@ -181,7 +179,7 @@ class Port5Screen(Screen):
     def update_analysis_details(self) -> None:
         """Update the analysis details view."""
         if self.selected_company_index < 0 or self.selected_company_index >= len(
-            self.analysis_results
+            self.analysis_results,
         ):
             self.clear_analysis_details()
             return
@@ -190,7 +188,7 @@ class Port5Screen(Screen):
 
         if result.error:
             self.query_one("#company-name", Static).update(
-                f"Company: {result.name} ({result.ticker})"
+                f"Company: {result.name} ({result.ticker})",
             )
             self.query_one("#risk-score", Static).update("Error analyzing company")
             self.query_one("#confidence-score", Static).update("")
@@ -200,16 +198,16 @@ class Port5Screen(Screen):
             return
 
         self.query_one("#company-name", Static).update(
-            f"Company: {result.name} ({result.ticker})"
+            f"Company: {result.name} ({result.ticker})",
         )
         self.query_one("#risk-score", Static).update(
-            f"Risk Score: {result.risk_score}/5"
+            f"Risk Score: {result.risk_score}/5",
         )
         self.query_one("#confidence-score", Static).update(
-            f"Confidence: {result.confidence_score:.2f if result.confidence_score else 'N/A'}"
+            f"Confidence: {result.confidence_score:.2f if result.confidence_score else 'N/A'}",
         )
         self.query_one("#recommendation", Static).update(
-            f"Recommendation: {result.recommendation or 'N/A'}"
+            f"Recommendation: {result.recommendation or 'N/A'}",
         )
 
         themes_text = (
@@ -237,7 +235,7 @@ class Port5Screen(Screen):
         """Analyze a list of ticker symbols."""
         self.is_analyzing = True
         self.query_one("#status-text", Static).update(
-            f"Analyzing {len(tickers)} companies..."
+            f"Analyzing {len(tickers)} companies...",
         )
         self.query_one("#loading-indicator", LoadingIndicator).display = True
 
@@ -274,14 +272,14 @@ class Port5Screen(Screen):
 
             # Update status
             self.query_one("#status-text", Static).update(
-                f"Analyzed {len(self.analysis_results)}/{len(tickers)} companies"
+                f"Analyzed {len(self.analysis_results)}/{len(tickers)} companies",
             )
 
         # Reset UI state
         self.is_analyzing = False
         self.query_one("#loading-indicator", LoadingIndicator).display = False
         self.query_one("#status-text", Static).update(
-            f"Analysis complete: {len(self.analysis_results)} companies"
+            f"Analysis complete: {len(self.analysis_results)} companies",
         )
 
         # Select the first result if available
@@ -294,7 +292,7 @@ class Port5Screen(Screen):
     async def load_top_companies(self, limit: int = 20) -> None:
         """Load top companies for analysis."""
         self.query_one("#status-text", Static).update(
-            f"Loading top {limit} companies..."
+            f"Loading top {limit} companies...",
         )
         self.query_one("#loading-indicator", LoadingIndicator).display = True
 
@@ -303,7 +301,7 @@ class Port5Screen(Screen):
 
         # Update UI with company data
         self.query_one("#status-text", Static).update(
-            f"Loaded {len(companies)} companies"
+            f"Loaded {len(companies)} companies",
         )
         self.query_one("#loading-indicator", LoadingIndicator).display = False
 
@@ -317,12 +315,12 @@ class Port5Screen(Screen):
 
         for company in companies:
             companies_table.add_row(
-                company.get("ticker", ""), company.get("name", ""), "N/A", "N/A"
+                company.get("ticker", ""), company.get("name", ""), "N/A", "N/A",
             )
 
         # Update status
         self.query_one("#status-text", Static).update(
-            f"Ready to analyze {len(companies)} companies"
+            f"Ready to analyze {len(companies)} companies",
         )
 
     @work

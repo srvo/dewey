@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class PrecommitAnalyzer(BaseScript):
-    """Analyzes pre-commit hooks and configurations.
+    """
+    Analyzes pre-commit hooks and configurations.
 
     This class inherits from BaseScript and provides methods for
     analyzing pre-commit configurations and identifying potential issues.

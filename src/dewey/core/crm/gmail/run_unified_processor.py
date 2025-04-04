@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""Run the Unified Email Processor.
+"""
+Run the Unified Email Processor.
 This script launches the UnifiedEmailProcessor which handles Gmail synchronization,
 email analysis, and contact extraction.
 """
@@ -64,9 +65,7 @@ def run_processor(batch_size=None, max_emails=None, debug=False):
         processor.execute()
 
     except Exception as e:
-        logging.exception(
-            "Error initializing or running UnifiedEmailProcessor: %s", e
-        )
+        logging.exception("Error initializing or running UnifiedEmailProcessor: %s", e)
         import traceback
 
         traceback.print_exc()

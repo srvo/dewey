@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Generate an index of Python classes in the repository.
+"""
+Generate an index of Python classes in the repository.
 
 This script scans all Python files in the repository and creates
 an index file mapping class names to their file locations.
@@ -9,11 +10,10 @@ Usage:
   python index_classes.py
 """
 
+import json
 import os
 import re
-import json
 import time
-from typing import Dict, List, Tuple
 
 
 def colorize(text: str, color_code: str) -> str:
@@ -21,13 +21,16 @@ def colorize(text: str, color_code: str) -> str:
     return f"\033[{color_code}m{text}\033[0m"
 
 
-def find_python_files(root_dir: str = ".") -> List[str]:
-    """Find all Python files in the repository.
+def find_python_files(root_dir: str = ".") -> list[str]:
+    """
+    Find all Python files in the repository.
 
     Args:
+    ----
         root_dir: Root directory to start the search
 
     Returns:
+    -------
         List of Python file paths
 
     """
@@ -55,20 +58,23 @@ def find_python_files(root_dir: str = ".") -> List[str]:
     return python_files
 
 
-def extract_classes_from_file(file_path: str) -> List[Tuple[str, str]]:
-    """Extract class names from a Python file.
+def extract_classes_from_file(file_path: str) -> list[tuple[str, str]]:
+    """
+    Extract class names from a Python file.
 
     Args:
+    ----
         file_path: Path to the Python file
 
     Returns:
+    -------
         List of tuples (class_name, file_path)
 
     """
     classes = []
 
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             content = f.read()
 
         # Regular expression to find class definitions
@@ -85,10 +91,12 @@ def extract_classes_from_file(file_path: str) -> List[Tuple[str, str]]:
     return classes
 
 
-def build_class_index() -> Dict[str, str]:
-    """Build an index mapping class names to file paths.
+def build_class_index() -> dict[str, str]:
+    """
+    Build an index mapping class names to file paths.
 
-    Returns:
+    Returns
+    -------
         Dictionary mapping class names to file paths
 
     """
@@ -115,18 +123,20 @@ def build_class_index() -> Dict[str, str]:
 
     elapsed_time = time.time() - start_time
     print(
-        colorize(f"Found {total_classes} classes in {elapsed_time:.2f} seconds", "1;32")
+        colorize(f"Found {total_classes} classes in {elapsed_time:.2f} seconds", "1;32"),
     )
 
     return class_index
 
 
 def save_index_to_file(
-    class_index: Dict[str, str], output_file: str = "class_index.json"
+    class_index: dict[str, str], output_file: str = "class_index.json",
 ) -> None:
-    """Save the class index to a JSON file.
+    """
+    Save the class index to a JSON file.
 
     Args:
+    ----
         class_index: Dictionary mapping class names to file paths
         output_file: Path to the output file
 
@@ -151,7 +161,7 @@ def main() -> None:
         colorize(
             "You can now use this index in other scripts for faster class lookups",
             "1;37",
-        )
+        ),
     )
 
 

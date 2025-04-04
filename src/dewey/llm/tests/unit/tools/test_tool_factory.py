@@ -10,7 +10,7 @@ from dewey.llm.tools.tool_factory import ToolFactory
 class TestToolFactory:
     """Test suite for the ToolFactory class."""
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_config(self) -> dict:
         """Fixture for a mock configuration."""
         return {

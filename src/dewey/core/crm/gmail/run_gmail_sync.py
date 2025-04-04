@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 import argparse
+import base64
+import json
 import logging
 import os
 import sys
-import base64
-import json
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 # Add the project root to Python path
@@ -24,7 +25,7 @@ from src.dewey.core.crm.gmail.gmail_sync import GmailSync
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger("gmail_sync")
 
@@ -38,7 +39,7 @@ class OAuthGmailClient:
     def __init__(self, credentials_file, token_file=None, scopes=None):
         self.credentials_file = credentials_file
         self.token_file = token_file or os.path.join(
-            os.path.dirname(credentials_file), "gmail_token.json"
+            os.path.dirname(credentials_file), "gmail_token.json",
         )
         self.scopes = scopes or [
             "https://www.googleapis.com/auth/gmail.readonly",
@@ -53,10 +54,10 @@ class OAuthGmailClient:
 
         if os.path.exists(self.token_file):
             try:
-                with open(self.token_file, "r") as token:
+                with open(self.token_file) as token:
                     creds_data = json.load(token)
                     creds = Credentials.from_authorized_user_info(
-                        creds_data, self.scopes
+                        creds_data, self.scopes,
                     )
                 self.logger.info("Loaded credentials from token file")
             except Exception as e:
@@ -74,7 +75,7 @@ class OAuthGmailClient:
             if not creds:
                 try:
                     flow = InstalledAppFlow.from_client_secrets_file(
-                        self.credentials_file, self.scopes
+                        self.credentials_file, self.scopes,
                     )
                     creds = flow.run_local_server(port=0)
                     self.logger.info("Created new credentials via OAuth flow")
@@ -133,16 +134,15 @@ class OAuthGmailClient:
                 # Don't log as error, this is expected sometimes
                 self.logger.debug(f"Message {msg_id} not found (404)")
                 return None
-            else:
-                self.logger.error(f"Error fetching message {msg_id}: {error}")
-                return None
+            self.logger.error(f"Error fetching message {msg_id}: {error}")
+            return None
 
     def decode_message_body(self, message):
         """Decodes the message body from base64."""
         try:
             if "data" in message:
                 return base64.urlsafe_b64decode(message["data"].encode("ASCII")).decode(
-                    "utf-8"
+                    "utf-8",
                 )
             return ""
         except Exception as e:
@@ -191,7 +191,7 @@ def parse_args():
         help="Maximum number of emails to sync",
     )
     parser.add_argument(
-        "--query", type=str, help='Gmail search query (e.g., "from:user@example.com")'
+        "--query", type=str, help='Gmail search query (e.g., "from:user@example.com")',
     )
     parser.add_argument(
         "--credentials",
@@ -219,16 +219,15 @@ def main():
         if motherduck_token and args.db_path.startswith("md:"):
             logger.info("MotherDuck token found in environment")
             os.environ["motherduck_token"] = motherduck_token
+        elif args.db_path.startswith("md:"):
+            logger.warning(
+                "No MotherDuck token found, but trying to connect to MotherDuck!",
+            )
         else:
-            if args.db_path.startswith("md:"):
-                logger.warning(
-                    "No MotherDuck token found, but trying to connect to MotherDuck!"
-                )
-            else:
-                logger.info(f"Using local database at {args.db_path}")
+            logger.info(f"Using local database at {args.db_path}")
 
         gmail_client = OAuthGmailClient(
-            credentials_file=args.credentials, token_file=args.token
+            credentials_file=args.credentials, token_file=args.token,
         )
 
         if not gmail_client.authenticate():
@@ -241,11 +240,11 @@ def main():
 
         if args.db_path.startswith("md:"):
             logger.info(
-                f"Gmail sync completed successfully to MotherDuck: {args.db_path}"
+                f"Gmail sync completed successfully to MotherDuck: {args.db_path}",
             )
         else:
             logger.info(
-                f"Gmail sync completed successfully to local database: {args.db_path}"
+                f"Gmail sync completed successfully to local database: {args.db_path}",
             )
         return 0
 

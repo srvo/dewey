@@ -7,10 +7,10 @@ The BaseScript system is a standardized framework for all scripts in the Dewey p
 The BaseScript system serves to:
 
 1. **Standardize Script Implementation**: Ensure all scripts follow a consistent pattern
-2. **Centralize Configuration**: All scripts use the same configuration source (dewey.yaml)
-3. **Provide Built-in Functionality**: Common features like logging, database connections, and LLM access
-4. **Enforce Error Handling**: Consistent error handling and resource cleanup
-5. **Simplify Script Development**: Reduce boilerplate code
+1. **Centralize Configuration**: All scripts use the same configuration source (dewey.yaml)
+1. **Provide Built-in Functionality**: Common features like logging, database connections, and LLM access
+1. **Enforce Error Handling**: Consistent error handling and resource cleanup
+1. **Simplify Script Development**: Reduce boilerplate code
 
 ## Usage
 
@@ -139,11 +139,12 @@ if __name__ == "__main__":
 ```
 
 This method:
+
 1. Parses command line arguments
-2. Sets up logging and configuration
-3. Calls your `run()` method
-4. Handles exceptions gracefully
-5. Cleans up resources (e.g., database connections)
+1. Sets up logging and configuration
+1. Calls your `run()` method
+1. Handles exceptions gracefully
+1. Cleans up resources (e.g., database connections)
 
 ## Migration
 
@@ -193,11 +194,11 @@ class TestMyScript(unittest.TestCase):
 ## Best Practices
 
 1. **Always inherit from BaseScript** for all non-test scripts
-2. **Implement the `run()` method** - this is required
-3. **Use the built-in logger** (`self.logger`) instead of creating your own
-4. **Handle errors properly** within your `run()` method
-5. **Clean up resources** in a `finally` block or let BaseScript handle it
-6. **Use the right initialization parameters**:
+1. **Implement the `run()` method** - this is required
+1. **Use the built-in logger** (`self.logger`) instead of creating your own
+1. **Handle errors properly** within your `run()` method
+1. **Clean up resources** in a `finally` block or let BaseScript handle it
+1. **Use the right initialization parameters**:
    - `name`: A short, descriptive name for logging
    - `description`: A longer description for help text
    - `config_section`: The section in dewey.yaml to load
@@ -209,21 +210,25 @@ class TestMyScript(unittest.TestCase):
 ### Common Issues
 
 1. **FileNotFoundError: dewey.yaml not found**
+
    - Make sure you're running the script from the project root
    - Check that config/dewey.yaml exists
 
-2. **ImportError: No module named 'dewey.core.db.connection'**
+1. **ImportError: No module named 'dewey.core.db.connection'**
+
    - If you use `requires_db=True`, make sure the database module is available
 
-3. **ImportError: No module named 'dewey.llm.llm_utils'**
+1. **ImportError: No module named 'dewey.llm.llm_utils'**
+
    - If you use `enable_llm=True`, make sure the LLM module is available
 
-4. **Configuration section not found**
+1. **Configuration section not found**
+
    - If you specify a `config_section` that doesn't exist, a warning is logged and the full config is used
 
 ### Debug Tips
 
 1. Use `--log-level=DEBUG` when running your script for more detailed logs
-2. Check the script initialization parameters to ensure they match your needs
-3. Use proper exception handling in your `run()` method
-4. Verify that required dependencies are installed
+1. Check the script initialization parameters to ensure they match your needs
+1. Use proper exception handling in your `run()` method
+1. Verify that required dependencies are installed

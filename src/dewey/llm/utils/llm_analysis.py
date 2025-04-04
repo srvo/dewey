@@ -13,7 +13,8 @@ class LLMAnalysis(BaseScript):
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        """Initialize the LLMAnalysis script.
+        """
+        Initialize the LLMAnalysis script.
 
         Args:
         ----
@@ -23,7 +24,8 @@ class LLMAnalysis(BaseScript):
         super().__init__(config_section="llm_analysis", **kwargs)
 
     def execute(self) -> dict[str, Any]:
-        """Execute the LLM analysis.
+        """
+        Execute the LLM analysis.
 
         Returns
         -------

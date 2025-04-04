@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -7,9 +7,11 @@ class GeminiClient(BaseScript):
     """A client for interacting with the Gemini LLM API."""
 
     def __init__(self, config: dict[str, Any], **kwargs: Any) -> None:
-        """Initializes the GeminiClient.
+        """
+        Initializes the GeminiClient.
 
         Args:
+        ----
             config: The configuration dictionary.
             **kwargs: Additional keyword arguments.
 
@@ -17,19 +19,21 @@ class GeminiClient(BaseScript):
         super().__init__(config=config, **kwargs)
 
     def run(self) -> None:
-        """Executes the core logic of the Gemini client.
+        """
+        Executes the core logic of the Gemini client.
 
         This method retrieves configuration values, interacts with the Gemini API,
         and logs relevant information.
 
-        Raises:
+        Raises
+        ------
             Exception: If there is an error during API interaction.
 
         """
         try:
             api_key = self.get_config_value("gemini_api_key")
             model_name = self.get_config_value(
-                "gemini_model_name", default="default_model"
+                "gemini_model_name", default="default_model",
             )
 
             self.logger.info(f"Using Gemini model: {model_name}")
@@ -45,14 +49,17 @@ class GeminiClient(BaseScript):
             raise
 
     def _interact_with_gemini(self, api_key: str, model_name: str, prompt: str) -> dict:
-        """Simulates interaction with the Gemini API.
+        """
+        Simulates interaction with the Gemini API.
 
         Args:
+        ----
             api_key: The Gemini API key.
             model_name: The name of the Gemini model to use.
             prompt: The prompt to send to the Gemini API.
 
         Returns:
+        -------
             A dictionary containing the simulated API response.
 
         """
@@ -65,7 +72,8 @@ class GeminiClient(BaseScript):
         return response
 
     def execute(self) -> None:
-        """Executes the Gemini client's primary logic.
+        """
+        Executes the Gemini client's primary logic.
 
         This method calls the run method, which handles the core interaction
         with the Gemini API.

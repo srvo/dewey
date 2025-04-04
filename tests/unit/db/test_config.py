@@ -1,4 +1,5 @@
-"""Tests for database configuration module.
+"""
+Tests for database configuration module.
 
 This module tests the database configuration functions.
 """
@@ -75,7 +76,7 @@ class TestDatabaseConfig(unittest.TestCase):
 
         # Test with missing required values
         with patch.dict(
-            "os.environ", {"DEWEY_LOCAL_DB": "", "DEWEY_MOTHERDUCK_DB": ""}
+            "os.environ", {"DEWEY_LOCAL_DB": "", "DEWEY_MOTHERDUCK_DB": ""},
         ):
             with self.assertRaises(Exception):
                 validate_config()

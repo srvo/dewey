@@ -15,16 +15,26 @@ This directory contains all utility and operational scripts for the Dewey projec
 
 ## Script Categories
 
-### Database Maintenance
-- `db_analyze_local_dbs.py` - Analyzes local database instances
-- `db_analyze_tables.py` - Analyzes database table structure and data
-- `db_cleanup_other_files.py` - Cleans up non-database files
-- `db_cleanup_tables.py` - Cleans up database tables
-- `db_drop_jv_tables.py` - Drops specific JV-related tables
-- `db_drop_other_tables.py` - Drops miscellaneous tables
-- `db_force_cleanup.py` - Forces cleanup of database objects
-- `db_upload_db.py` - Uploads database to a remote location
-- `db_verify_db.py` - Verifies database integrity
+### Database Maintenance (CLI Commands)
+Database operations are now available as CLI commands via `src/dewey/cli/db.py`:
+
+```bash
+python -m dewey.cli.db [COMMAND] [ARGS]
+```
+
+Available commands:
+- `cleanup-tables` - Clean up specified tables
+- `analyze-tables` - Analyze tables and display statistics
+- `drop-jv-tables` - Drop JV-related tables
+- `drop-other-tables` - Drop all tables except those specified
+- `cleanup-files` - Clean up database files matching patterns
+
+For help on any command:
+```bash
+python -m dewey.cli.db [COMMAND] --help
+```
+
+Legacy database scripts have been deprecated in favor of these standardized commands.
 
 ### Data Import
 - `import_import_client_onboarding.py` - Imports client onboarding data

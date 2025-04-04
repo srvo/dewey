@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class MdSchema(BaseScript):
-    """A module for managing MD schema within Dewey.
+    """
+    A module for managing MD schema within Dewey.
 
     This module inherits from BaseScript and provides a standardized
     structure for schema management, including configuration
@@ -19,15 +20,14 @@ class MdSchema(BaseScript):
         self.logger.info("Running MD Schema module...")
         # Example of accessing configuration
         example_config_value = self.get_config_value(
-            "example_config_key", "default_value"
+            "example_config_key", "default_value",
         )
         self.logger.info(f"Example config value: {example_config_value}")
         # Add your main logic here
-        pass
 
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()

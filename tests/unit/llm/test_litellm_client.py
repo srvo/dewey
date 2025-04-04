@@ -1,4 +1,5 @@
-"""Tests for the LiteLLMClient.
+"""
+Tests for the LiteLLMClient.
 
 This module tests the LiteLLMClient class, including configuration loading and
 API interaction with proper mocking of external dependencies.
@@ -13,11 +14,7 @@ from dewey.llm.exceptions import (
     LLMRateLimitError,
     LLMResponseError,
 )
-from dewey.llm.litellm_client import (
-    LiteLLMClient,
-    LiteLLMConfig,
-    Message,
-)
+from dewey.llm.litellm_client import LiteLLMClient, LiteLLMConfig, Message
 
 
 class TestLiteLLMClient(unittest.TestCase):
@@ -107,7 +104,7 @@ class TestLiteLLMClient(unittest.TestCase):
 
         # Directly patch the _create_config_from_dewey method
         with patch.object(
-            LiteLLMClient, "_create_config_from_dewey", return_value=test_config
+            LiteLLMClient, "_create_config_from_dewey", return_value=test_config,
         ):
             # Also patch DEWEY_CONFIG_PATH.exists to return True
             with patch("dewey.llm.litellm_client.DEWEY_CONFIG_PATH") as mock_path:
@@ -122,7 +119,7 @@ class TestLiteLLMClient(unittest.TestCase):
                             "timeout": 60,
                             "fallback_models": ["gpt-4", "gpt-3.5-turbo"],
                             "cache": True,
-                        }
+                        },
                     }
 
                     # Create the client
@@ -133,7 +130,7 @@ class TestLiteLLMClient(unittest.TestCase):
                     self.assertEqual(client.config.api_key, "test-claude-key")
                     self.assertEqual(client.config.timeout, 60)
                     self.assertEqual(
-                        client.config.fallback_models, ["gpt-4", "gpt-3.5-turbo"]
+                        client.config.fallback_models, ["gpt-4", "gpt-3.5-turbo"],
                     )
                     self.assertTrue(client.config.cache)
 
@@ -142,22 +139,22 @@ class TestLiteLLMClient(unittest.TestCase):
         """Test initialization from Aider model metadata."""
         # Create the test config
         test_config = LiteLLMConfig(
-            model="gpt-4-turbo", api_key=None, litellm_provider="openai"
+            model="gpt-4-turbo", api_key=None, litellm_provider="openai",
         )
 
         # Directly patch the _create_config_from_aider method
         with patch.object(
-            LiteLLMClient, "_create_config_from_aider", return_value=test_config
+            LiteLLMClient, "_create_config_from_aider", return_value=test_config,
         ):
             # Mock Aider metadata path exists
             with patch(
-                "dewey.llm.litellm_client.AIDER_MODEL_METADATA_PATH"
+                "dewey.llm.litellm_client.AIDER_MODEL_METADATA_PATH",
             ) as mock_path:
                 mock_path.exists.return_value = True
 
                 # Ensure Dewey config path doesn't exist
                 with patch(
-                    "dewey.llm.litellm_client.DEWEY_CONFIG_PATH"
+                    "dewey.llm.litellm_client.DEWEY_CONFIG_PATH",
                 ) as mock_dewey_path:
                     mock_dewey_path.exists.return_value = False
 
@@ -166,7 +163,7 @@ class TestLiteLLMClient(unittest.TestCase):
                         "gpt-4-turbo": {
                             "litellm_provider": "openai",
                             "context_window": 128000,
-                        }
+                        },
                     }
 
                     client = LiteLLMClient()
@@ -180,7 +177,7 @@ class TestLiteLLMClient(unittest.TestCase):
         # Mock successful response
         mock_response = MagicMock()
         mock_response.choices = [
-            MagicMock(message={"content": "This is a test response"})
+            MagicMock(message={"content": "This is a test response"}),
         ]
         self.mock_completion.return_value = mock_response
 
@@ -210,7 +207,7 @@ class TestLiteLLMClient(unittest.TestCase):
         # Mock successful response
         mock_response = MagicMock()
         mock_response.choices = [
-            MagicMock(message={"content": "This is a test response"})
+            MagicMock(message={"content": "This is a test response"}),
         ]
         self.mock_completion.return_value = mock_response
 
@@ -253,8 +250,8 @@ class TestLiteLLMClient(unittest.TestCase):
                         "name": "get_weather",
                         "arguments": '{"location": "New York", "unit": "celsius"}',
                     },
-                }
-            )
+                },
+            ),
         ]
         self.mock_completion.return_value = mock_response
 
@@ -273,13 +270,11 @@ class TestLiteLLMClient(unittest.TestCase):
                     },
                     "required": ["location"],
                 },
-            }
+            },
         ]
 
         result = client.generate_completion(
-            messages,
-            functions=functions,
-            function_call="auto",
+            messages, functions=functions, function_call="auto",
         )
 
         # Check that completion was called with correct parameters
@@ -315,7 +310,7 @@ class TestLiteLLMClient(unittest.TestCase):
         with patch("litellm.exceptions.AuthenticationError", MockAuthenticationError):
             # Mock authentication error
             self.mock_completion.side_effect = MockAuthenticationError(
-                "Invalid API key"
+                "Invalid API key",
             )
 
             client = LiteLLMClient()
@@ -334,7 +329,7 @@ class TestLiteLLMClient(unittest.TestCase):
         with patch("litellm.exceptions.APIConnectionError", MockAPIConnectionError):
             # Mock connection error
             self.mock_completion.side_effect = MockAPIConnectionError(
-                "Connection failed"
+                "Connection failed",
             )
 
             client = LiteLLMClient()
@@ -345,29 +340,18 @@ class TestLiteLLMClient(unittest.TestCase):
 
     def test_generate_completion_timeout_error(self):
         """Test handling of timeout errors."""
-        # Skip this test since the exception handling has changed in the litellm library
-        # and we can't easily mock the right exception type without knowing the internals
-        return
-
-        # The approach below would require knowing the exact exception hierarchy in litellm
-        # which might change between versions
-        """
+        # Mock timeout error
         class MockTimeoutError(Exception):
             pass
 
-        with patch("litellm.exceptions.Timeout", MockTimeoutError, create=True):
+        with patch("litellm.exceptions.Timeout", MockTimeoutError):
             self.mock_completion.side_effect = MockTimeoutError("Request timed out")
 
-            with patch("dewey.llm.litellm_client.litellm.exceptions") as mock_exceptions:
-                mock_exceptions.APITimeoutError = MockTimeoutError
-                mock_exceptions.Timeout = MockTimeoutError
+            client = LiteLLMClient()
+            messages = [Message(role="user", content="Hello")]
 
-                client = LiteLLMClient()
-                messages = [Message(role="user", content="Hello")]
-
-                with self.assertRaises(LLMTimeoutError):
-                    client.generate_completion(messages)
-        """
+            with self.assertRaises(LLMConnectionError):
+                client.generate_completion(messages)
 
     def test_generate_embedding_success(self):
         """Test successful embedding generation."""
@@ -407,10 +391,7 @@ class TestLiteLLMClient(unittest.TestCase):
         text = "This is a test"
 
         result = client.generate_embedding(
-            text,
-            model="custom-embedding-model",
-            dimensions=128,
-            user="test-user",
+            text, model="custom-embedding-model", dimensions=128, user="test-user",
         )
 
         # Check that embedding was called with correct parameters

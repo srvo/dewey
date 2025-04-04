@@ -3,7 +3,7 @@
 import os
 import re
 import shutil
-from typing import Dict, List, Optional, Protocol
+from typing import Protocol
 
 from dewey.core.base_script import BaseScript
 
@@ -64,12 +64,15 @@ class JournalFixer(BaseScript, JournalFixerInterface):
         self.fs: FileSystemInterface = fs if fs is not None else RealFileSystem()
 
     def parse_transactions(self, content: str) -> list[dict]:
-        """Parse all transactions from journal content.
+        """
+        Parse all transactions from journal content.
 
         Args:
+        ----
             content: The content of the journal file.
 
         Returns:
+        -------
             A list of dictionaries, where each dictionary represents a transaction.
 
         """
@@ -94,12 +97,15 @@ class JournalFixer(BaseScript, JournalFixerInterface):
         return transactions
 
     def process_transactions(self, transactions: list[dict]) -> str:
-        """Process transactions and return fixed journal content.
+        """
+        Process transactions and return fixed journal content.
 
         Args:
+        ----
             transactions: A list of transaction dictionaries.
 
         Returns:
+        -------
             The fixed journal content as a string.
 
         """
@@ -115,12 +121,15 @@ class JournalFixer(BaseScript, JournalFixerInterface):
         return "\n".join(fixed_entries)
 
     def parse_transaction(self, lines: list[str]) -> dict | None:
-        """Parse a transaction from a list of lines.
+        """
+        Parse a transaction from a list of lines.
 
         Args:
+        ----
             lines: A list of strings representing the lines of a transaction.
 
         Returns:
+        -------
             A dictionary representing the transaction, or None if parsing fails.
 
         """
@@ -149,21 +158,21 @@ class JournalFixer(BaseScript, JournalFixerInterface):
                     account = parts[0]
                     amount = parts[1] if len(parts) > 1 else None
                     transaction["postings"].append(
-                        {
-                            "account": account,
-                            "amount": amount,
-                        },
+                        {"account": account, "amount": amount},
                     )
 
         return transaction
 
     def process_journal_file(self, file_path: str) -> None:
-        """Process a journal file and fix all transactions.
+        """
+        Process a journal file and fix all transactions.
 
         Args:
+        ----
             file_path: The path to the journal file.
 
         Raises:
+        ------
             Exception: If the file processing fails, the original exception is re-raised after attempting to restore from backup.
 
         """

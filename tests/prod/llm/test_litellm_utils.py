@@ -1,4 +1,5 @@
-"""Tests for the LiteLLM utility functions.
+"""
+Tests for the LiteLLM utility functions.
 
 This module tests the utility functions in the litellm_utils.py module.
 """
@@ -8,9 +9,7 @@ import unittest
 from unittest.mock import MagicMock, mock_open, patch
 
 import litellm
-from dewey.llm.exceptions import (
-    LLMResponseError,
-)
+from dewey.llm.exceptions import LLMResponseError
 from dewey.llm.litellm_client import Message
 from dewey.llm.litellm_utils import (
     configure_azure_openai,
@@ -185,7 +184,7 @@ set-env:
             # Check that the environment variables were set
             self.assertEqual(os.environ["AZURE_API_KEY"], "test-azure-key")
             self.assertEqual(
-                os.environ["AZURE_API_BASE"], "https://test-endpoint.openai.azure.com"
+                os.environ["AZURE_API_BASE"], "https://test-endpoint.openai.azure.com",
             )
             self.assertEqual(os.environ["AZURE_API_VERSION"], "2023-05-15")
             self.assertEqual(os.environ["AZURE_DEPLOYMENT_NAME"], "test-deployment")
@@ -201,7 +200,7 @@ set-env:
 
             # Check that set_fallbacks was called with the right arguments
             mock_set_fallbacks.assert_called_once_with(
-                fallbacks=["gpt-4", "gpt-3.5-turbo", "claude-2"]
+                fallbacks=["gpt-4", "gpt-3.5-turbo", "claude-2"],
             )
 
     def test_get_text_from_response_openai_format(self):
@@ -213,9 +212,9 @@ set-env:
                     "message": {
                         "content": "This is the response text",
                         "role": "assistant",
-                    }
-                }
-            ]
+                    },
+                },
+            ],
         }
 
         text = get_text_from_response(response)
@@ -224,13 +223,7 @@ set-env:
     def test_get_text_from_response_classic_completion(self):
         """Test extracting text from classic completion response format."""
         # Mock classic completion response
-        response = {
-            "choices": [
-                {
-                    "text": "This is the completion text",
-                }
-            ]
-        }
+        response = {"choices": [{"text": "This is the completion text"}]}
 
         text = get_text_from_response(response)
         self.assertEqual(text, "This is the completion text")
@@ -242,7 +235,7 @@ set-env:
             "content": [
                 {"type": "text", "text": "This is the first part"},
                 {"type": "text", "text": " of the response."},
-            ]
+            ],
         }
 
         text = get_text_from_response(response)
@@ -256,7 +249,7 @@ set-env:
         # Override the behavior to use our custom implementation
         with patch("dewey.llm.litellm_utils.get_text_from_response") as mock_extract:
             mock_extract.side_effect = LLMResponseError(
-                "Could not extract text from response"
+                "Could not extract text from response",
             )
 
             with self.assertRaises(LLMResponseError):
@@ -283,17 +276,15 @@ set-env:
                     "message": {
                         "content": "This is a quick response",
                         "role": "assistant",
-                    }
-                }
-            ]
+                    },
+                },
+            ],
         }
         mock_completion.return_value = mock_response
 
         # Call the quick completion function
         result = quick_completion(
-            "What is the capital of France?",
-            model="gpt-3.5-turbo",
-            temperature=0.5,
+            "What is the capital of France?", model="gpt-3.5-turbo", temperature=0.5,
         )
 
         # Check that completion was called with the right arguments
@@ -303,7 +294,7 @@ set-env:
         self.assertEqual(call_args["model"], "gpt-3.5-turbo")
         self.assertEqual(call_args["messages"][0]["role"], "user")
         self.assertEqual(
-            call_args["messages"][0]["content"], "What is the capital of France?"
+            call_args["messages"][0]["content"], "What is the capital of France?",
         )
         self.assertEqual(call_args["temperature"], 0.5)
 
@@ -314,7 +305,7 @@ set-env:
     @patch("dewey.llm.litellm_utils.load_api_keys_from_env")
     @patch("dewey.llm.litellm_utils.set_api_keys")
     def test_initialize_client_from_env(
-        self, mock_set_keys, mock_load_keys, mock_client_class
+        self, mock_set_keys, mock_load_keys, mock_client_class,
     ):
         """Test initializing a LiteLLM client from environment variables."""
         # Mock load_api_keys_from_env return
@@ -334,10 +325,7 @@ set-env:
         # Check that load_api_keys_from_env and set_api_keys were called
         mock_load_keys.assert_called_once()
         mock_set_keys.assert_called_once_with(
-            {
-                "openai": "test-openai-key",
-                "anthropic": "test-anthropic-key",
-            }
+            {"openai": "test-openai-key", "anthropic": "test-anthropic-key"},
         )
 
         # Check that the client was instantiated with the right parameters
@@ -349,12 +337,12 @@ set-env:
     @patch("dewey.llm.litellm_utils.load_api_keys_from_env")
     @patch("dewey.llm.litellm_utils.set_api_keys")
     def test_initialize_client_with_fallbacks(
-        self, mock_set_keys, mock_load_keys, mock_client_class, mock_setup_fallbacks
+        self, mock_set_keys, mock_load_keys, mock_client_class, mock_setup_fallbacks,
     ):
         """Test initializing a LiteLLM client with fallback models."""
         # Set environment variable for fallbacks
         with patch.dict(
-            "os.environ", {"LITELLM_FALLBACKS": "gpt-4,claude-2"}, clear=False
+            "os.environ", {"LITELLM_FALLBACKS": "gpt-4,claude-2"}, clear=False,
         ):
             # Mock the client instance
             mock_client = MagicMock()
@@ -366,7 +354,7 @@ set-env:
 
             # Check that setup_fallback_models was called with the right arguments
             mock_setup_fallbacks.assert_called_once_with(
-                "gpt-3.5-turbo", ["gpt-4", "claude-2"]
+                "gpt-3.5-turbo", ["gpt-4", "claude-2"],
             )
 
 

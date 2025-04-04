@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-"""Script to migrate data from input_data directory to MotherDuck.
+"""
+Script to migrate data from input_data directory to MotherDuck.
 Uses the BaseScript's MotherDuckEngine for safe data migration.
 """
 
@@ -46,12 +47,12 @@ class DataMigrationScript(BaseScript):
                         # Delete source file after successful upload
                         file_path.unlink()
                         self.logger.info(
-                            f"Successfully processed and deleted: {file_path}"
+                            f"Successfully processed and deleted: {file_path}",
                         )
                     else:
                         self.logger.error(f"Failed to upload: {file_path}")
                 except Exception as e:
-                    self.logger.error(f"Error processing {file_path}: {str(e)}")
+                    self.logger.error(f"Error processing {file_path}: {e!s}")
 
         # Log results
         if total_files == success_files:
@@ -86,12 +87,12 @@ class DataMigrationScript(BaseScript):
                         # Delete source file after successful upload
                         file_path.unlink()
                         self.logger.info(
-                            f"Successfully processed and deleted: {file_path}"
+                            f"Successfully processed and deleted: {file_path}",
                         )
                     else:
                         self.logger.error(f"Failed to upload: {file_path}")
                 except Exception as e:
-                    self.logger.error(f"Error processing {file_path}: {str(e)}")
+                    self.logger.error(f"Error processing {file_path}: {e!s}")
 
         # Log results
         if total_files == success_files:

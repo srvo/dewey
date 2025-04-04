@@ -2,14 +2,12 @@
 
 import json
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 import pytest
 
 from dewey.core.base_script import BaseScript
-from dewey.core.research.utils.research_output_handler import (
-    ResearchOutputHandler,
-)
+from dewey.core.research.utils.research_output_handler import ResearchOutputHandler
 from dewey.core.research.utils.sts_xml_parser import STSXMLParser
 from dewey.core.research.utils.universe_breakdown import UniverseBreakdown
 
@@ -30,24 +28,28 @@ class TestUniverseBreakdown(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 
-    @pytest.fixture
+    @pytest.fixture()
     def breakdown(self) -> UniverseBreakdown:
-        """Create a test breakdown instance.
+        """
+        Create a test breakdown instance.
 
-        Returns:
+        Returns
+        -------
             A UniverseBreakdown instance.
 
         """
         return UniverseBreakdown()
 
     def test_initialization(self, breakdown: UniverseBreakdown) -> None:
-        """Test breakdown initialization.
+        """
+        Test breakdown initialization.
 
         Args:
+        ----
             breakdown: An instance of UniverseBreakdown.
 
         """
@@ -56,9 +58,11 @@ class TestUniverseBreakdown(BaseScript):
         assert hasattr(breakdown, "generate_report")
 
     def test_analyze_universe(self, breakdown: UniverseBreakdown) -> None:
-        """Test universe analysis.
+        """
+        Test universe analysis.
 
         Args:
+        ----
             breakdown: An instance of UniverseBreakdown.
 
         """
@@ -67,7 +71,7 @@ class TestUniverseBreakdown(BaseScript):
                 {"name": "Company A", "sector": "Technology", "market_cap": 1000000},
                 {"name": "Company B", "sector": "Healthcare", "market_cap": 2000000},
                 {"name": "Company C", "sector": "Technology", "market_cap": 1500000},
-            ]
+            ],
         }
 
         analysis: dict[str, Any] = breakdown.analyze(test_data)
@@ -78,9 +82,11 @@ class TestUniverseBreakdown(BaseScript):
         assert analysis["sector_breakdown"]["Healthcare"] == 1
 
     def test_generate_report(self, breakdown: UniverseBreakdown) -> None:
-        """Test report generation.
+        """
+        Test report generation.
 
         Args:
+        ----
             breakdown: An instance of UniverseBreakdown.
 
         """
@@ -112,24 +118,28 @@ class TestSTSXMLParser(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update极 to use execute() instead."
+            "Using deprecated run() method. Update极 to use execute() instead.",
         )
         self.execute()
 
-    @pytest.fixture
+    @pytest.fixture()
     def parser(self) -> STSXMLParser:
-        """Create a test parser instance.
+        """
+        Create a test parser instance.
 
-        Returns:
+        Returns
+        -------
             An STSXMLParser instance.
 
         """
         return STSXMLParser()
 
     def test_initialization(self, parser: STSXMLParser) -> None:
-        """Test parser initialization.
+        """
+        Test parser initialization.
 
         Args:
+        ----
             parser: An instance of STSXMLParser.
 
         """
@@ -137,9 +147,11 @@ class TestSTSXMLParser(BaseScript):
         assert hasattr(parser, "parse")
 
     def test_parse_xml(self, parser: STSXMLParser) -> None:
-        """Test XML parsing.
+        """
+        Test XML parsing.
 
         Args:
+        ----
             parser: An instance of STSXMLParser.
 
         """
@@ -162,9 +174,11 @@ class TestSTSXMLParser(BaseScript):
         assert result["company"]["metrics"]["revenue"] == "1000000"
 
     def test_error_handling(self, parser: STSXMLParser) -> None:
-        """Test error handling in parsing.
+        """
+        Test error handling in parsing.
 
         Args:
+        ----
             parser: An instance of STSXMLParser.
 
         """
@@ -189,37 +203,44 @@ class TestResearchOutputHandler(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 
-    @pytest.fixture
+    @pytest.fixture()
     def handler(self) -> ResearchOutputHandler:
-        """Create a test output handler instance.
+        """
+        Create a test output handler instance.
 
-        Returns:
+        Returns
+        -------
             A ResearchOutputHandler instance.
 
         """
         return ResearchOutputHandler()
 
-    @pytest.fixture
+    @pytest.fixture()
     def tmp_path(self, tmp_path: Path) -> Path:
-        """Create a temporary path for testing.
+        """
+        Create a temporary path for testing.
 
         Args:
+        ----
             tmp_path: A pytest tmp_path fixture.
 
         Returns:
+        -------
             A Path object representing the temporary directory.
 
         """
         return tmp_path
 
     def test_initialization(self, handler: ResearchOutputHandler) -> None:
-        """Test handler initialization.
+        """
+        Test handler initialization.
 
         Args:
+        ----
             handler: An instance of ResearchOutputHandler.
 
         """
@@ -228,9 +249,11 @@ class TestResearchOutputHandler(BaseScript):
         assert hasattr(handler, "load")
 
     def test_save_output(self, handler: ResearchOutputHandler, tmp_path: Path) -> None:
-        """Test saving research output.
+        """
+        Test saving research output.
 
         Args:
+        ----
             handler: An instance of ResearchOutputHandler.
             tmp_path: A temporary directory path.
 
@@ -250,15 +273,17 @@ class TestResearchOutputHandler(BaseScript):
         assert saved_data == test_data
 
     def test_load_output(self, handler: ResearchOutputHandler, tmp_path: Path) -> None:
-        """Test loading research output.
+        """
+        Test loading research output.
 
         Args:
+        ----
             handler: An instance of ResearchOutputHandler.
             tmp_path: A temporary directory path.
 
         """
         test_data: dict[str, Any] = {
-            "analysis": {"score": 85, "recommendations": ["Test recommendation"]}
+            "analysis": {"score": 85, "recommendations": ["Test recommendation"]},
         }
 
         # Save test data
@@ -271,9 +296,11 @@ class TestResearchOutputHandler(BaseScript):
         assert loaded_data == test_data
 
     def test_error_handling(self, handler: ResearchOutputHandler) -> None:
-        """Test error handling in output operations.
+        """
+        Test error handling in output operations.
 
         Args:
+        ----
             handler: An instance of ResearchOutputHandler.
 
         """
@@ -281,7 +308,7 @@ class TestResearchOutputHandler(BaseScript):
             handler.load(Path("nonexistent.json"))
 
 
-@pytest.mark.integration
+@pytest.mark.integration()
 class TestUtilsIntegration(BaseScript):
     """Integration tests for research utilities."""
 
@@ -290,9 +317,11 @@ class TestUtilsIntegration(BaseScript):
         super().__init__(config_section="crm")
 
     def execute(self, tmp_path: Path) -> None:
-        """Executes the complete analysis workflow integration test.
+        """
+        Executes the complete analysis workflow integration test.
 
         Args:
+        ----
             tmp_path: A temporary directory path.
 
         """
@@ -301,7 +330,7 @@ class TestUtilsIntegration(BaseScript):
     def run(self, tmp_path: Path) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute(tmp_path)
         # Create test instances

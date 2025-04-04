@@ -147,9 +147,7 @@ class RulesConverter(BaseScript):
                             self.regex_compiler.compile(pattern, re.IGNORECASE)
                         except re.error as e:
                             self.logger.exception(
-                                "Skipping invalid regex pattern '%s': %s",
-                                pattern,
-                                e,
+                                "Skipping invalid regex pattern '%s': %s", pattern, e,
                             )
                             continue
 
@@ -257,11 +255,11 @@ class RulesConverter(BaseScript):
             json.dump(rules, f, indent=2)
 
         self.logger.info("Generated rules file: %s", output_file)
-        self.logger.info("Total patterns: %s", rules['stats']['total_patterns'])
+        self.logger.info("Total patterns: %s", rules["stats"]["total_patterns"])
         self.logger.info(
-            "Patterns with examples: %s", rules['stats']['patterns_with_examples'],
+            "Patterns with examples: %s", rules["stats"]["patterns_with_examples"],
         )
-        self.logger.info("Unique categories: %s", len(rules['categories']))
+        self.logger.info("Unique categories: %s", len(rules["categories"]))
 
     def execute(self) -> None:
         """Orchestrates the rule parsing, analysis, and generation."""

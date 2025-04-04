@@ -4,31 +4,37 @@ from dewey.core.base_script import BaseScript
 
 
 class ImageGeneration(BaseScript):
-    """A class for generating images using an external API.
+    """
+    A class for generating images using an external API.
 
     Inherits from BaseScript for standardized configuration and logging.
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        """Initializes the ImageGeneration class.
+        """
+        Initializes the ImageGeneration class.
 
         Args:
+        ----
             **kwargs: Additional keyword arguments passed to BaseScript.
 
         """
         super().__init__(config_section="image_generation", **kwargs)
 
     def run(self) -> None:
-        """Executes the image generation process.
+        """
+        Executes the image generation process.
 
         Retrieves the API key and prompt from the configuration,
         then calls the image generation API.
 
-        Raises:
+        Raises
+        ------
             ValueError: If the API key is missing in the configuration.
             Exception: If the image generation fails.
 
-        Returns:
+        Returns
+        -------
             None
 
         """
@@ -47,16 +53,20 @@ class ImageGeneration(BaseScript):
             raise
 
     def _generate_image(self, api_key: str, prompt: str) -> None:
-        """Generates an image using the specified API key and prompt.
+        """
+        Generates an image using the specified API key and prompt.
 
         Args:
+        ----
             api_key: The API key for accessing the image generation service.
             prompt: The prompt to use for generating the image.
 
         Raises:
+        ------
             Exception: If the image generation fails.
 
         Returns:
+        -------
             None
 
         """
@@ -64,7 +74,7 @@ class ImageGeneration(BaseScript):
             # Placeholder for actual image generation logic
             self.logger.info(f"Generating image with prompt: {prompt}")
             self.logger.info(
-                f"Using API key: {api_key[:4]}...{api_key[-4:]}"
+                f"Using API key: {api_key[:4]}...{api_key[-4:]}",
             )  # Masking API key for security
             # Simulate API call
             image_url = "https://example.com/generated_image.png"
@@ -75,7 +85,8 @@ class ImageGeneration(BaseScript):
             raise
 
     def execute(self) -> None:
-        """Executes the image generation script.
+        """
+        Executes the image generation script.
 
         This method serves as the main entry point for the script,
         calling the run method to perform the image generation.

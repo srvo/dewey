@@ -44,7 +44,7 @@ class TestEmailClient:
                 "imap_port": "993",
                 "email_username": "test@example.com",
                 "email_password": "test_password",
-            }
+            },
         }
 
         # Call setup method directly
@@ -133,7 +133,7 @@ class TestEmailClient:
 
         # Test with quoted name
         name, email_address = client._parse_email_header(
-            '"Doe, John" <john@example.com>'
+            '"Doe, John" <john@example.com>',
         )
         assert name == "Doe, John"
         assert email_address == "john@example.com"
@@ -169,7 +169,7 @@ class TestEmailClient:
                 "body_text": "Test body",
                 "body_html": "<p>Test body</p>",
                 "has_attachments": False,
-            }
+            },
         ]
 
         # Execute

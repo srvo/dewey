@@ -2,16 +2,19 @@ from dewey.core.base_script import BaseScript
 
 
 class AnalysisScript(BaseScript):
-    """Base class for analysis scripts within the Dewey project.
+    """
+    Base class for analysis scripts within the Dewey project.
 
     Inherits from BaseScript and provides a standardized structure,
     logging, and configuration for analysis-related tasks.
     """
 
     def __init__(self, config_section: str = "analysis") -> None:
-        """Initializes the AnalysisScript with a configuration section.
+        """
+        Initializes the AnalysisScript with a configuration section.
 
         Args:
+        ----
             config_section: The section in dewey.yaml to load for this script.
                             Defaults to "analysis".
 
@@ -19,7 +22,8 @@ class AnalysisScript(BaseScript):
         super().__init__(config_section=config_section)
 
     def execute(self) -> None:
-        """Abstract method to be implemented by subclasses.
+        """
+        Abstract method to be implemented by subclasses.
 
         This method contains the core logic of the analysis script.
         """
@@ -28,6 +32,6 @@ class AnalysisScript(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()

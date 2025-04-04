@@ -4,7 +4,8 @@ from dewey.core.base_script import BaseScript
 
 
 class CodeGenerator(BaseScript):
-    """A script for generating code based on a given prompt.
+    """
+    A script for generating code based on a given prompt.
 
     This class inherits from BaseScript and implements the run() method
     to execute the code generation logic. It uses the script's logger for
@@ -12,21 +13,25 @@ class CodeGenerator(BaseScript):
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        """Initializes the CodeGenerator script.
+        """
+        Initializes the CodeGenerator script.
 
         Args:
+        ----
             **kwargs: Keyword arguments passed to the BaseScript constructor.
 
         """
         super().__init__(**kwargs)
 
     def execute(self) -> None:
-        """Executes the code generation process.
+        """
+        Executes the code generation process.
 
         Retrieves the prompt from the configuration, generates code using
         the LLM, and logs the generated code.
 
-        Raises:
+        Raises
+        ------
             Exception: If there is an error during code generation.
 
         """
@@ -35,13 +40,13 @@ class CodeGenerator(BaseScript):
             model = self.get_config_value("model", "gpt-3.5-turbo")
 
             self.logger.info(
-                f"Generating code for prompt: {prompt} using model: {model}"
+                f"Generating code for prompt: {prompt} using model: {model}",
             )
 
             if not self.llm_client:
                 self.logger.error("LLM client is not initialized.")
                 raise ValueError(
-                    "LLM client is not initialized.  Set enable_llm=True when initializing the script."
+                    "LLM client is not initialized.  Set enable_llm=True when initializing the script.",
                 )
 
             # Generate code using the LLM client

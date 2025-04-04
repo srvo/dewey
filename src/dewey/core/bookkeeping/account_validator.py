@@ -3,9 +3,9 @@
 import json
 import subprocess
 import sys
-from pathlib import Path
-from typing import Dict, List, Protocol
 from collections.abc import Callable
+from pathlib import Path
+from typing import Protocol
 
 from dewey.core.base_script import BaseScript
 
@@ -35,7 +35,8 @@ class RealFileSystem:
 
 
 class AccountValidator(BaseScript):
-    """Validates accounts in the Hledger journal against predefined rules.
+    """
+    Validates accounts in the Hledger journal against predefined rules.
 
     Inherits from BaseScript for standardized configuration and logging.
     """
@@ -46,15 +47,19 @@ class AccountValidator(BaseScript):
         self.fs: FileSystemInterface = fs
 
     def load_rules(self, rules_file: Path) -> dict:
-        """Load classification rules from a JSON file.
+        """
+        Load classification rules from a JSON file.
 
         Args:
+        ----
             rules_file: The path to the JSON rules file.
 
         Returns:
+        -------
             A dictionary containing the classification rules.
 
         Raises:
+        ------
             Exception: If the rules file cannot be loaded.
 
         """
@@ -71,17 +76,21 @@ class AccountValidator(BaseScript):
         rules: dict,
         run_command: Callable[..., subprocess.CompletedProcess] = subprocess.run,
     ) -> bool:
-        """Verify that all accounts in the rules exist in the journal file.
+        """
+        Verify that all accounts in the rules exist in the journal file.
 
         Args:
+        ----
             journal_file: The path to the hledger journal file.
             rules: A dictionary containing the classification rules.
             run_command: A function to run a subprocess command.
 
         Returns:
+        -------
             True if all accounts are valid, False otherwise.
 
         Raises:
+        ------
             Exception: If the hledger command fails or account validation fails.
 
         """
@@ -105,7 +114,7 @@ class AccountValidator(BaseScript):
                 for acc in missing:
                     self.logger.error(f"  {acc}")
                 self.logger.error(
-                    "\nAdd these account declarations to your journal file:"
+                    "\nAdd these account declarations to your journal file:",
                 )
                 for acc in missing:
                     self.logger.error(f"account {acc}")

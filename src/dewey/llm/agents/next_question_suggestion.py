@@ -1,18 +1,21 @@
-from typing import Any, Dict, List
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
 
 class NextQuestionSuggestion(BaseScript):
-    """Suggests the next question to ask based on the current conversation.
+    """
+    Suggests the next question to ask based on the current conversation.
 
     Inherits from BaseScript for standardized configuration and logging.
     """
 
     def __init__(self, config: dict[str, Any], **kwargs: Any) -> None:
-        """Initializes the NextQuestionSuggestion script.
+        """
+        Initializes the NextQuestionSuggestion script.
 
         Args:
+        ----
             config (Dict[str, Any]): The configuration dictionary.
             **kwargs (Any): Additional keyword arguments.
 
@@ -20,15 +23,19 @@ class NextQuestionSuggestion(BaseScript):
         super().__init__(config=config, **kwargs)
 
     def run(self, conversation_history: list[str]) -> str:
-        """Executes the next question suggestion logic.
+        """
+        Executes the next question suggestion logic.
 
         Args:
+        ----
             conversation_history: The history of the conversation.
 
         Returns:
+        -------
             The suggested next question.
 
         Raises:
+        ------
             ValueError: If the prompt template is not found in the configuration.
             Exception: If there is an error during question suggestion.
 
@@ -51,22 +58,26 @@ class NextQuestionSuggestion(BaseScript):
             raise
 
     def _call_llm(self, prompt: str) -> str:
-        """Calls the LLM to generate the next question.
+        """
+        Calls the LLM to generate the next question.
 
         Args:
+        ----
             prompt: The prompt to send to the LLM.
 
         Returns:
+        -------
             The LLM's response.
 
         Raises:
+        ------
             Exception: If the LLM call fails.
 
         """
         try:
             # Access LLM-related configurations
             model_name = self.get_config_value(
-                "llm_model_name", default="gpt-3.5-turbo"
+                "llm_model_name", default="gpt-3.5-turbo",
             )
             temperature = self.get_config_value("llm_temperature", default=0.7)
 
@@ -82,7 +93,8 @@ class NextQuestionSuggestion(BaseScript):
             raise
 
     def execute(self) -> None:
-        """Executes the next question suggestion logic.
+        """
+        Executes the next question suggestion logic.
 
         This method retrieves the conversation history from the configuration,
         calls the run method to get the next question suggestion, and logs the suggestion.

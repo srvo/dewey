@@ -12,7 +12,7 @@ from dewey.core.crm.contacts.contact_consolidation import ContactConsolidation
 from dewey.core.crm.contacts.csv_contact_integration import CsvContactIntegration
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_csv_file() -> Generator[str, None, None]:
     """Create a temporary CSV file for testing."""
     with tempfile.NamedTemporaryFile(suffix=".csv", delete=False) as temp_file:
@@ -25,7 +25,7 @@ def mock_csv_file() -> Generator[str, None, None]:
                 "company": ["ACME Inc.", "Widgets Co."],
                 "job_title": ["Developer", "Manager"],
                 "phone": ["123-456-7890", "987-654-3210"],
-            }
+            },
         )
 
         # Write to CSV
@@ -86,7 +86,7 @@ class TestContactConsolidation:
                 None,
                 "Test notes",
                 None,
-            )
+            ),
         ]
 
         # Execute

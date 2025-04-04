@@ -1,6 +1,6 @@
 """Critical analysis and risk identification agent using smolagents."""
 
-from typing import Any, Dict, Optional
+from typing import Any
 
 from smolagents import Tool
 
@@ -8,7 +8,8 @@ from dewey.core.base_script import BaseScript
 
 
 class AdversarialAgent(BaseScript):
-    """Agent for critical analysis and devil's advocacy.
+    """
+    Agent for critical analysis and devil's advocacy.
 
     Features:
         - Risk identification
@@ -25,17 +26,20 @@ class AdversarialAgent(BaseScript):
                 Tool.from_function(
                     self.analyze_risks,
                     description="Analyzes potential risks and issues in proposals",
-                )
-            ]
+                ),
+            ],
         )
 
     def analyze_risks(self, proposal: str) -> str:
-        """Analyzes potential risks and issues in a proposal.
+        """
+        Analyzes potential risks and issues in a proposal.
 
         Args:
+        ----
             proposal: The text of the proposal to analyze.
 
         Returns:
+        -------
             Detailed risk analysis containing potential issues and recommendations.
 
         """
@@ -44,12 +48,15 @@ class AdversarialAgent(BaseScript):
         return result
 
     def run(self, input_data: dict[str, Any] | None = None) -> dict[str, Any]:
-        """Executes the agent's primary task.
+        """
+        Executes the agent's primary task.
 
         Args:
+        ----
             input_data: Input data for the agent. Defaults to None.
 
         Returns:
+        -------
             The result of the agent execution with risk analysis.
 
         """
@@ -67,12 +74,15 @@ class AdversarialAgent(BaseScript):
         return {"analysis_result": result}
 
     def run_llm(self, prompt: str) -> str:
-        """Runs the LLM with the given prompt.
+        """
+        Runs the LLM with the given prompt.
 
         Args:
+        ----
             prompt: The prompt to send to the LLM.
 
         Returns:
+        -------
             The LLM's response.
 
         """
@@ -84,7 +94,8 @@ class AdversarialAgent(BaseScript):
             return f"LLM Error: {e}"
 
     def execute(self) -> None:
-        """Executes the adversarial analysis based on configuration.
+        """
+        Executes the adversarial analysis based on configuration.
 
         This method retrieves a proposal from the configuration, if available,
         and performs a risk analysis. The result is logged.

@@ -1,17 +1,17 @@
-"""Database maintenance utilities.
+"""
+Database maintenance utilities.
 
 This module provides functionality for maintaining and optimizing
 the database, including checking table sizes, analyzing tables,
 and performing optimization.
 """
 
-from typing import Dict, List, Optional
-
 from dewey.core.base_script import BaseScript
 
 
 class DbMaintenance(BaseScript):
-    """Class for database maintenance operations.
+    """
+    Class for database maintenance operations.
 
     This class provides methods to perform various maintenance tasks
     on the database, such as checking table sizes, analyzing tables,
@@ -33,7 +33,8 @@ class DbMaintenance(BaseScript):
         self.run()
 
     def run(self) -> None:
-        """Run the database maintenance operations.
+        """
+        Run the database maintenance operations.
 
         This method performs various maintenance tasks on the database,
         including checking table sizes, analyzing tables, and optimizing tables.
@@ -53,9 +54,11 @@ class DbMaintenance(BaseScript):
         self.logger.info("Database maintenance completed")
 
     def check_table_sizes(self) -> dict[str, int]:
-        """Check the sizes of all tables in the database.
+        """
+        Check the sizes of all tables in the database.
 
-        Returns:
+        Returns
+        -------
             Dictionary mapping table names to their sizes in bytes
 
         """
@@ -84,9 +87,11 @@ class DbMaintenance(BaseScript):
             return {}
 
     def analyze_tables(self, tables: list[str] | None = None) -> None:
-        """Analyze tables to update statistics.
+        """
+        Analyze tables to update statistics.
 
         Args:
+        ----
             tables: Optional list of tables to analyze. If None, all tables are analyzed.
 
         """
@@ -108,9 +113,11 @@ class DbMaintenance(BaseScript):
             self.logger.error(f"Error analyzing tables: {e}")
 
     def optimize_tables(self, tables: list[str] | None = None) -> None:
-        """Optimize tables for better performance.
+        """
+        Optimize tables for better performance.
 
         Args:
+        ----
             tables: Optional list of tables to optimize. If None, all tables are optimized.
 
         """
@@ -132,9 +139,11 @@ class DbMaintenance(BaseScript):
             self.logger.error(f"Error optimizing tables: {e}")
 
     def get_table_list(self) -> list[str]:
-        """Get a list of all tables in the database.
+        """
+        Get a list of all tables in the database.
 
-        Returns:
+        Returns
+        -------
             List of table names
 
         """

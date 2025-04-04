@@ -41,7 +41,8 @@ GLOBAL_CHAT_HISTORY_FILE = None
 def signal_handler(signum, frame) -> Never:
     """Handle timeout signal."""
     logger.error("Timeout reached")
-    raise TimeoutError("Timeout reached")
+    msg = "Timeout reached"
+    raise TimeoutError(msg)
 
 
 # Register signal handlers
@@ -139,7 +140,7 @@ def initialize_persistent_session(args):
     # Create a chat history file for this specific directory/file
     target_path = Path(args.dir).resolve()
     safe_name = re.sub(r"[^\w-]", "_", str(target_path))
-    GLOBAL_CHAT_HISTORY_FILE = str(chat_history_dir / "{}.json".format(safe_name))
+    GLOBAL_CHAT_HISTORY_FILE = str(chat_history_dir / f"{safe_name}.json")
 
     # Set up environment variables
     os.environ["AIDER_NO_AUTO_COMMIT"] = "1"

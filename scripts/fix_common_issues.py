@@ -6,7 +6,6 @@ import logging
 import re
 import sys
 from pathlib import Path
-from typing import Dict
 
 # Configure logging
 logging.basicConfig(
@@ -110,7 +109,7 @@ def fix_unused_imports(content: str) -> str:
                 # Handle multi-line imports
                 full_line = line
                 while full_line.strip().endswith("\\") or full_line.strip().endswith(
-                    ","
+                    ",",
                 ):
                     i += 1
                     if i >= len(lines):
@@ -124,9 +123,8 @@ def fix_unused_imports(content: str) -> str:
                         module, alias = part.split(" as ")
                         if alias.strip() not in unused_imports:
                             parts.append(part)
-                    else:
-                        if part.strip() not in unused_imports:
-                            parts.append(part)
+                    elif part.strip() not in unused_imports:
+                        parts.append(part)
 
                 # Reconstruct the line if there are remaining imports
                 if parts:
@@ -139,7 +137,7 @@ def fix_unused_imports(content: str) -> str:
                 # Handle multi-line imports
                 full_line = line
                 while full_line.strip().endswith("\\") or full_line.strip().endswith(
-                    ","
+                    ",",
                 ):
                     i += 1
                     if i >= len(lines):
@@ -157,13 +155,12 @@ def fix_unused_imports(content: str) -> str:
                             alias.strip(),
                         ) not in unused_from_imports:
                             parts.append(part)
-                    else:
-                        if (
-                            module,
-                            part.strip(),
-                            part.strip(),
-                        ) not in unused_from_imports:
-                            parts.append(part)
+                    elif (
+                        module,
+                        part.strip(),
+                        part.strip(),
+                    ) not in unused_from_imports:
+                        parts.append(part)
 
                 # Reconstruct the line if there are remaining imports
                 if parts:
@@ -187,7 +184,8 @@ def fix_bare_except(content: str) -> str:
 
 
 def fix_missing_docstrings(content: str) -> str:
-    """Add basic docstrings to functions and classes that are missing them.
+    """
+    Add basic docstrings to functions and classes that are missing them.
     Note: This is a simple implementation and won't handle all cases perfectly.
     """
     try:
@@ -198,7 +196,7 @@ def fix_missing_docstrings(content: str) -> str:
             if isinstance(node, (ast.FunctionDef, ast.ClassDef, ast.AsyncFunctionDef)):
                 if not ast.get_docstring(node):
                     missing_docstrings.append(
-                        (node.lineno, node.name, isinstance(node, ast.ClassDef))
+                        (node.lineno, node.name, isinstance(node, ast.ClassDef)),
                     )
 
         if not missing_docstrings:
@@ -314,19 +312,10 @@ def fix_file(file_path: Path, dry_run: bool = False) -> dict:
             with open(file_path, "w") as f:
                 f.write(content)
 
-        return {
-            "file": file_path,
-            "changes": changes,
-            "modified": bool(changes),
-        }
+        return {"file": file_path, "changes": changes, "modified": bool(changes)}
     except Exception as e:
         logger.error(f"Error fixing {file_path}: {e}")
-        return {
-            "file": file_path,
-            "changes": [],
-            "modified": False,
-            "error": str(e),
-        }
+        return {"file": file_path, "changes": [], "modified": False, "error": str(e)}
 
 
 def main():
@@ -335,10 +324,10 @@ def main():
 
     parser = argparse.ArgumentParser(description="Fix common flake8 issues")
     parser.add_argument(
-        "--dir", "-d", required=True, help="File or directory to process"
+        "--dir", "-d", required=True, help="File or directory to process",
     )
     parser.add_argument(
-        "--dry-run", action="store_true", help="Don't actually change files"
+        "--dry-run", action="store_true", help="Don't actually change files",
     )
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     args = parser.parse_args()

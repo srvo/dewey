@@ -1,6 +1,7 @@
 # Formatting failed: LLM generation failed: Gemini API error: Model gemini-2.0-flash in cooldown until Sat Mar 15 00:33:42 2025
 
-"""Tests for Exa AI Research Engine.
+"""
+Tests for Exa AI Research Engine.
 ============================
 """
 
@@ -12,21 +13,21 @@ import pytest
 from ethifinx.research.engines.exa import ExaEngine
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_env():
     """Mock environment variables."""
     with patch.dict(os.environ, {"EXA_API_KEY": "test_key"}):
         yield
 
 
-@pytest.fixture
+@pytest.fixture()
 async def engine(mock_env):
     """Create an ExaEngine instance for testing."""
     async with ExaEngine(max_retries=2) as engine:
         yield engine
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_engine_initialization(mock_env) -> None:
     """Test that the engine initializes correctly."""
     engine = ExaEngine(max_retries=2)
@@ -35,7 +36,7 @@ async def test_engine_initialization(mock_env) -> None:
     assert engine.api_key == "test_key"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_process_method(engine) -> None:
     """Test the process method returns expected status."""
     result = await engine.process()
@@ -43,7 +44,7 @@ async def test_process_method(engine) -> None:
     assert result["status"] == "Exa engine ready"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_search_basic(engine) -> None:
     """Test basic search functionality."""
     mock_response = {
@@ -80,7 +81,7 @@ async def test_search_basic(engine) -> None:
         assert payload["text"] is True
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_search_with_filters(engine) -> None:
     """Test search with domain and date filters."""
     mock_response = {"results": []}
@@ -112,7 +113,7 @@ async def test_search_with_filters(engine) -> None:
         assert payload["end_published_date"] == "2024-01-01"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_contents(engine) -> None:
     """Test content retrieval functionality."""
     mock_response = {
@@ -132,9 +133,7 @@ async def test_get_contents(engine) -> None:
         mock_post.return_value = mock_context
 
         result = await engine.get_contents(
-            ["https://example.com"],
-            text=True,
-            html=True,
+            ["https://example.com"], text=True, html=True,
         )
 
         assert result == mock_response
@@ -149,7 +148,7 @@ async def test_get_contents(engine) -> None:
         assert payload["html"] is True
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_find_similar(engine) -> None:
     """Test similar pages functionality."""
     mock_response = {
@@ -170,8 +169,7 @@ async def test_find_similar(engine) -> None:
         mock_post.return_value = mock_context
 
         result = await engine.find_similar(
-            "https://example.com",
-            include_domains=["trusted.com"],
+            "https://example.com", include_domains=["trusted.com"],
         )
 
         assert result == mock_response
@@ -185,7 +183,7 @@ async def test_find_similar(engine) -> None:
         assert payload["include_domains"] == ["trusted.com"]
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_search_retry_on_error(engine) -> None:
     """Test search retries on API errors."""
     mock_response = {"results": []}
@@ -207,7 +205,7 @@ async def test_search_retry_on_error(engine) -> None:
         assert mock_post.call_count == 2
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_missing_api_key() -> None:
     """Test error handling for missing API key."""
     with patch.dict(os.environ, clear=True):

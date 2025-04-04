@@ -1,6 +1,6 @@
 import re
 from logging import getLogger
-from typing import Any, Dict, List, Optional, Set
+from typing import Any
 
 from jinja2 import StrictUndefined, Template
 
@@ -10,7 +10,8 @@ logger = getLogger(__name__)
 
 
 class BaseAgent(BaseScript):
-    """Base class for all agents.
+    """
+    Base class for all agents.
 
     This class provides a foundation for building agents within the Dewey
     project, offering standardized configuration, logging, and database/LLM
@@ -27,9 +28,11 @@ class BaseAgent(BaseScript):
         disable_rate_limit: bool = False,
         **kwargs: Any,
     ) -> None:
-        """Initializes the BaseAgent script.
+        """
+        Initializes the BaseAgent script.
 
         Args:
+        ----
             name: Name of the agent (used for logging)
             description: Description of the agent
             config_section: Section in dewey.yaml to load for this agent
@@ -54,7 +57,8 @@ class BaseAgent(BaseScript):
         self.disable_rate_limit = disable_rate_limit  # Set from parameter
 
     def run(self) -> None:
-        """Executes the agent's primary logic.
+        """
+        Executes the agent's primary logic.
 
         This method should be overridden by subclasses to implement
         the specific behavior of the agent.
@@ -75,22 +79,25 @@ class BaseAgent(BaseScript):
             return compiled_template.render(**variables)
         except Exception as e:
             raise Exception(
-                f"Error during jinja template rendering: {type(e).__name__}: {e}"
+                f"Error during jinja template rendering: {type(e).__name__}: {e}",
             )
 
     def _generate_code(self, prompt: str) -> str:
-        """Generates code based on the given prompt using the LLM.
+        """
+        Generates code based on the given prompt using the LLM.
 
         Args:
+        ----
             prompt: The prompt to use for code generation.
 
         Returns:
+        -------
             The generated code.
 
         """
         if not self.llm_client:
             raise ValueError(
-                "LLM client is not initialized. Ensure enable_llm=True in the constructor."
+                "LLM client is not initialized. Ensure enable_llm=True in the constructor.",
             )
 
         try:
@@ -99,7 +106,7 @@ class BaseAgent(BaseScript):
                 self.logger.warning("Rate limiting is disabled for this agent.")
 
             response = self.llm_client.generate(
-                prompt, disable_rate_limit=self.disable_rate_limit
+                prompt, disable_rate_limit=self.disable_rate_limit,
             )  # Assuming a generate method exists
             return response.text  # Assuming the response has a text attribute
         except Exception as e:
@@ -107,7 +114,8 @@ class BaseAgent(BaseScript):
             raise
 
     def execute(self) -> None:
-        """Execute the agent.
+        """
+        Execute the agent.
 
         This method handles the common setup and execution flow:
         1. Parse arguments
@@ -140,9 +148,11 @@ class BaseAgent(BaseScript):
             self._cleanup()
 
     def to_dict(self) -> dict[str, Any]:
-        """Convert the agent to a dictionary representation.
+        """
+        Convert the agent to a dictionary representation.
 
-        Returns:
+        Returns
+        -------
             `dict`: Dictionary representation of the agent.
 
         """

@@ -1,5 +1,5 @@
-from typing import Any, Dict, Optional
 import json
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 from dewey.llm.litellm_utils import quick_completion
@@ -9,9 +9,11 @@ class CompanyAnalysisManager(BaseScript):
     """Manages the analysis of company data, including fetching, processing, and storing information."""
 
     def __init__(self, config_section: str | None = "company_analysis") -> None:
-        """Initializes the CompanyAnalysisManager.
+        """
+        Initializes the CompanyAnalysisManager.
 
         Args:
+        ----
             config_section: The section in the dewey.yaml configuration file to use for this script.
 
         """
@@ -37,20 +39,24 @@ class CompanyAnalysisManager(BaseScript):
 
         except Exception as e:
             self.logger.error(
-                f"An error occurred during company analysis: {e}", exc_info=True
+                f"An error occurred during company analysis: {e}", exc_info=True,
             )
             raise
 
     def _analyze_company(self, company_ticker: str) -> dict[str, Any]:
-        """Analyzes a company using LLM and other tools.
+        """
+        Analyzes a company using LLM and other tools.
 
         Args:
+        ----
             company_ticker: The ticker symbol of the company to analyze.
 
         Returns:
+        -------
             A dictionary containing the analysis results.
 
         Raises:
+        ------
             Exception: If there is an error during the analysis process.
 
         """
@@ -68,12 +74,12 @@ class CompanyAnalysisManager(BaseScript):
 
         except Exception as e:
             self.logger.error(
-                f"Error analyzing company {company_ticker}: {e}", exc_info=True
+                f"Error analyzing company {company_ticker}: {e}", exc_info=True,
             )
             raise
 
     def _store_analysis_results(
-        self, company_ticker: str, analysis_results: dict[str, Any]
+        self, company_ticker: str, analysis_results: dict[str, Any],
     ) -> None:
         """Stores the analysis results in the database."""
         if not self.db_conn:
@@ -101,7 +107,7 @@ class CompanyAnalysisManager(BaseScript):
             self.db_conn.commit()
 
             self.logger.info(
-                f"Analysis results stored successfully for: {company_ticker}"
+                f"Analysis results stored successfully for: {company_ticker}",
             )
 
         except Exception as e:

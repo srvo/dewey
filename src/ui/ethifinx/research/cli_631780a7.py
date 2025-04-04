@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import os
-from typing import List, Optional
 
 import click
 
@@ -22,9 +21,11 @@ logging.basicConfig(
 
 
 def print_analysis_result(result: dict) -> None:
-    """Print analysis result in a readable format.
+    """
+    Print analysis result in a readable format.
 
     Args:
+    ----
         result (dict): The analysis result dictionary.
 
     """
@@ -41,16 +42,17 @@ def print_analysis_result(result: dict) -> None:
 @click.group()
 def research():
     """Research commands for analyzing companies."""
-    pass
 
 
 @research.command()
 @click.option("--limit", default=150, help="Number of companies to research")
 @click.option("--timeout", default=30, help="Timeout for API calls")
 def run(limit: int, timeout: int):
-    """Run research workflow on top companies.
+    """
+    Run research workflow on top companies.
 
     Args:
+    ----
         limit (int): Number of companies to research.
         timeout (int): Timeout for API calls.
 
@@ -69,7 +71,7 @@ def run(limit: int, timeout: int):
             logging.info(f"Successfully processed {company['name']}")
             logging.info(f"Risk score: {result['structured_data'].get('risk_score')}")
             logging.info(
-                f"Recommendation: {result['structured_data'].get('recommendation')}"
+                f"Recommendation: {result['structured_data'].get('recommendation')}",
             )
         else:
             logging.error(f"Failed to process {company['name']}")
@@ -89,9 +91,11 @@ def run(limit: int, timeout: int):
 @click.option("--tick-range", help="Tick range to analyze (min-max)")
 @click.option("--limit", type=int, help="Limit number of companies to process")
 def analyze(tickers: str | None, tick_range: str | None, limit: int | None):
-    """Run analysis tagger on specified companies.
+    """
+    Run analysis tagger on specified companies.
 
     Args:
+    ----
         tickers (Optional[str]): Comma-separated list of tickers.
         tick_range (Optional[str]): Tick range to analyze (min-max).
         limit (Optional[int]): Limit number of companies to process.
@@ -107,14 +111,14 @@ def analyze(tickers: str | None, tick_range: str | None, limit: int | None):
             ticker_list = [t.strip() for t in tickers.split(",")]
             logging.info(f"Analyzing companies: {', '.join(ticker_list)}")
             async for result in workflow.process_companies_by_tickers(
-                ticker_list, callback=print_analysis_result
+                ticker_list, callback=print_analysis_result,
             ):
                 pass
         elif tick_range:
             min_tick, max_tick = map(int, tick_range.split("-"))
             logging.info(f"Analyzing companies with tick range {min_tick}-{max_tick}")
             async for result in workflow.process_companies_by_tick_range(
-                min_tick, max_tick, limit, callback=print_analysis_result
+                min_tick, max_tick, limit, callback=print_analysis_result,
             ):
                 pass
         else:

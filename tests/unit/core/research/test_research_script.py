@@ -55,7 +55,7 @@ class TestResearchScript(unittest.TestCase):
 
         # Verify that the logger was called
         self.script.logger.info.assert_called_with(
-            "Processing data: test input with config: None"
+            "Processing data: test input with config: None",
         )
 
     @patch("dewey.core.base_script.BaseScript._load_config")

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Gmail Email Fetcher and Database Repopulator
+"""
+Gmail Email Fetcher and Database Repopulator
 ===========================================
 
 This script:
@@ -10,23 +11,19 @@ This script:
 5. Populates the table with emails fetched from Gmail
 """
 
-import base64
 import json
 import logging
-import os
-import sys
 import time
-from datetime import datetime
-from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
 import uuid
+from datetime import datetime
+from typing import Any
 
 import duckdb
 from tqdm import tqdm  # For progress bars
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import get_motherduck_connection
 from dewey.core.crm.enrichment.gmail_utils import GmailAPIClient
+from dewey.core.db.connection import get_motherduck_connection
 
 
 class GmailFetcherAndRepopulator(BaseScript):
@@ -58,7 +55,7 @@ class GmailFetcherAndRepopulator(BaseScript):
             with get_motherduck_connection() as conn:
                 # Confirm before dropping the existing table
                 self.logger.warning(
-                    "This will DROP the existing emails table and recreate it."
+                    "This will DROP the existing emails table and recreate it.",
                 )
                 confirm = input("Are you sure you want to continue? (y/n): ")
                 if confirm.lower() != "y":
@@ -72,7 +69,7 @@ class GmailFetcherAndRepopulator(BaseScript):
                 self._fetch_and_store_emails(conn)
 
             self.logger.info(
-                "Email fetching and database repopulation completed successfully."
+                "Email fetching and database repopulation completed successfully.",
             )
 
         except KeyboardInterrupt:
@@ -82,9 +79,11 @@ class GmailFetcherAndRepopulator(BaseScript):
             raise
 
     def _verify_gmail_connection(self) -> bool:
-        """Verify connection to Gmail API.
+        """
+        Verify connection to Gmail API.
 
-        Returns:
+        Returns
+        -------
             bool: True if connection is successful, False otherwise
 
         """
@@ -97,20 +96,21 @@ class GmailFetcherAndRepopulator(BaseScript):
             messages = results.get("messages", [])
             if messages:
                 self.logger.info(
-                    f"Successfully connected to Gmail API. Found at least {len(messages)} message(s)."
+                    f"Successfully connected to Gmail API. Found at least {len(messages)} message(s).",
                 )
                 return True
-            else:
-                self.logger.warning("Connected to Gmail API but no messages found.")
-                return True
+            self.logger.warning("Connected to Gmail API but no messages found.")
+            return True
         except Exception as e:
             self.logger.error(f"Failed to connect to Gmail API: {e}")
             return False
 
     def _recreate_emails_table(self, conn: duckdb.DuckDBPyConnection) -> None:
-        """Drop and recreate the emails table.
+        """
+        Drop and recreate the emails table.
 
         Args:
+        ----
             conn: DuckDB connection
 
         """
@@ -121,7 +121,8 @@ class GmailFetcherAndRepopulator(BaseScript):
 
             # Create fresh emails table with updated schema
             self.logger.info("Creating new emails table...")
-            conn.execute("""
+            conn.execute(
+                """
             CREATE TABLE emails (
                 msg_id VARCHAR PRIMARY KEY,
                 thread_id VARCHAR,
@@ -152,7 +153,8 @@ class GmailFetcherAndRepopulator(BaseScript):
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-            """)
+            """,
+            )
 
             # Create indexes for performance
             self.logger.info("Creating indexes...")
@@ -173,9 +175,11 @@ class GmailFetcherAndRepopulator(BaseScript):
             raise
 
     def _fetch_and_store_emails(self, conn: duckdb.DuckDBPyConnection) -> None:
-        """Fetch all emails from Gmail API and store them in the database.
+        """
+        Fetch all emails from Gmail API and store them in the database.
 
         Args:
+        ----
             conn: DuckDB connection
 
         """
@@ -193,7 +197,7 @@ class GmailFetcherAndRepopulator(BaseScript):
                 total_messages = self.max_emails
 
             self.logger.info(
-                f"Starting to fetch {total_messages} messages from Gmail..."
+                f"Starting to fetch {total_messages} messages from Gmail...",
             )
 
             # Use a unique batch ID for this import
@@ -209,7 +213,7 @@ class GmailFetcherAndRepopulator(BaseScript):
                     # Check if we've reached the maximum emails to process
                     if self.max_emails > 0 and processed_count >= self.max_emails:
                         self.logger.info(
-                            f"Reached maximum emails limit ({self.max_emails})"
+                            f"Reached maximum emails limit ({self.max_emails})",
                         )
                         break
 
@@ -243,7 +247,7 @@ class GmailFetcherAndRepopulator(BaseScript):
                             message = self.gmail_client.fetch_message(msg_id)
                             if not message:
                                 self.logger.warning(
-                                    f"Failed to fetch message {msg_id}, skipping"
+                                    f"Failed to fetch message {msg_id}, skipping",
                                 )
                                 continue
 
@@ -264,7 +268,7 @@ class GmailFetcherAndRepopulator(BaseScript):
 
                         except Exception as e:
                             self.logger.error(
-                                f"Error processing message {message_ref.get('id')}: {e}"
+                                f"Error processing message {message_ref.get('id')}: {e}",
                             )
                             continue
 
@@ -272,7 +276,7 @@ class GmailFetcherAndRepopulator(BaseScript):
                     if email_batch:
                         self._store_email_batch(conn, email_batch, batch_id)
                         self.logger.info(
-                            f"Stored {len(email_batch)} emails in database"
+                            f"Stored {len(email_batch)} emails in database",
                         )
 
                     # Break if no more pages
@@ -283,20 +287,23 @@ class GmailFetcherAndRepopulator(BaseScript):
                     time.sleep(0.1)
 
             self.logger.info(
-                f"Successfully fetched and stored {processed_count} emails."
+                f"Successfully fetched and stored {processed_count} emails.",
             )
 
         except Exception as e:
             self.logger.error(f"Error fetching and storing emails: {e}")
             raise
 
-    def _parse_message(self, message: Dict[str, Any]) -> Dict[str, Any]:
-        """Parse a Gmail message into a structured dictionary for database storage.
+    def _parse_message(self, message: dict[str, Any]) -> dict[str, Any]:
+        """
+        Parse a Gmail message into a structured dictionary for database storage.
 
         Args:
+        ----
             message: Gmail message object
 
         Returns:
+        -------
             Structured email data
 
         """
@@ -315,7 +322,7 @@ class GmailFetcherAndRepopulator(BaseScript):
                 import email.utils
 
                 received_date = datetime.fromtimestamp(
-                    email.utils.mktime_tz(email.utils.parsedate_tz(date_str))
+                    email.utils.mktime_tz(email.utils.parsedate_tz(date_str)),
                 )
             except Exception as e:
                 self.logger.warning(f"Failed to parse date '{date_str}': {e}")
@@ -374,7 +381,7 @@ class GmailFetcherAndRepopulator(BaseScript):
                     "received_date": received_date.isoformat(),
                     "body_text": plain_body,
                     "body_html": html_body,
-                }
+                },
             ),
             "priority": 0,  # Will be set by enrichment
             "label_ids": json.dumps(message.get("labelIds", [])),
@@ -393,13 +400,16 @@ class GmailFetcherAndRepopulator(BaseScript):
 
         return email_data
 
-    def _extract_attachments(self, payload: Dict) -> List[Dict[str, Any]]:
-        """Extract attachments from the message payload.
+    def _extract_attachments(self, payload: dict) -> list[dict[str, Any]]:
+        """
+        Extract attachments from the message payload.
 
         Args:
+        ----
             payload: Gmail message payload
 
         Returns:
+        -------
             List of attachment metadata
 
         """
@@ -409,14 +419,14 @@ class GmailFetcherAndRepopulator(BaseScript):
             return attachments
 
         # Check if this part is an attachment
-        if "filename" in payload and payload["filename"]:
+        if payload.get("filename"):
             attachments.append(
                 {
                     "filename": payload["filename"],
                     "mimeType": payload.get("mimeType", ""),
                     "size": payload.get("body", {}).get("size", 0),
                     "attachmentId": payload.get("body", {}).get("attachmentId", ""),
-                }
+                },
             )
 
         # Check for multipart
@@ -429,12 +439,14 @@ class GmailFetcherAndRepopulator(BaseScript):
     def _store_email_batch(
         self,
         conn: duckdb.DuckDBPyConnection,
-        email_batch: List[Dict[str, Any]],
+        email_batch: list[dict[str, Any]],
         batch_id: str,
     ) -> None:
-        """Store a batch of emails in the database.
+        """
+        Store a batch of emails in the database.
 
         Args:
+        ----
             conn: DuckDB connection
             email_batch: List of email data dictionaries
             batch_id: Batch identifier

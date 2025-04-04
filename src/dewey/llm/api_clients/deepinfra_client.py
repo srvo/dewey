@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
-"""DeepInfra API Client (Legacy).
+"""
+DeepInfra API Client (Legacy).
 
 Handles error classification requests through the DeepInfra API with
 improved error handling, retries, and chunking for large files.
 """
 
-import logging
 import os
-import requests
 import time
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
+
+import requests
 
 from dewey.core.base_script import BaseScript
 
@@ -26,7 +27,7 @@ class DeepInfraClient(BaseScript):
     """DeepInfra API client for error classification."""
 
     def __init__(
-        self, api_key: Optional[str] = None, base_url: str = "https://api.deepinfra.com"
+        self, api_key: str | None = None, base_url: str = "https://api.deepinfra.com",
     ) -> None:
         """Initialize the DeepInfra client."""
         super().__init__(name="deepinfra_client")
@@ -35,7 +36,7 @@ class DeepInfraClient(BaseScript):
         self.api_key = api_key or os.getenv("DEEPINFRA_API_KEY")
         if not self.api_key:
             raise ValueError(
-                "Deep Infra API key not provided or found in environment variables."
+                "Deep Infra API key not provided or found in environment variables.",
             )
         self.base_url = base_url
         self.headers = {
@@ -46,11 +47,7 @@ class DeepInfraClient(BaseScript):
     def setup_argparse(self):
         """Set up command line arguments."""
         parser = super().setup_argparse()
-        parser.add_argument(
-            "input_file",
-            type=Path,
-            help="Path to input log file",
-        )
+        parser.add_argument("input_file", type=Path, help="Path to input log file")
         parser.add_argument(
             "--output-file",
             type=Path,
@@ -71,10 +68,7 @@ class DeepInfraClient(BaseScript):
 
         for idx, chunk in enumerate(chunks):
             self.logger.info(
-                "Processing chunk %d/%d (%d lines)",
-                idx + 1,
-                len(chunks),
-                len(chunk),
+                "Processing chunk %d/%d (%d lines)", idx + 1, len(chunks), len(chunk),
             )
             prompt = (
                 "Analyze these log lines and identify error patterns:\n\n"
@@ -129,7 +123,7 @@ class DeepInfraClient(BaseScript):
                             "pattern": line.strip(),
                             "count": 1,  # Basic count for now
                             "severity": "unknown",  # Could be enhanced
-                        }
+                        },
                     )
 
             return errors
@@ -139,9 +133,7 @@ class DeepInfraClient(BaseScript):
             return []
 
     def generate_issues_markdown(
-        self,
-        errors: list[dict[str, Any]],
-        output_file: Path,
+        self, errors: list[dict[str, Any]], output_file: Path,
     ) -> None:
         """Generate markdown report of identified issues."""
         output_file.parent.mkdir(parents=True, exist_ok=True)
@@ -173,7 +165,7 @@ class DeepInfraClient(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 

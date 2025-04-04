@@ -1,4 +1,5 @@
-"""Test suite for LiteLLM tests.
+"""
+Test suite for LiteLLM tests.
 
 This module runs all LiteLLM tests as a suite.
 """
@@ -9,7 +10,7 @@ import unittest
 
 # Add the project root to the path to make imports work
 sys.path.insert(
-    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")),
 )
 
 # Import test classes - using absolute imports
@@ -26,16 +27,16 @@ def create_test_suite():
 
     # Add test cases from each test module
     test_suite.addTest(
-        unittest.defaultTestLoader.loadTestsFromTestCase(TestLiteLLMClient)
+        unittest.defaultTestLoader.loadTestsFromTestCase(TestLiteLLMClient),
     )
     test_suite.addTest(
-        unittest.defaultTestLoader.loadTestsFromTestCase(TestLiteLLMUtils)
+        unittest.defaultTestLoader.loadTestsFromTestCase(TestLiteLLMUtils),
     )
     test_suite.addTest(
-        unittest.defaultTestLoader.loadTestsFromTestCase(TestLLMExceptions)
+        unittest.defaultTestLoader.loadTestsFromTestCase(TestLLMExceptions),
     )
     test_suite.addTest(
-        unittest.defaultTestLoader.loadTestsFromTestCase(TestLiteLLMIntegration)
+        unittest.defaultTestLoader.loadTestsFromTestCase(TestLiteLLMIntegration),
     )
 
     return test_suite

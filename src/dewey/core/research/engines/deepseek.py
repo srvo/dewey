@@ -1,4 +1,5 @@
-"""DeepSeek Engine
+"""
+DeepSeek Engine
 
 A research engine implementation using the DeepSeek AI model for analysis.
 """
@@ -6,7 +7,7 @@ A research engine implementation using the DeepSeek AI model for analysis.
 import json
 import logging
 import os
-from typing import Any, Dict, Optional
+from typing import Any
 
 import aiohttp
 
@@ -17,9 +18,11 @@ class DeepSeekEngine:
     """Engine for processing company information using DeepSeek LLM."""
 
     def __init__(self, api_key: str | None = None):
-        """Initialize the DeepSeek engine.
+        """
+        Initialize the DeepSeek engine.
 
         Args:
+        ----
             api_key: The API key for DeepSeek API access.
 
         """
@@ -28,12 +31,15 @@ class DeepSeekEngine:
         self.model = "deepseek-chat"
 
     async def analyze_company(self, company_data: dict[str, Any]) -> dict[str, Any]:
-        """Analyze a company using the DeepSeek engine.
+        """
+        Analyze a company using the DeepSeek engine.
 
         Args:
+        ----
             company_data: Dictionary containing company information
 
         Returns:
+        -------
             Dictionary containing analysis results
 
         """
@@ -47,7 +53,7 @@ class DeepSeekEngine:
 
             # Build prompt for the LLM
             prompt = self._build_analysis_prompt(
-                ticker, name, description, sector, industry
+                ticker, name, description, sector, industry,
             )
 
             # Get analysis from DeepSeek
@@ -62,7 +68,7 @@ class DeepSeekEngine:
             }
         except Exception as e:
             logger.error(
-                f"Error analyzing company {company_data.get('ticker', 'unknown')}: {str(e)}"
+                f"Error analyzing company {company_data.get('ticker', 'unknown')}: {e!s}",
             )
             return {
                 "ticker": company_data.get("ticker", "Unknown"),
@@ -72,11 +78,13 @@ class DeepSeekEngine:
             }
 
     def _build_analysis_prompt(
-        self, ticker: str, name: str, description: str, sector: str, industry: str
+        self, ticker: str, name: str, description: str, sector: str, industry: str,
     ) -> str:
-        """Build a prompt for company analysis.
+        """
+        Build a prompt for company analysis.
 
         Args:
+        ----
             ticker: Company ticker symbol
             name: Company name
             description: Company description
@@ -84,6 +92,7 @@ class DeepSeekEngine:
             industry: Company industry
 
         Returns:
+        -------
             Formatted prompt string
 
         """
@@ -119,15 +128,19 @@ class DeepSeekEngine:
         """
 
     async def _call_deepseek_api(self, prompt: str) -> dict[str, Any]:
-        """Call the DeepSeek API with the given prompt.
+        """
+        Call the DeepSeek API with the given prompt.
 
         Args:
+        ----
             prompt: The prompt to send to the DeepSeek API
 
         Returns:
+        -------
             The parsed JSON response from the API
 
         Raises:
+        ------
             Exception: If the API call fails
 
         """
@@ -156,7 +169,7 @@ class DeepSeekEngine:
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.post(
-                    self.api_url, headers=headers, json=payload
+                    self.api_url, headers=headers, json=payload,
                 ) as response:
                     if response.status == 200:
                         result = await response.json()
@@ -166,18 +179,19 @@ class DeepSeekEngine:
                             .get("content", "{}")
                         )
                         return json.loads(content)
-                    else:
-                        error_text = await response.text()
-                        raise Exception(f"API error ({response.status}): {error_text}")
+                    error_text = await response.text()
+                    raise Exception(f"API error ({response.status}): {error_text}")
         except json.JSONDecodeError:
             raise Exception("Failed to parse API response")
         except Exception as e:
-            raise Exception(f"API call failed: {str(e)}")
+            raise Exception(f"API call failed: {e!s}")
 
     def _get_mock_response(self) -> dict[str, Any]:
-        """Get a mock response for testing when no API key is available.
+        """
+        Get a mock response for testing when no API key is available.
 
-        Returns:
+        Returns
+        -------
             A mock analysis response
 
         """

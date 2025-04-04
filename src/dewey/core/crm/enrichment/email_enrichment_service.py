@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import base64
-from typing import Any, Tuple
+from typing import Any
 
 from database.models import AutomatedOperation, Email, EventLog
 from django.db import transaction
@@ -14,16 +14,19 @@ from dewey.llm import llm_utils
 
 
 class EmailEnrichmentService(BaseScript):
-    """Service for enriching email metadata like message bodies.
+    """
+    Service for enriching email metadata like message bodies.
 
     Inherits from BaseScript and provides methods to extract email content,
     prioritize emails, and update email records in the database.
     """
 
     def __init__(self, config_section: str = "crm") -> None:
-        """Initialize EmailEnrichmentService.
+        """
+        Initialize EmailEnrichmentService.
 
         Args:
+        ----
             config_section: The configuration section to use. Defaults to 'crm'.
 
         """
@@ -32,9 +35,11 @@ class EmailEnrichmentService(BaseScript):
         self.prioritizer = llm_utils.EmailPrioritizer()
 
     def get_gmail_service(self):
-        """Get the Gmail service object.
+        """
+        Get the Gmail service object.
 
-        Returns:
+        Returns
+        -------
             The Gmail service object.
 
         """
@@ -54,22 +59,25 @@ class EmailEnrichmentService(BaseScript):
             raise
 
     def run(self) -> None:
-        """Placeholder for a run method.
+        """
+        Placeholder for a run method.
 
         In a real implementation, this would likely drive the email
         enrichment process, possibly by querying for emails that need
         enrichment and calling `enrich_email` on them.
         """
         self.logger.info("EmailEnrichmentService run method called.")
-        pass
 
     def extract_message_bodies(self, message_data: dict) -> tuple[str, str]:
-        """Extract plain and HTML message bodies from Gmail message data.
+        """
+        Extract plain and HTML message bodies from Gmail message data.
 
         Args:
+        ----
             message_data: A dictionary containing the Gmail message data.
 
         Returns:
+        -------
             A tuple containing the plain text body and the HTML body.
 
         """
@@ -113,12 +121,15 @@ class EmailEnrichmentService(BaseScript):
         return plain_body, html_body
 
     def enrich_email(self, email: Email) -> bool:
-        """Enrich an email with message body content and priority score.
+        """
+        Enrich an email with message body content and priority score.
 
         Args:
+        ----
             email: The email to enrich.
 
         Returns:
+        -------
             True if enrichment was successful, False otherwise.
 
         """
@@ -204,12 +215,15 @@ class EmailEnrichmentService(BaseScript):
             return False
 
     def create_enrichment_task(self, email_id: int) -> AutomatedOperation:
-        """Create an automated operation task for email enrichment.
+        """
+        Create an automated operation task for email enrichment.
 
         Args:
+        ----
             email_id: The ID of the email to enrich.
 
         Returns:
+        -------
             The created AutomatedOperation object.
 
         """
@@ -224,14 +238,16 @@ class EmailEnrichmentService(BaseScript):
             return task
         except Exception as e:
             self.logger.error(
-                f"Failed to create enrichment task for email {email_id}: {e}"
+                f"Failed to create enrichment task for email {email_id}: {e}",
             )
             raise
 
     def complete_task(self, task: AutomatedOperation, result: dict[str, Any]) -> None:
-        """Mark an automated operation task as completed.
+        """
+        Mark an automated operation task as completed.
 
         Args:
+        ----
             task: The AutomatedOperation object to complete.
             result: A dictionary containing the results of the operation.
 
@@ -242,16 +258,18 @@ class EmailEnrichmentService(BaseScript):
             task.result = result
             task.save()
             self.logger.info(
-                f"Completed enrichment task {task.id} with result: {result}"
+                f"Completed enrichment task {task.id} with result: {result}",
             )
         except Exception as e:
             self.logger.error(f"Failed to complete enrichment task {task.id}: {e}")
             raise
 
     def fail_task(self, task: AutomatedOperation, error_message: str) -> None:
-        """Mark an automated operation task as failed.
+        """
+        Mark an automated operation task as failed.
 
         Args:
+        ----
             task: The AutomatedOperation object to fail.
             error_message: The error message associated with the failure.
 
@@ -262,14 +280,15 @@ class EmailEnrichmentService(BaseScript):
             task.error_message = error_message
             task.save()
             self.logger.error(
-                f"Enrichment task {task.id} failed with error: {error_message}"
+                f"Enrichment task {task.id} failed with error: {error_message}",
             )
         except Exception as e:
             self.logger.error(f"Failed to fail enrichment task {task.id}: {e}")
             raise
 
     def execute(self) -> None:
-        """Execute the email enrichment service.
+        """
+        Execute the email enrichment service.
 
         This method retrieves a batch of emails from the database that
         have not yet been enriched and calls the `enrich_email` method

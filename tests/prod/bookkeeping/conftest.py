@@ -1,28 +1,27 @@
 """Common fixtures for bookkeeping module tests."""
 
-from typing import Dict
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_base_script():
     """Fixture to mock BaseScript initialization."""
     with patch(
-        "dewey.core.base_script.BaseScript.__init__", return_value=None
+        "dewey.core.base_script.BaseScript.__init__", return_value=None,
     ) as mock_init:
         yield mock_init
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_logger():
     """Fixture to provide a mock logger."""
     logger = MagicMock()
-    yield logger
+    return logger
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_config():
     """Fixture to provide a mock configuration."""
     config: dict[str, dict[str, str]] = {
@@ -31,19 +30,19 @@ def mock_config():
             "start_year": "2022",
             "journal_base_dir": "data/bookkeeping/journals",
             "classification_rules": "data/bookkeeping/rules/classification_rules.json",
-        }
+        },
     }
-    yield config
+    return config
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_db_connection():
     """Fixture to provide a mock database connection."""
     conn = MagicMock()
-    yield conn
+    return conn
 
 
-@pytest.fixture
+@pytest.fixture()
 def sample_transaction_data():
     """Fixture to provide sample transaction data."""
     return [
@@ -68,7 +67,7 @@ def sample_transaction_data():
     ]
 
 
-@pytest.fixture
+@pytest.fixture()
 def sample_classification_rules():
     """Fixture to provide sample classification rules."""
     return {
@@ -81,7 +80,7 @@ def sample_classification_rules():
     }
 
 
-@pytest.fixture
+@pytest.fixture()
 def sample_account_rules():
     """Fixture to provide sample account rules."""
     return {
@@ -90,11 +89,11 @@ def sample_account_rules():
             "Income:Salary",
             "Expenses:Food",
             "Expenses:Utilities",
-        ]
+        ],
     }
 
 
-@pytest.fixture
+@pytest.fixture()
 def sample_journal_content():
     """Fixture to provide sample journal content."""
     return """

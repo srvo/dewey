@@ -1,4 +1,4 @@
-"""Database migration manager for Dewey.
+"""Database migration manager for Dewey (PostgreSQL).
 
 This module provides tools for managing database migrations, including:
 - Tracking applied migrations
@@ -6,17 +6,25 @@ This module provides tools for managing database migrations, including:
 - Handling rollbacks
 """
 
-import os
-import yaml
-import logging
 import importlib
+import os
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Any, List, Tuple, Optional
 
-import duckdb
+import yaml
 
 from dewey.core.base_script import BaseScript
+from dewey.utils.database import (
+    execute_query,
+    fetch_all,
+    fetch_one,
+    insert_row,
+    get_db_cursor,
+    initialize_pool,
+    close_pool,
+    table_exists,
+)
 
 
 class MigrationManager(BaseScript):
@@ -32,6 +40,7 @@ class MigrationManager(BaseScript):
         """Initialize the migration manager.
 
         Args:
+        ----
             config: Configuration dictionary
             **kwargs: Additional keyword arguments
 
@@ -41,13 +50,14 @@ class MigrationManager(BaseScript):
             self.get_config_value(
                 "migrations_directory",
                 default=str(Path(__file__).parent / "migration_files"),
-            )
+            ),
         )
-        self.conn = None
+        # self.conn = None # Connection managed by pool now
 
     def run(self) -> None:
         """Run the migration manager to apply pending migrations."""
         try:
+            initialize_pool()  # Ensure pool is ready
             self._ensure_migrations_table()
             pending_migrations = self._get_pending_migrations()
 
@@ -65,99 +75,63 @@ class MigrationManager(BaseScript):
             self.logger.exception(f"Error during migration: {e}")
             raise
         finally:
-            if self.conn:
-                self.conn.close()
-                self.conn = None
+            close_pool()  # Close pool when done
+            # No manual connection closing needed
+            # if self.conn:
+            #     self.conn.close()
+            #     self.conn = None
 
     def execute(self) -> None:
         """Execute the migration manager to apply pending migrations."""
-        try:
-            self._ensure_migrations_table()
-            pending_migrations = self._get_pending_migrations()
-
-            if not pending_migrations:
-                self.logger.info("No pending migrations to apply.")
-                return
-
-            self.logger.info(f"Found {len(pending_migrations)} pending migrations.")
-            for migration_file, migration_module in pending_migrations:
-                self._apply_migration(migration_file, migration_module)
-
-            self.logger.info("All migrations applied successfully.")
-
-        except Exception as e:
-            self.logger.exception(f"Error during migration: {e}")
-            raise
-        finally:
-            if self.conn:
-                self.conn.close()
-                self.conn = None
-
-    def _get_connection(self) -> duckdb.DuckDBPyConnection:
-        """Get a database connection.
-
-        Returns:
-            A DuckDB connection
-
-        """
-        if self.conn is None:
-            # Get connection string from config
-            db_conn_string = self.get_config_value(
-                "database_connection", default="dewey.duckdb"
-            )
-
-            # Check if it's a MotherDuck connection
-            if db_conn_string.startswith("md:"):
-                # Get MotherDuck token
-                token = os.environ.get("MOTHERDUCK_TOKEN")
-                if not token:
-                    token = self.get_config_value("motherduck_token")
-                    if token:
-                        os.environ["MOTHERDUCK_TOKEN"] = token
-
-            self.logger.info(f"Connecting to database: {db_conn_string}")
-            self.conn = duckdb.connect(db_conn_string)
-
-        return self.conn
+        # If BaseScript requires execute, just call run.
+        self.run()
 
     def _ensure_migrations_table(self) -> None:
-        """Ensure the migrations tracking table exists."""
-        conn = self._get_connection()
-
-        # Create migrations table if it doesn't exist
-        conn.execute(f"""
-        CREATE TABLE IF NOT EXISTS {self.MIGRATIONS_TABLE} (
-            id SERIAL PRIMARY KEY,
-            migration_name VARCHAR NOT NULL,
-            applied_at TIMESTAMP NOT NULL,
-            success BOOLEAN NOT NULL,
-            details TEXT
-        )
-        """)
-
-        self.logger.info(f"Ensured migrations table '{self.MIGRATIONS_TABLE}' exists.")
+        """Ensure the migrations tracking table exists using utility functions."""
+        # Check if table exists using the utility
+        if not table_exists(self.MIGRATIONS_TABLE):
+            self.logger.info(f"Migrations table '{self.MIGRATIONS_TABLE}' not found. Creating...")
+            # Use standard SQL types compatible with PostgreSQL
+            columns_definition = (
+                "id SERIAL PRIMARY KEY, "
+                "migration_name VARCHAR(255) NOT NULL UNIQUE, "  # Added UNIQUE constraint
+                "applied_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL, "  # Use TIMESTAMPTZ
+                "success BOOLEAN NOT NULL, "
+                "details TEXT"
+            )
+            # Use execute_query for DDL
+            create_table_query = f"CREATE TABLE {self.MIGRATIONS_TABLE} ({columns_definition})"
+            try:
+                execute_query(create_table_query)
+                self.logger.info(f"Successfully created migrations table '{self.MIGRATIONS_TABLE}'.")
+            except Exception as e:
+                self.logger.error(f"Failed to create migrations table: {e}")
+                raise
+        else:
+            self.logger.debug(f"Migrations table '{self.MIGRATIONS_TABLE}' already exists.")
 
     def _get_applied_migrations(self) -> list[str]:
-        """Get a list of already applied migrations.
-
-        Returns:
-            List of migration filenames that have already been applied
-
-        """
-        conn = self._get_connection()
-
-        result = conn.execute(f"""
+        """Get a list of already applied migrations using utility functions."""
+        # Query uses %s placeholders implicitly handled by fetch_all
+        query = f"""
         SELECT migration_name FROM {self.MIGRATIONS_TABLE}
         WHERE success = TRUE
         ORDER BY applied_at
-        """).fetchall()
-
-        return [row[0] for row in result]
+        """
+        try:
+            results = fetch_all(query)
+            return [row[0] for row in results]
+        except Exception as e:
+            # Log error and return empty list or re-raise depending on desired behavior
+            self.logger.error(f"Error fetching applied migrations: {e}")
+            # Depending on requirements, you might want to raise e here
+            return []
 
     def _get_available_migrations(self) -> list[str]:
         """Get a list of available migration files.
 
-        Returns:
+        Returns
+        -------
             List of available migration filenames
 
         """
@@ -180,7 +154,8 @@ class MigrationManager(BaseScript):
     def _get_pending_migrations(self) -> list[tuple[str, Any]]:
         """Get a list of pending migrations.
 
-        Returns:
+        Returns
+        -------
             List of (filename, module) tuples for migrations that need to be applied
 
         """
@@ -199,133 +174,153 @@ class MigrationManager(BaseScript):
                     pending_migrations.append((migration_file, migration_module))
                 except ImportError as e:
                     self.logger.error(
-                        f"Failed to import migration {migration_file}: {e}"
+                        f"Failed to import migration {migration_file}: {e}",
                     )
                     continue
 
         return pending_migrations
 
     def _apply_migration(self, migration_file: str, migration_module: Any) -> None:
-        """Apply a single migration.
-
-        Args:
-            migration_file: The filename of the migration
-            migration_module: The imported migration module
-
-        """
-        conn = self._get_connection()
-
+        """Apply a single migration using a pooled connection and cursor."""
         self.logger.info(f"Applying migration: {migration_file}")
 
         details = ""
         success = False
+        start_time = datetime.now()
 
         try:
-            # Check if the migration has the required functions
+            # Check for required functions
             if not hasattr(migration_module, "migrate"):
                 raise AttributeError(
-                    f"Migration {migration_file} missing required 'migrate' function"
+                    f"Migration {migration_file} missing required 'migrate(cursor)' function",
                 )
 
-            # Apply the migration
-            migration_module.migrate(conn)
+            # Get cursor within a transaction context
+            with get_db_cursor(commit=True) as cursor:
+                # Pass the cursor to the migration function
+                migration_module.migrate(cursor)
 
-            # Mark as successful
+            # Mark as successful if no exceptions were raised
             success = True
-            details = "Migration applied successfully"
+            duration = (datetime.now() - start_time).total_seconds()
+            details = f"Migration applied successfully in {duration:.2f}s"
             self.logger.info(f"Successfully applied migration: {migration_file}")
 
         except Exception as e:
             details = f"Error: {str(e)}"
             self.logger.exception(f"Failed to apply migration {migration_file}: {e}")
-
-            # Attempt rollback if available
-            if hasattr(migration_module, "rollback"):
-                try:
-                    self.logger.info(
-                        f"Attempting to rollback migration: {migration_file}"
-                    )
-                    migration_module.rollback(conn)
-                    details += "; Rollback successful"
-                    self.logger.info(f"Rollback successful for: {migration_file}")
-                except Exception as rollback_error:
-                    details += f"; Rollback failed: {str(rollback_error)}"
-                    self.logger.exception(
-                        f"Rollback failed for {migration_file}: {rollback_error}"
-                    )
-
-            if not success:
-                raise
+            # The transaction is automatically rolled back by get_db_cursor context manager
 
         finally:
-            # Record the migration attempt
-            now = datetime.now()
-            conn.execute(
-                f"""
-            INSERT INTO {self.MIGRATIONS_TABLE} (migration_name, applied_at, success, details)
-            VALUES (?, ?, ?, ?)
-            """,
-                [migration_file, now, success, details],
+            # Record the result (success or failure) in the migrations table
+            self._record_migration(migration_file, success, details)
+
+    def _record_migration(
+        self, migration_name: str, success: bool, details: Optional[str] = None,
+    ) -> None:
+        """Record the result of a migration attempt in the database."""
+        self.logger.debug(f"Recording migration attempt for {migration_name}: Success={success}")
+        data = {
+            "migration_name": migration_name,
+            "applied_at": datetime.now(),  # Record attempt time
+            "success": success,
+            "details": details or "",
+        }
+        try:
+            # Use insert_row utility
+            # This assumes `execute_query` used by `insert_row` handles commit
+            insert_row(self.MIGRATIONS_TABLE, data)
+            self.logger.debug(f"Recorded migration result for {migration_name}")
+        except Exception as e:
+            # If logging the migration fails, we have a bigger problem
+            self.logger.error(
+                f"CRITICAL: Failed to record migration result for {migration_name}: {e}",
             )
+            # Decide how to handle this critical failure. Raising might be appropriate.
+            # raise
 
     def create_migration(self, name: str) -> str:
-        """Create a new migration file with a timestamp.
+        """Create a new migration file.
 
         Args:
-            name: A descriptive name for the migration
+        ----
+            name: A descriptive name for the migration.
 
         Returns:
-            The path to the created migration file
-
+        -------
+            The path to the created migration file.
         """
         # Ensure the migrations directory exists
-        if not self.migrations_dir.exists():
-            self.migrations_dir.mkdir(parents=True)
+        self.migrations_dir.mkdir(parents=True, exist_ok=True)
 
-        # Create a timestamp for the migration
+        # Create a timestamped filename
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"{timestamp}_{name.lower().replace(' ', '_')}.py"
+        filepath = self.migrations_dir / filename
 
-        # Clean the name (remove spaces, lowercase, etc.)
-        clean_name = name.lower().replace(" ", "_").replace("-", "_")
+        # Define template as a regular multiline string first
+        raw_template = """\
+Migration: {{name}} # Placeholder for format
+Timestamp: {{timestamp}} # Placeholder for format
+"""
 
-        # Create the migration filename
-        filename = f"{timestamp}_{clean_name}.py"
-        file_path = self.migrations_dir / filename
 
-        # Create the migration file from template
-        with open(file_path, "w") as f:
-            f.write(
-                """\"\"\"
-Migration: {name}
-Created: {timestamp}
-\"\"\"
+import logging
+from psycopg2.extensions import cursor  # Import cursor type hint
 
-def migrate(conn):
-    \"\"\"Apply the migration.
+logger = logging.getLogger(__name__)
 
-    Args:
-        conn: A DuckDB connection
-    \"\"\"
-    # Implement the migration here
-    conn.execute(\"\"\"
-    -- Your SQL here
-    \"\"\")
 
-def rollback(conn):
-    \"\"\"Rollback the migration.
+def migrate(cur: cursor):
+    \"\"\"Apply the migration steps.
 
     Args:
-        conn: A DuckDB connection
+    ----
+        cur: The database cursor provided by the migration manager.
     \"\"\"
-    # Implement the rollback here
-    conn.execute(\"\"\"
-    -- Your rollback SQL here
-    \"\"\")
-""".format(name=name, timestamp=datetime.now().isoformat())
-            )
+    # Placeholders {name} and {filename} below are NOT formatted by the outer template
+    # They are intended to be used within the generated migration file if needed.
+    logger.info(\"Applying migration: {name} ({filename}).\")
 
-        self.logger.info(f"Created new migration file: {file_path}")
-        return str(file_path)
+    # --- Add migration SQL here using cur.execute() ---
+    # Example:
+    # cur.execute(\"\"\
+    #     CREATE TABLE IF NOT EXISTS my_new_table (
+    #         id SERIAL PRIMARY KEY,
+    #         name VARCHAR(100) NOT NULL
+    #     );
+    # \"\"\")
+    # logger.info(\"Created my_new_table\")
+
+    # --- End migration SQL ---
+
+    logger.info(\"Successfully applied migration: {name} ({filename}).\")
+
+# Optional: Add a rollback function if needed
+# def rollback(cur: cursor):
+#     \"\"\"Revert the migration steps.
+#
+#     Args:
+#     ----
+#         cur: The database cursor.
+#     \"\"\"
+#     logger.warning(\"Rolling back migration: {name} ({filename}).\")
+#     # Add rollback SQL here
+#     logger.warning(\"Successfully rolled back migration: {name} ({filename}).\")
+
+"""
+
+        # Format the template with the actual name and timestamp
+        template = raw_template.format(name=name, timestamp=timestamp)
+
+        try:
+            with open(filepath, "w") as f:
+                f.write(template)
+            self.logger.info(f"Created new migration file: {filepath}")
+            return str(filepath)
+        except IOError as e:
+            self.logger.error(f"Failed to create migration file {filepath}: {e}")
+            raise
 
 
 if __name__ == "__main__":

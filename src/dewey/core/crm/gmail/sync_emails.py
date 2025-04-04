@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class SyncEmails(BaseScript):
-    """Synchronizes emails from Gmail.
+    """
+    Synchronizes emails from Gmail.
 
     This script fetches emails from Gmail and stores them in the database.
     """
@@ -12,11 +13,13 @@ class SyncEmails(BaseScript):
         super().__init__(config_section="gmail_sync", requires_db=True)
 
     def execute(self) -> None:
-        """Runs the email synchronization process.
+        """
+        Runs the email synchronization process.
 
         Fetches emails from Gmail and stores them in the database.
 
-        Raises:
+        Raises
+        ------
             Exception: If any error occurs during the synchronization process.
 
         """
@@ -34,6 +37,6 @@ class SyncEmails(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()

@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class Tui(BaseScript):
-    """A base class for TUI modules within the Dewey framework.
+    """
+    A base class for TUI modules within the Dewey framework.
 
     This class inherits from BaseScript and provides a standardized
     interface for interacting with the terminal user interface.
@@ -23,6 +24,6 @@ class Tui(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()

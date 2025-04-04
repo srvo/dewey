@@ -9,17 +9,21 @@ class ListPersonRecords(BaseScript):
         super().__init__(config_section="crm", requires_db=True)
 
     def execute(self) -> None:
-        """Executes the script to list person records.
+        """
+        Executes the script to list person records.
 
         Retrieves person records from the database and logs them.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If there is an error executing the query.
 
         """
@@ -44,15 +48,19 @@ class ListPersonRecords(BaseScript):
             raise
 
     def run(self) -> None:
-        """Runs the script to list person records.
+        """
+        Runs the script to list person records.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If there is an error executing the query.
 
         """

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""IMAP Email Import Script.
+"""
+IMAP Email Import Script.
 
 This script imports emails using IMAP, which is more reliable for bulk imports
 than the Gmail API.
@@ -16,7 +17,7 @@ import time
 from datetime import datetime, timedelta
 from email.header import decode_header
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 from dateutil import parser as date_parser
 
@@ -82,12 +83,12 @@ class IMAPEmailImporter(BaseScript):
             password = args.password or os.getenv("GOOGLE_APP_PASSWORD")
             if not password:
                 raise ValueError(
-                    "Password must be provided via --password or GOOGLE_APP_PASSWORD environment variable"
+                    "Password must be provided via --password or GOOGLE_APP_PASSWORD environment variable",
                 )
 
             # Connect to Gmail
             imap_conn = self.connect_to_gmail(
-                self.get_config_value("gmail.username"), password
+                self.get_config_value("gmail.username"), password,
             )
             self.logger.info("Connected to Gmail IMAP")
 
@@ -105,9 +106,11 @@ class IMAPEmailImporter(BaseScript):
             sys.exit(1)
 
     def setup_argparse(self) -> argparse.ArgumentParser:
-        """Set up command line arguments.
+        """
+        Set up command line arguments.
 
-        Returns:
+        Returns
+        -------
             An argument parser configured with common options.
 
         """
@@ -118,30 +121,34 @@ class IMAPEmailImporter(BaseScript):
             help="App-specific password (or set GOOGLE_APP_PASSWORD env var)",
         )
         parser.add_argument(
-            "--days", type=int, default=7, help="Number of days to look back"
+            "--days", type=int, default=7, help="Number of days to look back",
         )
         parser.add_argument(
-            "--max", type=int, default=1000, help="Maximum number of emails to import"
+            "--max", type=int, default=1000, help="Maximum number of emails to import",
         )
         parser.add_argument(
-            "--batch-size", type=int, default=10, help="Number of emails per batch"
+            "--batch-size", type=int, default=10, help="Number of emails per batch",
         )
         parser.add_argument(
-            "--historical", action="store_true", help="Import all historical emails"
+            "--historical", action="store_true", help="Import all historical emails",
         )
         return parser
 
     def connect_to_gmail(self, username: str, password: str) -> imaplib.IMAP4_SSL:
-        """Connect to Gmail using IMAP.
+        """
+        Connect to Gmail using IMAP.
 
         Args:
+        ----
             username: Gmail username.
             password: App-specific password.
 
         Returns:
+        -------
             IMAP connection.
 
         Raises:
+        ------
             Exception: If connection to Gmail fails.
 
         """
@@ -155,12 +162,15 @@ class IMAPEmailImporter(BaseScript):
             raise
 
     def decode_email_header(self, header: str) -> str:
-        """Decode email header properly handling various encodings.
+        """
+        Decode email header properly handling various encodings.
 
         Args:
+        ----
             header: Raw email header.
 
         Returns:
+        -------
             Decoded header string.
 
         """
@@ -179,15 +189,19 @@ class IMAPEmailImporter(BaseScript):
         return " ".join(decoded_parts)
 
     def parse_email_message(self, email_data: bytes) -> dict[str, Any]:
-        """Parse email message from IMAP.
+        """
+        Parse email message from IMAP.
 
         Args:
+        ----
             email_data: Raw email data.
 
         Returns:
+        -------
             Parsed email data dictionary.
 
         Raises:
+        ------
             Exception: If parsing email fails.
 
         """
@@ -237,7 +251,7 @@ class IMAPEmailImporter(BaseScript):
                                 "mimeType": part.get_content_type(),
                                 "size": len(part.get_payload(decode=True)),
                                 "attachmentId": None,  # IMAP doesn't have attachment IDs
-                            }
+                            },
                         )
 
             if email_message.is_multipart():
@@ -279,7 +293,7 @@ class IMAPEmailImporter(BaseScript):
                         "headers": dict(email_message.items()),
                         "body": body,
                         "attachments": attachments,
-                    }
+                    },
                 ),
                 "metadata": json.dumps(
                     {
@@ -306,7 +320,7 @@ class IMAPEmailImporter(BaseScript):
                         else None,
                         "body_text": body["text"],
                         "body_html": body["html"],
-                    }
+                    },
                 ),
                 "snippet": body["text"][:500] if body["text"] else "",
                 "internal_date": timestamp,
@@ -331,9 +345,11 @@ class IMAPEmailImporter(BaseScript):
         batch_size: int = 10,
         historical: bool = False,
     ) -> None:
-        """Fetch emails from Gmail using IMAP.
+        """
+        Fetch emails from Gmail using IMAP.
 
         Args:
+        ----
             imap: IMAP connection.
             days_back: Number of days back to fetch.
             max_emails: Maximum number of emails to fetch.
@@ -341,6 +357,7 @@ class IMAPEmailImporter(BaseScript):
             historical: Whether to fetch all emails or just recent ones.
 
         Raises:
+        ------
             Exception: If fetching emails fails.
 
         """
@@ -351,7 +368,7 @@ class IMAPEmailImporter(BaseScript):
                 result = self.db_conn.execute("SELECT msg_id FROM emails").fetchall()
                 existing_ids = {str(row[0]) for row in result}
                 self.logger.info(
-                    f"Found {len(existing_ids)} existing messages in database"
+                    f"Found {len(existing_ids)} existing messages in database",
                 )
             except Exception as e:
                 self.logger.error(f"Error getting existing message IDs: {e}")
@@ -363,13 +380,13 @@ class IMAPEmailImporter(BaseScript):
             if historical:
                 _, message_numbers = imap.search(None, "ALL")
                 self.logger.debug(
-                    f"Found {len(message_numbers[0].split())} total messages"
+                    f"Found {len(message_numbers[0].split())} total messages",
                 )
             else:
                 date = (datetime.now() - timedelta(days=days_back)).strftime("%d-%b-%Y")
                 _, message_numbers = imap.search(None, f"SINCE {date}")
                 self.logger.debug(
-                    f"Found {len(message_numbers[0].split())} messages since {date}"
+                    f"Found {len(message_numbers[0].split())} messages since {date}",
                 )
 
             message_numbers = [int(num) for num in message_numbers[0].split()]
@@ -406,20 +423,20 @@ class IMAPEmailImporter(BaseScript):
 
                         if not msgid_match or not thrid_match:
                             self.logger.error(
-                                f"Failed to extract Gmail IDs from response: {response}"
+                                f"Failed to extract Gmail IDs from response: {response}",
                             )
                             continue
 
                         gmail_msgid = msgid_match.group(1)
                         gmail_thrid = thrid_match.group(1)
                         self.logger.debug(
-                            f"Extracted Gmail IDs - Message: {gmail_msgid}, Thread: {gmail_thrid}"
+                            f"Extracted Gmail IDs - Message: {gmail_msgid}, Thread: {gmail_thrid}",
                         )
 
                         # Skip if message already exists in database
                         if gmail_msgid in existing_ids:
                             self.logger.debug(
-                                f"Message {gmail_msgid} already exists in database, skipping"
+                                f"Message {gmail_msgid} already exists in database, skipping",
                             )
                             continue
 
@@ -439,12 +456,12 @@ class IMAPEmailImporter(BaseScript):
 
                     except Exception as e:
                         self.logger.error(
-                            f"Error processing message {num}: {str(e)}", exc_info=True
+                            f"Error processing message {num}: {e!s}", exc_info=True,
                         )
                         continue
 
                 self.logger.info(
-                    f"Processed batch of {len(batch)} messages. Total processed: {total_processed}"
+                    f"Processed batch of {len(batch)} messages. Total processed: {total_processed}",
                 )
 
                 if total_processed >= max_emails:
@@ -454,17 +471,20 @@ class IMAPEmailImporter(BaseScript):
                 time.sleep(1)
 
         except Exception as e:
-            self.logger.error(f"Error in fetch_emails: {str(e)}", exc_info=True)
+            self.logger.error(f"Error in fetch_emails: {e!s}", exc_info=True)
             raise
 
     def store_email(self, email_data: dict[str, Any], batch_id: str) -> bool:
-        """Store email in the database.
+        """
+        Store email in the database.
 
         Args:
+        ----
             email_data: Parsed email data.
             batch_id: Batch identifier.
 
         Returns:
+        -------
             True if successful.
 
         """

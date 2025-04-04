@@ -5,7 +5,7 @@ import os
 from io import StringIO
 from pathlib import Path
 from shutil import copy2
-from typing import Any, Dict, List, Tuple
+from typing import Any
 from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
@@ -56,15 +56,14 @@ class MockFileSystem(FileSystemInterface):
         if path_str in self.files:
             if "b" in mode:
                 return mock_open(read_data=self.files[path_str].encode())(
-                    path_str, mode
+                    path_str, mode,
                 )
             return StringIO(self.files[path_str])
-        elif path_str == "classification_rules.json":
+        if path_str == "classification_rules.json":
             # Mock a default rules file
             default_rules = '{"patterns": [{"regex": "payment", "category": "Income:Payment"}, {"regex": "grocery", "category": "Expenses:Groceries"}], "default_category": "Expenses:Uncategorized"}'
             return StringIO(default_rules)
-        else:
-            raise FileNotFoundError(f"File not found: {path_str}")
+        raise FileNotFoundError(f"File not found: {path_str}")
 
     def exists(self, path: PathLike) -> bool:
         """Check if a file exists in the mock file system."""
@@ -97,7 +96,7 @@ class MockFileSystem(FileSystemInterface):
         return []
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_fs() -> MockFileSystem:
     """Fixture providing a mock file system."""
     sample_rules = json.dumps(
@@ -107,7 +106,7 @@ def mock_fs() -> MockFileSystem:
                 {"regex": "grocery", "category": "Expenses:Groceries"},
             ],
             "default_category": "Expenses:Uncategorized",
-        }
+        },
     )
 
     sample_journal = json.dumps(
@@ -120,8 +119,8 @@ def mock_fs() -> MockFileSystem:
                     "amount": -50,
                 },
                 {"date": "2023-01-10", "description": "Coffee shop", "amount": -5},
-            ]
-        }
+            ],
+        },
     )
 
     fs = MockFileSystem(
@@ -130,7 +129,7 @@ def mock_fs() -> MockFileSystem:
             "journals/2023/jan.json": sample_journal,
             "journals/2023/jan/test.journal": "Sample journal content",
             "journals/2023/feb/test.journal": "Another journal content",
-        }
+        },
     )
     fs.dirs.add("journals")
     fs.dirs.add("journals/2023")
@@ -140,7 +139,7 @@ def mock_fs() -> MockFileSystem:
     return fs
 
 
-@pytest.fixture
+@pytest.fixture()
 def categorizer(mock_fs: MockFileSystem) -> JournalCategorizer:
     """Fixture providing a JournalCategorizer with mock file system."""
     with patch("dewey.core.base_script.BaseScript.__init__", return_value=None):
@@ -184,19 +183,19 @@ class TestJournalCategorizer:
         assert rules["default_category"] == "Expenses:Uncategorized"
 
     def test_load_classification_rules_file_not_found(
-        self, categorizer: JournalCategorizer
+        self, categorizer: JournalCategorizer,
     ) -> None:
         """Test error handling when rules file is not found."""
         # Mock opening a file that doesn't exist
         with patch.object(
-            categorizer.fs, "open", side_effect=FileNotFoundError("File not found")
+            categorizer.fs, "open", side_effect=FileNotFoundError("File not found"),
         ):
             with pytest.raises(FileNotFoundError):
                 categorizer.load_classification_rules("nonexistent_file.json")
 
     @patch("json.load")
     def test_load_classification_rules_invalid_json(
-        self, mock_json_load: MagicMock, categorizer: JournalCategorizer
+        self, mock_json_load: MagicMock, categorizer: JournalCategorizer,
     ) -> None:
         """Test error handling when rules file contains invalid JSON."""
         mock_json_load.side_effect = json.JSONDecodeError("Invalid JSON", "", 0)
@@ -217,7 +216,7 @@ class TestJournalCategorizer:
 
     @patch("shutil.copy2")
     def test_create_backup_exception(
-        self, mock_copy2: MagicMock, categorizer: JournalCategorizer
+        self, mock_copy2: MagicMock, categorizer: JournalCategorizer,
     ) -> None:
         """Test error handling when backup creation fails."""
         mock_copy2.side_effect = Exception("Backup failed")
@@ -264,7 +263,7 @@ class TestJournalCategorizer:
                     "amount": -50,
                 },
                 {"date": "2023-01-10", "description": "Coffee shop", "amount": -5},
-            ]
+            ],
         }
         mock_json_load.return_value = journal_data
 
@@ -280,7 +279,7 @@ class TestJournalCategorizer:
 
         # Mock the file read/write operations
         with patch.object(
-            categorizer, "create_backup", return_value="journals/2023/jan.json.bak"
+            categorizer, "create_backup", return_value="journals/2023/jan.json.bak",
         ):
             result = categorizer.process_journal_file("journals/2023/jan.json", rules)
 
@@ -301,11 +300,11 @@ class TestJournalCategorizer:
             )
 
     def test_process_journal_file_backup_fails(
-        self, categorizer: JournalCategorizer
+        self, categorizer: JournalCategorizer,
     ) -> None:
         """Test error handling when journal file backup fails."""
         with patch.object(
-            categorizer, "create_backup", side_effect=Exception("Backup failed")
+            categorizer, "create_backup", side_effect=Exception("Backup failed"),
         ):
             rules = categorizer.load_classification_rules("classification_rules.json")
             result = categorizer.process_journal_file("journals/2023/jan.json", rules)
@@ -313,7 +312,7 @@ class TestJournalCategorizer:
         assert result is False
 
     def test_process_journal_file_load_fails(
-        self, categorizer: JournalCategorizer
+        self, categorizer: JournalCategorizer,
     ) -> None:
         """Test error handling when journal file loading fails."""
         # Setup classification rules
@@ -324,17 +323,17 @@ class TestJournalCategorizer:
 
         # Mock json.load to raise an exception
         with patch.object(
-            categorizer, "create_backup", return_value="journals/2023/jan.json.bak"
+            categorizer, "create_backup", return_value="journals/2023/jan.json.bak",
         ):
             with patch("builtins.open", MagicMock()):
                 with patch("json.load", side_effect=Exception("Load failed")):
                     result = categorizer.process_journal_file(
-                        "journals/2023/jan.json", rules
+                        "journals/2023/jan.json", rules,
                     )
                     assert result is False
 
     def test_process_by_year_files(
-        self, categorizer: JournalCategorizer, mock_fs: MockFileSystem
+        self, categorizer: JournalCategorizer, mock_fs: MockFileSystem,
     ) -> None:
         """Test processing journal files grouped by year."""
         # Create mock files for different years: 2022/file.journal and 2023/file.journal
@@ -351,9 +350,10 @@ class TestJournalCategorizer:
         def mock_listdir(path):
             if path == "data/bookkeeping/ledger":
                 return ["2022", "2023"]
-            elif path == "data/bookkeeping/ledger/2022":
-                return ["file.json"]
-            elif path == "data/bookkeeping/ledger/2023":
+            if (
+                path == "data/bookkeeping/ledger/2022"
+                or path == "data/bookkeeping/ledger/2023"
+            ):
                 return ["file.json"]
             return []
 
@@ -390,15 +390,15 @@ class TestJournalCategorizer:
             # Should be called once for each year's file
             assert mock_process.call_count == 2
             mock_process.assert_any_call(
-                "data/bookkeeping/ledger/2022/file.json", rules
+                "data/bookkeeping/ledger/2022/file.json", rules,
             )
             mock_process.assert_any_call(
-                "data/bookkeeping/ledger/2023/file.json", rules
+                "data/bookkeeping/ledger/2023/file.json", rules,
             )
 
     @patch("sys.exit")
     def test_run_success(
-        self, mock_exit: MagicMock, categorizer: JournalCategorizer
+        self, mock_exit: MagicMock, categorizer: JournalCategorizer,
     ) -> None:
         """Test successful execution of run method."""
         with patch.object(categorizer, "load_classification_rules") as mock_load:
@@ -416,7 +416,7 @@ class TestJournalCategorizer:
 
     @patch("sys.exit")
     def test_run_failure(
-        self, mock_exit: MagicMock, categorizer: JournalCategorizer
+        self, mock_exit: MagicMock, categorizer: JournalCategorizer,
     ) -> None:
         """Test error handling during run method execution."""
         with patch.object(

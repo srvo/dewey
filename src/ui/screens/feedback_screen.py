@@ -1,4 +1,5 @@
-"""Feedback Manager Screen
+"""
+Feedback Manager Screen
 
 A screen for the Dewey UI that provides access to the Feedback Manager.
 """

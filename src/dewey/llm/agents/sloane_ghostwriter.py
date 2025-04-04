@@ -12,7 +12,8 @@ class SloaneGhostwriter(BaseScript):
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        """Initializes the SloaneGhostwriter script.
+        """
+        Initializes the SloaneGhostwriter script.
 
         Args:
         ----
@@ -22,7 +23,8 @@ class SloaneGhostwriter(BaseScript):
         super().__init__(**kwargs)
 
     def run(self) -> dict[str, Any]:
-        """Executes the core logic of the SloaneGhostwriter script.
+        """
+        Executes the core logic of the SloaneGhostwriter script.
 
         This method retrieves configuration values, generates text using a
         language model, and returns the generated text.
@@ -55,7 +57,8 @@ class SloaneGhostwriter(BaseScript):
             raise
 
     def execute(self) -> None:
-        """Executes the SloaneGhostwriter script.
+        """
+        Executes the SloaneGhostwriter script.
 
         This method calls the run method and logs any exceptions.
         """

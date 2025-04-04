@@ -1,4 +1,5 @@
-"""CRM Workflow Runner Script
+"""
+CRM Workflow Runner Script
 
 This script provides a unified entry point for running CRM workflows:
 - Email collection and enrichment
@@ -8,9 +9,6 @@ It can run workflows individually or as a complete pipeline.
 """
 
 import argparse
-import logging
-import sys
-from typing import List
 
 from dewey.core.base_script import BaseScript
 from dewey.core.crm.contacts.contact_consolidation import ContactConsolidation
@@ -18,7 +16,8 @@ from dewey.core.crm.enrichment.email_enrichment import EmailEnrichment
 
 
 class CRMWorkflowRunner(BaseScript):
-    """Runner for CRM workflows.
+    """
+    Runner for CRM workflows.
 
     This script provides a unified entry point for executing CRM workflows.
     It can run individual workflows or a complete pipeline based on command-line arguments.
@@ -35,9 +34,11 @@ class CRMWorkflowRunner(BaseScript):
         self.logger.info("Initialized CRM Workflow Runner")
 
     def setup_argparse(self) -> argparse.ArgumentParser:
-        """Set up command line arguments for the workflow runner.
+        """
+        Set up command line arguments for the workflow runner.
 
-        Returns:
+        Returns
+        -------
             Configured argument parser
 
         """
@@ -56,7 +57,7 @@ class CRMWorkflowRunner(BaseScript):
             help="Run contact consolidation workflow",
         )
         workflow_group.add_argument(
-            "--all", action="store_true", help="Run all workflows"
+            "--all", action="store_true", help="Run all workflows",
         )
 
         # Add Gmail API options

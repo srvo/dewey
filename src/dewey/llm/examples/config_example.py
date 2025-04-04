@@ -1,4 +1,5 @@
-"""Example demonstrating how to use the LiteLLM client with Dewey and Aider configuration.
+"""
+Example demonstrating how to use the LiteLLM client with Dewey and Aider configuration.
 
 This script shows how the LiteLLMClient automatically loads configuration from:
 1. Dewey config file (via symlink)
@@ -113,9 +114,7 @@ def create_client_and_test():
         ]
 
         response = client.generate_completion(
-            messages=messages,
-            temperature=0.7,
-            max_tokens=100,
+            messages=messages, temperature=0.7, max_tokens=100,
         )
 
         text = get_text_from_response(response)

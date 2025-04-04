@@ -1,9 +1,10 @@
-"""Splits a journal file into separate files by year.
+"""
+Splits a journal file into separate files by year.
 
 This script splits a journal file into separate files based on the year
 of the transactions.
 """
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 
 import os
 from pathlib import Path
@@ -98,7 +99,7 @@ class JournalSplitter(BaseScript):
 
         # Get account number from filename
         account_num = self.file_system.basename(input_file).split("_")[1].split(".")[0]
-        bank_account = "assets:checking:mercury{}".format(account_num)
+        bank_account = f"assets:checking:mercury{account_num}"
 
         # Initialize files dict to store transactions by year
         files: dict[str, IO] = {}
@@ -114,10 +115,15 @@ class JournalSplitter(BaseScript):
                         if current_year not in files:
                             output_file = self.file_system.join(
                                 output_dir,
-                                "{}_{}.journal".format(self.file_system.basename(input_file).replace('.journal', ''), current_year)
+                                "{}_{}.journal".format(
+                                    self.file_system.basename(input_file).replace(
+                                        ".journal", "",
+                                    ),
+                                    current_year,
+                                ),
                             )
                             files[current_year] = self.file_system.open(
-                                output_file, "w"
+                                output_file, "w",
                             )
                         files[current_year].write("".join(current_transaction))
 
@@ -138,7 +144,7 @@ class JournalSplitter(BaseScript):
                     "{}_{}.journal".format(
                         self.file_system.basename(input_file).replace(".journal", ""),
                         current_year,
-                    )
+                    ),
                 )
                 files[current_year] = self.file_system.open(output_file, "w")
             files[current_year].write("".join(current_transaction))

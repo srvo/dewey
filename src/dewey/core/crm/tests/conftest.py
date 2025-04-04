@@ -11,7 +11,8 @@ from dewey.core.base_script import BaseScript
 
 
 class TestConfiguration(BaseScript):
-    """Test configuration for database tests.
+    """
+    Test configuration for database tests.
 
     Inherits from BaseScript to utilize standardized configuration and logging.
     """
@@ -22,9 +23,11 @@ class TestConfiguration(BaseScript):
 
     @contextlib.contextmanager
     def mock_env_vars(self) -> Generator[None, None, None]:
-        """Mock environment variables for testing.
+        """
+        Mock environment variables for testing.
 
-        Yields:
+        Yields
+        ------
             None: This function is a generator that yields None.
 
         """
@@ -32,7 +35,7 @@ class TestConfiguration(BaseScript):
             os.environ,
             {
                 "MOTHERDUCK_TOKEN": self.get_config_value(
-                    "motherduck_token", "test_token"
+                    "motherduck_token", "test_token",
                 ),
                 "DEWEY_HOME": "/tmp/dewey_test",
                 "EMAIL_USERNAME": "test@example.com",
@@ -45,11 +48,13 @@ class TestConfiguration(BaseScript):
 
     @contextlib.contextmanager
     def setup_test_db(self) -> Generator[None, None, None]:
-        """Set up test database environment.
+        """
+        Set up test database environment.
 
         Creates a test directory and cleans up after the test.
 
-        Yields:
+        Yields
+        ------
             None: This function is a generator that yields None.
 
         """
@@ -61,13 +66,14 @@ class TestConfiguration(BaseScript):
             os.remove("/tmp/dewey_test/dewey.duckdb")
         except FileNotFoundError:
             self.logger.info("Test database file not found, skipping removal.")
-            pass
 
     @contextlib.contextmanager
     def mock_duckdb(self) -> Generator[Mock, None, None]:
-        """Mock DuckDB connection.
+        """
+        Mock DuckDB connection.
 
-        Yields:
+        Yields
+        ------
             Mock: A mock DuckDB connection object.
 
         """
@@ -80,21 +86,22 @@ class TestConfiguration(BaseScript):
         """Execute the test configuration setup."""
         self.logger.info("Setting up test configuration...")
         # Add any test configuration setup logic here
-        pass
 
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 
 
 @pytest.fixture(autouse=True)
 def mock_env_vars() -> Generator[None, None, None]:
-    """Fixture to mock environment variables using TestConfiguration.
+    """
+    Fixture to mock environment variables using TestConfiguration.
 
-    Yields:
+    Yields
+    ------
         None: This fixture yields None.
 
     """
@@ -105,9 +112,11 @@ def mock_env_vars() -> Generator[None, None, None]:
 
 @pytest.fixture(autouse=True)
 def setup_test_db() -> Generator[None, None, None]:
-    """Fixture to set up test database environment using TestConfiguration.
+    """
+    Fixture to set up test database environment using TestConfiguration.
 
-    Yields:
+    Yields
+    ------
         None: This fixture yields None.
 
     """
@@ -116,11 +125,13 @@ def setup_test_db() -> Generator[None, None, None]:
         yield
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_duckdb() -> Generator[Mock, None, None]:
-    """Fixture to mock DuckDB connection using TestConfiguration.
+    """
+    Fixture to mock DuckDB connection using TestConfiguration.
 
-    Yields:
+    Yields
+    ------
         Mock: A mock DuckDB connection object.
 
     """

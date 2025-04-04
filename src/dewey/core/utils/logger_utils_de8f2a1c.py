@@ -1,19 +1,17 @@
 import logging
 from pathlib import Path
-from typing import Optional
 
 from ethifinx.core.logging_config import LOG_FILE, LOG_FORMAT, LOG_LEVEL
 
 
 def _configure_logger(
-    logger: logging.Logger,
-    log_file: Path,
-    level: int,
-    format_str: str,
+    logger: logging.Logger, log_file: Path, level: int, format_str: str,
 ) -> None:
-    """Configures a logger with the specified settings.
+    """
+    Configures a logger with the specified settings.
 
     Args:
+    ----
         logger: The logger instance to configure.
         log_file: The path to the log file.
         level: The logging level.
@@ -39,15 +37,18 @@ def setup_logger(
     level: int | None = None,
     format_str: str | None = None,
 ) -> logging.Logger:
-    """Sets up a logger with the specified name and configuration.
+    """
+    Sets up a logger with the specified name and configuration.
 
     Args:
+    ----
         name: Name of the logger.
         log_file: Path for log file. Defaults to LOG_FILE.
         level: Logging level. Defaults to LOG_LEVEL.
         format_str: Log format string. Defaults to LOG_FORMAT.
 
     Returns:
+    -------
         Configured logger instance.
 
     """
@@ -70,12 +71,15 @@ def setup_logger(
 
 
 def get_logger(name: str) -> logging.Logger:
-    """Gets an existing logger or creates a new one with default configuration.
+    """
+    Gets an existing logger or creates a new one with default configuration.
 
     Args:
+    ----
         name: Name of the logger.
 
     Returns:
+    -------
         Logger instance.
 
     """

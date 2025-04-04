@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -7,9 +7,11 @@ class ProChat(BaseScript):
     """A class for professional chat interactions, inheriting from BaseScript."""
 
     def __init__(self, config_section: str = "pro_chat", **kwargs: Any) -> None:
-        """Initializes the ProChat agent.
+        """
+        Initializes the ProChat agent.
 
         Args:
+        ----
             config_section (str): Configuration section name. Defaults to 'pro_chat'.
             **kwargs (Any): Additional keyword arguments.
 
@@ -17,12 +19,14 @@ class ProChat(BaseScript):
         super().__init__(config_section=config_section, **kwargs)
 
     def execute(self) -> None:
-        """Executes the core logic of the ProChat agent.
+        """
+        Executes the core logic of the ProChat agent.
 
         This method retrieves configuration values, initializes necessary components,
         and performs the main operations of the chat agent.
 
-        Raises:
+        Raises
+        ------
             Exception: If there is an error during the execution.
 
         """
@@ -32,7 +36,7 @@ class ProChat(BaseScript):
             temperature = self.get_config_value("temperature", default=0.7)
 
             self.logger.info(
-                f"Starting ProChat with model: {model_name} and temperature: {temperature}"
+                f"Starting ProChat with model: {model_name} and temperature: {temperature}",
             )
 
             # Simulate chat interactions

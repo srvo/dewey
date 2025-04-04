@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Launcher for the Dewey Feedback Manager.
+"""
+Launcher for the Dewey Feedback Manager.
 
 This script provides a convenient way to launch the Feedback Manager TUI directly.
 """

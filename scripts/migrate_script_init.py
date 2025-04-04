@@ -12,14 +12,12 @@ Usage:
 python scripts/migrate_script_init.py [--dry-run]
 """
 
-import argparse
-import re
-from pathlib import Path
-from typing import List
-
 # Import the BaseScript class from our custom implementation to avoid circular imports
 import abc
+import argparse
 import logging
+import re
+from pathlib import Path
 
 
 class BaseScript(abc.ABC):
@@ -34,7 +32,6 @@ class BaseScript(abc.ABC):
     @abc.abstractmethod
     def run(self):
         """Function run."""
-        pass
 
 
 class ScriptInitMigrator(BaseScript):
@@ -51,7 +48,7 @@ class ScriptInitMigrator(BaseScript):
         self.skipped_files = []
         self.error_files = []
 
-    def find_script_files(self) -> List[Path]:
+    def find_script_files(self) -> list[Path]:
         """Find script files that might need migration."""
         script_files = []
         root_dir = Path(__file__).parent.parent
@@ -94,7 +91,7 @@ class ScriptInitMigrator(BaseScript):
     def migrate_file(self, file_path: Path) -> bool:
         """Migrate a single file to use the new BaseScript interface."""
         try:
-            with open(file_path, "r") as f:
+            with open(file_path) as f:
                 content = f.read()
 
             if not self.needs_migration(content):
@@ -168,7 +165,7 @@ class ScriptInitMigrator(BaseScript):
             return True
 
         except Exception as e:
-            self.logger.error(f"Error migrating {file_path}: {str(e)}")
+            self.logger.error(f"Error migrating {file_path}: {e!s}")
             self.error_files.append(file_path)
             return False
 

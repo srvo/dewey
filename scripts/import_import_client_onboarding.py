@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class ImportClientOnboarding(BaseScript):
-    """A module for importing client onboarding data into Dewey.
+    """
+    A module for importing client onboarding data into Dewey.
 
     This module inherits from BaseScript and provides a standardized
     structure for client onboarding scripts, including configuration
@@ -16,7 +17,7 @@ class ImportClientOnboarding(BaseScript):
 
         # Example of accessing a configuration value
         file_path = self.get_config_value(
-            "client_onboarding_file_path", "default_path.csv"
+            "client_onboarding_file_path", "default_path.csv",
         )
         self.logger.info(f"Using file path: {file_path}")
 
@@ -28,6 +29,6 @@ class ImportClientOnboarding(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()

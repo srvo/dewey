@@ -1,6 +1,7 @@
 # Formatting failed: LLM generation failed: Gemini API error: Model gemini-2.0-flash in cooldown until Sat Mar 15 00:33:42 2025
 
-"""Tests for Brave Search Engine.
+"""
+Tests for Brave Search Engine.
 =========================
 """
 
@@ -12,21 +13,21 @@ import pytest
 from ethifinx.research.engines.brave import BraveSearchEngine
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_env():
     """Mock environment variables."""
     with patch.dict(os.environ, {"BRAVE_API_KEY": "test_key"}):
         yield
 
 
-@pytest.fixture
+@pytest.fixture()
 async def engine(mock_env):
     """Create a BraveSearchEngine instance for testing."""
     async with BraveSearchEngine(max_retries=2) as engine:
         yield engine
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_engine_initialization(mock_env) -> None:
     """Test that the engine initializes correctly."""
     engine = BraveSearchEngine(max_retries=2)
@@ -35,7 +36,7 @@ async def test_engine_initialization(mock_env) -> None:
     assert engine.api_key == "test_key"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_process_method(engine) -> None:
     """Test the process method returns expected status."""
     result = await engine.process()
@@ -43,7 +44,7 @@ async def test_process_method(engine) -> None:
     assert result["status"] == "Brave Search engine ready"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_web_search_basic(engine) -> None:
     """Test basic web search functionality."""
     mock_response = {
@@ -77,7 +78,7 @@ async def test_web_search_basic(engine) -> None:
         assert params["q"] == "test query"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_web_search_with_options(engine) -> None:
     """Test web search with additional options."""
     mock_response = {"web": {"results": []}}
@@ -112,7 +113,7 @@ async def test_web_search_with_options(engine) -> None:
         assert params["safesearch"] == "strict"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_local_search_basic(engine) -> None:
     """Test basic local search functionality."""
     mock_search_response = {"web": {"results": []}}
@@ -129,7 +130,7 @@ async def test_local_search_basic(engine) -> None:
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_local_search_with_details(engine) -> None:
     """Test local search with location details."""
     mock_responses = {
@@ -152,8 +153,7 @@ async def test_local_search_with_details(engine) -> None:
         mock_get.side_effect = get_mock_response
 
         result = await engine.local_search(
-            "restaurants in San Francisco",
-            location_ids=["loc1", "loc2"],
+            "restaurants in San Francisco", location_ids=["loc1", "loc2"],
         )
 
         assert "search_results" in result
@@ -162,7 +162,7 @@ async def test_local_search_with_details(engine) -> None:
         assert mock_get.call_count == 3
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_search_retry_on_error(engine) -> None:
     """Test search retries on API errors."""
     mock_response = {"web": {"results": []}}
@@ -184,7 +184,7 @@ async def test_search_retry_on_error(engine) -> None:
         assert mock_get.call_count == 2
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_missing_api_key() -> None:
     """Test error handling for missing API key."""
     with patch.dict(os.environ, clear=True):

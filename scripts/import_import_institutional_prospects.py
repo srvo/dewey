@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class ImportInstitutionalProspects(BaseScript):
-    """A module for importing institutional prospects into Dewey.
+    """
+    A module for importing institutional prospects into Dewey.
 
     This module inherits from BaseScript and provides a standardized
     structure for import scripts, including configuration loading,
@@ -15,7 +16,7 @@ class ImportInstitutionalProspects(BaseScript):
 
         # Example of accessing a configuration value
         file_path = self.get_config_value(
-            "institutional_prospects_file", "default_path.csv"
+            "institutional_prospects_file", "default_path.csv",
         )
         self.logger.info(f"Using file: {file_path}")
 

@@ -5,14 +5,7 @@ from dewey.core.base_script import BaseScript
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.containers import Container, Horizontal, Vertical
-from textual.widgets import (
-    Button,
-    Footer,
-    Header,
-    Input,
-    Label,
-    TextArea,
-)
+from textual.widgets import Button, Footer, Header, Input, Label, TextArea
 
 # Import screens
 from .screens.feedback_screen import FeedbackScreen
@@ -22,7 +15,8 @@ class ServiceItem(BaseScript, BaseScriptListItem):
     """A list item representing a service."""
 
     def __init__(self, service_name: str, status: str) -> None:
-        """Initialize service item.
+        """
+        Initialize service item.
 
         Args:
         ----
@@ -46,7 +40,8 @@ class ServiceList(BaseScriptListView):
     """A list view of services."""
 
     def __init__(self, services: list[dict[str, str]]) -> None:
-        """Initialize service list.
+        """
+        Initialize service list.
 
         Args:
         ----
@@ -71,7 +66,8 @@ class ServiceControlScreen(BaseScriptScreen):
     ]
 
     def __init__(self, service_manager) -> None:
-        """Initialize service control screen.
+        """
+        Initialize service control screen.
 
         Args:
         ----
@@ -130,7 +126,8 @@ class IssueScreen(BaseScriptScreen):
     ]
 
     def __init__(self, service_manager) -> None:
-        """Initialize issue screen.
+        """
+        Initialize issue screen.
 
         Args:
         ----
@@ -166,10 +163,7 @@ class IssueScreen(BaseScriptScreen):
 
         try:
             issue_url = self.service_manager.github.create_github_issue(
-                None,
-                title,
-                description,
-                {},
+                None, title, description, {},
             )
             self.notify(f"Issue created: {issue_url}", severity="information")
             self.app.pop_screen()
@@ -242,7 +236,8 @@ class ServiceManagerApp(BaseScriptApp):
     ]
 
     def __init__(self, service_manager) -> None:
-        """Initialize service manager app.
+        """
+        Initialize service manager app.
 
         Args:
         ----
@@ -265,7 +260,8 @@ class ServiceManagerApp(BaseScriptApp):
         self.title = self.TITLE
 
     def push_screen(self, screen_name: str) -> None:
-        """Push a screen onto the stack.
+        """
+        Push a screen onto the stack.
 
         Args:
         ----

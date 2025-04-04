@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class ConsolidatedGmailApi(BaseScript):
-    """A class for interacting with the Gmail API.
+    """
+    A class for interacting with the Gmail API.
 
     This class inherits from BaseScript and provides methods for
     consolidating and managing Gmail interactions.
@@ -28,6 +29,6 @@ class ConsolidatedGmailApi(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()

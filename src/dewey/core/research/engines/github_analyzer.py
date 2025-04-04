@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class GithubAnalyzer(BaseScript):
-    """Analyzes GitHub repositories.
+    """
+    Analyzes GitHub repositories.
 
     This class inherits from BaseScript and provides methods for
     analyzing GitHub repositories, retrieving information,
@@ -23,5 +24,7 @@ class GithubAnalyzer(BaseScript):
 
     def run(self):
         """Executes the GitHub analysis."""
-        self.logger.info("Using deprecated run() method. Update to use execute() instead.")
+        self.logger.info(
+            "Using deprecated run() method. Update to use execute() instead.",
+        )
         self.execute()

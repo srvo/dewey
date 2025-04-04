@@ -1,9 +1,10 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection, get_connection
+from dewey.core.db.connection import DatabaseConnection
 
 
 class PortDatabase(BaseScript):
-    """Manages the port database operations.
+    """
+    Manages the port database operations.
 
     This class inherits from BaseScript and provides methods for
     interacting with the port database.
@@ -14,18 +15,22 @@ class PortDatabase(BaseScript):
         super().__init__(config_section="port_database")
 
     def execute(self) -> None:
-        """Executes the main logic of the PortDatabase.
+        """
+        Executes the main logic of the PortDatabase.
 
         This method retrieves the database URL from the configuration,
         establishes a database connection, and performs database operations.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If there is an error during database operations.
 
         """
@@ -49,7 +54,7 @@ class PortDatabase(BaseScript):
                     # self.logger.info(f"Example query result: {result}")
                 else:
                     self.logger.warning(
-                        "Database connection is not an instance of DatabaseConnection."
+                        "Database connection is not an instance of DatabaseConnection.",
                     )
 
             self.logger.info("Port Database operations completed.")

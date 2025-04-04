@@ -3,9 +3,9 @@
 
 import csv
 from abc import ABC, abstractmethod
-from pathlib import Path
-from typing import Any, Dict, Optional
 from collections.abc import Iterator
+from pathlib import Path
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 from dewey.core.research.engines.base import BaseEngine
@@ -13,7 +13,8 @@ from dewey.core.research.research_output_handler import ResearchOutputHandler
 
 
 class BaseWorkflow(BaseScript, ABC):
-    """Base class for research workflows.
+    """
+    Base class for research workflows.
 
     Provides a foundation for building research workflows within the Dewey
     project, offering standardized configuration, logging, and database/LLM
@@ -26,9 +27,11 @@ class BaseWorkflow(BaseScript, ABC):
         analysis_engine: BaseEngine | None = None,
         output_handler: ResearchOutputHandler | None = None,
     ) -> None:
-        """Initialize the workflow.
+        """
+        Initialize the workflow.
 
         Args:
+        ----
             search_engine: Engine for searching information.
             analysis_engine: Engine for analyzing search results.
             output_handler: Handler for research output.
@@ -40,15 +43,19 @@ class BaseWorkflow(BaseScript, ABC):
         self.output_handler = output_handler or ResearchOutputHandler()
 
     def read_companies(self, file_path: Path) -> Iterator[dict[str, str]]:
-        """Read companies from CSV file.
+        """
+        Read companies from CSV file.
 
         Args:
+        ----
             file_path: Path to CSV file.
 
         Yields:
+        ------
             Iterator[Dict[str, str]]: Iterator of company data dictionaries.
 
         Raises:
+        ------
             FileNotFoundError: If the file is not found.
             Exception: If there is an error reading the file.
 
@@ -66,20 +73,23 @@ class BaseWorkflow(BaseScript, ABC):
 
     @abstractmethod
     def execute(self, data_dir: str | None = None) -> dict[str, Any]:
-        """Execute the workflow.
+        """
+        Execute the workflow.
 
         Args:
+        ----
             data_dir: Optional directory for data files.
 
         Returns:
+        -------
             Dictionary containing results and statistics.
 
         """
-        pass
 
     @abstractmethod
     def run(self) -> None:
-        """Run the script.
+        """
+        Run the script.
 
         This method must be implemented by all subclasses.
         """

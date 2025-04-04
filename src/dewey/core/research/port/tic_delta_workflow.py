@@ -1,5 +1,4 @@
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import get_connection
 
 
 class TicDeltaWorkflow(BaseScript):

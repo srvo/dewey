@@ -1,4 +1,5 @@
-"""Tests for database CRUD operations and transactions.
+"""
+Tests for database CRUD operations and transactions.
 
 This module tests the database operations functionality.
 """
@@ -36,14 +37,14 @@ class TestCRUDOperations(unittest.TestCase):
         def mock_execute_query(query, params=None, for_write=False):
             if "INSERT" in query and "RETURNING" in query:
                 return [("1",)]
-            elif "UPDATE" in query:
+            if "UPDATE" in query:
                 return [("update",)]
-            elif "DELETE" in query:
+            if "DELETE" in query:
                 return [("delete",)]
-            elif "DESCRIBE" in query:
+            if "DESCRIBE" in query:
                 return [("id", "INTEGER", "NO"), ("name", "VARCHAR", "YES")]
-            else:  # Read operations
-                return [("1", "Test", 42)]
+            # Read operations
+            return [("1", "Test", 42)]
 
         self.mock_db_manager.execute_query.side_effect = mock_execute_query
 
@@ -67,7 +68,7 @@ class TestCRUDOperations(unittest.TestCase):
 
         # Check that execute_query was called with the correct query
         self.mock_db_manager.execute_query.assert_called_once_with(
-            "DESCRIBE test_table"
+            "DESCRIBE test_table",
         )
 
         # Check result
@@ -174,7 +175,7 @@ class TestCRUDOperations(unittest.TestCase):
 
             # Query records
             records = query_records(
-                "test_table", {"value": 42}, order_by="id", limit=10
+                "test_table", {"value": 42}, order_by="id", limit=10,
             )
 
             # Make sure the SELECT query was called with proper conditions
@@ -209,7 +210,7 @@ class TestCRUDOperations(unittest.TestCase):
 
         # Check that record_change was called for each record
         self.assertTrue(
-            self.mock_record_change.call_count > 0, "record_change not called"
+            self.mock_record_change.call_count > 0, "record_change not called",
         )
 
     def test_record_change(self):

@@ -1,4 +1,4 @@
-from typing import Optional, Protocol
+from typing import Protocol
 
 from dewey.core.base_script import BaseScript
 from dewey.core.config import DeweyConfig
@@ -8,12 +8,15 @@ class DatabaseInterface(Protocol):
     """A simple interface for database operations."""
 
     def execute(self, query: str) -> list:
-        """Executes a database query.
+        """
+        Executes a database query.
 
         Args:
+        ----
             query: The SQL query to execute.
 
         Returns:
+        -------
             The result of the query.
 
         """
@@ -35,15 +38,19 @@ class MercuryImporter(BaseScript):
         self.llm_client = llm_client
 
     def execute(self) -> None:
-        """Runs the Mercury importer.
+        """
+        Runs the Mercury importer.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If there is an error during the import process.
 
         """

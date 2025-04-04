@@ -310,7 +310,79 @@ class MyCustomScript(BaseScript):
 
 ---
 
-## 8. Database Integration (PostgreSQL)
+## 8. Module Interactions & Decoupling
+
+### Core Principles
+- **Loose Coupling**: Modules should be loosely coupled with minimal direct dependencies
+- **Interface Abstractions**: Use interfaces to define module boundaries
+- **Event-Driven Architecture**: Use event system for cross-module communication
+- **Dependency Injection**: Inject dependencies rather than hard-coding them
+
+### Event System
+- Use the centralized event bus for cross-module communication
+- Define clear event types with documented schemas
+- **Implementation**:
+  ```python
+  # Publishing an event
+  from dewey.core.events import event_bus
+  
+  event_bus.publish("contact_discovered", {"name": "John Doe", "email": "john@example.com"})
+  
+  # Subscribing to an event
+  def handle_new_contact(contact_data):
+      # Process the contact data
+      print(f"New contact: {contact_data['name']}")
+  
+  event_bus.subscribe("contact_discovered", handle_new_contact)
+  ```
+
+### Service Interfaces
+- Define interfaces for module services in `dewey.core.interfaces` package
+- Implementation classes should reference interfaces, not concrete types
+- Example:
+  ```python
+  # Interface definition
+  from abc import ABC, abstractmethod
+  
+  class LLMProvider(ABC):
+      @abstractmethod
+      def generate_text(self, prompt: str) -> str:
+          pass
+  
+  # Implementation
+  class OpenAIProvider(LLMProvider):
+      def generate_text(self, prompt: str) -> str:
+          # Implementation using OpenAI
+          return "Generated text"
+          
+  # Usage with dependency injection
+  def process_data(llm_provider: LLMProvider, data: str) -> str:
+      return llm_provider.generate_text(f"Process this data: {data}")
+  ```
+
+### Dependency Injection
+- Use constructor injection pattern for dependencies
+- Dependencies should be optional when possible, with graceful fallbacks
+- When subclassing `BaseScript`, use kwargs to pass dependencies:
+  ```python
+  class MyScript(BaseScript):
+      def __init__(
+          self, 
+          llm_provider: Optional[LLMProvider] = None,
+          *args, **kwargs
+      ):
+          super().__init__(*args, **kwargs)
+          self.llm_provider = llm_provider or self._get_default_llm()
+  ```
+
+### Cross-Module Feature Development
+- New features spanning multiple modules should use the event system
+- Create a feature-specific coordinator that subscribes to relevant events
+- Document cross-module interactions in feature documentation
+
+---
+
+## 9. Database Integration (PostgreSQL)
 
 ### Architecture
 - Central PostgreSQL instance/cluster
@@ -345,7 +417,7 @@ class MyCustomScript(BaseScript):
 
 ---
 
-## 9. Testing & Validation
+## 10. Testing & Validation
 
 ### Philosophy
 - Test early and often
@@ -396,7 +468,7 @@ class MyCustomScript(BaseScript):
 
 ---
 
-## 10. Documentation
+## 11. Documentation
 
 ### In-Code
 - Mandatory Google-style docstrings

@@ -2,14 +2,16 @@ from dewey.core.base_script import BaseScript
 
 
 class Apitube(BaseScript):
-    """A class for interacting with the Apitube API.
+    """
+    A class for interacting with the Apitube API.
 
     Inherits from BaseScript to provide standardized access to configuration,
     logging, and other utilities.
     """
 
     def __init__(self):
-        """Initializes the Apitube class.
+        """
+        Initializes the Apitube class.
 
         Calls the superclass constructor to initialize the base script.
         """
@@ -28,7 +30,8 @@ class Apitube(BaseScript):
         self.logger.info("Apitube script completed.")
 
     def execute(self) -> None:
-        """Executes the Apitube API interaction.
+        """
+        Executes the Apitube API interaction.
 
         This method retrieves the API key from the configuration and logs it.
         In a real implementation, this method would use the API key to

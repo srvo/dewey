@@ -1,4 +1,5 @@
-"""Main test runner for the CRM module tests.
+"""
+Main test runner for the CRM module tests.
 
 This module provides a way to run all CRM module tests from a single entry point.
 """
@@ -12,7 +13,8 @@ from dewey.core.base_script import BaseScript
 
 
 class CrmTestRunner(BaseScript):
-    """A class to run all CRM tests.
+    """
+    A class to run all CRM tests.
 
     This class provides a way to run all tests in the CRM module
     with a single command, using the pytest framework.
@@ -23,7 +25,8 @@ class CrmTestRunner(BaseScript):
         super().__init__(config_section="crm_test_runner")
 
     def execute(self) -> None:
-        """Run all CRM tests.
+        """
+        Run all CRM tests.
 
         This method discovers and runs all test files in the CRM tests directory.
         """
@@ -49,7 +52,7 @@ class CrmTestRunner(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 

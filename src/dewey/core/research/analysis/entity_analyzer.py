@@ -1,20 +1,23 @@
-from typing import Any, Dict
 import argparse
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
 
 class EntityAnalyzer(BaseScript):
-    """Analyzes entities in a given text.
+    """
+    Analyzes entities in a given text.
 
     This class provides methods for identifying and categorizing entities
     within a text using various NLP techniques.
     """
 
     def __init__(self, config_section: str = "entity_analyzer", **kwargs: Any) -> None:
-        """Initializes the EntityAnalyzer.
+        """
+        Initializes the EntityAnalyzer.
 
         Args:
+        ----
             config_section: The section in the config file to use for this script.
             **kwargs: Additional keyword arguments to pass to the BaseScript constructor.
 
@@ -33,12 +36,15 @@ class EntityAnalyzer(BaseScript):
         self.logger.info("Entity analysis completed.")
 
     def analyze_text(self, text: str) -> dict[str, list[str]]:
-        """Analyzes the given text and returns a dictionary of entities.
+        """
+        Analyzes the given text and returns a dictionary of entities.
 
         Args:
+        ----
             text: The text to analyze.
 
         Returns:
+        -------
             A dictionary containing the identified entities and their categories.
 
         """
@@ -49,7 +55,8 @@ class EntityAnalyzer(BaseScript):
         return entities
 
     def execute(self) -> None:
-        """Executes the entity analysis process based on command-line arguments.
+        """
+        Executes the entity analysis process based on command-line arguments.
 
         Parses command-line arguments to obtain the input text,
         analyzes the text for entities, and logs the results.
@@ -65,9 +72,11 @@ class EntityAnalyzer(BaseScript):
             self.logger.warning("No text provided for analysis.")
 
     def setup_argparse(self) -> argparse.ArgumentParser:
-        """Set up command line arguments.
+        """
+        Set up command line arguments.
 
-        Returns:
+        Returns
+        -------
             An argument parser configured with options for entity analysis.
 
         """

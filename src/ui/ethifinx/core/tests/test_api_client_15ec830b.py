@@ -3,34 +3,34 @@
 from unittest.mock import Mock, patch
 
 import pytest
-import requests
-
 from ethifinx.core.api_client import APIClient
 from ethifinx.core.config import Config
 
 
 @pytest.fixture(scope="session")
 def test_config() -> Config:
-    """Provide test configuration.
+    """
+    Provide test configuration.
 
-    Returns:
+    Returns
+    -------
         Config: Test configuration object.
 
     """
-    return Config(
-        API_BASE_URL="https://api.test.com/v1",
-        API_KEY="test_key",
-    )
+    return Config(API_BASE_URL="https://api.test.com/v1", API_KEY="test_key")
 
 
-@pytest.fixture
+@pytest.fixture()
 def api_client(test_config: Config) -> APIClient:
-    """Provide API client instance.
+    """
+    Provide API client instance.
 
     Args:
+    ----
         test_config: The test configuration.
 
     Returns:
+    -------
         APIClient: An instance of the API client.
 
     """
@@ -39,9 +39,11 @@ def api_client(test_config: Config) -> APIClient:
 
 @patch("requests.get")
 def test_fetch_data_success(mock_get: Mock, api_client: APIClient) -> None:
-    """Test successful data fetching.
+    """
+    Test successful data fetching.
 
     Args:
+    ----
         mock_get: Mocked requests.get method.
         api_client: API client instance.
 
@@ -62,9 +64,11 @@ def test_fetch_data_success(mock_get: Mock, api_client: APIClient) -> None:
 
 @patch("requests.get")
 def test_fetch_data_failure(mock_get: Mock, api_client: APIClient) -> None:
-    """Test data fetching failure.
+    """
+    Test data fetching failure.
 
     Args:
+    ----
         mock_get: Mocked requests.get method.
         api_client: API client instance.
 
@@ -77,9 +81,11 @@ def test_fetch_data_failure(mock_get: Mock, api_client: APIClient) -> None:
 
 @patch("requests.get")
 def test_fetch_data_with_params(mock_get: Mock, api_client: APIClient) -> None:
-    """Test data fetching with parameters.
+    """
+    Test data fetching with parameters.
 
     Args:
+    ----
         mock_get: Mocked requests.get method.
         api_client: API client instance.
 
@@ -101,9 +107,11 @@ def test_fetch_data_with_params(mock_get: Mock, api_client: APIClient) -> None:
 
 @patch("requests.get")
 def test_fetch_data_invalid_response(mock_get: Mock, api_client: APIClient) -> None:
-    """Test handling of invalid response.
+    """
+    Test handling of invalid response.
 
     Args:
+    ----
         mock_get: Mocked requests.get method.
         api_client: API client instance.
 

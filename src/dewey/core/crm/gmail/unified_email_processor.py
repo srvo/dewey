@@ -9,12 +9,13 @@ from typing import Any
 from dotenv import load_dotenv
 
 from src.dewey.core.base_script import BaseScript
-from src.dewey.core.crm.gmail.gmail_sync import GmailSync
 from src.dewey.core.db.connection import db_manager
+from src.dewey.core.crm.gmail.gmail_utils import OAuthGmailClient
 
 
 class UnifiedEmailProcessor(BaseScript):
-    """Unified processor that handles Gmail sync, enrichment, and prioritization.
+    """
+    Unified processor that handles Gmail sync, enrichment, and prioritization.
     Includes contact extraction and email signature parsing.
     """
 
@@ -140,8 +141,6 @@ class UnifiedEmailProcessor(BaseScript):
 
         # Initialize OAuthGmailClient for authentication
         try:
-            from src.dewey.core.crm.gmail.run_gmail_sync import OAuthGmailClient
-
             # Get credentials path from config or use default
             credentials_dir = self.get_config_value(
                 "paths.credentials_dir", "config/credentials",
@@ -154,7 +153,7 @@ class UnifiedEmailProcessor(BaseScript):
             )
 
             self.logger.info(
-                "Initializing Gmail client with credentials from %s", credentials_path
+                "Initializing Gmail client with credentials from %s", credentials_path,
             )
 
             # Initialize the Gmail OAuth client
@@ -170,9 +169,12 @@ class UnifiedEmailProcessor(BaseScript):
             self.logger.info("📊 Using MotherDuck database: %s", motherduck_db)
 
             # Initialize GmailSync with the authenticated client and MotherDuck path
-            self.gmail_sync = GmailSync(
-                gmail_client=gmail_client, db_path=motherduck_db,
+            from src.dewey.core.crm.gmail.gmail_sync import GmailSync
+            gmail_sync = GmailSync(
+                credentials_file=str(credentials_path), db_path=motherduck_db, token_file=str(token_path)
             )
+
+            self.gmail_sync = gmail_sync
 
             self.logger.info("✅ Gmail client initialized successfully with MotherDuck")
         except Exception as e:
@@ -224,7 +226,9 @@ class UnifiedEmailProcessor(BaseScript):
                 return
 
             self.logger.info(
-                "📨 Found %s emails to process (limiting to %s)", total_count, max_emails
+                "📨 Found %s emails to process (limiting to %s)",
+                total_count,
+                max_emails,
             )
         except Exception as e:
             self.logger.error("❌ Error counting unprocessed emails: %s", e)
@@ -299,7 +303,10 @@ class UnifiedEmailProcessor(BaseScript):
 
                     except Exception as e:
                         self.logger.error(
-                            "❌ Error processing email %s: %s", email_id, str(e), exc_info=True,
+                            "❌ Error processing email %s: %s",
+                            email_id,
+                            str(e),
+                            exc_info=True,
                         )
                         batch_error += 1
 
@@ -328,7 +335,7 @@ class UnifiedEmailProcessor(BaseScript):
                 if isinstance(remaining_time, str):
                     eta_str = "unknown"
                 else:
-                    eta_str = "{:.1f} seconds".format(remaining_time)
+                    eta_str = f"{remaining_time:.1f} seconds"
 
                 self.logger.info(
                     "✓ Processed %s/%s emails (%s/%s success in %.1fs, rate: %.1f/s, avg: %.1f/s, ETA: %s)",
@@ -382,7 +389,10 @@ class UnifiedEmailProcessor(BaseScript):
         self.logger.info(
             "🏁 Processing complete: %s/%s emails processed successfully "
             "in {:.1f} seconds ({:.1f}/s)",
-            success_count, processed_count, total_time, processed_count / total_time
+            success_count,
+            processed_count,
+            total_time,
+            processed_count / total_time,
         )
 
     def _setup_database_tables(self):
@@ -423,14 +433,14 @@ class UnifiedEmailProcessor(BaseScript):
                         """
                         CREATE INDEX IF NOT EXISTS idx_email_analyses_msg_id ON email_analyses(msg_id)
                     """,
-                        for_write=True,
+                    for_write=True,
                     )
 
                     db_manager.execute_query(
                         """
                         CREATE INDEX IF NOT EXISTS idx_email_analyses_email_id ON email_analyses(email_id)
                     """,
-                        for_write=True,
+                    for_write=True,
                     )
                 except Exception as e:
                     self.logger.warning(
@@ -491,819 +501,300 @@ class UnifiedEmailProcessor(BaseScript):
                                 default_value = "DEFAULT CURRENT_TIMESTAMP"
 
                             db_manager.execute_query(
-                                f"ALTER TABLE email_analyses ADD COLUMN {col_name} {col_type} {default_value}",
+                                f"""
+                                ALTER TABLE email_analyses
+                                ADD COLUMN {col_name} {col_type} {default_value}
+                            """,
                                 for_write=True,
                             )
                         except Exception as e:
-                            self.logger.warning(
-                                "Could not add column %s to email_analyses: %s", col_name, e
+                            self.logger.error(
+                                f"Could not add column {col_name} to email_analyses: {e}",
                             )
 
-                # Try to create indexes if they don't exist
-                try:
-                    # Check if indexes exist first
-                    db_manager.execute_query(
-                        """
-                        CREATE INDEX IF NOT EXISTS idx_email_analyses_msg_id ON email_analyses(msg_id)
-                    """,
-                        for_write=True,
-                    )
-
-                    db_manager.execute_query(
-                        """
-                        CREATE INDEX IF NOT EXISTS idx_email_analyses_email_id ON email_analyses(email_id)
-                    """,
-                        for_write=True,
-                    )
-                except Exception as e:
-                    self.logger.warning(
-                        f"Could not create indexes on email_analyses: {e}",
-                    )
-
             except Exception as e:
-                self.logger.error(f"Error checking email_analyses columns: {e}")
-
-        # Create contacts table if it doesn't exist
-        if "contacts" not in existing_tables:
-            self.logger.info("🔃 Creating contacts table")
-            try:
-                db_manager.execute_query(
-                    """
-                    CREATE TABLE IF NOT EXISTS contacts (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        email VARCHAR UNIQUE NOT NULL,
-                        first_name VARCHAR,
-                        last_name VARCHAR,
-                        full_name VARCHAR,
-                        company VARCHAR,
-                        job_title VARCHAR,
-                        is_client BOOLEAN DEFAULT FALSE,
-                        email_count INTEGER DEFAULT 1,
-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        confidence_score FLOAT DEFAULT 0.0,
-                        linkedin_url VARCHAR,
-                        twitter_handle VARCHAR
-                    )
-                """,
-                    for_write=True,
+                self.logger.error(
+                    "Could not check or update email_analyses columns: %s", e,
                 )
-
-                # Create index on email to optimize lookups
-                try:
-                    db_manager.execute_query(
-                        """
-                        CREATE INDEX IF NOT EXISTS idx_contacts_email ON contacts(email)
-                    """,
-                        for_write=True,
-                    )
-                except Exception as e:
-                    self.logger.warning("Could not create index on contacts: %s", e)
-
-            except Exception as e:
-                self.logger.error("Error creating contacts table: %s", e)
-
-        # For existing contacts table, check and add missing columns
-        if "contacts" in existing_tables:
-            try:
-                # Get existing columns
-                columns_result = db_manager.execute_query(
-                    """
-                    SELECT column_name FROM information_schema.columns
-                    WHERE table_name = 'contacts'
-                """,
-                )
-                existing_columns = (
-                    [row[0].lower() for row in columns_result] if columns_result else []
-                )
-
-                # Define expected columns with their types
-                expected_columns = {
-                    "id": "INTEGER",
-                    "email": "VARCHAR",
-                    "first_name": "VARCHAR",
-                    "last_name": "VARCHAR",
-                    "full_name": "VARCHAR",
-                    "company": "VARCHAR",
-                    "job_title": "VARCHAR",
-                    "is_client": "BOOLEAN",
-                    "email_count": "INTEGER",
-                    "linkedin_url": "VARCHAR",
-                    "twitter_handle": "VARCHAR",
-                    "confidence_score": "FLOAT",
-                    "created_at": "TIMESTAMP",
-                    "last_updated": "TIMESTAMP",
-                }
-
-                # Check and add missing columns
-                for col_name, col_type in expected_columns.items():
-                    if col_name.lower() not in existing_columns:
-                        self.logger.info(
-                            "➕ Adding missing column to contacts: %s", col_name
-                        )
-                        try:
-                            default_value = ""
-                            if col_type == "BOOLEAN":
-                                default_value = "DEFAULT FALSE"
-                            elif col_type == "INTEGER":
-                                default_value = "DEFAULT 0"
-                            elif col_type == "FLOAT":
-                                default_value = "DEFAULT 0.0"
-                            elif col_type == "TIMESTAMP":
-                                default_value = "DEFAULT CURRENT_TIMESTAMP"
-
-                            db_manager.execute_query(
-                                "ALTER TABLE contacts ADD COLUMN {col_name} {col_type} {default_value}".format(col_name=col_name, col_type=col_type, default_value=default_value),
-                                for_write=True,
-                            )
-                        except Exception as e:
-                            self.logger.warning(
-                                "Could not add column %s to contacts: %s", col_name, e
-                            )
-
-                # Try to create index if it doesn't exist
-                try:
-                    db_manager.execute_query(
-                        """
-                        CREATE INDEX IF NOT EXISTS idx_contacts_email ON contacts(email)
-                    """,
-                        for_write=True,
-                    )
-                except Exception as e:
-                    self.logger.warning("Could not create index on contacts: %s", e)
-
-            except Exception as e:
-                self.logger.error("Error checking contacts columns: %s", e)
-
-        self.logger.info("✅ Database tables and columns verified and created")
 
     def _get_existing_tables(self) -> list[str]:
-        """Get list of existing tables in the database."""
+        """Get a list of existing tables in the database."""
         try:
-            # First try DuckDB's information_schema.tables approach
-            results = db_manager.execute_query(
-                """
-                SELECT table_name FROM information_schema.tables
-                WHERE table_schema = 'main'
-            """,
-            )
+            # Import here to allow connection refreshes
+            from dewey.core.db import db_manager
 
-            if results:
-                return [row[0].lower() for row in results]
-
-            # Fallback to SHOW TABLES if the first approach doesn't work
-            try:
-                results = db_manager.execute_query("SHOW TABLES")
-                return [row[0].lower() for row in results] if results else []
-            except Exception:
-                # Last resort: try PRAGMA table_list which works in SQLite
-                try:
-                    results = db_manager.execute_query("PRAGMA table_list")
-                    return [
-                        row[1].lower()
-                        for row in results
-                        if row[1] not in ("sqlite_master", "sqlite_temp_master")
-                    ]
-                except Exception as e:
-                    self.logger.warning("All table list approaches failed: %s", e)
-                    return []
-
+            tables_result = db_manager.execute_query("SHOW TABLES")
+            existing_tables = [row[0].lower() for row in tables_result] if tables_result else []
+            return existing_tables
         except Exception as e:
-            self.logger.error(f"Error getting table list: {e}")
+            self.logger.error("Could not retrieve existing tables: %s", e)
             return []
 
     def _get_contact_table_columns(self) -> list[str]:
-        """Get the list of column names in the contacts table to support dynamic queries."""
+        """Get a list of columns in the contacts table."""
         try:
+            # Import here to allow connection refreshes
+            from dewey.core.db import db_manager
+
             columns_result = db_manager.execute_query(
                 """
                 SELECT column_name FROM information_schema.columns
                 WHERE table_name = 'contacts'
             """,
             )
-
-            # Handle result format properly - each row is a tuple, not a dict
-            if columns_result:
-                # If we have results, extract the first element of each tuple
-                return [row[0] for row in columns_result]
-            return []
+            existing_columns = (
+                [row[0].lower() for row in columns_result] if columns_result else []
+            )
+            return existing_columns
         except Exception as e:
-            self.logger.error(f"Error getting contact table columns: {e}")
-            # Return minimal set of expected columns as fallback
-            return ["email", "is_client", "last_updated"]
+            self.logger.error("Could not retrieve contact table columns: %s", e)
+            return []
 
     def _process_single_email(self, email_id):
-        """Process a single email for enrichment and storage."""
+        """Process a single email by ID."""
         try:
-            # Skip if already processed
-            query = """
-                SELECT msg_id FROM email_analyses
-                WHERE msg_id = ?
-            """
-            result = db_manager.execute_query(query, [email_id])
+            # Import here to allow connection refreshes
+            from dewey.core.db import db_manager
 
-            if result:
-                self.logger.debug(
-                    "Email %s already in email_analyses, checking if processing is complete",
-                    email_id,
-                )
+            # Get the raw email data
+            query = "SELECT * FROM raw_emails WHERE message_id = ?"
+            email_result = db_manager.execute_query(query, [email_id])
 
-                # Check if already fully processed
-                status_query = """
-                    SELECT status FROM email_analyses
-                    WHERE msg_id = ? AND status = 'processed'
-                """
-                status_result = db_manager.execute_query(status_query, [email_id])
-
-                if status_result:
-                    self.logger.debug(
-                        "Email %s already fully processed, skipping",
-                        email_id,
-                    )
-                    return True
-
-            # Fetch email if it exists
-            raw_email_query = """
-                SELECT
-                    message_id,
-                    thread_id,
-                    sender as from_address,
-                    subject,
-                    internal_date,
-                    snippet
-                FROM raw_emails
-                WHERE message_id = ?
-            """
-            email_data = db_manager.execute_query(raw_email_query, [email_id])
-
-            if not email_data:
+            if not email_result:
                 self.logger.warning("⚠️ Email %s not found in raw_emails", email_id)
                 return False
 
-            # Extract raw email data
-            (msg_id, thread_id, from_address, subject, internal_date, snippet) = (
-                email_data[0]
-            )
-
-            # Check contact info
-            contact = self._extract_contact_info(from_address, email_id)
-
-            # Additional enrichment through EmailEnrichment if available
-            enrichment_data = {}
-            if hasattr(self, "enrichment") and self.enrichment:
-                try:
-                    if hasattr(self.enrichment, "enrich_email"):
-                        self.logger.info(
-                            "Performing additional enrichment for email %s", email_id
-                        )
-                        success = self.enrichment.enrich_email(email_id)
-                        if success:
-                            self.logger.info(
-                                "Additional enrichment completed for email %s", email_id
-                            )
-                        else:
-                            self.logger.warning(
-                                "Additional enrichment failed for email %s", email_id
-                            )
-                    else:
-                        self.logger.warning(
-                            "EmailEnrichment class exists but missing enrich_email method",
-                        )
-                except Exception as e:
-                    self.logger.error(
-                        "Error during email enrichment: %s", e, exc_info=True,
-                    )
-
-            # Create standardized entry in email_analyses
-            self._store_email_analysis(
-                msg_id,
+            # Extract email data
+            (
+                message_id,
                 thread_id,
+                internal_date,
+                labels,
                 subject,
                 from_address,
-                internal_date,
+                recipient,
+                body,
+                headers,
+                attachments,
+                history_id,
+                raw_data,
                 snippet,
-                contact,
+            ) = email_result[0]
+
+            # Extract contact information from the email
+            contact_info = self._extract_contact_info(from_address, email_id)
+
+            # Store the email analysis
+            self._store_email_analysis(
+                msg_id=message_id,
+                thread_id=thread_id,
+                subject=subject,
+                from_address=from_address,
+                contact_info=contact_info,
+                email_id=email_id,
+                priority_score=0.0,  # Initial score
             )
 
-            return True
+            # Update timestamp fields
+            self._update_timestamp_fields(msg_id=message_id)
+
+            # Update internal date
+            self._update_internal_date(msg_id=message_id, internal_date=internal_date)
+
+            # Enrich contact from email
+            self._enrich_contact_from_email(email_id=email_id, contact_info=contact_info)
+
+            # Calculate priority score
+            self._calculate_priority_score(email_id=email_id)
+
+            return True  # Indicate success
 
         except Exception as e:
-            self.logger.error(
-                "❌ Error processing single email %s: %s", email_id, e, exc_info=True,
-            )
-            return False
+            self.logger.error("❌ Error processing email %s: %s", email_id, str(e))
+            return False  # Indicate failure
 
     def _extract_contact_info(self, from_address, email_id):
-        """Extract contact information from an email.
-
-        Args:
-        ----
-            from_address: The sender's email address
-            email_id: The email ID for reference
-
-        Returns:
-        -------
-            Dict containing contact information
-
-        """
+        """Extract contact information from email signature."""
         try:
-            # Start with basic info from the from_address
-            contact = {
-                "email": from_address,
-                "is_client": False,
-                "confidence_score": 0.5,
-                "source": "gmail",
-            }
+            # Import here to allow connection refreshes
+            from dewey.core.db import db_manager
 
-            # Extract name, if available
-            if "<" in from_address and ">" in from_address:
-                # Format: "John Doe <john@example.com>"
-                name_part = from_address.split("<")[0].strip()
-                email_part = from_address.split("<")[1].split(">")[0].strip()
+            # Get the raw email data
+            query = "SELECT body FROM raw_emails WHERE message_id = ?"
+            email_result = db_manager.execute_query(query, [email_id])
 
-                contact["full_name"] = name_part
-                contact["email"] = email_part
+            if not email_result:
+                self.logger.warning("⚠️ Email %s not found in raw_emails", email_id)
+                return {}
 
-                # Try to split into first/last name
-                name_parts = name_part.split()
-                if len(name_parts) > 0:
-                    contact["first_name"] = name_parts[0]
-                    if len(name_parts) > 1:
-                        contact["last_name"] = " ".join(name_parts[1:])
+            body = email_result[0][0]
 
-            # Check for known domain patterns
-            if "@" in from_address:
-                domain = from_address.split("@")[-1].lower()
-                contact["domain"] = domain
+            # Extract contact information from the email signature
+            contact_info = {}
+            for field, pattern in self.signature_patterns.items():
+                match = None
+                try:
+                    import re
 
-                # Check if this is a potential client domain
-                client_domains = self.get_config_value("client_domains", [])
-                if domain in client_domains:
-                    contact["is_client"] = True
-                    contact["confidence_score"] = 0.9
+                    match = re.search(pattern, body, re.MULTILINE)
+                except Exception as e:
+                    self.logger.warning(
+                        "Could not compile regex pattern for %s: %s", field, e,
+                    )
+                    continue
 
-            return contact
+                if match:
+                    contact_info[field] = match.group(1).strip()
+                    self.logger.debug(
+                        "Extracted %s: %s from email %s", field, contact_info[field], email_id,
+                    )
 
+            # Add the from address to the contact info
+            contact_info["email"] = from_address
+
+            return contact_info
         except Exception as e:
-            self.logger.error("Error extracting contact info from %s: %s", from_address, e)
-            return {"email": from_address, "error": str(e)}
+            self.logger.error("❌ Error extracting contact info: %s", e)
+            return {}
 
     def _get_column_names(self, table_name: str) -> list[str]:
-        """Get column names for a table.
-
-        Args:
-        ----
-            table_name: Name of the table
-
-        Returns:
-        -------
-            List of column names in lowercase
-
-        """
+        """Get a list of column names for a given table."""
         try:
             # Import here to allow connection refreshes
             from dewey.core.db import db_manager
 
-            # Query table schema to get column names
-            query = f"""
-                SELECT column_name
-                FROM information_schema.columns
+            columns_result = db_manager.execute_query(
+                f"""
+                SELECT column_name FROM information_schema.columns
                 WHERE table_name = '{table_name}'
-            """
-            result = db_manager.execute_query(query)
-
-            # Extract column names and convert to lowercase
-            column_names = [row[0].lower() for row in result] if result else []
-
-            # Fall back to a list of common column names if query fails
-            if not column_names:
-                self.logger.warning(
-                    "Could not get column names, using fallback approach",
-                )
-                if table_name == "email_analyses":
-                    column_names = [
-                        "msg_id",
-                        "thread_id",
-                        "subject",
-                        "from_address",
-                        "status",
-                        "metadata",
-                        "priority",
-                        "priority_score",
-                        "analysis_date",
-                        "snippet",
-                        "internal_date",
-                    ]
-                elif table_name == "contacts":
-                    column_names = [
-                        "email",
-                        "first_name",
-                        "last_name",
-                        "full_name",
-                        "company",
-                        "job_title",
-                        "phone",
-                        "country",
-                        "source",
-                        "domain",
-                        "last_interaction_date",
-                        "metadata",
-                        "is_client",
-                    ]
-
-            return column_names
-
+            """,
+            )
+            existing_columns = (
+                [row[0].lower() for row in columns_result] if columns_result else []
+            )
+            return existing_columns
         except Exception as e:
-            self.logger.warning(f"Error getting column names for {table_name}: {e}")
-            # Return minimal set of columns as fallback
-            return ["id", "name", "created_at", "updated_at"]
+            self.logger.error("Could not retrieve column names for %s: %s", table_name, e)
+            return []
 
     def _store_email_analysis(
-        self, msg_id, thread_id, subject, from_address, internal_date, snippet, contact,
+        self,
+        msg_id: str,
+        thread_id: str,
+        subject: str,
+        from_address: str,
+        contact_info: dict[str, Any],
+        email_id: str,
+        priority_score: float,
     ):
-        """Store email analysis in the database.
-
-        Args:
-        ----
-            msg_id: Message ID
-            thread_id: Thread ID
-            subject: Email subject
-            from_address: Sender's email address
-            internal_date: Date the email was sent
-            snippet: Email snippet
-            contact: Contact information dict
-
-        """
+        """Store email analysis results in the database."""
         try:
             # Import here to allow connection refreshes
             from dewey.core.db import db_manager
 
-            # Get column names
-            column_names = self._get_column_names("email_analyses")
+            # Convert contact info to JSON string
+            contact_info_json = json.dumps(contact_info)
 
-            # Check if record exists
-            exists = db_manager.execute_query(
-                "SELECT 1 FROM email_analyses WHERE msg_id = ?", [msg_id],
+            # Use parameterized query to prevent SQL injection
+            query = """
+                INSERT OR REPLACE INTO email_analyses (
+                    msg_id,
+                    thread_id,
+                    subject,
+                    from_address,
+                    analysis_date,
+                    priority,
+                    status,
+                    metadata,
+                    email_id,
+                    processed,
+                    priority_score,
+                    extracted_contacts,
+                    processed_timestamp
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """
+
+            # Execute the query with the parameters
+            db_manager.execute_query(
+                query,
+                [
+                    msg_id,
+                    thread_id,
+                    subject,
+                    from_address,
+                    datetime.utcnow(),
+                    0,  # Initial priority
+                    "complete",  # Set status to complete
+                    "{}",  # Empty metadata
+                    email_id,
+                    True,  # Set processed to True
+                    priority_score,
+                    contact_info_json,
+                    datetime.utcnow(),
+                ],
+                for_write=True,
             )
 
-            # Get current timestamp as ISO string for consistency
-            now_str = datetime.now().isoformat()
-            now_int = int(datetime.now().timestamp())
-
-            # Prepare JSON data
-            metadata = json.dumps(
-                {"from": from_address, "contact": contact, "processed_at": now_str},
-            )
-
-            # Calculate priority score based on contact info
-            priority_score = 0.5  # Default score
-            if contact.get("is_client", False):
-                priority_score = 0.8  # Higher priority for clients
-
-            # Convert to integer scale for priority column (0-100)
-            priority_int = int(priority_score * 100)
-
-            # Handle internal_date type - convert to both string and int formats for flexibility
-            internal_date_str = None
-            internal_date_int = None
-
-            if internal_date:
-                try:
-                    # If it's a timestamp, convert it
-                    if isinstance(internal_date, (int, float)):
-                        internal_date_int = int(internal_date)
-                        internal_date_str = datetime.fromtimestamp(
-                            internal_date_int / 1000
-                            if internal_date_int > 1e10
-                            else internal_date_int,
-                        ).isoformat()
-                    # If it's a string, convert to int if possible
-                    elif isinstance(internal_date, str):
-                        internal_date_str = internal_date
-                        try:
-                            # Try to parse the string as a datetime
-                            dt = datetime.fromisoformat(
-                                internal_date.replace("Z", "+00:00"),
-                            )
-                            internal_date_int = int(dt.timestamp())
-                        except:
-                            pass
-                except Exception as e:
-                    self.logger.warning(f"Error converting internal_date: {e}")
-                    # Keep the values as they are
-
-            if exists:
-                # Update existing record
-                try:
-                    # Update without timestamp fields to avoid type issues
-                    db_manager.execute_query(
-                        """
-                        UPDATE email_analyses
-                        SET
-                            thread_id = ?,
-                            subject = ?,
-                            from_address = ?,
-                            priority = ?,
-                            priority_score = ?,
-                            status = 'processed',
-                            metadata = ?
-                        WHERE msg_id = ?
-                    """,
-                        [
-                            thread_id,
-                            subject,
-                            from_address,
-                            priority_int,
-                            priority_score,
-                            metadata,
-                            msg_id,
-                        ],
-                        for_write=True,
-                    )
-
-                    self.logger.debug(f"Updated email_analyses record for {msg_id}")
-
-                    # Update timestamp fields separately
-                    self._update_timestamp_fields(
-                        msg_id, now_str, now_int, column_names,
-                    )
-
-                    # Update snippet if present
-                    if "snippet" in column_names and snippet:
-                        self._update_field(msg_id, "snippet", snippet)
-
-                    # Update internal_date field (always done separately to avoid type issues)
-                    self._update_internal_date(
-                        msg_id, internal_date_int, internal_date_str, column_names,
-                    )
-
-                except Exception as e:
-                    self.logger.warning(
-                        f"Error updating record, trying simpler update: {e}",
-                    )
-                    # Check if this was a write-write conflict
-                    if "write-write conflict" in str(e):
-                        # Set the flag for adaptive delay
-                        self.had_write_conflicts = True
-
-                    # Try a minimal update if the full one fails
-                    db_manager.execute_query(
-                        """
-                        UPDATE email_analyses
-                        SET status = 'processed'
-                        WHERE msg_id = ?
-                    """,
-                        [msg_id],
-                        for_write=True,
-                    )
-            else:
-                # Insert new record - exclude timestamp and internal_date fields from initial insert
-                try:
-                    # Build a minimal query with only the essential fields
-                    essential_fields = [
-                        "msg_id",
-                        "thread_id",
-                        "subject",
-                        "from_address",
-                        "priority",
-                        "priority_score",
-                        "metadata",
-                    ]
-
-                    # Exclude any fields not present in the schema
-                    fields_to_insert = [
-                        field
-                        for field in essential_fields
-                        if field.lower() in column_names
-                    ]
-
-                    # Build parameters list first, then use its length for placeholders
-                    insert_values = []
-                    for field in fields_to_insert:
-                        if field == "msg_id":
-                            insert_values.append(msg_id)
-                        elif field == "thread_id":
-                            insert_values.append(thread_id)
-                        elif field == "subject":
-                            insert_values.append(subject)
-                        elif field == "from_address":
-                            insert_values.append(from_address)
-                        elif field == "priority":
-                            insert_values.append(priority_int)
-                        elif field == "priority_score":
-                            insert_values.append(priority_score)
-                        elif field == "metadata":
-                            insert_values.append(metadata)
-
-                    # Generate placeholders based on parameter count
-                    placeholders = ", ".join(["?" for _ in insert_values])
-
-                    insert_query = f"""
-                        INSERT INTO email_analyses (
-                            {", ".join(fields_to_insert)}
-                        ) VALUES (
-                            {placeholders}
-                        )
-                    """
-
-                    # Execute the insert
-                    db_manager.execute_query(
-                        insert_query, insert_values, for_write=True,
-                    )
-
-                    self.logger.debug(f"Inserted email_analyses record for {msg_id}")
-
-                    # Update timestamp fields separately
-                    self._update_timestamp_fields(
-                        msg_id, now_str, now_int, column_names,
-                    )
-
-                    # Update snippet if present
-                    if "snippet" in column_names and snippet:
-                        self._update_field(msg_id, "snippet", snippet)
-
-                    # Update internal_date field (always done separately to avoid type issues)
-                    self._update_internal_date(
-                        msg_id, internal_date_int, internal_date_str, column_names,
-                    )
-
-                except Exception as e:
-                    self.logger.error(f"Error inserting record with dynamic query: {e}")
-                    # Check if this was a write-write conflict
-                    if "write-write conflict" in str(e):
-                        # Set the flag for adaptive delay
-                        self.had_write_conflicts = True
-
-                    # Try an absolute minimal insert as last resort
-                    try:
-                        db_manager.execute_query(
-                            """
-                            INSERT INTO email_analyses (
-                                msg_id, status
-                            ) VALUES (
-                                ?, 'processed'
-                            )
-                        """,
-                            [msg_id],
-                            for_write=True,
-                        )
-                        self.logger.warning("Fell back to minimal insert for %s", msg_id)
-                    except Exception as e2:
-                        self.logger.error("Even minimal insert failed: %s", e2)
-
-            # Update contact info based on extracted data
-            try:
-                self._enrich_contact_from_email(msg_id, contact)
-            except Exception as e:
-                self.logger.warning("Error enriching contact from email: %s", e)
+            self.logger.debug("Stored email analysis for %s", msg_id)
 
         except Exception as e:
-            self.logger.error(
-                "Error storing email analysis for %s: %s", msg_id, e, exc_info=True,
-            )
+            self.logger.error("❌ Error storing email analysis: %s", e)
 
     def _update_timestamp_fields(
-        self, msg_id, timestamp_str, timestamp_int, column_names,
+        self,
+        msg_id: str,
     ):
-        """Update timestamp fields separately based on column types."""
-        # Update analysis_date if present
-        if "analysis_date" in column_names:
-            try:
-                # First, check the column type
-                type_query = """
-                    SELECT data_type
-                    FROM information_schema.columns
-                    WHERE table_name = 'email_analyses'
-                    AND column_name = 'analysis_date'
+        """Update timestamp fields in the email_analyses table."""
+        try:
+            # Import here to allow connection refreshes
+            from dewey.core.db import db_manager
+
+            # Update the analysis_date and processed_timestamp fields
+            db_manager.execute_query(
                 """
-                type_result = db_manager.execute_query(type_query)
-
-                if not type_result:
-                    self.logger.warning(
-                        "Could not determine column type for analysis_date, skipping update",
-                    )
-                    return
-
-                col_type = type_result[0][0].upper() if type_result[0][0] else "UNKNOWN"
-                self.logger.debug(f"analysis_date column type: {col_type}")
-
-                # For timestamp/date types, use string format
-                if any(t in col_type for t in ["TIMESTAMP", "DATETIME", "DATE"]):
-                    db_manager.execute_query(
-                        """
-                        UPDATE email_analyses
-                        SET analysis_date = ?
-                        WHERE msg_id = ?
-                    """,
-                        [timestamp_str, msg_id],
-                        for_write=True,
-                    )
-                    self.logger.debug(
-                        f"Updated analysis_date with string value: {timestamp_str}",
-                    )
-
-                # For numeric types, use integer format
-                elif any(t in col_type for t in ["INT", "BIGINT", "INTEGER"]):
-                    db_manager.execute_query(
-                        """
-                        UPDATE email_analyses
-                        SET analysis_date = ?
-                        WHERE msg_id = ?
-                    """,
-                        [timestamp_int, msg_id],
-                        for_write=True,
-                    )
-                    self.logger.debug(
-                        f"Updated analysis_date with integer value: {timestamp_int}",
-                    )
-
-                # For unknown types, skip update to avoid errors
-                else:
-                    self.logger.warning(
-                        f"Unsupported column type for analysis_date: {col_type}, skipping update",
-                    )
-
-            except Exception as e:
-                self.logger.warning(f"Could not update analysis_date: {e}")
+                UPDATE email_analyses
+                SET analysis_date = ?, processed_timestamp = ?
+                WHERE msg_id = ?
+            """,
+                [datetime.utcnow(), datetime.utcnow(), msg_id],
+                for_write=True,
+            )
+            self.logger.debug("Updated timestamp fields for %s", msg_id)
+        except Exception as e:
+            self.logger.error("❌ Error updating timestamp fields: %s", e)
 
     def _update_internal_date(
-        self, msg_id, internal_date_int, internal_date_str, column_names,
+        self,
+        msg_id: str,
+        internal_date: datetime,
     ):
-        """Update internal_date field separately, respecting column type."""
-        if "internal_date" not in column_names:
-            return
-
+        """Update internal date in the email_analyses table."""
         try:
-            # First, check the column type in the database
-            type_query = """
-                SELECT data_type
-                FROM information_schema.columns
-                WHERE table_name = 'email_analyses'
-                AND column_name = 'internal_date'
-            """
-            type_result = db_manager.execute_query(type_query)
+            # Import here to allow connection refreshes
+            from dewey.core.db import db_manager
 
-            if not type_result:
-                self.logger.warning(
-                    "Could not determine column type for internal_date, skipping update",
-                )
-                return
-
-            col_type = type_result[0][0].upper() if type_result[0][0] else "UNKNOWN"
-            self.logger.debug(f"internal_date column type: {col_type}")
-
-            # For numeric types, use integer format
-            if any(t in col_type for t in ["INT", "BIGINT", "INTEGER"]):
-                if internal_date_int is not None:
-                    db_manager.execute_query(
-                        """
-                        UPDATE email_analyses
-                        SET internal_date = ?
-                        WHERE msg_id = ?
-                    """,
-                        [internal_date_int, msg_id],
-                        for_write=True,
-                    )
-                    self.logger.debug(
-                        f"Updated internal_date with integer value: {internal_date_int}",
-                    )
-                else:
-                    self.logger.warning(
-                        "No integer value available for internal_date, skipping update",
-                    )
-
-            # For timestamp/date types, use string format
-            elif any(t in col_type for t in ["TIMESTAMP", "DATETIME", "DATE"]):
-                if internal_date_str:
-                    db_manager.execute_query(
-                        """
-                        UPDATE email_analyses
-                        SET internal_date = ?
-                        WHERE msg_id = ?
-                    """,
-                        [internal_date_str, msg_id],
-                        for_write=True,
-                    )
-                    self.logger.debug(
-                        f"Updated internal_date with string value: {internal_date_str}",
-                    )
-                else:
-                    self.logger.warning(
-                        "No string value available for internal_date, skipping update",
-                    )
-
-            # For unknown types, skip update to avoid errors
-            else:
-                self.logger.warning(
-                    f"Unsupported column type for internal_date: {col_type}, skipping update",
-                )
-
+            # Update the analysis_date and processed_timestamp fields
+            db_manager.execute_query(
+                """
+                UPDATE email_analyses
+                SET internal_date = ?
+                WHERE msg_id = ?
+            """,
+                [internal_date, msg_id],
+                for_write=True,
+            )
+            self.logger.debug("Updated internal_date for %s", msg_id)
         except Exception as e:
-            self.logger.warning(f"Could not update internal_date for {msg_id}: {e}")
+            self.logger.error("❌ Error updating internal_date: %s", e)
 
     def _update_field(self, msg_id, field_name, value):
-        """Update a specific field with proper error handling."""
+        """Generic method to update a single field in the email_analyses table."""
         try:
+            # Import here to allow connection refreshes
+            from dewey.core.db import db_manager
+
+            # Update the specified field
             db_manager.execute_query(
                 f"""
                 UPDATE email_analyses
@@ -1313,99 +804,130 @@ class UnifiedEmailProcessor(BaseScript):
                 [value, msg_id],
                 for_write=True,
             )
+            self.logger.debug(f"Updated {field_name} for {msg_id}")
         except Exception as e:
-            self.logger.warning(f"Could not update {field_name} for {msg_id}: {e}")
+            self.logger.error(f"❌ Error updating {field_name}: %s", e)
 
     def _enrich_contact_from_email(self, email_id: str, contact_info: dict[str, Any]):
-        """Enrich contact information and set priority based on client status."""
-        if not contact_info.get("email"):
-            self.logger.warning(
-                f"No email found for contact in message {email_id}, using sender",
-            )
-            contact_info["email"] = contact_info.get("sender", f"unknown_{email_id}")
+        """Enrich contact information from email."""
+        if not self.enrichment:
+            self.logger.debug("Skipping contact enrichment - module not loaded")
+            return
 
-        # Set confidence score if missing
-        if "confidence_score" not in contact_info:
-            contact_info["confidence_score"] = 0.0
-
-        # Get current timestamp as ISO string
-        now_str = datetime.now().isoformat()
-
-        # Prepare simplified contact info without complex structures
-        # that might cause issues with database queries
-        simple_contact = {
-            "email": contact_info["email"],
-            "is_client": False,
-            "email_count": 1,
-            "confidence_score": contact_info.get("confidence_score", 0.0),
-        }
-
-        # Add simple string fields
-        for field in [
-            "first_name",
-            "last_name",
-            "full_name",
-            "phone",
-            "company",
-            "title",
-        ]:
-            if contact_info.get(field):
-                simple_contact[field] = contact_info[field]
-
-        # Map title to job_title if needed
-        if contact_info.get("title") and "job_title" not in simple_contact:
-            simple_contact["job_title"] = contact_info["title"]
-
-        # Add LinkedIn/Twitter if available
-        if contact_info.get("linkedin_url"):
-            simple_contact["linkedin_url"] = contact_info["linkedin_url"]
-        if contact_info.get("twitter_handle"):
-            simple_contact["twitter_handle"] = contact_info["twitter_handle"]
-
-        # Check if the contact is a client
         try:
-            is_client_result = db_manager.execute_query(
-                """
-                SELECT 1 FROM client_profiles
-                WHERE email = ? LIMIT 1
-            """,
-                [simple_contact["email"]],
-            )
+            # Import here to allow connection refreshes
+            from dewey.core.db import db_manager
 
-            # If this is a client, add a 0.3 to confidence score
-            client_match = len(is_client_result) > 0
-            simple_contact["is_client"] = client_match
-            if client_match:
-                simple_contact["confidence_score"] = min(
-                    1.0, simple_contact["confidence_score"] + 0.3,
-                )
-                contact_info["is_client"] = True
-                contact_info["confidence_score"] = simple_contact["confidence_score"]
+            # Get the raw email data
+            query = "SELECT from_address FROM raw_emails WHERE message_id = ?"
+            email_result = db_manager.execute_query(query, [email_id])
+
+            if not email_result:
+                self.logger.warning("⚠️ Email %s not found in raw_emails", email_id)
+                return
+
+            from_address = email_result[0][0]
+
+            # Enrich the contact information
+            enriched_contact = self.enrichment.enrich_contact(contact_info)
+
+            # Get the contact table columns
+            contact_table_columns = self._get_contact_table_columns()
+
+            # Prepare the insert values
+            insert_values = []
+            insert_columns = []
+
+            # Add the enriched contact information to the insert values
+            for column in contact_table_columns:
+                if column in enriched_contact:
+                    insert_values.append(enriched_contact[column])
+                    insert_columns.append(column)
+                else:
+                    insert_values.append(None)
+
+            # Add the from address to the insert values
+            if "email" in contact_table_columns and "email" not in insert_columns:
+                insert_values.append(from_address)
+                insert_columns.append("email")
+
+            # Create the insert query
+            insert_query = f"""
+                INSERT OR IGNORE INTO contacts ({', '.join(insert_columns)})
+                VALUES ({', '.join(['?' for _ in insert_columns])})
+            """
+
+            # Execute the insert query
+            db_manager.execute_query(insert_query, insert_values, for_write=True)
+
+            self.logger.debug("Enriched contact information for %s", email_id)
+
         except Exception as e:
-            self.logger.warning("Error checking client status: %s", e)
+            self.logger.error("❌ Error enriching contact: %s", e)
 
-        # Get existing columns to ensure we're using the right field names
+    def _calculate_priority_score(
+        self,
+        email_id: str,
+    ):
+        """Calculate priority score for an email."""
         try:
-            # Check if contact already exists - use a more resilient query
-            contact_exists = False
+            # Import here to allow connection refreshes
+            from dewey.core.db import db_manager
+
+            # Get the raw email data
+            query = "SELECT body, subject FROM raw_emails WHERE message_id = ?"
+            email_result = db_manager.execute_query(query, [email_id])
+
+            if not email_result:
+                self.logger.warning("⚠️ Email %s not found in raw_emails", email_id)
+                return
+
+            body, subject = email_result[0]
+
+            # Calculate the priority score based on the email body and subject
+            priority_score = 0.0
+            if "urgent" in body.lower() or "important" in subject.lower():
+                priority_score += 0.5
+            if "action required" in body.lower() or "action needed" in subject.lower():
+                priority_score += 0.3
+            if "meeting" in body.lower() or "schedule" in subject.lower():
+                priority_score += 0.2
+
+            # Update the priority score in the email_analyses table
+            self._update_field(email_id, "priority_score", priority_score)
+
+            self.logger.debug("Calculated priority score for %s: %s", email_id, priority_score)
+
+        except Exception as e:
+            self.logger.error("❌ Error calculating priority score: %s", e)
+
+    def _cleanup(self) -> None:
+        """Clean up resources."""
+        self.logger.info("Cleaning up resources")
+        if self.gmail_sync:
             try:
-                # First try a simple existence check
-                existing = db_manager.execute_query(
-                    """
-                    SELECT 1 FROM contacts WHERE email = ? LIMIT 1
-                """,
-                    [simple_contact["email"]],
-                )
-                contact_exists = len(existing) > 0
-            except Exception as e:
-                self.logger.warning(f"Error checking existing contact: {e}")
-                # Fallback to a different check
-                try:
-                    existing = db_manager.execute_query(
-                        """
-                        SELECT COUNT(*) FROM contacts WHERE email = ?
-                    """,
-                        [simple_contact["email"]],
+                self.gmail_sync.close_connection()
+            except:
+                pass
+
+    def __signal_handler(self, sig, frame):
+        """Handle signals to allow graceful exit."""
+        self.logger.info("Signal received, stopping processing...")
+        self._interrupted = True
+
+    def _maybe_release_db_connections(self):
+        """Release database connections to prevent long-term locking."""
+        self.logger.debug("Releasing database connections")
+        try:
+            # Import here to allow connection refreshes
+            from dewey.core.db import db_manager
+
+            db_manager.close_all_connections()
+            self.logger.debug("Database connections released")
+        except Exception as e:
+            self.logger.error("Could not release database connections: %s", e)
+
+
                     )
                     contact_exists = existing and existing[0][0] > 0
                 except Exception as e2:
@@ -1431,7 +953,7 @@ class UnifiedEmailProcessor(BaseScript):
                         for_write=True,
                     )
                     self.logger.debug(
-                        "Updated existing contact: %s", simple_contact["email"]
+                        "Updated existing contact: %s", simple_contact["email"],
                     )
                 except Exception as e:
                     self.logger.warning("Error updating contact: %s", e)
@@ -1448,7 +970,9 @@ class UnifiedEmailProcessor(BaseScript):
                         )
                     except Exception as e2:
                         self.logger.error(
-                            "Both update attempts failed for contact %s: %s", simple_contact["email"], e2
+                            "Both update attempts failed for contact %s: %s",
+                            simple_contact["email"],
+                            e2,
                         )
             else:
                 # Insert new contact with minimal required fields
@@ -1504,7 +1028,7 @@ class UnifiedEmailProcessor(BaseScript):
                             )
                         except Exception as e:
                             self.logger.warning(
-                                "Could not update additional contact info: %s", e
+                                "Could not update additional contact info: %s", e,
                             )
                 except Exception as e:
                     self.logger.warning("Error inserting contact: %s", e)
@@ -1533,13 +1057,17 @@ class UnifiedEmailProcessor(BaseScript):
                             )
                     except Exception as e2:
                         self.logger.error(
-                            "All insert attempts failed for %s: %s", simple_contact["email"], e2
+                            "All insert attempts failed for %s: %s",
+                            simple_contact["email"],
+                            e2,
                         )
         except Exception as e:
-            self.logger.error("Error enriching contact from email: %s", e, exc_info=True)
+            self.logger.error(
+                "Error enriching contact from email: %s", e, exc_info=True,
+            )
 
     def _calculate_priority_score(
-        self, contact_info: dict[str, Any], body: str
+        self, contact_info: dict[str, Any], body: str,
     ) -> float:
         """Calculate priority score based on contact and email content."""
         # Get priority weights from config

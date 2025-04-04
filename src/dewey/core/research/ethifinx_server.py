@@ -1,12 +1,15 @@
 """API server management service for Ethifinx research platform."""
 
-from dewey.core.base_script import BaseScript
 import multiprocessing
 import socket
 import time
 from contextlib import contextmanager
+
 import requests
 import uvicorn
+
+from dewey.core.base_script import BaseScript
+
 from ...core.config import get_settings
 
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import subprocess
 import sys
-from typing import Any, Dict, List, Optional, Protocol
+from typing import Any, Protocol
 
 from prompt_toolkit import prompt
 from prompt_toolkit.shortcuts import confirm
@@ -11,9 +11,7 @@ from dewey.core.bookkeeping.classification_engine import (
     ClassificationEngine,
     ClassificationError,
 )
-from dewey.core.bookkeeping.writers.journal_writer_fab1858b import (
-    JournalWriter,
-)
+from dewey.core.bookkeeping.writers.journal_writer_fab1858b import JournalWriter
 
 
 class LLMClientInterface(Protocol):
@@ -37,11 +35,11 @@ class ClassificationVerifier(BaseScript):
         super().__init__(config_section="bookkeeping")
         self.rules_path = self.get_path(
             self.get_config_value(
-                "rules_path", "import/mercury/classification_rules.json"
-            )
+                "rules_path", "import/mercury/classification_rules.json",
+            ),
         )
         self.journal_path = self.get_path(
-            self.get_config_value("journal_path", "~/.hledger.journal")
+            self.get_config_value("journal_path", "~/.hledger.journal"),
         ).expanduser()
         self.engine = classification_engine or ClassificationEngine(self.rules_path)
         self.writer = journal_writer or JournalWriter(self.journal_path.parent)
@@ -50,7 +48,7 @@ class ClassificationVerifier(BaseScript):
 
         if not self.rules_path.exists():
             self.logger.error(
-                "Missing classification rules at %s", self.rules_path.resolve()
+                "Missing classification rules at %s", self.rules_path.resolve(),
             )
             sys.exit(1)
 
@@ -63,45 +61,52 @@ class ClassificationVerifier(BaseScript):
 
     @property
     def valid_categories(self) -> list[str]:
-        """Get valid classification categories from engine.
+        """
+        Get valid classification categories from engine.
 
-        Returns:
+        Returns
+        -------
             list[str]: List of valid classification categories.
 
         """
         return self.engine.categories
 
     def get_ai_suggestion(self, description: str) -> str:
-        """Get AI classification suggestion using an LLM.
+        """
+        Get AI classification suggestion using an LLM.
 
         Args:
+        ----
             description (str): Transaction description.
 
         Returns:
+        -------
             str: AI classification suggestion.
 
         """
         try:
             instructions = "Return ONLY the account path as category1:category2"
             response = self.llm_client.classify_text(  # type: ignore
-                text=f"Classify transaction: '{description}'",
-                instructions=instructions,
+                text=f"Classify transaction: '{description}'", instructions=instructions,
             )
-            return response if response else ""
+            return response or ""
         except Exception as e:
             self.logger.exception("AI classification failed: %s", str(e))
             return ""
 
     def _process_hledger_csv(
-        self, csv_data: str, limit: int = 50
+        self, csv_data: str, limit: int = 50,
     ) -> list[dict[str, Any]]:
-        """Process hledger CSV data using DuckDB.
+        """
+        Process hledger CSV data using DuckDB.
 
         Args:
+        ----
             csv_data (str): CSV data from hledger.
             limit (int, optional): Maximum number of transactions to retrieve. Defaults to 50.
 
         Returns:
+        -------
             List[Dict[str, Any]]: List of transaction dictionaries.
 
         """
@@ -143,12 +148,15 @@ class ClassificationVerifier(BaseScript):
             return []
 
     def get_transaction_samples(self, limit: int = 50) -> list[dict[str, Any]]:
-        """Get sample transactions using hledger + DuckDB.
+        """
+        Get sample transactions using hledger + DuckDB.
 
         Args:
+        ----
             limit (int, optional): Maximum number of transactions to retrieve. Defaults to 50.
 
         Returns:
+        -------
             list[dict]: List of transaction dictionaries.
 
         """
@@ -179,15 +187,17 @@ class ClassificationVerifier(BaseScript):
             pass
 
     def prompt_for_feedback(self, tx: dict[str, Any]) -> None:
-        """Interactive prompt for transaction verification.
+        """
+        Interactive prompt for transaction verification.
 
         Args:
+        ----
             tx (dict): Transaction dictionary.
 
         """
         if not isinstance(tx, dict):
             self.logger.error(
-                "Invalid transaction format - expected dict, got %s", type(tx)
+                "Invalid transaction format - expected dict, got %s", type(tx),
             )
             return
 
@@ -209,10 +219,9 @@ class ClassificationVerifier(BaseScript):
             response = confirm("Is this classification correct?", default=True)
 
             if not response:
-                default = suggested_category if suggested_category else ""
+                default = suggested_category or ""
                 new_category = prompt(
-                    "Enter correct account path: ",
-                    default=default,
+                    "Enter correct account path: ", default=default,
                 ).strip()
 
                 if new_category:
@@ -221,9 +230,7 @@ class ClassificationVerifier(BaseScript):
                         self.engine.process_feedback(feedback, self.writer)
                         self.processed_feedback += 1
                         self.logger.info(
-                            "Updated classification: %s → %s",
-                            account,
-                            new_category,
+                            "Updated classification: %s → %s", account, new_category,
                         )
                     except ClassificationError as e:
                         self.logger.exception("Invalid category: %s", str(e))
@@ -232,9 +239,11 @@ class ClassificationVerifier(BaseScript):
             self.logger.debug("Problematic transaction data: %s", tx)
 
     def generate_report(self, total: int) -> None:
-        """Generate verification session summary.
+        """
+        Generate verification session summary.
 
         Args:
+        ----
             total (int): Total number of transactions processed.
 
         """

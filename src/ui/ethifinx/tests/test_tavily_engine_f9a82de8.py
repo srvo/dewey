@@ -1,6 +1,7 @@
 # Formatting failed: LLM generation failed: Gemini API error: Model gemini-2.0-flash in cooldown until Sat Mar 15 00:33:42 2025
 
-"""Tests for Tavily Research Engine.
+"""
+Tests for Tavily Research Engine.
 =============================
 """
 
@@ -12,21 +13,21 @@ import pytest
 from ethifinx.research.engines.tavily import TavilyEngine
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_env():
     """Mock environment variables."""
     with patch.dict(os.environ, {"TAVILY_API_KEY": "test_key"}):
         yield
 
 
-@pytest.fixture
+@pytest.fixture()
 async def engine(mock_env):
     """Create a TavilyEngine instance for testing."""
     async with TavilyEngine(max_retries=2) as engine:
         yield engine
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_engine_initialization(mock_env) -> None:
     """Test that the engine initializes correctly."""
     engine = TavilyEngine(max_retries=2)
@@ -35,7 +36,7 @@ async def test_engine_initialization(mock_env) -> None:
     assert engine.api_key == "test_key"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_process_method(engine) -> None:
     """Test the process method returns expected status."""
     result = await engine.process()
@@ -43,7 +44,7 @@ async def test_process_method(engine) -> None:
     assert result["status"] == "Tavily engine ready"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_search_basic(engine) -> None:
     """Test basic search functionality."""
     mock_response = {
@@ -78,7 +79,7 @@ async def test_search_basic(engine) -> None:
         assert payload["max_results"] == 5
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_search_news(engine) -> None:
     """Test news-specific search functionality."""
     mock_response = {
@@ -112,7 +113,7 @@ async def test_search_news(engine) -> None:
         assert payload["days"] == 7
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_search_with_domains(engine) -> None:
     """Test search with domain filtering."""
     mock_response = {"results": []}
@@ -124,9 +125,7 @@ async def test_search_with_domains(engine) -> None:
         mock_post.return_value = mock_context
 
         result = await engine.search(
-            "test query",
-            include_domains=["example.com"],
-            exclude_domains=["spam.com"],
+            "test query", include_domains=["example.com"], exclude_domains=["spam.com"],
         )
 
         assert result == mock_response
@@ -140,7 +139,7 @@ async def test_search_with_domains(engine) -> None:
         assert payload["exclude_domains"] == ["spam.com"]
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_search_retry_on_error(engine) -> None:
     """Test search retries on API errors."""
     mock_response = {"results": []}
@@ -162,7 +161,7 @@ async def test_search_retry_on_error(engine) -> None:
         assert mock_post.call_count == 2
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_missing_api_key() -> None:
     """Test error handling for missing API key."""
     with patch.dict(os.environ, clear=True):

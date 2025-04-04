@@ -2,7 +2,7 @@
 import re
 import shutil
 from pathlib import Path
-from typing import Any, Dict, List, Protocol, Tuple
+from typing import Any, Protocol
 
 from dewey.core.base_script import BaseScript
 
@@ -79,17 +79,19 @@ class JournalProcessor(BaseScript):
             self.get_config_value(
                 "classification_file",
                 str(Path.home() / "books/import/mercury/classification_rules.json"),
-            )
+            ),
         )
         self.ledger_file: Path = Path(
-            self.get_config_value("ledger_file", str(Path.home() / ".hledger.journal"))
+            self.get_config_value("ledger_file", str(Path.home() / ".hledger.journal")),
         )
         self.backup_ext: str = self.get_config_value("backup_ext", ".bak")
 
     def load_classification_rules(self) -> dict:
-        """Load classification rules from JSON files.
+        """
+        Load classification rules from JSON files.
 
-        Returns:
+        Returns
+        -------
             A dictionary containing the classification rules.
 
         """
@@ -99,13 +101,16 @@ class JournalProcessor(BaseScript):
         return {}  # Placeholder
 
     def process_transactions(self, transactions: list[dict], rules: dict) -> list[dict]:
-        """Process transactions and categorize them based on rules.
+        """
+        Process transactions and categorize them based on rules.
 
         Args:
+        ----
             transactions: A list of transaction dictionaries.
             rules: A dictionary containing the classification rules.
 
         Returns:
+        -------
             A list of processed transaction dictionaries.
 
         """
@@ -130,12 +135,15 @@ class JournalProcessor(BaseScript):
             current_tx["postings"].append({"account": account, "amount": amount})
 
     def parse_journal_entries(self, file_path: Path) -> list[dict]:
-        """Parse hledger journal file into structured transactions.
+        """
+        Parse hledger journal file into structured transactions.
 
         Args:
+        ----
             file_path: The path to the hledger journal file.
 
         Returns:
+        -------
             A list of structured transactions.
 
         """
@@ -164,12 +172,15 @@ class JournalProcessor(BaseScript):
         return transactions
 
     def serialize_transactions(self, transactions: list[dict]) -> str:
-        """Convert structured transactions back to journal format.
+        """
+        Convert structured transactions back to journal format.
 
         Args:
+        ----
             transactions: A list of structured transactions.
 
         Returns:
+        -------
             A string representation of the transactions in journal format.
 
         """
@@ -190,13 +201,16 @@ class JournalProcessor(BaseScript):
         return "\n".join(journal_lines).strip() + "\n"
 
     def write_journal_file(self, content: str, file_path: Path) -> None:
-        """Write updated journal file with backup.
+        """
+        Write updated journal file with backup.
 
         Args:
+        ----
             content: The content to write to the journal file.
             file_path: The path to the journal file.
 
         Raises:
+        ------
             Exception: If writing to the journal file fails.
 
         """

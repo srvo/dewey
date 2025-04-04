@@ -1,6 +1,6 @@
 """Transcript analysis agent for extracting action items and insights from meetings."""
 
-from typing import Any, Dict
+from typing import Any
 
 from smolagents import Tool
 
@@ -8,7 +8,8 @@ from dewey.core.base_script import BaseScript
 
 
 class TranscriptAnalysisAgent(BaseScript):
-    """Agent for analyzing meeting transcripts to extract action items and content.
+    """
+    Agent for analyzing meeting transcripts to extract action items and content.
 
     Features:
         - Action item extraction
@@ -26,17 +27,20 @@ class TranscriptAnalysisAgent(BaseScript):
                 Tool.from_function(
                     self.analyze_transcript,
                     description="Analyzes a meeting transcript to extract actionable insights.",
-                )
-            ]
+                ),
+            ],
         )
 
     def analyze_transcript(self, transcript: str) -> dict[str, Any]:
-        """Analyzes a meeting transcript to extract actionable insights.
+        """
+        Analyzes a meeting transcript to extract actionable insights.
 
         Args:
+        ----
             transcript: The meeting transcript.
 
         Returns:
+        -------
             The analysis results including action items, topics, decisions, and follow-ups.
 
         """
@@ -55,12 +59,15 @@ class TranscriptAnalysisAgent(BaseScript):
         return result
 
     def run(self, prompt: str) -> dict[str, Any]:
-        """Runs the transcript analysis agent.
+        """
+        Runs the transcript analysis agent.
 
         Args:
+        ----
             prompt: The prompt for analysis.
 
         Returns:
+        -------
             A dictionary containing the analysis results.
 
         """
@@ -78,7 +85,8 @@ class TranscriptAnalysisAgent(BaseScript):
         return result
 
     def execute(self) -> None:
-        """Executes the transcript analysis agent.
+        """
+        Executes the transcript analysis agent.
 
         This method is the main entry point for the script. It calls the run method
         with a predefined prompt and logs the results.

@@ -1,7 +1,6 @@
 """Module for data synchronization between different data sources."""
 
-import sys
-from typing import Any, Dict, List
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection, get_connection
@@ -17,7 +16,8 @@ class SyncScript(BaseScript):
         self.destination_db: DatabaseConnection = None
 
     def execute(self) -> None:
-        """Executes the data synchronization process.
+        """
+        Executes the data synchronization process.
 
         This includes connecting to source and destination databases,
         fetching data from the source, transforming it, and loading it
@@ -30,19 +30,20 @@ class SyncScript(BaseScript):
             self.logger.info("Data synchronization process completed successfully.")
         except Exception as e:
             self.logger.error(
-                f"An error occurred during synchronization: {e}", exc_info=True
+                f"An error occurred during synchronization: {e}", exc_info=True,
             )
             raise
 
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 
     def connect_to_databases(self) -> None:
-        """Establishes connections to the source and destination databases
+        """
+        Establishes connections to the source and destination databases
         using configurations from the application settings.
         """
         try:
@@ -52,20 +53,21 @@ class SyncScript(BaseScript):
 
             if not source_db_config or not destination_db_config:
                 raise ValueError(
-                    "Source and destination database configurations must be specified in dewey.yaml."
+                    "Source and destination database configurations must be specified in dewey.yaml.",
                 )
 
             self.source_db = get_connection(source_db_config)
             self.destination_db = get_connection(destination_db_config)
             self.logger.info(
-                "Successfully connected to both source and destination databases."
+                "Successfully connected to both source and destination databases.",
             )
         except Exception as e:
             self.logger.error(f"Failed to connect to databases: {e}", exc_info=True)
             raise
 
     def synchronize_data(self) -> None:
-        """Orchestrates the synchronization of data from the source to the
+        """
+        Orchestrates the synchronization of data from the source to the
         destination database.
 
         This involves fetching data, transforming it as necessary, and
@@ -86,13 +88,16 @@ class SyncScript(BaseScript):
             self.logger.error(f"Data synchronization failed: {e}", exc_info=True)
             raise
 
-    def fetch_data_from_source(self) -> List[Any]:
-        """Fetches data from the source database.
+    def fetch_data_from_source(self) -> list[Any]:
+        """
+        Fetches data from the source database.
 
-        Returns:
+        Returns
+        -------
             A list of data records from the source database.
 
-        Raises:
+        Raises
+        ------
             Exception: If there is an error fetching data from the source.
 
         """
@@ -105,21 +110,24 @@ class SyncScript(BaseScript):
                 cursor.execute(query)
                 data = cursor.fetchall()
             self.logger.info(
-                f"Successfully fetched {len(data)} records from the source."
+                f"Successfully fetched {len(data)} records from the source.",
             )
             return data
         except Exception as e:
             self.logger.error(f"Failed to fetch data from source: {e}", exc_info=True)
             raise
 
-    def transform_data(self, data: List[Any]) -> List[Dict[str, Any]]:
-        """Transforms the fetched data as necessary before loading it into
+    def transform_data(self, data: list[Any]) -> list[dict[str, Any]]:
+        """
+        Transforms the fetched data as necessary before loading it into
         the destination database.
 
         Args:
+        ----
             data: A list of data records fetched from the source database.
 
         Returns:
+        -------
             A list of transformed data records.
 
         """
@@ -128,23 +136,22 @@ class SyncScript(BaseScript):
             transformed_data = []
             for record in data:
                 # Example transformation (replace with your actual transformation logic)
-                transformed_record = {
-                    "id": record[0],
-                    "value": record[1] * 2,
-                }
+                transformed_record = {"id": record[0], "value": record[1] * 2}
                 transformed_data.append(transformed_record)
             self.logger.info(
-                f"Successfully transformed {len(transformed_data)} records."
+                f"Successfully transformed {len(transformed_data)} records.",
             )
             return transformed_data
         except Exception as e:
             self.logger.error(f"Data transformation failed: {e}", exc_info=True)
             raise
 
-    def load_data_into_destination(self, data: List[Dict[str, Any]]) -> None:
-        """Loads the transformed data into the destination database.
+    def load_data_into_destination(self, data: list[dict[str, Any]]) -> None:
+        """
+        Loads the transformed data into the destination database.
 
         Args:
+        ----
             data: A list of transformed data records to load into the
                 destination database.
 
@@ -156,14 +163,14 @@ class SyncScript(BaseScript):
             with self.destination_db.connection() as conn:
                 cursor = conn.cursor()
                 cursor.executemany(
-                    query, [(record["id"], record["value"]) for record in data]
+                    query, [(record["id"], record["value"]) for record in data],
                 )
                 conn.commit()
             self.logger.info(
-                f"Successfully loaded {len(data)} records into the destination."
+                f"Successfully loaded {len(data)} records into the destination.",
             )
         except Exception as e:
             self.logger.error(
-                f"Failed to load data into destination: {e}", exc_info=True
+                f"Failed to load data into destination: {e}", exc_info=True,
             )
             raise

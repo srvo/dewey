@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class SecEtl(BaseScript):
-    """A class for performing SEC ETL operations.
+    """
+    A class for performing SEC ETL operations.
 
     This class inherits from BaseScript and provides methods for
     extracting, transforming, and loading data from SEC filings.
@@ -13,7 +14,8 @@ class SecEtl(BaseScript):
         super().__init__(config_section="sec_etl")
 
     def execute(self) -> None:
-        """Executes the SEC ETL process.
+        """
+        Executes the SEC ETL process.
 
         This method orchestrates the extraction, transformation, and loading of data
         from SEC filings into a structured format suitable for analysis.
@@ -58,15 +60,15 @@ class SecEtl(BaseScript):
     def _load_data(self, data):
         """Placeholder for data loading logic."""
         # Replace with actual implementation to load data into the database
-        pass
 
     def run(self) -> None:
-        """Legacy method for backward compatibility.
+        """
+        Legacy method for backward compatibility.
 
         New scripts should implement execute() instead of run().
         This method will be deprecated in a future version.
         """
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()

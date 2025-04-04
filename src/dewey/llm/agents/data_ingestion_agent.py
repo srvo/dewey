@@ -4,16 +4,19 @@ from dewey.core.base_script import BaseScript
 
 
 class DataIngestionAgent(BaseScript):
-    """A Dewey script for data ingestion tasks.
+    """
+    A Dewey script for data ingestion tasks.
 
     This agent handles the process of ingesting data from various sources,
     transforming it, and loading it into a target system.
     """
 
     def __init__(self, config_section: str = "data_ingestion", **kwargs: Any) -> None:
-        """Initializes the DataIngestionAgent.
+        """
+        Initializes the DataIngestionAgent.
 
         Args:
+        ----
             config_section (str): The configuration section to use.
             **kwargs (Any): Additional keyword arguments.
 
@@ -21,13 +24,15 @@ class DataIngestionAgent(BaseScript):
         super().__init__(config_section=config_section, **kwargs)
 
     def run(self) -> None:
-        """Executes the data ingestion process.
+        """
+        Executes the data ingestion process.
 
         This method orchestrates the data ingestion workflow, including
         extracting data from sources, transforming it according to defined rules,
         and loading it into the designated target system.
 
-        Raises:
+        Raises
+        ------
             Exception: If any error occurs during the data ingestion process.
 
         """
@@ -46,13 +51,15 @@ class DataIngestionAgent(BaseScript):
             raise
 
     def execute(self) -> None:
-        """Executes the data ingestion process.
+        """
+        Executes the data ingestion process.
 
         This method orchestrates the data ingestion workflow, including
         extracting data from sources, transforming it according to defined rules,
         and loading it into the designated target system.
 
-        Raises:
+        Raises
+        ------
             Exception: If any error occurs during the data ingestion process.
 
         """

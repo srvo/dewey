@@ -65,7 +65,7 @@ class JournalEntryGenerator(BaseScript):
         try:
             for i, assumption in enumerate(self.ASSUMPTIONS, 1):
                 while True:
-                    response = input("{}. {} (y/n): ".format(i, assumption)).strip().lower()
+                    response = input(f"{i}. {assumption} (y/n): ").strip().lower()
                     if response == "y":
                         break
                     if response == "n":
@@ -175,7 +175,7 @@ account Expenses:Hosting:Mormair_E650
             "{current_date} Depreciation - Mormair_E650\n"
             "    Expenses:Depreciation:Mormair_E650     £6.94\n"
             "    Assets:AccumulatedDepr:Mormair_E650   £-6.94\n\n"
-        ).format(current_date=current_date.strftime('%Y-%m-%d'))
+        ).format(current_date=current_date.strftime("%Y-%m-%d"))
 
     def calculate_revenue_share(self, recovered: float) -> float:
         """Calculates the revenue share based on the recovered amount."""
@@ -217,21 +217,30 @@ account Expenses:Hosting:Mormair_E650
             "{current_date} Lease income - Mormair_E650\n"
             "    Assets:Cash                          £{cash:.2f}\n"
             "    Income:Lease:Mormair_E650          £-{gross_revenue:.2f}\n\n"
-        ).format(current_date=current_date.strftime('%Y-%m-%d'), cash=gross_revenue - revenue_share_amount - hosting_fee, gross_revenue=gross_revenue)
+        ).format(
+            current_date=current_date.strftime("%Y-%m-%d"),
+            cash=gross_revenue - revenue_share_amount - hosting_fee,
+            gross_revenue=gross_revenue,
+        )
 
         revenue_share_payment_entry = (
             "{current_date} Revenue share payment - "
             "Mormair_E650\n"
             "    Expenses:RevenueShare:Mormair_E650  £{revenue_share_amount:.2f}\n"
             "    Assets:Cash                           £-{revenue_share_amount:.2f}\n\n"
-        ).format(current_date=current_date.strftime('%Y-%m-%d'), revenue_share_amount=revenue_share_amount)
+        ).format(
+            current_date=current_date.strftime("%Y-%m-%d"),
+            revenue_share_amount=revenue_share_amount,
+        )
 
         hosting_fee_payment_entry = (
             "{current_date} Hosting fee payment - "
             "Mormair_E650\n"
             "    Expenses:Hosting:Mormair_E650        £{hosting_fee:.2f}\n"
             "    Assets:Cash                           £-{hosting_fee:.2f}\n\n"
-        ).format(current_date=current_date.strftime('%Y-%m-%d'), hosting_fee=hosting_fee)
+        ).format(
+            current_date=current_date.strftime("%Y-%m-%d"), hosting_fee=hosting_fee,
+        )
 
         return (
             lease_income_entry,

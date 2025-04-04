@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""Fix docstring formatting issues using Ruff's built-in capabilities.
+"""
+Fix docstring formatting issues using Ruff's built-in capabilities.
 
 This script automatically fixes docstring issues by:
 1. Running Ruff's linter with docstring rules to fix common formatting issues
@@ -14,18 +15,19 @@ If no path is provided, it will process the current directory.
 
 import argparse
 import subprocess
-import sys
 from pathlib import Path
-from typing import List, Tuple
 
 
-def fix_docstrings(file_path: Path) -> Tuple[bool, str]:
-    """Fix docstring issues in a file using Ruff.
+def fix_docstrings(file_path: Path) -> tuple[bool, str]:
+    """
+    Fix docstring issues in a file using Ruff.
 
     Args:
+    ----
         file_path: Path to the Python file to process
 
     Returns:
+    -------
         A tuple of (success, message)
 
     """
@@ -53,20 +55,22 @@ def fix_docstrings(file_path: Path) -> Tuple[bool, str]:
 
         if fixed:
             return True, f"Fixed docstrings in {file_path}"
-        else:
-            return False, f"No docstring issues to fix in {file_path}"
+        return False, f"No docstring issues to fix in {file_path}"
 
     except Exception as e:
         return False, f"Error processing {file_path}: {e}"
 
 
-def process_path(path: Path) -> Tuple[int, List[str]]:
-    """Process a file or recursively process a directory.
+def process_path(path: Path) -> tuple[int, list[str]]:
+    """
+    Process a file or recursively process a directory.
 
     Args:
+    ----
         path: Path to a file or directory
 
     Returns:
+    -------
         A tuple containing the number of files changed and a list of changed file paths
 
     """
@@ -91,7 +95,7 @@ def process_path(path: Path) -> Tuple[int, List[str]]:
 def main():
     """Parse command line arguments and run the script."""
     parser = argparse.ArgumentParser(
-        description="Fix docstring formatting issues using Ruff"
+        description="Fix docstring formatting issues using Ruff",
     )
     parser.add_argument(
         "paths",

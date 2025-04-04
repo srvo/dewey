@@ -5,7 +5,7 @@ from dewey.core.base_script import BaseScript
 from dewey.llm.agents.base_agent import BaseAgent
 
 
-@pytest.fixture
+@pytest.fixture()
 def basic_agent():
     return BaseAgent(
         name="TestAgent",
@@ -15,7 +15,7 @@ def basic_agent():
     )
 
 
-@pytest.fixture
+@pytest.fixture()
 def unlimited_agent():
     return BaseAgent(name="UnlimitedAgent", disable_rate_limit=True, enable_llm=True)
 

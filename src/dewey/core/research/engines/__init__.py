@@ -1,4 +1,5 @@
-"""Research Engines
+"""
+Research Engines
 
 This module provides engines for company analysis.
 """

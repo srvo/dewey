@@ -18,7 +18,7 @@ SELECT sector, COUNT(*) AS count
 FROM read_csv_auto('{UNIVERSE_FILE}')
 GROUP BY sector
 ORDER BY count DESC
-"""
+""",
 ).df()
 
 # Get industry breakdown
@@ -28,7 +28,7 @@ SELECT industry, COUNT(*) AS count
 FROM read_csv_auto('{UNIVERSE_FILE}')
 GROUP BY industry
 ORDER BY count DESC
-"""
+""",
 ).df()
 
 # Get country breakdown
@@ -38,7 +38,7 @@ SELECT country, COUNT(*) AS count
 FROM read_csv_auto('{UNIVERSE_FILE}')
 GROUP BY country
 ORDER BY count DESC
-"""
+""",
 ).df()
 
 # Print sector breakdown

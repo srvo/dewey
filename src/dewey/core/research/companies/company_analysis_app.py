@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class CompanyAnalysisApp(BaseScript):
-    """A script for performing company analysis.
+    """
+    A script for performing company analysis.
 
     This script inherits from BaseScript and implements the run() method
     to perform the core logic of company analysis. It utilizes the Dewey
@@ -11,7 +12,8 @@ class CompanyAnalysisApp(BaseScript):
     """
 
     def __init__(self) -> None:
-        """Initializes the CompanyAnalysisApp.
+        """
+        Initializes the CompanyAnalysisApp.
 
         Calls the superclass constructor with the appropriate configuration
         section and flags for database and LLM requirements.
@@ -25,14 +27,16 @@ class CompanyAnalysisApp(BaseScript):
         )
 
     def execute(self) -> None:
-        """Executes the company analysis process.
+        """
+        Executes the company analysis process.
 
         This method calls the run() method to perform the core logic of the script.
         """
         self.run()
 
     def run(self) -> None:
-        """Runs the company analysis process.
+        """
+        Runs the company analysis process.
 
         This method contains the core logic of the script, including:
         1. Retrieving company information from the database.
@@ -40,7 +44,8 @@ class CompanyAnalysisApp(BaseScript):
         3. Performing sentiment analysis using LLM.
         4. Storing the analysis results in the database.
 
-        Raises:
+        Raises
+        ------
             Exception: If any error occurs during the analysis process.
 
         """
@@ -62,7 +67,7 @@ class CompanyAnalysisApp(BaseScript):
 
             if not company_data:
                 self.logger.warning(
-                    f"No data found for company ticker: {company_ticker}"
+                    f"No data found for company ticker: {company_ticker}",
                 )
                 company_data = {}  # Provide an empty dictionary to avoid errors
 
@@ -85,15 +90,19 @@ class CompanyAnalysisApp(BaseScript):
             raise
 
     def _fetch_financial_data(self, ticker: str) -> dict:
-        """Fetches financial data for a given company ticker.
+        """
+        Fetches financial data for a given company ticker.
 
         Args:
+        ----
             ticker: The ticker symbol of the company.
 
         Returns:
+        -------
             A dictionary containing the financial data.
 
         Raises:
+        ------
             Exception: If any error occurs during data fetching.
 
         """
@@ -108,21 +117,25 @@ class CompanyAnalysisApp(BaseScript):
             return financial_data
         except Exception as e:
             self.logger.error(
-                f"Error fetching financial data for {ticker}: {e}", exc_info=True
+                f"Error fetching financial data for {ticker}: {e}", exc_info=True,
             )
             raise
 
     def _analyze_company(self, company_data: dict, financial_data: dict) -> dict:
-        """Analyzes company data and financial data using LLM.
+        """
+        Analyzes company data and financial data using LLM.
 
         Args:
+        ----
             company_data: A dictionary containing company information.
             financial_data: A dictionary containing financial data.
 
         Returns:
+        -------
             A dictionary containing the analysis results.
 
         Raises:
+        ------
             Exception: If any error occurs during the analysis.
 
         """
@@ -137,18 +150,21 @@ class CompanyAnalysisApp(BaseScript):
             return analysis_results
         except Exception as e:
             self.logger.error(
-                f"Error during company analysis using LLM: {e}", exc_info=True
+                f"Error during company analysis using LLM: {e}", exc_info=True,
             )
             raise
 
     def _store_analysis_results(self, ticker: str, analysis_results: dict) -> None:
-        """Stores the analysis results in the database.
+        """
+        Stores the analysis results in the database.
 
         Args:
+        ----
             ticker: The ticker symbol of the company.
             analysis_results: A dictionary containing the analysis results.
 
         Raises:
+        ------
             Exception: If any error occurs during data storage.
 
         """
@@ -159,11 +175,11 @@ class CompanyAnalysisApp(BaseScript):
             # query = f"INSERT INTO analysis_results (ticker, results) VALUES ('{ticker}', '{analysis_results}')"
             # self.db_conn.execute(query)
             self.logger.info(
-                f"Successfully stored analysis results for {ticker} in the database."
+                f"Successfully stored analysis results for {ticker} in the database.",
             )
         except Exception as e:
             self.logger.error(
-                f"Error storing analysis results for {ticker}: {e}", exc_info=True
+                f"Error storing analysis results for {ticker}: {e}", exc_info=True,
             )
             raise
 

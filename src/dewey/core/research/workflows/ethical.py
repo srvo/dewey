@@ -1,22 +1,20 @@
 #!/usr/bin/env python3
 """Ethical analysis workflow for research."""
 
-import csv
 import json
 import logging
-import os
-from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import get_connection
-from ..base_workflow import BaseWorkflow
-from ..engines import BaseEngine
-from ...engines.deepseek import DeepSeekEngine
 from tests.dewey.core.research.analysis.test_workflow_integration import (
     ResearchOutputHandler,
 )
+
+from ...engines.deepseek import DeepSeekEngine
+from ..base_workflow import BaseWorkflow
+from ..engines import BaseEngine
 
 
 class EthicalAnalysisWorkflow(BaseScript, BaseWorkflow):
@@ -24,14 +22,15 @@ class EthicalAnalysisWorkflow(BaseScript, BaseWorkflow):
 
     def __init__(
         self,
-        data_dir: Union[str, Path],
-        search_engine: Optional[BaseEngine] = None,
-        analysis_engine: Optional[BaseEngine] = None,
-        output_handler: Optional[ResearchOutputHandler] = None,
+        data_dir: str | Path,
+        search_engine: BaseEngine | None = None,
+        analysis_engine: BaseEngine | None = None,
+        output_handler: ResearchOutputHandler | None = None,
     ) -> None:
         """Initialize the workflow.
 
         Args:
+        ----
             data_dir: Directory for data files.
             search_engine: Optional search engine (defaults to DeepSeekEngine).
             analysis_engine: Optional analysis engine (defaults to DeepSeekEngine).
@@ -96,13 +95,15 @@ Please identify:
             "total_analysis_words": 0,
         }
 
-    def build_query(self, company_data: Dict[str, str]) -> str:
+    def build_query(self, company_data: dict[str, str]) -> str:
         """Build a search query for a company.
 
         Args:
+        ----
             company_data: Dictionary containing company information.
 
         Returns:
+        -------
             Search query string.
 
         """
@@ -123,9 +124,11 @@ Please identify:
         """Count words in text.
 
         Args:
+        ----
             text: Text to count words in
 
         Returns:
+        -------
             Number of words
 
         """
@@ -168,13 +171,15 @@ Please identify:
             """
             )
 
-    def analyze_company_profile(self, company: str) -> Optional[Dict[str, Any]]:
+    def analyze_company_profile(self, company: str) -> dict[str, Any] | None:
         """Analyze a company's ethical profile.
 
         Args:
+        ----
             company: The name of the company to analyze.
 
         Returns:
+        -------
             A dictionary containing the analysis results, or None if an error occurred.
 
         """
@@ -260,7 +265,7 @@ Please provide:
             }
 
         except Exception as e:
-            self.logger.error(f"Error analyzing company {company}: {str(e)}")
+            self.logger.error(f"Error analyzing company {company}: {e!s}")
             return None
 
     def execute(self) -> None:

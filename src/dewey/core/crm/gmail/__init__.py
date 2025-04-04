@@ -1,4 +1,5 @@
 """Module for managing Gmail-related tasks within Dewey."""
+
 """
 Dewey CRM Gmail Module.
 

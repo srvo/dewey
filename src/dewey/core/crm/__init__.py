@@ -1,16 +1,14 @@
-"""Customer Relationship Management (CRM) Module for Dewey
+"""
+Customer Relationship Management (CRM) Module for Dewey
 
 This module provides CRM functionality for managing contacts, communication,
 data import/export, and various CRM-related utilities.
 """
 
-from typing import Any, Optional
-
 from dewey.core.base_script import BaseScript
 from dewey.core.crm.communication import EmailClient
 from dewey.core.crm.contacts import ContactConsolidation, CsvContactIntegration
 from dewey.core.crm.data import DataImporter
-from dewey.core.db.connection import DatabaseConnection, get_connection
 
 # TODO: Update all CRM modules to use LiteLLMClient directly instead of get_llm_client
 # Temporary import fix during migration from llm_utils to litellm_client
@@ -24,7 +22,8 @@ def get_llm_client(*args, **kwargs):
 
 
 class CrmModule(BaseScript):
-    """A module for managing CRM-related tasks within Dewey.
+    """
+    A module for managing CRM-related tasks within Dewey.
 
     This module inherits from BaseScript and provides a standardized
     structure for CRM scripts, including configuration loading, logging,
@@ -39,9 +38,11 @@ class CrmModule(BaseScript):
         requires_db: bool = True,
         enable_llm: bool = False,
     ) -> None:
-        """Initializes the CRM module.
+        """
+        Initializes the CRM module.
 
         Args:
+        ----
             name: The name of the CRM module.
             description: A description of the CRM module.
             config_section: The configuration section to use for this module.
@@ -58,12 +59,14 @@ class CrmModule(BaseScript):
         )
 
     def run(self) -> None:
-        """Executes the primary logic of the CRM module.
+        """
+        Executes the primary logic of the CRM module.
 
         This method demonstrates accessing configuration values,
         logging information, and interacting with a database (if enabled).
 
-        Raises:
+        Raises
+        ------
             Exception: If there is an error during the CRM module execution.
 
         """
@@ -95,12 +98,14 @@ class CrmModule(BaseScript):
             raise
 
     def execute(self) -> None:
-        """Executes the primary logic of the CRM module.
+        """
+        Executes the primary logic of the CRM module.
 
         This method demonstrates accessing configuration values,
         logging information, and interacting with a database (if enabled).
 
-        Raises:
+        Raises
+        ------
             Exception: If there is an error during the CRM module execution.
 
         """
@@ -133,9 +138,9 @@ class CrmModule(BaseScript):
 
 
 __all__ = [
-    "CrmModule",
     "ContactConsolidation",
+    "CrmModule",
     "CsvContactIntegration",
-    "EmailClient",
     "DataImporter",
+    "EmailClient",
 ]

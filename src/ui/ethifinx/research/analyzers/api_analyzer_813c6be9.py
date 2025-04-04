@@ -1,7 +1,5 @@
-from dewey.core.base_script import BaseScript
-
 import asyncio
-from typing import Dict, Any
+from typing import Any
 
 from ethifinx.research.engines.api_docs import APIDocEngine
 
@@ -14,12 +12,15 @@ class APIAnalyzer:
         self.engine = APIDocEngine()
 
     async def analyze_api(self, api_name: str) -> dict[str, Any]:
-        """Analyzes a specific API's documentation and capabilities.
+        """
+        Analyzes a specific API's documentation and capabilities.
 
         Args:
+        ----
             api_name: The name of the API to analyze.
 
         Returns:
+        -------
             A dictionary containing the analysis results.
 
         """
@@ -27,9 +28,11 @@ class APIAnalyzer:
         return await self.engine.get_commercial_usage_status(api_name)
 
     async def analyze_all_apis(self) -> dict[str, dict[str, Any]]:
-        """Analyzes all configured APIs.
+        """
+        Analyzes all configured APIs.
 
-        Returns:
+        Returns
+        -------
             A dictionary where keys are API names and values are dictionaries
             containing data types, commercial usage status, and tier information.
 
@@ -49,9 +52,11 @@ class APIAnalyzer:
 
 
 async def print_api_analysis_results(results: dict[str, dict[str, Any]]) -> None:
-    """Prints the analysis results for each API.
+    """
+    Prints the analysis results for each API.
 
     Args:
+    ----
         results: A dictionary containing the analysis results for each API.
 
     """

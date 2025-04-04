@@ -1,8 +1,6 @@
-from typing import Any, Optional, Protocol
+from typing import Any, Protocol
 
 from dewey.core.base_script import BaseScript
-from dewey.core.db.connection import DatabaseConnection
-from dewey.llm.litellm_client import LiteLLMClient as LLMClient
 
 
 class LLMClientInterface(Protocol):
@@ -24,7 +22,8 @@ class DatabaseConnectionInterface(Protocol):
 
 
 class AutomationModule(BaseScript):
-    """Base class for automation modules within Dewey.
+    """
+    Base class for automation modules within Dewey.
 
     This class provides a standardized structure for automation scripts,
     including configuration loading, logging, and a `run` method to
@@ -37,16 +36,18 @@ class AutomationModule(BaseScript):
         db_conn: DatabaseConnectionInterface | None = None,
         llm_client: LLMClientInterface | None = None,
     ) -> None:
-        """Initializes the AutomationModule.
+        """
+        Initializes the AutomationModule.
 
         Args:
+        ----
             config_section: The configuration section to use for this module.
             db_conn: Optional database connection.  Defaults to None, which will use the BaseScript's default.
             llm_client: Optional LLM client. Defaults to None, which will use the BaseScript's default.
 
         """
         super().__init__(
-            config_section=config_section, requires_db=True, enable_llm=True
+            config_section=config_section, requires_db=True, enable_llm=True,
         )
         self._db_conn = db_conn or self.db_conn
         self._llm_client = llm_client or self.llm_client
@@ -65,18 +66,22 @@ class AutomationModule(BaseScript):
         return llm_client.generate_text(prompt)
 
     def run(self) -> None:
-        """Executes the main logic of the automation module.
+        """
+        Executes the main logic of the automation module.
 
         This method should be overridden by subclasses to implement
         the specific automation tasks.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If something goes wrong.
 
         """
@@ -105,14 +110,15 @@ class AutomationModule(BaseScript):
 
         except Exception as e:
             self.logger.error(
-                f"An error occurred during automation: {e}", exc_info=True
+                f"An error occurred during automation: {e}", exc_info=True,
             )
             raise
 
         self.logger.info("Automation module finished.")
 
     def execute(self) -> None:
-        """Execute the automation module.
+        """
+        Execute the automation module.
 
         This method calls the run method to execute the main logic of the module.
         """

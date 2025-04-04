@@ -17,7 +17,8 @@ class ContactAgent(BaseScript):
         self.logger.info("ContactAgent finished.")
 
     def execute(self) -> None:
-        """Executes the contact agent logic.
+        """
+        Executes the contact agent logic.
 
         This method calls the run method to maintain existing functionality.
         """

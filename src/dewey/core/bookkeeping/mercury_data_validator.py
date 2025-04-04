@@ -1,7 +1,7 @@
 import re
 from abc import ABC, abstractmethod
 from datetime import date, datetime
-from typing import Any, Dict, Optional
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 from dewey.llm.llm_utils import call_llm
@@ -10,8 +10,6 @@ from dewey.llm.llm_utils import call_llm
 class DataValidationError(Exception):
     """Exception for invalid transaction data."""
 
-    pass
-
 
 class LLMInterface(ABC):
     """An interface for LLM clients."""
@@ -19,7 +17,6 @@ class LLMInterface(ABC):
     @abstractmethod
     def call_llm(self, prompt: str) -> str:
         """Call the LLM with the given prompt."""
-        pass
 
 
 class DeweyLLM(LLMInterface):
@@ -34,18 +31,18 @@ class DeweyLLM(LLMInterface):
 
 
 class MercuryDataValidator(BaseScript):
-    """Validates raw transaction data from Mercury CSV files.
+    """
+    Validates raw transaction data from Mercury CSV files.
 
     This class inherits from BaseScript and leverages its
     configuration, logging, database, and LLM capabilities.
     """
 
     def __init__(
-        self,
-        llm_client: LLMInterface | None = None,
-        db_conn: Any | None = None,
+        self, llm_client: LLMInterface | None = None, db_conn: Any | None = None,
     ) -> None:
-        """Initializes the MercuryDataValidator.
+        """
+        Initializes the MercuryDataValidator.
 
         Calls the superclass constructor to initialize the BaseScript
         with the 'bookkeeping' configuration section.
@@ -59,7 +56,8 @@ class MercuryDataValidator(BaseScript):
         self._db_conn = db_conn if db_conn is not None else self.db_conn
 
     def execute(self) -> None:
-        """Executes the data validation process.
+        """
+        Executes the data validation process.
 
         This method retrieves configuration values, performs a database
         query (if a database connection is available), and makes an LLM
@@ -79,15 +77,18 @@ class MercuryDataValidator(BaseScript):
             response = self._llm_client.call_llm(prompt)
 
     def normalize_description(self, description: str | None) -> str:
-        """Normalize transaction description.
+        """
+        Normalize transaction description.
 
         Removes extra whitespace and normalizes the case of the
         transaction description.
 
         Args:
+        ----
             description: The transaction description string.
 
         Returns:
+        -------
             The normalized transaction description string.
 
         """
@@ -97,17 +98,21 @@ class MercuryDataValidator(BaseScript):
         return re.sub(r"\s{2,}", " ", description.strip())
 
     def _parse_date(self, date_str: str) -> date:
-        """Parse the date string.
+        """
+        Parse the date string.
 
         Parses the date string into a datetime.date object.
 
         Args:
+        ----
             date_str: The date string in 'YYYY-MM-DD' format.
 
         Returns:
+        -------
             The datetime.date object.
 
         Raises:
+        ------
             ValueError: If the date string is invalid.
 
         """
@@ -119,18 +124,22 @@ class MercuryDataValidator(BaseScript):
             raise ValueError(msg) from e
 
     def _validate_date(self, date_obj: date) -> date:
-        """Validate the date object.
+        """
+        Validate the date object.
 
         Validates that the date is within the allowed range
         (year >= 2000 and not in the future).
 
         Args:
+        ----
             date_obj: The datetime.date object.
 
         Returns:
+        -------
             The datetime.date object.
 
         Raises:
+        ------
             ValueError: If the date is outside the allowed range.
 
         """
@@ -140,18 +149,22 @@ class MercuryDataValidator(BaseScript):
         return date_obj
 
     def parse_and_validate_date(self, date_str: str) -> date:
-        """Parse and validate the date string.
+        """
+        Parse and validate the date string.
 
         Parses the date string and validates that it is within the
         allowed range (year >= 2000 and not in the future).
 
         Args:
+        ----
             date_str: The date string in 'YYYY-MM-DD' format.
 
         Returns:
+        -------
             The datetime.date object.
 
         Raises:
+        ------
             ValueError: If the date is invalid or outside the allowed range.
 
         """
@@ -159,34 +172,41 @@ class MercuryDataValidator(BaseScript):
         return self._validate_date(date_obj)
 
     def normalize_amount(self, amount_str: str) -> float:
-        """Normalize the amount string.
+        """
+        Normalize the amount string.
 
         Removes commas and whitespace from the amount string and converts
         it to a float.
 
         Args:
+        ----
             amount_str: The amount string.
 
         Returns:
+        -------
             The normalized amount as a float.
 
         """
         return float(amount_str.replace(",", "").strip())
 
     def validate_row(self, row: dict[str, str]) -> dict[str, Any]:
-        """Validate and normalize a transaction row.
+        """
+        Validate and normalize a transaction row.
 
         Validates and normalizes the data in a transaction row,
         including the date, description, amount, and account ID.
 
         Args:
+        ----
             row: A dictionary representing a transaction row.
 
         Returns:
+        -------
             A dictionary containing the validated and normalized
             transaction data.
 
         Raises:
+        ------
             DataValidationError: If the transaction data is invalid.
 
         """

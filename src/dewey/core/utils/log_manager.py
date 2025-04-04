@@ -30,23 +30,27 @@ PROJECT_ROOT = Path(os.path.abspath(os.path.dirname(__file__))).parent.parent.pa
 
 
 class LogManager(BaseScript):
-    """Manages logging configuration, rotation, and analysis.
+    """
+    Manages logging configuration, rotation, and analysis.
 
     Inherits from BaseScript to provide standardized access to configuration,
     logging, and other utilities.
     """
 
     def __init__(self, config_section: str = "log_manager") -> None:
-        """Initializes the LogManager.
+        """
+        Initializes the LogManager.
 
         Args:
+        ----
             config_section: The configuration section to use for this script.
 
         """
         super().__init__(config_section=config_section)
 
     def run(self) -> None:
-        """Executes the main logic of the LogManager.
+        """
+        Executes the main logic of the LogManager.
 
         This method is intended to be overridden by subclasses to implement
         specific logging management tasks.
@@ -57,9 +61,11 @@ class LogManager(BaseScript):
             self.logger.error(f"Error in run method: {e}")
 
     def get_log_level(self) -> str:
-        """Retrieves the log level from the configuration.
+        """
+        Retrieves the log level from the configuration.
 
-        Returns:
+        Returns
+        -------
             The log level as a string (e.g., "INFO", "DEBUG").
 
         """
@@ -71,15 +77,17 @@ class LogManager(BaseScript):
             return "INFO"  # Provide a default value in case of error
 
     def get_log_file_path(self) -> str:
-        """Retrieves the log file path from the configuration.
+        """
+        Retrieves the log file path from the configuration.
 
-        Returns:
+        Returns
+        -------
             The log file path as a string.
 
         """
         try:
             log_file_path = self.get_config_value(
-                "log_file_path", default="application.log"
+                "log_file_path", default="application.log",
             )
             return log_file_path if log_file_path is not None else "application.log"
         except Exception as e:
@@ -87,9 +95,11 @@ class LogManager(BaseScript):
             return "application.log"  # Provide a default value in case of error
 
     def some_other_function(self, arg: Any) -> None:
-        """Example function demonstrating config and logging.
+        """
+        Example function demonstrating config and logging.
 
         Args:
+        ----
             arg: An example argument.
 
         """
@@ -100,12 +110,15 @@ class LogManager(BaseScript):
             self.logger.error(f"Error in some_other_function method: {e}")
 
     def get_path(self, path: str) -> Path:
-        """Get a path relative to the project root.
+        """
+        Get a path relative to the project root.
 
         Args:
+        ----
             path: Path relative to project root or absolute path
 
         Returns:
+        -------
             Resolved Path object
 
         """
@@ -117,11 +130,13 @@ class LogManager(BaseScript):
         return PROJECT_ROOT / path
 
     def parse_args(self):
-        """Parse command line arguments.
+        """
+        Parse command line arguments.
 
         Customized version that handles DB and LLM args properly for testing.
 
-        Returns:
+        Returns
+        -------
             Parsed arguments
 
         """
@@ -163,7 +178,8 @@ class LogManager(BaseScript):
         return args
 
     def execute(self) -> None:
-        """Executes the LogManager script.
+        """
+        Executes the LogManager script.
 
         This method calls the run method and handles any exceptions.
         """

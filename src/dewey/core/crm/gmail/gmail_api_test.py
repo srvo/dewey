@@ -1,7 +1,8 @@
 """Test Gmail API access and message retrieval."""
 
-from .gmail_utils import GmailAPIClient
 import logging
+
+from .gmail_utils import GmailAPIClient
 
 logger = logging.getLogger(__name__)
 

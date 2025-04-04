@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""Script to synchronize between local DuckDB and MotherDuck.
+"""
+Script to synchronize between local DuckDB and MotherDuck.
 
 This script can be run to manually sync data between a local DuckDB
 database and a MotherDuck (cloud) instance.
@@ -10,7 +11,6 @@ import os
 import sys
 import time
 from pathlib import Path
-from typing import List, Optional
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.sync import get_duckdb_sync
@@ -30,9 +30,11 @@ class SyncDuckDBScript(BaseScript):
         self.sync = None
 
     def _parse_args(self) -> argparse.Namespace:
-        """Parse command line arguments.
+        """
+        Parse command line arguments.
 
-        Returns:
+        Returns
+        -------
             Parsed arguments
 
         """
@@ -49,7 +51,7 @@ class SyncDuckDBScript(BaseScript):
         )
 
         parser.add_argument(
-            "--md-db", help="MotherDuck database name", default="dewey", type=str
+            "--md-db", help="MotherDuck database name", default="dewey", type=str,
         )
 
         parser.add_argument(
@@ -68,11 +70,11 @@ class SyncDuckDBScript(BaseScript):
         )
 
         parser.add_argument(
-            "--tables", help="Specific tables to sync (comma-separated)", type=str
+            "--tables", help="Specific tables to sync (comma-separated)", type=str,
         )
 
         parser.add_argument(
-            "--exclude", help="Tables to exclude from sync (comma-separated)", type=str
+            "--exclude", help="Tables to exclude from sync (comma-separated)", type=str,
         )
 
         parser.add_argument(
@@ -89,13 +91,14 @@ class SyncDuckDBScript(BaseScript):
         )
 
         parser.add_argument(
-            "--verbose", help="Enable verbose logging", action="store_true"
+            "--verbose", help="Enable verbose logging", action="store_true",
         )
 
         return parser.parse_args()
 
     def execute(self) -> None:
-        """Execute the sync script.
+        """
+        Execute the sync script.
 
         This method replaces the legacy run() method. It configures logging,
         initializes the sync instance, parses table lists, and performs the
@@ -110,7 +113,7 @@ class SyncDuckDBScript(BaseScript):
 
         # Initialize sync instance
         self.logger.info(
-            f"Initializing sync between local DB {self.args.local_db} and MotherDuck DB {self.args.md_db}"
+            f"Initializing sync between local DB {self.args.local_db} and MotherDuck DB {self.args.md_db}",
         )
 
         try:
@@ -134,7 +137,7 @@ class SyncDuckDBScript(BaseScript):
                 self._run_monitor_mode(tables_to_sync, tables_to_exclude)
             else:
                 success = self._run_sync(
-                    self.args.direction, tables_to_sync, tables_to_exclude
+                    self.args.direction, tables_to_sync, tables_to_exclude,
                 )
                 if not success:
                     self.logger.error("Sync failed")
@@ -158,7 +161,7 @@ class SyncDuckDBScript(BaseScript):
 
         # Initialize sync instance
         self.logger.info(
-            f"Initializing sync between local DB {self.args.local_db} and MotherDuck DB {self.args.md_db}"
+            f"Initializing sync between local DB {self.args.local_db} and MotherDuck DB {self.args.md_db}",
         )
 
         try:
@@ -182,7 +185,7 @@ class SyncDuckDBScript(BaseScript):
                 self._run_monitor_mode(tables_to_sync, tables_to_exclude)
             else:
                 success = self._run_sync(
-                    self.args.direction, tables_to_sync, tables_to_exclude
+                    self.args.direction, tables_to_sync, tables_to_exclude,
                 )
                 if not success:
                     self.logger.error("Sync failed")
@@ -196,12 +199,15 @@ class SyncDuckDBScript(BaseScript):
                 self.sync.close()
 
     def _parse_table_list(self, table_str: str) -> list[str]:
-        """Parse a comma-separated list of tables.
+        """
+        Parse a comma-separated list of tables.
 
         Args:
+        ----
             table_str: Comma-separated list of table names
 
         Returns:
+        -------
             List of table names
 
         """
@@ -213,14 +219,17 @@ class SyncDuckDBScript(BaseScript):
         tables: list[str] | None = None,
         exclude: list[str] | None = None,
     ) -> bool:
-        """Run a sync operation.
+        """
+        Run a sync operation.
 
         Args:
+        ----
             direction: Sync direction ('up', 'down', or 'both')
             tables: Specific tables to sync, or None for all tables
             exclude: Tables to exclude from sync
 
         Returns:
+        -------
             True if sync was successful, False otherwise
 
         """
@@ -243,7 +252,7 @@ class SyncDuckDBScript(BaseScript):
                     table_success = self.sync.sync_table_to_local(table)
                     if not table_success:
                         self.logger.error(
-                            f"Failed to sync table {table} from MotherDuck to local"
+                            f"Failed to sync table {table} from MotherDuck to local",
                         )
                         success = False
             else:
@@ -262,7 +271,7 @@ class SyncDuckDBScript(BaseScript):
                     table_success = self.sync.sync_table_to_local(table)
                     if not table_success:
                         self.logger.error(
-                            f"Failed to sync table {table} from MotherDuck to local"
+                            f"Failed to sync table {table} from MotherDuck to local",
                         )
                         success = False
 
@@ -280,7 +289,7 @@ class SyncDuckDBScript(BaseScript):
                     table_success = self.sync.sync_table_to_motherduck(table)
                     if not table_success:
                         self.logger.error(
-                            f"Failed to sync table {table} from local to MotherDuck"
+                            f"Failed to sync table {table} from local to MotherDuck",
                         )
                         success = False
             else:
@@ -299,24 +308,26 @@ class SyncDuckDBScript(BaseScript):
                     table_success = self.sync.sync_table_to_motherduck(table)
                     if not table_success:
                         self.logger.error(
-                            f"Failed to sync table {table} from local to MotherDuck"
+                            f"Failed to sync table {table} from local to MotherDuck",
                         )
                         success = False
 
         return success
 
     def _run_monitor_mode(
-        self, tables: list[str] | None = None, exclude: list[str] | None = None
+        self, tables: list[str] | None = None, exclude: list[str] | None = None,
     ) -> None:
-        """Run in monitor mode, continuously syncing changes.
+        """
+        Run in monitor mode, continuously syncing changes.
 
         Args:
+        ----
             tables: Specific tables to sync, or None for all tables
             exclude: Tables to exclude from sync
 
         """
         self.logger.info(
-            f"Starting monitor mode with {self.args.interval} second interval"
+            f"Starting monitor mode with {self.args.interval} second interval",
         )
 
         try:

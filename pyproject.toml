@@ -17,7 +17,7 @@ dependencies = [
     # Core Dependencies
     "python-dotenv>=1.0.0",
     "pyyaml>=6.0.0",
-    "pydantic",
+    "pydantic>=2.0.0",
     "structlog",
     "sqlalchemy",
     "setuptools",
@@ -73,7 +73,7 @@ dependencies = [
     "tqdm",
     "humanize",
     "chardet>=5.2.0", # For CSV encoding detection
-    "litellm>=1.63.7",
+    "litellm",  # Fixes importlib-resources deprecation warning
 ]
 
 [tool.setuptools]
@@ -105,24 +105,6 @@ testpaths = [
     "tests"
 ]
 
-[tool.black]
-line-length = 88
-target-version = ['py311']
-skip-string-normalization = true
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-)/
-'''
 
 [tool.flake8]
 max-line-length = 79
@@ -149,6 +131,6 @@ select = ["E", "F", "I", "D"]
 ignore = ["E203", "D203", "D213"]
 
 [tool.ruff.format]
-# Enable code formatting in docstrings
-docstring-code-format = true
 quote-style = "double"
+skip-magic-trailing-comma = true
+indent-style = "space"

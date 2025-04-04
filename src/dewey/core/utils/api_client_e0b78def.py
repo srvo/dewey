@@ -17,7 +17,8 @@ class APIClient(BaseScript):
     """API client for making HTTP requests."""
 
     def __init__(self, config: Config | None = None) -> None:
-        """Initialize API client.
+        """
+        Initialize API client.
 
         Args:
         ----
@@ -32,21 +33,19 @@ class APIClient(BaseScript):
         """Execute the API client's main logic."""
         self.logger.info("Starting API client execution...")
         # Add main API client logic here
-        pass
 
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 
     def fetch_data(
-        self,
-        endpoint: str,
-        params: dict[str, Any] | None = None,
+        self, endpoint: str, params: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
-        """Fetch data from API endpoint.
+        """
+        Fetch data from API endpoint.
 
         Args:
         ----

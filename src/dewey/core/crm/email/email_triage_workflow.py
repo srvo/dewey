@@ -7,22 +7,26 @@ class EmailTriageWorkflow(BaseScript):
     def __init__(self):
         """Initializes the EmailTriageWorkflow."""
         super().__init__(
-            config_section="email_triage", requires_db=True, enable_llm=True
+            config_section="email_triage", requires_db=True, enable_llm=True,
         )
 
     def execute(self) -> None:
-        """Executes the email triage workflow.
+        """
+        Executes the email triage workflow.
 
         This includes connecting to the database, fetching emails, categorizing them,
         and taking actions based on the categories.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If any error occurs during the workflow execution.
 
         """
@@ -58,13 +62,13 @@ class EmailTriageWorkflow(BaseScript):
 
         except Exception as e:
             self.logger.error(
-                f"An error occurred during email triage workflow: {e}", exc_info=True
+                f"An error occurred during email triage workflow: {e}", exc_info=True,
             )
             raise
 
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()

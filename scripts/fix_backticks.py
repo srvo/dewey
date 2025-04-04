@@ -8,8 +8,8 @@ This script:
 3. Preserves the actual code content
 """
 
-import os
 import logging
+import os
 
 # Set up logging
 logging.basicConfig(
@@ -50,7 +50,7 @@ def fix_file(file_path: str) -> None:
     """Fix backtick issues in a Python file."""
     try:
         # Read the file
-        with open(file_path, "r") as f:
+        with open(file_path) as f:
             lines = f.readlines()
 
         # Remove markdown and code block syntax
@@ -90,7 +90,7 @@ def fix_file(file_path: str) -> None:
         logger.info(f"Fixed {file_path}")
 
     except Exception as e:
-        logger.error(f"Error fixing {file_path}: {str(e)}")
+        logger.error(f"Error fixing {file_path}: {e!s}")
 
 
 def main():
@@ -109,10 +109,10 @@ def main():
             fix_file(file_path)
             fixed_count += 1
         except Exception as e:
-            logger.error(f"Failed to fix {file_path}: {str(e)}")
+            logger.error(f"Failed to fix {file_path}: {e!s}")
             error_count += 1
 
-    logger.info(f"\nSummary:")
+    logger.info("\nSummary:")
     logger.info(f"Fixed {fixed_count} files")
     logger.info(f"Failed to fix {error_count} files")
 

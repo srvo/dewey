@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import re
 import uuid
-from typing import Any, Dict, Optional
+from typing import Any
 
 import duckdb
 
@@ -13,7 +13,8 @@ from dewey.utils.database import execute_query, fetch_all, fetch_one
 
 
 class ContactEnrichment(BaseScript):
-    """Contact Enrichment System with Task Tracking and Multiple Data Sources.
+    """
+    Contact Enrichment System with Task Tracking and Multiple Data Sources.
 
     This module provides comprehensive contact enrichment capabilities by:
     - Extracting contact information from email signatures and content
@@ -34,17 +35,19 @@ class ContactEnrichment(BaseScript):
         super().__init__(config_section="crm", *args, **kwargs)
         # Load regex patterns from config or use defaults
         self.patterns = self.get_config_value("regex_patterns", {}).get(
-            "contact_info", {}
+            "contact_info", {},
         )
         # Default batch size if not specified in config
         self.enrichment_batch_size = self.get_config_value(
-            "settings.analysis_batch_size", 50
+            "settings.analysis_batch_size", 50,
         )
 
     def run(self, batch_size: int | None = None) -> None:
-        """Runs the contact enrichment process.
+        """
+        Runs the contact enrichment process.
 
         Args:
+        ----
             batch_size: Number of emails to process in this batch. If None, uses default from config.
 
         """
@@ -70,15 +73,18 @@ class ContactEnrichment(BaseScript):
             self.logger.error(f"Error in ContactEnrichment execution: {e}")
 
     def _setup_database_tables(self, conn: duckdb.DuckDBPyConnection) -> None:
-        """Set up required database tables for contact enrichment.
+        """
+        Set up required database tables for contact enrichment.
 
         Args:
+        ----
             conn: Database connection object
 
         """
         try:
             # Create enrichment_tasks table
-            conn.execute("""
+            conn.execute(
+                """
             CREATE TABLE IF NOT EXISTS enrichment_tasks (
                 task_id VARCHAR PRIMARY KEY,
                 task_type VARCHAR,
@@ -93,10 +99,12 @@ class ContactEnrichment(BaseScript):
                 result JSON,
                 error TEXT
             )
-            """)
+            """,
+            )
 
             # Create enrichment_sources table
-            conn.execute("""
+            conn.execute(
+                """
             CREATE TABLE IF NOT EXISTS enrichment_sources (
                 source_id VARCHAR PRIMARY KEY,
                 source_type VARCHAR,
@@ -106,10 +114,12 @@ class ContactEnrichment(BaseScript):
                 confidence FLOAT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-            """)
+            """,
+            )
 
             # Create contacts table if it doesn't exist
-            conn.execute("""
+            conn.execute(
+                """
             CREATE TABLE IF NOT EXISTS contacts (
                 email VARCHAR PRIMARY KEY,
                 name VARCHAR,
@@ -130,7 +140,8 @@ class ContactEnrichment(BaseScript):
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-            """)
+            """,
+            )
 
             self.logger.info("Database tables created or verified successfully")
 
@@ -146,9 +157,11 @@ class ContactEnrichment(BaseScript):
         task_type: str,
         metadata: dict[str, Any] | None = None,
     ) -> str:
-        """Create a new enrichment task in the database.
+        """
+        Create a new enrichment task in the database.
 
         Args:
+        ----
             conn: Database connection object.
             entity_type: Type of entity being enriched (e.g., 'email', 'contact').
             entity_id: Unique identifier for the entity.
@@ -156,12 +169,15 @@ class ContactEnrichment(BaseScript):
             metadata: Optional dictionary of task metadata.
 
         Returns:
+        -------
             Unique task ID (UUID).
 
         Raises:
+        ------
             Exception: If database operation fails.
 
         Example:
+        -------
             task_id = self.create_enrichment_task(
                 conn,
                 entity_type="email",
@@ -175,7 +191,7 @@ class ContactEnrichment(BaseScript):
         cursor = conn.cursor()
 
         self.logger.info(
-            f"[TASK] Creating new {task_type} task for {entity_type}:{entity_id}"
+            f"[TASK] Creating new {task_type} task for {entity_type}:{entity_id}",
         )
         self.logger.debug(f"[TASK] Task metadata: {json.dumps(metadata or {})}")
 
@@ -209,9 +225,11 @@ class ContactEnrichment(BaseScript):
         result: dict[str, Any] | None = None,
         error: str | None = None,
     ) -> None:
-        """Update the status and details of an enrichment task.
+        """
+        Update the status and details of an enrichment task.
 
         Args:
+        ----
             conn: Database connection object.
             task_id: Unique identifier of the task to update.
             status: New status for the task (e.g., 'completed', 'failed').
@@ -219,14 +237,17 @@ class ContactEnrichment(BaseScript):
             error: Optional error message if task failed.
 
         Raises:
+        ------
             Exception: If database operation fails.
 
         Notes:
+        -----
             - Increments the attempt counter on each update.
             - Updates timestamps for last attempt and modification.
             - Maintains both success results and error messages.
 
         Example:
+        -------
             self.update_task_status(
                 conn,
                 task_id="12345",
@@ -264,7 +285,7 @@ class ContactEnrichment(BaseScript):
 
         except Exception as e:
             self.logger.error(
-                f"[TASK] Failed to update task status: {e!s}", exc_info=True
+                f"[TASK] Failed to update task status: {e!s}", exc_info=True,
             )
             raise
 
@@ -277,9 +298,11 @@ class ContactEnrichment(BaseScript):
         data: dict[str, Any],
         confidence: float,
     ) -> str:
-        """Store enrichment data from a specific source with version control.
+        """
+        Store enrichment data from a specific source with version control.
 
         Args:
+        ----
             conn: Database connection object.
             source_type: Type of enrichment source (e.g., 'email_signature').
             entity_type: Type of entity being enriched (e.g., 'contact').
@@ -288,17 +311,21 @@ class ContactEnrichment(BaseScript):
             confidence: Confidence score (0.0 to 1.0) for the data quality.
 
         Returns:
+        -------
             Unique source ID (UUID).
 
         Raises:
+        ------
             Exception: If database operation fails.
 
         Notes:
+        -----
             - Implements version control by marking previous sources as invalid.
             - Maintains a complete history of enrichment sources.
             - Supports multiple sources for the same entity.
 
         Example:
+        -------
             source_id = self.store_enrichment_source(
                 conn,
                 source_type="email_signature",
@@ -312,10 +339,10 @@ class ContactEnrichment(BaseScript):
         source_id = str(uuid.uuid4())
 
         self.logger.info(
-            f"[SOURCE] Storing {source_type} data for {entity_type}:{entity_id}"
+            f"[SOURCE] Storing {source_type} data for {entity_type}:{entity_id}",
         )
         self.logger.debug(
-            f"[SOURCE] Data: {json.dumps(data)}, Confidence: {confidence}"
+            f"[SOURCE] Data: {json.dumps(data)}, Confidence: {confidence}",
         )
 
         try:
@@ -357,12 +384,15 @@ class ContactEnrichment(BaseScript):
             raise
 
     def extract_contact_info(self, message_text: str) -> dict[str, Any] | None:
-        r"""Extract contact information from email message text using regex patterns.
+        r"""
+        Extract contact information from email message text using regex patterns.
 
         Args:
+        ----
             message_text: Raw text content of the email message.
 
         Returns:
+        -------
             Dictionary containing extracted contact information with keys:
                 - name: Full name
                 - job_title: Job title
@@ -373,12 +403,14 @@ class ContactEnrichment(BaseScript):
             Returns None if insufficient information is found.
 
         Notes:
+        -----
             - Uses predefined regex patterns to extract information.
             - Calculates confidence score based on number of fields found.
             - Requires at least 2 valid fields to return results.
             - Handles various text formats and edge cases.
 
         Example:
+        -------
             info = self.extract_contact_info("John Doe\nCEO at ACME Inc\nPhone: 555-1234")
             # Returns: {
             #     "name": "John Doe",
@@ -438,22 +470,25 @@ class ContactEnrichment(BaseScript):
 
         except Exception as e:
             self.logger.error(
-                f"[EXTRACT] Error extracting contact info: {e!s}",
-                exc_info=True,
+                f"[EXTRACT] Error extracting contact info: {e!s}", exc_info=True,
             )
             return None
 
     def process_email_for_enrichment(self, conn, email_id: str) -> bool:
-        """Process a single email for contact enrichment.
+        """
+        Process a single email for contact enrichment.
 
         Args:
+        ----
             conn: Database connection object.
             email_id: Unique identifier of the email to process.
 
         Returns:
+        -------
             True if enrichment was successful, False otherwise.
 
         Notes:
+        -----
             - Retrieves email content from database.
             - Creates enrichment task for tracking.
             - Extracts contact information from email body.
@@ -469,6 +504,7 @@ class ContactEnrichment(BaseScript):
             6. Update task status.
 
         Example:
+        -------
             success = self.process_email_for_enrichment(conn, "email_12345")
 
         """
@@ -489,16 +525,12 @@ class ContactEnrichment(BaseScript):
 
             email_id, from_email, from_name, plain_body, html_body = result
             self.logger.info(
-                f"[PROCESS] Processing email from {from_email} ({from_name})"
+                f"[PROCESS] Processing email from {from_email} ({from_name})",
             )
 
             # Create enrichment task for tracking
             task_id = self.create_enrichment_task(
-                conn,
-                "email",
-                email_id,
-                "contact_info",
-                {"from_email": from_email},
+                conn, "email", email_id, "contact_info", {"from_email": from_email},
             )
 
             try:
@@ -508,7 +540,7 @@ class ContactEnrichment(BaseScript):
 
                 if contact_info:
                     self.logger.info(
-                        "[PROCESS] Contact info found, storing enrichment source"
+                        "[PROCESS] Contact info found, storing enrichment source",
                     )
                     # Store extracted information as enrichment source
                     self.store_enrichment_source(
@@ -553,7 +585,7 @@ class ContactEnrichment(BaseScript):
                         )
                     else:
                         self.logger.info(
-                            f"[PROCESS] Updated contact record for {from_email}"
+                            f"[PROCESS] Updated contact record for {from_email}",
                         )
 
                     # Update task status to completed
@@ -562,17 +594,13 @@ class ContactEnrichment(BaseScript):
 
                 self.logger.info("[PROCESS] No contact info found in email")
                 self.update_task_status(
-                    conn,
-                    task_id,
-                    "skipped",
-                    {"reason": "No contact info found"},
+                    conn, task_id, "skipped", {"reason": "No contact info found"},
                 )
                 return False
 
             except Exception as e:
                 self.logger.error(
-                    f"[PROCESS] Error processing email {email_id}: {e!s}",
-                    exc_info=True,
+                    f"[PROCESS] Error processing email {email_id}: {e!s}", exc_info=True,
                 )
                 self.update_task_status(conn, task_id, "failed", error=str(e))
                 return False
@@ -585,12 +613,15 @@ class ContactEnrichment(BaseScript):
             return False
 
     def enrich_contacts(self, batch_size: int | None = None) -> None:
-        """Process a batch of emails for contact enrichment.
+        """
+        Process a batch of emails for contact enrichment.
 
         Args:
+        ----
             batch_size: Number of emails to process in this batch. If None, uses default from config.
 
         Notes:
+        -----
             - Processes emails in batches for better performance and resource management.
             - Only processes emails that haven't been enriched before.
             - Tracks success rate and provides detailed logging.
@@ -603,13 +634,14 @@ class ContactEnrichment(BaseScript):
             4. Log results and handle errors.
 
         Example:
+        -------
             self.enrich_contacts(batch_size=100)  # Process 100 emails
 
         """
         batch_size = batch_size or self.enrichment_batch_size
 
         self.logger.info(
-            f"[BATCH] Starting contact enrichment batch (size={batch_size})"
+            f"[BATCH] Starting contact enrichment batch (size={batch_size})",
         )
 
         try:
@@ -649,8 +681,7 @@ class ContactEnrichment(BaseScript):
 
         except Exception as e:
             self.logger.error(
-                f"[BATCH] Fatal error in enrichment batch: {e!s}",
-                exc_info=True,
+                f"[BATCH] Fatal error in enrichment batch: {e!s}", exc_info=True,
             )
             raise
 

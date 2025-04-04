@@ -1,7 +1,6 @@
 import argparse
-import logging
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection
@@ -14,11 +13,11 @@ class LLMClientInterface(ABC):
     @abstractmethod
     def generate_text(self, prompt: str) -> str:
         """Generates text based on the given prompt."""
-        pass
 
 
 class DataAnalysisScript(BaseScript):
-    """A script to fetch data from a database, analyze it with an LLM,
+    """
+    A script to fetch data from a database, analyze it with an LLM,
     and log the results.
     """
 
@@ -27,7 +26,8 @@ class DataAnalysisScript(BaseScript):
         db_connection: DatabaseConnection | None = None,
         llm_client: LLMClientInterface | None = None,
     ) -> None:
-        """Initializes the DataAnalysisScript with configurations for database
+        """
+        Initializes the DataAnalysisScript with configurations for database
         and LLM.
         """
         super().__init__(
@@ -41,12 +41,15 @@ class DataAnalysisScript(BaseScript):
         self.llm_client = llm_client or LLMClient()
 
     def _fetch_data(self) -> dict[str, Any]:
-        """Fetches data from the database.
+        """
+        Fetches data from the database.
 
-        Returns:
+        Returns
+        -------
             A dictionary containing the fetched data.
 
-        Raises:
+        Raises
+        ------
             Exception: If there is an error fetching data from the database.
 
         """
@@ -60,12 +63,15 @@ class DataAnalysisScript(BaseScript):
             raise
 
     def fetch_data_from_db(self) -> dict[str, Any]:
-        """Fetches data from the database and logs the action.
+        """
+        Fetches data from the database and logs the action.
 
-        Returns:
+        Returns
+        -------
             A dictionary containing the fetched data.
 
-        Raises:
+        Raises
+        ------
             Exception: If there is an error fetching data from the database.
 
         """
@@ -78,15 +84,19 @@ class DataAnalysisScript(BaseScript):
             raise
 
     def _analyze_data(self, data: dict[str, Any]) -> dict[str, Any]:
-        """Analyzes the given data using an LLM.
+        """
+        Analyzes the given data using an LLM.
 
         Args:
+        ----
             data: A dictionary containing the data to be analyzed.
 
         Returns:
+        -------
             A dictionary containing the analysis results.
 
         Raises:
+        ------
             ValueError: If the LLM client is not initialized.
             Exception: If there is an error analyzing data with the LLM.
 
@@ -103,15 +113,19 @@ class DataAnalysisScript(BaseScript):
             raise
 
     def analyze_data_with_llm(self, data: dict[str, Any]) -> dict[str, Any]:
-        """Analyzes the given data using an LLM and logs the action.
+        """
+        Analyzes the given data using an LLM and logs the action.
 
         Args:
+        ----
             data: A dictionary containing the data to be analyzed.
 
         Returns:
+        -------
             A dictionary containing the analysis results.
 
         Raises:
+        ------
             Exception: If there is an error analyzing data with the LLM.
 
         """
@@ -124,7 +138,8 @@ class DataAnalysisScript(BaseScript):
             raise
 
     def execute(self) -> None:
-        """Executes the data analysis script.
+        """
+        Executes the data analysis script.
 
         This method orchestrates the fetching of data from the database,
         analyzing it using a language model, and logging the analysis results.
@@ -158,9 +173,11 @@ class DataAnalysisScript(BaseScript):
             self.logger.error(f"Script failed: {e}")
 
     def setup_argparse(self) -> argparse.ArgumentParser:
-        """Set up command line arguments.
+        """
+        Set up command line arguments.
 
-        Returns:
+        Returns
+        -------
             An argument parser configured with common options.
 
         """

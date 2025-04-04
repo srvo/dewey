@@ -2,14 +2,16 @@ from dewey.core.base_script import BaseScript
 
 
 class Investments(BaseScript):
-    """A class for performing investment analysis.
+    """
+    A class for performing investment analysis.
 
     This class inherits from BaseScript and provides methods for
     analyzing investment data.
     """
 
     def __init__(self):
-        """Initializes the Investments class.
+        """
+        Initializes the Investments class.
 
         Calls the constructor of the BaseScript class with the
         configuration section set to 'investments'.
@@ -17,7 +19,8 @@ class Investments(BaseScript):
         super().__init__(config_section="investments")
 
     def execute(self) -> None:
-        """Executes the investment analysis script.
+        """
+        Executes the investment analysis script.
 
         This method contains the core logic of the script.
         """
@@ -52,11 +55,12 @@ class Investments(BaseScript):
         self.logger.info("Investment analysis completed.")
 
     def run(self) -> None:
-        """Runs the investment analysis script.
+        """
+        Runs the investment analysis script.
 
         This method contains the core logic of the script.
         """
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()

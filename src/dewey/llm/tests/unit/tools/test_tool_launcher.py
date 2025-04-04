@@ -10,7 +10,7 @@ from dewey.llm.tools.tool_launcher import ToolLauncher
 class TestToolLauncher:
     """Test suite for the ToolLauncher class."""
 
-    @pytest.fixture
+    @pytest.fixture()
     def launcher(self) -> ToolLauncher:
         """Fixture for a pre-configured ToolLauncher instance."""
         with patch("dewey.core.base_script.BaseScript.__init__", return_value=None):

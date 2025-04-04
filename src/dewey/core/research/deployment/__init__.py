@@ -4,7 +4,8 @@ from dewey.core.base_script import BaseScript
 
 
 class DeploymentModule(BaseScript):
-    """Base class for deployment modules within Dewey.
+    """
+    Base class for deployment modules within Dewey.
 
     This class provides a standardized structure for deployment scripts,
     including configuration loading, logging, and a `run` method to
@@ -19,9 +20,11 @@ class DeploymentModule(BaseScript):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        """Initializes the DeploymentModule.
+        """
+        Initializes the DeploymentModule.
 
         Args:
+        ----
             config_section (str): Section in dewey.yaml to load for this script. Defaults to "deployment".
             requires_db (bool): Whether this script requires database access. Defaults to False.
             enable_llm (bool): Whether this script requires LLM access. Defaults to False.
@@ -40,18 +43,22 @@ class DeploymentModule(BaseScript):
         self.description = "Base class for deployment modules."
 
     def execute(self) -> None:
-        """Executes the deployment logic.
+        """
+        Executes the deployment logic.
 
         This method should be overridden by subclasses to implement the
         specific deployment steps.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If an error occurs during deployment.
 
         """
@@ -75,7 +82,7 @@ class DeploymentModule(BaseScript):
             if self.enable_llm and self.llm_client:
                 try:
                     response = self.llm_client.generate(
-                        prompt="Write a short poem about deployment."
+                        prompt="Write a short poem about deployment.",
                     )
                     self.logger.info(f"LLM response: {response}")
                 except Exception as llm_error:
@@ -90,6 +97,6 @@ class DeploymentModule(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()

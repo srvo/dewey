@@ -1,9 +1,11 @@
-"""Handles journal file writing and management.
+"""
+Handles journal file writing and management.
 
 This module provides classes and functions for writing and managing journal files,
 including functionalities for backing up existing files, handling processed hashes,
 and logging classification decisions.
 """
+
 import shutil
 from collections import defaultdict
 from collections.abc import Callable
@@ -71,8 +73,8 @@ class JournalWriter(BaseScript):
         self.config_source = config_source or self
         self.output_dir: Path = Path(
             self.config_source.get_config_value(
-                "journal_dir", "data/bookkeeping/journals"
-            )
+                "journal_dir", "data/bookkeeping/journals",
+            ),
         )
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.processed_hashes_file: Path = self.output_dir / ".processed_hashes"
@@ -91,7 +93,7 @@ class JournalWriter(BaseScript):
         # Example usage of config and database:
         if self.config_source:
             example_config_value = self.config_source.get_config_value(
-                "utils.example_config", "default_value"
+                "utils.example_config", "default_value",
             )
 
         if self.db_conn:
@@ -150,7 +152,7 @@ class JournalWriter(BaseScript):
         try:
             if filename.exists():
                 timestamp = now_func().strftime("%Y%m%d%H%M%S")
-                backup_name = "{}_{}{}".format(filename.stem, timestamp, filename.suffix)
+                backup_name = f"{filename.stem}_{timestamp}{filename.suffix}"
                 self.io_service.copy_file(filename, filename.parent / backup_name)
 
             self.io_service.write_text(filename, "\n".join(entries) + "\n")
@@ -203,7 +205,7 @@ class JournalWriter(BaseScript):
         for (account_id, year), entries in self._group_entries_by_account_and_year(
             entries,
         ).items():
-            filename = self.output_dir / "{}_{}.journal".format(account_id, year)
+            filename = self.output_dir / f"{account_id}_{year}.journal"
             self._write_file_with_backup(filename, entries)
 
         self._save_processed_hashes(self.seen_hashes)

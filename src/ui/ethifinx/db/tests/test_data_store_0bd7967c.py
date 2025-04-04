@@ -53,7 +53,7 @@ def test_session(test_engine):
         session.close()
 
 
-@pytest.fixture
+@pytest.fixture()
 def data_store(test_session):
     """Create DataStore instance."""
     return DataStore(session=test_session)
@@ -72,7 +72,6 @@ def test_save_to_db_failure(data_store) -> None:
     """Test database save failure."""
     with pytest.raises(DatabaseSaveError):
         test_data = TestTable(
-            key=None,
-            value=None,
+            key=None, value=None,
         )  # This should fail due to nullable=False
         data_store.save_to_db(test_data)

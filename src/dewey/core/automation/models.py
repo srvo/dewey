@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 
 from dewey.core.base_script import BaseScript
 
@@ -35,20 +35,24 @@ class Script(BaseScript):
         super().__init__(config_section=self.name)
 
     def run(self) -> None:
-        """Run the script.
+        """
+        Run the script.
 
-        Raises:
+        Raises
+        ------
             NotImplementedError: If the run method is not implemented.
 
         """
         raise NotImplementedError("The run method must be implemented")
 
     def execute(self) -> None:
-        """Execute the script.
+        """
+        Execute the script.
 
         This method calls the run method, which should be implemented by subclasses.
 
-        Raises:
+        Raises
+        ------
             NotImplementedError: If the run method is not implemented.
 
         """
@@ -79,9 +83,11 @@ class Service(BaseScript):
         version: str = "1.0.0",
         path_handler: PathHandler | None = None,
     ) -> None:
-        """Initializes a Service instance.
+        """
+        Initializes a Service instance.
 
         Args:
+        ----
             name: The name of the service.
             path: The path to the service.
             config_path: The path to the service configuration.
@@ -105,9 +111,11 @@ class Service(BaseScript):
         self.version = version
 
     def to_dict(self) -> dict[str, Any]:
-        """Convert the service to a dictionary.
+        """
+        Convert the service to a dictionary.
 
-        Returns:
+        Returns
+        -------
             A dictionary representation of the service.
 
         """
@@ -124,15 +132,18 @@ class Service(BaseScript):
 
     @classmethod
     def from_dict(
-        cls, data: dict[str, Any], path_handler: PathHandler | None = None
+        cls, data: dict[str, Any], path_handler: PathHandler | None = None,
     ) -> "Service":
-        """Create a service from a dictionary.
+        """
+        Create a service from a dictionary.
 
         Args:
+        ----
             data: A dictionary containing the service data.
             path_handler: Handler for creating Path objects.
 
         Returns:
+        -------
             A Service instance created from the dictionary.
 
         """
@@ -150,20 +161,24 @@ class Service(BaseScript):
         )
 
     def run(self) -> None:
-        """Runs the service.
+        """
+        Runs the service.
 
-        Raises:
+        Raises
+        ------
             NotImplementedError: If the run method is not implemented.
 
         """
         raise NotImplementedError("The run method must be implemented")
 
     def execute(self) -> None:
-        """Executes the service.
+        """
+        Executes the service.
 
         This method calls the run method, which should be implemented by subclasses.
 
-        Raises:
+        Raises
+        ------
             NotImplementedError: If the run method is not implemented.
 
         """

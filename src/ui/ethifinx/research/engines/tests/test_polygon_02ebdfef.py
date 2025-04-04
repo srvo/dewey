@@ -1,6 +1,7 @@
 # Formatting failed: LLM generation failed: Gemini API error: Model gemini-2.0-flash in cooldown until Sat Mar 15 00:33:42 2025
 
-"""Tests for Polygon API Engine.
+"""
+Tests for Polygon API Engine.
 =======================
 """
 
@@ -12,21 +13,21 @@ import pytest
 from ethifinx.research.engines.polygon import PolygonEngine
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_env():
     """Mock environment variables."""
     with patch.dict(os.environ, {"POLYGON_API_KEY": "test_key"}):
         yield
 
 
-@pytest.fixture
+@pytest.fixture()
 async def engine(mock_env):
     """Create a PolygonEngine instance for testing."""
     async with PolygonEngine(max_retries=2) as engine:
         yield engine
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_engine_initialization(mock_env) -> None:
     """Test that the engine initializes correctly."""
     engine = PolygonEngine(max_retries=2)
@@ -35,7 +36,7 @@ async def test_engine_initialization(mock_env) -> None:
     assert engine.api_key == "test_key"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_process_method(engine) -> None:
     """Test the process method returns expected status."""
     result = await engine.process()
@@ -43,7 +44,7 @@ async def test_process_method(engine) -> None:
     assert result["status"] == "Polygon engine ready"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_ticker_details(engine) -> None:
     """Test ticker details retrieval."""
     mock_response = {
@@ -75,7 +76,7 @@ async def test_get_ticker_details(engine) -> None:
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_ticker_news(engine) -> None:
     """Test ticker news retrieval."""
     mock_response = {
@@ -118,7 +119,7 @@ async def test_get_ticker_news(engine) -> None:
         assert params["limit"] == 1
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_aggregates(engine) -> None:
     """Test aggregates retrieval."""
     mock_response = {
@@ -159,7 +160,7 @@ async def test_get_aggregates(engine) -> None:
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_daily_open_close(engine) -> None:
     """Test daily open/close retrieval."""
     mock_response = {
@@ -187,7 +188,7 @@ async def test_get_daily_open_close(engine) -> None:
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_trades(engine) -> None:
     """Test trades retrieval."""
     mock_response = {
@@ -220,7 +221,7 @@ async def test_get_trades(engine) -> None:
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_quotes(engine) -> None:
     """Test quotes retrieval."""
     mock_response = {
@@ -256,7 +257,7 @@ async def test_get_quotes(engine) -> None:
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_financials(engine) -> None:
     """Test financials retrieval."""
     mock_response = {
@@ -292,7 +293,7 @@ async def test_get_financials(engine) -> None:
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_market_status(engine) -> None:
     """Test market status retrieval."""
     mock_response = {
@@ -314,7 +315,7 @@ async def test_get_market_status(engine) -> None:
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_search_retry_on_error(engine) -> None:
     """Test search retries on API errors."""
     mock_response = {"results": [{"ticker": "AAPL"}]}
@@ -336,7 +337,7 @@ async def test_search_retry_on_error(engine) -> None:
         assert mock_get.call_count == 2
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_missing_api_key() -> None:
     """Test error handling for missing API key."""
     with patch.dict(os.environ, clear=True):

@@ -1,4 +1,5 @@
-"""Tests for database monitoring and health check functionality.
+"""
+Tests for database monitoring and health check functionality.
 
 This module tests the database monitoring and health check functions.
 """
@@ -61,7 +62,7 @@ class TestDatabaseMonitor(unittest.TestCase):
 
         # Check that execute_query was called with correct query
         self.mock_db_manager.execute_query.assert_called_once_with(
-            "SELECT 1", local_only=False
+            "SELECT 1", local_only=False,
         )
 
         # Test failed connection
@@ -118,7 +119,7 @@ class TestDatabaseMonitor(unittest.TestCase):
 
             # Check results - should be healthy since all conditions are good
             self.assertTrue(
-                result["healthy"], f"Expected healthy sync but got {result}"
+                result["healthy"], f"Expected healthy sync but got {result}",
             )
             self.assertIn("last_sync", result)
             self.assertEqual(result["unresolved_conflicts"], 0)
@@ -135,23 +136,23 @@ class TestDatabaseMonitor(unittest.TestCase):
                 mock_sync.return_value = {"healthy": True}
 
                 with patch(
-                    "src.dewey.core.db.monitor.check_schema_consistency"
+                    "src.dewey.core.db.monitor.check_schema_consistency",
                 ) as mock_schema:
                     mock_schema.return_value = {"consistent": True}
 
                     with patch(
-                        "src.dewey.core.db.monitor.check_database_size"
+                        "src.dewey.core.db.monitor.check_database_size",
                     ) as mock_size:
                         mock_size.return_value = {"file_size_bytes": 1024 * 1024}
 
                         with patch(
-                            "src.dewey.core.db.monitor.check_table_health"
+                            "src.dewey.core.db.monitor.check_table_health",
                         ) as mock_table:
                             mock_table.return_value = {"healthy": True}
 
                             # Mock TABLES list
                             with patch(
-                                "src.dewey.core.db.monitor.TABLES", ["test_table"]
+                                "src.dewey.core.db.monitor.TABLES", ["test_table"],
                             ):
                                 # Run health check
                                 result = run_health_check(include_performance=False)
@@ -163,7 +164,7 @@ class TestDatabaseMonitor(unittest.TestCase):
                                 self.assertTrue(result["sync"]["healthy"])
                                 self.assertTrue(result["schema"]["consistent"])
                                 self.assertTrue(
-                                    result["tables"]["test_table"]["healthy"]
+                                    result["tables"]["test_table"]["healthy"],
                                 )
                                 self.assertIn("timestamp", result)
                                 self.assertNotIn("performance", result)

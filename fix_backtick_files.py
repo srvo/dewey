@@ -1,25 +1,27 @@
 #!/usr/bin/env python
 """Fixes Python files by removing markdown code markers."""
+
 import os
 import re
 import sys
 
 
 def fix_python_file(file_path: str) -> bool:
-    """Fixes a Python file by removing ```python and ``` markers.
+    """
+    Fixes a Python file by removing ```python and ``` markers.
 
     Args:
         file_path: The path to the Python file.
 
     Returns:
         True if the file was fixed, False otherwise.
+
     """
     with open(file_path, encoding="utf-8") as f:
         content = f.read()
 
     # Check if the file contains ```python
     if "```python" in content:
-        print(f"Fixing {file_path}")
         # Remove ```python at the beginning and ``` at the end
         fixed_content = re.sub(r"^```python\n", "", content)
         fixed_content = re.sub(r"\n```\s*$", "", fixed_content)
@@ -32,13 +34,15 @@ def fix_python_file(file_path: str) -> bool:
 
 
 def fix_files_in_directory(directory: str) -> int:
-    """Fixes all Python files in a directory recursively.
+    """
+    Fixes all Python files in a directory recursively.
 
     Args:
         directory: The directory to search.
 
     Returns:
         The number of files fixed.
+
     """
     fixed_count = 0
     for root, _, files in os.walk(directory):
@@ -52,10 +56,6 @@ def fix_files_in_directory(directory: str) -> int:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        directory = sys.argv[1]
-    else:
-        directory = "src"
+    directory = sys.argv[1] if len(sys.argv) > 1 else "src"
 
     fixed_count = fix_files_in_directory(directory)
-    print(f"Fixed {fixed_count} files")

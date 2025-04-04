@@ -10,7 +10,7 @@ from dewey.llm.agents.base_agent import BaseAgent
 class TestBaseAgent:
     """Tests for the BaseAgent class."""
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_base_agent(self) -> BaseAgent:
         """Create a BaseAgent instance with mocked BaseScript initialization."""
         with patch("dewey.core.base_script.BaseScript.__init__", return_value=None):
@@ -29,7 +29,7 @@ class TestBaseAgent:
         """Test that BaseAgent initializes correctly."""
         # Arrange & Act
         with patch(
-            "dewey.core.base_script.BaseScript.__init__", return_value=None
+            "dewey.core.base_script.BaseScript.__init__", return_value=None,
         ) as mock_init:
             agent = BaseAgent(
                 name="TestAgent",

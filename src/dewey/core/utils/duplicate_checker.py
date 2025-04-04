@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Any, List, Optional
+from typing import Any
 
 import yaml
 
@@ -24,7 +24,7 @@ try:
 except ImportError:
     # Mock function for testing when actual module is not available
     logger.warning(
-        "Could not import initialize_client_from_env from dewey.llm.litellm_utils. Using mock."
+        "Could not import initialize_client_from_env from dewey.llm.litellm_utils. Using mock.",
     )
 
     def get_llm_client(*args, **kwargs):
@@ -39,7 +39,8 @@ PROJECT_ROOT = Path(os.path.abspath(os.path.dirname(__file__))).parent.parent.pa
 
 
 class DuplicateChecker(BaseScript):
-    """A class for checking and handling duplicate entries.
+    """
+    A class for checking and handling duplicate entries.
 
     This class inherits from BaseScript and provides methods for
     identifying and managing duplicate data.
@@ -72,7 +73,7 @@ class DuplicateChecker(BaseScript):
 
             # Configure formatter
             log_format = log_config.get(
-                "format", "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+                "format", "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
             )
             date_format = log_config.get("date_format", "%Y-%m-%d %H:%M:%S")
             formatter = logging.Formatter(fmt=log_format, datefmt=date_format)
@@ -88,21 +89,24 @@ class DuplicateChecker(BaseScript):
             self.logger.setLevel(logging.INFO)
             handler = logging.StreamHandler()
             formatter = logging.Formatter(
-                "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+                "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
             )
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
             self.logger.debug("Using default logging configuration")
 
     def check_duplicates(self, data: list[Any], threshold: float) -> list[Any]:
-        """Placeholder for the actual duplicate checking logic.
+        """
+        Placeholder for the actual duplicate checking logic.
         This method should be overridden in a subclass or extended.
 
         Args:
+        ----
             data (List[Any]): The list of data to check for duplicates.
             threshold (float): The similarity threshold.
 
         Returns:
+        -------
             List[Any]: A list of duplicate items.
 
         """
@@ -121,15 +125,19 @@ class DuplicateChecker(BaseScript):
         return list(set(duplicates))
 
     def run(self, data: list[Any] | None = None) -> None:
-        """Executes the duplicate checking process.
+        """
+        Executes the duplicate checking process.
 
         Args:
+        ----
             data (Optional[List[Any]]): The data to check. If None, it defaults to an example list.
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If an error occurs during the duplicate checking process.
 
         """
@@ -153,12 +161,15 @@ class DuplicateChecker(BaseScript):
             raise
 
     def get_path(self, path: str) -> Path:
-        """Get a path relative to the project root.
+        """
+        Get a path relative to the project root.
 
         Args:
+        ----
             path: Path relative to project root or absolute path
 
         Returns:
+        -------
             Resolved Path object
 
         """
@@ -197,15 +208,17 @@ class DuplicateChecker(BaseScript):
                 self.db_conn.close()
             except Exception as e:
                 DuplicateChecker.logger.warning(
-                    f"Error closing database connection: {e}"
+                    f"Error closing database connection: {e}",
                 )
 
     def parse_args(self):
-        """Parse command line arguments.
+        """
+        Parse command line arguments.
 
         Customized version that handles DB and LLM args properly for testing.
 
-        Returns:
+        Returns
+        -------
             Parsed arguments
 
         """
@@ -288,12 +301,15 @@ class DuplicateChecker(BaseScript):
         return args
 
     def _load_config(self):
-        """Load configuration from the configuration file.
+        """
+        Load configuration from the configuration file.
 
-        Returns:
+        Returns
+        -------
             Loaded configuration dictionary
 
-        Raises:
+        Raises
+        ------
             FileNotFoundError: If the configuration file is not found
             yaml.YAMLError: If there is an error parsing the YAML
 
@@ -302,11 +318,13 @@ class DuplicateChecker(BaseScript):
             return yaml.safe_load(f)
 
     def execute(self):
-        """Execute the DuplicateChecker.
+        """
+        Execute the DuplicateChecker.
         This method is called when the DuplicateChecker is run as a script.
         It handles command-line arguments, runs the script, and cleans up.
 
-        Returns:
+        Returns
+        -------
             None
 
         """
@@ -316,7 +334,7 @@ class DuplicateChecker(BaseScript):
 
             # Log a message
             DuplicateChecker.logger.info(
-                f"Executing duplicate checker with config: {self.config_section}"
+                f"Executing duplicate checker with config: {self.config_section}",
             )
 
             # Run the script

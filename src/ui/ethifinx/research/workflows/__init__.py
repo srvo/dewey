@@ -1,4 +1,5 @@
-"""Research Workflows
+"""
+Research Workflows
 
 This module provides workflows for company research.
 """

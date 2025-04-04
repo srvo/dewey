@@ -1,4 +1,5 @@
-"""Script to detect business opportunities from email content.
+"""
+Script to detect business opportunities from email content.
 
 Dependencies:
 - SQLite database with processed contacts
@@ -8,7 +9,7 @@ Dependencies:
 
 import re
 import sqlite3
-from typing import Any, Dict
+from typing import Any
 
 import pandas as pd
 
@@ -25,12 +26,15 @@ class OpportunityDetector(BaseScript):
         self.opportunity_patterns: dict[str, str] = self.get_config_value("opportunity")
 
     def extract_opportunities(self, email_text: str) -> dict[str, bool]:
-        """Extracts opportunities from email text using predefined regex patterns.
+        """
+        Extracts opportunities from email text using predefined regex patterns.
 
         Args:
+        ----
             email_text: The text content of the email.
 
         Returns:
+        -------
             A dictionary indicating the presence of each opportunity type.
 
         """
@@ -41,11 +45,13 @@ class OpportunityDetector(BaseScript):
         return opportunities
 
     def update_contacts_db(
-        self, opportunities_df: pd.DataFrame, conn: sqlite3.Connection
+        self, opportunities_df: pd.DataFrame, conn: sqlite3.Connection,
     ) -> None:
-        """Updates the contacts table in the database with detected opportunities.
+        """
+        Updates the contacts table in the database with detected opportunities.
 
         Args:
+        ----
             opportunities_df: DataFrame containing email and opportunity flags.
             conn: Database connection.
 
@@ -74,16 +80,18 @@ class OpportunityDetector(BaseScript):
                 )
             except Exception as e:
                 self.logger.error(
-                    f"Error updating opportunities for {row['from_email']}: {str(e)}"
+                    f"Error updating opportunities for {row['from_email']}: {e!s}",
                 )
 
     def detect_opportunities(self, conn: sqlite3.Connection) -> None:
-        """Detects and flags business opportunities within emails.
+        """
+        Detects and flags business opportunities within emails.
 
         Fetches emails, identifies opportunities based on regex patterns, and
         updates the contacts database.
 
         Args:
+        ----
             conn: Database connection.
 
         """
@@ -101,7 +109,7 @@ class OpportunityDetector(BaseScript):
         # Initialize new columns for each opportunity type, defaulting to False
         for key in self.opportunity_patterns.keys():
             df[key] = df["full_message"].apply(
-                lambda text: bool(self.extract_opportunities(text).get(key, False))
+                lambda text: bool(self.extract_opportunities(text).get(key, False)),
             )
 
         # Aggregate opportunities per contact
@@ -114,7 +122,7 @@ class OpportunityDetector(BaseScript):
                     "speaking": "any",
                     "publicity": "any",
                     "submission": "any",
-                }
+                },
             )
             .reset_index()
         )

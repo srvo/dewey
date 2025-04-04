@@ -1,11 +1,12 @@
-"""Data Importer Module for CRM
+"""
+Data Importer Module for CRM
 
 This module provides functionality for importing data from various sources
 into the CRM system, with a focus on CSV files and other structured data formats.
 """
 
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import pandas as pd
 
@@ -13,7 +14,8 @@ from dewey.core.base_script import BaseScript
 
 
 class DataImporter(BaseScript):
-    """A class for importing data from various sources into the CRM system.
+    """
+    A class for importing data from various sources into the CRM system.
 
     This class provides methods for importing data from CSV files and other
     structured data formats, inferring schemas, and handling data validation.
@@ -24,12 +26,15 @@ class DataImporter(BaseScript):
         super().__init__(config_section="data_importer", requires_db=True)
 
     def infer_csv_schema(self, file_path: str) -> dict[str, str]:
-        """Infer the schema of a CSV file.
+        """
+        Infer the schema of a CSV file.
 
         Args:
+        ----
             file_path: Path to the CSV file
 
         Returns:
+        -------
             A dictionary mapping column names to inferred data types
 
         """
@@ -70,16 +75,19 @@ class DataImporter(BaseScript):
             raise
 
     def create_table_from_schema(
-        self, table_name: str, schema: dict[str, str], primary_key: str | None = None
+        self, table_name: str, schema: dict[str, str], primary_key: str | None = None,
     ) -> None:
-        """Create a database table from a schema.
+        """
+        Create a database table from a schema.
 
         Args:
+        ----
             table_name: Name of the table to create
             schema: Schema dictionary mapping column names to data types
             primary_key: Optional primary key column
 
         Returns:
+        -------
             None
 
         """
@@ -116,15 +124,18 @@ class DataImporter(BaseScript):
         primary_key: str | None = None,
         batch_size: int = 1000,
     ) -> int:
-        """Import a CSV file into a database table.
+        """
+        Import a CSV file into a database table.
 
         Args:
+        ----
             file_path: Path to the CSV file
             table_name: Name of the table to import into
             primary_key: Optional primary key column
             batch_size: Number of rows to import in each batch
 
         Returns:
+        -------
             Number of rows imported
 
         """
@@ -169,7 +180,7 @@ class DataImporter(BaseScript):
                     # Update total
                     total_rows += len(records)
                     self.logger.info(
-                        f"Imported chunk {chunk_index + 1} with {len(records)} rows"
+                        f"Imported chunk {chunk_index + 1} with {len(records)} rows",
                     )
 
             self.logger.info(f"Import completed. Total rows imported: {total_rows}")
@@ -180,12 +191,15 @@ class DataImporter(BaseScript):
             raise
 
     def list_person_records(self, limit: int = 100) -> list[dict[str, Any]]:
-        """List person records from the CRM system.
+        """
+        List person records from the CRM system.
 
         Args:
+        ----
             limit: Maximum number of records to return
 
         Returns:
+        -------
             A list of person dictionaries
 
         """
@@ -194,10 +208,12 @@ class DataImporter(BaseScript):
                 raise RuntimeError("No database connection available")
 
             # Query unified_contacts table (created by ContactConsolidation)
-            result = self.db_conn.execute(f"""
+            result = self.db_conn.execute(
+                f"""
             SELECT * FROM unified_contacts
             LIMIT {limit}
-            """).fetchall()
+            """,
+            ).fetchall()
 
             # Convert to list of dictionaries
             columns = [desc[0] for desc in self.db_conn.description]
@@ -215,7 +231,8 @@ class DataImporter(BaseScript):
             return []
 
     def execute(self) -> None:
-        """Execute the data import process.
+        """
+        Execute the data import process.
 
         This method orchestrates the data import process by reading
         configuration values and importing data from the specified source.
@@ -239,7 +256,7 @@ class DataImporter(BaseScript):
             rows_imported = self.import_csv(file_path, table_name, primary_key)
 
             self.logger.info(
-                f"Data import completed. Imported {rows_imported} rows to {table_name}"
+                f"Data import completed. Imported {rows_imported} rows to {table_name}",
             )
 
         except Exception as e:

@@ -32,6 +32,7 @@ dewey/
 ## Comparison with Conventions
 
 ### Alignment with Conventions
+
 ✅ Core module structure follows conventions with proper separation of concerns
 ✅ LLM module properly organized with api_clients and prompts
 ✅ Configuration centralized in config/dewey.yaml
@@ -39,6 +40,7 @@ dewey/
 ✅ Documentation in docs directory
 
 ### Deviations from Conventions
+
 ❌ `refactor/` directory not specified in conventions
 ❌ Some modules missing __init__.py files
 ❌ UI structure differs from conventions (both in src/dewey/ui and separate ui/ directory)
@@ -47,6 +49,7 @@ dewey/
 ## Module Purposes
 
 ### Core Module (`src/dewey/core/`)
+
 The core module contains the primary business logic of the system:
 
 - **automation/**: Handles automated tasks and workflow management
@@ -57,6 +60,7 @@ The core module contains the primary business logic of the system:
 - **research/**: Investment and financial research capabilities
 
 ### LLM Module (`src/dewey/llm/`)
+
 Handles all large language model interactions:
 
 - **api_clients/**: Implementations for different LLM providers
@@ -64,47 +68,58 @@ Handles all large language model interactions:
 - **docs/**: Module-specific documentation and PRDs
 
 ### Scripts Module (`src/dewey/scripts/`)
+
 Contains utility scripts and tools for:
+
 - PRD management
 - Code consolidation
 - Architecture analysis
 - System maintenance
 
 ### UI Module (`src/dewey/ui/` and `ui/`)
+
 **Note**: Current structure deviates from conventions. Recommendation to consolidate under `src/dewey/ui/`.
 
 ### Utils Module (`src/dewey/utils/`)
+
 Common utilities and helper functions used across the project.
 
 ### Refactor Module (`src/dewey/refactor/`)
+
 **Note**: This directory is not specified in conventions. Consider:
+
 1. Moving contents to appropriate modules
-2. Updating conventions if the directory serves a specific purpose
-3. Removing if no longer needed
+1. Updating conventions if the directory serves a specific purpose
+1. Removing if no longer needed
 
 ## Recommendations for Convention Updates
 
 1. **Directory Structure**
+
    - Add clear guidelines for handling refactoring work
    - Clarify UI module structure and resolve duplication
    - Add specifications for module-level docs directories
 
-2. **Module Organization**
+1. **Module Organization**
+
    - Add requirements for module-level README.md files
    - Specify required contents of __init__.py files
    - Define standards for module-specific documentation
 
-3. **Configuration Management**
+1. **Configuration Management**
+
    - Add guidelines for module-specific configuration sections
    - Specify validation requirements for config sections
    - Document environment variable handling
 
-4. **Documentation**
+1. **Documentation**
+
    - Add requirements for API documentation
    - Specify format for module-level documentation
    - Define standards for code examples
 
-5. **Testing**
+1. **Testing**
+
    - Add guidelines for test organization within modules
    - Specify requirements for test coverage
    - Define standards for test documentation
@@ -112,16 +127,19 @@ Common utilities and helper functions used across the project.
 ## Technical Debt Items
 
 1. **High Priority**
+
    - Resolve UI module duplication
    - Add missing __init__.py files
    - Document refactor directory purpose or migrate contents
 
-2. **Medium Priority**
+1. **Medium Priority**
+
    - Add missing module-level documentation
    - Implement consistent error handling
    - Standardize configuration validation
 
-3. **Low Priority**
+1. **Low Priority**
+
    - Update outdated documentation
    - Add missing code examples
    - Improve test coverage
@@ -129,10 +147,10 @@ Common utilities and helper functions used across the project.
 ## Next Steps
 
 1. Review and update CONVENTIONS.md to reflect current structure
-2. Create migration plan for UI module consolidation
-3. Document or migrate refactor directory contents
-4. Add missing module documentation
-5. Implement consistent error handling across modules
+1. Create migration plan for UI module consolidation
+1. Document or migrate refactor directory contents
+1. Add missing module documentation
+1. Implement consistent error handling across modules
 
 ## Appendix: Module Dependencies
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""Pre-commit hook to check if abstract methods are properly implemented.
+"""
+Pre-commit hook to check if abstract methods are properly implemented.
 
 This script verifies that classes inheriting from certain base classes
 implement their required abstract methods. Specifically:
@@ -10,18 +11,17 @@ implement their required abstract methods. Specifically:
 import argparse
 import ast
 import sys
-from typing import List, Dict, Set, Tuple
 
 
 class AbstractMethodVisitor(ast.NodeVisitor):
     """AST visitor to find classes and check for abstract method implementations."""
 
     def __init__(self):
-        self.classes: Dict[str, Set[str]] = {}  # class_name -> set of method names
-        self.base_classes: Dict[
-            str, Set[str]
+        self.classes: dict[str, set[str]] = {}  # class_name -> set of method names
+        self.base_classes: dict[
+            str, set[str],
         ] = {}  # class_name -> set of base class names
-        self.errors: List[str] = []
+        self.errors: list[str] = []
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
         """Visit class definitions and store information about methods and base classes."""
@@ -47,9 +47,9 @@ class AbstractMethodVisitor(ast.NodeVisitor):
         self.generic_visit(node)
 
 
-def check_file(filename: str) -> List[str]:
+def check_file(filename: str) -> list[str]:
     """Check a Python file for abstract method implementation requirements."""
-    with open(filename, "r", encoding="utf-8") as f:
+    with open(filename, encoding="utf-8") as f:
         content = f.read()
 
     try:
@@ -69,13 +69,13 @@ def check_file(filename: str) -> List[str]:
         # BaseScript requires 'execute'
         if "BaseScript" in base_classes and "execute" not in methods:
             errors.append(
-                f"Class '{class_name}' inherits from 'BaseScript' but doesn't implement the required 'execute' method"
+                f"Class '{class_name}' inherits from 'BaseScript' but doesn't implement the required 'execute' method",
             )
 
         # BookkeepingScript requires 'run'
         if "BookkeepingScript" in base_classes and "run" not in methods:
             errors.append(
-                f"Class '{class_name}' inherits from 'BookkeepingScript' but doesn't implement the required 'run' method"
+                f"Class '{class_name}' inherits from 'BookkeepingScript' but doesn't implement the required 'run' method",
             )
 
     return errors
@@ -84,7 +84,7 @@ def check_file(filename: str) -> List[str]:
 def main():
     """Parse arguments and run checks on specified files."""
     parser = argparse.ArgumentParser(
-        description="Check if classes implement required abstract methods"
+        description="Check if classes implement required abstract methods",
     )
     parser.add_argument("filenames", nargs="+", help="Files to check")
     args = parser.parse_args()

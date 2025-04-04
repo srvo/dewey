@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Example of using model fallbacks with the LiteLLM client.
+"""
+Example of using model fallbacks with the LiteLLM client.
 
 This script demonstrates how to configure model fallbacks to improve
 reliability in case a primary model is unavailable or fails.
@@ -7,19 +8,12 @@ reliability in case a primary model is unavailable or fails.
 
 import logging
 import os
-from typing import List
 
-from dewey.llm import (
-    LiteLLMClient,
-    LiteLLMConfig,
-    Message,
-    create_message,
-)
+from dewey.llm import LiteLLMClient, LiteLLMConfig, Message, create_message
 
 # Set up logging
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
 
@@ -52,7 +46,7 @@ def main():
 
     # Create message objects
     system_message = create_message(
-        "system", "You are a helpful assistant that provides concise answers."
+        "system", "You are a helpful assistant that provides concise answers.",
     )
 
     user_message = create_message(
@@ -72,14 +66,14 @@ def main():
         print(f"Model used: {result.model}")
         print(f"Response: {result.response_text}")
         print(
-            f"Tokens used: {result.total_tokens} (prompt: {result.prompt_tokens}, completion: {result.completion_tokens})"
+            f"Tokens used: {result.total_tokens} (prompt: {result.prompt_tokens}, completion: {result.completion_tokens})",
         )
         print(f"Response time: {result.response_ms}ms")
 
         # Check if a fallback was used
         if result.model != primary_model:
             print(
-                f"\nFallback was used! Primary model '{primary_model}' failed, fell back to '{result.model}'"
+                f"\nFallback was used! Primary model '{primary_model}' failed, fell back to '{result.model}'",
             )
 
     except Exception as e:

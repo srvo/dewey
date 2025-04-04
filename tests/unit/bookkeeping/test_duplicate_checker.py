@@ -1,7 +1,6 @@
 """Test module for duplicate_checker.py."""
 
 import hashlib
-from typing import Dict, List, Tuple
 from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
@@ -52,11 +51,10 @@ class MockFileSystem(FileSystemInterface):
             handle = m(path, mode)
             handle.read.return_value = self.files.get(path, b"")
             return handle
-        else:
-            return mock_open(read_data=self.files.get(path, b"").decode())(path, mode)
+        return mock_open(read_data=self.files.get(path, b"").decode())(path, mode)
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_fs() -> MockFileSystem:
     """Fixture providing a mock file system with sample files."""
     # Create different content for each file to get correct hash counts
@@ -70,7 +68,7 @@ def mock_fs() -> MockFileSystem:
             "data/bookkeeping/ledger/file2.journal": duplicate_content,
             "data/bookkeeping/ledger/unique1.journal": unique_content1,
             "data/bookkeeping/ledger/unique2.journal": unique_content2,
-        }
+        },
     )
 
     # Set up the walk results to include these files
@@ -85,14 +83,14 @@ def mock_fs() -> MockFileSystem:
                     "unique1.journal",
                     "unique2.journal",
                 ],
-            )
-        ]
+            ),
+        ],
     )
 
     return mock_fs
 
 
-@pytest.fixture
+@pytest.fixture()
 def checker(mock_fs: MockFileSystem) -> DuplicateChecker:
     """Fixture providing a DuplicateChecker with mock file system."""
     # First, patch the BaseScript.__init__ method so we can control it
@@ -103,7 +101,7 @@ def checker(mock_fs: MockFileSystem) -> DuplicateChecker:
             return_value="data/bookkeeping/ledger",
         ):
             checker = DuplicateChecker(
-                file_system=mock_fs, ledger_dir="data/bookkeeping/ledger"
+                file_system=mock_fs, ledger_dir="data/bookkeeping/ledger",
             )
             # Now set required attributes that would normally be set by BaseScript.__init__
             checker.logger = MagicMock()
@@ -139,7 +137,7 @@ class TestCalculateFileHash:
 class TestDuplicateChecker:
     """Test cases for DuplicateChecker class."""
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_fs(self) -> MockFileSystem:
         """Fixture to provide a mock file system with test data."""
         # Create different content for files to ensure correct hashing
@@ -153,7 +151,7 @@ class TestDuplicateChecker:
                 "data/bookkeeping/ledger/file2.journal": duplicate_content,
                 "data/bookkeeping/ledger/unique1.journal": unique_content1,
                 "data/bookkeeping/ledger/unique2.journal": unique_content2,
-            }
+            },
         )
 
         # Setup walk method to return our test files
@@ -168,13 +166,13 @@ class TestDuplicateChecker:
                         "unique1.journal",
                         "unique2.journal",
                     ],
-                )
+                ),
             ]
 
         fs.walk = custom_walk
         return fs
 
-    @pytest.fixture
+    @pytest.fixture()
     def checker(self, mock_fs: MockFileSystem) -> DuplicateChecker:
         """Fixture to provide a DuplicateChecker instance."""
         # First, patch the BaseScript.__init__ method so we can control it
@@ -189,7 +187,7 @@ class TestDuplicateChecker:
                 # Now set required attributes that would normally be set by BaseScript.__init__
                 checker.logger = MagicMock()
                 checker.config = {
-                    "bookkeeping": {"ledger_dir": "data/bookkeeping/ledger"}
+                    "bookkeeping": {"ledger_dir": "data/bookkeeping/ledger"},
                 }
                 return checker
 
@@ -207,7 +205,7 @@ class TestDuplicateChecker:
                 # Set required attributes that would normally be set by BaseScript.__init__
                 checker.logger = MagicMock()
                 checker.config = {
-                    "bookkeeping": {"ledger_dir": "data/bookkeeping/ledger"}
+                    "bookkeeping": {"ledger_dir": "data/bookkeeping/ledger"},
                 }
 
                 # Test default values
@@ -263,7 +261,7 @@ class TestDuplicateChecker:
             return mock_open(read_data=b"content")(path, mode)
 
         with patch.object(
-            checker.file_system, "open", side_effect=mock_open_with_error
+            checker.file_system, "open", side_effect=mock_open_with_error,
         ):
             hashes = checker.find_ledger_files()
 
@@ -281,7 +279,7 @@ class TestDuplicateChecker:
         checker.logger.warning.assert_called_once()
 
     def test_check_duplicates_without_duplicates(
-        self, checker: DuplicateChecker
+        self, checker: DuplicateChecker,
     ) -> None:
         """Test check_duplicates when no duplicates are found."""
         # Mock find_ledger_files to return no duplicates
@@ -295,7 +293,7 @@ class TestDuplicateChecker:
 
             assert result is False
             checker.logger.info.assert_called_once_with(
-                "No duplicate ledger files found."
+                "No duplicate ledger files found.",
             )
 
     def test_run_with_duplicates(self, checker: DuplicateChecker) -> None:
@@ -304,7 +302,7 @@ class TestDuplicateChecker:
             checker.run()
 
             checker.logger.error.assert_called_once_with(
-                "Duplicate ledger files found."
+                "Duplicate ledger files found.",
             )
 
     def test_run_without_duplicates(self, checker: DuplicateChecker) -> None:
@@ -313,7 +311,7 @@ class TestDuplicateChecker:
             checker.run()
 
             checker.logger.info.assert_called_once_with(
-                "No duplicate ledger files found."
+                "No duplicate ledger files found.",
             )
 
     @patch("dewey.core.bookkeeping.duplicate_checker.DuplicateChecker")

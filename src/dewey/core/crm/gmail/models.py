@@ -4,7 +4,8 @@ from dewey.core.base_script import BaseScript
 
 
 class GmailModel(BaseScript):
-    """A model for interacting with Gmail within Dewey.
+    """
+    A model for interacting with Gmail within Dewey.
 
     This class inherits from BaseScript and provides a standardized
     structure for Gmail-related scripts, including configuration
@@ -13,9 +14,11 @@ class GmailModel(BaseScript):
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initializes the GmailModel.
+        """
+        Initializes the GmailModel.
 
         Args:
+        ----
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
 
@@ -36,13 +39,16 @@ class GmailModel(BaseScript):
         self.logger.info("Gmail model run completed.")
 
     def some_method(self, arg1: str, arg2: int) -> str:
-        """An example method.
+        """
+        An example method.
 
         Args:
+        ----
             arg1: A string argument.
             arg2: An integer argument.
 
         Returns:
+        -------
             A string result.
 
         """
@@ -55,8 +61,8 @@ class GmailModel(BaseScript):
 
         try:
             # Attempt to initialize Gmail service
-            from googleapiclient.discovery import build
             from google.oauth2.credentials import Credentials
+            from googleapiclient.discovery import build
 
             # Load credentials from config
             client_id = self.get_config_value("gmail_credentials.client_id")

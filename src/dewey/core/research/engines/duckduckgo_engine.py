@@ -1,5 +1,6 @@
-from dewey.core.base_script import BaseScript
 from duckduckgo_search import ddg
+
+from dewey.core.base_script import BaseScript
 
 
 class DuckDuckGoEngine(BaseScript):
@@ -10,13 +11,16 @@ class DuckDuckGoEngine(BaseScript):
         super().__init__(config_section="research_engines.duckduckgo")
 
     def execute(self, query: str, max_results: int = 5) -> list[dict]:
-        """Executes a search query using the DuckDuckGo search engine.
+        """
+        Executes a search query using the DuckDuckGo search engine.
 
         Args:
+        ----
             query: The search query string.
             max_results: The maximum number of search results to return.
 
         Returns:
+        -------
             A list of dictionaries, where each dictionary represents a search result.
             Each dictionary contains the keys 'title', 'href', and 'body'.
 

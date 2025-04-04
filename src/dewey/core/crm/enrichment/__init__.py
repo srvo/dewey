@@ -1,4 +1,5 @@
 """Module for managing enrichment tasks within Dewey's CRM."""
+
 """
 Dewey CRM Enrichment Module.
 

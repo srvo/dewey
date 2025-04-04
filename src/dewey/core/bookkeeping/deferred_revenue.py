@@ -2,8 +2,8 @@ import os
 import re
 import sys
 from datetime import datetime
-from typing import List, Protocol
 from re import Match
+from typing import Protocol
 
 from dateutil.relativedelta import relativedelta
 
@@ -79,12 +79,15 @@ class AltruistIncomeProcessor(BaseScript):
 
     @staticmethod
     def _parse_altruist_transactions(journal_content: str) -> list[Match[str]]:
-        """Parses the journal content to find Altruist income transactions.
+        """
+        Parses the journal content to find Altruist income transactions.
 
         Args:
+        ----
             journal_content: The content of the journal file as a string.
 
         Returns:
+        -------
             A list of match objects, each representing an Altruist income transaction.
 
         """
@@ -97,12 +100,15 @@ class AltruistIncomeProcessor(BaseScript):
         return list(transaction_regex.finditer(journal_content))  # type: ignore
 
     def _generate_deferred_revenue_transactions(self, match: re.Match) -> list[str]:
-        """Generates deferred revenue and fee income transactions for a given Altruist transaction.
+        """
+        Generates deferred revenue and fee income transactions for a given Altruist transaction.
 
         Args:
+        ----
             match: A match object representing an Altruist income transaction.
 
         Returns:
+        -------
             A list of transaction strings to be added to the journal.
 
         """
@@ -144,7 +150,8 @@ class AltruistIncomeProcessor(BaseScript):
         return transactions
 
     def process_altruist_income(self, journal_file: str) -> str:
-        """Processes the journal file to recognize altruist income.
+        """
+        Processes the journal file to recognize altruist income.
 
         Recognizes altruist income at the beginning of each quarter,
         recognizes one month's worth of revenue as fee income, and creates deferred revenue entries
@@ -152,12 +159,15 @@ class AltruistIncomeProcessor(BaseScript):
         in the quarter.
 
         Args:
+        ----
             journal_file: The path to the journal file.
 
         Returns:
+        -------
             The updated content of the journal file with the new transactions.
 
         Raises:
+        ------
             FileNotFoundError: If the journal file does not exist.
 
         """
@@ -183,7 +193,7 @@ class AltruistIncomeProcessor(BaseScript):
                 output_transactions.extend(transactions)
             except Exception:
                 self.logger.exception(
-                    "Failed to generate transactions for match: %s", match.group(0)
+                    "Failed to generate transactions for match: %s", match.group(0),
                 )
                 continue
 
@@ -203,12 +213,15 @@ class AltruistIncomeProcessor(BaseScript):
         return output_content
 
     def _run(self, journal_file: str) -> str:
-        """Core logic of the Altruist income processing.
+        """
+        Core logic of the Altruist income processing.
 
         Args:
+        ----
             journal_file: The path to the journal file.
 
         Returns:
+        -------
             The updated content of the journal file with the new transactions.
 
         """

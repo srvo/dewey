@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class DropOtherTables(BaseScript):
-    """A script to drop all tables except the ones specified in the configuration.
+    """
+    A script to drop all tables except the ones specified in the configuration.
 
     This script inherits from BaseScript and provides a standardized
     structure for database maintenance, including configuration loading,
@@ -18,7 +19,7 @@ class DropOtherTables(BaseScript):
 
         if not isinstance(tables_to_keep, list):
             self.logger.error(
-                "The 'tables_to_keep' configuration value must be a list."
+                "The 'tables_to_keep' configuration value must be a list.",
             )
             return
 
@@ -37,7 +38,7 @@ class DropOtherTables(BaseScript):
 
         if not isinstance(tables_to_keep, list):
             self.logger.error(
-                "The 'tables_to_keep' configuration value must be a list."
+                "The 'tables_to_keep' configuration value must be a list.",
             )
             return
 
@@ -47,7 +48,7 @@ class DropOtherTables(BaseScript):
             with self.db_connection() as conn:
                 with conn.cursor() as cursor:
                     cursor.execute(
-                        "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema';"
+                        "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema';",
                     )
                     all_tables = [row[0] for row in cursor.fetchall()]
                     self.logger.debug(f"All tables in database: {all_tables}")

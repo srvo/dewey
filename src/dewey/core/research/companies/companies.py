@@ -16,7 +16,8 @@ class Companies(BaseScript):
         This method orchestrates the process of researching and analyzing companies,
         including fetching data, performing analysis, and storing results.
 
-        Raises:
+        Raises
+        ------
             Exception: If any error occurs during the process.
 
         """
@@ -28,7 +29,8 @@ class Companies(BaseScript):
         This method orchestrates the process of researching and analyzing companies,
         including fetching data, performing analysis, and storing results.
 
-        Raises:
+        Raises
+        ------
             Exception: If any error occurs during the process.
 
         """

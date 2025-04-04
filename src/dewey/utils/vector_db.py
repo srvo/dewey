@@ -4,31 +4,37 @@ from dewey.core.base_script import BaseScript
 
 
 class VectorDB(BaseScript):
-    """A utility script for interacting with a vector database.
+    """
+    A utility script for interacting with a vector database.
 
     Inherits from BaseScript for standardized configuration, logging,
     and database connections.
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        """Initializes the VectorDB script.
+        """
+        Initializes the VectorDB script.
 
         Args:
+        ----
             **kwargs: Additional keyword arguments passed to BaseScript.
 
         """
         super().__init__(config_section="vector_db", **kwargs)
 
     def execute(self) -> None:
-        """Executes the main logic of the VectorDB script.
+        """
+        Executes the main logic of the VectorDB script.
 
         Retrieves configuration values, initializes the database and LLM,
         and performs vector operations.
 
-        Raises:
+        Raises
+        ------
             Exception: If there is an error during the vector database operation.
 
-        Returns:
+        Returns
+        -------
             None
 
         """
@@ -45,11 +51,12 @@ class VectorDB(BaseScript):
 
         except Exception as e:
             self.logger.exception(
-                f"An error occurred during vector database operation: {e}"
+                f"An error occurred during vector database operation: {e}",
             )
 
     def run(self) -> None:
-        """Legacy method for backward compatibility.
+        """
+        Legacy method for backward compatibility.
 
         New scripts should implement execute() instead of run().
         This method will be deprecated in a future version.

@@ -1,34 +1,41 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
 
 class LogicalFallacyAgent(BaseScript):
-    """A Dewey script for identifying logical fallacies in text.
+    """
+    A Dewey script for identifying logical fallacies in text.
 
     This agent leverages the Dewey framework for configuration,
     logging, and interaction with external resources.
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        """Initializes the LogicalFallacyAgent.
+        """
+        Initializes the LogicalFallacyAgent.
 
         Args:
+        ----
             **kwargs: Keyword arguments passed to the BaseScript constructor.
 
         """
         super().__init__(**kwargs)
 
     def run(self, text: str) -> dict[str, Any]:
-        """Executes the logical fallacy detection process.
+        """
+        Executes the logical fallacy detection process.
 
         Args:
+        ----
             text: The input text to analyze for logical fallacies.
 
         Returns:
+        -------
             A dictionary containing the analysis results.
 
         Raises:
+        ------
             Exception: If an error occurs during the analysis.
 
         """
@@ -54,7 +61,8 @@ class LogicalFallacyAgent(BaseScript):
             raise
 
     def execute(self) -> None:
-        """Executes the logical fallacy detection workflow.
+        """
+        Executes the logical fallacy detection workflow.
 
         This method retrieves text to analyze from a configured source,
         analyzes it for logical fallacies using the configured LLM, and
@@ -78,7 +86,7 @@ class LogicalFallacyAgent(BaseScript):
 
         except Exception as e:
             self.logger.exception(
-                f"Error during logical fallacy detection workflow: {e}"
+                f"Error during logical fallacy detection workflow: {e}",
             )
             raise
 

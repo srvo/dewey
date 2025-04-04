@@ -7,9 +7,9 @@ from .main_menu import MainMenu
 from .research import ResearchScreen
 
 __all__ = [
-    "ResearchScreen",
     "DatabaseScreen",
     "EnginesScreen",
     "LLMAgentsScreen",
     "MainMenu",
+    "ResearchScreen",
 ]

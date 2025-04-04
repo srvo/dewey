@@ -38,6 +38,7 @@ ENV/
 *.duckdb.wal
 backups/
 logs/
+*.log
 
 # Aider
 .aider*

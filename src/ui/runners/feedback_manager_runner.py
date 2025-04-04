@@ -1,4 +1,5 @@
-"""Feedback Manager Runner
+"""
+Feedback Manager Runner
 
 A standalone script to run the Feedback Manager screen for testing and development.
 """
@@ -18,7 +19,7 @@ class FeedbackManagerApp(App):
     """Simple app to run the Feedback Manager screen."""
 
     CSS_PATH = os.path.join(
-        os.path.dirname(__file__), "../assets/feedback_manager.tcss"
+        os.path.dirname(__file__), "../assets/feedback_manager.tcss",
     )
     TITLE = "Dewey TUI — Feedback Manager & Port5 Research"
 

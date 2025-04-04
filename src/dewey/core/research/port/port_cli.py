@@ -14,7 +14,8 @@ class PortCLI(BaseScript):
         super().__init__(config_section="port_cli", requires_db=True, enable_llm=True)
 
     def execute(self) -> None:
-        """Executes the PortCLI script.
+        """
+        Executes the PortCLI script.
 
         This method parses command-line arguments, connects to the database,
         fetches data, calls the LLM, and inserts the results into the database.
@@ -42,7 +43,7 @@ class PortCLI(BaseScript):
                 prompt = "Summarize the following data:"
                 data = {"key1": "value1", "key2": "value2"}
                 response = quick_completion(
-                    prompt + str(data), llm_client=self.llm_client
+                    prompt + str(data), llm_client=self.llm_client,
                 )
 
                 # Insert data into the database using build_insert_query and db_conn.execute
@@ -61,14 +62,16 @@ class PortCLI(BaseScript):
     def run(self) -> None:
         """Legacy method for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 
     def setup_argparse(self) -> argparse.ArgumentParser:
-        """Set up command line arguments.
+        """
+        Set up command line arguments.
 
-        Returns:
+        Returns
+        -------
             An argument parser configured with common options.
 
         """

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Bidirectional Schema Sync Script.
+"""
+Bidirectional Schema Sync Script.
 
 This script demonstrates how to use the bidirectional schema sync functionality
 to keep your database schema and code models in sync.
@@ -21,7 +22,7 @@ from src.dewey.core.db.schema_updater import main as update_schema
 
 
 def run_bidirectional_sync(
-    execute_alters=False, force_imports=False, add_primary_key=True
+    execute_alters=False, force_imports=False, add_primary_key=True,
 ):
     """Run the bidirectional schema sync process."""
     print("Starting bidirectional schema sync...")
@@ -38,7 +39,7 @@ def run_bidirectional_sync(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Run bidirectional schema synchronization."
+        description="Run bidirectional schema synchronization.",
     )
     parser.add_argument(
         "--execute",
@@ -64,5 +65,5 @@ if __name__ == "__main__":
             execute_alters=args.execute,
             force_imports=args.force_imports,
             add_primary_key=args.add_primary_key,
-        )
+        ),
     )

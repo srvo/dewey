@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Enhanced script for refactoring code and generating tests using Aider.
+"""
+Enhanced script for refactoring code and generating tests using Aider.
 
 This script provides a comprehensive workflow to:
 1. Refactor a given directory of Python files to match Dewey conventions
@@ -36,7 +37,8 @@ logger = logging.getLogger("aider_refactor_and_test")
 
 
 def read_file(file_path: Path) -> str:
-    """Read a file and return its contents.
+    """
+    Read a file and return its contents.
 
     Args:
     ----
@@ -51,12 +53,13 @@ def read_file(file_path: Path) -> str:
         with open(file_path) as f:
             return f.read()
     except Exception as e:
-        logger.warning(f"Could not read file {file_path}: {str(e)}")
+        logger.warning(f"Could not read file {file_path}: {e!s}")
         return ""
 
 
 def read_conventions() -> str:
-    """Read the conventions.md file for context.
+    """
+    Read the conventions.md file for context.
 
     Returns
     -------
@@ -67,7 +70,8 @@ def read_conventions() -> str:
 
 
 def read_config() -> str:
-    """Read the dewey.yaml config file for context.
+    """
+    Read the dewey.yaml config file for context.
 
     Returns
     -------
@@ -78,7 +82,8 @@ def read_config() -> str:
 
 
 def read_base_script() -> str:
-    """Read the base_script.py file for context.
+    """
+    Read the base_script.py file for context.
 
     Returns
     -------
@@ -89,7 +94,8 @@ def read_base_script() -> str:
 
 
 def find_python_files(path: Path) -> list[Path]:
-    """Find all Python files in the directory or return the given file if it's a Python file.
+    """
+    Find all Python files in the directory or return the given file if it's a Python file.
 
     Args:
     ----
@@ -102,13 +108,14 @@ def find_python_files(path: Path) -> list[Path]:
     """
     if path.is_file() and path.suffix == ".py":
         return [path]
-    elif path.is_dir():
+    if path.is_dir():
         return list(path.glob("**/*.py"))
     return []
 
 
 def find_test_files(path: Path) -> list[Path]:
-    """Find all test files in the directory.
+    """
+    Find all test files in the directory.
 
     Args:
     ----
@@ -125,9 +132,10 @@ def find_test_files(path: Path) -> list[Path]:
 
 
 def build_refactor_prompt(
-    conventions_content: str, config_content: str, base_script_content: str
+    conventions_content: str, config_content: str, base_script_content: str,
 ) -> str:
-    """Build the refactor prompt with all context.
+    """
+    Build the refactor prompt with all context.
 
     Args:
     ----
@@ -176,7 +184,8 @@ def build_test_prompt(
     config_content: str,
     base_script_content: str,
 ) -> str:
-    """Build the test generation prompt with all context.
+    """
+    Build the test generation prompt with all context.
 
     Args:
     ----
@@ -309,7 +318,8 @@ def process_files_for_refactoring(
     base_script_content: str,
     dry_run: bool = False,
 ) -> None:
-    """Process Python files for refactoring.
+    """
+    Process Python files for refactoring.
 
     Args:
     ----
@@ -322,7 +332,7 @@ def process_files_for_refactoring(
 
     """
     refactor_prompt = build_refactor_prompt(
-        conventions_content, config_content, base_script_content
+        conventions_content, config_content, base_script_content,
     )
 
     for file_path in source_files:
@@ -349,9 +359,10 @@ def process_files_for_refactoring(
 
 
 def run_generated_tests(
-    test_dir: Path, source_files: list[Path], verbose: bool = False
+    test_dir: Path, source_files: list[Path], verbose: bool = False,
 ) -> bool:
-    """Run the generated tests using pytest.
+    """
+    Run the generated tests using pytest.
 
     Args:
     ----
@@ -373,7 +384,7 @@ def run_generated_tests(
             rel_path = source_file.relative_to(SRC_DIR)
             module_dir = rel_path.parent
         except ValueError:
-            module_dir = Path("")
+            module_dir = Path()
             rel_path = Path(source_file.name)
 
         test_file_name = f"test_{source_file.name}"
@@ -399,7 +410,7 @@ def run_generated_tests(
     # Run the tests
     logger.info(f"Running tests with command: {' '.join(cmd)}")
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True)
+        result = subprocess.run(cmd, capture_output=True, text=True, check=False)
 
         # Log the output
         if result.stdout:
@@ -427,7 +438,8 @@ def generate_tests_for_files(
     dry_run: bool = False,
     make_testable: bool = True,  # New parameter to allow modifying source files
 ) -> None:
-    """Generate tests for each source file.
+    """
+    Generate tests for each source file.
 
     Args:
     ----
@@ -456,7 +468,7 @@ def generate_tests_for_files(
                 module_dir = rel_path.parent
             except ValueError:
                 # If not in SRC_DIR, just use the file name
-                module_dir = Path("")
+                module_dir = Path()
                 rel_path = Path(source_file.name)
 
             test_file_name = f"test_{source_file.name}"
@@ -476,7 +488,8 @@ def generate_tests_for_files(
             if not conftest_path.exists():
                 logger.info(f"Creating conftest.py at {conftest_path}")
                 with open(conftest_path, "w") as f:
-                    f.write("""\"\"\"Common test fixtures for this test directory.\"\"\"
+                    f.write(
+                        """\"\"\"Common test fixtures for this test directory.\"\"\"
 
 import pytest
 from unittest.mock import MagicMock, patch
@@ -497,7 +510,8 @@ def mock_config() -> Dict[str, Any]:
         "settings": {"key": "value"},
         "database": {"connection_string": "mock_connection"}
     }
-""")
+""",
+                    )
 
             # Use a null file for input history to avoid command issues
             null_history = os.devnull if os.name != "nt" else "NUL"
@@ -509,18 +523,20 @@ def mock_config() -> Dict[str, Any]:
             # Create test file if it doesn't exist
             if not test_file_path.exists():
                 with open(test_file_path, "w") as f:
-                    f.write(f"""\"\"\"Tests for {source_file.stem}.\"\"\"
+                    f.write(
+                        f"""\"\"\"Tests for {source_file.stem}.\"\"\"
 
 import pytest
 from unittest.mock import patch, MagicMock
 from typing import Dict, List, Any, Optional
 
 # Import the module being tested
-""")
+""",
+                    )
 
             # First create/update the test file
             test_coder = Coder.create(
-                main_model=model, fnames=[str(test_file_path)], io=io
+                main_model=model, fnames=[str(test_file_path)], io=io,
             )
 
             # Build test prompt
@@ -565,7 +581,7 @@ Source file:
 
                 # Create coder with the source file
                 source_coder = Coder.create(
-                    main_model=model, fnames=[str(source_file)], io=io
+                    main_model=model, fnames=[str(source_file)], io=io,
                 )
 
                 # Run source file improvement
@@ -593,16 +609,16 @@ Source file:
                     test_coder.run(updated_test_prompt)
 
         except Exception as e:
-            logger.error(f"Failed to generate tests for {source_file}: {str(e)}")
+            logger.error(f"Failed to generate tests for {source_file}: {e!s}")
 
 
 def main():
     """Function main."""
     parser = argparse.ArgumentParser(
-        description="Refactor Python files and generate tests"
+        description="Refactor Python files and generate tests",
     )
     parser.add_argument(
-        "--dry-run", action="store_true", help="Don't actually modify files"
+        "--dry-run", action="store_true", help="Don't actually modify files",
     )
     parser.add_argument(
         "--src-dir",
@@ -616,13 +632,13 @@ def main():
         help="Directory for test files (defaults to PROJECT_ROOT/tests)",
     )
     parser.add_argument(
-        "--model", type=str, default=DEFAULT_MODEL, help="Model to use for refactoring"
+        "--model", type=str, default=DEFAULT_MODEL, help="Model to use for refactoring",
     )
     parser.add_argument(
-        "--skip-refactor", action="store_true", help="Skip the refactoring phase"
+        "--skip-refactor", action="store_true", help="Skip the refactoring phase",
     )
     parser.add_argument(
-        "--skip-tests", action="store_true", help="Skip the test generation phase"
+        "--skip-tests", action="store_true", help="Skip the test generation phase",
     )
     parser.add_argument(
         "--conventions-file",
@@ -635,7 +651,7 @@ def main():
         help="Don't modify source files for testability",
     )
     parser.add_argument(
-        "--run-tests", action="store_true", help="Run tests after generating them"
+        "--run-tests", action="store_true", help="Run tests after generating them",
     )
     parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
     args = parser.parse_args()

@@ -5,18 +5,21 @@ from dewey.core.base_script import BaseScript
 
 
 class FormatAndLint(BaseScript):
-    """A class for formatting and linting code.
+    """
+    A class for formatting and linting code.
 
     This class inherits from BaseScript and provides methods for
     formatting and linting code.
     """
 
     def __init__(
-        self, config_section: str = "format_and_lint", logger: logging.Logger = None
+        self, config_section: str = "format_and_lint", logger: logging.Logger = None,
     ) -> None:
-        """Initializes the FormatAndLint class.
+        """
+        Initializes the FormatAndLint class.
 
         Args:
+        ----
             config_section (str): The configuration section to use.
 
         """
@@ -31,7 +34,7 @@ class FormatAndLint(BaseScript):
         try:
             # Add your formatting and linting logic here
             config_value: Any = self.get_config_value(
-                "some_config_key", "default_value"
+                "some_config_key", "default_value",
             )
             self.logger.info(f"Example config value: {config_value}")
 
@@ -47,6 +50,6 @@ class FormatAndLint(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()

@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class ScreenManager(BaseScript):
-    """Manages the display and navigation of screens in the TUI.
+    """
+    Manages the display and navigation of screens in the TUI.
 
     This class inherits from BaseScript and provides methods for
     initializing, displaying, and switching between different screens
@@ -24,9 +25,11 @@ class ScreenManager(BaseScript):
         print("Placeholder for screen display logic.")
 
     def display_screen(self, screen_name: str) -> None:
-        """Displays the specified screen.
+        """
+        Displays the specified screen.
 
         Args:
+        ----
             screen_name: The name of the screen to display.
 
         """
@@ -35,7 +38,8 @@ class ScreenManager(BaseScript):
         print(f"Displaying screen: {screen_name}")
 
     def execute(self) -> None:
-        """Executes the screen management logic.
+        """
+        Executes the screen management logic.
 
         This method initializes and manages the display of screens
         within the text-based user interface. It retrieves the default

@@ -57,10 +57,7 @@ class TestLiteLLMUtils:
     def test_set_api_keys(self) -> None:
         """Test setting API keys in litellm."""
         # Arrange
-        api_keys = {
-            "openai": "test-openai-key",
-            "anthropic": "test-anthropic-key",
-        }
+        api_keys = {"openai": "test-openai-key", "anthropic": "test-anthropic-key"}
 
         # Act
         with patch("dewey.llm.litellm_utils.litellm") as mock_litellm:
@@ -73,14 +70,14 @@ class TestLiteLLMUtils:
                     assert mock_litellm.api_key == "test-openai-key"
                     # Check if environment variable is set for Anthropic
                     mock_os.environ.__setitem__.assert_called_with(
-                        "ANTHROPIC_API_KEY", "test-anthropic-key"
+                        "ANTHROPIC_API_KEY", "test-anthropic-key",
                     )
 
     def test_get_text_from_response(self) -> None:
         """Test extracting text from a model response."""
         # Arrange - create a proper dict-like response
         mock_response = {
-            "choices": [{"message": {"content": "This is a test response"}}]
+            "choices": [{"message": {"content": "This is a test response"}}],
         }
 
         # Act
@@ -98,7 +95,7 @@ class TestLiteLLMUtils:
 
         # Test with Anthropic format
         anthropic_response = {
-            "content": [{"type": "text", "text": "This is an Anthropic response"}]
+            "content": [{"type": "text", "text": "This is an Anthropic response"}],
         }
         with patch("dewey.llm.litellm_utils.logger") as mock_logger:
             text = get_text_from_response(anthropic_response)
@@ -134,7 +131,7 @@ class TestLiteLLMUtils:
         # Act
         with patch("dewey.llm.litellm_utils.logger") as mock_logger:
             with patch(
-                "dewey.llm.litellm_utils.completion", return_value=mock_response
+                "dewey.llm.litellm_utils.completion", return_value=mock_response,
             ):
                 with patch(
                     "dewey.llm.litellm_utils.get_text_from_response",

@@ -2,8 +2,8 @@
 """Test helper utilities for the Dewey project."""
 
 import asyncio
-from typing import Any, TypeVar
 from collections.abc import Callable
+from typing import Any, TypeVar
 
 from textual.pilot import Pilot
 
@@ -11,16 +11,19 @@ T = TypeVar("T")
 
 
 async def wait_for_condition(
-    condition: Callable[[], bool], timeout: float = 1.0, interval: float = 0.1
+    condition: Callable[[], bool], timeout: float = 1.0, interval: float = 0.1,
 ) -> None:
-    """Wait for a condition to become true.
+    """
+    Wait for a condition to become true.
 
     Args:
+    ----
         condition: Function that returns True when condition is met
         timeout: Maximum time to wait in seconds
         interval: Time between checks in seconds
 
     Raises:
+    ------
         TimeoutError: If condition is not met within timeout
 
     """
@@ -32,16 +35,19 @@ async def wait_for_condition(
 
 
 async def wait_for_worker(
-    pilot: Pilot[Any], worker_id: str, timeout: float = 5.0
+    pilot: Pilot[Any], worker_id: str, timeout: float = 5.0,
 ) -> None:
-    """Wait for a worker to complete.
+    """
+    Wait for a worker to complete.
 
     Args:
+    ----
         pilot: Textual pilot instance
         worker_id: ID of the worker to wait for
         timeout: Maximum time to wait in seconds
 
     Raises:
+    ------
         TimeoutError: If worker does not complete within timeout
 
     """
@@ -55,11 +61,13 @@ async def wait_for_worker(
 
 
 async def simulate_file_upload(
-    pilot: Pilot[Any], source_path: str, target_db: str
+    pilot: Pilot[Any], source_path: str, target_db: str,
 ) -> None:
-    """Simulate a file upload operation.
+    """
+    Simulate a file upload operation.
 
     Args:
+    ----
         pilot: Textual pilot instance
         source_path: Path to source file/directory
         target_db: Target database name
@@ -82,9 +90,11 @@ async def simulate_file_upload(
 
 
 async def simulate_table_analysis(pilot: Pilot[Any], database: str) -> None:
-    """Simulate a table analysis operation.
+    """
+    Simulate a table analysis operation.
 
     Args:
+    ----
         pilot: Textual pilot instance
         database: Database to analyze
 
@@ -104,9 +114,11 @@ async def simulate_table_analysis(pilot: Pilot[Any], database: str) -> None:
 
 
 async def simulate_config_save(pilot: Pilot[Any], token: str, default_db: str) -> None:
-    """Simulate saving configuration.
+    """
+    Simulate saving configuration.
 
     Args:
+    ----
         pilot: Textual pilot instance
         token: MotherDuck token
         default_db: Default database name

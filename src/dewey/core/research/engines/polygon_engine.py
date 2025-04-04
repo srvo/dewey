@@ -8,9 +8,11 @@ class PolygonEngine(BaseScript):
     """Engine for interacting with the Polygon API."""
 
     def __init__(self, config_section: str = "polygon_engine") -> None:
-        """Initializes the PolygonEngine.
+        """
+        Initializes the PolygonEngine.
 
         Args:
+        ----
             config_section (str): Section in dewey.yaml to load for this engine.
 
         """
@@ -38,11 +40,7 @@ class PolygonEngine(BaseScript):
                 create_table(conn, table_name, schema)
 
                 # Example: Insert data (replace with your actual data)
-                data = {
-                    "ticker": "AAPL",
-                    "timestamp": "2024-01-01",
-                    "price": 170.00,
-                }
+                data = {"ticker": "AAPL", "timestamp": "2024-01-01", "price": 170.00}
                 insert_query = (
                     f"INSERT INTO {table_name} ({', '.join(data.keys())}) "
                     f"VALUES ({', '.join(['?' for _ in data.values()])})"
@@ -50,7 +48,7 @@ class PolygonEngine(BaseScript):
                 execute_query(conn, insert_query, list(data.values()))
 
                 self.logger.info(
-                    f"Successfully created table {table_name} and inserted sample data."
+                    f"Successfully created table {table_name} and inserted sample data.",
                 )
 
         except Exception as e:

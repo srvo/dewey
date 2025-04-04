@@ -4,16 +4,19 @@ from dewey.core.base_script import BaseScript
 
 
 class EntityAnalysis(BaseScript):
-    """Performs entity analysis.
+    """
+    Performs entity analysis.
 
     This class inherits from BaseScript and provides methods for
     analyzing entities.
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initializes the EntityAnalysis module.
+        """
+        Initializes the EntityAnalysis module.
 
         Args:
+        ----
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
 
@@ -23,19 +26,23 @@ class EntityAnalysis(BaseScript):
         self.description = "Performs entity analysis."
 
     def run(self) -> None:
-        """Executes the entity analysis process.
+        """
+        Executes the entity analysis process.
 
         This method retrieves the API key from the configuration, logs
         the start and completion of the analysis, and includes a placeholder
         for the actual entity analysis logic.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             None
 
         """
@@ -43,7 +50,7 @@ class EntityAnalysis(BaseScript):
 
         # Example of accessing a configuration value
         api_key = self.get_config_value(
-            "entity_analysis.api_key", default="default_key"
+            "entity_analysis.api_key", default="default_key",
         )
         self.logger.debug(f"API Key: {api_key}")
 
@@ -51,18 +58,22 @@ class EntityAnalysis(BaseScript):
         self.logger.info("Entity analysis completed.")
 
     def execute(self) -> None:
-        """Executes the entity analysis process.
+        """
+        Executes the entity analysis process.
 
         This method logs the start and completion of the analysis and
         includes a placeholder for the actual entity analysis logic.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             NotImplementedError: If the entity analysis logic is not implemented.
 
         """

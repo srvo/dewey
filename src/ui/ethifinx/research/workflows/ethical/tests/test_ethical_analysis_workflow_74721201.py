@@ -26,10 +26,7 @@ class TestEthicalAnalysisWorkflow(BaseScriptBaseWorkflowIntegrationTest):
         assert isinstance(mock_workflow.output_handler, ResearchOutputHandler)
 
     def test_workflow_execution(
-        self,
-        mock_workflow,
-        temp_data_dir,
-        sample_companies_csv,
+        self, mock_workflow, temp_data_dir, sample_companies_csv,
     ) -> None:
         """Test complete workflow execution."""
         results = mock_workflow.execute(data_dir=temp_data_dir)
@@ -57,10 +54,7 @@ class TestEthicalAnalysisWorkflow(BaseScriptBaseWorkflowIntegrationTest):
             assert len(output_data["companies"]) > 0
 
     def test_database_integration(
-        self,
-        mock_workflow,
-        temp_data_dir,
-        sample_companies_csv,
+        self, mock_workflow, temp_data_dir, sample_companies_csv,
     ) -> None:
         """Test database operations during workflow execution."""
         mock_workflow.execute(data_dir=temp_data_dir)
@@ -76,10 +70,7 @@ class TestEthicalAnalysisWorkflow(BaseScriptBaseWorkflowIntegrationTest):
             mock_workflow.execute(data_dir=temp_data_dir)
 
     def test_output_handler_integration(
-        self,
-        mock_workflow,
-        temp_data_dir,
-        sample_companies_csv,
+        self, mock_workflow, temp_data_dir, sample_companies_csv,
     ) -> None:
         """Test integration with output handler."""
         mock_workflow.execute(data_dir=temp_data_dir)
@@ -105,10 +96,7 @@ class TestEthicalAnalysisWorkflow(BaseScriptBaseWorkflowIntegrationTest):
             assert "metadata" in company
 
     def test_engine_integration(
-        self,
-        mock_workflow,
-        temp_data_dir,
-        sample_companies_csv,
+        self, mock_workflow, temp_data_dir, sample_companies_csv,
     ) -> None:
         """Test integration with search and analysis engines."""
         # Override mock engines with specific test data
@@ -198,10 +186,7 @@ class TestEthicalAnalysisWorkflow(BaseScriptBaseWorkflowIntegrationTest):
         con.close()
 
     def test_workflow_stats(
-        self,
-        mock_workflow,
-        temp_data_dir,
-        sample_companies_csv,
+        self, mock_workflow, temp_data_dir, sample_companies_csv,
     ) -> None:
         """Test statistics generation during workflow execution."""
         results = mock_workflow.execute(data_dir=temp_data_dir)
@@ -224,10 +209,7 @@ class TestEthicalAnalysisWorkflow(BaseScriptBaseWorkflowIntegrationTest):
         assert stats["total_analysis_words"] > 0
 
     def test_error_recovery(
-        self,
-        mock_workflow,
-        temp_data_dir,
-        sample_companies_csv,
+        self, mock_workflow, temp_data_dir, sample_companies_csv,
     ) -> None:
         """Test workflow continues after individual company errors."""
 

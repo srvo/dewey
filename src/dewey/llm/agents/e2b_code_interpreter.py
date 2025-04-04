@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class E2BCodeInterpreter(BaseScript):
-    """A class for interacting with the E2B code interpreter.
+    """
+    A class for interacting with the E2B code interpreter.
 
     Inherits from BaseScript for standardized configuration and logging.
     """
@@ -12,9 +13,11 @@ class E2BCodeInterpreter(BaseScript):
         config_section: str = "E2BCodeInterpreter",
         name: str = "E2BCodeInterpreter",
     ) -> None:
-        """Initializes the E2BCodeInterpreter.
+        """
+        Initializes the E2BCodeInterpreter.
 
         Args:
+        ----
             config_section (str): The configuration section to use.
             name (str): The name of the script.
 
@@ -22,12 +25,14 @@ class E2BCodeInterpreter(BaseScript):
         super().__init__(config_section=config_section, name=name)
 
     def execute(self) -> None:
-        """Executes the core logic of the E2B code interpreter.
+        """
+        Executes the core logic of the E2B code interpreter.
 
         Retrieves configuration values, initializes necessary components,
         and performs the main operations of the code interpreter.
 
-        Raises:
+        Raises
+        ------
             Exception: If an error occurs during execution.
 
         """
@@ -52,17 +57,20 @@ class E2BCodeInterpreter(BaseScript):
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 
     def interpret_code(self, code: str) -> str:
-        """Interprets the given code using the E2B code interpreter.
+        """
+        Interprets the given code using the E2B code interpreter.
 
         Args:
+        ----
             code (str): The code to interpret.
 
         Returns:
+        -------
             str: The result of the code interpretation.
 
         """

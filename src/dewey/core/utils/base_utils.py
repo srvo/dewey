@@ -7,20 +7,24 @@ class Utils(BaseScript):
     """A utility script demonstrating Dewey conventions."""
 
     def __init__(self, name: str = "Utils") -> None:
-        """Initializes the Utils script.
+        """
+        Initializes the Utils script.
 
         Args:
+        ----
             name: The name of the script.
 
         """
         super().__init__(config_section="utils", name=name)
 
     def run(self) -> None:
-        """Executes the core logic of the Utils script.
+        """
+        Executes the core logic of the Utils script.
 
         This example demonstrates accessing configuration values and using the logger.
 
-        Raises:
+        Raises
+        ------
             Exception: If an error occurs during execution.
 
         """
@@ -34,7 +38,8 @@ class Utils(BaseScript):
             self.logger.exception(f"An error occurred during execution: {e}")
 
     def execute(self) -> None:
-        """Executes the utility script's main logic.
+        """
+        Executes the utility script's main logic.
 
         This method demonstrates accessing a configuration value and logging a message.
         """

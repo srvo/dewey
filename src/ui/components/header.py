@@ -9,9 +9,11 @@ class Header(Static):
     """A header component for the TUI application."""
 
     def __init__(self, title: str = "Dewey") -> None:
-        """Initialize the header with a title.
+        """
+        Initialize the header with a title.
 
         Args:
+        ----
             title: The title to display in the header
 
         """
@@ -28,9 +30,11 @@ class Header(Static):
         self.update(title_text)
 
     def update_title(self, new_title: str) -> None:
-        """Update the header title.
+        """
+        Update the header title.
 
         Args:
+        ----
             new_title: The new title to display
 
         """

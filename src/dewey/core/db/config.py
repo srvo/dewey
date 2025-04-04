@@ -1,4 +1,5 @@
-"""Database configuration module.
+"""
+Database configuration module.
 
 This module handles database configuration, initialization, and environment setup
 for PostgreSQL databases.
@@ -41,7 +42,8 @@ IS_TEST_MODE = False
 
 
 def get_db_config() -> dict:
-    """Get database configuration.
+    """
+    Get database configuration.
 
     Returns
     -------
@@ -69,7 +71,8 @@ def get_db_config() -> dict:
 
 
 def validate_config() -> bool:
-    """Validate database configuration.
+    """
+    Validate database configuration.
 
     Returns
     -------
@@ -86,7 +89,9 @@ def validate_config() -> bool:
     required_pg_params = ["pg_host", "pg_port", "pg_user", "pg_dbname"]
     missing_params = [p for p in required_pg_params if not config.get(p)]
     if missing_params:
-        error_msg = "Missing required PostgreSQL config parameters: %s" % ', '.join(missing_params)
+        error_msg = "Missing required PostgreSQL config parameters: %s" % ", ".join(
+            missing_params,
+        )
         logger.error(error_msg)
         raise ValueError(error_msg)
 
@@ -106,7 +111,9 @@ def validate_config() -> bool:
                 pass  # Decide if directory creation is needed for PG
         except (OSError, PermissionError) as e:
             logger.warning(
-                "Could not create directories: %s. This is expected in test environments or if backup dir is unused.", e)
+                "Could not create directories: %s. This is expected in test environments or if backup dir is unused.",
+                e,
+            )
 
     # Check pool configuration
     if config["pool_size"] < 1:
@@ -145,7 +152,8 @@ def validate_config() -> bool:
 
 
 def setup_logging(log_level: str = "INFO", log_file: str | None = None) -> None:
-    """Set up logging configuration.
+    """
+    Set up logging configuration.
 
     Args:
     ----
@@ -166,7 +174,7 @@ def setup_logging(log_level: str = "INFO", log_file: str | None = None) -> None:
             log_config["filename"] = log_file
         except (OSError, PermissionError) as e:
             logger.warning(
-                "Could not create log directory: %s. Logging to console only.", e
+                "Could not create log directory: %s. Logging to console only.", e,
             )
 
     logging.basicConfig(**log_config)
@@ -174,7 +182,8 @@ def setup_logging(log_level: str = "INFO", log_file: str | None = None) -> None:
 
 
 def initialize_environment() -> bool:
-    """Initialize database environment.
+    """
+    Initialize database environment.
 
     Returns
     -------
@@ -210,7 +219,8 @@ def initialize_environment() -> bool:
                         logger.info("Created directory: %s", dir_path)
             except (OSError, PermissionError) as e:
                 logger.warning(
-                    "Could not create directories: %s. This is expected in test environments.", e
+                    "Could not create directories: %s. This is expected in test environments.",
+                    e,
                 )
 
         # Remove DuckDB specific environment settings
@@ -227,7 +237,8 @@ def initialize_environment() -> bool:
 
 
 def get_connection_string() -> str:
-    """Get PostgreSQL database connection string.
+    """
+    Get PostgreSQL database connection string.
 
     Returns
     -------
@@ -245,7 +256,8 @@ def get_connection_string() -> str:
     missing = [p for p in required_params if not config.get(p)]
     if missing:
         raise ValueError(
-            "Missing required PostgreSQL config for connection string: %s" % missing)
+            "Missing required PostgreSQL config for connection string: %s" % missing,
+        )
 
     # Construct DSN (Data Source Name) string
     # Example: "postgresql://user:password@host:port/dbname"
@@ -268,7 +280,8 @@ def get_connection_string() -> str:
 
 # For testing purposes - enables test mode
 def set_test_mode(enabled: bool = True) -> None:
-    """Set test mode to skip file operations during tests.
+    """
+    Set test mode to skip file operations during tests.
 
     Args:
     ----

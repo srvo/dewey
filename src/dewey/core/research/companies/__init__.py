@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class CompanyResearch(BaseScript):
-    """Base class for company research modules within Dewey.
+    """
+    Base class for company research modules within Dewey.
 
     This class provides a standardized structure for company research scripts,
     including configuration loading, logging, and a `run` method to
@@ -15,9 +16,11 @@ class CompanyResearch(BaseScript):
         requires_db: bool = True,
         enable_llm: bool = True,
     ) -> None:
-        """Initializes the CompanyResearch module.
+        """
+        Initializes the CompanyResearch module.
 
         Args:
+        ----
             config_section (str): Section in dewey.yaml to load for this script. Defaults to "company_research".
             requires_db (bool): Whether this script requires database access. Defaults to True.
             enable_llm (bool): Whether this script requires LLM access. Defaults to True.
@@ -32,12 +35,14 @@ class CompanyResearch(BaseScript):
         self.description = "Base class for company research scripts."
 
     def execute(self) -> None:
-        """Executes the primary logic of the company research script.
+        """
+        Executes the primary logic of the company research script.
 
         This method should be overridden by subclasses to implement specific
         research tasks.
 
-        Raises:
+        Raises
+        ------
             Exception: If there is an error during company research.
 
         """
@@ -45,7 +50,7 @@ class CompanyResearch(BaseScript):
         try:
             # Example of accessing a configuration value
             example_config_value = self.get_config_value(
-                "example_config_key", "default_value"
+                "example_config_key", "default_value",
             )
             self.logger.debug(f"Example config value: {example_config_value}")
 
@@ -71,7 +76,7 @@ class CompanyResearch(BaseScript):
                 # Example LLM call (replace with your actual prompt)
                 try:
                     response = self.llm_client.generate(
-                        prompt="Tell me about the company Apple."
+                        prompt="Tell me about the company Apple.",
                     )
                     self.logger.info(f"LLM response: {response}")
                 except Exception as e:
@@ -83,14 +88,14 @@ class CompanyResearch(BaseScript):
 
         except Exception as e:
             self.logger.error(
-                f"An error occurred during company research: {e}", exc_info=True
+                f"An error occurred during company research: {e}", exc_info=True,
             )
             raise
 
     def run(self) -> None:
         """Legacy method that calls execute() for backward compatibility."""
         self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
+            "Using deprecated run() method. Update to use execute() instead.",
         )
         self.execute()
 

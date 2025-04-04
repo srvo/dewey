@@ -33,7 +33,7 @@ class TestLogManager(unittest.TestCase):
         log_file_path = log_manager.get_log_file_path()
         self.assertEqual(log_file_path, "/path/to/log/file.log")
         mock_get_config_value.assert_called_once_with(
-            "log_file_path", default="application.log"
+            "log_file_path", default="application.log",
         )
 
     @patch.object(BaseScript, "get_config_value")
@@ -44,10 +44,10 @@ class TestLogManager(unittest.TestCase):
         log_manager = LogManager()
         log_manager.some_other_function("test_arg")
         mock_get_config_value.assert_called_once_with(
-            "some_config_key", default="default_value"
+            "some_config_key", default="default_value",
         )
         mock_logger.info.assert_called_once_with(
-            "Some value: test_value, Arg: test_arg"
+            "Some value: test_value, Arg: test_arg",
         )
 
 

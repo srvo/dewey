@@ -1,10 +1,11 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
 
 class EventCallback(BaseScript):
-    """A class for handling event callbacks within the Dewey framework.
+    """
+    A class for handling event callbacks within the Dewey framework.
 
     This class inherits from BaseScript and provides a structured way to
     manage event-driven logic, utilizing Dewey's configuration and logging
@@ -12,9 +13,11 @@ class EventCallback(BaseScript):
     """
 
     def __init__(self, config_section: str, event_data: dict[str, Any]) -> None:
-        """Initializes the EventCallback with configuration and event data.
+        """
+        Initializes the EventCallback with configuration and event data.
 
         Args:
+        ----
             config_section (str): The configuration section for the script.
             event_data (Dict[str, Any]): A dictionary containing data
                 associated with the event.
@@ -24,12 +27,14 @@ class EventCallback(BaseScript):
         self.event_data = event_data
 
     def run(self) -> None:
-        """Executes the core logic of the event callback.
+        """
+        Executes the core logic of the event callback.
 
         This method retrieves configuration values, processes event data,
         and logs relevant information using the Dewey logging system.
 
-        Raises:
+        Raises
+        ------
             ValueError: If a required configuration value is missing.
 
         """
@@ -53,7 +58,8 @@ class EventCallback(BaseScript):
             raise
 
     def execute(self) -> None:
-        """Executes the event callback logic.
+        """
+        Executes the event callback logic.
 
         This method retrieves the callback URL from the configuration,
         logs the event type, and then attempts to post the event data
@@ -75,7 +81,9 @@ class EventCallback(BaseScript):
             # response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
             # self.logger.info(f"Callback response status code: {response.status_code}")
 
-            self.logger.info(f"Successfully executed event callback for event type: {event_type}")
+            self.logger.info(
+                f"Successfully executed event callback for event type: {event_type}",
+            )
 
         except KeyError as e:
             self.logger.error(f"Missing configuration value: {e}")

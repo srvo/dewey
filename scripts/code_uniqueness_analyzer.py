@@ -4,16 +4,19 @@ from dewey.core.base_script import BaseScript
 
 
 class CodeUniquenessAnalyzer(BaseScript):
-    """Analyzes code uniqueness within a project.
+    """
+    Analyzes code uniqueness within a project.
 
     This class inherits from BaseScript and implements the Dewey conventions
     for script structure, logging, and configuration.
     """
 
     def __init__(self, config_path: str, **kwargs: Any) -> None:
-        """Initializes the CodeUniquenessAnalyzer.
+        """
+        Initializes the CodeUniquenessAnalyzer.
 
         Args:
+        ----
             config_path: Path to the configuration file.
             **kwargs: Additional keyword arguments.
 
@@ -23,12 +26,14 @@ class CodeUniquenessAnalyzer(BaseScript):
         self.kwargs = kwargs
 
     def run(self) -> None:
-        """Executes the code uniqueness analysis.
+        """
+        Executes the code uniqueness analysis.
 
         This method contains the core logic of the script. It retrieves
         configuration values, analyzes code, and logs the results.
 
-        Raises:
+        Raises
+        ------
             Exception: If an error occurs during the analysis.
 
         """
@@ -49,6 +54,6 @@ class CodeUniquenessAnalyzer(BaseScript):
 if __name__ == "__main__":
     # Example usage:
     analyzer = CodeUniquenessAnalyzer(
-        config_path="path/to/your/config.yaml"
+        config_path="path/to/your/config.yaml",
     )  # Replace with your config path
     analyzer.run()

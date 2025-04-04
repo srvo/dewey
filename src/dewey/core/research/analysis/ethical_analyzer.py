@@ -2,14 +2,16 @@ from dewey.core.base_script import BaseScript
 
 
 class EthicalAnalyzer(BaseScript):
-    """A class for performing ethical analysis.
+    """
+    A class for performing ethical analysis.
 
     This class inherits from BaseScript and provides methods for analyzing
     the ethical implications of various inputs.
     """
 
     def __init__(self):
-        """Initializes the EthicalAnalyzer.
+        """
+        Initializes the EthicalAnalyzer.
 
         Calls the superclass constructor to inherit common functionalities
         such as configuration loading, logging, and database connectivity.
@@ -17,7 +19,8 @@ class EthicalAnalyzer(BaseScript):
         super().__init__(config_section="ethical_analyzer")
 
     def run(self) -> None:
-        """Executes the ethical analysis process.
+        """
+        Executes the ethical analysis process.
 
         This method contains the core logic for performing ethical analysis.
         """
@@ -26,7 +29,8 @@ class EthicalAnalyzer(BaseScript):
         self.logger.info("Ethical analysis completed.")
 
     def execute(self) -> None:
-        """Executes the ethical analysis process.
+        """
+        Executes the ethical analysis process.
 
         This method contains the core logic for performing ethical analysis.
         It currently logs the start and completion of the analysis.

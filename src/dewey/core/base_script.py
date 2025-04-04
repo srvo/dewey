@@ -30,9 +30,7 @@ CONFIG_PATH = PROJECT_ROOT / "config" / "dewey.yaml"
 
 
 class BaseScript(ABC):
-    """
-    Base class for all Dewey scripts.
-    """
+    """Base class for all Dewey scripts.
 
     This class provides standardized access to configuration,
     logging, database connections, and LLM integrations.
@@ -45,7 +43,6 @@ class BaseScript(ABC):
         config: Loaded configuration from dewey.yaml
         db_conn: Database connection (if enabled)
         llm_client: LLM client (if enabled)
-
     """
 
     def __init__(
@@ -61,7 +58,7 @@ class BaseScript(ABC):
 
         Args:
         ----
-            name: Name of the script (used for logging)
+            name: Name of the script(used for logging)
             description: Description of the script
             config_section: Section in dewey.yaml to load for this script
             requires_db: Whether this script requires database access
@@ -91,13 +88,32 @@ class BaseScript(ABC):
         # Load configuration
         self.config = self._load_config()
 
-        # Initialize database connection if required
-        self.db_conn = None
+        # Enable interaction with events system
+        self.event_bus = None
+        try:
+            from dewey.core.events import event_bus
+            self.event_bus = event_bus
+            self.logger.debug("Event bus initialized")
+        except ImportError:
+            self.logger.debug("Event bus not available, events disabled")
+            
+        # Set up service dependency properties
+        self._llm_provider = None
+        self._db_provider = None
+        
+        # Try importing service registry for dependency injection
+        try:
+            from dewey.core.service_registry import service_registry
+            self.service_registry = service_registry
+            self.logger.debug("Service registry initialized")
+        except ImportError:
+            self.service_registry = None
+            self.logger.debug("Service registry not available")
+        
+        # Now initialize required services
         if self.requires_db:
             self._initialize_db_connection()
-
-        # Initialize LLM client if required
-        self.llm_client = None
+            
         if self.enable_llm:
             self._initialize_llm_client()
 
@@ -138,8 +154,6 @@ class BaseScript(ABC):
         ------
             FileNotFoundError: If the configuration file doesn't exist
             yaml.YAMLError: If the configuration file isn't valid YAML
-        """
-
         """
         try:
             config_path = self.project_root / "config" / "dewey.yaml"
@@ -184,20 +198,50 @@ class BaseScript(ABC):
     def _initialize_llm_client(self) -> None:
         """Initialize LLM client if required."""
         try:
+            # First check if we have a provider via service registry
+            if self.service_registry:
+                from dewey.core.interfaces.llm_provider import LLMProvider
+                llm_provider = self.service_registry.get(LLMProvider)
+                if llm_provider:
+                    self._llm_provider = llm_provider
+                    self.llm_client = llm_provider  # For backwards compatibility
+                    self.logger.debug(f"Using LLMProvider: {llm_provider.model_name}")
+                    return
+            
+            # Fall back to direct LiteLLMClient initialization
             from dewey.llm.litellm_client import LiteLLMClient, LiteLLMConfig
 
             self.logger.debug("Initializing LLM client")
             llm_config = self.config.get("llm", {})
             config = LiteLLMConfig(**llm_config)
             self.llm_client = LiteLLMClient(config=config)
+            
+            # Try to create and register provider if imports work
+            try:
+                from dewey.core.interfaces.llm_provider import LLMProvider
+                from dewey.llm.providers.litellm_provider import LiteLLMProvider
+                
+                # Create provider wrapping the client
+                self._llm_provider = LiteLLMProvider(client=self.llm_client)
+                
+                # Register with service registry if available
+                if self.service_registry:
+                    self.service_registry.register(LLMProvider, self._llm_provider)
+                    
+            except ImportError:
+                # Provider modules not available, continue with direct client
+                pass
+                
             self.logger.debug("LLM client initialized")
         except ImportError:
             self.logger.error("Could not import LLM module. Is it installed?")
             # Don't raise to allow scripts to run without LLM support
             self.llm_client = None
+            self._llm_provider = None
         except Exception as e:
             self.logger.error("Failed to initialize LLM client: %s", e)
             self.llm_client = None
+            self._llm_provider = None
 
     def setup_argparse(self) -> argparse.ArgumentParser:
         """Set up command line arguments.

@@ -1,13 +1,14 @@
-"""Analysis Tagging Workflow
+"""
+Analysis Tagging Workflow
 
 A workflow for tagging and analyzing company information.
 """
 
 import asyncio
 import logging
-from datetime import datetime
-from typing import Any, Dict, List
 from collections.abc import AsyncGenerator
+from datetime import datetime
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -16,23 +17,28 @@ class AnalysisTaggingWorkflow:
     """Workflow for analyzing companies and generating tags."""
 
     def __init__(self, engine):
-        """Initialize the analysis tagging workflow.
+        """
+        Initialize the analysis tagging workflow.
 
         Args:
+        ----
             engine: The engine to use for analysis.
 
         """
         self.engine = engine
 
     async def process_companies_by_tickers(
-        self, tickers: list[str]
+        self, tickers: list[str],
     ) -> AsyncGenerator[dict[str, Any], None]:
-        """Process a list of company tickers.
+        """
+        Process a list of company tickers.
 
         Args:
+        ----
             tickers: List of company ticker symbols
 
         Yields:
+        ------
             Analysis results for each company
 
         """
@@ -67,7 +73,7 @@ class AnalysisTaggingWorkflow:
 
                 yield result
             except Exception as e:
-                logger.error(f"Error processing company {ticker}: {str(e)}")
+                logger.error(f"Error processing company {ticker}: {e!s}")
                 yield {
                     "ticker": ticker,
                     "name": company_data.get("name", "Unknown"),
@@ -76,14 +82,17 @@ class AnalysisTaggingWorkflow:
                 }
 
     def _get_mock_company_data(self, ticker: str) -> dict[str, Any]:
-        """Get mock company data for the given ticker.
+        """
+        Get mock company data for the given ticker.
 
         In a real implementation, this would fetch from a database.
 
         Args:
+        ----
             ticker: Company ticker symbol
 
         Returns:
+        -------
             Dictionary containing company information
 
         """
@@ -138,12 +147,14 @@ class AnalysisTaggingWorkflow:
             },
         )
 
-    async def execute(self, tickers: List[str]) -> None:
-        """Execute the analysis tagging workflow.
+    async def execute(self, tickers: list[str]) -> None:
+        """
+        Execute the analysis tagging workflow.
 
         Processes a list of company tickers, analyzes them, and prints the results.
 
         Args:
+        ----
             tickers: List of company ticker symbols to analyze.
 
         """
@@ -154,9 +165,15 @@ class AnalysisTaggingWorkflow:
 if __name__ == "__main__":
     # Example usage (replace with your actual engine and tickers)
     class MockEngine:
-        async def analyze_company(self, company_data: Dict[str, Any]) -> Dict[str, Any]:
+        async def analyze_company(self, company_data: dict[str, Any]) -> dict[str, Any]:
             await asyncio.sleep(0.1)  # Simulate some work
-            return {"success": True, "analysis": {"tags": ["AI", "Cloud"], "summary": "This company is doing great!"}}
+            return {
+                "success": True,
+                "analysis": {
+                    "tags": ["AI", "Cloud"],
+                    "summary": "This company is doing great!",
+                },
+            }
 
     async def main():
         engine = MockEngine()

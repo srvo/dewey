@@ -1,6 +1,7 @@
 # Formatting failed: LLM generation failed: Gemini API error: Model gemini-2.0-flash in cooldown until Sat Mar 15 00:33:42 2025
 
-"""Tests for SEC EDGAR API Engine.
+"""
+Tests for SEC EDGAR API Engine.
 =========================
 """
 
@@ -11,14 +12,14 @@ import pytest
 from ethifinx.research.engines.sec import SECEngine
 
 
-@pytest.fixture
+@pytest.fixture()
 async def engine():
     """Create a SECEngine instance for testing."""
     async with SECEngine(max_retries=2) as engine:
         yield engine
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_engine_initialization() -> None:
     """Test that the engine initializes correctly."""
     engine = SECEngine(max_retries=2)
@@ -26,7 +27,7 @@ async def test_engine_initialization() -> None:
     assert engine.max_retries == 2
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_process_method(engine) -> None:
     """Test the process method returns expected status."""
     result = await engine.process()
@@ -34,7 +35,7 @@ async def test_process_method(engine) -> None:
     assert result["status"] == "SEC engine ready"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_company_tickers(engine) -> None:
     """Test company tickers retrieval."""
     mock_response = {
@@ -54,7 +55,7 @@ async def test_get_company_tickers(engine) -> None:
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_company_facts(engine) -> None:
     """Test company facts retrieval."""
     mock_response = {
@@ -95,7 +96,7 @@ async def test_get_company_facts(engine) -> None:
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_company_concept(engine) -> None:
     """Test company concept retrieval."""
     mock_response = {
@@ -131,7 +132,7 @@ async def test_get_company_concept(engine) -> None:
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_submissions(engine) -> None:
     """Test submissions retrieval."""
     mock_response = {
@@ -170,7 +171,7 @@ async def test_get_submissions(engine) -> None:
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_company_filings(engine) -> None:
     """Test company filings retrieval."""
     mock_response = {
@@ -203,17 +204,14 @@ async def test_get_company_filings(engine) -> None:
         mock_get.return_value = mock_context
 
         result = await engine.get_company_filings(
-            "320193",
-            form_type="10-K",
-            start_date="2023-01-01",
-            end_date="2023-12-31",
+            "320193", form_type="10-K", start_date="2023-01-01", end_date="2023-12-31",
         )
 
         assert result == mock_response
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_mutual_fund_search(engine) -> None:
     """Test mutual fund search."""
     mock_response = {
@@ -241,7 +239,7 @@ async def test_get_mutual_fund_search(engine) -> None:
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_mutual_fund_series(engine) -> None:
     """Test mutual fund series retrieval."""
     mock_response = {
@@ -264,7 +262,7 @@ async def test_get_mutual_fund_series(engine) -> None:
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_company_financial_statements(engine) -> None:
     """Test financial statements retrieval."""
     mock_response = {
@@ -287,16 +285,14 @@ async def test_get_company_financial_statements(engine) -> None:
         mock_get.return_value = mock_context
 
         result = await engine.get_company_financial_statements(
-            "320193",
-            form_type="10-K",
-            filing_date="2023-10-27",
+            "320193", form_type="10-K", filing_date="2023-10-27",
         )
 
         assert result == mock_response
         mock_get.assert_called_once()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_search_retry_on_error(engine) -> None:
     """Test search retries on API errors."""
     mock_response = {"cik": "0000320193"}

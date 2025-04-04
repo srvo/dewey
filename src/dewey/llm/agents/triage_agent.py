@@ -1,6 +1,6 @@
 """Triage agent for initial analysis and delegation of incoming items using smolagents."""
 
-from typing import Any, Dict, Optional
+from typing import Any
 
 from smolagents import Tool
 
@@ -8,7 +8,8 @@ from dewey.core.base_script import BaseScript
 
 
 class TriageAgent(BaseScript):
-    """Agent for triaging incoming items and determining appropriate actions.
+    """
+    Agent for triaging incoming items and determining appropriate actions.
 
     Features:
         - Priority assessment
@@ -26,32 +27,38 @@ class TriageAgent(BaseScript):
                 Tool.from_function(
                     self.triage_item,
                     description="Analyzes an item and determines appropriate actions.",
-                )
-            ]
+                ),
+            ],
         )
 
     def run(self, prompt: str) -> dict[str, Any]:
-        """Runs the triage agent with the given prompt.
+        """
+        Runs the triage agent with the given prompt.
 
         Args:
+        ----
             prompt: The prompt to use for triaging.
 
         Returns:
+        -------
             The result of the agent's run.
 
         """
         return self.agent.run(prompt)
 
     def triage_item(
-        self, content: str, context: dict[str, Any] | None = None
+        self, content: str, context: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
-        """Analyzes an item and determines appropriate actions.
+        """
+        Analyzes an item and determines appropriate actions.
 
         Args:
+        ----
             content: The content to analyze.
             context: Optional context for the analysis. Defaults to None.
 
         Returns:
+        -------
             Triage results containing priority, classification, and recommended actions.
 
         """
@@ -78,12 +85,15 @@ class TriageAgent(BaseScript):
         return result
 
     def execute(self, prompt: str) -> dict[str, Any]:
-        """Executes the triage agent with the given prompt.
+        """
+        Executes the triage agent with the given prompt.
 
         Args:
+        ----
             prompt: The prompt to use for triaging.
 
         Returns:
+        -------
             The result of the agent's run.
 
         """

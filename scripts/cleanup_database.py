@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-"""Script to clean up and consolidate tables in the MotherDuck database.
+"""
+Script to clean up and consolidate tables in the MotherDuck database.
 Removes empty tables and consolidates redundant table structures.
 """
 
@@ -49,13 +50,13 @@ def cleanup_database():
                 print(f"Dropping table {table}")
                 conn.execute(f"DROP TABLE IF EXISTS {table}")
             except Exception as e:
-                print(f"Error dropping table {table}: {str(e)}")
+                print(f"Error dropping table {table}: {e!s}")
 
         print("Database cleanup completed successfully")
         conn.close()
 
     except Exception as e:
-        print(f"Error during database cleanup: {str(e)}")
+        print(f"Error during database cleanup: {e!s}")
         raise
 
 

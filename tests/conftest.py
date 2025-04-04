@@ -53,7 +53,6 @@ def clear_logs():
     """Clear log files between tests."""
     for log_file in Path(log_dir).glob("*.log"):
         log_file.unlink(missing_ok=True)
-    yield
 
 
 @pytest.fixture(autouse=True)
@@ -62,9 +61,9 @@ def clean_logging(caplog):
     caplog.clear()
 
 
-@pytest.fixture
+@pytest.fixture()
 def base_script():
-"""Fixture providing BaseScript instance for test setup."""
+    """Fixture providing BaseScript instance for test setup."""
 
     class TestScript(BaseScript):
         """Class TestScript."""
@@ -76,7 +75,7 @@ def base_script():
     return TestScript()
 
 
-@pytest.fixture
+@pytest.fixture()
 def test_data_dir(tmp_path) -> Path:
     """Create and return a temporary directory for test data."""
     data_dir = tmp_path / "test_data"
@@ -84,7 +83,7 @@ def test_data_dir(tmp_path) -> Path:
     return data_dir
 
 
-@pytest.fixture
+@pytest.fixture()
 def test_config_dir(tmp_path) -> Path:
     """Create and return a temporary directory for test configuration."""
     config_dir = tmp_path / "config"
@@ -92,7 +91,7 @@ def test_config_dir(tmp_path) -> Path:
     return config_dir
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_env(test_data_dir, test_config_dir, monkeypatch):
     """Set up mock environment variables for testing."""
     monkeypatch.setenv("DEWEY_DATA_DIR", str(test_data_dir))
@@ -100,20 +99,29 @@ def mock_env(test_data_dir, test_config_dir, monkeypatch):
     monkeypatch.setenv("MOTHERDUCK_TOKEN", "test_token")
 
 
-@pytest.fixture
+@pytest.fixture()
 def sample_csv_file(test_data_dir) -> Path:
     """Create a sample CSV file for testing."""
     csv_file = test_data_dir / "test.csv"
-    csv_file.write_text("id,name,value\n" "1,test1,100\n" "2,test2,200\n")
+    csv_file.write_text("id,name,value\n1,test1,100\n2,test2,200\n")
     return csv_file
 
 
-@pytest.fixture
+@pytest.fixture()
 def sample_config_file(test_config_dir) -> Path:
     """Create a sample configuration file for testing."""
     config_file = test_config_dir / "dewey.yaml"
     config_file.write_text(
-        "database:\n" "  motherduck_token: test_token\n" "  default_db: test_db\n"
+        "database:\n"
+        "  postgres:\n"
+        "    host: localhost\n"
+        "    port: 5432\n"
+        "    dbname: test_db\n"
+        "    user: test_user\n"
+        "    password: test_pass\n"
+        "    sslmode: prefer\n"
+        "    pool_min: 5\n"
+        "    pool_max: 10\n",
     )
     return config_file
 
@@ -132,7 +140,7 @@ def setup_test_environment(tmp_path):
 logging:
   level: DEBUG
   format: "[%(levelname)s] %(message)s"
-"""
+""",
     )
 
     yield
@@ -142,19 +150,34 @@ logging:
     del os.environ["MOTHERDUCK_API_KEY"]
 
 
-@pytest.fixture
+@pytest.fixture()
+def postgres_connection():
+    """Fixture providing a mock PostgreSQL database connection."""
+    mock_conn = MagicMock()
+    mock_engine = MagicMock()
+    mock_session = MagicMock()
+
+    with (
+        patch("sqlalchemy.create_engine", return_value=mock_engine),
+        patch("sqlalchemy.orm.sessionmaker", return_value=mock_session),
+    ):
+        yield {"engine": mock_engine, "session": mock_session, "connection": mock_conn}
+
+
+@pytest.fixture()
 def mock_credentials():
-"""
+    """
     Mock all API credentials used in the project.
 
     This fixture provides all the necessary API credentials for testing.
     Use it when testing components that need to access external services.
 
     Example:
+    -------
         def test_something(mock_credentials):
             # Test code that uses credentials
 
-"""
+    """
     test_credentials = {
         # LLM API credentials
         "OPENAI_API_KEY": "test-openai-key",
@@ -174,12 +197,13 @@ def mock_credentials():
         "GMAIL_CLIENT_SECRET": "test-gmail-client-secret",
         "GMAIL_TOKEN": "test-gmail-token",
         "GMAIL_REFRESH_TOKEN": "test-gmail-refresh-token",
-        # Database credentials
-        "DB_URL": "localhost",
-        "DB_PORT": "5432",
-        "DB_NAME": "test_db",
-        "DB_USER": "test_user",
-        "DB_PASSWORD": "test_password",
+        # PostgreSQL credentials
+        "PG_HOST": "localhost",
+        "PG_PORT": "5432",
+        "PG_DBNAME": "test_db",
+        "PG_USER": "test_user",
+        "PG_PASSWORD": "test_password",
+        "PG_SSLMODE": "prefer",
         # Other API credentials
         "GITHUB_TOKEN": "test-github-token",
         "SEC_API_KEY": "test-sec-api-key",
@@ -191,19 +215,20 @@ def mock_credentials():
         yield test_credentials
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_credential_config():
-"""
+    """
     Mock the credential configuration in dewey.yaml.
 
     This fixture returns a patch to the BaseScript._load_config method
     to mock credential configuration.
 
     Example:
+    -------
         def test_something(mock_credential_config):
             # Test code that uses credentials from config
 
-"""
+    """
     mock_config = {
         "llm": {
             "providers": {
@@ -219,7 +244,7 @@ def mock_credential_config():
                     "api_key": "test-deepinfra-key",
                     "api_base": "https://api.deepinfra.com/v1/openai",
                 },
-            }
+            },
         },
         "settings": {
             "gmail_credentials": {
@@ -228,11 +253,16 @@ def mock_credential_config():
                 "token": "test-gmail-token",
                 "refresh_token": "test-gmail-refresh-token",
             },
-            "db_url": "localhost",
-            "db_port": "5432",
-            "db_name": "test_db",
-            "db_user": "test_user",
-            "db_password": "test_password",
+            "postgres": {
+                "host": "localhost",
+                "port": "5432",
+                "dbname": "test_db",
+                "user": "test_user",
+                "password": "test_password",
+                "sslmode": "prefer",
+                "pool_min": 5,
+                "pool_max": 10,
+            },
             "github_token": "test-github-token",
             "sec_api_key": "test-sec-api-key",
         },
@@ -251,13 +281,37 @@ def mock_credential_config():
         yield mock_config
 
 
-@pytest.fixture
+@pytest.fixture()
+def db_session():
+    """Fixture providing a SQLAlchemy session for testing."""
+    from sqlalchemy.orm import sessionmaker
+
+    engine = create_engine("sqlite:///:memory:")
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    try:
+        yield session
+    finally:
+        session.close()
+
+
+@pytest.fixture()
+def mock_db_connection():
+    """Fixture providing a mock DatabaseConnection instance."""
+    with patch("src.dewey.core.db.connection.DatabaseConnection") as mock:
+        mock_instance = mock.return_value
+        mock_instance.get_session.return_value.__enter__.return_value = MagicMock()
+        yield mock_instance
+
+
+@pytest.fixture()
 def test_data_dir():
     """Return the path to the test data directory."""
     return os.path.join(os.path.dirname(__file__), "data")
 
 
-@pytest.fixture
+@pytest.fixture()
 def temp_dir(tmp_path):
     """Return a temporary directory that is cleaned up after the test."""
     return tmp_path

@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
-"""Code Quality Tool - Runs flake8 and black on Python files in specified directories.
+"""
+Code Quality Tool - Runs flake8 and black on Python files in specified directories.
 Automatically formats code with black and reports on any remaining flake8 issues.
 """
 
 import argparse
 import logging
+import operator
 import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Dict, List, Tuple
 
 # Configure logging
 logging.basicConfig(
@@ -23,7 +24,7 @@ logger = logging.getLogger("code_quality")
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        description="Run flake8 and black on Python files in a directory."
+        description="Run flake8 and black on Python files in a directory.",
     )
     parser.add_argument(
         "--dir",
@@ -50,7 +51,7 @@ def parse_args() -> argparse.Namespace:
         help="Only check for issues without making changes",
     )
     parser.add_argument(
-        "--verbose", "-v", action="store_true", help="Enable verbose output"
+        "--verbose", "-v", action="store_true", help="Enable verbose output",
     )
     return parser.parse_args()
 
@@ -102,18 +103,14 @@ def run_black(file_path: Path, check_only: bool) -> tuple[Path, bool, str]:
         if not check_only and not was_formatted:
             was_formatted = "reformatted" in result.stderr
 
-        return (
-            file_path,
-            was_formatted,
-            result.stderr if result.stderr else result.stdout,
-        )
+        return (file_path, was_formatted, result.stderr or result.stdout)
     except Exception as e:
         logger.error(f"Error running black on {file_path}: {e}")
         return file_path, False, f"Error: {e}"
 
 
 def process_file(
-    file_path: Path, check_only: bool, max_line_length: int, verbose: bool
+    file_path: Path, check_only: bool, max_line_length: int, verbose: bool,
 ) -> dict:
     """Process a file with flake8 and black."""
     result = {
@@ -181,7 +178,7 @@ def main() -> None:
         subprocess.run(["black", "--version"], capture_output=True, check=True)
     except (subprocess.SubprocessError, FileNotFoundError):
         logger.error(
-            "flake8 and/or black are not installed. Please install them first."
+            "flake8 and/or black are not installed. Please install them first.",
         )
         sys.exit(1)
 
@@ -193,7 +190,7 @@ def main() -> None:
     for file_path in python_files:
         logger.info(f"Processing {file_path}")
         result = process_file(
-            file_path, args.check_only, args.max_line_length, args.verbose
+            file_path, args.check_only, args.max_line_length, args.verbose,
         )
         results.append(result)
 
@@ -220,23 +217,23 @@ def main() -> None:
     print(f"Total Python files processed: {len(python_files)}")
     print(f"Files reformatted by black: {formatted_count}")
     print(
-        f"Files with issues before: {files_with_issues_before} ({total_issues_before} issues)"
+        f"Files with issues before: {files_with_issues_before} ({total_issues_before} issues)",
     )
     print(
-        f"Files with issues after: {files_with_issues_after} ({total_issues_after} issues)"
+        f"Files with issues after: {files_with_issues_after} ({total_issues_after} issues)",
     )
     print(f"Issues fixed: {total_issues_before - total_issues_after}")
 
     if args.verbose:
         print("\nIssues by type before formatting:")
         for code, count in sorted(
-            issues_before_by_code.items(), key=lambda x: x[1], reverse=True
+            issues_before_by_code.items(), key=operator.itemgetter(1), reverse=True,
         ):
             print(f"  {code}: {count}")
 
         print("\nIssues by type after formatting:")
         for code, count in sorted(
-            issues_after_by_code.items(), key=lambda x: x[1], reverse=True
+            issues_after_by_code.items(), key=operator.itemgetter(1), reverse=True,
         ):
             print(f"  {code}: {count}")
 
@@ -253,7 +250,7 @@ def main() -> None:
                         print(f"    {issue}")
                     if len(r.get("issues_after", [])) > 5:
                         print(
-                            f"    ... and {len(r.get('issues_after', [])) - 5} more issues"
+                            f"    ... and {len(r.get('issues_after', [])) - 5} more issues",
                         )
 
     print("\nRecommended fixes for common issues:")

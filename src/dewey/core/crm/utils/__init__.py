@@ -1,4 +1,5 @@
-"""Utilities Module for CRM
+"""
+Utilities Module for CRM
 
 This module contains utility classes and functions used across the CRM system.
 """

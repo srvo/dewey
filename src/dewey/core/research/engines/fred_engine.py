@@ -8,19 +8,23 @@ class FredEngine(BaseScript):
     def __init__(self) -> None:
         """Initializes the FredEngine class."""
         super().__init__(
-            config_section="fred_engine", requires_db=True, enable_llm=True
+            config_section="fred_engine", requires_db=True, enable_llm=True,
         )
 
     def run(self) -> None:
-        """Executes the main logic of the Fred Engine.
+        """
+        Executes the main logic of the Fred Engine.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If there is an error during the Fred Engine execution.
 
         """
@@ -29,7 +33,7 @@ class FredEngine(BaseScript):
         try:
             # Example of accessing configuration values
             example_config_value = self.get_config_value(
-                "example_config", "default_value"
+                "example_config", "default_value",
             )
             self.logger.info(f"Example config value: {example_config_value}")
 
@@ -62,15 +66,19 @@ class FredEngine(BaseScript):
             raise
 
     def execute(self) -> None:
-        """Executes the main logic of the Fred Engine.
+        """
+        Executes the main logic of the Fred Engine.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If there is an error during the Fred Engine execution.
 
         """
@@ -79,7 +87,7 @@ class FredEngine(BaseScript):
         try:
             # Example of accessing configuration values
             example_config_value = self.get_config_value(
-                "example_config", "default_value"
+                "example_config", "default_value",
             )
             self.logger.info(f"Example config value: {example_config_value}")
 

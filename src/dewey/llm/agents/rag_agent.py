@@ -1,15 +1,15 @@
 """RAG agent for semantic search using the smolagents framework."""
 
-from typing import Any, Dict, Optional
+from typing import Any
 
 from smolagents import Tool
 
-from dewey.core.base_script import BaseScript
 from dewey.llm.agents.base_agent import BaseAgent
 
 
 class RAGAgent(BaseAgent):
-    """RAG agent for semantic search and knowledge retrieval.
+    """
+    RAG agent for semantic search and knowledge retrieval.
 
     Features:
         - Semantic search capabilities
@@ -27,21 +27,24 @@ class RAGAgent(BaseAgent):
                 Tool.from_function(
                     self.search,
                     description="Searches the knowledge base using semantic similarity.",
-                )
-            ]
+                ),
+            ],
         )
 
     def search(
-        self, query: str, content_type: str | None = None, limit: int = 5
+        self, query: str, content_type: str | None = None, limit: int = 5,
     ) -> dict[str, Any]:
-        """Searches the knowledge base using semantic similarity.
+        """
+        Searches the knowledge base using semantic similarity.
 
         Args:
+        ----
             query: The search query.
             content_type: Content type filter. Defaults to None.
             limit: Maximum number of results. Defaults to 5.
 
         Returns:
+        -------
             The search results with relevance scores.
 
         """
@@ -55,12 +58,15 @@ class RAGAgent(BaseAgent):
         return result
 
     def run(self, prompt: str) -> dict[str, Any]:
-        """Executes the RAG agent with the given prompt.
+        """
+        Executes the RAG agent with the given prompt.
 
         Args:
+        ----
             prompt: The prompt to use for the RAG agent.
 
         Returns:
+        -------
             The search results.
 
         """

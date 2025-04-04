@@ -1,8 +1,9 @@
 """Code documentation analysis and generation agent using smolagents."""
 
 import ast
-from typing import List, Dict, Any, Optional
 from pathlib import Path
+from typing import Any
+
 import structlog
 from smolagents import Tool
 
@@ -38,13 +39,15 @@ class DocstringAgent(BaseAgent):
             ]
         )
 
-    def extract_code_context(self, code: str) -> List[Dict[str, Any]]:
+    def extract_code_context(self, code: str) -> list[dict[str, Any]]:
         """Extracts context from code using AST analysis.
 
         Args:
+        ----
             code (str): Source code to analyze.
 
         Returns:
+        -------
             List[Dict[str, Any]]: A list of code contexts.
 
         """
@@ -68,9 +71,11 @@ class DocstringAgent(BaseAgent):
         """Calculates cyclomatic complexity of an AST node.
 
         Args:
+        ----
             node (ast.AST): The AST node to analyze.
 
         Returns:
+        -------
             int: The cyclomatic complexity.
 
         """
@@ -84,13 +89,15 @@ class DocstringAgent(BaseAgent):
 
         return complexity
 
-    def analyze_file(self, file_path: Path) -> Optional[Dict[str, Any]]:
+    def analyze_file(self, file_path: Path) -> dict[str, Any] | None:
         """Analyzes a file and improves its documentation.
 
         Args:
+        ----
             file_path (Path): The path to the file to analyze.
 
         Returns:
+        -------
             Optional[Dict[str, Any]]: A dictionary containing the analysis results, or None if an error occurs.
 
         """

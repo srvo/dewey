@@ -4,13 +4,13 @@
 
 import os
 from pathlib import Path
-from typing import Set
+
 import libcst as cst
 import libcst.matchers as m
 from libcst.metadata import MetadataWrapper
 
 
-def find_python_files(directory: Path) -> Set[Path]:
+def find_python_files(directory: Path) -> set[Path]:
     """Find all Python files in the directory."""
     python_files = set()
     for root, _, files in os.walk(directory):

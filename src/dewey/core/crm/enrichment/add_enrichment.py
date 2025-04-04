@@ -1,4 +1,5 @@
-"""Add enrichment capabilities to existing database while preserving sync functionality.
+"""
+Add enrichment capabilities to existing database while preserving sync functionality.
 
 This module provides functionality to enhance the existing database with data enrichment
 capabilities. It adds new tables and columns to support:
@@ -24,7 +25,8 @@ class AddEnrichmentCapabilities(BaseScript):
         super().__init__(config_section="crm", requires_db=True)
 
     def run(self) -> None:
-        """Adds enrichment capabilities while preserving existing functionality.
+        """
+        Adds enrichment capabilities while preserving existing functionality.
 
         This function performs the following operations:
         1. Adds new columns to the contacts table for enrichment tracking

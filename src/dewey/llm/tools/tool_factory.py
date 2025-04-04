@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 
@@ -7,9 +7,11 @@ class ToolFactory(BaseScript):
     """A class for creating and managing tools, adhering to Dewey conventions."""
 
     def __init__(self, config: dict[str, Any], **kwargs: Any) -> None:
-        """Initializes the ToolFactory with configuration and optional keyword arguments.
+        """
+        Initializes the ToolFactory with configuration and optional keyword arguments.
 
         Args:
+        ----
             config: A dictionary containing configuration parameters.
             **kwargs: Additional keyword arguments.
 
@@ -17,15 +19,18 @@ class ToolFactory(BaseScript):
         super().__init__(config=config, **kwargs)
 
     def run(self) -> None:
-        """Executes the core logic of the ToolFactory.
+        """
+        Executes the core logic of the ToolFactory.
 
         This method orchestrates the tool creation process, utilizing configurations
         and logging mechanisms provided by the BaseScript.
 
-        Raises:
+        Raises
+        ------
             Exception: If any error occurs during the tool creation process.
 
-        Returns:
+        Returns
+        -------
             None
 
         """
@@ -46,15 +51,16 @@ class ToolFactory(BaseScript):
             raise
 
     def execute(self) -> None:
-        """Executes the tool creation process.
+        """
+        Executes the tool creation process.
 
         This method reads the tool name from the configuration and logs
         the intention to create the tool.
 
-        Returns:
+        Returns
+        -------
             None
 
         """
         tool_name = self.get_config_value("tool_name", default="DefaultTool")
         self.logger.info(f"Executing tool creation for: {tool_name}")
-        return

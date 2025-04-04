@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any
 
 import requests
 
@@ -9,9 +9,11 @@ class BraveSearchEngine(BaseScript):
     """A class for interacting with the Brave search engine."""
 
     def __init__(self, config: dict[str, Any], name: str = "BraveSearchEngine") -> None:
-        """Initializes the BraveSearchEngine.
+        """
+        Initializes the BraveSearchEngine.
 
         Args:
+        ----
             config (Dict[str, Any]): A dictionary containing configuration parameters.
             name (str): The name of the script instance.
 
@@ -19,15 +21,19 @@ class BraveSearchEngine(BaseScript):
         super().__init__(config=config, name=name)
 
     def run(self, query: str) -> str | None:
-        """Executes a search query using the Brave search engine.
+        """
+        Executes a search query using the Brave search engine.
 
         Args:
+        ----
             query: The search query.
 
         Returns:
+        -------
             The search results as a string, or None if an error occurred.
 
         Raises:
+        ------
             Exception: If there is an issue with the search query or API request.
 
         """
@@ -35,7 +41,7 @@ class BraveSearchEngine(BaseScript):
             api_key = self.get_config_value("brave_search_api_key")
             if not api_key:
                 self.logger.error(
-                    "Brave Search API key is missing in the configuration."
+                    "Brave Search API key is missing in the configuration.",
                 )
                 return None
 
@@ -50,29 +56,32 @@ class BraveSearchEngine(BaseScript):
             if response.status_code == 200:
                 results = response.json()
                 return str(results)  # Returning the results as a string
-            else:
-                self.logger.error(
-                    f"Brave Search API request failed with status code: {response.status_code}"
-                )
-                return None
+            self.logger.error(
+                f"Brave Search API request failed with status code: {response.status_code}",
+            )
+            return None
 
         except Exception as e:
             self.logger.exception(
-                f"An error occurred during the Brave Search API request: {e}"
+                f"An error occurred during the Brave Search API request: {e}",
             )
             return None
 
     def make_request(self, url: str, headers: dict[str, str]) -> requests.Response:
-        """Makes an HTTP request to the specified URL.
+        """
+        Makes an HTTP request to the specified URL.
 
         Args:
+        ----
             url: The URL to make the request to.
             headers: The headers to include in the request.
 
         Returns:
+        -------
             The response object.
 
         Raises:
+        ------
             requests.RequestException: If there is an issue with the request.
 
         """
@@ -85,7 +94,8 @@ class BraveSearchEngine(BaseScript):
             raise
 
     def execute(self) -> None:
-        """Executes a search query using the Brave search engine.
+        """
+        Executes a search query using the Brave search engine.
 
         Retrieves the search query from the configuration and calls the run method.
         """

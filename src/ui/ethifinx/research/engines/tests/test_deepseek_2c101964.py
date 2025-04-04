@@ -1,6 +1,7 @@
 # Formatting failed: LLM generation failed: Gemini API error: Model gemini-2.0-flash in cooldown until Sat Mar 15 00:33:42 2025
 
-"""Tests for the DeepSeek Analysis Engine.
+"""
+Tests for the DeepSeek Analysis Engine.
 
 Tests both the base engine functionality inheritance and DeepSeek-specific features.
 """
@@ -12,17 +13,12 @@ import pytest
 from ethifinx.research.engines.deepseek import DeepSeekEngine
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_api_response() -> dict[str, Any]:
     """Mock API response fixture."""
     return {
         "choices": [
-            {
-                "message": {
-                    "content": "Test analysis content",
-                    "role": "assistant",
-                },
-            },
+            {"message": {"content": "Test analysis content", "role": "assistant"}},
         ],
         "usage": {
             "prompt_cache_hit_tokens": 10,
@@ -32,13 +28,13 @@ def mock_api_response() -> dict[str, Any]:
     }
 
 
-@pytest.fixture
+@pytest.fixture()
 def engine() -> DeepSeekEngine:
     """Create a DeepSeek engine instance."""
     return DeepSeekEngine(api_key="test_key")
 
 
-@pytest.fixture
+@pytest.fixture()
 def search_results() -> list[dict[str, Any]]:
     """Sample search results fixture."""
     return [
@@ -82,9 +78,7 @@ class TestDeepSeekEngineBase:
             assert isinstance(result["timestamp"], str)
 
     async def test_error_handling_inheritance(
-        self,
-        engine: DeepSeekEngine,
-        search_results: list[dict[str, Any]],
+        self, engine: DeepSeekEngine, search_results: list[dict[str, Any]],
     ) -> None:
         """Test error handling follows base class patterns."""
         with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
@@ -103,9 +97,7 @@ class TestDeepSeekEngineSpecific:
     """Test DeepSeek-specific functionality."""
 
     async def test_chat_completion(
-        self,
-        engine: DeepSeekEngine,
-        mock_api_response: dict[str, Any],
+        self, engine: DeepSeekEngine, mock_api_response: dict[str, Any],
     ) -> None:
         """Test basic chat completion."""
         messages = [{"role": "user", "content": "Hello"}]
@@ -122,9 +114,7 @@ class TestDeepSeekEngineSpecific:
             assert not response["error"]
 
     async def test_json_completion(
-        self,
-        engine: DeepSeekEngine,
-        mock_api_response: dict[str, Any],
+        self, engine: DeepSeekEngine, mock_api_response: dict[str, Any],
     ) -> None:
         """Test JSON mode completion."""
         messages = [{"role": "user", "content": "List colors"}]
@@ -139,10 +129,7 @@ class TestDeepSeekEngineSpecific:
             called_args = mock_post.call_args[1]["json"]
             assert called_args["response_format"] == {"type": "json_object"}
 
-    async def test_function_calling(
-        self,
-        engine: DeepSeekEngine,
-    ) -> None:
+    async def test_function_calling(self, engine: DeepSeekEngine) -> None:
         """Test function registration and calling."""
         # Register test function
         engine.register_function(
@@ -167,9 +154,7 @@ class TestDeepSeekEngineSpecific:
                 await engine.handle_function_call(func_call)
 
     async def test_chat_prefix_completion(
-        self,
-        engine: DeepSeekEngine,
-        mock_api_response: dict[str, Any],
+        self, engine: DeepSeekEngine, mock_api_response: dict[str, Any],
     ) -> None:
         """Test chat prefix completion (Beta)."""
         messages = [
@@ -181,10 +166,7 @@ class TestDeepSeekEngineSpecific:
             mock_post.return_value.status_code = 200
             mock_post.return_value.json.return_value = mock_api_response
 
-            await engine.chat_prefix_completion(
-                messages,
-                stop=["```"],
-            )
+            await engine.chat_prefix_completion(messages, stop=["```"])
 
             # Verify beta URL and stop sequence
             assert mock_post.call_args[0][0].startswith("https://api.deepseek.com/beta")
@@ -192,9 +174,7 @@ class TestDeepSeekEngineSpecific:
 
     def test_template_management(self, engine: DeepSeekEngine) -> None:
         """Test conversation template management."""
-        template = [
-            {"role": "system", "content": "You are a test assistant"},
-        ]
+        template = [{"role": "system", "content": "You are a test assistant"}]
 
         # Test adding template
         engine.add_template("test", template)
@@ -208,9 +188,7 @@ class TestDeepSeekEngineSpecific:
         assert engine.get_template("nonexistent") == []
 
     async def test_cache_metrics(
-        self,
-        engine: DeepSeekEngine,
-        mock_api_response: dict[str, Any],
+        self, engine: DeepSeekEngine, mock_api_response: dict[str, Any],
     ) -> None:
         """Test cache metrics tracking."""
         with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
@@ -224,19 +202,14 @@ class TestDeepSeekEngineSpecific:
             assert engine.cache_metrics.total_requests == 1
 
     async def test_error_analysis(
-        self,
-        engine: DeepSeekEngine,
-        mock_api_response: dict[str, Any],
+        self, engine: DeepSeekEngine, mock_api_response: dict[str, Any],
     ) -> None:
         """Test error analysis functionality."""
         with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
             # First call raises error, second call (error analysis) succeeds
             mock_post.side_effect = [
                 Exception("Test Error"),
-                AsyncMock(
-                    status_code=200,
-                    json=Mock(return_value=mock_api_response),
-                ),
+                AsyncMock(status_code=200, json=Mock(return_value=mock_api_response)),
             ]
 
             response = await engine.chat_completion(

@@ -1,9 +1,9 @@
 # Refactored from: financial_analysis
 # Date: 2025-03-16T16:19:10.702032
 # Refactor Version: 1.0
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 from datetime import datetime, timedelta
-from typing import Any, Dict, List
+from typing import Any
 
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import DatabaseConnection, get_connection
@@ -28,13 +28,16 @@ class FinancialAnalysis(BaseScript):
         """Sync current universe from MotherDuck to local DuckDB.
 
         Args:
+        ----
             local_conn: Connection to the local DuckDB database.
             md_conn: Connection to the MotherDuck database.
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If connection to MotherDuck fails.
 
         """
@@ -54,7 +57,7 @@ class FinancialAnalysis(BaseScript):
                     AND workflow IS NOT NULL  -- Only include stocks with a workflow
                     AND workflow != 'excluded'  -- Exclude explicitly excluded stocks
                     AND workflow != 'ignore'  -- Exclude ignored stocks
-            """,
+            """
             ).fetchdf()
 
             # Create and populate table in local DuckDB
@@ -63,7 +66,7 @@ class FinancialAnalysis(BaseScript):
                 CREATE TABLE IF NOT EXISTS current_universe (
                     ticker VARCHAR PRIMARY KEY, name VARCHAR, sector VARCHAR, industry VARCHAR
                 )
-            """,
+            """
             )
 
             # Clear existing data
@@ -79,13 +82,15 @@ class FinancialAnalysis(BaseScript):
             self.logger.exception(f"Error syncing current universe: {e}")
             raise
 
-    def get_current_universe(self) -> List[Dict[str, str]]:
+    def get_current_universe(self) -> list[dict[str, str]]:
         """Get the current universe of stocks.
 
-        Returns:
+        Returns
+        -------
             A list of dictionaries, each representing a stock with ticker, name, sector, and industry.
 
-        Raises:
+        Raises
+        ------
             Exception: If database query fails.
 
         """
@@ -102,7 +107,7 @@ class FinancialAnalysis(BaseScript):
                         ts.symbol = cu.ticker
                         OR ts.entity_id = REPLACE(ts.symbol, 'C', '')
                     ORDER BY cu.sector, cu.industry, cu.ticker
-                    """,
+                    """
                 ).fetchdf()
 
                 if stocks_df is None or stocks_df.empty:
@@ -124,16 +129,19 @@ class FinancialAnalysis(BaseScript):
             self.logger.exception(f"Error getting current universe: {e}")
             raise
 
-    def analyze_financial_changes(self, ticker: str) -> List[Dict[str, Any]]:
+    def analyze_financial_changes(self, ticker: str) -> list[dict[str, Any]]:
         """Analyze significant financial metric changes for a given ticker.
 
         Args:
+        ----
             ticker: The stock ticker to analyze.
 
         Returns:
+        -------
             A list of dictionaries, each representing a significant financial metric change.
 
         Raises:
+        ------
             Exception: If database query fails.
 
         """
@@ -183,16 +191,19 @@ class FinancialAnalysis(BaseScript):
             )
             raise
 
-    def analyze_material_events(self, ticker: str) -> List[str]:
+    def analyze_material_events(self, ticker: str) -> list[str]:
         """Analyze material events from SEC filings for a given ticker.
 
         Args:
+        ----
             ticker: The stock ticker to analyze.
 
         Returns:
+        -------
             A list of strings, each representing a material event.
 
         Raises:
+        ------
             Exception: If database query fails.
 
         """
@@ -269,12 +280,15 @@ class FinancialAnalysis(BaseScript):
         3. Printing a summary of material findings.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
 
         Raises:
+        ------
             Exception: If any part of the analysis fails.
 
         """

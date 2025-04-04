@@ -1,42 +1,22 @@
-from typing import Any
+from dewey.core.db.operations import DatabaseMaintenance
+from dewey.core.base_script import Config
+import typer
 
-from dewey.core.base_script import BaseScript
+app = typer.Typer()
 
-
-class ForceCleanup(BaseScript):
-    """A module for forcing database cleanup tasks within Dewey.
-
-    This module inherits from BaseScript and provides a standardized
-    structure for database cleanup scripts, including configuration
-    loading, logging, and a `run` method to execute the script's
-    primary logic.
+@app.command()
+def force_cleanup(
+    dry_run: bool = typer.Option(False, "--dry-run", help="Simulate cleanup"),
+    config_path: str = typer.Option(None, help="Path to config file")
+):
     """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initializes the ForceCleanup module."""
-        super().__init__(*args, **kwargs)
-
-    def execute(self) -> None:
-        """Executes the database cleanup logic.
-
-        This method should contain the core logic for performing
-        the database cleanup tasks.
-        """
-        self.logger.info("Starting database cleanup...")
-        # Add your database cleanup logic here
-        config_value = self.get_config_value("cleanup_setting", "default_value")
-        self.logger.info(f"Using cleanup setting: {config_value}")
-        self.logger.info("Database cleanup completed.")
-
-    def run(self) -> None:
-        """Legacy method that calls execute() for backward compatibility."""
-        self.logger.warning(
-            "Using deprecated run() method. Update to use execute() instead."
-        )
-        self.execute()
-
+    Force cleanup of database objects (tables, indexes, etc.)
+    """
+    config = Config(config_path=config_path) if config_path else None
+    maintenance = DatabaseMaintenance(config=config, dry_run=dry_run)
+    
+    # Add force cleanup logic to DatabaseMaintenance class
+    maintenance.force_cleanup()
 
 if __name__ == "__main__":
-    # Example usage (for testing purposes)
-    script = ForceCleanup()
-    script.run()
+    app()

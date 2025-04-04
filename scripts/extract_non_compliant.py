@@ -7,12 +7,12 @@ This script runs the compliance tests and extracts:
 4. Files that use hardcoded settings
 """
 
+import ast
 import os
 import re
-import ast
 import subprocess
 import sys
-from typing import Dict, List, Set, Tuple
+
 import yaml
 
 DEWEY_ROOT = "/Users/srvo/dewey"
@@ -32,11 +32,12 @@ def run_tests() -> str:
         ["pytest", "tests/dewey/core/test_script_compliance.py", "-v"],
         capture_output=True,
         text=True,
+        check=False,
     )
     return result.stdout + result.stderr
 
 
-def extract_files(test_output: str) -> Dict[str, List[str]]:
+def extract_files(test_output: str) -> dict[str, list[str]]:
     """Extract non-compliant files from test output."""
     non_compliant = {
         "base_script": [],
@@ -69,13 +70,13 @@ def extract_files(test_output: str) -> Dict[str, List[str]]:
     return non_compliant
 
 
-def analyze_file_for_configs(file_path: str) -> Tuple[Set[str], Set[str]]:
+def analyze_file_for_configs(file_path: str) -> tuple[set[str], set[str]]:
     """Analyze a file for hardcoded paths and settings."""
     paths = set()
     settings = set()
 
     try:
-        with open(file_path, "r") as f:
+        with open(file_path) as f:
             content = f.read()
             tree = ast.parse(content)
 
@@ -106,7 +107,7 @@ def analyze_file_for_configs(file_path: str) -> Tuple[Set[str], Set[str]]:
     return paths, settings
 
 
-def analyze_needed_configs(non_compliant: Dict[str, List[str]]) -> Dict[str, Set[str]]:
+def analyze_needed_configs(non_compliant: dict[str, list[str]]) -> dict[str, set[str]]:
     """Analyze non-compliant files to determine needed config additions."""
     needed_configs = {"paths": set(), "settings": set()}
 
@@ -124,7 +125,7 @@ def analyze_needed_configs(non_compliant: Dict[str, List[str]]) -> Dict[str, Set
 
 
 def write_results(
-    non_compliant: Dict[str, List[str]], needed_configs: Dict[str, Set[str]]
+    non_compliant: dict[str, list[str]], needed_configs: dict[str, set[str]]
 ) -> None:
     """Write results to output files."""
     # Write non-compliant files by category
