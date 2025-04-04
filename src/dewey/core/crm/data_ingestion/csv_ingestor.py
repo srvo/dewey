@@ -2,7 +2,8 @@ from dewey.core.base_script import BaseScript
 
 
 class CsvIngestor(BaseScript):
-    """A class for ingesting data from CSV files into a database.
+    """
+    A class for ingesting data from CSV files into a database.
 
     This class inherits from BaseScript and implements the Dewey conventions
     for configuration, logging, and database interaction.
@@ -13,12 +14,14 @@ class CsvIngestor(BaseScript):
         super().__init__(config_section="csv_ingestor", requires_db=True)
 
     def run(self) -> None:
-        """Runs the CSV ingestion process.
+        """
+        Runs the CSV ingestion process.
 
         This method contains the core logic for reading CSV files,
         transforming the data, and loading it into the database.
 
-        Raises:
+        Raises
+        ------
             Exception: If any error occurs during the ingestion process.
 
         """
@@ -31,11 +34,11 @@ class CsvIngestor(BaseScript):
 
             if not csv_file_path or not table_name:
                 raise ValueError(
-                    "CSV file path and table name must be specified in the configuration."
+                    "CSV file path and table name must be specified in the configuration.",
                 )
 
             self.logger.info(
-                f"Ingesting data from CSV file: {csv_file_path} into table: {table_name}"
+                f"Ingesting data from CSV file: {csv_file_path} into table: {table_name}",
             )
 
             # Example: Using database connection
