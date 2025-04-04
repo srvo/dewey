@@ -1,18 +1,18 @@
 import json
 import logging
 import os
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 import duckdb
-from dotenv import load_dotenv
-
 from dewey.core.base_script import BaseScript
 from dewey.core.db.connection import db_manager
 from dewey.utils.database import execute_query, fetch_all, fetch_one
+from dotenv import load_dotenv
 
 
 class EmailEnrichment(BaseScript):
-    """Enriches email data with additional metadata.
+    """
+    Enriches email data with additional metadata.
 
     This class provides methods to enrich email data with:
     - Message priority scores
@@ -49,7 +49,7 @@ class EmailEnrichment(BaseScript):
             with self._get_connection() as conn:
                 self._setup_database_tables(conn)
                 self.logger.info(
-                    "Database tables for email enrichment initialized during startup"
+                    "Database tables for email enrichment initialized during startup",
                 )
         except Exception as e:
             self.logger.error(f"Error setting up database tables: {e}")
@@ -58,9 +58,11 @@ class EmailEnrichment(BaseScript):
         self.emojis = ["✉️", "📩", "📬", "📮", "📧", "📨", "📪", "📫", "📭", "📤", "📥"]
 
     def _get_connection(self):
-        """Get a connection to the database using a context manager.
+        """
+        Get a connection to the database using a context manager.
 
-        Returns:
+        Returns
+        -------
             Context manager for database connection
 
         """
@@ -86,15 +88,18 @@ class EmailEnrichment(BaseScript):
             raise
 
     def _setup_database_tables(self, conn: duckdb.DuckDBPyConnection) -> None:
-        """Set up the necessary database tables for email enrichment.
+        """
+        Set up the necessary database tables for email enrichment.
 
         Args:
+        ----
             conn: Database connection
 
         """
         try:
             # Create or validate email enrichment status table
-            conn.execute("""
+            conn.execute(
+                """
             CREATE TABLE IF NOT EXISTS email_enrichment_status (
                 email_id VARCHAR PRIMARY KEY,
                 status VARCHAR,
@@ -106,10 +111,12 @@ class EmailEnrichment(BaseScript):
                 opportunity_detected BOOLEAN,
                 last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-            """)
+            """,
+            )
 
             # Create or validate email content table for storing enriched content
-            conn.execute("""
+            conn.execute(
+                """
             CREATE TABLE IF NOT EXISTS email_content (
                 email_id VARCHAR PRIMARY KEY,
                 plain_body TEXT,
@@ -118,7 +125,8 @@ class EmailEnrichment(BaseScript):
                 business_opportunities JSON,
                 last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-            """)
+            """,
+            )
 
             self.logger.info("Database tables for email enrichment created or verified")
 
@@ -127,9 +135,11 @@ class EmailEnrichment(BaseScript):
             raise
 
     def _process_emails_for_enrichment(self, conn: duckdb.DuckDBPyConnection) -> None:
-        """Process emails that need enrichment.
+        """
+        Process emails that need enrichment.
 
         Args:
+        ----
             conn: Database connection
 
         """
@@ -169,7 +179,7 @@ class EmailEnrichment(BaseScript):
 
                     # Calculate priority score
                     priority_score, confidence, reason = self._calculate_priority(
-                        conn, msg_id, from_address, subject, contact_info, opportunities
+                        conn, msg_id, from_address, subject, contact_info, opportunities,
                     )
 
                     # Update enrichment status
@@ -193,7 +203,7 @@ class EmailEnrichment(BaseScript):
                             conn,
                             msg_id,
                             0.0,
-                            f"Error: {str(e)}",
+                            f"Error: {e!s}",
                             0.0,
                             False,
                             False,
@@ -201,7 +211,7 @@ class EmailEnrichment(BaseScript):
                         )
                     except Exception as inner_e:
                         self.logger.error(
-                            f"Failed to update status for email {msg_id}: {inner_e}"
+                            f"Failed to update status for email {msg_id}: {inner_e}",
                         )
 
         except Exception as e:
@@ -209,15 +219,18 @@ class EmailEnrichment(BaseScript):
             raise
 
     def _fetch_email_body(
-        self, conn: duckdb.DuckDBPyConnection, email_id: str
+        self, conn: duckdb.DuckDBPyConnection, email_id: str,
     ) -> tuple[str, str]:
-        """Fetch email body content from the database or Gmail API as fallback.
+        """
+        Fetch email body content from the database or Gmail API as fallback.
 
         Args:
+        ----
             conn: Database connection
             email_id: ID of the email to fetch
 
         Returns:
+        -------
             Tuple of (plain_text_body, html_body)
 
         """
@@ -261,7 +274,7 @@ class EmailEnrichment(BaseScript):
                         plain_text = re.sub(r"\s+", " ", plain_text).strip()
                     except Exception as e:
                         self.logger.warning(
-                            f"Error extracting plain text from HTML: {e}"
+                            f"Error extracting plain text from HTML: {e}",
                         )
                 else:
                     # Plain text only
@@ -286,7 +299,7 @@ class EmailEnrichment(BaseScript):
 
                     if plain_body or html_body:
                         self.logger.info(
-                            f"Successfully fetched email body from Gmail API for {email_id}"
+                            f"Successfully fetched email body from Gmail API for {email_id}",
                         )
 
                         # Get subject from headers
@@ -306,7 +319,7 @@ class EmailEnrichment(BaseScript):
                             # If html_body has <body> tag, add subject inside it
                             if "<body" in html_body.lower():
                                 html_body = html_body.replace(
-                                    "<body", f"<body><h3>{subject}</h3>", 1
+                                    "<body", f"<body><h3>{subject}</h3>", 1,
                                 )
                             else:
                                 html_body = f"<html><body><h3>{subject}</h3>{html_body}</body></html>"
@@ -350,9 +363,11 @@ class EmailEnrichment(BaseScript):
         plain_body: str,
         html_body: str,
     ) -> None:
-        """Store email content in the database.
+        """
+        Store email content in the database.
 
         Args:
+        ----
             conn: Database connection
             email_id: ID of the email
             plain_body: Plain text body
@@ -386,15 +401,18 @@ class EmailEnrichment(BaseScript):
         execute_query(conn, query, params)
 
     def _extract_contact_info(
-        self, conn: duckdb.DuckDBPyConnection, email_id: str
+        self, conn: duckdb.DuckDBPyConnection, email_id: str,
     ) -> dict[str, Any]:
-        """Extract contact information from email content.
+        """
+        Extract contact information from email content.
 
         Args:
+        ----
             conn: Database connection
             email_id: ID of the email to process
 
         Returns:
+        -------
             Dictionary containing extracted contact information
 
         """
@@ -434,15 +452,18 @@ class EmailEnrichment(BaseScript):
         return contact_info
 
     def _detect_opportunities(
-        self, conn: duckdb.DuckDBPyConnection, email_id: str
+        self, conn: duckdb.DuckDBPyConnection, email_id: str,
     ) -> list[dict[str, Any]]:
-        """Detect business opportunities in email content.
+        """
+        Detect business opportunities in email content.
 
         Args:
+        ----
             conn: Database connection
             email_id: ID of the email to process
 
         Returns:
+        -------
             List of detected opportunities
 
         """
@@ -473,7 +494,7 @@ class EmailEnrichment(BaseScript):
                     "confidence": 0.75,
                     "details": "Potential business opportunity detected",
                     "keywords": ["proposal", "opportunity"],
-                }
+                },
             ]
         else:
             opportunities = []
@@ -499,9 +520,11 @@ class EmailEnrichment(BaseScript):
         contact_info: dict[str, Any],
         opportunities: list[dict[str, Any]],
     ) -> tuple[float, float, str]:
-        """Calculate priority score for an email.
+        """
+        Calculate priority score for an email.
 
         Args:
+        ----
             conn: Database connection
             email_id: ID of the email
             from_address: Sender's email address
@@ -510,6 +533,7 @@ class EmailEnrichment(BaseScript):
             opportunities: Detected business opportunities
 
         Returns:
+        -------
             Tuple of (priority_score, confidence, reason)
 
         """
@@ -563,9 +587,11 @@ class EmailEnrichment(BaseScript):
         opportunity_detected: bool,
         status: str = "completed",
     ) -> None:
-        """Update the enrichment status for an email.
+        """
+        Update the enrichment status for an email.
 
         Args:
+        ----
             conn: Database connection
             email_id: ID of the email
             priority_score: Calculated priority score
@@ -628,12 +654,15 @@ class EmailEnrichment(BaseScript):
         execute_query(conn, query, params)
 
     def enrich_email(self, email_id: str) -> bool:
-        """Enrich a single email with additional metadata and analysis.
+        """
+        Enrich a single email with additional metadata and analysis.
 
         Args:
+        ----
             email_id: The email ID to enrich
 
         Returns:
+        -------
             True if enrichment was successful, False otherwise
 
         """
@@ -649,7 +678,7 @@ class EmailEnrichment(BaseScript):
 
                 if status and status[0] == "completed":
                     self.logger.info(
-                        f"Email {email_id} already fully enriched, skipping"
+                        f"Email {email_id} already fully enriched, skipping",
                     )
                     return True
 
@@ -692,7 +721,7 @@ class EmailEnrichment(BaseScript):
                     self.logger.warning(f"No metadata found for email {email_id}")
 
                 # Calculate priority
-                priority_score, priority_confidence, priority_reason = (
+                (priority_score, priority_confidence, priority_reason) = (
                     self._calculate_priority(
                         conn,
                         email_id,
@@ -724,7 +753,7 @@ class EmailEnrichment(BaseScript):
             try:
                 with self._get_connection() as conn:
                     self._update_enrichment_status(
-                        conn, email_id, 0, f"Error: {str(e)}", 0, False, False, "failed"
+                        conn, email_id, 0, f"Error: {e!s}", 0, False, False, "failed",
                     )
             except:
                 pass
@@ -743,7 +772,7 @@ class ConnectionManager:
     def __enter__(self):
         # If connection exists and is open, use it
         if self.enrichment.connection is not None and not getattr(
-            self.enrichment.connection, "closed", False
+            self.enrichment.connection, "closed", False,
         ):
             self.connection = self.enrichment.connection
             self.created_new = False
@@ -751,15 +780,15 @@ class ConnectionManager:
             # Use MotherDuck token if available
             config = None
             if self.enrichment.motherduck_token and self.enrichment.db_path.startswith(
-                "md:"
+                "md:",
             ):
                 config = {"motherduck_token": self.enrichment.motherduck_token}
                 self.enrichment.logger.debug(
-                    f"Connecting to MotherDuck database: {self.enrichment.db_path}"
+                    f"Connecting to MotherDuck database: {self.enrichment.db_path}",
                 )
             else:
                 self.enrichment.logger.debug(
-                    f"Connecting to local database: {self.enrichment.db_path}"
+                    f"Connecting to local database: {self.enrichment.db_path}",
                 )
 
             # Create new connection
@@ -779,7 +808,7 @@ class ConnectionManager:
                 self.enrichment.logger.debug("Database connection closed")
             except Exception as e:
                 self.enrichment.logger.warning(
-                    f"Error closing database connection: {e}"
+                    f"Error closing database connection: {e}",
                 )
 
 
