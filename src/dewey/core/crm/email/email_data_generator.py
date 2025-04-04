@@ -2,24 +2,27 @@ from dewey.core.base_script import BaseScript
 
 
 class EmailDataGenerator(BaseScript):
-    """Generates data related to emails.
+    """
+    Generates data related to emails.
 
     This class inherits from BaseScript and provides methods for generating
     email-related data.
     """
 
     def __init__(self):
-        """Initializes the EmailDataGenerator.
+        """
+        Initializes the EmailDataGenerator.
 
         Calls the superclass constructor with the appropriate configuration
         section and requirements.
         """
         super().__init__(
-            config_section="email_data_generator", requires_db=True, enable_llm=True
+            config_section="email_data_generator", requires_db=True, enable_llm=True,
         )
 
     def run(self) -> None:
-        """Runs the email data generation process.
+        """
+        Runs the email data generation process.
 
         This method contains the core logic for generating email data.
         """
