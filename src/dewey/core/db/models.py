@@ -1490,12 +1490,8 @@ TABLE_INDEXES = {
     "email_preferences": [
         """CREATE INDEX IF NOT EXISTS idx_email_preferences_id ON email_preferences(id)""",
     ],
-    "emails": [
-        """CREATE INDEX IF NOT EXISTS idx_emails_msg_id ON emails(msg_id)""",
-    ],
-    "holdings": [
-        """CREATE INDEX IF NOT EXISTS idx_holdings_id ON holdings(id)""",
-    ],
+    "emails": ["""CREATE INDEX IF NOT EXISTS idx_emails_msg_id ON emails(msg_id)"""],
+    "holdings": ["""CREATE INDEX IF NOT EXISTS idx_holdings_id ON holdings(id)"""],
     "households": [
         """CREATE INDEX IF NOT EXISTS idx_households_id ON households(id)""",
     ],
