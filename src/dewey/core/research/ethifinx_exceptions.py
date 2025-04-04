@@ -2,9 +2,7 @@
 
 
 class EthifinxError(Exception):
-    """
-    Base exception for Ethifinx.
-    """
+    """Base exception for Ethifinx."""
 
 
 class APIError(EthifinxError):
