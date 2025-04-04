@@ -1,5 +1,3 @@
-from typing import Dict, Optional
-
 from dewey.core.base_script import BaseScript
 from dewey.core.db.utils import create_table, insert_data
 from dewey.llm.llm_utils import generate_schema_from_data
@@ -9,9 +7,11 @@ class CSVInferSchema(BaseScript):
     """Infers schema from CSV file and creates a table in the database."""
 
     def __init__(self, config_section: str | None = None) -> None:
-        """Initializes the CSVInferSchema class.
+        """
+        Initializes the CSVInferSchema class.
 
         Args:
+        ----
             config_section (Optional[str]): The section in the config file to use.
 
         """
@@ -46,7 +46,7 @@ class CSVInferSchema(BaseScript):
             self._insert_data(csv_file_path, table_name, schema)
 
             self.logger.info(
-                f"Successfully created table {table_name} from {csv_file_path}"
+                f"Successfully created table {table_name} from {csv_file_path}",
             )
 
         except Exception as e:
@@ -54,15 +54,19 @@ class CSVInferSchema(BaseScript):
             raise
 
     def _infer_schema(self, csv_data: str) -> dict[str, str]:
-        """Infers the schema of the CSV data using an LLM.
+        """
+        Infers the schema of the CSV data using an LLM.
 
         Args:
+        ----
             csv_data (str): The CSV data as a string.
 
         Returns:
+        -------
             Dict[str, str]: A dictionary representing the schema, where keys are column names and values are data types.
 
         Raises:
+        ------
             Exception: If there is an error during schema inference.
 
         """
@@ -76,13 +80,16 @@ class CSVInferSchema(BaseScript):
             raise
 
     def _create_table(self, table_name: str, schema: dict[str, str]) -> None:
-        """Creates a table in the database based on the inferred schema.
+        """
+        Creates a table in the database based on the inferred schema.
 
         Args:
+        ----
             table_name (str): The name of the table to create.
             schema (Dict[str, str]): A dictionary representing the schema.
 
         Raises:
+        ------
             Exception: If there is an error during table creation.
 
         """
@@ -95,16 +102,19 @@ class CSVInferSchema(BaseScript):
             raise
 
     def _insert_data(
-        self, csv_file_path: str, table_name: str, schema: dict[str, str]
+        self, csv_file_path: str, table_name: str, schema: dict[str, str],
     ) -> None:
-        """Inserts data from the CSV file into the specified table.
+        """
+        Inserts data from the CSV file into the specified table.
 
         Args:
+        ----
             csv_file_path (str): The path to the CSV file.
             table_name (str): The name of the table to insert data into.
             schema (Dict[str, str]): A dictionary representing the schema.
 
         Raises:
+        ------
             Exception: If there is an error during data insertion.
 
         """
